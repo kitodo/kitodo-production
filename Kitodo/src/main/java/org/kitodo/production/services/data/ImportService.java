@@ -355,12 +355,12 @@ public class ImportService {
         List<String> doctypes = getDocTypeMetadata(ruleset);
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
-        if (kitodoNodes.getLength() > 0) {
+        if (kitodoNodes.getLength() > 0 && !doctypes.isEmpty()) {
             NodeList importedMetadata = kitodoNodes.item(0).getChildNodes();
             for (int i = 0; i < importedMetadata.getLength(); i++) {
                 Node metadataNode = importedMetadata.item(i);
                 Element metadataElement = (Element) metadataNode;
-                if (!doctypes.isEmpty() && doctypes.get(0).equals(metadataElement.getAttribute("name"))) {
+                if (doctypes.get(0).equals(metadataElement.getAttribute("name"))) {
                     return metadataElement.getTextContent();
                 }
             }

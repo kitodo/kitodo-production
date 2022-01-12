@@ -54,18 +54,18 @@
         <xs:attribute type="ruleset:Type" name="type"/>
         <xs:attribute type="xs:anyURI" name="namespace"/>
     </xs:complexType>
-    
+
     <xs:complexType name="Condition">
         <xs:annotation>
             <xs:documentation xml:lang="en">
                 A &lt;condition&gt; can be defined within a &lt;restriction&gt; and allows the elements listed therein,
                 if the &lt;condition&gt; is met. &lt;condition&gt;s can be nested, if multiple condition checks are
                 necessary.
-                
+
                 The attribute "key" indicates on which key’s value the additional permits depend. with nested keys, a
                 preceding '../' refers to a higher-level key. (The syntax is based on XPath, but "key" is not an XPath,
                 the '../' is the only permissible modifier.) It can be repeated.
-                
+
                 In addition, exactly one of the following attributes must be specified, which formulates the condition
                 for the value:
 
@@ -105,13 +105,13 @@
                 effect if it is "false". (A work usually has a workflow, but this can be switched off for a
                 higher-level unit, for example a series.) The "use" attribute can be used to define a technical use of
                 the value. Several uses are to be recorded in ONE attribute with several values separated ​​by spaces.
-                
+
                 If a division is defined within &lt;subdivisionByDate&gt;, the attribute "dates" indicates in which
                 metadata key is stored, when this division dates, and the attribute "scheme" indicates the pattern
                 (date format). 'yyyy' stands for a year, 'yyyy/yyyy' for a period of two consecutive years, 'MM' for
                 the month and 'dd' for the day. The number of letters defines a minimum length of the number (leading
                 zeros).
-                
+
                 The root of the physical structure must be called "physSequence". There are three structures for
                 physical objects, a "page" for the page of a bound or stitched publication, "track" for an aural or
                 audiovisual recording, and "other" for another linked physical entity. In between there can be
@@ -136,7 +136,7 @@
             <xs:documentation xml:lang="en">
                 The attribute specifies in which section of the METS file the metadata key is stored. The areas have a
                 rough semantic meaning:
-                
+
                 'description' is the standard value, the metadata entry is written to the &lt;dmdSec&gt;. It describes
                     the digital resource, sometimes referred to as workpiece properties.
 
@@ -448,6 +448,7 @@
                             <xs:enumeration value="processTitle"/>
                             <xs:enumeration value="recordIdentifier"/>
                             <xs:enumeration value="title"/>
+                            <xs:enumeration value="docType"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:list>
