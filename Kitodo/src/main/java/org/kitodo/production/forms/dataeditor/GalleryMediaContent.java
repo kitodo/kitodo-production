@@ -184,9 +184,9 @@ public class GalleryMediaContent {
          */
         try {
             InputStream previewData = ServiceManager.getFileService().read(uri);
-            return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType).build();
-            return new DefaultStreamedContent(previewData, mimeType, Paths.get(uri.getPath()).getFileName().toString(),
-                    previewData.available());
+            return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType)
+                    .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength(previewData.available())
+                    .build();
         } catch (IOException e) {
             logger.catching(e);
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
