@@ -30,9 +30,9 @@ public class JAXBContextCache {
 
     // ConcurrentHashMap takes care of synchronization in a multi-threaded
     // environment
-    private final static Map<Class, JAXBContext> jaxbContextCache = new ConcurrentHashMap();
+    private static final Map<Class, JAXBContext> jaxbContextCache = new ConcurrentHashMap();
 
-    private final static Map<ContextDescriptor, Object> contextDescriptorObjectCache = new ConcurrentHashMap();
+    private static final Map<ContextDescriptor, Object> contextDescriptorObjectCache = new ConcurrentHashMap();
 
     /**
      * The synchronized function singleton() must be used to obtain singleton access
@@ -65,8 +65,10 @@ public class JAXBContextCache {
      *            The file of object to cache.
      * @param <T>
      *            The generic class type.
-     * @return The unmarshalled value of class.t
+     * @return The unmarshalled instance of class
      * @throws JAXBException
+     *             The exception while unmarshaller is created or unmarshalling is
+     *             being in process
      */
     public static <T> T getUnmarshalled(final Class<T> clazz, final File file) throws JAXBException {
         final ContextDescriptor contextDescriptor = new ContextDescriptor(clazz, file);
@@ -78,7 +80,7 @@ public class JAXBContextCache {
         // remove all existing unmarshalled objects for class in conjunction with
         // filename (heap of one unmarshalled object per context descriptor)
         for (ContextDescriptor cachedContextDescriptor : contextDescriptorObjectCache.keySet()) {
-            if (cachedContextDescriptor.clazz.equals(clazz)
+            if (cachedContextDescriptor.clazz.equals(clazz.toString())
                     && cachedContextDescriptor.fileName.equals(file.getName())) {
                 contextDescriptorObjectCache.remove(cachedContextDescriptor);
             }
