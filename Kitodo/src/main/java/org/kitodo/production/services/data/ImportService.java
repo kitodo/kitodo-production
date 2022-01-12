@@ -423,7 +423,7 @@ public class ImportService {
             // logical structure is created by import XSLT file!
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document);
             return new TempProcess(process, workpiece);
-        } else if (Objects.nonNull(process) && Objects.nonNull(process.getRuleset())){
+        } else if (Objects.nonNull(process) && Objects.nonNull(process.getRuleset())) {
             String docType = getRecordDocType(document, process.getRuleset());
             NodeList metadataNodes = extractMetadataNodeList(document);
             return new TempProcess(process, metadataNodes, docType);
@@ -1230,7 +1230,7 @@ public class ImportService {
      * @return list of Strings containing the IDs of the doc type metadata defined in the provided ruleset.
      * @throws IOException thrown if ruleset file cannot be loaded
      */
-    private List<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
+    public static List<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
         RulesetManagementInterface rulesetManagementInterface
                 = ServiceManager.getRulesetManagementService().getRulesetManagement();
         String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);

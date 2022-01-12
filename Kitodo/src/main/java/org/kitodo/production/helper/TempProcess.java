@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -19,14 +21,14 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.services.data.ImportService;
 import org.w3c.dom.NodeList;
 
 /**
  * This class is used during import.
  */
 public class TempProcess {
-
-    private static final String DOC_TYPE = "docType";
 
     private Workpiece workpiece;
 
@@ -111,17 +113,23 @@ public class TempProcess {
      * of type "docType" and if its value equals the type of the logical root element. If not, the
      * logical root is set to the value of the "docType" metadata.
      *
-     * This function is currently only used for the import of prestructured processes.
+     * <p>This function is currently only used for the import of prestructured processes.</p>
      */
-    public void verifyDocType() {
-        if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
-            Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()
-                    .stream().filter(m -> m.getKey().equals(DOC_TYPE)).findFirst();
-            if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
-                String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
-                if (StringUtils.isNotBlank(docType)
-                        && !this.getWorkpiece().getLogicalStructure().getType().equals(docType)) {
-                    this.getWorkpiece().getLogicalStructure().setType(docType);
+    public void verifyDocType() throws IOException, ProcessGenerationException {
+        if (Objects.nonNull(process.getRuleset())) {
+            List<String> doctypeMetadata = ImportService.getDocTypeMetadata(process.getRuleset());
+            if (doctypeMetadata.isEmpty()) {
+                throw new ProcessGenerationException("No doc type metadata defined in ruleset!");
+            }
+            if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
+                Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()
+                        .stream().filter(m -> m.getKey().equals(doctypeMetadata.get(0))).findFirst();
+                if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
+                    String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
+                    if (StringUtils.isNotBlank(docType)
+                            && !this.getWorkpiece().getLogicalStructure().getType().equals(docType)) {
+                        this.getWorkpiece().getLogicalStructure().setType(docType);
+                    }
                 }
             }
         }

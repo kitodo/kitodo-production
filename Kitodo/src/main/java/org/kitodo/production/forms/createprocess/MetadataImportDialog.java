@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
@@ -101,7 +103,7 @@ public abstract class MetadataImportDialog {
      * on successful import.
      * @param processes list of TempProcess instances
      */
-    void fillCreateProcessForm(LinkedList<TempProcess> processes) {
+    void fillCreateProcessForm(LinkedList<TempProcess> processes) throws ProcessGenerationException, IOException {
         this.createProcessForm.setProcesses(processes);
         if (!processes.isEmpty() && Objects.nonNull(processes.getFirst())) {
             TempProcess firstProcess = processes.getFirst();
