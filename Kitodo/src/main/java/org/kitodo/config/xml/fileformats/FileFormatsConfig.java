@@ -20,7 +20,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -54,9 +53,7 @@ public class FileFormatsConfig {
      *             incorrect
      */
     public static List<FileFormat> getFileFormats() throws JAXBException {
-        Unmarshaller fileFormatsConfig = JAXBContextCache.getInstance().get(FileFormatsConfig.class).createUnmarshaller();
-        FileFormatsConfig read = (FileFormatsConfig) fileFormatsConfig.unmarshal(CONFIG_FILE);
-        return read.fileFormat;
+        return JAXBContextCache.getInstance().getUnmarshalled(FileFormatsConfig.class, CONFIG_FILE).fileFormat;
     }
 
     /**

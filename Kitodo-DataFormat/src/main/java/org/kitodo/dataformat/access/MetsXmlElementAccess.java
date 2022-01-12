@@ -195,7 +195,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     @Override
     public Workpiece read(InputStream in) throws IOException {
         try {
-            JAXBContext jc = JAXBContextCache.getInstance().get(Mets.class);
+            JAXBContext jc = JAXBContextCache.getJAXBContext(Mets.class);
             Unmarshaller unmarshaller = jc.createUnmarshaller();
             Mets mets = (Mets) unmarshaller.unmarshal(in);
             return new MetsXmlElementAccess(mets).workpiece;
@@ -220,7 +220,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     @Override
     public void save(Workpiece workpiece, OutputStream out) throws IOException {
         try {
-            JAXBContext context = JAXBContextCache.getInstance().get(Mets.class);
+            JAXBContext context = JAXBContextCache.getJAXBContext(Mets.class);
             Marshaller marshal = context.createMarshaller();
             marshal.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshal.marshal(new MetsXmlElementAccess(workpiece).toMets(), out);
