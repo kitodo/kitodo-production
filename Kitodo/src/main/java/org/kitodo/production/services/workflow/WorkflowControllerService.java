@@ -211,15 +211,13 @@ public class WorkflowControllerService {
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     throw new DataException("Error on image validation!");
                 }
+                this.webDav.uploadFromHome(task.getProcess());
             }
         }
 
         // unlock the process
         MetadataLock.setFree(task.getProcess().getId());
 
-        // if the result of the verification is ok, then continue, otherwise it
-        // is not reached
-        this.webDav.uploadFromHome(task.getProcess());
         task.setEditType(TaskEditType.MANUAL_SINGLE);
         close(task);
     }
