@@ -78,7 +78,21 @@ public class MetsService {
      *             not found)
      */
     public String getBaseType(URI uri) throws IOException {
-        LogicalDivision logicalDivision = loadWorkpiece(uri).getLogicalStructure();
+        Workpiece workpiece = loadWorkpiece(uri);
+        return getBaseType(workpiece);
+
+    }
+
+    /**
+     * Returns the type of the top element of the logical structure, and thus the
+     * type of the workpiece.
+     *
+     * @param workpiece
+     *            the workpiece
+     * @return the type of root element of the logical structure of the workpiece
+     */
+    public String getBaseType(Workpiece workpiece) {
+        LogicalDivision logicalDivision = workpiece.getLogicalStructure();
         String type = logicalDivision.getType();
         while (Objects.isNull(type) && !logicalDivision.getChildren().isEmpty()) {
             logicalDivision = logicalDivision.getChildren().get(0);
@@ -150,12 +164,12 @@ public class MetsService {
      * @param workpiece the workpiece to count tags.
      * @return the number of tags
      */
-    public static long countLogicalMetadata(Workpiece workpiece) {
-        return Workpiece.treeStream(workpiece.getLogicalStructure())
+    public static int countLogicalMetadata(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getLogicalStructure())
                 .flatMap(logicalDivision -> logicalDivision.getMetadata().parallelStream())
                 .filter(metadata -> !(metadata instanceof MetadataEntry)
                         || Objects.nonNull(((MetadataEntry) metadata).getValue())
                                 && !((MetadataEntry) metadata).getValue().isEmpty())
-                .mapToInt(metadata -> 1).count();
+                .mapToInt(metadata -> 1).count());
     }
 }

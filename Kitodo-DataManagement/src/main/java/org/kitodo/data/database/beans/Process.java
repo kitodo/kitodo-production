@@ -123,6 +123,15 @@ public class Process extends BaseTemplateBean {
     private List<Map<String, Object>> metadata;
 
     @Transient
+    private int numberOfMetadata;
+
+    @Transient
+    private int numberOfImages;
+
+    @Transient
+    private int numberOfStructures;
+
+    @Transient
     private String baseType;
 
     /**
@@ -587,5 +596,59 @@ public class Process extends BaseTemplateBean {
     @Override
     public int hashCode() {
         return Objects.hash(this.getId());
+    }
+
+    /**
+     * Get amount of structure elements.
+     *
+     * @return Amount of structure elements
+     */
+    public int getNumberOfStructures() {
+        return numberOfStructures;
+    }
+
+    /**
+     * Get amount of meta data elements.
+     *
+     * @return Amount of meta data elements
+     */
+    public int getNumberOfMetadata() {
+        return numberOfMetadata;
+    }
+
+    /**
+     * Set amount of meta data elements.
+     *
+     * @param numberOfMetadata Integer value of amount of meta data elements
+     */
+    public void setNumberOfMetadata(int numberOfMetadata) {
+        this.numberOfMetadata = numberOfMetadata;
+    }
+
+    /**
+     * Get amount of images.
+     *
+     * @return Integer value of amount of images
+     */
+    public int getNumberOfImages() {
+        return numberOfImages;
+    }
+
+    /**
+     * Set amount of images.
+     *
+     * @param numberOfImages Integer value of amount of images
+     */
+    public void setNumberOfImages(int numberOfImages) {
+        this.numberOfImages = numberOfImages;
+    }
+
+    /**
+     * Set amount of structure elements.
+     *
+     * @param numberOfStructures Integer value of amount of structure elements
+     */
+    public void setNumberOfStructures(int numberOfStructures) {
+        this.numberOfStructures = numberOfStructures;
     }
 }

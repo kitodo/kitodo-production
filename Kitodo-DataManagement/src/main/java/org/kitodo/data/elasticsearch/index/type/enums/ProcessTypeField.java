@@ -41,6 +41,9 @@ public enum ProcessTypeField implements TypeInterface {
     TEMPLATES("templates"),
     WORKPIECES("workpieces"),
     METADATA("meta"),
+    NUMBER_OF_METADATA("numberOfMetadata"),
+    NUMBER_OF_IMAGES("numberOfImages"),
+    NUMBER_OF_STRUCTURES("numberOfStructures"),
     BASE_TYPE("baseType"),
     IN_CHOICE_LIST_SHOWN("inChoiceListShown");
 

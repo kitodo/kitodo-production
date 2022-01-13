@@ -37,6 +37,9 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
+    private Integer numberOfMetadata;
+    private Integer numberOfImages;
+    private Integer numberOfStructures;
     private String sortHelperStatus;
     private String baseType;
 
@@ -399,5 +402,59 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setBaseType(String baseType) {
         this.baseType = baseType;
+    }
+
+    /**
+     * Get numberOfMetadata .
+     *
+     * @return value of numberOfMetadata
+     */
+    public Integer getNumberOfMetadata() {
+        return numberOfMetadata;
+    }
+
+    /**
+     * Set numberOfMetadata.
+     *
+     * @param numberOfMetadata as Integer
+     */
+    public void setNumberOfMetadata(Integer numberOfMetadata) {
+        this.numberOfMetadata = numberOfMetadata;
+    }
+
+    /**
+     * Get numberOfImages.
+     *
+     * @return value of numberOfImages
+     */
+    public Integer getNumberOfImages() {
+        return numberOfImages;
+    }
+
+    /**
+     * Set numberOfImages.
+     *
+     * @param numberOfImages as Integer
+     */
+    public void setNumberOfImages(Integer numberOfImages) {
+        this.numberOfImages = numberOfImages;
+    }
+
+    /**
+     * Get numberOfStructures.
+     *
+     * @return value of numberOfStructures
+     */
+    public Integer getNumberOfStructures() {
+        return numberOfStructures;
+    }
+
+    /**
+     * Set numberOfStructures.
+     *
+     * @param numberOfStructures as Integer
+     */
+    public void setNumberOfStructures(Integer numberOfStructures) {
+        this.numberOfStructures = numberOfStructures;
     }
 }

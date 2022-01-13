@@ -172,6 +172,15 @@
           }
         }
       },
+      "numberOfMetadata": {
+        "type": "long"
+      },
+      "numberOfImages": {
+        "type": "long"
+      },
+      "numberOfStructures": {
+        "type": "long"
+      },
       "project": {
         "properties": {
           "id": {

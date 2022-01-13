@@ -17,6 +17,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -63,6 +65,9 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.PARENT_ID.getKey(), processParentId);
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.METADATA.getKey(), process.getMetadata());
+        jsonObject.put(ProcessTypeField.NUMBER_OF_METADATA.getKey(), process.getNumberOfMetadata());
+        jsonObject.put(ProcessTypeField.NUMBER_OF_IMAGES.getKey(), process.getNumberOfImages());
+        jsonObject.put(ProcessTypeField.NUMBER_OF_STRUCTURES.getKey(), process.getNumberOfStructures());
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), getProperties(process));
         jsonObject.put(ProcessTypeField.BASE_TYPE.getKey(), process.getBaseType());
         jsonObject.put(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), process.getInChoiceListShown());
