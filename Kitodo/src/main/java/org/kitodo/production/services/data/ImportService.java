@@ -352,7 +352,7 @@ public class ImportService {
      * @return docType as String
      */
     private String getRecordDocType(Document record, Ruleset ruleset) throws IOException {
-        List<String> doctypes = getDocTypeMetadata(ruleset);
+        Collection<String> doctypes = getDocTypeMetadata(ruleset);
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
         if (kitodoNodes.getLength() > 0 && !doctypes.isEmpty()) {
@@ -360,7 +360,7 @@ public class ImportService {
             for (int i = 0; i < importedMetadata.getLength(); i++) {
                 Node metadataNode = importedMetadata.item(i);
                 Element metadataElement = (Element) metadataNode;
-                if (doctypes.get(0).equals(metadataElement.getAttribute("name"))) {
+                if (doctypes.contains(metadataElement.getAttribute("name"))) {
                     return metadataElement.getTextContent();
                 }
             }
@@ -1230,12 +1230,12 @@ public class ImportService {
      * @return list of Strings containing the IDs of the doc type metadata defined in the provided ruleset.
      * @throws IOException thrown if ruleset file cannot be loaded
      */
-    public static List<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
-        RulesetManagementInterface rulesetManagementInterface
+    public static Collection<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
+        RulesetManagementInterface rulesetManagement
                 = ServiceManager.getRulesetManagementService().getRulesetManagement();
         String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
         String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
-        rulesetManagementInterface.load(new File(rulesetPath));
-        return new ArrayList<>(rulesetManagementInterface.getFunctionalKeys(FunctionalMetadata.DOC_TYPE));
+        rulesetManagement.load(new File(rulesetPath));
+        return rulesetManagement.getFunctionalKeys(FunctionalMetadata.DOC_TYPE);
     }
 }

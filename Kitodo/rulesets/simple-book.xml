@@ -25,6 +25,9 @@
             <label lang="de">Buch</label>
             <label lang="fr">Livre</label>
         </division>
+        <key id="document_type" use="docType">
+            <label>Document type</label>
+        </key>
         <key id="publicationYear">
             <label>Publication year</label>
             <codomain type="integer"/>

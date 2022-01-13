@@ -12,7 +12,7 @@
 package org.kitodo.production.helper;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -117,13 +117,13 @@ public class TempProcess {
      */
     public void verifyDocType() throws IOException, ProcessGenerationException {
         if (Objects.nonNull(process.getRuleset())) {
-            List<String> doctypeMetadata = ImportService.getDocTypeMetadata(process.getRuleset());
+            Collection<String> doctypeMetadata = ImportService.getDocTypeMetadata(process.getRuleset());
             if (doctypeMetadata.isEmpty()) {
                 throw new ProcessGenerationException("No doc type metadata defined in ruleset!");
             }
             if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
                 Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()
-                        .stream().filter(m -> m.getKey().equals(doctypeMetadata.get(0))).findFirst();
+                        .stream().filter(metadata -> doctypeMetadata.contains(metadata.getKey())).findFirst();
                 if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
                     String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
                     if (StringUtils.isNotBlank(docType)
