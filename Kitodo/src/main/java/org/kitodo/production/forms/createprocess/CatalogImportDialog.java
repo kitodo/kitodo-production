@@ -173,8 +173,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 showGrowlMessage(summary, detail);
 
                 if (this.importChildren) {
-                    summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChilrenSuccessfulSummary");
-                    detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChilrenSuccessfulDetail",
+                    summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
+                    detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
                         String.valueOf(this.createProcessForm.getChildProcesses().size()));
                     showGrowlMessage(summary, detail);
                 }

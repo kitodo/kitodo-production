@@ -119,7 +119,7 @@ public class TempProcess {
         if (Objects.nonNull(process.getRuleset())) {
             Collection<String> doctypeMetadata = ImportService.getDocTypeMetadata(process.getRuleset());
             if (doctypeMetadata.isEmpty()) {
-                throw new ProcessGenerationException("No doc type metadata defined in ruleset!");
+                throw new ProcessGenerationException(Helper.getTranslation("newProcess.docTypeMetadataMissing"));
             }
             if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
                 Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()
