@@ -1296,6 +1296,10 @@ Import form
     width: 100%;
 }
 
+#editForm\:metadataTable .ui-selectlistbox-listcontainer {
+    width: 100%;
+}
+
 .metadata-button {
     border-radius: var(--default-border-radius);
     margin-right: var(--default-half-size);
@@ -1976,7 +1980,8 @@ form#metadata div label,
     margin-left: 8px;
 }
 
-#metadataPanel .input-wrapper .ui-button {
+#metadataPanel .input-wrapper .ui-button,
+#editForm\:metadataTable .input-wrapper .ui-button {
     vertical-align: top;
 }
 

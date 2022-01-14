@@ -91,7 +91,7 @@
                                 rendered="#{MassImportForm.importMode.equals('file') and MassImportForm.selectedCatalog ne null}">
                             <div>
                                 <p:fileUpload value="#{MassImportForm.file}"
-                                              fileUploadListener="#{MassImportForm.handleFileUpload}"
+                                              listener="#{MassImportForm.handleFileUpload}"
                                               allowTypes="/(\.|\/)(csv)$/"
                                               skinSimple="true"
                                               fileLimit="1"
