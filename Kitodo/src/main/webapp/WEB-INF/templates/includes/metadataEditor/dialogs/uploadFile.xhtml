@@ -47,7 +47,7 @@
                         <p:fileUpload id="ulpoadMedia"
                                       widgetVar="uploadMedia"
                                       value="#{DataEditorForm.uploadFileDialog.file}"
-                                      fileUploadListener="#{DataEditorForm.uploadFileDialog.uploadMedia}"
+                                      listener="#{DataEditorForm.uploadFileDialog.uploadMedia}"
                                       oncomplete="handleLastFileUploadRequest(this);"
                                       mode="advanced"
                                       multiple="true"
