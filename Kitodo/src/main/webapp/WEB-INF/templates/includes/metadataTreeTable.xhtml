@@ -97,6 +97,7 @@
                                       readonly="#{not item.editable}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       disabled="#{not item.editable or readOnly}"
+                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
@@ -110,14 +111,14 @@
                                      value="#{item.selectedItem}"
                                      readonly="#{not item.editable}"
                                      autoWidth="false"
+                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      disabled="#{not item.editable or readOnly}"
                                      styleClass="#{readOnly ? 'read-only' : ''}">
                         <f:selectItem itemValue="#{null}"
-                                      itemDisabled="#{item.required}"
-                                      itemLabel="#{msgs.notSelected}"
+                                      itemLabel="#{msgs.selectPlease}"
                                       noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
 
