@@ -20,7 +20,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +40,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -49,7 +49,6 @@ import org.kitodo.production.forms.dataeditor.StructureTreeNode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.primefaces.model.TreeNode;
-import org.kitodo.data.database.beans.Process;
 
 public class DataEditorService {
 
