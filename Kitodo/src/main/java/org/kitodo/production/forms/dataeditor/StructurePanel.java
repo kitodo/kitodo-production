@@ -1009,7 +1009,11 @@ public class StructurePanel implements Serializable {
         try {
             StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
             StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
-            if (dragNode.getDataObject() instanceof LogicalDivision
+            if (dragNode.isLinked() || dropNode.isLinked()) {
+                Helper.setErrorMessage("dataEditor.dragNDropLinkError");
+                show();
+            }
+            else if (dragNode.getDataObject() instanceof LogicalDivision
                     && dropNode.getDataObject() instanceof LogicalDivision) {
                 checkLogicalDragDrop(dragNode, dropNode);
             } else if (dragNode.getDataObject() instanceof PhysicalDivision
@@ -1020,7 +1024,7 @@ public class StructurePanel implements Serializable {
                 movePageNode(event, dropNode, dragNode);
             } else {
                 Helper.setErrorMessage(
-                    Helper.getTranslation("dataEditor.dragnDropError", dragNode.getLabel(), dropNode.getLabel()));
+                    Helper.getTranslation("dataEditor.dragNDropError", dragNode.getLabel(), dropNode.getLabel()));
                 show();
             }
         } catch (Exception exception) {
@@ -1076,11 +1080,11 @@ public class StructurePanel implements Serializable {
                 return;
             } else {
                 Helper.setErrorMessage(
-                    Helper.getTranslation("dataEditor.dragnDropError", dragNode.getLabel(), dropNode.getLabel()));
+                    Helper.getTranslation("dataEditor.dragNDropError", dragNode.getLabel(), dropNode.getLabel()));
             }
         } else {
             Helper.setErrorMessage(
-                Helper.getTranslation("dataEditor.dragnDropError", dragNode.getLabel(), dropNode.getLabel()));
+                Helper.getTranslation("dataEditor.dragNDropError", dragNode.getLabel(), dropNode.getLabel()));
         }
         show();
     }
