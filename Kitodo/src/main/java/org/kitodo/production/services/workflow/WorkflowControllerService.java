@@ -211,13 +211,14 @@ public class WorkflowControllerService {
                 if (!mih.checkIfImagesValid(task.getProcess().getTitle(), imageFolder)) {
                     throw new DataException("Error on image validation!");
                 }
-                this.webDav.uploadFromHome(task.getProcess());
             }
         }
 
         // unlock the process
         MetadataLock.setFree(task.getProcess().getId());
-
+        if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+            this.webDav.uploadFromHome(task.getProcess());
+        }
         task.setEditType(TaskEditType.MANUAL_SINGLE);
         close(task);
     }
@@ -317,7 +318,9 @@ public class WorkflowControllerService {
      *            object
      */
     public void unassignTaskFromUser(Task task) throws DataException {
-        this.webDav.uploadFromHome(task.getProcess());
+        if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+            this.webDav.uploadFromHome(task.getProcess());
+        }
         task.setProcessingStatus(TaskStatus.OPEN);
         taskService.replaceProcessingUser(task, null);
         // if we have a correction task here then never remove startdate
@@ -342,7 +345,9 @@ public class WorkflowControllerService {
      */
     public void reportProblem(Comment comment) throws DataException {
         Task currentTask = comment.getCurrentTask();
-        this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
+        if (currentTask.isTypeImagesRead() || currentTask.isTypeImagesWrite()) {
+            this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
+        }
         Date date = new Date();
         currentTask.setProcessingStatus(TaskStatus.LOCKED);
         currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
