@@ -147,7 +147,7 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedStructure() {
-        if (!getSelectedStructure().isPresent()) {
+        if (getSelectedStructure().isEmpty()) {
             /*
              * No element is selected or the selected element is not a structure
              * but, for example, a physical division.
@@ -612,24 +612,20 @@ public class StructurePanel implements Serializable {
      * Adds a tree node to the given parent node. The tree node is set to
      * ‘expanded’.
      *
+     * @param parentProcess
+     *            parent process of current process
      * @param type
      *            the internal name of the type of node, to be resolved through
      *            the rule set
-     * @param linked
-     *            whether the node is a link. If so, it will be marked with a
-     *            link symbol.
-     * @param dataObject
-     *            the internal object represented by the node
      * @param parent
      *            parent node to which the new node is to be added
      * @return the generated node so that you can add children to it
      */
-    private DefaultTreeNode addTreeNode(Process parentProcess, String type, boolean linked, Object dataObject,
-                                        DefaultTreeNode parent) {
+    private DefaultTreeNode addTreeNode(Process parentProcess, String type, DefaultTreeNode parent) {
         StructuralElementViewInterface structuralElementView = dataEditor.getRulesetManagement().getStructuralElementView(type,
             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         return addTreeNode("[" + parentProcess.getId() + "] " + structuralElementView.getLabel() + " - "
-                        + parentProcess.getTitle(), structuralElementView.isUndefined(), linked, dataObject, parent);
+                        + parentProcess.getTitle(), structuralElementView.isUndefined(), true, null, parent);
     }
 
     /**
@@ -706,7 +702,7 @@ public class StructurePanel implements Serializable {
                     if (Objects.isNull(logicalDivision.getType())) {
                         break;
                     } else {
-                        parentNode = addTreeNode(parent, logicalDivision.getType(), true, null, parentNode);
+                        parentNode = addTreeNode(parent, logicalDivision.getType(), parentNode);
                         parentNode.setExpanded(true);
                     }
                 }
@@ -1256,7 +1252,7 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) throws Exception {
+    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
 
         LogicalDivision dragStructure = (LogicalDivision) dragNode.getDataObject();
         LogicalDivision dropStructure = (LogicalDivision) dropNode.getDataObject();
