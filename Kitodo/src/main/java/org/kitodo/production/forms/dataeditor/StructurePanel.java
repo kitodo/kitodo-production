@@ -508,7 +508,8 @@ public class StructurePanel implements Serializable {
                             .processIdFromUri(structure.getLink().getUri())) {
                         StructuralElementViewInterface view = dataEditor.getRulesetManagement().getStructuralElementView(
                             type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                        node = new StructureTreeNode(view.getLabel(), view.isUndefined(), true, structure);
+                        node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
+                                + child.getTitle(), view.isUndefined(), true, structure);
                     }
                 } catch (DataException e) {
                     Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
@@ -623,11 +624,12 @@ public class StructurePanel implements Serializable {
      *            parent node to which the new node is to be added
      * @return the generated node so that you can add children to it
      */
-    private DefaultTreeNode addTreeNode(String type, boolean linked, Object dataObject, DefaultTreeNode parent) {
+    private DefaultTreeNode addTreeNode(Process parentProcess, String type, boolean linked, Object dataObject,
+                                        DefaultTreeNode parent) {
         StructuralElementViewInterface structuralElementView = dataEditor.getRulesetManagement().getStructuralElementView(type,
             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        return addTreeNode(structuralElementView.getLabel(), structuralElementView.isUndefined(), linked, dataObject,
-            parent);
+        return addTreeNode("[" + parentProcess.getId() + "] " + structuralElementView.getLabel() + " - "
+                        + parentProcess.getTitle(), structuralElementView.isUndefined(), linked, dataObject, parent);
     }
 
     /**
@@ -704,7 +706,7 @@ public class StructurePanel implements Serializable {
                     if (Objects.isNull(logicalDivision.getType())) {
                         break;
                     } else {
-                        parentNode = addTreeNode(logicalDivision.getType(), true, null, parentNode);
+                        parentNode = addTreeNode(parent, logicalDivision.getType(), true, null, parentNode);
                         parentNode.setExpanded(true);
                     }
                 }
