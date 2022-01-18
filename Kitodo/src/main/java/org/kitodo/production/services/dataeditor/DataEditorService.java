@@ -247,8 +247,15 @@ public class DataEditorService {
         }
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
 
-        if (structureTreeNode.getDataObject() instanceof View) {
-            View view = (View) structureTreeNode.getDataObject();
+        Object dataObject = structureTreeNode.getDataObject();
+        // data object is null for structures inside parent processes
+        if (Objects.isNull(dataObject)) {
+            return null;
+        }
+
+        // default case
+        if (dataObject instanceof View) {
+            View view = (View) dataObject;
             if (Objects.isNull(view.getPhysicalDivision())) {
                 throw new IllegalStateException("View has no physical division assigned");
             }
@@ -258,13 +265,14 @@ public class DataEditorService {
                         dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         }
 
-        if (structureTreeNode.getDataObject() instanceof Process) {
+        // data object is a Process for parent processes
+        if (dataObject instanceof Process) {
             return null;
         }
 
         throw new IllegalStateException("Data object is of bad type: "
-                + (Objects.isNull(structureTreeNode.getDataObject()) ? "null"
-                    : structureTreeNode.getDataObject().getClass().getName()));
+                + (Objects.isNull(dataObject) ? "null"
+                    : dataObject.getClass().getName()));
     }
 
     private static Collection<Metadata> getExistingMetadataRows(List<TreeNode> metadataTreeNodes)
