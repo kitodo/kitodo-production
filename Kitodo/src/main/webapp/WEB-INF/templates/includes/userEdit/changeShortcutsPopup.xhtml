@@ -19,7 +19,7 @@
         <p:dialog widgetVar="changeShortcutsDialog"
                   id="changeShortcutsDialog"
                   header="#{msgs.shortcuts}"
-                  width="400px"
+                  width="500px"
                   height="480px"
                   modal="true"
                   resizable="false"
@@ -35,10 +35,13 @@
                                                value="#{msgs['shortcuts.dataEditor.'.concat(item.key)]}"/>
                                 <p:inputText id="shortcutInput"
                                              value="#{UserForm.shortcuts[item.key]}"
-                                             onkeydown="toggleSave()"
                                              styleClass="shortcut-input">
-                                    <p:ajax event="blur"/>
+                                    <p:ajax event="change" oncomplete="toggleSave()"/>
                                 </p:inputText>
+                                <p:button title="#{msgs['shortcuts.clear']}"
+                                          icon="fa fa-trash"
+                                          type="button"
+                                          onclick="$(this).siblings('.shortcut-input').val('');$(this).siblings('.shortcut-input').change();return false;"/>
                             </div>
                         </ui:repeat>
                     </h:form>

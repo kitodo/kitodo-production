@@ -21,6 +21,7 @@ let shortcuts = {
             keyCombination += event.originalEvent.code;
             event.originalEvent.target.value = keyCombination;
             event.preventDefault();
+            $(event.originalEvent.target).change();
         });
     }
 };
