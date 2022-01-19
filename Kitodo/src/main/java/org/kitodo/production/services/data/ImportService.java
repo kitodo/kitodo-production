@@ -365,7 +365,11 @@ public class ImportService {
         return "";
     }
 
-    private String getParentID(Document document) throws XPathExpressionException {
+    /**
+     * Get the parent ID from the document.
+     * @return
+     */
+    public String getParentID(Document document) throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
         NodeList nodeList = (NodeList) parentIDXpath.compile(parentXpath)
@@ -541,12 +545,19 @@ public class ImportService {
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
-            this.parentTempProcess = checkForParent(parentID, template.getRuleset().getId(), projectId);
+            checkForParent(parentID, template.getRuleset().getId(), projectId);
         }
     }
 
-    private TempProcess checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
+    /**
+     * Check if there already is a parent process in Database.
+     */
+    public void checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
             ProcessGenerationException {
+        if (Objects.isNull(parentID)) {
+            this.parentTempProcess = null;
+            return;
+        }
         HashMap<String, String> parentIDMetadata = new HashMap<>();
         parentIDMetadata.put(identifierMetadata, parentID);
         Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
@@ -554,9 +565,10 @@ public class ImportService {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
             Workpiece parentWorkpiece = ServiceManager.getMetsService().loadWorkpiece(workpieceUri);
-            return new TempProcess(parentProcess, parentWorkpiece);
+            this.parentTempProcess = new TempProcess(parentProcess, parentWorkpiece);
+            return;
         }
-        return null;
+        this.parentTempProcess = null;
     }
 
     private List<DataRecord> searchChildRecords(String opac, String parentId, int numberOfRows) {

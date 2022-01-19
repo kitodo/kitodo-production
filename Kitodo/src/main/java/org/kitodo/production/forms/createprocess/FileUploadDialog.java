@@ -32,6 +32,7 @@ import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -73,15 +74,21 @@ public class FileUploadDialog extends MetadataImportDialog {
             LinkedList<TempProcess> processes = new LinkedList<>();
             processes.add(tempProcess);
 
-            TempProcess parentProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
-            if (Objects.nonNull(parentProcess)) {
-                processes.add(parentProcess);
+            String parentID = importService.getParentID(internalDocument, this.createProcessForm.getRulesetManagement()
+                    .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER).toArray()[0].toString());
+            importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset().getId(),
+                createProcessForm.getProject().getId());
+            if (Objects.isNull(importService.getParentTempProcess())) {
+                TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
+                if (Objects.nonNull(parentTempProcess)) {
+                    processes.add(parentTempProcess);
+                }
             }
             fillCreateProcessForm(processes);
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
                 | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException
-                | TransformerException e) {
+                | TransformerException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
