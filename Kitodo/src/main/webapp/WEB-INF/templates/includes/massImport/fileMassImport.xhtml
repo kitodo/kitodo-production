@@ -34,7 +34,7 @@
         <div>
             <p:fileUpload value="#{MassImportForm.file}"
                           rendered="#{MassImportForm.selectedCatalog ne null}"
-                          fileUploadListener="#{MassImportForm.handleFileUpload}"
+                          listener="#{MassImportForm.handleFileUpload}"
                           allowTypes="/(\.|\/)(csv)$/"
                           skinSimple="true"
                           uploadLabel="#{msgs.massImport}"

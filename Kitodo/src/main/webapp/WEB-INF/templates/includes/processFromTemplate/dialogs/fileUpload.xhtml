@@ -47,7 +47,7 @@
                 <p:row>
                     <div>
                         <p:fileUpload rendered="#{CreateProcessForm.fileUploadDialog.selectedCatalog ne null}"
-                                      fileUploadListener="#{CreateProcessForm.fileUploadDialog.handleFileUpload}"
+                                      listener="#{CreateProcessForm.fileUploadDialog.handleFileUpload}"
                                       allowTypes="/(\.|\/)(xml)$/"
                                       skinSimple="true"
                                       oncomplete="PF('fileUploadDialog').hide();"
