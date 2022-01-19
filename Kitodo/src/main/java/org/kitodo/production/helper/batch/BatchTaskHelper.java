@@ -156,7 +156,9 @@ public class BatchTaskHelper extends BatchHelper {
      */
     public String openBatchTasksByUser() {
         for (Task task : this.steps) {
-            this.myDav.uploadFromHome(task.getProcess());
+            if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+                this.myDav.uploadFromHome(task.getProcess());
+            }
             task.setProcessingStatus(TaskStatus.OPEN);
             if (task.isCorrection()) {
                 task.setProcessingBegin(null);
@@ -187,7 +189,9 @@ public class BatchTaskHelper extends BatchHelper {
                 boolean valid = isTaskValid(task);
 
                 if (valid) {
-                    this.myDav.uploadFromHome(task.getProcess());
+                    if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+                        this.myDav.uploadFromHome(task.getProcess());
+                    }
                     task.setEditType(TaskEditType.MANUAL_MULTI);
                     new WorkflowControllerService().close(task);
                 }
