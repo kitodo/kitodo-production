@@ -1009,7 +1009,7 @@ public class StructurePanel implements Serializable {
         try {
             StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
             StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
-            if (dragNode.isLinked() || dropNode.isLinked()) {
+            if (dropNode.isLinked()) {
                 Helper.setErrorMessage("dataEditor.dragNDropLinkError");
                 show();
             }
