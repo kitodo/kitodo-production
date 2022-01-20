@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -281,8 +280,7 @@ public class RulesetManagement implements RulesetManagementInterface {
     @SuppressWarnings("unchecked")
     private <T> T read(Class<T> objectClass, File inputFile) throws IOException {
         try {
-            Unmarshaller reader = JAXBContextCache.getInstance().get(objectClass).createUnmarshaller();
-            return (T) reader.unmarshal(inputFile);
+            return JAXBContextCache.getInstance().getUnmarshalled(objectClass, inputFile);
         } catch (JAXBException e) {
             /*
              * If the parser ran on an IOException, we can throw it out

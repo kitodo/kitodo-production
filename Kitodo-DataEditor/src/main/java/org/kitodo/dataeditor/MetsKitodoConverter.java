@@ -85,7 +85,7 @@ public class MetsKitodoConverter {
     private static void saveToFile(Mets mets, URI xmlFile) throws JAXBException, IOException {
         URI metsFileUri = fileManagementModule.getFile(xmlFile).toURI();
         try (OutputStream outputStream = fileManagementModule.write(metsFileUri)) {
-            JAXBContext context = JAXBContextCache.getInstance().get(Mets.class);
+            JAXBContext context = JAXBContextCache.getJAXBContext(Mets.class);
             Marshaller marshaller = context.createMarshaller();
             marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
             marshaller.marshal(mets, outputStream);

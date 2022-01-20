@@ -52,7 +52,7 @@ class MetsKitodoReader {
      * @return The Mets object in mets-kitodo format.
      */
     static Mets readStringToMets(String xmlString) throws JAXBException {
-        JAXBContext jaxbMetsContext = JAXBContextCache.getInstance().get(Mets.class);
+        JAXBContext jaxbMetsContext = JAXBContextCache.getJAXBContext(Mets.class);
         Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
         try (StringReader stringReader = new StringReader(xmlString)) {
             return (Mets) jaxbUnmarshaller.unmarshal(new InputSource(stringReader));
@@ -70,7 +70,7 @@ class MetsKitodoReader {
         FileManagementInterface fileManagementModule = new KitodoServiceLoader<FileManagementInterface>(
                 FileManagementInterface.class).loadModule();
         if (fileManagementModule.fileExist(xmlFile)) {
-            JAXBContext jaxbMetsContext = JAXBContextCache.getInstance().get(Mets.class);
+            JAXBContext jaxbMetsContext = JAXBContextCache.getJAXBContext(Mets.class);
             Unmarshaller jaxbUnmarshaller = jaxbMetsContext.createUnmarshaller();
             try (InputStream inputStream = fileManagementModule.read(xmlFile)) {
                 return (Mets) jaxbUnmarshaller.unmarshal(inputStream);
