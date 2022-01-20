@@ -92,6 +92,9 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
                 throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
             }
             configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
+            if (ldapGroup.getUserDN().contains("{ldaplogin}")) {
+                authentication = new UsernamePasswordAuthenticationToken(user.getLdapLogin(), authentication.getCredentials());
+            }
             return ldapAuthenticationProvider.authenticate(authentication);
         } else {
             return daoAuthenticationProvider.authenticate(authentication);
@@ -152,7 +155,7 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
     }
 
     private String[] convertUserDn(String userDn) {
-        return new String[] {userDn.replaceFirst("\\{login}", "{0}") };
+        return new String[] {userDn.replaceFirst("\\{(?:ldap)?login}", "{0}") };
     }
 
     /**
