@@ -555,7 +555,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
          * 5-10 ->range, 5- ->min., Qualitätssicherung ->name) handling the
          * filter according to the parameters
          */
-        switch (FilterService.getTaskFilter(parameters)) {
+        switch (getTaskFilter(parameters)) {
             case EXACT:
                 try {
                     return filterTaskExact(parameters, taskStatus, negate, objectType);
@@ -662,7 +662,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             } else {
                 return TaskFilter.NAME;
             }
-        } else if (StringUtils.isNumeric(parameters)) {
+        } else if (!parameters.isEmpty() && StringUtils.isNumeric(parameters)) {
             return TaskFilter.EXACT;
         } else {
             return TaskFilter.NAME;
