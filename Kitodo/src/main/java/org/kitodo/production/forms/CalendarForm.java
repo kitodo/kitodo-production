@@ -41,12 +41,13 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
@@ -110,7 +111,7 @@ public class CalendarForm implements Serializable {
     private UploadedFile uploadedFile;
     private LocalDate selectedDate;
     private Block selectedBlock = null;
-    private List<MetadataViewInterface> metadataTypes = null;
+    private List<ProcessDetail> metadataTypes = null;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -745,7 +746,7 @@ public class CalendarForm implements Serializable {
         if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
             CountableMetadata metadata = new CountableMetadata(selectedBlock, Pair.of(selectedIssue.getDate(), selectedIssue.getIssue()));
             if (!getAllMetadataTypes().isEmpty()) {
-                metadata.setMetadataType(getAllMetadataTypes().get(0).getLabel());
+                metadata.setMetadataDetail(getAllMetadataTypes().get(0));
             }
             selectedBlock.addMetadata(metadata);
         } else {
@@ -818,11 +819,11 @@ public class CalendarForm implements Serializable {
      *
      * @return the map of metadata types
      */
-    public List<MetadataViewInterface> getAllMetadataTypes() {
+    public List<ProcessDetail> getAllMetadataTypes() {
         if (Objects.isNull(metadataTypes)) {
             try {
                 Process process = ServiceManager.getProcessService().getById(parentId);
-                metadataTypes = CalendarService.getAddableMetadata(process);
+                metadataTypes = CalendarService.getAddableMetadataTable(process);
             } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
             }
@@ -863,8 +864,8 @@ public class CalendarForm implements Serializable {
      * @param issue the issue to calculate the metadata for
      * @return the metadata value as java.lang.String
      */
-    public String getMetadataValue(CountableMetadata metadata, LocalDate date, Issue issue) {
-        if (Objects.nonNull(metadata)) {
+    public String getTextMetadataValue(CountableMetadata metadata, LocalDate date, Issue issue) {
+        if (Objects.nonNull(metadata) && metadata.getMetadataDetail() instanceof ProcessTextMetadata) {
             return metadata.getValue(new ImmutablePair<>(date, issue), course.getYearStart());
         }
         return "";

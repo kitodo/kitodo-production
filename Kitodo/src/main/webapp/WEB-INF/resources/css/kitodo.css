@@ -1648,14 +1648,24 @@ h3#headerText.calendar-heading {
 
 
 #calendarDayDialog .metadata-first-appearance,
-#calendarDayDialog .metadata-last-appearance,
-#calendarDayDialog .metadata-value {
+#calendarDayDialog .metadata-last-appearance {
     display: inline-block;
     font-weight: bold;
     margin: var(--default-half-size);
 }
 
+#calendarDayDialog .metadata-value {
+    font-weight: bold;
+    margin: var(--default-half-size);
+    vertical-align: top;
+}
+
+#calendarDayDialog .ui-inputtextarea{
+    height: 50px;
+}
+
 #calendarDayDialog .metadata-value-label {
+    vertical-align: top;
     margin-left: var(--default-half-size);
 }
 
@@ -1665,6 +1675,11 @@ h3#headerText.calendar-heading {
 
 #calendarDayDialog .ui-inputtext {
     margin-bottom: var(--default-full-size);
+}
+
+#calendarDayDialog .ui-selectlistbox-item {
+    width: 100%;
+    display: inline-flex;
 }
 
 /*----------------------------------------------------------------------

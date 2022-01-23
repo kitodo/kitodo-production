@@ -37,6 +37,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 import org.kitodo.production.model.bibliography.course.metadata.RecoveredMetadata;
+import org.kitodo.production.services.data.ImportService;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -875,7 +876,7 @@ public class Course extends ArrayList<Block> {
             if (metaDatum.matches(metaDatum.getMetadataType(), issueId, false)) {
                 metadataNode.setAttribute(ATTRIBUTE_VALUE, "");
             } else {
-                metadataNode.setAttribute(ATTRIBUTE_VALUE, metaDatum.getStartValue());
+                metadataNode.setAttribute(ATTRIBUTE_VALUE, ImportService.getProcessDetailValue(metaDatum.getMetadataDetail()));
                 if (metaDatum.getStepSize() != null) {
                     metadataNode.setAttribute(ATTRIBUTE_INCREMENT, metaDatum.getStepSize().toString().toLowerCase());
                 }

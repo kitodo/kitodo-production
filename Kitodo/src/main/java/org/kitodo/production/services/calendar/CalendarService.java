@@ -28,13 +28,17 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
@@ -117,8 +121,8 @@ public class CalendarService {
      * @param metadataKey the key for the metadata type to be translated
      * @return localized metadata type as java.lang.String
      */
-    public static String getMetadataTranslation(List<MetadataViewInterface> metadataList, String metadataKey) {
-        for (MetadataViewInterface selectItem : metadataList) {
+    public static String getMetadataTranslation(List<ProcessDetail> metadataList, String metadataKey) {
+        for (ProcessDetail selectItem : metadataList) {
             if (selectItem.getLabel().equals(metadataKey)) {
                 return selectItem.getLabel();
             }
@@ -190,5 +194,26 @@ public class CalendarService {
             stringBuilder.append(dateIssue.getRight().getHeading());
         }
         return stringBuilder.toString();
+    }
+
+    /**
+     * Get all metadata allowed for the future elements that will be generated
+     * by the NewspaperProcessesGenerator.
+     *
+     * @param completeEdition parent process
+     * @return list of allowed metadata as List of ProcessDetail
+     * @throws IOException when ruleset file could not be read
+     */
+    public static List<ProcessDetail> getAddableMetadataTable(Process completeEdition) throws IOException, DataException {
+        ProcessFieldedMetadata table = new ProcessFieldedMetadata();
+        List<MetadataViewInterface> metadataViewInterfaceList = getAddableMetadata(completeEdition);
+        for (MetadataViewInterface keyView : metadataViewInterfaceList) {
+            if (keyView.isComplex()) {
+                table.createMetadataGroupPanel((ComplexMetadataViewInterface) keyView, Collections.emptyList());
+            } else {
+                table.createMetadataEntryEdit((SimpleMetadataViewInterface) keyView, Collections.emptyList());
+            }
+        }
+        return table.getRows();
     }
 }
