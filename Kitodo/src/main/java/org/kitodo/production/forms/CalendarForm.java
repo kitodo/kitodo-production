@@ -139,6 +139,7 @@ public class CalendarForm implements Serializable {
     public CalendarForm() {
         issueColours = ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";");
         course = new Course();
+
     }
 
     /**
@@ -894,6 +895,21 @@ public class CalendarForm implements Serializable {
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e);
             return key;
+        }
+    }
+
+    /**
+     * Check if course has issues with same name.
+     */
+    public void checkDuplicatesIssues() {
+        boolean check = false;
+        for (Block block : course) {
+            if (block.checkIssuesWithSameHeading()) {
+                check = true;
+            }
+        }
+        if (!check) {
+            PrimeFaces.current().executeScript("PF('createProcessesConfirmDialog').show();");
         }
     }
 }

@@ -289,7 +289,7 @@ public class CountableMetadata {
      */
     public void setMetadataDetail(ProcessDetail metadataDetail) {
         this.metadataDetail = metadataDetail;
-        this.metadataType = this.metadataDetail.getLabel();
+        this.metadataType = this.metadataDetail.getMetadataID();
     }
 
     /**

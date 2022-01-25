@@ -263,7 +263,8 @@ public class IndividualIssue {
             if (counter.getMetadataDetail().getInput().equals("inputText")
                     || counter.getMetadataDetail().getInput().equals("inputTextarea")) {
                 String value = counter.getValue(selectedIssue, yearStart);
-                if (metadata.stream().findFirst().get() instanceof MetadataEntry) {
+                if (metadata.stream().findFirst().isPresent()
+                        && metadata.stream().findFirst().get() instanceof MetadataEntry) {
                     ((MetadataEntry) metadata.stream().findFirst().get()).setValue(value);
                 }
             }

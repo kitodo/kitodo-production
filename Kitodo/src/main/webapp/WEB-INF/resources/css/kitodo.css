@@ -1408,6 +1408,9 @@ h3#headerText.calendar-heading {
     margin: var(--default-full-size);
     padding: var(--default-half-size);
     position: relative;
+    min-width: calc(100% - 50px);
+    width: fit-content;
+    max-width: fit-content;
 }
 
 #editForm\:calendarTabView\:blockList .block-label {
@@ -1680,6 +1683,8 @@ h3#headerText.calendar-heading {
 #calendarDayDialog .ui-selectlistbox-item {
     width: 100%;
     display: inline-flex;
+    height: 30px;
+    vertical-align: center;
 }
 
 /*----------------------------------------------------------------------

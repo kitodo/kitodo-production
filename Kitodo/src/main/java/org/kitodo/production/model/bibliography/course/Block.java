@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.production.helper.Helper;
@@ -451,6 +452,24 @@ public class Block {
     public void removeIssue(Issue issue) {
         clearProcessesIfNecessary(issue);
         issues.remove(issue);
+    }
+
+    /**
+     * Check if block has issues with same heading.
+     * @return 'true' if duplicates are found anf 'false' if not.
+     */
+    public boolean checkIssuesWithSameHeading() {
+        List<String> issuesTitles = issues.stream().map(Issue::getHeading).collect(Collectors.toList());
+        List<String> titles = new ArrayList<>();
+        for (String title : issuesTitles) {
+            if (titles.contains(title)) {
+                Helper.setErrorMessage("duplicatedTitles", " (Block " + (course.indexOf(this) + 1) + ")" );
+                return true;
+            } else {
+                titles.add(title);
+            }
+        }
+        return false;
     }
 
     /**

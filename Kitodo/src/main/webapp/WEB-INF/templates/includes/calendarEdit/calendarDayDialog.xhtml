@@ -42,7 +42,7 @@
                         <h:panelGroup layout="block"
                                       styleClass="issue-wrapper">
                             <div class="appearance-wrapper">
-                                <h:outputText
+                                <h:outputText style="font-weight: bold"
                                         value="#{issue.heading} #{msgs['calendar.sheet.issue.'.concat(issue.isMatch(date) ? 'selected' : 'notSelected')]}"/>
                                 <p:commandButton action="#{CalendarForm.changeMatch(issue, date)}"
                                                  value="#{issue.isMatch(date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"

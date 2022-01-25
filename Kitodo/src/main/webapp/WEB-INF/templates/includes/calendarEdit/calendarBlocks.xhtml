@@ -79,7 +79,7 @@
                 </h:panelGroup>
             </h:panelGrid>
             <h:panelGrid rendered="#{block.firstAppearanceDate ne null and block.lastAppearanceDate ne null}"
-                         style="margin-bottom-bottom:10px; margin-top: 10px; border: solid 1px var(--medium-gray); width: 100%; padding-bottom: 5px; padding-top: 5px">
+                         style="margin-top: 10px; border: solid 1px var(--medium-gray); width: 100%; padding-bottom: 5px; padding-top: 5px">
                 <h:panelGroup>
                     <div>
                         <p:commandButton action="#{CalendarForm.addIssue(block)}"
@@ -94,20 +94,26 @@
                         <!-- Issues -->
                         <p:dataTable id="issueList"
                                      var="issue"
-                                     style="padding-left: 10px;padding-right: 10px;"
-                                     value="#{block.issues}" rendered="#{block.issues.size() ne 0}">
-                            <p:column>
-                                <p:inputText value="#{issue.heading}">
-                                    <p:ajax event="blur"
+                                     rowIndexVar="rowIndex"
+                                     style="padding-left: 10px;padding-right: 10px;position: relative;"
+                                     value="#{block.issues}"
+                                     rendered="#{block.issues.size() ne 0}">
+                            <p:column headerText="#{msgs['name']}" width="200" >
+                                <p:inputText value="#{issue.heading}"
+                                             id="issueName"
+                                             required="true"
+                                             styleClass="input-with-button" >
+                                    <p:ajax event="blur" listener="#{block.checkIssuesWithSameHeading()}"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
                                 </p:inputText>
                                 <span class="issue-badge"
-                                      style="background-color: #{CalendarForm.getIssueColor(block.issues.indexOf(issue))};
-                                             border-color: #{CalendarForm.getIssueColor(block.issues.indexOf(issue))};"/>
+                                      style="background-color: #{CalendarForm.getIssueColor(rowIndex)};
+                                             border-color: #{CalendarForm.getIssueColor(rowIndex)};"/>
                             </p:column>
                             <p:column headerText="#{msgs['calendar.day.1']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.monday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.1']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -116,6 +122,7 @@
                             <p:column headerText="#{msgs['calendar.day.2']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.tuesday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.2']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -124,6 +131,7 @@
                             <p:column headerText="#{msgs['calendar.day.3']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.wednesday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.3']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -132,6 +140,7 @@
                             <p:column headerText="#{msgs['calendar.day.4']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.thursday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.4']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -140,6 +149,7 @@
                             <p:column headerText="#{msgs['calendar.day.5']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.friday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.5']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -148,6 +158,7 @@
                             <p:column headerText="#{msgs['calendar.day.6']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.saturday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.6']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -156,6 +167,7 @@
                             <p:column headerText="#{msgs['calendar.day.7']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.sunday}"
+                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.7']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -168,7 +180,7 @@
                                                  update="editForm:calendarTabView:calendarDetailsLayout"/>
                             </p:column>
                         </p:dataTable>
-                        <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide();"/>
+                        <p:ajaxStatus onerror="$('#loadingScreen').hide();" onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide();"/>
                     </div>
                     <div>
                         <h:outputText value="#{msgs['granularity.issueCount']} #{block.countIndividualIssues()}"

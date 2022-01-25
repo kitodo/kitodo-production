@@ -30,9 +30,9 @@
                          value="#{msgs['granularity.create']}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
+                         action="#{CalendarForm.checkDuplicatesIssues()}"
                          actionListener="#{CalendarForm.setGranularity(CalendarForm.granularity)}"
                          onclick="setConfirmUnload(false);"
-                         oncomplete="PF('createProcessesConfirmDialog').show();"
                          update="notifications"/>
         <p:commandButton value="#{msgs.fileDownload}"
                          icon="fa fa-download fa-lg"
