@@ -128,7 +128,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
 
     @Override
     public UserDetails loadUserByUsername(String username) {
-        return new SecurityUserDetails(getByLogin(username));
+        return new SecurityUserDetails(getByLdapLoginOrLogin(username));
     }
 
     @Override
@@ -155,23 +155,18 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     }
 
     /**
-     * Gets user by ldap login and in case that no user can be found the normal
-     * login is used as fallback.
+     * Returns a user by his or her LDAP login or common login.
      *
      * @param login
-     *            The login of the user.
-     * @return The user object.
+     *            the login of the user to look for
+     * @return the user, if one is found
      * @throws UsernameNotFoundException
-     *             if no user can be found by ldap login and normal login
+     *             if no unique user can be found
      */
-    public User getByLdapLoginWithFallback(String login) {
-        User user;
-        try {
-            user = getByLdapLogin(login);
-        } catch (UsernameNotFoundException e) {
-            user = getByLogin(login);
-        }
-        return user;
+    public User getByLdapLoginOrLogin(String login) {
+        List<User> users = getByLoginQuery(login, "from User where ldapLogin = :login");
+        users.addAll(getByLoginQuery(login, "from User where login = :login"));
+        return uniqueResult(users, login);
     }
 
     /**
@@ -182,28 +177,23 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @return The user.
      */
     public User getByLogin(String login) {
-        return getByLoginQuery(login, "from User where login = :login");
+        List<User> users = getByLoginQuery(login, "from User where login = :login");
+        return uniqueResult(users, login);
     }
 
-    /**
-     * Gets user by ldap login.
-     *
-     * @param ldapLogin
-     *            The ldapLogin.
-     * @return The user.
-     */
-    public User getByLdapLogin(String ldapLogin) {
-        return getByLoginQuery(ldapLogin, "from User where ldapLogin = :login");
+    private List<User> getByLoginQuery(String login, String query) {
+        return getByQuery(query, Collections.singletonMap("login", login));
     }
 
-    private User getByLoginQuery(String login, String query) {
-        List<User> users = getByQuery(query, Collections.singletonMap("login", login));
+    private User uniqueResult(List<User> users, String login) {
         if (users.size() == 1) {
             return users.get(0);
         } else if (users.isEmpty()) {
-            throw new UsernameNotFoundException("Login " + login + " not found!");
+            throw new UsernameNotFoundException("Login '" + login + "' not found!");
         } else {
-            throw new UsernameNotFoundException("Login " + login + " was found more than once");
+            logger.error("Login '{}' was found more than once! Affected IDs: {}", login,
+                    users.stream().map(user -> Objects.toString(user.getId())).collect(Collectors.joining(", ")));
+            throw new UsernameNotFoundException("Login '" + login + "' was found more than once!");
         }
     }
 
