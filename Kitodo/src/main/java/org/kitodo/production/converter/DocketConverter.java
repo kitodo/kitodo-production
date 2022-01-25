@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class DocketConverter extends BeanConverter implements Converter {
+public class DocketConverter extends BeanConverter implements Converter<Docket> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getDocketService(), value);
+    public Docket getAsObject(FacesContext context, UIComponent component, String value) {
+        return (Docket) getAsObject(ServiceManager.getDocketService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, Docket value) {
         return getAsString(value, "docket");
     }
 

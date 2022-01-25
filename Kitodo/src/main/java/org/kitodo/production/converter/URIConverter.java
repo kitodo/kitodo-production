@@ -24,11 +24,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 @Named("URIConverter")
-public class URIConverter implements Converter {
+public class URIConverter implements Converter<URI> {
     private static final Logger logger = LogManager.getLogger(URIConverter.class);
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+    public URI getAsObject(FacesContext context, UIComponent component, String value) {
         if (Objects.isNull(value) || value.isEmpty()) {
             return null;
         } else {
@@ -42,9 +42,9 @@ public class URIConverter implements Converter {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object object) {
+    public String getAsString(FacesContext context, UIComponent component, URI object) {
         if (Objects.nonNull(object)) {
-            return String.valueOf(((URI) object).getPath());
+            return String.valueOf(object.getPath());
         } else {
             return null;
         }

@@ -26,10 +26,10 @@ import org.kitodo.production.helper.Helper;
 
 
 @Named("IllustratedSelectItemConverter")
-public class IllustratedSelectItemConverter implements Converter, Serializable {
+public class IllustratedSelectItemConverter implements Converter<IllustratedSelectItem>, Serializable {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
+    public IllustratedSelectItem getAsObject(FacesContext context, UIComponent component, String value) {
         if (StringUtils.isNotEmpty(value)) {
             List<IllustratedSelectItem> illustratedSelectItems = (List<IllustratedSelectItem>) component.getAttributes()
                     .get("illustratedSelectItems");
@@ -43,10 +43,9 @@ public class IllustratedSelectItemConverter implements Converter, Serializable {
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object object) {
+    public String getAsString(FacesContext context, UIComponent component, IllustratedSelectItem object) {
         if (Objects.nonNull(object)) {
-            IllustratedSelectItem selectItem = (IllustratedSelectItem) object;
-            return selectItem.getLabel();
+            return object.getLabel();
         }
         return null;
     }

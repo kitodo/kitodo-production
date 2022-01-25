@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class TaskConverter extends BeanConverter implements Converter {
+public class TaskConverter extends BeanConverter implements Converter<Task> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getTaskService(), value);
+    public Task getAsObject(FacesContext context, UIComponent component, String value) {
+        return (Task) getAsObject(ServiceManager.getTaskService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, Task value) {
         return getAsString(value, "task");
     }
 

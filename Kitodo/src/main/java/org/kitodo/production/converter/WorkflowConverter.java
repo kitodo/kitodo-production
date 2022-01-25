@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class WorkflowConverter extends BeanConverter implements Converter {
+public class WorkflowConverter extends BeanConverter implements Converter<Workflow> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getWorkflowService(), value);
+    public Workflow getAsObject(FacesContext context, UIComponent component, String value) {
+        return (Workflow) getAsObject(ServiceManager.getWorkflowService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, Workflow value) {
         return getAsString(value, "workflow");
     }
 

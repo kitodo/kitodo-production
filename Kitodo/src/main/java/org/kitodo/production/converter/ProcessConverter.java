@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class ProcessConverter extends BeanConverter implements Converter {
+public class ProcessConverter extends BeanConverter implements Converter<Process> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getProcessService(), value);
+    public Process getAsObject(FacesContext context, UIComponent component, String value) {
+        return (Process) getAsObject(ServiceManager.getProcessService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, Process value) {
         return getAsString(value, "process");
     }
 

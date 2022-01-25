@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.services.ServiceManager;
 
 public class WorkflowConverterIT {
 
@@ -39,22 +41,22 @@ public class WorkflowConverterIT {
     @Test
     public void shouldGetAsObject() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
-        Workflow workflow = (Workflow) workflowConverter.getAsObject(null, null, "2");
+        Workflow workflow = workflowConverter.getAsObject(null, null, "2");
         assertEquals(MESSAGE, 2, workflow.getId().intValue());
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
-        String workflow = (String) workflowConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", workflow);
+        Workflow workflow = workflowConverter.getAsObject(null, null, "in");
+        assertEquals(MESSAGE, "0", String.valueOf(workflow));
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         WorkflowConverter workflowConverter = new WorkflowConverter();
-        String workflow = (String) workflowConverter.getAsObject(null, null, "10");
-        assertEquals(MESSAGE, "0", workflow);
+        Workflow workflow = workflowConverter.getAsObject(null, null, "10");
+        assertEquals(MESSAGE, "0", String.valueOf(workflow.getId()));
     }
 
     @Test
@@ -82,10 +84,11 @@ public class WorkflowConverterIT {
     }
 
     @Test
-    public void shouldGetAsStringWithString() {
+    public void shouldGetAsStringWithWorkflow() throws DAOException {
         WorkflowConverter workflowConverter = new WorkflowConverter();
-        String workflow = workflowConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", workflow);
+        Workflow workflow = ServiceManager.getWorkflowService().getById(20);
+        String workflowId = workflowConverter.getAsString(null, null, workflow);
+        assertEquals(MESSAGE, "20", workflowId);
     }
 
     @Test

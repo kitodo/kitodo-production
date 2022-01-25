@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class BatchConverter extends BeanConverter implements Converter {
+public class BatchConverter extends BeanConverter implements Converter<Batch> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getBatchService(), value);
+    public Batch getAsObject(FacesContext context, UIComponent component, String value) {
+        return (Batch) getAsObject(ServiceManager.getBatchService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, Batch value) {
         return getAsString(value, "batch");
     }
 

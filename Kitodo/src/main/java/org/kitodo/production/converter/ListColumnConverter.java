@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class ListColumnConverter extends BeanConverter implements Converter {
+public class ListColumnConverter extends BeanConverter implements Converter<ListColumn> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getListColumnService(), value);
+    public ListColumn getAsObject(FacesContext context, UIComponent component, String value) {
+        return (ListColumn) getAsObject(ServiceManager.getListColumnService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, ListColumn value) {
         return getAsString(value, "listColumn");
     }
 }

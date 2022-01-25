@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.services.ServiceManager;
 
 public class AuthorityConverterIT {
 
@@ -39,22 +41,22 @@ public class AuthorityConverterIT {
     @Test
     public void shouldGetAsObject() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
-        Authority authority = (Authority) authorityConverter.getAsObject(null, null, "20");
+        Authority authority = authorityConverter.getAsObject(null, null, "20");
         assertEquals(MESSAGE, 20, authority.getId().intValue());
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
-        String authority = (String) authorityConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", authority);
+        Authority authority = authorityConverter.getAsObject(null, null, "in");
+        assertEquals(MESSAGE, "0", String.valueOf(authority.getId()));
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         AuthorityConverter authorityConverter = new AuthorityConverter();
-        String authority = (String) authorityConverter.getAsObject(null, null, "1000");
-        assertEquals(MESSAGE, "0", authority);
+        Authority authority = authorityConverter.getAsObject(null, null, "1000");
+        assertEquals(MESSAGE, "0", String.valueOf(authority.getId()));
     }
 
     @Test
@@ -82,10 +84,11 @@ public class AuthorityConverterIT {
     }
 
     @Test
-    public void shouldGetAsStringWithString() {
+    public void shouldGetAsStringWithAuthority() throws DAOException {
         AuthorityConverter authorityConverter = new AuthorityConverter();
-        String authority = authorityConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", authority);
+        Authority authority = ServiceManager.getAuthorityService().getById(20);
+        String authorityId = authorityConverter.getAsString(null, null, authority);
+        assertEquals(MESSAGE, "20", authorityId);
     }
 
     @Test

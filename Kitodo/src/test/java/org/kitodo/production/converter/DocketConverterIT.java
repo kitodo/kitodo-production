@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.services.ServiceManager;
 
 public class DocketConverterIT {
 
@@ -40,22 +42,22 @@ public class DocketConverterIT {
     @Test
     public void shouldGetAsObject() {
         DocketConverter docketConverter = new DocketConverter();
-        Docket docket = (Docket) docketConverter.getAsObject(null, null, "2");
+        Docket docket = docketConverter.getAsObject(null, null, "2");
         assertEquals(MESSAGE, 2, docket.getId().intValue());
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         DocketConverter docketConverter = new DocketConverter();
-        String docket = (String) docketConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", docket);
+        Docket docket = docketConverter.getAsObject(null, null, "in");
+        assertEquals(MESSAGE, "0", String.valueOf(docket.getId()));
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         DocketConverter docketConverter = new DocketConverter();
-        String docket = (String) docketConverter.getAsObject(null, null, "10");
-        assertEquals(MESSAGE, "0", docket);
+        Docket docket = docketConverter.getAsObject(null, null, "10");
+        assertEquals(MESSAGE, "0", String.valueOf(docket.getId()));
     }
 
     @Test
@@ -83,10 +85,11 @@ public class DocketConverterIT {
     }
 
     @Test
-    public void shouldGetAsStringWithString() {
+    public void shouldGetAsStringWithDocket() throws DAOException {
         DocketConverter docketConverter = new DocketConverter();
-        String docket = docketConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", docket);
+        Docket docket = ServiceManager.getDocketService().getById(20);
+        String docketId = docketConverter.getAsString(null, null, docket);
+        assertEquals(MESSAGE, "20", docketId);
     }
 
     @Test

@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class RulesetConverter extends BeanConverter implements Converter {
+public class RulesetConverter extends BeanConverter implements Converter<Ruleset> {
 
     @Override
-    public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getRulesetService(), value);
+    public Ruleset getAsObject(FacesContext context, UIComponent component, String value) {
+        return (Ruleset) getAsObject(ServiceManager.getRulesetService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext context, UIComponent component, Object value) {
+    public String getAsString(FacesContext context, UIComponent component, Ruleset value) {
         return getAsString(value, "ruleset");
     }
 }

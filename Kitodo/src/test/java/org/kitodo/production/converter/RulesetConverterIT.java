@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.services.ServiceManager;
 
 public class RulesetConverterIT {
 
@@ -40,22 +42,22 @@ public class RulesetConverterIT {
     @Test
     public void shouldGetAsObject() {
         RulesetConverter rulesetConverter = new RulesetConverter();
-        Ruleset ruleset = (Ruleset) rulesetConverter.getAsObject(null, null, "2");
+        Ruleset ruleset = rulesetConverter.getAsObject(null, null, "2");
         assertEquals(MESSAGE, 2, ruleset.getId().intValue());
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         RulesetConverter rulesetConverter = new RulesetConverter();
-        String ruleset = (String) rulesetConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", ruleset);
+        Ruleset ruleset = rulesetConverter.getAsObject(null, null, "in");
+        assertEquals(MESSAGE, "0", String.valueOf(ruleset.getId()));
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         RulesetConverter rulesetConverter = new RulesetConverter();
-        String ruleset = (String) rulesetConverter.getAsObject(null, null, "10");
-        assertEquals(MESSAGE, "0", ruleset);
+        Ruleset ruleset = rulesetConverter.getAsObject(null, null, "10");
+        assertEquals(MESSAGE, "0", String.valueOf(ruleset.getId()));
     }
 
     @Test
@@ -83,10 +85,11 @@ public class RulesetConverterIT {
     }
 
     @Test
-    public void shouldGetAsStringWithString() {
+    public void shouldGetAsStringWithRuleset() throws DAOException {
         RulesetConverter rulesetConverter = new RulesetConverter();
-        String ruleset = rulesetConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", ruleset);
+        Ruleset ruleset = ServiceManager.getRulesetService().getById(20);
+        String rulesetId = rulesetConverter.getAsString(null, null, ruleset);
+        assertEquals(MESSAGE, "20", rulesetId);
     }
 
     @Test

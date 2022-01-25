@@ -19,6 +19,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.services.ServiceManager;
 
 public class ClientConverterIT {
 
@@ -39,21 +41,21 @@ public class ClientConverterIT {
     @Test
     public void shouldGetAsObject() {
         ClientConverter clientConverter = new ClientConverter();
-        Client client = (Client) clientConverter.getAsObject(null, null, "2");
+        Client client = clientConverter.getAsObject(null, null, "2");
         assertEquals(MESSAGE, 2, client.getId().intValue());
     }
 
     @Test
     public void shouldGetAsObjectIncorrectString() {
         ClientConverter clientConverter = new ClientConverter();
-        String client = (String) clientConverter.getAsObject(null, null, "in");
-        assertEquals(MESSAGE, "0", client);
+        Client client = clientConverter.getAsObject(null, null, "in");
+        assertEquals(MESSAGE, "0", String.valueOf(client.getId()));
     }
 
     @Test
     public void shouldGetAsObjectIncorrectId() {
         ClientConverter clientConverter = new ClientConverter();
-        String client = (String) clientConverter.getAsObject(null, null, "10");
+        String client = String.valueOf(clientConverter.getAsObject(null, null, "10"));
         assertEquals(MESSAGE, "0", client);
     }
 
@@ -82,10 +84,11 @@ public class ClientConverterIT {
     }
 
     @Test
-    public void shouldGetAsStringWithString() {
+    public void shouldGetByIdAsString() throws DAOException {
         ClientConverter clientConverter = new ClientConverter();
-        String client = clientConverter.getAsString(null, null, "20");
-        assertEquals(MESSAGE, "20", client);
+        Client client = ServiceManager.getClientService().getById(20);
+        String clientId = clientConverter.getAsString(null, null, client);
+        assertEquals(MESSAGE, "20", clientId);
     }
 
     @Test

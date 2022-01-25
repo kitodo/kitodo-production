@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class LdapGroupConverter extends BeanConverter implements Converter {
+public class LdapGroupConverter extends BeanConverter implements Converter<LdapGroup> {
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
-        return getAsObject(ServiceManager.getLdapGroupService(), value);
+    public LdapGroup getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
+        return (LdapGroup) getAsObject(ServiceManager.getLdapGroupService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, LdapGroup value) {
         return getAsString(value, "ldapGroup");
     }
 }

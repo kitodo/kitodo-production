@@ -16,18 +16,19 @@ import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 import javax.inject.Named;
 
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class ClientConverter extends BeanConverter implements Converter {
+public class ClientConverter extends BeanConverter implements Converter<Client> {
 
     @Override
-    public Object getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
-        return getAsObject(ServiceManager.getClientService(), value);
+    public Client getAsObject(FacesContext facesContext, UIComponent uiComponent, String value) {
+        return (Client) getAsObject(ServiceManager.getClientService(), value);
     }
 
     @Override
-    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Object value) {
+    public String getAsString(FacesContext facesContext, UIComponent uiComponent, Client value) {
         return getAsString(value, "client");
     }
 }
