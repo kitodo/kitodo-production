@@ -1194,6 +1194,10 @@ h3#headerText {
     margin: 0 0 5px 5px;
 }
 
+#changeShortcutsDialog_content {
+    overflow: visible;
+}
+
 #resetPasswordForm .dialogFieldWrapper,
 #changeShortcutsForm .dialogFieldWrapper {
     max-height: unset;
@@ -1202,6 +1206,12 @@ h3#headerText {
 
 #changeShortcutsForm div {
     margin-top: var(--default-half-size);
+}
+
+.shortcut-input {
+    display: inline-block;
+    margin-right: 8px;
+    width: calc(100% - 48px);
 }
 
 #titleProcess :is(h3, h5) {
