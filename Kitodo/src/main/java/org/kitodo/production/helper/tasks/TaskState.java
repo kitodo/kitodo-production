@@ -15,7 +15,7 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
 
 /**
  * TaskState defines a set of states that a task can be in. Their meanings are
- * the followings:
+ * the following:
  * 
  * <dl>
  * <dt>{@code CRASHED}</dt>

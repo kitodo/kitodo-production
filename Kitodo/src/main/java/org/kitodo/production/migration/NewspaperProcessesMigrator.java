@@ -633,7 +633,7 @@ public class NewspaperProcessesMigrator {
         Process yearProcess = processGenerator.getGeneratedProcess();
         yearProcess.setTitle(yearTitle);
         ProcessService.checkTasks(yearProcess, yearToCreate.getValue().getType());
-        // remove metadata from year (which originally relates to issue and was copyed there)
+        // remove metadata from year (which originally relates to issue and was copied there)
         yearToCreate.getValue().getMetadata().clear();
         processService.saveToDatabase(yearProcess);
 

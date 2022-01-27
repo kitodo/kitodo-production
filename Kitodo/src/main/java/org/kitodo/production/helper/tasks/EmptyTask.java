@@ -260,7 +260,7 @@ public class EmptyTask extends Thread {
 
     /**
      * Returns the task state. It can be one of
-     * the followings:
+     * the following:
      *
      * <dl>
      * <dt>{@code CRASHED}</dt>

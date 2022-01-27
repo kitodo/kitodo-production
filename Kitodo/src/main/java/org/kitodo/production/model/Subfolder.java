@@ -222,7 +222,7 @@ public class Subfolder {
     }
 
     /**
-     * Returns the relative path to a (fictious) media file in the folder,
+     * Returns the relative path to a (fictitious) media file in the folder,
      * relative to the process dierctory.
      *
      * @return relative path to the file
