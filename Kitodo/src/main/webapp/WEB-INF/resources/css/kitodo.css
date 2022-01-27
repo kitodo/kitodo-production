@@ -1648,8 +1648,6 @@ h3#headerText.calendar-heading {
     border-bottom: solid var(--default-border-width) var(--cloudy-gray);
 }
 
-
-
 #calendarDayDialog .metadata-first-appearance,
 #calendarDayDialog .metadata-last-appearance {
     display: inline-block;
@@ -1661,10 +1659,6 @@ h3#headerText.calendar-heading {
     font-weight: bold;
     margin: var(--default-half-size);
     vertical-align: top;
-}
-
-#calendarDayDialog .ui-inputtextarea{
-    height: 50px;
 }
 
 #calendarDayDialog .metadata-value-label {

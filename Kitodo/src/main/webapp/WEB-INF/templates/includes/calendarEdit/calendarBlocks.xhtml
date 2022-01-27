@@ -85,7 +85,7 @@
                         <p:commandButton action="#{CalendarForm.addIssue(block)}"
                                          value="#{msgs['calendar.issue.add']}"
                                          icon="fa fa-plus"
-                                         styleClass="secondary"
+                                         styleClass="callto"
                                          iconPos="right"
                                          title="#{msgs['calendar.issue.add']}"
                                          update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -101,7 +101,6 @@
                             <p:column headerText="#{msgs['name']}" width="200" >
                                 <p:inputText value="#{issue.heading}"
                                              id="issueName"
-                                             required="true"
                                              styleClass="input-with-button" >
                                     <p:ajax event="blur" listener="#{block.checkIssuesWithSameHeading()}"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -113,7 +112,6 @@
                             <p:column headerText="#{msgs['calendar.day.1']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.monday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.1']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -122,7 +120,6 @@
                             <p:column headerText="#{msgs['calendar.day.2']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.tuesday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.2']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -131,7 +128,6 @@
                             <p:column headerText="#{msgs['calendar.day.3']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.wednesday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.3']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -140,7 +136,6 @@
                             <p:column headerText="#{msgs['calendar.day.4']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.thursday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.4']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -149,7 +144,6 @@
                             <p:column headerText="#{msgs['calendar.day.5']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.friday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.5']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -158,7 +152,6 @@
                             <p:column headerText="#{msgs['calendar.day.6']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.saturday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.6']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -167,7 +160,6 @@
                             <p:column headerText="#{msgs['calendar.day.7']}"
                                       width="30">
                                 <p:selectBooleanCheckbox value="#{issue.sunday}"
-                                                         disabled="#{issue.heading eq ''}"
                                                          title="#{msgs['calendar.day.7']}">
                                     <p:ajax event="change"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
@@ -218,7 +210,7 @@
                              iconPos="right"
                              value="#{msgs['calendar.block.remove']}"
                              title="#{msgs['calendar.block.remove']}"
-                             styleClass="remove-block"
+                             styleClass="remove-block secondary"
                              style="display: inline-block"
                              update="editForm:calendarTabView:calendarDetailsLayout">
                 <p:confirm severity="alert"

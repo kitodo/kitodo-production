@@ -914,4 +914,27 @@ public class CalendarForm implements Serializable {
             PrimeFaces.current().executeScript("PF('createProcessesConfirmDialog').show();");
         }
     }
+
+    /**
+     * Get first issue that's appear on the selected Date.
+     * @return issue
+     */
+    public Issue getFirstMatchIssue() {
+        if (selectedDate != null) {
+            return getCalendarSheet().get(selectedDate.getDayOfMonth() - 1).get(selectedDate.getMonthValue() - 1).getIssues()
+                    .parallelStream()
+                    .filter(issue -> issue.isMatch(selectedDate))
+                    .findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    /**
+     * add Metadata to all Issues that's appear on the selected Date.
+     */
+    public void addMetadataToAllMatchIssues() {
+        if (getFirstMatchIssue() != null) {
+            addMetadata(getFirstMatchIssue());
+        }
+    }
 }

@@ -27,11 +27,27 @@
               modal="true">
         <!--@elvariable id="date" type="java.time.LocalDate"-->
         <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
-        <h3>
-            #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
-            #{date.toString()}
-            (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
-        </h3>
+        <p:panelGrid columns="2" id="header" style="width: 95%">
+            <p:row style="display: inherit">
+                <h3>
+                    #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
+                    #{date.toString()}
+                    (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
+                </h3>
+            </p:row>
+            <p:row>
+                <p:commandButton id="addMetadataGlobal"
+                                 action="#{CalendarForm.addMetadataToAllMatchIssues()}"
+                                 rendered="#{CalendarForm.getFirstMatchIssue() ne null}"
+                                 value="#{msgs['calendar.metadata.add']}"
+                                 title="#{msgs['calendar.metadata.global.add']}"
+                                 icon="fa fa-plus"
+                                 iconPos="right"
+                                 styleClass="callto right"
+                                 style="padding: 5px"
+                                 update="calendarDayForm"/>
+            </p:row>
+        </p:panelGrid>
         <h:form id="calendarDayForm">
             <h:panelGroup layout="block"
                           styleClass="dialogFieldWrapper">
@@ -49,13 +65,12 @@
                                                  icon="#{issue.isMatch(date) ? 'fa fa-trash' : 'fa fa-plus'}"
                                                  iconPos="right"
                                                  styleClass="secondary"
-                                                 update="editForm:calendarTabView:calendarDetailsLayout
-                                                         calendarDayForm"/>
+                                                 update="editForm:calendarTabView:calendarDetailsLayout header calendarDayForm"/>
                                 <!-- Add metadata-->
                                 <p:commandButton id="addMetadata"
                                                  action="#{CalendarForm.addMetadata(issue)}"
                                                  value="#{msgs['calendar.metadata.add']}"
-                                                 title="#{msgs['calendar.metadata.add']}"
+                                                 title="#{msgs['calendar.metadata.issue.add']}"
                                                  icon="fa fa-plus"
                                                  iconPos="right"
                                                  rendered="#{issue.isMatch(date)}"
@@ -111,7 +126,7 @@
                                                 <p:inputTextarea value="#{metadata.startValue}"
                                                                  rendered="#{metadata.metadataDetail.input eq 'inputTextarea'}"
                                                                  styleClass="input"
-                                                                 style="width: 60%; height: 55px"
+                                                                 style="width: 60%;"
                                                                  title="#{msgs['calendar.metadata.startValue']}">
                                                     <p:ajax event="blur" update="calendarDayForm"/>
                                                 </p:inputTextarea>
