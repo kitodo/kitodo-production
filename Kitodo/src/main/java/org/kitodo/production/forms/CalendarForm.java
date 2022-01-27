@@ -35,6 +35,7 @@ import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.naming.ConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -46,6 +47,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
@@ -59,6 +62,7 @@ import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
+import org.kitodo.production.process.NewspaperProcessesGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.calendar.CalendarService;
 import org.primefaces.PrimeFaces;
@@ -899,16 +903,14 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * Check if course has issues with same name.
+     * Check if process with the same processtitle already exists.
      */
-    public void checkDuplicatesIssues() {
-        boolean check = false;
-        for (Block block : course) {
-            if (block.checkIssuesWithSameHeading()) {
-                check = true;
-            }
-        }
-        if (!check) {
+    public void checkDuplicatedTitles() throws ProcessGenerationException, DataException, DAOException,
+            ConfigurationException, IOException, DoctypeMissingException {
+        Process process = ServiceManager.getProcessService().getById(parentId);
+        NewspaperProcessesGenerator newspaperProcessesGenerator = new NewspaperProcessesGenerator(process, course);
+        newspaperProcessesGenerator.initialize();
+        if (!newspaperProcessesGenerator.isDuplicatedTitles()) {
             PrimeFaces.current().executeScript("PF('createProcessesConfirmDialog').show();");
         }
     }
