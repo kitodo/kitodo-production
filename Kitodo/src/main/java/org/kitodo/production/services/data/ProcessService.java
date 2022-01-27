@@ -102,7 +102,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
@@ -2631,9 +2630,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.get(rulesetId);
         } else {
-            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
-            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
-                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+            functionalDivisions = ServiceManager.getRulesetService()
+                    .getFunctionalDivisions(rulesetId, FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
             RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.put(rulesetId, functionalDivisions);
         }
         return functionalDivisions.contains(processDTO.getBaseType());
@@ -2657,9 +2655,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
         } else {
-            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
-            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
-                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
+            functionalDivisions = ServiceManager.getRulesetService()
+                    .getFunctionalDivisions(rulesetId, FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
             RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
         }
         return functionalDivisions.contains(processDTO.getBaseType());

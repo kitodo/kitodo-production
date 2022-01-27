@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -40,6 +42,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.RulesetDTO;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
@@ -232,7 +235,7 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
         String fileName = ruleset.getFile();
         try {
             rulesetManagement.load(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), fileName).toFile());
-        } catch (FileNotFoundException e) {
+        } catch (FileNotFoundException | IllegalArgumentException e) {
             throw new RulesetNotFoundException(fileName);
         }
 
@@ -240,5 +243,27 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
             logger.trace("Reading ruleset took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
         return rulesetManagement;
+    }
+
+    /**
+     * Returns the names of those divisions that fulfill a given function.
+     * 
+     * @param rulesetId
+     *            ruleset database number
+     * @param function
+     *            function that the divisions are supposed to fulfill
+     * @return collection of identifiers for divisions that fulfill this
+     *         function
+     */
+    public Collection<String> getFunctionalDivisions(Integer rulesetId, FunctionalDivision function) {
+        try {
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            RulesetManagementInterface rulesetManagement;
+            rulesetManagement = ServiceManager.getRulesetService().openRuleset(ruleset);
+            return rulesetManagement.getFunctionalDivisions(function);
+        } catch (DAOException | IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return Collections.emptySet();
+        }
     }
 }
