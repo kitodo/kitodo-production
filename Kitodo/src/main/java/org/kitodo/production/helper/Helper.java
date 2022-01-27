@@ -18,6 +18,7 @@ import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -132,9 +133,9 @@ public class Helper {
      * @param parameters
      *            list of parameters used for string substitution in message tag
      */
-    public static void setErrorMessage(String title, final Object[] parameters) {
+    public static void setErrorMessage(String title, Object... parameters) {
         if (Objects.nonNull(parameters) && parameters.length > 0) {
-            setErrorMessage(MessageFormat.format(getTranslation(title), parameters));
+            setErrorMessage(getTranslation(title, Arrays.stream(parameters).map(Object::toString).toArray(String[]::new)));
         } else {
             setErrorMessage(getTranslation(title));
         }
