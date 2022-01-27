@@ -413,17 +413,17 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
 
-        final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        final List<ProcessDTO> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap, true);
         Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
 
-        String script = "action:addData " + "key:" + metadataKey + " value:\"legal note\"";
+        String script = "action:addData " + "key:" + metadataKey + " \"value:legal note\"";
         List<Process> processes = new ArrayList<>();
         processes.add(process);
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
         final List<ProcessDTO> processByMetadataAfter = ServiceManager.getProcessService()
-                .findByMetadata(metadataSearchMap);
+                .findByMetadata(metadataSearchMap, true);
         Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
 
     }
