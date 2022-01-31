@@ -97,6 +97,7 @@
                                       readonly="#{not item.editable}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       disabled="#{not item.editable or readOnly}"
+                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
@@ -111,6 +112,7 @@
                                      readonly="#{not item.editable}"
                                      autoWidth="false"
                                      disabled="#{not item.editable or readOnly}"
+                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{readOnly ? 'read-only' : ''}">
                         <f:selectItem itemValue="#{null}"
                                       itemDisabled="#{item.required}"
@@ -126,6 +128,7 @@
                     <p:selectOneRadio id="selectOneRadio"
                                       value="#{item.selectedItem}"
                                       readonly="#{not item.editable}"
+                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       disabled="#{not item.editable or readOnly}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       layout="grid"
@@ -140,6 +143,7 @@
                               title="#{item.active.toString()}">
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                              disabled="#{not item.editable or readOnly}"
+                                             required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                              value="#{item.active}">
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:selectBooleanCheckbox>
