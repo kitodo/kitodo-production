@@ -65,6 +65,7 @@ import org.kitodo.production.model.bibliography.course.metadata.CountableMetadat
 import org.kitodo.production.process.NewspaperProcessesGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.calendar.CalendarService;
+import org.kitodo.production.services.data.ImportService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -883,7 +884,7 @@ public class CalendarForm implements Serializable {
      * @param block the block to get the metadata for
      * @return list of pairs containing the metadata type and the date of its earliest occurrence
      */
-    public List<Pair<String, LocalDate>> getMetadataSummary(Block block) {
+    public List<Pair<ProcessDetail, LocalDate>> getMetadataSummary(Block block) {
         return CalendarService.getMetadataSummary(block);
     }
 
@@ -900,6 +901,17 @@ public class CalendarForm implements Serializable {
             Helper.setErrorMessage(e);
             return key;
         }
+    }
+
+    /**
+     * Get the value of the given processDetail.
+     *
+     * @param processDetail
+     *            as ProcessDetail
+     * @return the value as a java.lang.String
+     */
+    public String getMetadataValue(ProcessDetail processDetail) {
+        return ImportService.getProcessDetailValue(processDetail);
     }
 
     /**

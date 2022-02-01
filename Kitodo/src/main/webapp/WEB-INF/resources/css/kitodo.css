@@ -1458,7 +1458,6 @@ h3#headerText.calendar-heading {
 
 #editForm\:calendarTabView .metadata-list .ui-dataview-row {
     border: solid var(--default-border-width) var(--cloudy-gray);
-    height: calc(var(--input-height) + 2 * var(--default-border-width));
     line-height: calc(var(--input-height) + 2 * var(--default-border-width));
 }
 
@@ -1604,6 +1603,17 @@ h3#headerText.calendar-heading {
     color: var(--carbon-blue);
 }
 
+#calendarDayDialog {
+    width: 80% !important;
+    height: 80% !important;
+    overflow-y: hidden ;
+}
+
+#calendarDayDialog_content {
+    height: 100% !important;
+    overflow-y: hidden ;
+}
+
 #calendarDayDialog .ui-dialog-content,
 #calendarDayDialog form,
 #calendarDayDialog form > .ui-panelgrid,
@@ -1613,18 +1623,28 @@ h3#headerText.calendar-heading {
 
 #calendarDayDialog form {
     height: calc(100% - 100px);
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #calendarDayDialog .dialogButtonWrapper {
     bottom: var(--default-full-size);
+    display: inline-block;
+    height: 60px;
     position: absolute;
     width: calc(100% - var(--default-double-size));
 }
 
 #calendarDayDialog .dialogFieldWrapper {
+    min-height: 100%;
     margin-bottom: 0;
     overflow-y: hidden;
+}
+
+#calendarDayDialogHeader {
+    width: 100%;
+    padding-left: var(--default-double-size);
+    padding-right: var(--default-double-size);
+    padding-bottom: var(--default-full-size);
 }
 
 #calendarDayDialog .issue-wrapper:not(:last-child) {

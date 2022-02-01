@@ -189,7 +189,9 @@
                             value="#{CalendarForm.getMetadataSummary(block)}">
                     <p:dataViewListItem>
                         <h:outputText styleClass="label"
-                                      value="#{CalendarForm.getMetadataTranslation(metadata.key)}
+                                      value="#{CalendarForm.getMetadataTranslation(metadata.key.metadataID)}
+                                             #{msgs.metadataWithValue}
+                                             '#{CalendarForm.getMetadataValue(metadata.key)}'
                                              #{msgs['calendar.metadata.firstAppearance']}
                                              #{metadata.value}"/>
                         <p:commandButton action="#{CalendarForm.setSelectedDate(metadata.value)}"

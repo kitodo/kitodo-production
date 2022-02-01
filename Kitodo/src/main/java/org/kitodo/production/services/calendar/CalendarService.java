@@ -46,6 +46,7 @@ import org.kitodo.production.model.bibliography.course.metadata.CountableMetadat
 import org.kitodo.production.model.bibliography.course.metadata.MetadataEditMode;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 
 public class CalendarService {
 
@@ -123,7 +124,7 @@ public class CalendarService {
      */
     public static String getMetadataTranslation(List<ProcessDetail> metadataList, String metadataKey) {
         for (ProcessDetail selectItem : metadataList) {
-            if (selectItem.getLabel().equals(metadataKey)) {
+            if (selectItem.getMetadataID().equals(metadataKey)) {
                 return selectItem.getLabel();
             }
         }
@@ -159,16 +160,16 @@ public class CalendarService {
      * @param block the block to get the metadata for
      * @return list of pairs containing the metadata type and the date of its earliest occurrence
      */
-    public static List<Pair<String, LocalDate>> getMetadataSummary(Block block) {
-        Map<String, LocalDate> metadataMap = new HashMap<>();
+    public static List<Pair<ProcessDetail, LocalDate>> getMetadataSummary(Block block) {
+        Map<ProcessDetail, LocalDate> metadataMap = new HashMap<>();
         if (Objects.nonNull(block)) {
             for (CountableMetadata metadata : block.getMetadata()) {
                 if (metadataMap.containsKey(metadata.getMetadataType())) {
                     if (metadata.getCreate().getLeft().isBefore(metadataMap.get(metadata.getMetadataType()))) {
-                        metadataMap.replace(metadata.getMetadataType(), metadata.getCreate().getKey());
+                        metadataMap.replace(metadata.getMetadataDetail(), metadata.getCreate().getKey());
                     }
                 } else {
-                    metadataMap.put(metadata.getMetadataType(), metadata.getCreate().getKey());
+                    metadataMap.put(metadata.getMetadataDetail(), metadata.getCreate().getKey());
                 }
             }
         }

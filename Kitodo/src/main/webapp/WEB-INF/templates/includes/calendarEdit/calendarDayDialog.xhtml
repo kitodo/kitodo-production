@@ -19,16 +19,13 @@
     <p:dialog id="calendarDayDialog"
               widgetVar="calendarDayDialog"
               resizable="false"
-              width="800"
-              height="480"
               showHeader="false"
               dynamic="true"
-              position="center center"
               modal="true">
         <!--@elvariable id="date" type="java.time.LocalDate"-->
         <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
-        <p:panelGrid columns="2" id="header" style="width: 95%">
-            <p:row style="display: inherit">
+        <h:panelGrid columns="2" id="calendarDayDialogHeader">
+            <p:row>
                 <h3>
                     #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
                     #{date.toString()}
@@ -39,15 +36,15 @@
                 <p:commandButton id="addMetadataGlobal"
                                  action="#{CalendarForm.addMetadataToAllMatchIssues()}"
                                  rendered="#{CalendarForm.getFirstMatchIssue() ne null}"
-                                 value="#{msgs['calendar.metadata.add']}"
-                                 title="#{msgs['calendar.metadata.global.add']}"
+                                 value="#{msgs['calendar.metadata.global.add']}"
+                                 title="#{msgs['calendar.metadata.global.add.tooltip']}"
                                  icon="fa fa-plus"
                                  iconPos="right"
                                  styleClass="callto right"
                                  style="padding: 5px"
                                  update="calendarDayForm"/>
             </p:row>
-        </p:panelGrid>
+        </h:panelGrid>
         <h:form id="calendarDayForm">
             <h:panelGroup layout="block"
                           styleClass="dialogFieldWrapper">
@@ -65,12 +62,12 @@
                                                  icon="#{issue.isMatch(date) ? 'fa fa-trash' : 'fa fa-plus'}"
                                                  iconPos="right"
                                                  styleClass="secondary"
-                                                 update="editForm:calendarTabView:calendarDetailsLayout header calendarDayForm"/>
+                                                 update="editForm:calendarTabView:calendarDetailsLayout calendarDayDialogHeader calendarDayForm"/>
                                 <!-- Add metadata-->
                                 <p:commandButton id="addMetadata"
                                                  action="#{CalendarForm.addMetadata(issue)}"
-                                                 value="#{msgs['calendar.metadata.add']}"
-                                                 title="#{msgs['calendar.metadata.issue.add']}"
+                                                 value="#{msgs['calendar.metadata.issue.add']}"
+                                                 title="#{msgs['calendar.metadata.issue.add.tooltip']}"
                                                  icon="fa fa-plus"
                                                  iconPos="right"
                                                  rendered="#{issue.isMatch(date)}"
@@ -231,6 +228,8 @@
                     </p:repeat>
                 </p:panelGrid>
             </h:panelGroup>
+        </h:form>
+        <p:panelGrid>
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">
                 <p:commandButton id="close"
@@ -241,6 +240,6 @@
                                  iconPos="right"
                                  styleClass="primary right"/>
             </h:panelGroup>
-        </h:form>
+        </p:panelGrid>
     </p:dialog>
 </ui:composition>
