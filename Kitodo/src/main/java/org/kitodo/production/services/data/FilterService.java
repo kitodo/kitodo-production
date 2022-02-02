@@ -555,7 +555,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
          * 5-10 ->range, 5- ->min., Qualitätssicherung ->name) handling the
          * filter according to the parameters
          */
-        switch (FilterService.getTaskFilter(parameters)) {
+        switch (getTaskFilter(parameters)) {
             case EXACT:
                 try {
                     return filterTaskExact(parameters, taskStatus, negate, objectType);
@@ -649,25 +649,24 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
         if (parameters.contains("-")) {
             String[] strArray = parameters.split("-");
-            if (strArray.length >= 2) {
-                if (strArray[0].length() == 0) {
-                    return TaskFilter.MAX;
+            if (Arrays.stream(strArray).allMatch(StringUtils::isNumeric)) {
+                if (strArray.length >= 2) {
+                    if (strArray[0].length() == 0) {
+                        return TaskFilter.MAX;
+                    } else {
+                        return TaskFilter.RANGE;
+                    }
                 } else {
-                    return TaskFilter.RANGE;
+                    return TaskFilter.MIN;
                 }
             } else {
-                return TaskFilter.MIN;
-            }
-        } else if (!parameters.contains("-")) {
-            try {
-                // check if parseInt throws an exception
-                Integer.parseInt(parameters);
-                return TaskFilter.EXACT;
-            } catch (NumberFormatException e) {
                 return TaskFilter.NAME;
             }
+        } else if (!parameters.isEmpty() && StringUtils.isNumeric(parameters)) {
+            return TaskFilter.EXACT;
+        } else {
+            return TaskFilter.NAME;
         }
-        return TaskFilter.UNKNOWN;
     }
 
     /**
