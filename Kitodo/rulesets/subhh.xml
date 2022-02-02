@@ -27,7 +27,7 @@
 
             - possible member tag:
                     restriction         (optional, repeatable)
-         
+
         'editing' tag:
             Describes how the program should behave when editing the data.
 
@@ -63,10 +63,10 @@
                 - possible member tags, in order as mentioned:
                         label               (repeatable, min. quantity: 1)
                         subdivisionByDate   (optional, not repeatable)
-             
+
             'label' tag:
                 Sets a human readable label for an item.
-                
+
                 - optional attribute 'lang':
                         ISO 639 alpha-2 language code - display language to use
                         the label for. If missing, defines the default value
@@ -77,7 +77,7 @@
 
             'subdivisionByDate' tag:
                 Determines how this division is broken down by date.
-                
+
                 - optional attribute 'yearBegin':
                         Annual first day of the operating year, if the annual
                         accounts do not coincide with the turn of the year.
@@ -206,7 +206,7 @@
             <label/>
             <label lang="de">Literaturbericht</label>
         </division>
- 
+
         <!--
             'key' tag:
                 Declare a subclass of kitodo:metadata or kitodo:metadataGroup.
@@ -214,7 +214,7 @@
                 - required attribute 'id':
                         Internal name of the key. This should be a xsd:NMTOKEN
                         (that is, do not include spaces).
-     
+
                 - optional attribute 'domain':
                         location where to store entries with that key in the
                         METS file. Defaults to 'description'. Possible values:
@@ -231,7 +231,7 @@
                                             amdSec in the element techMD
                         mets:div            saves the entry in element div of
                                             the METS structure
-     
+
                 - possible member tags, in order as mentioned:
                         label               (repeatable, min. quantity: 1)
                         codomain            (optional, not repeatable)
@@ -239,10 +239,10 @@
                         pattern             (optional, not repeatable)
                         preset              (optional, repeatable)
                         key                 (optional, repeatable)
-             
+
             'label' tag:
                 Sets a human readable label for an item.
-                
+
                 - optional attribute 'lang':
                         ISO 639 alpha-2 language code - display language to use
                         the label for. If missing, defines the default value
@@ -253,7 +253,7 @@
 
             'codomain' tag:
                 Defines the codomain (value space) of the data type.
-                
+
                 - optional attribute 'type':
                         Sets the XML Schema Datatype of which this key is a
                         subclass (cf. https://www.w3.org/TR/xmlschema-2/ ).
@@ -266,7 +266,7 @@
                         date                a top-open interval of exactly one
                                             day in length on the timeline,
                                             beginning on the beginning moment
-                                            of the day 
+                                            of the day
                         integer             the standard mathematical concept
                                             of the integer numbers
                         string              character strings
@@ -283,7 +283,7 @@
                 - required attribute 'value':
                         A possible value of the enumeration type. This is a
                         xsd:string (that is, it may include spaces).
-     
+
                 - optional member tag:
                         label               Sets a human readable label for the
                                             option. Labels for options are
@@ -416,7 +416,7 @@
             <label>CatalogID predecessor</label>
             <label lang="de">PPN Vorg.</label>
         </key>
- 
+
         <!-- the digital collections -->
         <key id="singleDigCollection">
             <label>Digital collection</label>
@@ -432,7 +432,7 @@
             </option>
             <preset>eins</preset>
         </key>
- 
+
         <key id="DocLanguage" domain="source">
             <label>language</label>
             <label lang="de">Sprache</label>
@@ -492,7 +492,7 @@
             <label>all creators (original version)</label>
             <label lang="de">Alle Autoren u. Beteiligte (orig.)</label>
         </key>
- 
+
         <!-- persons as metadata group -->
         <key id="Person">
             <label>Person</label>
@@ -540,7 +540,7 @@
                 <codomain type="date"/>
             </key>
         </key>
- 
+
         <key id="TSL_ATS">
             <label>TSL/ATS</label>
         </key>
@@ -570,16 +570,16 @@
             <label>Owner</label>
             <label lang="de">Besitzer</label>
         </key>
-         
+
         <!-- A metadata type of yes/no type ("boolean")
-        
+
         Yes/no is implemented here as follows: If the value is set to yes, the
         value of the option is saved as an entry, if no, no entry is saved. The
         label may be displayed on the input element, in this example something
         like the following could appear in the list:
-        
+
         Hinweistext:        [checkbox] Hinweistext einfügen
-        
+
         If the checkbox is checked, the kitodo:metadata 'NotePreImport' with
         the value 'Hinweis für Nutzer: Hiermit erhalten Sie noch vor Ende der
         Gesamtproduktion bereits Zugriff auf alle Seiten des Zeitschriftenban-
@@ -595,7 +595,7 @@
                 <label>Hinweistext einfügen</label>
             </option>
         </key>
- 
+
         <!-- some enumeration types key -->
         <key id="AccessLicenseGlobal" domain="rights">
             <label>AccessLicenseGlobal</label>
@@ -760,6 +760,9 @@
                 <label>Wirtschaftswissenschaften</label>
             </option>
         </key>
+        <key id="document_type" use="docType">
+            <label>Document type</label>
+        </key>
     </declaration>
 
     <correlation>
@@ -774,7 +777,7 @@
 
                 - attribute 'key':
                         Name of the grouped key for which restrictions are to
-                        be set. 
+                        be set.
 
                 Exactly one of the two attributes key or division must be
                 specified (either ... or).
@@ -818,7 +821,7 @@
                         (for grouped keys). Defaults to 'unrestricted'. Possible
                         values as above.
 
-                - optional member tag:      
+                - optional member tag:
                         permit              (optional, repeatable)
         -->
         <!-- Restrictions on grouped keys -->
@@ -827,7 +830,7 @@
             <permit key="LastName" minOccurs="1"/>
             <permit key="DateOfDeath" maxOccurs="1"/>
         </restriction>
- 
+
         <!-- Restrictions on divisions -->
         <restriction division="Graphics" unspecified="forbidden">
             <permit key="CatalogIDDigital" minOccurs="1"/>
@@ -1136,11 +1139,11 @@
                 Sets display preferences for metadata keys.
 
                 - required attribute 'key':
-                        metadata key whose display properties you want to 
+                        metadata key whose display properties you want to
                         configure
 
                 - optional attribute 'alwaysShowing':
-                        If true, a form field for this metadata key is always 
+                        If true, a form field for this metadata key is always
                         displayed by default. By default, no empty form fields
                         are displayed, but must first be selected from a list
                         and added to the display. Defaults to false.
@@ -1193,7 +1196,7 @@
         <setting key="CatalogIDSuccessorPeriodical" alwaysShowing="true"/>
         <setting key="Owner" alwaysShowing="true"/>
         <setting key="ReviewedAct" alwaysShowing="true"/>
- 
+
         <!-- Use of acquisition stages -->
         <setting key="ScanningInformation" excluded="true" multiline="true"/>
         <!--

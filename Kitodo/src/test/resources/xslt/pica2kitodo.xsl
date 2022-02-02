@@ -28,7 +28,7 @@
                 <kitodo:kitodo>
                     <xsl:apply-templates select="@*|node()"/>
                     <!-- ### DocType ### -->
-                    <kitodo:metadata name="docType">
+                    <kitodo:metadata name="document_type">
                         <xsl:variable name="status" select="pica:datafield[@tag='002@']/pica:subfield[@code='0']"/>
                         <xsl:variable name="genre" select="pica:datafield[@tag='013D']/pica:subfield[@code='a']"/>
                         <xsl:if test="matches($status,'^[AO]a[uv]')">

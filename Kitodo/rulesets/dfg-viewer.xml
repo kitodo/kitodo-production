@@ -27,7 +27,7 @@
 
             - possible member tag:
                     restriction         (optional, repeatable)
-         
+
         'editing' tag:
             Describes how the program should behave when editing the data.
 
@@ -63,10 +63,10 @@
                 - possible member tags, in order as mentioned:
                         label               (repeatable, min. quantity: 1)
                         subdivisionByDate   (optional, not repeatable)
-             
+
             'label' tag:
                 Sets a human readable label for an item.
-                
+
                 - optional attribute 'lang':
                         ISO 639 alpha-2 language code - display language to use
                         the label for. If missing, defines the default value
@@ -77,7 +77,7 @@
 
             'subdivisionByDate' tag:
                 Determines how this division is broken down by date.
-                
+
                 - optional attribute 'yearBegin':
                         Annual first day of the operating year, if the annual
                         accounts do not coincide with the turn of the year.
@@ -548,7 +548,7 @@
                 - required attribute 'id':
                         Internal name of the key. This should be a xsd:NMTOKEN
                         (that is, do not include spaces).
-     
+
                 - optional attribute 'domain':
                         location where to store entries with that key in the
                         METS file. Defaults to 'description'. Possible values:
@@ -565,7 +565,7 @@
                                             amdSec in the element techMD
                         mets:div            saves the entry in element div of
                                             the METS structure
-     
+
                 - possible member tags, in order as mentioned:
                         label               (repeatable, min. quantity: 1)
                         codomain            (optional, not repeatable)
@@ -573,10 +573,10 @@
                         pattern             (optional, not repeatable)
                         preset              (optional, repeatable)
                         key                 (optional, repeatable)
-             
+
             'label' tag:
                 Sets a human readable label for an item.
-                
+
                 - optional attribute 'lang':
                         ISO 639 alpha-2 language code - display language to use
                         the label for. If missing, defines the default value
@@ -587,7 +587,7 @@
 
             'codomain' tag:
                 Defines the codomain (value space) of the data type.
-                
+
                 - optional attribute 'type':
                         Sets the XML Schema Datatype of which this key is a
                         subclass (cf. https://www.w3.org/TR/xmlschema-2/ ).
@@ -600,7 +600,7 @@
                         date                a top-open interval of exactly one
                                             day in length on the timeline,
                                             beginning on the beginning moment
-                                            of the day 
+                                            of the day
                         integer             the standard mathematical concept
                                             of the integer numbers
                         string              character strings
@@ -617,7 +617,7 @@
                 - required attribute 'value':
                         A possible value of the enumeration type. This is a
                         xsd:string (that is, it may include spaces).
-     
+
                 - optional member tag:
                         label               Sets a human readable label for the
                                             option. Labels for options are
@@ -869,7 +869,7 @@
             <key id="role">
                 <label>Role</label>
                 <label lang="de">Rolle</label>
-                
+
                 <key id="roleTerm">
                     <label>Form of the role</label>
                     <label lang="de">Form der Rolle</label>
@@ -920,7 +920,7 @@
         <key id="genre">
             <label>Style, form, or content</label>
             <label lang="de">Gattung</label>
-            
+
             <key id="authority">
                 <label>Controlled list from which the value is taken</label>
                 <label lang="de">Quelle für die verwendeten Codes</label>
@@ -1290,7 +1290,7 @@
                 <label>Number and material</label>
                 <label lang="de">Umfang</label>
             </key>
-            
+
             <key id="digitalOrigin">
                 <label>Digitization method</label>
                 <label lang="de">Ursprung</label>
@@ -2526,7 +2526,7 @@
             <key id="topic">
                 <label>Subject term</label>
                 <label lang="de">Sachschlagwort</label>
-                
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI des Schlagwortes</label>
@@ -2542,7 +2542,7 @@
             <key id="geographic">
                 <label>Geographic subject term</label>
                 <label lang="de">Ortsbezug</label>
-                
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI des Schlagwortes</label>
@@ -2558,7 +2558,7 @@
             <key id="temporal">
                 <label>Chronological subject term</label>
                 <label lang="de">Zeitbezug</label>
-                
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI des Schlagwortes</label>
@@ -2574,7 +2574,7 @@
             <key id="titleInfo">
                 <label>Title used as a subject</label>
                 <label lang="de">Werkbezug</label>
-                
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI des Schlagwortes</label>
@@ -2596,11 +2596,11 @@
             <key id="name">
                 <label>Name used as a subject</label>
                 <label lang="de">Personenbezug</label>
-                
+
                 <key id="type">
                     <label>Type</label>
                     <label lang="de">Typ</label>
-    
+
                     <option value="personal">
                         <label>Person</label>
                     </option>
@@ -2609,11 +2609,11 @@
                         <label lang="de">Organisation</label>
                     </option>
                 </key>
-    
+
                 <key id="authority">
                     <label>Controlled vocabulary</label>
                     <label lang="de">Normdatei</label>
-    
+
                     <option value="abne">
                         <label>Autoridades de la Biblioteca Nacional de España</label>
                     </option>
@@ -2678,27 +2678,27 @@
                         <label>UNBIS name authority list</label>
                     </option>
                 </key>
-    
+
                 <key id="authorityURI">
                     <label>URI of the controlled vocabulary</label>
                     <label lang="de">URI der Normdatei</label>
                     <codomain type="anyURI"/>
                 </key>
-    
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI des Namens</label>
                     <codomain type="anyURI"/>
                 </key>
-    
+
                 <key id="namePart">
                     <label>The name itself</label>
                     <label lang="de">Namensbestandteil</label>
-    
+
                     <key id="type">
                         <label>Type</label>
                         <label lang="de">Typ</label>
-    
+
                         <option value="family">
                             <label>Surname</label>
                             <label lang="de">Familienname</label>
@@ -2716,22 +2716,22 @@
                             <label lang="de">Titel, Ordnungshilfen und Homonymzusätze</label>
                         </option>
                     </key>
-    
+
                     <key id="value">
                         <label>Value</label>
                         <label lang="de">Wert</label>
                     </key>
                 </key>
-    
+
                 <key id="displayForm">
                     <label>personal name in direct order</label>
                     <label lang="de">Anzeigeform</label>
                 </key>
-    
+
                 <key id="role">
                     <label>Role</label>
                     <label lang="de">Rolle</label>
-                    
+
                     <key id="roleTerm">
                         <label>Form of the role</label>
                         <label lang="de">Form der Rolle</label>
@@ -2739,7 +2739,7 @@
                         <key id="type">
                             <label>Type</label>
                             <label lang="de">Typ</label>
-    
+
                             <option value="text">
                                 <label>A role in a textual form</label>
                                 <label lang="de">Textliche Beschreibung der Rolle</label>
@@ -2749,7 +2749,7 @@
                                 <label lang="de">Code, der für die Rolle steht</label>
                             </option>
                         </key>
-    
+
                         <key id="authority">
                             <label>Controlled list from which the value is taken</label>
                             <label lang="de">Quelle für die verwendeten Codes</label>
@@ -2757,14 +2757,14 @@
                                 <label>MARC Code and Term List for Relators</label>
                             </option>
                         </key>
-    
+
                         <key id="authorityURI">
                             <label>URI of the controlled vocabulary</label>
                             <label lang="de">URI der Normdatei</label>
                             <codomain type="anyURI"/>
                             <option value="http://id.loc.gov/vocabulary/relators"/>
                         </key>
-    
+
                         <key id="valueURI">
                             <label>URI identifying the value from a controlled vocabulary</label>
                             <label lang="de">URI der Rolle</label>
@@ -3339,7 +3339,7 @@
                 <key id="type">
                     <label>Type</label>
                     <label lang="de">Typ</label>
-    
+
                     <option value="abbreviated">
                         <label>Title as abbreviated</label>
                         <label lang="de">Abgekürzter Titel</label>
@@ -3357,13 +3357,13 @@
                         <label lang="de">Normtitel</label>
                     </option>
                 </key>
-    
+
                 <key id="authorityURI">
                     <label>URI of the controlled vocabulary</label>
                     <label lang="de">URI der Normdatei</label>
                     <codomain type="anyURI"/>
                 </key>
-    
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI des Sachtitels</label>
@@ -3386,7 +3386,7 @@
                     <key id="type">
                         <label>Type</label>
                         <label lang="de">Typ</label>
-        
+
                         <option value="volume">
                             <label lang="de">Band</label>
                         </option>
@@ -3419,15 +3419,15 @@
             <key id="recordInfo">
                 <label>Information about the metadata record</label>
                 <label lang="de">Ressource</label>
-                
+
                 <key id="recordIdentifier">
                     <label>System control number</label>
                     <label lang="de">Identifier</label>
-                    
+
                     <key id="source">
                         <label>Organization</label>
                         <label lang="de">Organisation</label>
-                        
+
                         <option value="marcorg">
                             <label>MARC Code List for Organizations</label>
                         </option>
@@ -3989,13 +3989,13 @@
             <key id="physicalLocation">
                 <label>Institution or repository</label>
                 <label lang="de">Physischer Ort</label>
-                
+
                 <key id="authorityURI">
                     <label>URI of the controlled vocabulary</label>
                     <label lang="de">URI der Normdatei</label>
                     <codomain type="anyURI"/>
                 </key>
-    
+
                 <key id="valueURI">
                     <label>URI identifying the value from a controlled vocabulary</label>
                     <label lang="de">URI der Organisation</label>
@@ -4062,7 +4062,7 @@
                 <key id="type">
                     <label>Type</label>
                     <label lang="de">Typ</label>
-    
+
                     <option value="volume"/>
                     <option value="issue"/>
                     <option value="chapter"/>
@@ -4078,15 +4078,15 @@
         <key id="recordInfo">
             <label>Information about the metadata record</label>
             <label lang="de">Ressource</label>
-            
+
             <key id="recordIdentifier">
                 <label>System control number</label>
                 <label lang="de">Identifier</label>
-                
+
                 <key id="source">
                     <label>Organization</label>
                     <label lang="de">Organisation</label>
-                    
+
                     <option value="marcorg">
                         <label>MARC Code List for Organizations</label>
                     </option>
@@ -4106,6 +4106,11 @@
                 <label lang="de">Erschließungsstandard</label>
             </key>
         </key>
+
+        <key id="document_type" use="docType">
+            <label>Document type</label>
+        </key>
+
     </declaration>
 
     <correlation>
@@ -4120,7 +4125,7 @@
 
                 - attribute 'key':
                         Name of the grouped key for which restrictions are to
-                        be set. 
+                        be set.
 
                 Exactly one of the two attributes key or division must be
                 specified (either ... or).
@@ -4164,7 +4169,7 @@
                         (for grouped keys). Defaults to 'unrestricted'. Possible
                         values as above.
 
-                - optional member tag:      
+                - optional member tag:
                         permit              (optional, repeatable)
         -->
 
@@ -4365,11 +4370,11 @@
                 Sets display preferences for metadata keys.
 
                 - required attribute 'key':
-                        metadata key whose display properties you want to 
+                        metadata key whose display properties you want to
                         configure
 
                 - optional attribute 'alwaysShowing':
-                        If true, a form field for this metadata key is always 
+                        If true, a form field for this metadata key is always
                         displayed by default. By default, no empty form fields
                         are displayed, but must first be selected from a list
                         and added to the display. Defaults to false.

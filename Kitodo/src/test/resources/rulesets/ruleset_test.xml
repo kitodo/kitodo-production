@@ -36,6 +36,9 @@
         <key id="TSL_ATS">
             <label>TSL/ATS</label>
         </key>
+        <key id="document_type" use="docType">
+            <label>Document type</label>
+        </key>
         <key id="CatalogIDDigital">
             <label>PPN (digital)</label>
         </key>

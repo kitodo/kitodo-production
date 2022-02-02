@@ -79,7 +79,7 @@ public class ImportServiceIT {
 
     @Test
     public void testImportProcess() throws Exception {
-        Assert.assertEquals("Not the correct amount of processes found",(long) 7, (long) processService.count());
+        Assert.assertEquals("Not the correct amount of processes found", 7, (long) processService.count());
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
@@ -92,7 +92,7 @@ public class ImportServiceIT {
         Assert.assertEquals("WrongProcessTitle", "Kitodo_" + RECORD_ID, importedProcess.getTitle());
         Assert.assertEquals("Wrong project used", 1, (long) importedProcess.getProject().getId());
         Assert.assertEquals("Wrong template used", 1, (long) importedProcess.getTemplate().getId());
-        Assert.assertEquals("Not the correct amount of processes found",(long) 8, (long) processService.count());
+        Assert.assertEquals("Not the correct amount of processes found", 8, (long) processService.count());
     }
 
     private static void setupServer(String serverResponse) {
