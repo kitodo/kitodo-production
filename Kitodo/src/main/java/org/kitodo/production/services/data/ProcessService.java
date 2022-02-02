@@ -95,6 +95,7 @@ import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
@@ -149,6 +150,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.Stopwatch;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.bar.BarChartOptions;
@@ -308,10 +310,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException {
+        Stopwatch stopwatch = new Stopwatch("Setting metadata and base type for", processes, BaseBean::getId);
         for (Process process : processes) {
             process.setMetadata(getMetadataForIndex(process, true));
             process.setBaseType(getBaseType(process));
         }
+        stopwatch.log(logger);
         super.addAllObjectsToIndex(processes);
     }
 

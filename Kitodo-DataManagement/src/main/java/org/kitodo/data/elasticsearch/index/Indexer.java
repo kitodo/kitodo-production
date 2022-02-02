@@ -17,16 +17,22 @@ import java.util.Map;
 
 import javax.ws.rs.HttpMethod;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.elasticsearch.Index;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.utils.Stopwatch;
 
 /**
  * Implementation of ElasticSearch Indexer for index package.
  */
 public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Index {
+
+    private static final Logger logger = LogManager.getLogger(Indexer.class);
 
     private String method;
     private static final String INCORRECT_HTTP = "Incorrect HTTP method!";
@@ -110,11 +116,17 @@ public class Indexer<T extends BaseIndexedBean, S extends BaseType> extends Inde
         IndexRestClient restClient = initiateRestClient();
 
         if (method.equals(HttpMethod.PUT)) {
+            Stopwatch createDocumentsStopwatch = new Stopwatch("Creating documents for", baseIndexedBeans, BaseBean::getId);
             Map<Integer, Map<String, Object>> documents = baseType.createDocuments(baseIndexedBeans);
+            createDocumentsStopwatch.log(logger);
             if (async) {
+                Stopwatch indexingStopwatch = new Stopwatch("Asynchronously indexing", baseIndexedBeans, BaseBean::getId);
                 restClient.addTypeAsync(this.type, documents);
+                indexingStopwatch.log(logger);
             } else {
+                Stopwatch indexingStopwatch = new Stopwatch("Synchronously indexing", baseIndexedBeans, BaseBean::getId);
                 restClient.addTypeSync(this.type, documents);
+                indexingStopwatch.log(logger);
             }
         } else {
             throw new CustomResponseException(INCORRECT_HTTP);

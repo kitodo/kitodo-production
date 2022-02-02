@@ -332,6 +332,10 @@ public class IndexingService {
                 Thread.currentThread().interrupt();
             }
         }
+        if (attempts == ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT)) {
+            logger.fatal("Couldn't start '{}' indexing in {} attempts. '{}' indexing running. Giving up.", type,
+                    attempts, currentIndexState);
+        }
     }
 
     /**

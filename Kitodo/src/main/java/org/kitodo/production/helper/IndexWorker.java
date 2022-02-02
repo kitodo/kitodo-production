@@ -18,10 +18,12 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.HibernateException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.utils.Stopwatch;
 
 public class IndexWorker implements Runnable {
 
@@ -56,7 +58,7 @@ public class IndexWorker implements Runnable {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     public void run() {
         this.indexedObjects = 0;
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
@@ -66,9 +68,15 @@ public class IndexWorker implements Runnable {
 
             if (amountToIndex < batchSize) {
                 if (indexAllObjects) {
-                    indexObjects(searchService.getAll(this.startIndexing, amountToIndex));
+                    Stopwatch getAllStopwatch = new Stopwatch("Reading from database, mode \"all\",");
+                    List all = searchService.getAll(this.startIndexing, amountToIndex);
+                    getAllStopwatch.log(all, BaseBean::getId, logger);
+                    indexObjects(all);
                 } else {
-                    indexObjects(searchService.getAllNotIndexed(this.startIndexing, amountToIndex));
+                    Stopwatch getNotIndexedStopwatch = new Stopwatch("Reading from database, mode \"not indexed\",");
+                    List allNotIndexed = searchService.getAllNotIndexed(this.startIndexing, amountToIndex);
+                    getNotIndexedStopwatch.log(allNotIndexed, BaseBean::getId, logger);
+                    indexObjects(allNotIndexed);
                 }
             } else {
                 if (amountToIndex > indexLimit) {
@@ -91,17 +99,21 @@ public class IndexWorker implements Runnable {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"rawtypes", "unchecked"})
     private void indexChunks(int batchSize) throws CustomResponseException, DAOException, DataException {
-        List<Object> objectsToIndex;
+        List objectsToIndex;
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         while (this.indexedObjects < indexLimit) {
             int offset = this.indexedObjects + this.startIndexing;
 
             if (indexAllObjects) {
+                Stopwatch getAllStopwatch = new Stopwatch("Reading chunk from database, mode \"all\",");
                 objectsToIndex = searchService.getAll(offset, batchSize);
+                getAllStopwatch.log(objectsToIndex, BaseBean::getId, logger);
             } else {
+            	Stopwatch getNotIndexedStopwatch = new Stopwatch("Reading chunk from database, mode \"not indexed\",");
                 objectsToIndex = searchService.getAllNotIndexed(offset, batchSize);
+                getNotIndexedStopwatch.log(objectsToIndex, BaseBean::getId, logger);
             }
             if (objectsToIndex.isEmpty()) {
                 break;

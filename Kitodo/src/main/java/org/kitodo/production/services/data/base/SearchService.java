@@ -56,6 +56,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.ProjectService;
+import org.kitodo.utils.Stopwatch;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -209,7 +210,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         if (!baseIndexedBeans.isEmpty()) {
             indexer.performMultipleRequests(baseIndexedBeans, type, true);
         }
+        Stopwatch stopwatch = new Stopwatch("Setting INDEXED in database for", baseIndexedBeans, BaseBean::getId);
         setIndexColumToIndexed(baseIndexedBeans);
+        stopwatch.log(logger);
     }
 
     private void setIndexColumToIndexed(List<T> baseIndexedBeans) throws DAOException {
