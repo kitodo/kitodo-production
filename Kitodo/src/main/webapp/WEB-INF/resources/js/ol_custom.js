@@ -82,30 +82,30 @@ kitodo.RotateRightControl = function(options = {}) {
     });
 };
 
+function resetNorth() {
+    if (kitodo.map) {
+        let view = kitodo.map.getView();
+        view.animate({
+            rotation: 0,
+            duration: 0
+        });
+    }
+}
+
 /**
  * @param {Object=} options Custom control options for Kitodo in OpenLayers
  * @extends {ol.control.Rotate}
  * @constructor
  */
 kitodo.ResetNorthControl = function(options = {}) {
-    var buttonResetNorth = document.createElement("button");
+    let buttonResetNorth = document.createElement("button");
     buttonResetNorth.innerHTML = "<i class='fa fa-compass'/>";
     buttonResetNorth.setAttribute("type", "button");
     buttonResetNorth.setAttribute("title", "Reset orientation");
 
-    var this_ = this;
+    buttonResetNorth.addEventListener("click", resetNorth, false);
 
-    var handleResetNorth = function() {
-        var view = this_.getMap().getView();
-        view.animate({
-            rotation: 0,
-            duration: 100
-        });
-    };
-
-    buttonResetNorth.addEventListener("click", handleResetNorth, false);
-
-    var elementResetNorth = document.createElement("div");
+    let elementResetNorth = document.createElement("div");
     elementResetNorth.className = "ol-rotate ol-unselectable ol-control"; /*ol-rotate-reset*/
     elementResetNorth.appendChild(buttonResetNorth);
 
@@ -224,6 +224,7 @@ function addListener(element) {
 }
 
 function initializeImage() {
+    resetNorth();
     hideCanvas();
     let image = $("#imagePreviewForm\\:mediaViewData");
     addListener(image);
