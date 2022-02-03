@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -515,8 +516,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     List<Map<MetadataEntry, Boolean>> getListForLeadingMetadataFields() {
         List<Map<MetadataEntry, Boolean>> result = Objects.isNull(container) ? new ArrayList<>()
                 : container.getListForLeadingMetadataFields();
-        Map<MetadataEntry, Boolean> metadataEntryMap = metadata.parallelStream().filter(MetadataEntry.class::isInstance)
-                .map(MetadataEntry.class::cast).collect(Collectors.toMap(Function.identity(), all -> Boolean.FALSE));
+        Map<MetadataEntry, Boolean> metadataEntryMap = new HashMap<>();
+        treeNode.getChildren().stream().map(TreeNode::getData).filter(ProcessSimpleMetadata.class::isInstance)
+                .map(ProcessSimpleMetadata.class::cast).map(ProcessDetail::getMetadataID).forEachOrdered(key -> {
+                    MetadataEntry metadataEntry = new MetadataEntry();
+                    metadataEntry.setKey(key);
+                    metadataEntryMap.put(metadataEntry, Boolean.FALSE);
+                });
+        metadata.stream().filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
+                .forEachOrdered(key -> metadataEntryMap.put(key, Boolean.FALSE));
         result.add(metadataEntryMap);
         return result;
     }
