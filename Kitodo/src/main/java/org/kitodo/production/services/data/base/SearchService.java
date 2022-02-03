@@ -208,8 +208,8 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         indexer.setMethod(HttpMethod.PUT);
         if (!baseIndexedBeans.isEmpty()) {
             indexer.performMultipleRequests(baseIndexedBeans, type, true);
+            saveAsIndexed(baseIndexedBeans);
         }
-        saveAsIndexed(baseIndexedBeans);
     }
 
     /**
