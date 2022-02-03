@@ -375,18 +375,10 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     void storeAsIndexed(List<T> baseBeans) throws DAOException {
-        try (Session session = HibernateUtil.getSession()) {
-            Transaction transaction = session.beginTransaction();
-            for (BaseBean baseBean : baseBeans) {
-                BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
-                entity.setIndexAction(IndexAction.DONE);
-                session.saveOrUpdate(entity);
-                session.flush();
-            }
-            transaction.commit();
-            session.close();
-        } catch (RuntimeException e) {
-            throw new DAOException(e);
+        for (BaseBean baseBean : baseBeans) {
+            BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
+            entity.setIndexAction(IndexAction.DONE);
+            storeObject((T) entity);
         }
     }
 
