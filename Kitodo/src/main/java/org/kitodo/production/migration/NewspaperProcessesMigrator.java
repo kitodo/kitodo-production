@@ -11,8 +11,7 @@
 
 package org.kitodo.production.migration;
 
-import com.google.common.collect.Iterators;
-import com.google.common.collect.PeekingIterator;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -32,6 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.naming.ConfigurationException;
+
+import org.apache.commons.collections4.iterators.PeekingIterator;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -755,7 +756,7 @@ public class NewspaperProcessesMigrator {
      */
     public boolean hasNextYear() {
         if (Objects.isNull(yearsIterator)) {
-            yearsIterator = Iterators.peekingIterator(years.entrySet().iterator());
+            yearsIterator = new PeekingIterator(years.entrySet().iterator());
         }
         return yearsIterator.hasNext();
     }

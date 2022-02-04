@@ -90,14 +90,6 @@
                 <enabled>false</enabled>
             </snapshots>
         </repository>
-        <repository>
-            <id>maven-eu</id>
-            <name>maven-eu Repository</name>
-            <url>https://maven-eu.nuxeo.org/nexus/content/repositories/public/</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
     </repositories>
 
     <modules>
