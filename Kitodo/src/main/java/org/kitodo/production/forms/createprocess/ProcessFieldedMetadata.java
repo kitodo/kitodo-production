@@ -543,6 +543,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         try {
             if (Objects.nonNull(division)) {
                 division.getContentIds().clear();
+                division.setOrderlabel(null);
+                division.setLabel(null);
             }
             metadata.clear();
             for (TreeNode child : treeNode.getChildren()) {
