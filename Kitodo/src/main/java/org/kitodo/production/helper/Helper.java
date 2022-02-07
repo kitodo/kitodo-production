@@ -135,8 +135,8 @@ public class Helper {
      */
     public static void setErrorMessage(String title, Object... parameters) {
         if (Objects.nonNull(parameters) && parameters.length > 0) {
-            setErrorMessage(getTranslation(title, Arrays.stream(parameters)
-                    .map(object -> Objects.nonNull(object) ? Objects.toString(object) : "").toArray(String[]::new)));
+            setErrorMessage(getTranslation(title,
+                Arrays.stream(parameters).map(object -> Objects.toString(object)).toArray(String[]::new)));
         } else {
             setErrorMessage(getTranslation(title));
         }
