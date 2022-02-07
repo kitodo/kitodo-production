@@ -11,12 +11,8 @@
 
 package org.kitodo.production.services.data;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
-import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
-import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
-import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
+import static org.elasticsearch.index.query.QueryBuilders.*;
+import static org.kitodo.data.database.enums.CorrectionComments.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -109,6 +105,7 @@ import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -246,12 +243,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process");
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate"));
     }
 
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate") + " AND ( indexAction = 'INDEX' OR indexAction ) IS NULL");
     }
 
     @Override
@@ -266,7 +263,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public List<Process> getAllNotIndexed() {
-        return getByQuery("FROM Process WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return getByQuery("FROM Process WHERE " + BaseDAO.getDateFilter("creationDate") + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
     }
 
     @Override

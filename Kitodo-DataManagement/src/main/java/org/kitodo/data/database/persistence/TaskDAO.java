@@ -38,12 +38,15 @@ public class TaskDAO extends BaseDAO<Task> {
 
     @Override
     public List<Task> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Task ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM Task WHERE " + getDateFilter("processingBegin") + " ORDER BY id ASC", offset,
+            size);
     }
 
     @Override
     public List<Task> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+        return retrieveObjects("FROM Task WHERE " + getDateFilter("processingBegin")
+                + " AND ( indexAction = 'INDEX' OR indexAction ) IS NULL ORDER BY id ASC",
+            offset,
             size);
     }
 

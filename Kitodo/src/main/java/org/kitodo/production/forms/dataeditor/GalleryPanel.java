@@ -251,7 +251,7 @@ public class GalleryPanel {
     }
 
     private int getDropStripeIndex(DragDropEvent event) {
-        // empty stripe of structure element
+        /*// empty stripe of structure element
         Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
         // between two pages of structure element
         Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
@@ -276,7 +276,9 @@ public class GalleryPanel {
             return 0;
         } else {
             return -1;
-        }
+        }*/
+
+        return -1;
     }
 
     private int getMediaIndex(DragDropEvent event) {

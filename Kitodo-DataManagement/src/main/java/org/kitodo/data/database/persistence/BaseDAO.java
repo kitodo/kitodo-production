@@ -13,10 +13,13 @@ package org.kitodo.data.database.persistence;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.persistence.PersistenceException;
 
@@ -25,6 +28,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -421,4 +425,29 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             }
         }
     }
+
+    public static String getDateFilter(String column) {
+        List<String> dates = getDatesFromConfig();
+        if (!dates.isEmpty()) {
+            return " ( "
+                    + dates.stream().map(date -> column + " LIKE '" + date + "%' ").collect(Collectors.joining(" OR "))
+                    + " )";
+        }
+        return " 1=1 ";
+    }
+
+    /*
+     * Parameter "database.subset.dates" filters the database to a subset. Atm, only
+     * the largest data tables of tasks by processingBegin and process by creation
+     * date are considered. The dates can be defined & separated in the format YYYY,
+     * YYYY-MM or YYYY-MM-DD e.g. 2017-05-10,2018-06,2022
+     */
+    private static List<String> getDatesFromConfig() {
+        final String[] databaseSubsetDates = ConfigMain.getStringArrayParameter("database.subset.dates");
+        // sanitize entries of parameter
+        return Arrays.stream(databaseSubsetDates)
+                .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asPredicate())
+                .collect(Collectors.toList());
+    }
+
 }
