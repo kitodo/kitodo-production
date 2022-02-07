@@ -1280,7 +1280,12 @@ Import form
     max-width: calc(50% - 93px);
     overflow: hidden;
     text-overflow: ellipsis;
+    vertical-align: top;
     width: 50%;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectoneradio {
+    height: auto;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-spinner-input {
@@ -1319,11 +1324,6 @@ Import form
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-inputfield.hasDatepicker {
     width: calc(50% - 140px);
-}
-
-#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu + span,
-#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu + span + span {
-    vertical-align: top;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-button.ui-datepicker-trigger {
