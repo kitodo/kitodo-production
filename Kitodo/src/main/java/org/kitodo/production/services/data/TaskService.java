@@ -160,7 +160,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin") + " AND indexAction = 'INDEX' OR indexAction IS NULL");
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
+                + " AND indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
     @Override
@@ -177,7 +178,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public List<Task> getAllNotIndexed() {
-        return getByQuery("FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin") + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
+        return getByQuery("FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
+                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
     }
 
     @Override
