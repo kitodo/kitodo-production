@@ -111,8 +111,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId " +
-                        "AND ordering > :ordering AND repeatOnCorrection = 1",
+        return getByQuery("FROM Task WHERE process_id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
             parameters);
     }
 

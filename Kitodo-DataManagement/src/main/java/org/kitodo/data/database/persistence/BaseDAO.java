@@ -426,6 +426,14 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         }
     }
 
+    /**
+     * Query part of date filter. Filter is configured by "database.subset.dates"
+     * parameter in kitodo_config.properties.
+     *
+     * @param column
+     *            The column to filter.
+     * @return The query part to filter for dates.
+     */
     public static String getDateFilter(String column) {
         List<String> dates = getDatesFromConfig();
         if (!dates.isEmpty()) {
