@@ -979,7 +979,6 @@ public class ImportService {
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
                 managementInterface, acquisitionStage, priorityList);
-        metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
         metadata.preserve();
         return metadata.getRows();
     }
