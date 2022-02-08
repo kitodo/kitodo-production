@@ -446,7 +446,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         final String[] databaseSubsetDates = ConfigMain.getStringArrayParameter("database.subset.dates");
         // sanitize entries of parameter
         return Arrays.stream(databaseSubsetDates)
-                .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asPredicate())
+                .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asMatchPredicate())
                 .collect(Collectors.toList());
     }
 
