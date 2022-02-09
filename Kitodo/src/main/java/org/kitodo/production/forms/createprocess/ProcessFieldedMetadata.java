@@ -567,6 +567,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
         if (copy) {
             MetadataGroup metadataGroup = new MetadataGroup();
+            metadataGroup.setKey(metadataKey);
             Optional<Domain> optionalDomain = metadataView.getDomain();
             optionalDomain.ifPresent(domain -> metadataGroup.setDomain(DOMAIN_TO_MDSEC.get(domain)));
             metadataGroup.setGroup(metadata);
