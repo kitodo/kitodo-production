@@ -371,6 +371,16 @@ public class ExportXmlLog {
         return propertyElement;
     }
 
+    private void prepareMetadataElements(List<Element> metadataElements, boolean useAnchor, Process process,
+            HashMap<String, Namespace> namespaces, Namespace xmlns)
+            throws IOException, JDOMException, JaxenException {
+        HashMap<String, String> fields = getMetsFieldsFromConfig(useAnchor);
+        URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
+        Document metsDoc = new SAXBuilder()
+                .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
+        prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
+    }
+
     private void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,
             HashMap<String, Namespace> namespaces, Namespace xmlns) throws JaxenException {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
@@ -394,17 +404,6 @@ public class ExportXmlLog {
     private List<Element> createMetadataElements(Namespace xmlns, Process process) {
         List<Element> metadataElements = new ArrayList<>();
         try {
-            URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
-            Document metsDoc = new SAXBuilder()
-                    .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
-            Document anchorDoc = null;
-            URI anchorFileName = URI.create(ServiceManager.getFileService().getMetadataFilePath(process).toString()
-                    .replace("meta.xml", "meta_anchor.xml"));
-            if (ServiceManager.getFileService().fileExist(anchorFileName)
-                    && ServiceManager.getFileService().canRead(anchorFileName)) {
-                anchorDoc = new SAXBuilder()
-                        .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
-            }
             HashMap<String, Namespace> namespaces = new HashMap<>();
 
             HashMap<String, String> names = getNamespacesFromConfig();
@@ -413,13 +412,11 @@ public class ExportXmlLog {
                 namespaces.put(key, Namespace.getNamespace(key, entry.getValue()));
             }
 
-            HashMap<String, String> fields = getMetsFieldsFromConfig(false);
-            prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
-
-            if (Objects.nonNull(anchorDoc)) {
-                fields = getMetsFieldsFromConfig(true);
-                prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
+            prepareMetadataElements(metadataElements, false, process, namespaces, xmlns);
+            if (Objects.nonNull(process.getParent())) {
+                prepareMetadataElements(metadataElements, true, process.getParent(), namespaces, xmlns);
             }
+
         } catch (IOException | JDOMException | JaxenException e) {
             logger.error(e.getMessage(), e);
         }
