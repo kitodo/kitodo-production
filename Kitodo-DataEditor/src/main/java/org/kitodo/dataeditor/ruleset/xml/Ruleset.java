@@ -11,14 +11,18 @@
 
 package org.kitodo.dataeditor.ruleset.xml;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.TreeSet;
+import java.util.function.Function;
 
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -46,6 +50,9 @@ public class Ruleset {
     @XmlAttribute
     private String lang;
 
+    @XmlElement(name = "include", namespace = "http://names.kitodo.org/ruleset/v2")
+    private List<String> includes = new ArrayList<>();
+
     /**
      * The declaration section defines divisions and keys.
      */
@@ -67,6 +74,60 @@ public class Ruleset {
     private EditingElement editing;
 
     private transient List<Key> keys;
+
+    /**
+     * Inserts all information from another ruleset into this ruleset. Information
+     * of the same name will be overwritten.
+     *
+     * @param other ruleset to insert
+     */
+    public void addAll(Ruleset other) {
+        if (Objects.nonNull(other.declaration)) {
+            if (Objects.isNull(declaration)) {
+                declaration = other.declaration;
+            } else {
+                replaceOrAdd(other.declaration.getDivisions(), Division::getId, declaration.getDivisions());
+                replaceOrAdd(other.declaration.getKeys(), Key::getId, declaration.getKeys());
+            }
+        }
+        if (Objects.nonNull(other.restrictions)) {
+            if (Objects.isNull(restrictions)) {
+                restrictions = other.restrictions;
+            } else {
+                replaceOrAdd(other.restrictions, RestrictivePermit::getKey, restrictions);
+                replaceOrAdd(other.restrictions, RestrictivePermit::getDivision, restrictions);
+            }
+        }
+        if (Objects.nonNull(other.editing)) {
+            if (Objects.isNull(editing)) {
+                editing = other.editing;
+            } else {
+                replaceOrAdd(other.editing.getSettings(), Setting::getKey, editing.getSettings());
+                replaceOrAdd(other.editing.getAcquisitionStages(), AcquisitionStage::getName, editing.getAcquisitionStages());
+            }
+        }
+    }
+
+    private static <I, T> void replaceOrAdd(List<T> data, Function<T, I> getId, List<T> collector) {
+        for (T entry : data) {
+            I id = getId.apply(entry);
+            if (Objects.equals(id, Optional.empty())) {
+                continue;
+            }
+            boolean add = true;
+            ListIterator<T> collectorIterator = collector.listIterator();
+            while (collectorIterator.hasNext()) {
+                if (Objects.equals(id, getId.apply(collectorIterator.next()))) {
+                    collectorIterator.set(entry);
+                    add = false;
+                    break;
+                }
+            }
+            if (add) {
+                collector.add(entry);
+            }
+        }
+    }
 
     /**
      * Returns an acquisition stage by name.
@@ -193,6 +254,15 @@ public class Ruleset {
             }
         }
         return divisionDeclarations;
+    }
+
+    /**
+     * Returns the filenames of the included rulesets.
+     *
+     * @return filenames of the included rulesets
+     */
+    public List<String> getIncludes() {
+        return includes;
     }
 
     /**

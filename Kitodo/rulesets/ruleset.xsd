@@ -297,7 +297,8 @@
             <xs:documentation xml:lang="en">
                 A &lt;ruleset&gt; technically describes the description of digital objects in structure and the
                 assignment of metadata. The assumed default language of &lt;label&gt;s without the "lang" attribute is
-                English, unless another language is specified as default with the "lang" attribute here. Section
+                English, unless another language is specified as default with the "lang" attribute here.
+                &lt;include&gt;s allow to preload embedded ruleset files. Section
                 &lt;declaration&gt; defines the possible &lt;division&gt;s and metadata &lt;key&gt;s. In section
                 &lt;restriction&gt;, the possible combinations of the former can be restricted. In section
                 &lt;editing&gt;, settings for displaying the input fields in the metadata editor can be made.
@@ -305,6 +306,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="include" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
                 <xs:element name="declaration" minOccurs="1" maxOccurs="1" type="ruleset:DeclarationElement"/>
                 <xs:element name="correlation" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
