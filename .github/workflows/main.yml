@@ -34,6 +34,9 @@ jobs:
       - name: start mysql
         run:
             sudo service mysql start
+      - name: check MySQL version
+        run:
+            mysql --version
       - name: create database
         run:
             mysql -u root -proot -e 'CREATE DATABASE kitodo;'
