@@ -153,7 +153,7 @@
                                                       title="#{metadata.metadataDetail.value}">
                                             <p:spinner id="spinner"
                                                        value="#{metadata.metadataDetail.value}">
-                                                <p:ajax event="blur"/>
+                                                <p:ajax event="blur" update="calendarDayForm"/>
                                             </p:spinner>
                                         </h:panelGroup>
                                         <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'calendar'}">
@@ -162,7 +162,7 @@
                                                         pattern="yyyy-MM-dd"
                                                         styleClass="input-with-button"
                                                         showOn="button">
-                                                <p:ajax event="dateSelect"/>
+                                                <p:ajax event="dateSelect" update="calendarDayForm"/>
                                             </p:calendar>
                                         </h:panelGroup>
                                         <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'manyMenu'}">
@@ -170,7 +170,7 @@
                                                               value="#{metadata.metadataDetail.selectedItems}"
                                                               showCheckbox="true">
                                                 <f:selectItems value="#{metadata.metadataDetail.items}"/>
-                                                <p:ajax event="change"/>
+                                                <p:ajax event="change" update="calendarDayForm"/>
                                             </p:selectManyMenu>
                                         </h:panelGroup>
                                         <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneMenu'}"
@@ -182,7 +182,7 @@
                                                               itemLabel="#{msgs.notSelected}"
                                                               noSelectionOption="true"/>
                                                 <f:selectItems value="#{metadata.metadataDetail.items}"/>
-                                                <p:ajax event="change"/>
+                                                <p:ajax event="change" update="calendarDayForm"/>
                                             </p:selectOneMenu>
                                         </h:panelGroup>
                                         <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneRadio'}">
@@ -191,14 +191,14 @@
                                                               layout="grid"
                                                               columns="1">
                                                 <f:selectItems value="#{metadata.metadataDetail.items}"/>
-                                                <p:ajax/>
+                                                <p:ajax update="calendarDayForm"/>
                                             </p:selectOneRadio>
                                         </h:panelGroup>
                                         <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'toggleSwitch'}"
                                                       title="#{metadata.metadataDetail.active.toString()}">
                                             <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                                                      value="#{metadata.metadataDetail.active}">
-                                                <p:ajax event="change"/>
+                                                <p:ajax event="change" update="calendarDayForm"/>
                                             </p:selectBooleanCheckbox>
                                         </h:panelGroup>
 

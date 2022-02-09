@@ -603,7 +603,8 @@ public class CalendarForm implements Serializable {
      */
     public void addIssue(Block block) {
         if (Objects.nonNull(block)) {
-            Issue issue = block.addIssue();
+            block.addIssue();
+            block.checkIssuesWithSameHeading();
         }
     }
 
@@ -919,11 +920,13 @@ public class CalendarForm implements Serializable {
      */
     public void checkDuplicatedTitles() throws ProcessGenerationException, DataException, DAOException,
             ConfigurationException, IOException, DoctypeMissingException {
-        Process process = ServiceManager.getProcessService().getById(parentId);
-        NewspaperProcessesGenerator newspaperProcessesGenerator = new NewspaperProcessesGenerator(process, course);
-        newspaperProcessesGenerator.initialize();
-        if (!newspaperProcessesGenerator.isDuplicatedTitles()) {
-            PrimeFaces.current().executeScript("PF('createProcessesConfirmDialog').show();");
+        if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
+            Process process = ServiceManager.getProcessService().getById(parentId);
+            NewspaperProcessesGenerator newspaperProcessesGenerator = new NewspaperProcessesGenerator(process, course);
+            newspaperProcessesGenerator.initialize();
+            if (!newspaperProcessesGenerator.isDuplicatedTitles()) {
+                PrimeFaces.current().executeScript("PF('createProcessesConfirmDialog').show();");
+            }
         }
     }
 
