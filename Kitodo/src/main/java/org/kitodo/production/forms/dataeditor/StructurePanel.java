@@ -41,6 +41,7 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
@@ -1375,7 +1376,11 @@ public class StructurePanel implements Serializable {
      *          whether metadata structure should be displayed in separate structure trees or not
      */
     public boolean isSeparateMedia() {
-        return this.dataEditor.getProcess().getTemplate().getWorkflow().isSeparateStructure();
+        Template template = dataEditor.getProcess().getTemplate();
+        if ( Objects.nonNull(template) ) {
+            return template.getWorkflow().isSeparateStructure();
+        }
+        return false;
     }
 
     private void expandNode(TreeNode node) {
