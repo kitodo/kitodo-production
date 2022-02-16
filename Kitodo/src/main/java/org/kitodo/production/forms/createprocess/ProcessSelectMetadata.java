@@ -13,6 +13,7 @@ package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -122,8 +123,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         Collection<Metadata> metadata = new HashSet<>((int) Math.ceil(items / .75));
         String key = settings.getId();
         MdSec domain = DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION));
-        selectedItems.removeAll(Collections.singletonList(""));
-        selectedItems.removeAll(Collections.singletonList(null));
+        selectedItems.removeAll(Arrays.asList("", null));
         for (String selectedItem : selectedItems) {
             if (!settings.isValid(selectedItem)) {
                 throw new InvalidMetadataValueException(label, selectedItem);
