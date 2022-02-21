@@ -2720,6 +2720,7 @@ Column content
 #imagePreviewForm\:structuredPages .ui-panel .ui-panel-content,
 #imagePreviewForm\:unstructuredMedia .ui-panel .ui-panel-content {
     padding: 0;
+    background: var(--blue);
 }
 
 #imagePreviewForm div.ui-panel.ui-corner-all,
@@ -2767,14 +2768,26 @@ Column content
     width: 100%;
 }
 
-.media-stripe-active,
-.media-stripe-index-active::after {
-    background-color: var(--light-gray);
-    opacity: .3;
+.structure-element-datalist-item > div {
+    display: inline-block;
 }
 
-.media-stripe-active.ui-droppable-hover,
-.media-stripe-index-active.ui-droppable-hover::after {
+
+.kitodo-dragging .structure-element-datalist-item.kitodo-dragging-active {
+    cursor: move;
+}
+
+.kitodo-dragging .structure-element-datalist-item:not(.kitodo-dragging-active):last-child:after,
+.kitodo-dragging .structure-element-datalist-item:not(.kitodo-dragging-active):before {
+    background-color: var(--light-gray);
+    opacity: .3;
+    display: inline-block;
+    width: 20px;
+    height: 104px;
+    content: "";
+}
+
+.kitodo-dragging .structure-element-datalist-item.kitodo-dropping-active:not(.kitodo-dragging-active):before {
     opacity: .8;
 }
 

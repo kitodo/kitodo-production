@@ -177,7 +177,7 @@ function scrollToSelectedPreviewThumbnail() {
 }
 
 function scrollToStructureThumbnail(thumbnail, scrollable) {
-    let mediaPosition = thumbnail.closest(".media-position");
+    let mediaPosition = thumbnail.closest(".structure-element-datalist-item");
     scrollable.animate({
         scrollTop: mediaPosition[0].offsetTop
     }, 180, null, null);

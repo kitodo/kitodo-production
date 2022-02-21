@@ -8,7 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF, scrollToStructureThumbnail,
+/* globals select, setGalleryViewMode, onPageDrop, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF, scrollToStructureThumbnail,
     scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload */
 
 var metadataEditor = {
@@ -328,3 +328,114 @@ function expandMetadata(panelClass) {
 function setConfirmUnload(on) {
     window.onbeforeunload = (on) ? function() { return true; } : void 0;
 }
+
+document.addEventListener("dragstart", function( event ) {
+    event.target.closest(".structure-element-datalist-item").classList.add('kitodo-dragging-active');
+    document.getElementById("imagePreviewForm").classList.add('kitodo-dragging');
+    console.log("drag start");
+});
+
+document.addEventListener("dragover", function( event ) {
+    event.preventDefault()
+    let droppingElement = event.target.closest(".structure-element-datalist-item");
+    if(droppingElement != null && !droppingElement.matches('.kitodo-dropping-active')) {
+        const legacyDroppingElement = document.querySelector(".kitodo-dropping-active");
+        if(legacyDroppingElement != null) {
+            legacyDroppingElement.classList.remove("kitodo-dropping-active");
+        }
+        droppingElement.classList.add("kitodo-dropping-active");
+    }
+});
+
+document.addEventListener("dragend", function( event ) {
+    event.preventDefault();
+    document.getElementById("imagePreviewForm").classList.remove('kitodo-dragging');
+    const draggableElement = document.querySelector('.kitodo-dragging-active');
+    draggableElement.classList.remove('kitodo-dragging-active');
+    let droppingElement = document.querySelector(".kitodo-dropping-active");
+    if (droppingElement != null) {
+        droppingElement.parentNode.insertBefore(draggableElement, droppingElement);
+        droppingElement.classList.remove("kitodo-dropping-active");
+        onPageDrop([{name: "dragId", value: draggableElement.firstChild.id},{name: "dropId", value: droppingElement.firstChild.id}]);
+    }
+});
+
+window.addEventListener('DOMContentLoaded', () => {
+
+    const draggables = document.querySelectorAll('.structure-element-datalist-item');
+    const containers = document.querySelectorAll('.structureElementDataList ul')
+
+    draggables.forEach(draggable => {
+        draggable.setAttribute("draggable", "true");
+    });
+
+    /*
+    containers.forEach(container => {
+        container.addEventListener('dragover', event => {
+            event.preventDefault();
+            if(document.querySelector(".kitodo-dropping-active") != null) {
+                document.querySelector(".kitodo-dropping-active").classList.remove("kitodo-dropping-active");
+            }
+            const droppingElement = getDroppingElement(container, event.clientX, event.clientY);
+            droppingElement.classList.add("kitodo-dropping-active");
+        })
+    })
+*/
+    function distance(pointA, pointB){
+        let dx = pointB.x - pointA.x;
+        let dy = pointB.y - pointA.y;
+        let dist = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+        return dist;
+    }
+
+    function getDroppingElement(container, x, y) {
+        const draggableElements = [...container.querySelectorAll('.structure-element-datalist-item:not(.kitodo-dragging-active)')];
+        console.log(draggableElements.length)
+        let closestElement = null;
+        let closestDistance = Number.POSITIVE_INFINITY;
+
+        draggableElements.forEach( element => {
+            const box = element.getBoundingClientRect()
+            let elementDistance = distance({ x :  box.x + (box.width / 2), y : box.y + (box.height / 2) }, { x :  x, y : y });
+            if( closestDistance > elementDistance ){
+                closestDistance = elementDistance;
+                closestElement = element;
+            }
+        });
+
+        return closestElement;
+    }
+
+});
+
+/*
+handleDragStartStructureElement(event) {
+    event.dataTransfer.setData('text', event.target.id);
+    document.getElementById("imagePreviewForm").classList.add('kitodo-dragging');
+    console.log("dragstart");
+},
+handleDragOverStructureElement(event) {
+    event.preventDefault();
+    console.log("dragover");
+    console.log(event);
+
+    let dropArea = document.getElementById(event.target.closest(".draggable-panel").id);
+
+    if(!dropArea.matches('.kitodo-droppable')) {
+        Array.from(document.querySelectorAll('.kitodo-droppable')).forEach((el) => el.classList.remove('kitodo-droppable'));
+        dropArea.classList.add('kitodo-droppable');
+    }
+},
+handleDropStructureElement(event) {
+    event.preventDefault();
+    document.getElementById("imagePreviewForm").classList.remove('kitodo-dragging');
+    console.log("drop");
+    const id = event.dataTransfer.getData('text');
+    const draggableElement = document.getElementById(id);
+    const dropzone = event.target;
+    dropzone.appendChild()
+    event.dataTransfer.clearData();
+    console.log([{name: "dragId", value: id},{name: "dropId", value: event.target.id}]);
+    onPageDrop([{name: "dragId", value: id},{name: "dropId", value: event.target.id}]);
+},
+*/
