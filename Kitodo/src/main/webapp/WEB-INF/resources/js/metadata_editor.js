@@ -363,13 +363,15 @@ document.addEventListener("dragend", function( event ) {
 window.addEventListener('DOMContentLoaded', () => {
 
     const draggables = document.querySelectorAll('.structure-element-datalist-item');
-    const containers = document.querySelectorAll('.structureElementDataList ul')
 
     draggables.forEach(draggable => {
         draggable.setAttribute("draggable", "true");
     });
 
     /*
+    Variant distance calculation next potential drop area
+
+    const containers = document.querySelectorAll('.structureElementDataList ul')
     containers.forEach(container => {
         container.addEventListener('dragover', event => {
             event.preventDefault();
@@ -380,7 +382,8 @@ window.addEventListener('DOMContentLoaded', () => {
             droppingElement.classList.add("kitodo-dropping-active");
         })
     })
-*/
+
+
     function distance(pointA, pointB){
         let dx = pointB.x - pointA.x;
         let dy = pointB.y - pointA.y;
@@ -405,10 +408,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
         return closestElement;
     }
-
+*/
 });
 
 /*
+Variant direct call over onDragAttribute
 handleDragStartStructureElement(event) {
     event.dataTransfer.setData('text', event.target.id);
     document.getElementById("imagePreviewForm").classList.add('kitodo-dragging');

@@ -147,7 +147,80 @@
                         </p:outputPanel>
                     </p:dataList>
 
+                    <!-- Unstructured media-->
+                    <p:outputPanel>
+                        <p:outputLabel value="#{msgs['dataEditor.unstructuredMedia']}"
+                                       styleClass="gallery-stripe-header stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"
+                                       a:data-stripe="0"/>
+                        <h:panelGroup id="unstructuredMedia"
+                                      layout="block">
+                            <p:outputPanel>
+                                <!-- Index 0 of stripes is used to retrieve the logical root element. -->
+                                <!--@elvariable id="currentMedia" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
+                                <p:dataList id="unstructuredMediaList"
+                                            styleClass="pageList"
+                                            itemStyleClass="structure-element-datalist-item"
+                                            value="#{DataEditorForm.galleryPanel.stripes.get(0).medias}"
+                                            binding="#{currentMedia}"
+                                            emptyMessage="#{msgs['noMedia']}"
+                                            var="media">
+
+                                    <p:panel id="unstructuredMediaPanel">
+                                        <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
+                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
+                                            <p:outputPanel styleClass="thumbnail-container"
+                                                           a:data-order="#{media.order}"
+                                                           a:data-stripe="0">
+                                                <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                                                <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                                rendered="#{media.showingInPreview}">
+                                                    <f:param name="mediaId"
+                                                             value="#{media.id}"/>
+                                                    <f:param name="process"
+                                                             value="#{DataEditorForm.process.id}"/>
+                                                    <f:param name="sessionId"
+                                                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                                                </p:graphicImage>
+                                                <h:panelGroup class="thumbnail-overlay">
+                                                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                </h:panelGroup>
+                                            </p:outputPanel>
+                                        </h:panelGroup>
+                                    </p:panel>
+
+                                </p:dataList>
+                            </p:outputPanel>
+                        </h:panelGroup>
+                    </p:outputPanel>
+
                 </p:fieldset>
+            </ui:fragment>
+
+            <!-- Pages in UNstructured view -->
+            <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' and not empty DataEditorForm.galleryPanel.medias}">
+                <div class="thumbnail-wrapper" >
+                    <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
+                               var="media">
+                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
+                            <p:panel a:data-order="#{media.order}">
+                                <h:panelGroup layout="block" styleClass="thumbnail-container">
+                                    <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                    rendered="#{media.showingInPreview}">
+                                        <f:param name="id"
+                                                 value="#{media.id}"/>
+                                        <f:param name="process"
+                                                 value="#{DataEditorForm.process.id}"/>
+                                        <f:param name="sessionId"
+                                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                                    </p:graphicImage>
+                                    <h:panelGroup styleClass="thumbnail-overlay">
+                                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                    </h:panelGroup>
+                                </h:panelGroup>
+                            </p:panel>
+                        </p:outputPanel>
+                    </ui:repeat>
+                </div>
             </ui:fragment>
 
             <!-- View current page with OpenLayers -->
