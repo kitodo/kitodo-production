@@ -22,12 +22,16 @@ import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.helper.metadata.pagination.PaginatorMode;
@@ -39,6 +43,7 @@ import org.primefaces.PrimeFaces;
  * Backing bean for the pagination panel.
  */
 public class PaginationPanel {
+    private static final Logger logger = LogManager.getLogger(PaginationPanel.class);
 
     private final DataEditorForm dataEditor;
     private boolean fictitiousCheckboxChecked = false;
@@ -332,7 +337,11 @@ public class PaginationPanel {
             Helper.setErrorMessage("fehlerBeimEinlesen", "No pages selected for pagination.");
             return;
         }
-        dataEditor.getMetadataPanel().preserve();
+        try {
+            dataEditor.getMetadataPanel().preserve();
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            logger.info(e.getMessage());
+        }
         List<Separator> pageSeparators = Separator.factory(ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS));
         String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
                 paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());

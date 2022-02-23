@@ -184,13 +184,9 @@ public class MetadataPanel implements Serializable {
     /**
      * Preserve metadata.
      */
-    public void preserve() {
-        try {
-            this.preserveLogical();
-            this.preservePhysical();
-        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
-            logger.info(e.getMessage());
-        }
+    public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        this.preserveLogical();
+        this.preservePhysical();
     }
 
     void preserveLogical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {

@@ -441,8 +441,8 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
     }
 
     private String save(boolean close) {
-        metadataPanel.preserve();
         try {
+            metadataPanel.preserve();
             structurePanel.preserve();
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
@@ -947,5 +947,16 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      */
     public boolean isFolderConfigurationComplete() {
         return folderConfigurationComplete;
+    }
+
+    /**
+     * Preserve changes in the metadata panel.
+     */
+    public void preserveMetadataPanel() {
+        try {
+            metadataPanel.preserve();
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            logger.info(e.getMessage());
+        }
     }
 }
