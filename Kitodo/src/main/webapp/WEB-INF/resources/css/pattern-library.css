@@ -102,7 +102,7 @@ label.ui-state-error {
     background-color: var(--pure-white) !important;
 }
 
-input.ui-state-error {
+.ui-state-error {
     background-color: var(--error-background) !important;
 }
 

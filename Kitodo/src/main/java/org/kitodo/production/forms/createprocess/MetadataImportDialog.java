@@ -93,29 +93,4 @@ public abstract class MetadataImportDialog {
             return new LinkedList<>();
         }
     }
-
-    /**
-     * Fill metadata fields in metadata tab with metadata values of first process in given list "processes"
-     * on successful import.
-     * @param processes list of TempProcess instances
-     */
-    void fillCreateProcessForm(LinkedList<TempProcess> processes) throws ProcessGenerationException, IOException {
-        this.createProcessForm.setProcesses(processes);
-        if (!processes.isEmpty() && Objects.nonNull(processes.getFirst())) {
-            TempProcess firstProcess = processes.getFirst();
-            if (Objects.nonNull(firstProcess.getWorkpiece())
-                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure())
-                    && Objects.nonNull(firstProcess.getWorkpiece().getLogicalStructure().getType())) {
-                firstProcess.verifyDocType();
-                this.createProcessForm.getProcessDataTab()
-                        .setDocType(firstProcess.getWorkpiece().getLogicalStructure().getType());
-            }
-            if (Objects.nonNull(firstProcess.getMetadataNodes())
-                    && firstProcess.getMetadataNodes().getLength() > 0) {
-                createProcessForm.getProcessMetadata().initializeProcessDetails(
-                        firstProcess.getWorkpiece().getLogicalStructure());
-                this.createProcessForm.getProcessDataTab().generateProcessTitleAndTiffHeader();
-            }
-        }
-    }
 }

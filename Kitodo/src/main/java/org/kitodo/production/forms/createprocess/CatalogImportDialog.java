@@ -32,7 +32,9 @@ import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
@@ -73,8 +75,6 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      * Get the full record with the given ID from the catalog.
      */
     public void getSelectedRecord() {
-        this.createProcessForm.setChildProcesses(new LinkedList<>());
-        this.createProcessForm.setProcesses(new LinkedList<>());
         getRecordById(Helper.getRequestParameter(ID_PARAMETER_NAME));
     }
 
@@ -151,13 +151,20 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             Helper.setErrorMessage("No record selected!");
         } else {
             try {
+                createProcessForm.setChildProcesses(new LinkedList<>());
+                createProcessForm.setProcesses(new LinkedList<>());
                 int projectId = this.createProcessForm.getProject().getId();
                 int templateId = this.createProcessForm.getTemplate().getId();
                 String opac = this.hitModel.getSelectedCatalog();
                 // import children
                 if (this.importChildren) {
-                    this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
-                            opac, this.currentRecordId, projectId, templateId, numberOfChildren));
+                    try {
+                        this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
+                                opac, this.currentRecordId, projectId, templateId, numberOfChildren));
+                    } catch (NoRecordFoundException e) {
+                        this.createProcessForm.setChildProcesses(new LinkedList<>());
+                        showGrowlMessage("Import error", e.getLocalizedMessage());
+                    }
                 }
                 // import ancestors
                 LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
@@ -165,24 +172,26 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                         this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
-                fillCreateProcessForm(processes);
+                this.createProcessForm.setProcesses(processes);
+                this.createProcessForm.fillCreateProcessForm(processes.getFirst());
 
                 String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
                 String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
-                    String.valueOf(processes.size()), opac);
+                        String.valueOf(processes.size()), opac);
                 showGrowlMessage(summary, detail);
 
                 if (this.importChildren) {
                     summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
                     detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
-                        String.valueOf(this.createProcessForm.getChildProcesses().size()));
+                            String.valueOf(this.createProcessForm.getChildProcesses().size()));
                     showGrowlMessage(summary, detail);
                 }
 
                 showRecord();
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
-                    | ParserConfigurationException | UnsupportedFormatException | SAXException | NoRecordFoundException
-                    | DAOException | ConfigException | TransformerException e) {
+                    | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
+                    | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
+                    | NoSuchMetadataFieldException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
         }
