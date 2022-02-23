@@ -33,7 +33,6 @@ import java.util.stream.Collectors;
 import javax.naming.ConfigurationException;
 
 import org.apache.commons.collections4.iterators.PeekingIterator;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
