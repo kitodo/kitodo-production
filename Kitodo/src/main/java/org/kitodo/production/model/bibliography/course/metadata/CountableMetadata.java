@@ -301,7 +301,7 @@ public class CountableMetadata {
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
         try {
-            for (Metadata metadata : metadataDetail.getMetadata()) {
+            for (Metadata metadata : metadataDetail.getMetadataWithFilledValues()) {
                 stringBuilder.append(metadata);
             }
         } catch (InvalidMetadataValueException e) {
