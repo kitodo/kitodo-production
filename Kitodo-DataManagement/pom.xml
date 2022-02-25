@@ -255,6 +255,12 @@
                                 <version>${mariadb-java-client.version}</version>
                                 <scope>runtime</scope>
                             </dependency>
+                            <dependency>
+                                <groupId>org.flywaydb</groupId>
+                                <artifactId>flyway-mysql</artifactId>
+                                <version>${flyway-maven-plugin.version}</version>
+                                <scope>runtime</scope>
+                            </dependency>
                         </dependencies>
                         <executions>
                             <execution>
