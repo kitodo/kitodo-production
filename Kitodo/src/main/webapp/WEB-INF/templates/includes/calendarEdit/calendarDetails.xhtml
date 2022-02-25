@@ -15,6 +15,25 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui"
         xmlns:h="http://xmlns.jcp.org/jsf/html">
+    <h:outputScript>
+        $(document).ready(function(){
+            $(document).on("keypress", "#editForm\\:calendarTabView\\:yearInput", function(event) {
+                if(event.key == 'Enter') {
+                    event.preventDefault();
+                    event.target.blur();
+                    document.activeElement = event.currentTarget;
+                }
+            });
+        });
+        $(document).ready(function(){
+            $(document).on("keypress", function(event) {
+                if(event.key == 'Enter') {
+                    event.preventDefault();
+                }
+            });
+        });
+    </h:outputScript>
+
     <h:panelGrid id="calendarDetailsLayout"
                  columns="2">
         <h:panelGroup>
@@ -28,11 +47,14 @@
                                  icon="fa fa-arrow-left"
                                  update="editForm:calendarTabView:calendarDetailsLayout"/>
                 <p:inputNumber id="yearInput"
+
                                value="#{CalendarForm.year}"
+                               maxValue="2025"
                                decimalPlaces="0"
                                thousandSeparator="">
-                    <p:ajax event="change"
+                    <p:ajax event="blur"
                             update="editForm:calendarTabView:calendarDetailsLayout"/>
+
                 </p:inputNumber>
                 <p:commandButton title="#{msgs['calendar.year.next']}"
                                  action="#{CalendarForm.nextYear}"

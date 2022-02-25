@@ -16,13 +16,19 @@ import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.UnreachableCodeException;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 
@@ -32,6 +38,8 @@ import org.kitodo.production.model.bibliography.course.metadata.CountableMetadat
  * <em>type</em> of issue.
  */
 public class IndividualIssue {
+    private static final Logger logger = LogManager.getLogger(IndividualIssue.class);
+
     /**
      * The constant DAY holds a DateTimeFormatter used to get the a two-digit
      * day (01—31) from the newspaper’s date.
@@ -229,7 +237,7 @@ public class IndividualIssue {
      * @return a list of pairs, each consisting of the metadata type name and
      *         the value
      */
-    public Iterable<MetadataEntry> getMetadata(int monthOfYear, int dayOfMonth) {
+    public Iterable<Metadata> getMetadata(int monthOfYear, int dayOfMonth) {
         return getMetadata(MonthDay.of(monthOfYear, dayOfMonth));
     }
 
@@ -242,15 +250,25 @@ public class IndividualIssue {
      * @return a list of pairs, each consisting of the metadata type name and
      *         the value
      */
-    public Iterable<MetadataEntry> getMetadata(MonthDay yearStart) {
-        List<MetadataEntry> result = new ArrayList<>();
+    public Iterable<Metadata> getMetadata(MonthDay yearStart) {
+        List<Metadata> result = new ArrayList<>();
         Pair<LocalDate, Issue> selectedIssue = Pair.of(date, issue);
         for (CountableMetadata counter : block.getMetadata(selectedIssue, null)) {
-            String value = counter.getValue(selectedIssue, yearStart);
-            MetadataEntry entry = new MetadataEntry();
-            entry.setKey(counter.getMetadataType());
-            entry.setValue(value);
-            result.add(entry);
+            Collection<Metadata> metadata = Collections.emptyList();
+            try {
+                metadata = counter.getMetadataDetail().getMetadata();
+            } catch (InvalidMetadataValueException e) {
+                logger.error(e.getLocalizedMessage());
+            }
+            if (counter.getMetadataDetail().getInput().equals("inputText")
+                    || counter.getMetadataDetail().getInput().equals("inputTextarea")) {
+                String value = counter.getValue(selectedIssue, yearStart);
+                if (metadata.stream().findFirst().isPresent()
+                        && metadata.stream().findFirst().get() instanceof MetadataEntry) {
+                    ((MetadataEntry) metadata.stream().findFirst().get()).setValue(value);
+                }
+            }
+            result.addAll(metadata);
         }
         return result;
     }

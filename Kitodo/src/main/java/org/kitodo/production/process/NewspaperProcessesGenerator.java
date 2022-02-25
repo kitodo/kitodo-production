@@ -314,7 +314,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if something goes wrong when reading or writing one of the
      *             affected files
      */
-    private void initialize() throws ConfigurationException, IOException, DoctypeMissingException {
+    public void initialize() throws ConfigurationException, IOException, DoctypeMissingException {
         final long begin = System.nanoTime();
 
         overallMetadataFileUri = processService.getMetadataFileUri(overallProcess);
@@ -531,7 +531,13 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private String makeTitle(String definition, Map<String, String> genericFields) throws ProcessGenerationException {
+    /**
+     * Generate process title.
+     * @param definition as String
+     * @param genericFields a map with generic fields that can be configured for process
+     * @return process title as String
+     */
+    public String makeTitle(String definition, Map<String, String> genericFields) throws ProcessGenerationException {
         String title;
         boolean prefixWithProcessTitle = definition.startsWith("+");
         if (prefixWithProcessTitle) {
@@ -801,20 +807,26 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private boolean isDuplicatedTitles() throws ProcessGenerationException, DataException {
+    /**
+     * Check if process with the same processtitle already exists.
+     * @return 'true' if Duplicated titles are found and 'false' if not
+     */
+    public boolean isDuplicatedTitles() throws ProcessGenerationException, DataException {
         List<List<IndividualIssue>> processes = course.getProcesses();
         List<String> issueTitles = new ArrayList<>();
+        boolean check = false;
         for (List<IndividualIssue> individualProcess : processes) {
             for (IndividualIssue individualIssue : individualProcess) {
                 Map<String, String> genericFields = individualIssue.getGenericFields();
                 String title = makeTitle(issueDivisionView.getProcessTitle().orElse("+'_'+#YEAR+#MONTH+#DAY+#ISSU"),
                     genericFields);
                 if (!ServiceManager.getProcessService().findByTitle(title).isEmpty() || issueTitles.contains(title)) {
-                    return true;
+                    Helper.setErrorMessage("duplicatedTitles", individualIssue.toString());
+                    check = true;
                 }
                 issueTitles.add(title);
             }
         }
-        return false;
+        return check;
     }
 }

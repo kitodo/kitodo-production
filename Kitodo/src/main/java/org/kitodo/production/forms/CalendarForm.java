@@ -35,18 +35,22 @@ import java.util.regex.Pattern;
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
+import javax.naming.ConfigurationException;
 import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.DoctypeMissingException;
+import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
@@ -58,8 +62,10 @@ import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
+import org.kitodo.production.process.NewspaperProcessesGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.calendar.CalendarService;
+import org.kitodo.production.services.data.ImportService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -110,7 +116,7 @@ public class CalendarForm implements Serializable {
     private UploadedFile uploadedFile;
     private LocalDate selectedDate;
     private Block selectedBlock = null;
-    private List<MetadataViewInterface> metadataTypes = null;
+    private List<ProcessDetail> metadataTypes = null;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -138,6 +144,7 @@ public class CalendarForm implements Serializable {
     public CalendarForm() {
         issueColours = ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";");
         course = new Course();
+
     }
 
     /**
@@ -596,7 +603,8 @@ public class CalendarForm implements Serializable {
      */
     public void addIssue(Block block) {
         if (Objects.nonNull(block)) {
-            Issue issue = block.addIssue();
+            block.addIssue();
+            block.checkIssuesWithSameHeading();
         }
     }
 
@@ -745,7 +753,7 @@ public class CalendarForm implements Serializable {
         if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
             CountableMetadata metadata = new CountableMetadata(selectedBlock, Pair.of(selectedIssue.getDate(), selectedIssue.getIssue()));
             if (!getAllMetadataTypes().isEmpty()) {
-                metadata.setMetadataType(getAllMetadataTypes().get(0).getLabel());
+                metadata.setMetadataDetail(getAllMetadataTypes().get(0));
             }
             selectedBlock.addMetadata(metadata);
         } else {
@@ -818,11 +826,11 @@ public class CalendarForm implements Serializable {
      *
      * @return the map of metadata types
      */
-    public List<MetadataViewInterface> getAllMetadataTypes() {
+    public List<ProcessDetail> getAllMetadataTypes() {
         if (Objects.isNull(metadataTypes)) {
             try {
                 Process process = ServiceManager.getProcessService().getById(parentId);
-                metadataTypes = CalendarService.getAddableMetadata(process);
+                metadataTypes = CalendarService.getAddableMetadataTable(process);
             } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
             }
@@ -863,8 +871,8 @@ public class CalendarForm implements Serializable {
      * @param issue the issue to calculate the metadata for
      * @return the metadata value as java.lang.String
      */
-    public String getMetadataValue(CountableMetadata metadata, LocalDate date, Issue issue) {
-        if (Objects.nonNull(metadata)) {
+    public String getTextMetadataValue(CountableMetadata metadata, LocalDate date, Issue issue) {
+        if (Objects.nonNull(metadata) && metadata.getMetadataDetail() instanceof ProcessTextMetadata) {
             return metadata.getValue(new ImmutablePair<>(date, issue), course.getYearStart());
         }
         return "";
@@ -877,7 +885,7 @@ public class CalendarForm implements Serializable {
      * @param block the block to get the metadata for
      * @return list of pairs containing the metadata type and the date of its earliest occurrence
      */
-    public List<Pair<String, LocalDate>> getMetadataSummary(Block block) {
+    public List<Pair<ProcessDetail, LocalDate>> getMetadataSummary(Block block) {
         return CalendarService.getMetadataSummary(block);
     }
 
@@ -893,6 +901,55 @@ public class CalendarForm implements Serializable {
         } catch (IllegalArgumentException e) {
             Helper.setErrorMessage(e);
             return key;
+        }
+    }
+
+    /**
+     * Get the value of the given processDetail.
+     *
+     * @param processDetail
+     *            as ProcessDetail
+     * @return the value as a java.lang.String
+     */
+    public String getMetadataValue(ProcessDetail processDetail) {
+        return ImportService.getProcessDetailValue(processDetail);
+    }
+
+    /**
+     * Check if process with the same processtitle already exists.
+     */
+    public void checkDuplicatedTitles() throws ProcessGenerationException, DataException, DAOException,
+            ConfigurationException, IOException, DoctypeMissingException {
+        if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
+            Process process = ServiceManager.getProcessService().getById(parentId);
+            NewspaperProcessesGenerator newspaperProcessesGenerator = new NewspaperProcessesGenerator(process, course);
+            newspaperProcessesGenerator.initialize();
+            if (!newspaperProcessesGenerator.isDuplicatedTitles()) {
+                PrimeFaces.current().executeScript("PF('createProcessesConfirmDialog').show();");
+            }
+        }
+    }
+
+    /**
+     * Get first issue that's appear on the selected Date.
+     * @return issue
+     */
+    public Issue getFirstMatchIssue() {
+        if (selectedDate != null) {
+            return getCalendarSheet().get(selectedDate.getDayOfMonth() - 1).get(selectedDate.getMonthValue() - 1).getIssues()
+                    .parallelStream()
+                    .filter(issue -> issue.isMatch(selectedDate))
+                    .findFirst().orElse(null);
+        }
+        return null;
+    }
+
+    /**
+     * add Metadata to all Issues that's appear on the selected Date.
+     */
+    public void addMetadataToAllMatchIssues() {
+        if (getFirstMatchIssue() != null) {
+            addMetadata(getFirstMatchIssue());
         }
     }
 }

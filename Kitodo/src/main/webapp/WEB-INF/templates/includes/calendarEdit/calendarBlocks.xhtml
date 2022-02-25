@@ -15,68 +15,99 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui"
         xmlns:h="http://xmlns.jcp.org/jsf/html">
+
+    <h:outputScript target="body">
+        function hide(element) {
+            $('.p-datepicker-panel').hide();
+            $(element).blur();
+        }
+
+        function hideAndFocusNextInput(element) {
+            hide(element);
+            var inputs = $('.ui-inputfield');
+            var nextInput = inputs.get(inputs.index(document.activeElement) + 1);
+            if (nextInput) {
+                nextInput.focus();
+            }
+        }
+    </h:outputScript>
     <!-- Blocks -->
     <p:dataView id="blockList"
                 var="block"
                 value="#{CalendarForm.course}">
         <p:dataViewListItem>
-            <h:outputText value="#{msgs['calendar.block']} #{CalendarForm.course.indexOf(block)+1}" styleClass="block-label"/>
+            <h:outputText value="#{msgs['calendar.block']} #{CalendarForm.course.indexOf(block)+1}"
+                          styleClass="block-label"/>
             <h:panelGrid columns="2" columnClasses="block-layout">
                 <h:panelGroup>
-                    <div>
-                        <p:outputLabel value="#{msgs['calendar.block.firstAppearance']}"
-                                       styleClass="input" for="blockFirstAppearance"/>
-                        <p:datePicker id="blockFirstAppearance"
-                                      value="#{block.firstAppearanceDate}"
-                                      yearNavigator="true"
-                                      yearRange="1605:2025"
-                                      pattern="dd.MM.yyyy"
-                                      autocomplete="off"
-                                      required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
-                            <p:ajax event="change"
-                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
-                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
-                            <p:ajax event="dateSelect"
-                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
-                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
-                        </p:datePicker>
-                    </div>
-                    <div>
-                        <p:outputLabel value="#{msgs['calendar.block.lastAppearance']}"
-                                       styleClass="input"
-                                       for="blockLastAppearance"/>
-                        <p:datePicker id="blockLastAppearance"
-                                      value="#{block.lastAppearanceDate}"
-                                      yearNavigator="true"
-                                      yearRange="1605:2025"
-                                      pattern="dd.MM.yyyy"
-                                      autocomplete="off"
-                                      required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
-                            <p:ajax event="change"
-                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
-                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
-                            <p:ajax event="dateSelect"
-                                    listener="#{CalendarForm.checkBlockPlausibility(block)}"
-                                    update="editForm:calendarTabView:calendarDetailsLayout"/>
-                        </p:datePicker>
-                    </div>
-                    <h:outputText value="#{msgs['granularity.issueCount']} #{block.countIndividualIssues()}"
-                                  styleClass="number-of-issues"/>
+                    <p:outputLabel value="#{msgs['calendar.block.firstAppearance']}"
+                                   styleClass="input"
+                                   for="blockFirstAppearance"/>
+                    <p:datePicker id="blockFirstAppearance"
+                                  value="#{block.firstAppearanceDate}"
+                                  yearNavigator="true"
+                                  yearRange="1605:2025"
+                                  pattern="dd.MM.yyyy"
+                                  autocomplete="off"
+                                  required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                        <p:ajax event="change" oncomplete="hideAndFocusNextInput(this);"
+                                listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                update="editForm:calendarTabView:calendarDetailsLayout"/>
+                        <p:ajax event="dateSelect" oncomplete="hideAndFocusNextInput(this);"
+                                listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                update="editForm:calendarTabView:calendarDetailsLayout"/>
+                    </p:datePicker>
                 </h:panelGroup>
                 <h:panelGroup>
+                    <p:outputLabel value="#{msgs['calendar.block.lastAppearance']}"
+                                   styleClass="input"
+                                   for="blockLastAppearance"/>
+                    <p:datePicker id="blockLastAppearance"
+                                  value="#{block.lastAppearanceDate}"
+                                  yearNavigator="true"
+                                  yearRange="1605:2025"
+                                  pattern="dd.MM.yyyy"
+                                  autocomplete="off"
+                                  required="#{empty param['editForm:calendarTabView:blockList:'.concat(CalendarForm.course.indexOf(block)).concat(':removeBlock')]}">
+                        <p:ajax event="change" oncomplete="hide(this);"
+                                listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                update="editForm:calendarTabView:calendarDetailsLayout"/>
+                        <p:ajax event="dateSelect" oncomplete="hide(this);"
+                                listener="#{CalendarForm.checkBlockPlausibility(block)}"
+                                update="editForm:calendarTabView:calendarDetailsLayout"/>
+                    </p:datePicker>
+                </h:panelGroup>
+            </h:panelGrid>
+            <h:panelGrid rendered="#{block.firstAppearanceDate ne null and block.lastAppearanceDate ne null}"
+                         style="margin-top: 10px; border: solid 1px var(--medium-gray); width: 100%; padding-bottom: 5px; padding-top: 5px">
+                <h:panelGroup>
+                    <div>
+                        <p:commandButton action="#{CalendarForm.addIssue(block)}"
+                                         value="#{msgs['calendar.issue.add']}"
+                                         icon="fa fa-plus"
+                                         styleClass="callto"
+                                         iconPos="right"
+                                         title="#{msgs['calendar.issue.add']}"
+                                         update="editForm:calendarTabView:calendarDetailsLayout"/>
+                    </div>
                     <div>
                         <!-- Issues -->
                         <p:dataTable id="issueList"
                                      var="issue"
-                                     value="#{block.issues}">
-                            <p:column>
-                                <p:inputText value="#{issue.heading}">
-                                    <p:ajax event="change"
+                                     rowIndexVar="rowIndex"
+                                     style="padding-left: 10px;padding-right: 10px;position: relative;"
+                                     value="#{block.issues}"
+                                     rendered="#{block.issues.size() ne 0}">
+                            <p:column headerText="#{msgs['name']}" width="200" >
+                                <p:inputText value="#{issue.heading}"
+                                             id="issueName"
+                                             styleClass="input-with-button" >
+                                    <p:ajax event="blur" listener="#{block.checkIssuesWithSameHeading()}"
                                             update="editForm:calendarTabView:calendarDetailsLayout"/>
                                 </p:inputText>
                                 <span class="issue-badge"
-                                      style="background-color: #{CalendarForm.getIssueColor(block.issues.indexOf(issue))};
-                                             border-color: #{CalendarForm.getIssueColor(block.issues.indexOf(issue))};"/>
+                                      style="background-color: #{CalendarForm.getIssueColor(rowIndex)};
+                                             border-color: #{CalendarForm.getIssueColor(rowIndex)};"/>
                             </p:column>
                             <p:column headerText="#{msgs['calendar.day.1']}"
                                       width="30">
@@ -141,13 +172,12 @@
                                                  update="editForm:calendarTabView:calendarDetailsLayout"/>
                             </p:column>
                         </p:dataTable>
-                        <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide();"/>
-                        <p:commandButton action="#{CalendarForm.addIssue(block)}"
-                                         value="#{msgs['calendar.issue.add']}"
-                                         icon="fa fa-plus"
-                                         iconPos="right"
-                                         title="#{msgs['calendar.issue.add']}"
-                                         update="editForm:calendarTabView:calendarDetailsLayout"/>
+                        <p:ajaxStatus onerror="$('#loadingScreen').hide();" onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide();"/>
+                    </div>
+                    <div>
+                        <h:outputText value="#{msgs['granularity.issueCount']} #{block.countIndividualIssues()}"
+                                      styleClass="number-of-issues"
+                                      style="font-weight: bold;text-align: right;"/>
                     </div>
                 </h:panelGroup>
             </h:panelGrid>
@@ -159,7 +189,9 @@
                             value="#{CalendarForm.getMetadataSummary(block)}">
                     <p:dataViewListItem>
                         <h:outputText styleClass="label"
-                                      value="#{CalendarForm.getMetadataTranslation(metadata.key)}
+                                      value="#{CalendarForm.getMetadataTranslation(metadata.key.metadataID)}
+                                             #{msgs.metadataWithValue}
+                                             '#{CalendarForm.getMetadataValue(metadata.key)}'
                                              #{msgs['calendar.metadata.firstAppearance']}
                                              #{metadata.value}"/>
                         <p:commandButton action="#{CalendarForm.setSelectedDate(metadata.value)}"
@@ -180,9 +212,13 @@
                              iconPos="right"
                              value="#{msgs['calendar.block.remove']}"
                              title="#{msgs['calendar.block.remove']}"
-                             styleClass="remove-block"
+                             styleClass="remove-block secondary"
                              style="display: inline-block"
-                             update="editForm:calendarTabView:calendarDetailsLayout"/>
+                             update="editForm:calendarTabView:calendarDetailsLayout">
+                <p:confirm severity="alert"
+                           message="#{msgs['calendar.block.remove.query']}"
+                           header="#{msgs.confirmDelete}"/>
+            </p:commandButton>
             <p:commandButton id="copyBlock"
                              action="#{CalendarForm.copyBlock(block)}"
                              value="#{msgs['calendar.block.add']}"

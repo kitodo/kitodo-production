@@ -17,6 +17,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -28,6 +34,8 @@ import org.kitodo.production.services.calendar.CalendarService;
  * Generic metadata that is created using a counter.
  */
 public class CountableMetadata {
+    private static final Logger logger = LogManager.getLogger(CountableMetadata.class);
+
     /**
      * Block this metadata counter belongs to. The block is needed to have
      * access to the other issues, which—together with the start value and step
@@ -61,6 +69,8 @@ public class CountableMetadata {
      * incremented.
      */
     private Granularity stepSize;
+
+    private ProcessDetail metadataDetail;
 
     /**
      * Creates a new countable metadata.
@@ -259,7 +269,27 @@ public class CountableMetadata {
      *            the start value to set
      */
     public void setStartValue(String startValue) {
+        ((ProcessTextMetadata)metadataDetail).setValue(startValue);
         this.startValue = startValue;
+    }
+
+    /**
+     * Gets metadataDetail.
+     *
+     * @return value of metadataDetail
+     */
+    public ProcessDetail getMetadataDetail() {
+        return metadataDetail;
+    }
+
+    /**
+     * Sets metadataDetail.
+     *
+     * @param metadataDetail value of metadataDetail
+     */
+    public void setMetadataDetail(ProcessDetail metadataDetail) {
+        this.metadataDetail = metadataDetail;
+        this.metadataType = this.metadataDetail.getMetadataID();
     }
 
     /**
@@ -270,7 +300,13 @@ public class CountableMetadata {
     @Override
     public String toString() {
         StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append(startValue);
+        try {
+            for (Metadata metadata : metadataDetail.getMetadata()) {
+                stringBuilder.append(metadata);
+            }
+        } catch (InvalidMetadataValueException e) {
+            logger.error(e.getMessage());
+        }
         stringBuilder.append(" from ");
         stringBuilder.append(DateTimeFormatter.ISO_DATE.format(create.getLeft()));
         stringBuilder.append(", ");
@@ -283,8 +319,10 @@ public class CountableMetadata {
             stringBuilder.append(", ");
             stringBuilder.append(delete.getRight().getHeading());
         }
-        stringBuilder.append(", step size ");
-        stringBuilder.append(stepSize);
+        if (Objects.nonNull(stepSize)) {
+            stringBuilder.append(", step size ");
+            stringBuilder.append(stepSize);
+        }
         return stringBuilder.toString();
     }
 }
