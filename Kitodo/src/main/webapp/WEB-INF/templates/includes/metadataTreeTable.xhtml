@@ -20,18 +20,18 @@
     <!-- parameters:
            * root: table data tree (org.primefaces.model.TreeNode)
            * readOnly: whether user can edit values (boolean)
-           * buttonUpdate: update action of copy/delete buttons (String); if empty, no buttons are rendered
+           * Form: "DataEditorForm" or "CreateProcessForm"
      -->
 
     <!--@elvariable id="readOnly" type="boolean"-->
     <!--@elvariable id="root" type="org.primefaces.model.TreeNode"-->
-    <!--@elvariable id="buttonUpdate" type="java.lang.String"-->
+    <!--@elvariable id="Form" type="DataEditorForm" or "CreateProcessForm"-->
     <!--@elvariable id="node" type="org.primefaces.model.TreeNode"-->
-    <p:remoteCommand name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)" />
     <p:treeTable value="#{root}"
                  var="item"
                  nodeVar="node"
                  styleClass="no-header"
+                 widgetVar="metadataTable"
                  id="metadataTable">
         <p:column>
             <span class="input-wrapper">
@@ -48,7 +48,7 @@
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:inputText>
                 </h:panelGroup>
 
@@ -61,7 +61,7 @@
                                      disabled="#{not item.editable or readOnly}"
                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:inputTextarea>
                 </h:panelGroup>
 
@@ -73,7 +73,7 @@
                                disabled="#{not item.editable or readOnly}"
                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:spinner>
                 </h:panelGroup>
 
@@ -86,7 +86,7 @@
                                 showOn="button"
                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
-                        <p:ajax event="dateSelect" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="dateSelect" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:calendar>
                 </h:panelGroup>
 
@@ -99,7 +99,7 @@
                                       disabled="#{not item.editable or readOnly}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
 
@@ -117,7 +117,7 @@
                                       itemLabel="#{msgs.notSelected}"
                                       noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
 
@@ -131,7 +131,7 @@
                                       layout="grid"
                                       columns="1">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:selectOneRadio>
                 </h:panelGroup>
 
@@ -141,54 +141,54 @@
                     <p:selectBooleanCheckbox id="selectBooleanCheckbox"
                                              disabled="#{not item.editable or readOnly}"
                                              value="#{item.active}">
-                        <p:ajax event="change" oncomplete="#{request.requestURI.contains('metadataEditor') ? 'preserveMetadata(); updateTitleMetadata();' : ''}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
                     </p:selectBooleanCheckbox>
                 </h:panelGroup>
 
                 <!-- button to add metadata to group -->
-                <h:panelGroup title="#{DataEditorForm.metadataPanel.metadataAddableToGroup(node) ? msgs['dataEditor.addMetadata.toGroup'] : msgs['dataEditor.addMetadata.noMetadataAddableToGroup']}"
-                              rendered="#{request.requestURI.contains('metadataEditor') and item.input eq 'dataTable' and not readOnly}"
-                              styleClass="ui-button">
+                <h:panelGroup title="#{Form.metadataAddableToGroup(node) ? msgs['dataEditor.addMetadata.toGroup'] : msgs['dataEditor.addMetadata.noMetadataAddableToGroup']}"
+                              rendered="#{item.input eq 'dataTable' and not readOnly}"
+                              styleClass="metadata-button">
                     <p:commandButton id="addMetadataToGroup"
-                                     action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForGroup(node)}"
-                                     disabled="#{not DataEditorForm.metadataPanel.metadataAddableToGroup(node)}"
+                                     action="#{Form.prepareAddableMetadataForGroup(node)}"
+                                     disabled="#{not Form.metadataAddableToGroup(node)}"
                                      icon="fa fa-plus"
                                      styleClass="secondary"
-                                     update="addMetadataForm"
+                                     update="addMetadataDialog"
                                      oncomplete="PF('addMetadataDialog').show()"/>
                 </h:panelGroup>
 
                 <!-- button to delete -->
-                <p:commandButton id="deleteMetadata"
-                                 update="#{buttonUpdate}"
-                                 icon="fa fa-trash"
-                                 immediate="true"
-                                 tabindex="-1"
-                                 title="#{msgs.metadataDelete}"
-                                 styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                 onclick="$('#loadingScreen').show()"
-                                 oncomplete="$('#loadingScreen').hide()"
-                                 action="#{item.delete}"
-                                 rendered="#{not empty buttonUpdate and not readOnly}"
-                                 disabled="#{(item.getOccurrences() le 1) and (item.isRequired() || DataEditorForm.rulesetManagement.isAlwaysShowingForKey(item.getMetadataID()))}"
-                />
-
-                <!-- button to duplicate -->
-                <h:panelGroup title="#{DataEditorForm.canBeAdded(item) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
-                    <p:commandButton id="duplicateMetadata"
-                                     update="#{buttonUpdate}"
-                                     icon="fa fa-clone"
-                                     immediate="true"
+                <h:panelGroup styleClass="metadata-button" title="#{Form.canBeDeleted(item) ? msgs.metadataDelete :  msgs.metadataDeleteNotAllowed}">
+                    <p:commandButton id="deleteMetadata"
+                                     update="metadataTable"
+                                     icon="fa fa-trash"
                                      tabindex="-1"
                                      styleClass="secondary #{readOnly ? 'disabled' : ''}"
-                                     disabled="#{not DataEditorForm.canBeAdded(item)}"
+                                     onclick="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide()"
+                                     action="#{item.delete}"
+                                     rendered="#{not readOnly}"
+                                     disabled="#{!Form.canBeDeleted(item)}"
+                    />
+                </h:panelGroup>
+
+                <!-- button to duplicate -->
+                <h:panelGroup title="#{Form.canBeAdded(node) ? msgs.metadataDuplicate : msgs['dataEditor.addMetadata.maximumNumberOfMetadata']}">
+                    <p:commandButton id="duplicateMetadata"
+                                     update="metadataTable"
+                                     icon="fa fa-clone"
+                                     tabindex="-1"
+                                     styleClass="secondary #{readOnly ? 'disabled' : ''}"
+                                     disabled="#{not Form.canBeAdded(node)}"
                                      onclick="$('#loadingScreen').show()"
                                      oncomplete="$('#loadingScreen').hide()"
                                      action="#{item.copy}"
-                                     rendered="#{not empty buttonUpdate and not readOnly}"
+                                     rendered="#{not readOnly}"
                     />
                 </h:panelGroup>
             </span>
         </p:column>
     </p:treeTable>
+    <p:remoteCommand  name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)"  />
 </ui:composition>

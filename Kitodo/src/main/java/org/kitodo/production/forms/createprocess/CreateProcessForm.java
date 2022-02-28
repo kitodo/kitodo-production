@@ -48,6 +48,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
@@ -55,11 +56,13 @@ import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 @Named("CreateProcessForm")
 @ViewScoped
-public class CreateProcessForm extends BaseForm implements RulesetSetupInterface {
+public class CreateProcessForm extends BaseForm implements MetadataTreeTableInterface, RulesetSetupInterface {
 
     private static final Logger logger = LogManager.getLogger(CreateProcessForm.class);
 
@@ -69,6 +72,7 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
     private final ProcessMetadata processMetadata = new ProcessMetadata(this);
+    private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     private RulesetManagementInterface rulesetManagement;
     private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
@@ -192,6 +196,14 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public TitleRecordLinkTab getTitleRecordLinkTab() {
         return titleRecordLinkTab;
+    }
+
+    /**
+     * Get addMetadataDialog.
+     * @return addMetadataDialog
+     */
+    public AddMetadataDialog getAddMetadataDialog() {
+        return addMetadataDialog;
     }
 
     /**
@@ -583,5 +595,60 @@ public class CreateProcessForm extends BaseForm implements RulesetSetupInterface
      */
     public String getReferringView() {
         return this.referringView;
+    }
+
+    /**
+     * Check and return whether the given ProcessDetail 'processDetail' is contained in the current list of addable
+     * metadata types in the addDocStrucTypeDialog.
+     *
+     * @param treeNode treeNode to be added
+     * @return whether the given ProcessDetail can be added or not
+     */
+    public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
+        if (Objects.isNull(treeNode.getParent().getParent())) {
+            if (Objects.nonNull(processMetadata.getSelectedMetadataTreeNode())
+                    || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+                this.addMetadataDialog.prepareAddableMetadataForStructure();
+            }
+        } else if (!Objects.equals(processMetadata.getSelectedMetadataTreeNode(), treeNode.getParent())
+                || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+            prepareAddableMetadataForGroup(treeNode.getParent());
+        }
+        if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
+            return addMetadataDialog.getAddableMetadata()
+                    .stream()
+                    .map(SelectItem::getValue)
+                    .collect(Collectors.toList())
+                    .contains(((ProcessDetail) treeNode.getData()).getMetadataID());
+        }
+        return false;
+    }
+
+    @Override
+    public boolean canBeDeleted(ProcessDetail processDetail) {
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+                || (!processDetail.isRequired() && !this.rulesetManagement.isAlwaysShowingForKey(processDetail.getMetadataID()));
+    }
+
+    /**
+     * Check and return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can
+     * be added to it or not.
+     *
+     * @param metadataNode TreeNode for which the check is performed
+     * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
+     */
+    public boolean metadataAddableToGroup(TreeNode metadataNode) {
+        if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
+            return !(DataEditorService.getAddableMetadataForGroup(getMainProcess().getRuleset(), metadataNode).isEmpty());
+        }
+        return false;
+    }
+
+    /**
+     * Prepare addable metadata for metadata group.
+     * @param treeNode metadataGroup treeNode
+     */
+    public void prepareAddableMetadataForGroup(TreeNode treeNode) {
+        addMetadataDialog.prepareAddableMetadataForGroup(getMainProcess().getRuleset(), treeNode);
     }
 }

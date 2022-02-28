@@ -71,10 +71,16 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         }
     }
 
-    @Override
-    public Collection<Metadata> getMetadata() {
+    /**
+     * Returns the metadata from this row.
+     * @param skipEmpty boolean
+     * @return the metadata from this row
+     * @throws InvalidMetadataValueException
+     *             if the metadata form contains syntactically wrong input
+     */
+    public Collection<Metadata> getMetadata(boolean skipEmpty) {
         value = value.trim();
-        if (value.isEmpty()) {
+        if (skipEmpty && value.isEmpty()) {
             return Collections.emptyList();
         }
         /* if (!settings.isValid(value)) {
@@ -85,6 +91,11 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
         entry.setDomain(DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION)));
         entry.setValue(value);
         return Collections.singletonList(entry);
+    }
+
+    @Override
+    public Collection<Metadata> getMetadataWithFilledValues() {
+        return getMetadata(true);
     }
 
     @Override

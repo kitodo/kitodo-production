@@ -256,7 +256,7 @@ public class IndividualIssue {
         for (CountableMetadata counter : block.getMetadata(selectedIssue, null)) {
             Collection<Metadata> metadata = Collections.emptyList();
             try {
-                metadata = counter.getMetadataDetail().getMetadata();
+                metadata = counter.getMetadataDetail().getMetadataWithFilledValues();
             } catch (InvalidMetadataValueException e) {
                 logger.error(e.getLocalizedMessage());
             }

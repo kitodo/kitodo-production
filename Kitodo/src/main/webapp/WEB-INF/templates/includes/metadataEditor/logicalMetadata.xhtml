@@ -26,8 +26,8 @@
         <h:form id="metadata">
             <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
                 <ui:param name="root" value="#{DataEditorForm.metadataPanel.logicalMetadataRows}" />
-                <ui:param name="buttonUpdate" value="metadataAccordion:metadata:metadataTable" />
                 <ui:param name="readOnly" value="#{readOnly}" />
+                <ui:param name="Form" value="#{DataEditorForm}"/>
             </ui:include>
 
             <p:panelGrid style="margin-top:10px;"

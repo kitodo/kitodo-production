@@ -39,6 +39,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -158,6 +159,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         this(template.container, null, template.metadataView, template.label, template.metadataKey,
                 new ArrayList<>(template.metadata));
         copy = true;
+        hiddenMetadata = template.hiddenMetadata;
+        treeNode = new DefaultTreeNode(this, template.getTreeNode().getParent());
+        createMetadataTable();
+        treeNode.setExpanded(true);
     }
 
     /**
@@ -165,9 +170,19 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     private void createMetadataTable() {
         // the existing metadata is passed to the rule set, which sorts it
-        List<MetadataViewWithValuesInterface> tableData = metadataView
-                .getSortedVisibleMetadata(addLabels(metadata), additionallySelectedFields);
-
+        List<MetadataViewWithValuesInterface> tableData = null;
+        if (Objects.nonNull(treeNode) && !treeNode.getChildren().isEmpty()) {
+            try {
+                tableData = metadataView.getSortedVisibleMetadata(
+                        DataEditorService.getExistingMetadataRows(treeNode.getChildren()),
+                        additionallySelectedFields);
+            } catch (InvalidMetadataValueException e) {
+                logger.error(e.getLocalizedMessage());
+            }
+        } else {
+            tableData = metadataView
+                    .getSortedVisibleMetadata(addLabels(metadata), additionallySelectedFields);
+        }
         treeNode.getChildren().clear();
         hiddenMetadata = Collections.emptyList();
         for (MetadataViewWithValuesInterface rowData : tableData) {
@@ -401,15 +416,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             TreeNode child = children.get(index);
             Object childData = child.getData();
             if (Objects.equals(childData, processDetail)) {
-                Object copyData = null;
+                TreeNode copy = null;
                 if (childData instanceof ProcessSimpleMetadata) {
-                    copyData = ((ProcessSimpleMetadata) childData).getClone();
+                    ProcessSimpleMetadata copyData = ((ProcessSimpleMetadata) childData).getClone();
+                    copy = new DefaultTreeNode(copyData, treeNode);
+                    copy.setExpanded(child.isExpanded());
                 } else if (childData instanceof ProcessFieldedMetadata) {
-                    copyData = new ProcessFieldedMetadata((ProcessFieldedMetadata) childData);
+                    ProcessFieldedMetadata copyData = new ProcessFieldedMetadata((ProcessFieldedMetadata) childData);
+                    copy = copyData.treeNode;
                 }
-                TreeNode copy = new DefaultTreeNode(copyData);
-                copy.setParent(treeNode);
-                copy.setExpanded(child.isExpanded());
                 treeNode.getChildren().add(index + 1, copy);
             } else if (searchRecursiveAndCopy(child, processDetail)) {
                 return true;
@@ -436,7 +451,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *             if some value is invalid
      */
     @Override
-    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException {
+        return getMetadata(true);
+    }
+
+    @Override
+    public Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException {
         assert division == null;
         MetadataGroup result = new MetadataGroup();
         result.setKey(metadataKey);
@@ -446,7 +466,11 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         } catch (NoSuchMetadataFieldException e) {
             throw new IllegalStateException("never happening exception");
         }
-        result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
+        if (skipEmpty) {
+            result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
+        } else {
+            result.setGroup(new ArrayList<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
+        }
         return Collections.singletonList(result);
     }
 
@@ -519,6 +543,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         try {
             if (Objects.nonNull(division)) {
                 division.getContentIds().clear();
+                division.setOrderlabel(null);
+                division.setLabel(null);
             }
             metadata.clear();
             for (TreeNode child : treeNode.getChildren()) {
@@ -527,10 +553,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 if (Objects.nonNull(metsFieldValue)) {
                     metsFieldValue.getKey().accept(division, metsFieldValue.getValue());
                 } else {
-                    metadata.addAll(row.getMetadata());
+                    metadata.addAll(row.getMetadataWithFilledValues());
                 }
             }
-            metadata.addAll(hiddenMetadata);
+            if (Objects.nonNull(hiddenMetadata)) {
+                metadata.addAll(hiddenMetadata);
+            }
         } catch (InvalidMetadataValueException invalidValueException) {
             if (Objects.isNull(division)) {
                 invalidValueException.addParent(metadataKey);
@@ -539,6 +567,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         }
         if (copy) {
             MetadataGroup metadataGroup = new MetadataGroup();
+            metadataGroup.setKey(metadataKey);
             Optional<Domain> optionalDomain = metadataView.getDomain();
             optionalDomain.ifPresent(domain -> metadataGroup.setDomain(DOMAIN_TO_MDSEC.get(domain)));
             metadataGroup.setGroup(metadata);
@@ -553,12 +582,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @param toDelete
      *            process detail to delete
      */
-    public void remove(ProcessDetail toDelete) {
+    public void remove(ProcessDetail toDelete) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         Iterator<TreeNode> treeNodesIterator = treeNode.getChildren().iterator();
         while (treeNodesIterator.hasNext()) {
             TreeNode treeNode = treeNodesIterator.next();
             if (treeNode.getData().equals(toDelete)) {
                 treeNodesIterator.remove();
+                preserve();
                 break;
             }
         }
@@ -611,5 +641,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
         return occ;
+    }
+
+    @Override
+    public int getMinOcc() {
+        return metadataView.getMinOccurs();
     }
 }

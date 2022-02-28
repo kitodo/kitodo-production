@@ -18,10 +18,6 @@ import java.util.EnumMap;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
@@ -70,25 +66,16 @@ public abstract class ProcessDetail implements Serializable {
     /**
      * This method is triggered when the user clicks the copy metadata button.
      */
-    public void copy() throws IOException {
+    public void copy() throws IOException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         container.copy(this);
-        refreshPage();
+        container.preserve();
     }
 
     /**
      * This method is triggered when the user clicks the delete metadata button.
      */
-    public void delete() throws IOException {
+    public void delete() throws IOException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         container.remove(this);
-        refreshPage();
-    }
-
-    private void refreshPage() throws IOException {
-        FacesContext currentInstance = FacesContext.getCurrentInstance();
-        if (Objects.nonNull(currentInstance)) {
-            ExternalContext externalContext = currentInstance.getExternalContext();
-            externalContext.redirect(((HttpServletRequest) externalContext.getRequest()).getRequestURI());
-        }
     }
 
     public abstract String getMetadataID();
@@ -112,7 +99,6 @@ public abstract class ProcessDetail implements Serializable {
         return label;
     }
 
-
     /**
      * Returns the metadata from this row, as far as it has to be stored in the
      * collection obtainable from {@link LogicalDivision#getMetadata()}.
@@ -121,7 +107,16 @@ public abstract class ProcessDetail implements Serializable {
      * @throws InvalidMetadataValueException
      *             if the metadata form contains syntactically wrong input
      */
-    public abstract Collection<Metadata> getMetadata() throws InvalidMetadataValueException;
+    public abstract Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException;
+
+    /**
+     * Returns the metadata from this row.
+     * @param skipEmpty boolean to filter metadata with empty value or not.
+     * @return the metadata from this row
+     * @throws InvalidMetadataValueException
+     *             if the metadata form contains syntactically wrong input
+     */
+    public abstract Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException;
 
     /**
      * If the metadata entry addresses a property of the structure, returns a
@@ -166,4 +161,10 @@ public abstract class ProcessDetail implements Serializable {
     public int getOccurrences() {
         return container.getOccurrences(this.getMetadataID());
     }
+
+    public void preserve() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        container.preserve();
+    }
+
+    public abstract int getMinOcc();
 }

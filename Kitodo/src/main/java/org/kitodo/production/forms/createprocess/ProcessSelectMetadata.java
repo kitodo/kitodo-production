@@ -112,11 +112,18 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
-    public Collection<Metadata> getMetadata() throws InvalidMetadataValueException {
+    public Collection<Metadata> getMetadataWithFilledValues() throws InvalidMetadataValueException {
+        return getMetadata(true);
+    }
+
+    @Override
+    public Collection<Metadata> getMetadata(boolean skipEmpty) throws InvalidMetadataValueException {
         int items = selectedItems.size();
         Collection<Metadata> metadata = new HashSet<>((int) Math.ceil(items / .75));
         String key = settings.getId();
         MdSec domain = DOMAIN_TO_MDSEC.get(settings.getDomain().orElse(Domain.DESCRIPTION));
+        selectedItems.removeAll(Collections.singletonList(""));
+        selectedItems.removeAll(Collections.singletonList(null));
         for (String selectedItem : selectedItems) {
             if (!settings.isValid(selectedItem)) {
                 throw new InvalidMetadataValueException(label, selectedItem);
@@ -125,6 +132,13 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
             entry.setKey(key);
             entry.setDomain(domain);
             entry.setValue(selectedItem);
+            metadata.add(entry);
+        }
+        if (!skipEmpty && metadata.isEmpty()) {
+            MetadataEntry entry = new MetadataEntry();
+            entry.setKey(key);
+            entry.setDomain(domain);
+            metadata.add(entry);
             metadata.add(entry);
         }
         return metadata;

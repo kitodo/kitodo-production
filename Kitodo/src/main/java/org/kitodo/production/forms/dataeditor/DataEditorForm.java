@@ -56,15 +56,17 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
 @SessionScoped
-public class DataEditorForm implements RulesetSetupInterface, Serializable {
+public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
 
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
 
@@ -842,17 +844,29 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
      * Check and return whether the given ProcessDetail 'processDetail' is contained in the current list of addable
      * metadata types in the addDocStrucTypeDialog.
      *
-     * @param processDetail ProcessDetail to be added
+     * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
-    public boolean canBeAdded(ProcessDetail processDetail) {
-        if (Objects.nonNull(this.getAddDocStrucTypeDialog().getAddableMetadata())) {
-            return this.getAddDocStrucTypeDialog().getAddableMetadata().stream()
-                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(processDetail.getMetadataID());
+    public boolean canBeAdded(TreeNode treeNode) {
+        if (Objects.isNull(treeNode.getParent().getParent())) {
+            if (Objects.nonNull(metadataPanel.getSelectedMetadataTreeNode()) || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+                this.addMetadataDialog.prepareAddableMetadataForStructure(treeNode.getParent().getChildren());
+            }
+        } else if (!Objects.equals(metadataPanel.getSelectedMetadataTreeNode(), treeNode.getParent())
+                || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+            prepareAddableMetadataForGroup(treeNode.getParent());
         }
-        else {
-            return true;
+        if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
+            return addMetadataDialog.getAddableMetadata().stream()
+                    .map(SelectItem::getValue).collect(Collectors.toList()).contains(((ProcessDetail) treeNode.getData()).getMetadataID());
         }
+        return false;
+    }
+
+    @Override
+    public boolean canBeDeleted(ProcessDetail processDetail) {
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+                || (!processDetail.isRequired() && !this.ruleset.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
     /**
@@ -958,5 +972,22 @@ public class DataEditorForm implements RulesetSetupInterface, Serializable {
         } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
             logger.info(e.getMessage());
         }
+    }
+
+    /**
+     * Check and return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can
+     * be added to it or not.
+     *
+     * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
+     */
+    public boolean metadataAddableToGroup(TreeNode metadataNode) {
+        return metadataPanel.metadataAddableToGroup(metadataNode);
+    }
+
+    /**
+     * Prepare addable metadata for metadata group.
+     */
+    public void prepareAddableMetadataForGroup(TreeNode treeNode) {
+        addMetadataDialog.prepareAddableMetadataForGroup(treeNode);
     }
 }

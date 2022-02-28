@@ -59,23 +59,24 @@ public class ProcessDataTab {
      * @param docType as java.lang.String
      */
     public void setDocType(String docType) {
-        if (Objects.isNull(allDocTypes) || allDocTypes.isEmpty()) {
-            this.docType = "";
-            Helper.setErrorMessage("errorLoadingDocTypes");
-        } else if (docTypeExistsInRuleset(docType)) {
-            this.docType = docType;
-        } else {
-            this.docType = (String) allDocTypes.get(0).getValue();
-            Helper.setErrorMessage("docTypeNotFound", new Object[] {docType});
-        }
-        if (!this.createProcessForm.getProcesses().isEmpty()) {
-            this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure().setType(this.docType);
-            if (this.docType.isEmpty()) {
-                this.createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
+        if (Objects.isNull(this.docType) || this.docType.isEmpty() || !this.docType.equals(docType)) {
+            if (Objects.isNull(allDocTypes) || allDocTypes.isEmpty()) {
+                this.docType = "";
+                Helper.setErrorMessage("errorLoadingDocTypes");
+            } else if (docTypeExistsInRuleset(docType)) {
+                this.docType = docType;
             } else {
-                ProcessFieldedMetadata metadata = this.createProcessForm.getProcessMetadata()
-                        .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
-                this.createProcessForm.getProcessMetadata().setProcessDetails(metadata);
+                this.docType = (String) allDocTypes.get(0).getValue();
+                Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
+            }
+            if (!this.createProcessForm.getProcesses().isEmpty()) {
+                this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure().setType(this.docType);
+                if (this.docType.isEmpty()) {
+                    this.createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
+                } else {
+                    this.createProcessForm.getProcessMetadata()
+                            .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
+                }
             }
         }
     }

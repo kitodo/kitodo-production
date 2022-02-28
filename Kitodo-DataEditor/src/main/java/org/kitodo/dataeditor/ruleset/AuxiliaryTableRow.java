@@ -11,13 +11,12 @@
 
 package org.kitodo.dataeditor.ruleset;
 
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.Set;
 
 import org.kitodo.api.Metadata;
 
@@ -81,7 +80,7 @@ class AuxiliaryTableRow {
      * which class these objects have, it still accepts them and provides for
      * possibly necessary grouping.
      */
-    private Set<Metadata> metaDataObjects = new HashSet<>();
+    private Collection<Metadata> metaDataObjects = new ArrayList<>();
 
     /**
      * Creates a new data row object and enters a key into the table.

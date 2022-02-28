@@ -57,8 +57,10 @@ public class MetadataPanel implements Serializable {
     public void addMetadataEntry() {
         try {
             if (Objects.nonNull(selectedMetadataTreeNode) && Objects.nonNull(selectedMetadataTreeNode.getData())) {
+                ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).getAdditionallySelectedFields().clear();
                 ((ProcessFieldedMetadata) selectedMetadataTreeNode.getData()).addAdditionallySelectedField(addMetadataKeySelectedItem);
             } else {
+                logicalMetadataTable.getAdditionallySelectedFields().clear();
                 logicalMetadataTable.addAdditionallySelectedField(addMetadataKeySelectedItem);
             }
         } catch (NoSuchMetadataFieldException e) {
@@ -148,8 +150,7 @@ public class MetadataPanel implements Serializable {
             StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
                     optionalStructure.get().getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
             logicalMetadataTable = new ProcessFieldedMetadata(optionalStructure.get(), divisionView);
-            dataEditorForm.getAddDocStrucTypeDialog().prepareAddableMetadataForStructure(true,
-                    getLogicalMetadataRows().getChildren());
+            dataEditorForm.getAddMetadataDialog().prepareAddableMetadataForStructure(getLogicalMetadataRows().getChildren());
         } else {
             logicalMetadataTable = ProcessFieldedMetadata.EMPTY;
         }
@@ -208,7 +209,7 @@ public class MetadataPanel implements Serializable {
      */
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
-            return !(DataEditorService.getAddableMetadataForGroup(this.dataEditorForm, metadataNode).isEmpty());
+            return !(DataEditorService.getAddableMetadataForGroup(this.dataEditorForm.getProcess().getRuleset(), metadataNode).isEmpty());
         } else {
             return false;
         }

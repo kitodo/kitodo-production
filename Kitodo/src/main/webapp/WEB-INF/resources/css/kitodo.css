@@ -1269,8 +1269,39 @@ Import form
 
 #editForm\:processFromTemplateTabView\:metadataTable textarea,
 #editForm\:processFromTemplateTabView\:metadataTable input,
+#editForm\:processFromTemplateTabView\:metadataTable div.ui-selectonemenu,
+#editForm\:processFromTemplateTabView\:metadataTable span.ui-spinner,
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectoneradio,
 #editForm\:processFromTemplateTabView\:metadataTable div.ui-selectmanymenu {
+    background: inherit;
+    box-sizing: border-box;
+    display: inline-block;
+    margin-right: var(--default-half-size);
+    max-width: calc(50% - 93px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: top;
+    width: 50%;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectoneradio {
+    height: auto;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-spinner-input {
+    max-width: none;
     width: 100%;
+}
+
+.metadata-button {
+    border-radius: var(--default-border-radius);
+    margin-right: var(--default-half-size);
+}
+
+#editForm\:processFromTemplateTabView\:addMetadataButtonWrapper {
+    border-radius: var(--default-border-radius);
+    box-shadow: var(--second-level-shadow);
+    margin-left: 60%;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
@@ -1281,6 +1312,23 @@ Import form
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) label {
     margin-left: var(--default-double-size);
     width: calc(100% - var(--default-double-size));
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield {
+    width: calc(50% - var(--default-double-size) - 93px);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield.hasDatepicker {
+    width: calc(50% - 172px);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-inputfield.hasDatepicker {
+    width: calc(50% - 140px);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-button.ui-datepicker-trigger {
+    margin-right: var(--default-half-size);
+    margin-left: 0;
 }
 
 #progressDialog {
@@ -3181,7 +3229,13 @@ footer {
 
 .basicDataTitle {
     font-weight: bold;
-    padding: var(--default-half-size) var(--default-full-size);
+    padding: .75em 3em;
+}
+
+.metadataTitle {
+    border-top: solid var(--contrast-border-width) var(--medium-gray);
+    font-weight: bold;
+    padding: .75em 1.5em;
 }
 
 #tasksTabView\:actionForm {

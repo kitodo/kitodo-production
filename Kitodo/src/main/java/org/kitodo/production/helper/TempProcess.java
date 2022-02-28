@@ -17,6 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
@@ -61,6 +62,10 @@ public class TempProcess {
         this.metadataNodes = nodeList;
         this.workpiece = new Workpiece();
         this.workpiece.getLogicalStructure().setType(docType);
+        if (nodeList.getLength() != 0) {
+            this.workpiece.getLogicalStructure().getMetadata().addAll(
+                    ImportService.importMetadata(this.metadataNodes, MdSec.DMD_SEC));
+        }
     }
 
     /**
