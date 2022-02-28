@@ -926,20 +926,44 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             List<Process> children;
             try {
                 children = ServiceManager.getProcessService().getById(processDTO.getId()).getChildren();
-                processDTO.setProgressClosed(progressOfChildren(children, tasks -> getProgressClosed(tasks, null)));
-                processDTO.setProgressInProcessing(progressOfChildren(children, tasks -> getProgressInProcessing(tasks, null)));
-                processDTO.setProgressOpen(progressOfChildren(children, tasks -> getProgressOpen(tasks, null)));
-                processDTO.setProgressLocked(progressOfChildren(children, tasks -> getProgressLocked(tasks, null)));
+                processDTO.setProgressClosed(progressOfChildrenClosed(children));
+                processDTO.setProgressInProcessing(progressOfChildrenInProcessing(children));
+                processDTO.setProgressOpen(progressOfChildrenOpen(children));
+                processDTO.setProgressLocked(progressOfChildrenLocked(children));
             } catch (DAOException dao) {
                 throw new DataException(dao);
             }
         }
     }
-
-    private static Double progressOfChildren(List<Process> children, Function<List<Task>, Double> calculator) {
+    
+    private Double progressOfChildrenClosed(List<Process> children) {
         DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (Process child : children) {
-            statistics.addValue(calculator.apply(child.getTasks()));
+            statistics.addValue(getProgressClosed(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+    
+    private Double progressOfChildrenInProcessing(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressInProcessing(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+    
+    private Double progressOfChildrenOpen(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressOpen(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+    
+    private Double progressOfChildrenLocked(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressLocked(child.getTasks(), null));
         }
         return statistics.getMean();
     }
