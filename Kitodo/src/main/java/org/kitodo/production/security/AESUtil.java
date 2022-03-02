@@ -110,10 +110,12 @@ public class AESUtil {
      */
     public static boolean isEncrypted(String potentialEncryptedValue) {
         try {
-            byte[] cipherCombined = Base64.getDecoder().decode(potentialEncryptedValue);
-            byte[] saltPrefix = Arrays.copyOfRange(cipherCombined, 0, SALT_PREFIX.getBytes().length);
-            // check if cipher combined has salt prefix
-            return Arrays.equals(saltPrefix, SALT_PREFIX.getBytes());
+            if(Objects.nonNull(potentialEncryptedValue)) {
+                byte[] cipherCombined = Base64.getDecoder().decode(potentialEncryptedValue);
+                byte[] saltPrefix = Arrays.copyOfRange(cipherCombined, 0, SALT_PREFIX.getBytes().length);
+                // check if cipher combined has salt prefix
+                return Arrays.equals(saltPrefix, SALT_PREFIX.getBytes());
+            }
         } catch (IllegalArgumentException e) {
             logger.debug("Value to encrypt is not a valid base64 string.");
         }
