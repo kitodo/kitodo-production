@@ -821,8 +821,8 @@
             </activation>
             <properties>
                 <jsf.projectStage>Development</jsf.projectStage>
-                <!-- resource expiration after two minutes -->
-                <myfaces.resourceMaxTimeExpires>120000</myfaces.resourceMaxTimeExpires>
+                <!-- resource expiration after four minutes -->
+                <myfaces.resourceMaxTimeExpires>240000</myfaces.resourceMaxTimeExpires>
             </properties>
         </profile>
     </profiles>
