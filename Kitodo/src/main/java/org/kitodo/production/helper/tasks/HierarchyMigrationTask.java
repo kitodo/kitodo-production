@@ -347,7 +347,7 @@ public class HierarchyMigrationTask extends EmptyTask {
      */
     private static Integer getCurrentNo(LogicalDivision includedStructualElement) {
         Integer currentNo = includedStructualElement.getMetadata().parallelStream()
-                .filter(metadata -> metadata.getKey().equals("CurrentNo")).filter(MetadataEntry.class::isInstance)
+                .filter(metadata -> metadata.getKey().equals("CurrentNoSorting")).filter(MetadataEntry.class::isInstance)
                 .map(MetadataEntry.class::cast).map(MetadataEntry::getValue).filter(value -> value.matches("\\d+"))
                 .map(Integer::valueOf).findFirst().orElse(null);
         return currentNo;
