@@ -34,6 +34,7 @@
         <selenium.version>3.141.59</selenium.version>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
         <jsf.projectStage>Production</jsf.projectStage>
+        <myfaces.resourceMaxTimeExpires>604800000</myfaces.resourceMaxTimeExpires>
     </properties>
 
     <dependencies>
@@ -820,6 +821,8 @@
             </activation>
             <properties>
                 <jsf.projectStage>Development</jsf.projectStage>
+                <!-- resource expiration after four minutes -->
+                <myfaces.resourceMaxTimeExpires>240000</myfaces.resourceMaxTimeExpires>
             </properties>
         </profile>
     </profiles>

@@ -48,6 +48,11 @@
     </context-param>
 
     <context-param>
+        <param-name>org.apache.myfaces.RESOURCE_MAX_TIME_EXPIRES</param-name>
+        <param-value>${myfaces.resourceMaxTimeExpires}</param-value>
+    </context-param>
+
+    <context-param>
         <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
         <param-value>true</param-value>
     </context-param>
