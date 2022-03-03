@@ -327,7 +327,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         LogicalDivision childStructureRoot = workpiece.getLogicalStructure().getChildren().get(0);
         workpiece.setLogicalStructure(childStructureRoot);
         metsService.saveWorkpiece(workpiece, metadataFilePath);
-        return getCurrentNo(childStructureRoot);
+        return getCurrentNoSorting(childStructureRoot);
     }
 
     /**
@@ -341,12 +341,12 @@ public class HierarchyMigrationTask extends EmptyTask {
      * volumes, supplementary volumes are counted on afterwards (thus, in the
      * order in which the books are usually placed on a shelf).
      *
-     * @param includedStructualElement
+     * @param logicalDivision
      *            outline element with metadata
      * @return the CurrentNo, or {@code null}
      */
-    private static Integer getCurrentNo(LogicalDivision includedStructualElement) {
-        Integer currentNo = includedStructualElement.getMetadata().parallelStream()
+    private static Integer getCurrentNoSorting(LogicalDivision logicalDivision) {
+        Integer currentNo = logicalDivision.getMetadata().parallelStream()
                 .filter(metadata -> metadata.getKey().equals("CurrentNoSorting")).filter(MetadataEntry.class::isInstance)
                 .map(MetadataEntry.class::cast).map(MetadataEntry::getValue).filter(value -> value.matches("\\d+"))
                 .map(Integer::valueOf).findFirst().orElse(null);
