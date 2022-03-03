@@ -17,9 +17,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -175,19 +177,15 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     private void createMetadataTable() {
         // the existing metadata is passed to the rule set, which sorts it
-        List<MetadataViewWithValuesInterface> tableData = null;
+        Collection<Metadata> entered = addLabels(new HashSet<>(metadata));
         if (Objects.nonNull(treeNode) && !treeNode.getChildren().isEmpty()) {
             try {
-                tableData = metadataView.getSortedVisibleMetadata(
-                        DataEditorService.getExistingMetadataRows(treeNode.getChildren()),
-                        additionallySelectedFields);
+                entered.addAll(DataEditorService.getExistingMetadataRows(treeNode.getChildren()));
             } catch (InvalidMetadataValueException e) {
                 logger.error(e.getLocalizedMessage());
             }
-        } else {
-            tableData = metadataView
-                    .getSortedVisibleMetadata(addLabels(metadata), additionallySelectedFields);
         }
+        List<MetadataViewWithValuesInterface> tableData = metadataView.getSortedVisibleMetadata(entered, additionallySelectedFields);
         treeNode.getChildren().clear();
         hiddenMetadata = Collections.emptyList();
         for (MetadataViewWithValuesInterface rowData : tableData) {
@@ -516,16 +514,17 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     List<Map<MetadataEntry, Boolean>> getListForLeadingMetadataFields() {
         List<Map<MetadataEntry, Boolean>> result = Objects.isNull(container) ? new ArrayList<>()
                 : container.getListForLeadingMetadataFields();
-        Map<MetadataEntry, Boolean> metadataEntryMap = new HashMap<>();
+        Map<String, MetadataEntry> metadataEntryMap = new HashMap<>();
         treeNode.getChildren().stream().map(TreeNode::getData).filter(ProcessSimpleMetadata.class::isInstance)
                 .map(ProcessSimpleMetadata.class::cast).map(ProcessDetail::getMetadataID).forEachOrdered(key -> {
                     MetadataEntry metadataEntry = new MetadataEntry();
                     metadataEntry.setKey(key);
-                    metadataEntryMap.put(metadataEntry, Boolean.FALSE);
+                    metadataEntryMap.put(key, metadataEntry);
                 });
         metadata.stream().filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
-                .forEachOrdered(key -> metadataEntryMap.put(key, Boolean.FALSE));
-        result.add(metadataEntryMap);
+                .forEachOrdered(key -> metadataEntryMap.put(key.getKey(), key));
+        result.add(metadataEntryMap.entrySet().stream()
+            .collect(Collectors.toMap(Entry::getValue, all -> Boolean.FALSE)));
         return result;
     }
 
