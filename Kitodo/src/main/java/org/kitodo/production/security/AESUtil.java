@@ -73,6 +73,10 @@ public class AESUtil {
     public static String encrypt(String value, String secret)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
+        if(Objects.isNull(value)){
+            return StringUtils.EMPTY;
+        }
+
         // generate salt
         byte[] salt = new byte[SALT_LENGTH];
         new SecureRandom().nextBytes(salt);

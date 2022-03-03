@@ -80,16 +80,9 @@ public class LdapServerForm extends BaseForm {
      */
     public String save() {
         try {
-            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
-
-            if (StringUtils.isNotBlank(securitySecret)) {
-                ldapServer.setManagerPassword( AESUtil.encrypt(ldapServer.getManagerPassword(), securitySecret) );
-            }
-
             ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
             return usersPage;
-        } catch (DAOException | NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
-                | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -140,17 +133,17 @@ public class LdapServerForm extends BaseForm {
     }
 
     /**
-     * Gets decrypted manager password.
+     * Gets manager password.
      *
-     * @return The decrypted manager password
+     * @return The manager password
      */
-    public String getDecryptedManagerPassword() {
+    public String getManagerPassword() {
         if (AESUtil.isEncrypted(ldapServer.getManagerPassword())) {
             String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
 
             if (StringUtils.isNotBlank(securitySecret)) {
                 try {
-                    ldapServer.setManagerPassword(AESUtil.decrypt(ldapServer.getManagerPassword(), securitySecret));
+                    return AESUtil.decrypt(ldapServer.getManagerPassword(), securitySecret);
                 } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
                         | InvalidKeyException | BadPaddingException | IllegalBlockSizeException
                         | InvalidKeySpecException e) {
@@ -160,6 +153,24 @@ public class LdapServerForm extends BaseForm {
 
         }
         return ldapServer.getManagerPassword();
+    }
+
+    /**
+     * Sets manager password.
+     *
+     * @param managerPassword The manager password
+     */
+    public void setManagerPassword(String managerPassword) {
+        try {
+            String securitySecret = ConfigCore.getParameterOrDefaultValue(ParameterCore.SECURITY_SECRET_LDAPMANAGERPASSWORD);
+            if (StringUtils.isNotBlank(securitySecret)) {
+                managerPassword = AESUtil.encrypt(managerPassword, securitySecret);
+            }
+            ldapServer.setManagerPassword(managerPassword);
+        } catch (NoSuchPaddingException | NoSuchAlgorithmException | InvalidAlgorithmParameterException
+                | InvalidKeyException | BadPaddingException | IllegalBlockSizeException | InvalidKeySpecException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {LDAP_SERVER }, logger, e);
+        }
     }
 
     /**
