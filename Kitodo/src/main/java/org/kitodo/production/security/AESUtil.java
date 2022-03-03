@@ -73,6 +73,10 @@ public class AESUtil {
     public static String encrypt(String value, String secret)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
+        if (Objects.isNull(value)) {
+            return StringUtils.EMPTY;
+        }
+
         // generate salt
         byte[] salt = new byte[SALT_LENGTH];
         new SecureRandom().nextBytes(salt);
@@ -110,10 +114,12 @@ public class AESUtil {
      */
     public static boolean isEncrypted(String potentialEncryptedValue) {
         try {
-            byte[] cipherCombined = Base64.getDecoder().decode(potentialEncryptedValue);
-            byte[] saltPrefix = Arrays.copyOfRange(cipherCombined, 0, SALT_PREFIX.getBytes().length);
-            // check if cipher combined has salt prefix
-            return Arrays.equals(saltPrefix, SALT_PREFIX.getBytes());
+            if (Objects.nonNull(potentialEncryptedValue)) {
+                byte[] cipherCombined = Base64.getDecoder().decode(potentialEncryptedValue);
+                byte[] saltPrefix = Arrays.copyOfRange(cipherCombined, 0, SALT_PREFIX.getBytes().length);
+                // check if cipher combined has salt prefix
+                return Arrays.equals(saltPrefix, SALT_PREFIX.getBytes());
+            }
         } catch (IllegalArgumentException e) {
             logger.debug("Value to encrypt is not a valid base64 string.");
         }
