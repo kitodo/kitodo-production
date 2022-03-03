@@ -73,7 +73,7 @@ public class AESUtil {
     public static String encrypt(String value, String secret)
             throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException,
             InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidKeySpecException {
-        if(Objects.isNull(value)){
+        if (Objects.isNull(value)) {
             return StringUtils.EMPTY;
         }
 
@@ -114,7 +114,7 @@ public class AESUtil {
      */
     public static boolean isEncrypted(String potentialEncryptedValue) {
         try {
-            if(Objects.nonNull(potentialEncryptedValue)) {
+            if (Objects.nonNull(potentialEncryptedValue)) {
                 byte[] cipherCombined = Base64.getDecoder().decode(potentialEncryptedValue);
                 byte[] saltPrefix = Arrays.copyOfRange(cipherCombined, 0, SALT_PREFIX.getBytes().length);
                 // check if cipher combined has salt prefix
