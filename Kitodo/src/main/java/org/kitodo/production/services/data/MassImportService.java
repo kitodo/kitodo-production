@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import com.opencsv.CSVReader;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,16 +54,16 @@ public class MassImportService {
      * Import from csvFile.
      * @param selectedCatalog
      *            the catalog to import from.
-     * @param file the file to parse.
+     * @param csvInputStream the inputStream to parse.
      * @param projectId the project id.
      * @param templateId the template id.
      * @param metadata metadata edited via frontend to add to the imported metadata.
      */
-    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId, Collection<Metadata> metadata)
-            throws IOException, ImportException {
+    public void importFromCSV(String selectedCatalog, InputStream csvInputStream, int projectId, int templateId,
+                              Collection<Metadata> metadata) throws IOException, ImportException {
         CSVReader reader;
         List<String> ppns = new ArrayList<>();
-        reader = new CSVReader(new InputStreamReader(file.getInputStream()));
+        reader = new CSVReader(new InputStreamReader(csvInputStream));
         String[] line;
         while ((line = reader.readNext()) != null) {
             ppns.add(line[0]);

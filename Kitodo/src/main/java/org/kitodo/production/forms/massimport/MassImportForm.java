@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.massimport;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -53,6 +54,7 @@ public class MassImportForm extends BaseForm {
     private String docType;
     private String selectedCatalog;
     private UploadedFile file;
+    private InputStream fileInputStream;
     private String ppnString;
     private final MassImportService massImportService = ServiceManager.getMassImportService();
     private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
@@ -106,6 +108,12 @@ public class MassImportForm extends BaseForm {
      */
     public void handleFileUpload(FileUploadEvent event) {
         file = event.getFile();
+        try {
+            fileInputStream = file.getInputStream();
+        } catch (IOException e) {
+            Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
+        }
+
     }
 
     /**
@@ -113,7 +121,8 @@ public class MassImportForm extends BaseForm {
      */
     public String importFromCSV() {
         try {
-            massImportService.importFromCSV(selectedCatalog, file, projectId, templateId, workpiece.getLogicalStructure().getMetadata());
+            massImportService.importFromCSV(selectedCatalog, fileInputStream, projectId, templateId,
+                    workpiece.getLogicalStructure().getMetadata());
             return PROCESS_LIST_PATH;
         } catch (IOException e) {
             Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
