@@ -202,11 +202,11 @@ public class Rule {
 
         Collection<RestrictivePermit> result = new ArrayList<>(restrictivePermit.getPermits());
         Map<String, Optional<MetadataEntry>> metadataCache = new HashMap<>();
-        getConditionalPermitsRecursive(restrictivePermit, metadataCache, metadata, result);
+        getConditionalPermits(restrictivePermit, metadataCache, metadata, result); // start recursion
         return result;
     }
 
-    private static void getConditionalPermitsRecursive(ConditionsMapInterface conditionsMapInterface,
+    private static void getConditionalPermits(ConditionsMapInterface conditionsMapInterface,
             Map<String, Optional<MetadataEntry>> metadataCache, List<Map<MetadataEntry, Boolean>> metadata,
             Collection<RestrictivePermit> result) {
 
@@ -217,7 +217,7 @@ public class Rule {
                 Condition condition = conditionsMapInterface.getCondition(conditionKey, possibleMetadata.get().getValue());
                 if (Objects.nonNull(condition)) {
                     result.addAll(condition.getPermits());
-                    getConditionalPermitsRecursive(condition, metadataCache, metadata, result);
+                    getConditionalPermits(condition, metadataCache, metadata, result); // recursive
                 }
             }
         }

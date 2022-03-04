@@ -324,10 +324,11 @@ public class MetadataValidation implements MetadataValidationInterface {
             Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations) {
 
-        return checkForDetailsInTheMetadataRecursive(containedMetadata, containingMetadataView, location, translations, new LinkedList<>());
+        return checkForDetailsInTheMetadata( // start recursion
+            containedMetadata, containingMetadataView, location, translations, new LinkedList<>());
     }
     
-    private static ValidationResult checkForDetailsInTheMetadataRecursive(
+    private static ValidationResult checkForDetailsInTheMetadata(
             Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations, LinkedList<Map<MetadataEntry, Boolean>> surroundingMetadata) {
         boolean error = false;
@@ -353,7 +354,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                     }
                 } else if (metadata instanceof MetadataGroup
                         && metadataView instanceof ComplexMetadataViewInterface) {
-                    ValidationResult validationResult = checkForDetailsInTheMetadataRecursive(
+                    ValidationResult validationResult = checkForDetailsInTheMetadata( // recursive
                         ((MetadataGroup) metadata).getGroup(),
                         (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                         translations, surroundingMetadata);
