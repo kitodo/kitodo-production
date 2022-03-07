@@ -218,7 +218,7 @@ public class RulesetManagement implements RulesetManagementInterface {
      */
     @Override
     public void load(File rulesetFile) throws IOException {
-        this.ruleset = readRecursive(rulesetFile);
+        this.ruleset = read(rulesetFile);
         initializeNamespaces(ruleset.getKeys(), rulesetFile.getParentFile());
     }
 
@@ -262,7 +262,7 @@ public class RulesetManagement implements RulesetManagementInterface {
         }
     }
 
-    private static Ruleset readRecursive(File rulesetFile) throws IOException {
+    private static Ruleset read(File rulesetFile) throws IOException {
         Ruleset result = new Ruleset();
         Ruleset base = read(Ruleset.class, rulesetFile);
         for (String include : base.getIncludes()) {
