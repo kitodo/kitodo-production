@@ -16,6 +16,8 @@ import java.util.Objects;
 import javax.enterprise.context.RequestScoped;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.LdapGroup;
@@ -24,6 +26,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.authentication.DisabledException;
@@ -42,6 +45,7 @@ import org.springframework.security.ldap.authentication.LdapAuthenticationProvid
 @Named("AuthenticationController")
 @RequestScoped
 public class DynamicAuthenticationProvider implements AuthenticationProvider {
+    private static final Logger logger = LogManager.getLogger(DynamicAuthenticationProvider.class);
 
     private static volatile DynamicAuthenticationProvider instance = null;
     private AuthenticationProvider daoAuthenticationProvider = null;
@@ -80,24 +84,32 @@ public class DynamicAuthenticationProvider implements AuthenticationProvider {
 
     @Override
     public Authentication authenticate(Authentication authentication) {
-        User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
-        if (!user.isActive()) {
-            throw new DisabledException(SpringSecurityMessageSource.getAccessor().getMessage(
-                "AbstractUserDetailsAuthenticationProvider.disabled",
-                Helper.getString(LocaleHelper.getCurrentLocale(), "errorUserIsDisabled")));
-        }
-        LdapGroup ldapGroup = user.getLdapGroup();
-        if (ldapAuthentication && Objects.nonNull(ldapGroup)) {
-            if (Objects.isNull(ldapGroup.getLdapServer())) {
-                throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
+        try {
+            User user = ServiceManager.getUserService().getByLdapLoginWithFallback(authentication.getName());
+            if (!user.isActive()) {
+                throw new DisabledException(SpringSecurityMessageSource.getAccessor().getMessage(
+                    "AbstractUserDetailsAuthenticationProvider.disabled",
+                    Helper.getString(LocaleHelper.getCurrentLocale(), "errorUserIsDisabled")));
             }
-            configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
-            if (ldapGroup.getUserDN().contains("{ldaplogin}")) {
-                authentication = new UsernamePasswordAuthenticationToken(user.getLdapLogin(), authentication.getCredentials());
+            LdapGroup ldapGroup = user.getLdapGroup();
+            if (ldapAuthentication && Objects.nonNull(ldapGroup)) {
+                if (Objects.isNull(ldapGroup.getLdapServer())) {
+                    throw new AuthenticationServiceException("No LDAP server specified on user's LDAP group");
+                }
+                configureAuthenticationProvider(ldapGroup.getLdapServer().getUrl(), ldapGroup.getUserDN());
+                if (ldapGroup.getUserDN().contains("{ldaplogin}")) {
+                    authentication = new UsernamePasswordAuthenticationToken(user.getLdapLogin(), authentication.getCredentials());
+                }
+                return ldapAuthenticationProvider.authenticate(authentication);
+            } else {
+                return daoAuthenticationProvider.authenticate(authentication);
             }
-            return ldapAuthenticationProvider.authenticate(authentication);
-        } else {
-            return daoAuthenticationProvider.authenticate(authentication);
+        } catch (RuntimeException problem) {
+            // if login fails because of some unchecked exception, log it
+            // when in debug mode
+            logger.debug(problem.getLocalizedMessage(), problem);
+            // rethrow exception
+            throw problem;
         }
     }
 
