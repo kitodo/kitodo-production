@@ -69,8 +69,7 @@ public class SearchResultGeneration {
     private List<ProcessDTO> getResultsWithFilter() {
         List<ProcessDTO> processDTOS = new ArrayList<>();
         try {
-            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
-                ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), false);
+            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -136,8 +135,7 @@ public class SearchResultGeneration {
                     rangeQueryBuilder.gte(queriedIds).lt(queriedIds + elasticsearchLimit);
                     BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
                     queryForFilter.should(rangeQueryBuilder);
-                    processDTOS = ServiceManager.getProcessService().findByQuery(queryForFilter,
-                        ServiceManager.getProcessService().sortByTitle(SortOrder.ASC), true);
+                    processDTOS = ServiceManager.getProcessService().findByQuery(queryForFilter,true);
                     queriedIds += elasticsearchLimit;
                     for (ProcessDTO processDTO : processDTOS) {
                         prepareRow(rowCounter, sheet, processDTO);
