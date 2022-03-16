@@ -37,7 +37,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
-    private Integer sortHelperStatus;
+    private String sortHelperStatus;
     private String baseType;
 
     /**
@@ -329,9 +329,9 @@ public class ProcessDTO extends BaseTemplateDTO {
     /**
      * Get sort helper for task status.
      *
-     * @return sort helper for task status as Integer
+     * @return sort helper for task status as String
      */
-    public Integer getSortHelperStatus() {
+    public String getSortHelperStatus() {
         return this.sortHelperStatus;
     }
 
@@ -339,9 +339,9 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set sort helper for task status.
      *
      * @param sortHelperStatus
-     *            as Integer
+     *            as String
      */
-    public void setSortHelperStatus(Integer sortHelperStatus) {
+    public void setSortHelperStatus(String sortHelperStatus) {
         this.sortHelperStatus = sortHelperStatus;
     }
 
