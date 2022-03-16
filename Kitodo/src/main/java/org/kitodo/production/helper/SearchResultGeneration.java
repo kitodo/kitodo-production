@@ -185,13 +185,9 @@ public class SearchResultGeneration {
         row.createCell(5).setCellValue(numberOfProcessMetadata);
         row.createCell(6).setCellValue(processDTO.getProject().getTitle());
         String sortHelperStatus = "";
-        String progress = ServiceManager.getProcessService().getProgress(null, processDTO.getTasks());
+        String progress = processDTO.getSortHelperStatus().toString();
 
-        if (Objects.nonNull(progress)) {
-            sortHelperStatus = progress.substring(0, 3) + " / "
-                    + progress.substring(3, 6) + " / "
-                    + progress.substring(6);
-        }
+        sortHelperStatus = progress.substring(0, 3) + " / " + progress.substring(3, 6) + " / " + progress.substring(6);
         row.createCell(7).setCellValue(sortHelperStatus);
     }
 }
