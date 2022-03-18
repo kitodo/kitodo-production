@@ -317,8 +317,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      */
     public boolean isParentElementConfigured() {
         try {
-            return Objects.nonNull(this.hitModel.getImportConfiguration()) &&
-                    ServiceManager.getImportService().isParentElementConfigured(this.hitModel.getImportConfiguration());
+            return Objects.nonNull(this.hitModel.getImportConfiguration()) && ServiceManager.getImportService()
+                    .isParentElementConfigured(this.hitModel.getImportConfiguration());
         } catch (ConfigException e) {
             return false;
         }

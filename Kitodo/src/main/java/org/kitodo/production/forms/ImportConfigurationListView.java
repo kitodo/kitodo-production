@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -32,6 +33,11 @@ public class ImportConfigurationListView extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ImportConfigurationListView.class);
     private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
 
+    /**
+     * Get import configurations.
+     *
+     * @return import configurations
+     */
     public List<ImportConfiguration> getImportConfigurations() {
         try {
             return ServiceManager.getImportConfigurationService().getAll();

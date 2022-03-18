@@ -14,6 +14,7 @@ package org.kitodo.production.forms;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 

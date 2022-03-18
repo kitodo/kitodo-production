@@ -36,7 +36,8 @@ public class LazyHitModel extends LazyDataModel<Object> {
     /**
      * Empty default constructor. Sets default catalog and search field, if configured.
      */
-    public LazyHitModel() {}
+    public LazyHitModel() {
+    }
 
     @Override
     public Object getRowData(String rowKey) {

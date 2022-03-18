@@ -13,6 +13,7 @@ package org.kitodo.production.forms.validators;
 
 import java.util.List;
 import java.util.Objects;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIInput;
@@ -59,12 +60,13 @@ public class ImportConfigurationMappingValidator implements Validator<DualListMo
             for (MappingFile mappingFile : mappingFiles) {
                 int index = mappingFiles.indexOf(mappingFile);
                 // first mapping file must map import configuration metadata format to some other format
-                if (index == 0 && !Objects.equals(metadataFormat, mappingFile.getInputMetadataFormat()))
+                if (index == 0 && !Objects.equals(metadataFormat, mappingFile.getInputMetadataFormat())) {
                     throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
                             "First configured mapping file '" + mappingFile.getTitle() + "' must have '"
                                     + metadataFormat
                                     + "' as input metadata format (found '" + mappingFile.getInputMetadataFormat()
                                     + " instead)!", null));
+                }
                 // last mapping file must map to KITODO internal metadata format
                 if (index == mappingFiles.size() - 1
                         && !Objects.equals(mappingFile.getOutputMetadataFormat(), MetadataFormat.KITODO.name())) {

@@ -166,29 +166,7 @@ public class ImportService {
         }
         return localReference;
     }
-/*
-    private void loadOpacConfiguration(String catalogName) {
-        try {
-            OPACConfig.getOPACConfiguration(catalogName);
-            try {
-                trimMode = OPACConfig.getParentIDTrimMode(catalogName);
-            } catch (NoSuchElementException e) {
-                logger.debug(e.getLocalizedMessage());
-            }
-            try {
-                String idMetadata = OPACConfig.getIdentifierMetadata(catalogName);
-                if (StringUtils.isNotBlank(idMetadata)) {
-                    identifierMetadata = idMetadata;
-                }
-            } catch (NoSuchElementException e) {
-                logger.debug(e.getLocalizedMessage());
-            }
-        } catch (IllegalArgumentException e) {
-            logger.error(e.getLocalizedMessage());
-            throw new IllegalArgumentException("Error: OPAC '" + catalogName + "' is not supported!");
-        }
-    }
-*/
+
     /**
      * Load ExternalDataImportInterface implementation with KitodoServiceLoader and perform given query string
      * with loaded module.
@@ -261,7 +239,7 @@ public class ImportService {
     }
 
     /**
-     * Get default import depth for given import configuration
+     * Get default import depth for given import configuration.
      *
      * @param importConfiguration ImportConfiguration
      * @return default import depth of given import configuration
