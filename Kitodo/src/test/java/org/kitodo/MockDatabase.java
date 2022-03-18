@@ -1773,7 +1773,7 @@ public class MockDatabase {
      * @throws DAOException thrown if Kalliope ImportConfiguration cannot be loaded from database
      */
     public static ImportConfiguration getKalliopeImportConfiguration() throws DAOException {
-        return ServiceManager.getImportConfigurationService().getById(1);
+        return ServiceManager.getImportConfigurationService().getById(2);
     }
 
     /**
@@ -1783,6 +1783,6 @@ public class MockDatabase {
      * @throws DAOException thrown if K10Plus ImportConfiguration cannot be loaded from database
      */
     public static ImportConfiguration getK10PlusImportConfiguration() throws DAOException {
-        return ServiceManager.getImportConfigurationService().getById(2);
+        return ServiceManager.getImportConfigurationService().getById(3);
     }
 }
