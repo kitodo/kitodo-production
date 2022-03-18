@@ -33,6 +33,11 @@ public class MappingFileListView extends BaseForm {
     private static final Logger logger = LogManager.getLogger(MappingFileListView.class);
     private final String mappingFileEditPath = MessageFormat.format(REDIRECT_PATH, "mappingFileEdit");
 
+    /**
+     * Get mapping files.
+     *
+     * @return mapping files
+     */
     public List<MappingFile> getMappingFiles() {
         try {
             return ServiceManager.getMappingFileService().getAll();
