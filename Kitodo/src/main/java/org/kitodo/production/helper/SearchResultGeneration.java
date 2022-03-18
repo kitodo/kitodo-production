@@ -184,8 +184,6 @@ public class SearchResultGeneration {
         row.createCell(4).setCellValue(numberOfProcessStructuralElements);
         row.createCell(5).setCellValue(numberOfProcessMetadata);
         row.createCell(6).setCellValue(processDTO.getProject().getTitle());
-        String progress = processDTO.getSortHelperStatus();
-
-        row.createCell(7).setCellValue(progress);
+        row.createCell(7).setCellValue(processDTO.getSortHelperStatus());
     }
 }
