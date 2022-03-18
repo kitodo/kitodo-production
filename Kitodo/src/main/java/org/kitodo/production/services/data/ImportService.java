@@ -233,8 +233,10 @@ public class ImportService {
     public String getDefaultSearchField(ImportConfiguration importConfiguration) {
         if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
             return Helper.getTranslation("filename");
-        } else {
+        } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())){
             return importConfiguration.getDefaultSearchField().getLabel();
+        } else {
+            return "";
         }
     }
 

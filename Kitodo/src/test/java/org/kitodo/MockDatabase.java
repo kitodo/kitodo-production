@@ -1431,7 +1431,27 @@ public class MockDatabase {
         ServiceManager.getMappingFileService().saveToDatabase(mappingFilePicaToKitodo);
     }
 
-    public static void insertImportConfigurations() throws DAOException {
+    public static void insertImportConfigurations() throws DAOException, DataException {
+
+        // add GBV import configuration, including id and default search fields
+        ImportConfiguration gbvConfiguration = new ImportConfiguration();
+        gbvConfiguration.setTitle("GBV");
+        gbvConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
+        gbvConfiguration.setSruVersion("1.2");
+        gbvConfiguration.setSruRecordSchema("mods");
+
+        SearchField ppnField = new SearchField();
+        ppnField.setValue("pica.ppn");
+        ppnField.setLabel("PPN");
+        ppnField.setImportConfiguration(gbvConfiguration);
+
+        gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
+        ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
+
+        gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
+        gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
+        ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
 
         // add Kalliope import configuration, including id search field
         ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
@@ -1488,6 +1508,11 @@ public class MockDatabase {
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+
+        for (Project project : ServiceManager.getProjectService().getAll()) {
+            project.setDefaultImportConfiguration(k10plusConfiguration);
+            ServiceManager.getProjectService().save(project);
+        }
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
