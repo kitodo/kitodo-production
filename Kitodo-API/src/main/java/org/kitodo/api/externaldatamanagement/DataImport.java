@@ -280,7 +280,7 @@ public class DataImport {
     /**
      * Set searchFields.
      *
-     * @param searchFields as java.util.Map<java.lang.String,java.lang.String>
+     * @param searchFields as Map
      */
     public void setSearchFields(Map<String, String> searchFields) {
         this.searchFields = searchFields;
@@ -298,7 +298,7 @@ public class DataImport {
     /**
      * Set urlParameters.
      *
-     * @param urlParameters as java.util.Map<java.lang.String,java.lang.String>
+     * @param urlParameters as Map
      */
     public void setUrlParameters(Map<String, String> urlParameters) {
         this.urlParameters = urlParameters;
