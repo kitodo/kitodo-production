@@ -49,36 +49,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
             }
         }
 
-        boolean isIE = AgentUtils.isIE(context);
-        MediaPlayer player = resolvePlayer(context, media);
-        String sourceParam = player.getSourceParam();
-
-        // Fix npe exception https://forum.primefaces.org/viewtopic.php?t=62518
-        // This fix is deprecated cause primeface fix this in 7.0.13
-        if (value instanceof StreamedContent && "application/pdf".equals(player.getType())) {
-            StreamedContent streamedContent = (StreamedContent) value;
-            if (streamedContent.getName() != null) {
-                int index = src.indexOf("?");
-                src = src.substring(0, index) + ";/" + streamedContent.getName() + ""
-                        + src.substring(index);
-            }
-        }
-
-        String type = player.getType();
-        if (type != null && type.equals("application/pdf")) {
-            String view = media.getView();
-            String zoom = media.getZoom();
-
-            if (view != null) {
-                src = src + "#view=" + view;
-            }
-
-            if (zoom != null) {
-                src += (view != null) ? "&zoom=" + zoom : "#zoom=" + zoom;
-            }
-        }
-
-        buildObjectTag(context, media, writer, src, isIE, player, sourceParam);
+        super.encodeEnd(context, component);
     }
 
     private void buildVideoTag(FacesContext context, Media media, ResponseWriter writer, String src)
@@ -88,7 +59,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
             writer.writeAttribute("class", media.getStyleClass(), null);
         }
 
-        Optional uiParameter = media.getChildren().stream().filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
+        Optional<UIComponent> uiParameter = media.getChildren().stream().filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
         if (uiParameter.isPresent() && !Boolean.FALSE.toString().equals(((UIParameter) uiParameter.get()).getValue())) {
             writer.writeAttribute("controls", "", null);
         }

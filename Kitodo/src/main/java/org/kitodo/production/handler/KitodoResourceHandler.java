@@ -21,7 +21,7 @@ import org.primefaces.application.resource.PrimeResourceHandler;
 
 public class KitodoResourceHandler extends PrimeResourceHandler {
 
-    public static final String KITODO_RANGE_STREAMED_CONTENT_KEY = "krsc";
+    private static final String KITODO_RANGE_STREAMED_CONTENT_KEY = "krsc";
 
     public KitodoResourceHandler(ResourceHandler wrapped) {
         super(wrapped);
