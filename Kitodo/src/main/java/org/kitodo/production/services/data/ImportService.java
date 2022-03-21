@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -1190,9 +1191,11 @@ public class ImportService {
      * @param projectId the projectId
      * @param templateId the templateId
      * @param selectedCatalog the selected catalog to import from
+     * @param presetMetadata Map containing preset metadata with keys as metadata keys and values as metadata values
      * @return the importedProcess
      */
-    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog) throws ImportException {
+    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog,
+                                 Map<String, String> presetMetadata) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         TempProcess tempProcess;
         Template template;
@@ -1205,6 +1208,13 @@ public class ImportService {
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
+            for (Map.Entry<String, String> presetMetadataEntry : presetMetadata.entrySet()) {
+                MetadataEntry metadataEntry = new MetadataEntry();
+                metadataEntry.setKey(presetMetadataEntry.getKey());
+                metadataEntry.setValue(presetMetadataEntry.getValue());
+                metadataEntry.setDomain(MdSec.DMD_SEC);
+                tempProcess.getWorkpiece().getLogicalStructure().getMetadata().add(metadataEntry);
+            }
             ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
             URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
             tempProcess.getProcess().setProcessBaseUri(processBaseUri);

@@ -38,6 +38,7 @@ public class MassImportForm extends BaseForm {
     private String selectedCatalog;
     private UploadedFile file;
     private String ppnString;
+    private Character csvSeparator = ';';
     private final MassImportService massImportService = ServiceManager.getMassImportService();
 
     private static final String PROCESS_LIST_PATH = "/pages/processes.jsf?faces-redirect=true";
@@ -56,7 +57,7 @@ public class MassImportForm extends BaseForm {
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile file = event.getFile();
         try {
-            massImportService.importFromCSV(selectedCatalog, file, projectId, templateId);
+            massImportService.importFromCSV(selectedCatalog, file, projectId, templateId, csvSeparator);
             FacesContext context = FacesContext.getCurrentInstance();
             String path = context.getExternalContext().getRequestContextPath() + PROCESS_LIST_PATH;
             context.getExternalContext().redirect(path);
@@ -173,5 +174,23 @@ public class MassImportForm extends BaseForm {
      */
     public void setPpnString(String ppnString) {
         this.ppnString = ppnString;
+    }
+
+    /**
+     * Get csvSeparator.
+     *
+     * @return value of csvSeparator
+     */
+    public Character getCsvSeparator() {
+        return csvSeparator;
+    }
+
+    /**
+     * Set csvSeparator.
+     *
+     * @param csvSeparator as java.lang.Character
+     */
+    public void setCsvSeparator(Character csvSeparator) {
+        this.csvSeparator = csvSeparator;
     }
 }

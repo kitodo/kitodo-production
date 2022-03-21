@@ -15,11 +15,11 @@ import com.opencsv.CSVReader;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.file.UploadedFile;
@@ -54,38 +54,58 @@ public class MassImportService {
      * @param file the file to parse.
      * @param projectId the project id.
      * @param templateId the template id.
+     * @param csvSeparator character used to separate columns in CSV file
      */
-    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId)
+    public void importFromCSV(String selectedCatalog, UploadedFile file, int projectId, int templateId,
+                              Character csvSeparator)
             throws IOException, ImportException {
+        Map<String, Map<String, String>> presetMetadata = new HashMap<>();
         CSVReader reader;
-        List<String> ppns = new ArrayList<>();
-        reader = new CSVReader(new InputStreamReader(file.getInputStream()));
+        reader = new CSVReader(new InputStreamReader(file.getInputStream()), csvSeparator);
         String[] line;
+        int counter = 0;
+        String[] metadataKeys = new String[0];
         while ((line = reader.readNext()) != null) {
-            ppns.add(line[0]);
+            if (counter == 0) {
+                metadataKeys = line;
+            } else {
+                Map<String, String> processMetadata = new HashMap<>();
+                for (int i = 1; i < metadataKeys.length; i++) {
+                    if (StringUtils.isNotBlank(line[i])) {
+                        processMetadata.put(metadataKeys[i], line[i]);
+                    }
+                }
+                presetMetadata.put(line[0], processMetadata);
+            }
+            counter++;
         }
-        importPPNs(selectedCatalog, ppns, projectId, templateId);
+        importPPNs(selectedCatalog, presetMetadata, projectId, templateId);
     }
 
     /**
-     * Import Processes from given commaseparated text.
+     * Import Processes from given comma separated text.
      *  @param selectedCatalog
      *            the catalog to import from
-     * @param ppnString the ppn string from textfield.
+     * @param ppnString the ppn string from text field.
      * @param projectId the project id.
      * @param templateId the template id.
      */
     public void importFromText(String selectedCatalog, String ppnString, int projectId, int templateId)
             throws ImportException {
-        List<String> ppns = Arrays.asList(ppnString.replaceAll("\\s","").split(","));
-        importPPNs(selectedCatalog, ppns, projectId, templateId);
+        String[] ppns = ppnString.replaceAll("\\s","").split(",");
+        Map<String, Map<String, String>> presetMetadata = new HashMap<>();
+        for (String ppn : ppns) {
+            presetMetadata.put(ppn, new HashMap<>());
+        }
+        importPPNs(selectedCatalog, presetMetadata, projectId, templateId);
     }
 
-    private void importPPNs(String selectedCatalog, List<String> ppns, int projectId, int templateId)
+    private void importPPNs(String selectedCatalog, Map<String, Map<String, String>> processMetadata, int projectId,
+                            int templateId)
             throws ImportException {
         ImportService importService = ServiceManager.getImportService();
-        for (String ppn : ppns) {
-            importService.importProcess(ppn, projectId, templateId, selectedCatalog);
+        for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
+            importService.importProcess(entry.getKey(), projectId, templateId, selectedCatalog, entry.getValue());
         }
     }
 }
