@@ -150,4 +150,12 @@ public class ProcessMetadata {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
     }
+
+    public void update() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        LogicalDivision logicalDivision = (LogicalDivision) processDetails.getDivision();
+        if (Objects.nonNull(logicalDivision)) {
+            processDetails.preserve();
+            processDetails = initializeProcessDetails(logicalDivision);
+        }
+    }
 }

@@ -24,6 +24,8 @@ import java.util.function.BiConsumer;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -34,6 +36,9 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Serializable {
+    private static final Logger logger = LogManager.getLogger(ProcessSelectMetadata.class);
+
+    private final boolean dependent;
 
     /**
      * Converts the select items map to the select items type required by JSF to
@@ -62,9 +67,11 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     private List<String> selectedItems = new ArrayList<>();
 
     ProcessSelectMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings,
-            Collection<MetadataEntry> selected) {
+            Collection<MetadataEntry> selected, boolean dependent) {
         super(container, settings, settings.getLabel());
-        this.items = toItems(settings.getSelectItems());
+        List<Map<MetadataEntry, Boolean>> leadingMetadataFields = container.getListForLeadingMetadataFields();
+        this.items = toItems(settings.getSelectItems(leadingMetadataFields));
+        container.markLeadingMetadataFields(leadingMetadataFields);
         if (selected.isEmpty()) {
             selectedItems.addAll(settings.getDefaultItems());
         } else {
@@ -72,12 +79,14 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
                 selectedItems.add(entry.getValue());
             }
         }
+        this.dependent = dependent;
     }
 
     private ProcessSelectMetadata(ProcessSelectMetadata template) {
         super(template.container, template.settings, template.label);
         this.items = template.items;
         this.selectedItems = new ArrayList<>(template.selectedItems);
+        this.dependent = template.dependent;
     }
 
     @Override
@@ -125,7 +134,17 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         selectedItems.removeAll(Collections.singletonList(""));
         selectedItems.removeAll(Collections.singletonList(null));
         for (String selectedItem : selectedItems) {
-            if (!settings.isValid(selectedItem)) {
+            if (!settings.isValid(selectedItem, container.getListForLeadingMetadataFields())) {
+                /*
+                 * If this selection field is dependent on another metadata
+                 * field and is not valid, then this is because the user has
+                 * changed a field it depends on. In that case we can safely
+                 * skip saving the value.
+                 */
+                if (dependent) {
+                    logger.debug("{} \"{}\" moved out of scope, forgetting.", key, selectedItem);
+                    continue;
+                }
                 throw new InvalidMetadataValueException(label, selectedItem);
             }
             MetadataEntry entry = new MetadataEntry();
@@ -167,7 +186,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
             String value = String.join(" ", selectedItems);
-            if (!settings.isValid(value)) {
+            if (!settings.isValid(value, container.getListForLeadingMetadataFields())) {
                 throw new InvalidMetadataValueException(label, value);
             }
             return Pair.of(super.getStructureFieldSetters(settings), value);
@@ -179,7 +198,7 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     @Override
     public boolean isValid() {
         for (String selectedItem : selectedItems) {
-            if (!settings.isValid(selectedItem)) {
+            if (!settings.isValid(selectedItem, container.getListForLeadingMetadataFields())) {
                 return false;
             }
         }

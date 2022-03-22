@@ -11,15 +11,25 @@
 
 package org.kitodo.dataeditor.ruleset;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.dataeditor.ruleset.xml.Condition;
+import org.kitodo.dataeditor.ruleset.xml.ConditionsMapInterface;
 import org.kitodo.dataeditor.ruleset.xml.RestrictivePermit;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Unspecified;
@@ -30,6 +40,8 @@ import org.kitodo.dataeditor.ruleset.xml.Unspecified;
  * restrictions.
  */
 public class Rule {
+    private static final Logger logger = LogManager.getLogger(Rule.class);
+
     /**
      * Maybe a rule, but maybe not.
      */
@@ -55,46 +67,6 @@ public class Rule {
     }
 
     /**
-     * A filter to generate the possibilities based on a rule. This is because
-     * the rule restricts the possibilities and gives order to elements, Or does
-     * not restrict and gives order anyway for elements where mentioned and rest
-     * is just like that. We have that twice for subdivisions and options so
-     * this is summarized here and only getter is fetched from outside.
-     *
-     * @param possibilities
-     *            list of possibilities unfiltered
-     * @param getter
-     *            which field to read
-     * @return list is filtered
-     */
-    private Map<String, String> filterPossibilitiesBasedOnRule(Map<String, String> possibilities,
-            Function<RestrictivePermit, Optional<String>> getter) {
-        if (optionalRestrictivePermit.isPresent()) {
-            Map<String, String> filteredPossibilities = new LinkedHashMap<>();
-            RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
-            for (RestrictivePermit permit : restrictivePermit.getPermits()) {
-                Optional<String> getterResult = getter.apply(permit);
-                if (getterResult.isPresent()) {
-                    String entry = getterResult.get();
-                    if (possibilities.containsKey(entry)) {
-                        filteredPossibilities.put(entry, possibilities.get(entry));
-                    }
-                }
-            }
-            if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
-                for (Entry<String, String> entryPair : possibilities.entrySet()) {
-                    if (!filteredPossibilities.containsKey(entryPair.getKey())) {
-                        filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
-                    }
-                }
-            }
-            return filteredPossibilities;
-        } else {
-            return possibilities;
-        }
-    }
-
-    /**
      * Returns only the allowed sub-divisions by rule, possibly only resorted.
      *
      * @param divisions
@@ -102,7 +74,28 @@ public class Rule {
      * @return exit
      */
     Map<String, String> getAllowedSubdivisions(Map<String, String> divisions) {
-        return filterPossibilitiesBasedOnRule(divisions, RestrictivePermit::getDivision);
+        if (!optionalRestrictivePermit.isPresent()) {
+            return divisions;
+        }
+        Map<String, String> filteredPossibilities = new LinkedHashMap<>();
+        RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
+        for (RestrictivePermit permit : restrictivePermit.getPermits()) {
+            Optional<String> getterResult = permit.getDivision();
+            if (getterResult.isPresent()) {
+                String entry = getterResult.get();
+                if (divisions.containsKey(entry)) {
+                    filteredPossibilities.put(entry, divisions.get(entry));
+                }
+            }
+        }
+        if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
+            for (Entry<String, String> entryPair : divisions.entrySet()) {
+                if (!filteredPossibilities.containsKey(entryPair.getKey())) {
+                    filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
+                }
+            }
+        }
+        return filteredPossibilities;
     }
 
     /**
@@ -175,10 +168,86 @@ public class Rule {
      *
      * @param selectItems
      *            the selection items
+     * @param metadata
+     *            metadata, for conditional select items
      * @return the selection items
      */
-    Map<String, String> getSelectItems(Map<String, String> selectItems) {
-        return filterPossibilitiesBasedOnRule(selectItems, RestrictivePermit::getValue);
+    Map<String, String> getSelectItems(Map<String, String> selectItems, List<Map<MetadataEntry, Boolean>> metadata) {
+        if (!optionalRestrictivePermit.isPresent()) {
+            return selectItems;
+        }
+        Map<String, String> filteredPossibilities = new LinkedHashMap<>();
+        RestrictivePermit restrictivePermit = optionalRestrictivePermit.get();
+        for (RestrictivePermit permit : getConditionalPermits(restrictivePermit, metadata)) {
+            Optional<String> getterResult = permit.getValue();
+            if (getterResult.isPresent()) {
+                String entry = getterResult.get();
+                if (selectItems.containsKey(entry)) {
+                    filteredPossibilities.put(entry, selectItems.get(entry));
+                }
+            }
+        }
+        if (restrictivePermit.getUnspecified().equals(Unspecified.UNRESTRICTED)) {
+            for (Entry<String, String> entryPair : selectItems.entrySet()) {
+                if (!filteredPossibilities.containsKey(entryPair.getKey())) {
+                    filteredPossibilities.put(entryPair.getKey(), entryPair.getValue());
+                }
+            }
+        }
+        return filteredPossibilities;
+    }
+
+    private static Collection<RestrictivePermit> getConditionalPermits(RestrictivePermit restrictivePermit,
+            List<Map<MetadataEntry, Boolean>> metadata) {
+
+        Collection<RestrictivePermit> result = new ArrayList<>(restrictivePermit.getPermits());
+        Map<String, Optional<MetadataEntry>> metadataCache = new HashMap<>();
+        getConditionalPermits(restrictivePermit, metadataCache, metadata, result); // start recursion
+        return result;
+    }
+
+    private static void getConditionalPermits(ConditionsMapInterface conditionsMapInterface,
+            Map<String, Optional<MetadataEntry>> metadataCache, List<Map<MetadataEntry, Boolean>> metadata,
+            Collection<RestrictivePermit> result) {
+
+        for (String conditionKey : conditionsMapInterface.getConditionKeys()) {
+            Optional<MetadataEntry> possibleMetadata = metadataCache.computeIfAbsent(conditionKey,
+                key -> getMetadataEntryForKey(key, metadata));
+            if (possibleMetadata.isPresent()) {
+                Condition condition = conditionsMapInterface.getCondition(conditionKey, possibleMetadata.get().getValue());
+                if (Objects.nonNull(condition)) {
+                    result.addAll(condition.getPermits());
+                    getConditionalPermits(condition, metadataCache, metadata, result); // recursive
+                }
+            }
+        }
+    }
+
+    private static Optional<MetadataEntry> getMetadataEntryForKey(final String key,
+            final List<Map<MetadataEntry, Boolean>> metadata) {
+        String effectiveKey = key;
+        int metadataIndex = metadata.size() - 1;
+        while (effectiveKey.startsWith("../")) {
+            effectiveKey = effectiveKey.substring(3);
+            metadataIndex--;
+        }
+        if (metadataIndex < 0) {
+            logger.warn("<condition key=\"{}\"> can never be met because metadata has only {} layers", key,
+                metadata.size());
+            return Optional.empty();
+        }
+
+        Map<MetadataEntry, Boolean> effectiveMetadata = metadata.get(metadataIndex);
+        MetadataEntry found = null;
+        for (Entry<MetadataEntry, Boolean> mapEntry : effectiveMetadata.entrySet()) {
+            MetadataEntry metadataEntry = mapEntry.getKey();
+            if (metadataEntry.getKey().equals(effectiveKey)) {
+                found = metadataEntry;
+                mapEntry.setValue(Boolean.TRUE);
+                break;
+            }
+        }
+        return Optional.ofNullable(found);
     }
 
     /**
@@ -203,56 +272,6 @@ public class Rule {
     }
 
     /**
-     * Combines two rules into each other. The first rule, if in doubt, is more
-     * specific to the order of elements, otherwise it’s the same as around.
-     * This is so if rule is nesting, and additional rule is found for key, then
-     * merged and nesting rule is first and thus more specific to the case but
-     * other rule otherwise considered as well. This is important but difficult
-     * to implement and so it is done now.
-     *
-     * @param one
-     *            a rule
-     * @param another
-     *            the other rule
-     * @return merged rule
-     */
-    private RestrictivePermit merge(RestrictivePermit one, RestrictivePermit another) {
-        RestrictivePermit merged = new RestrictivePermit();
-
-        // we assume that both rules to merge are rules on the same entity
-        merged.setDivision(one.getDivision());
-        merged.setKey(one.getKey());
-        merged.setValue(one.getValue());
-
-        mergeQuantities(one, another, merged);
-
-        // if one of both is forbidden, then it is forbidden
-        merged.setUnspecified(
-            one.getUnspecified().equals(Unspecified.FORBIDDEN) || another.getUnspecified().equals(Unspecified.FORBIDDEN)
-                    ? Unspecified.FORBIDDEN
-                    : Unspecified.UNRESTRICTED);
-
-        // for sub-rules, apply recursively
-        HashMap<RestrictivePermit, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
-        for (RestrictivePermit anotherPermit : another.getPermits()) {
-            anotherPermits.put(anotherPermit, anotherPermit);
-        }
-        List<RestrictivePermit> mergedPermits = new LinkedList<>();
-        for (RestrictivePermit onePermit : one.getPermits()) {
-            if (anotherPermits.containsKey(onePermit)) {
-                mergedPermits.add(merge(onePermit, anotherPermits.get(onePermit)));
-                anotherPermits.remove(onePermit);
-            } else {
-                mergedPermits.add(onePermit);
-            }
-        }
-        mergedPermits.addAll(anotherPermits.values());
-        merged.setPermits(mergedPermits);
-
-        return merged;
-    }
-
-    /**
      * Combines two rules. The function happens in separate, this is just
      * wrapping.
      *
@@ -271,6 +290,41 @@ public class Rule {
     }
 
     /**
+     * Combines two rules into each other. The first rule, if in doubt, is more
+     * specific to the order of elements, otherwise it’s the same as around.
+     * This is so if rule is nesting, and additional rule is found for key, then
+     * merged and nesting rule is first and thus more specific to the case but
+     * other rule otherwise considered as well. This is important but difficult
+     * to implement and so it is done now.
+     *
+     * @param one
+     *            a rule
+     * @param another
+     *            the other rule
+     * @return merged rule
+     */
+    private static RestrictivePermit merge(RestrictivePermit one, RestrictivePermit another) {
+        RestrictivePermit merged = new RestrictivePermit();
+
+        // we assume that both rules to merge are rules on the same entity
+        merged.setDivision(one.getDivision());
+        merged.setKey(one.getKey());
+        merged.setValue(one.getValue());
+
+        mergeQuantities(one, another, merged);
+
+        // if one of both is forbidden, then it is forbidden
+        merged.setUnspecified(
+            one.getUnspecified().equals(Unspecified.FORBIDDEN) || another.getUnspecified().equals(Unspecified.FORBIDDEN)
+                    ? Unspecified.FORBIDDEN
+                    : Unspecified.UNRESTRICTED);
+
+        mergeConditions(one.getConditions(), another.getConditions(), merged.getConditions());
+        mergePermits(one.getPermits(), another.getPermits(), merged.getPermits());
+        return merged;
+    }
+
+    /**
      * This is taken out because otherwise checkstyle is unfortunate because
      * function is length 59 and should only be 50 lines. This is part of the
      * {@link #merge(RestrictivePermit, RestrictivePermit)} function and connects the quantities. Merge is
@@ -283,7 +337,7 @@ public class Rule {
      * @param merged
      *            merged rule
      */
-    private void mergeQuantities(RestrictivePermit one, RestrictivePermit another, RestrictivePermit merged) {
+    private static void mergeQuantities(RestrictivePermit one, RestrictivePermit another, RestrictivePermit merged) {
         if (one.getMinOccurs() == null) {
             merged.setMinOccurs(another.getMinOccurs());
         } else {
@@ -303,5 +357,62 @@ public class Rule {
                 merged.setMaxOccurs(Math.min(one.getMaxOccurs(), another.getMaxOccurs()));
             }
         }
+    }
+
+    private static void mergeConditions(List<Condition> one, List<Condition> another, List<Condition> merged) {
+        // if both have no conditions, there are no conditions
+        boolean oneHasNoConditions = one.isEmpty();
+        boolean anotherHasNoConditions = another.isEmpty();
+        if (oneHasNoConditions && anotherHasNoConditions) {
+            return;
+        }
+
+        // if just one side has conditions, apply them
+        if (!oneHasNoConditions && anotherHasNoConditions) {
+            merged.addAll(one);
+            return;
+        }
+        if (oneHasNoConditions && !anotherHasNoConditions) {
+            merged.addAll(another);
+            return;
+        }
+
+        // if both have conditions, they must both apply
+        Map<Pair<String, String>, Condition> anotherMap = another.stream().collect(
+            Collectors.toMap(condition -> Pair.of(condition.getKey(), condition.getEquals()), Function.identity()));
+        for (Condition oneCondition : one) {
+            Condition anotherCondition = anotherMap.get(Pair.of(oneCondition.getKey(), oneCondition.getEquals()));
+            if (Objects.nonNull(anotherCondition)) {
+                merged.add(mergeCondition(oneCondition, anotherCondition));
+            }
+        }
+    }
+
+    private static Condition mergeCondition(Condition one, Condition another) {
+        Condition result = new Condition();
+
+        // we assume that both conditions are on the same entity
+        result.setKey(one.getKey());
+        result.setEquals(one.getEquals());
+
+        mergeConditions(one.getConditions(), another.getConditions(), result.getConditions());
+        mergePermits(one.getPermits(), another.getPermits(), result.getPermits());
+        return result;
+    }
+
+    private static void mergePermits(List<RestrictivePermit> one, List<RestrictivePermit> another, List<RestrictivePermit> mergedPermits) {
+        HashMap<RestrictivePermit, RestrictivePermit> anotherPermits = new LinkedHashMap<>();
+        for (RestrictivePermit anotherPermit : another) {
+            anotherPermits.put(anotherPermit, anotherPermit);
+        }
+        for (RestrictivePermit onePermit : one) {
+            if (anotherPermits.containsKey(onePermit)) {
+                mergedPermits.add(merge(onePermit, anotherPermits.get(onePermit)));
+                anotherPermits.remove(onePermit);
+            } else {
+                mergedPermits.add(onePermit);
+            }
+        }
+        mergedPermits.addAll(anotherPermits.values());
     }
 }
