@@ -348,8 +348,7 @@ public class KitodoScriptService {
                 }
             } else {
                 try {
-                    deleteMetadataDirectory(process);
-                    ServiceManager.getProcessService().remove(process);
+                    ServiceManager.getProcessService().deleteProcess(process);
                     Helper.setMessage("Process " + title + " deleted.");
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
