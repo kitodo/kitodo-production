@@ -163,6 +163,7 @@
                               rendered="#{item.input eq 'dataTable' and not readOnly}"
                               styleClass="metadata-button">
                     <p:commandButton id="addMetadataToGroup"
+                                     process="@this"
                                      action="#{Form.prepareAddableMetadataForGroup(node)}"
                                      disabled="#{not Form.metadataAddableToGroup(node)}"
                                      icon="fa fa-plus"

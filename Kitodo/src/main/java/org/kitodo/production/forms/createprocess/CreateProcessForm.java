@@ -629,7 +629,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     /**
      * Get process ancestors.
      *
-     * @return process ansestors
+     * @return process ancestors
      */
     public List<TempProcess> getProcessAncestors() {
         return this.processes;
@@ -672,8 +672,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     && Objects.nonNull(tempProcess.getWorkpiece().getLogicalStructure())
                     && Objects.nonNull(tempProcess.getWorkpiece().getLogicalStructure().getType())) {
                 tempProcess.verifyDocType();
-                this.getProcessDataTab()
-                        .setDocType(tempProcess.getWorkpiece().getLogicalStructure().getType());
+                processDataTab.setDocType(tempProcess.getWorkpiece().getLogicalStructure().getType());
+                processDataTab.updateProcessMetadata();
             }
         }
     }

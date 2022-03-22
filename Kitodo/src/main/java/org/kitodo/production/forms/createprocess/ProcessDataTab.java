@@ -67,10 +67,12 @@ public class ProcessDataTab {
                 Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
             }
         }
-        updateProcessMetadata();
     }
 
-    private void updateProcessMetadata() {
+    /**
+     * Update process metadata of currently selected process.
+     */
+    public void updateProcessMetadata() {
         if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())) {
             createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
