@@ -70,7 +70,7 @@ public class SearchResultGeneration {
         List<ProcessDTO> processDTOS = new ArrayList<>();
         try {
             processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
-                    ServiceManager.getProcessService().sortById(SortOrder.ASC),false);
+                    ServiceManager.getProcessService().sortById(SortOrder.ASC), false);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
