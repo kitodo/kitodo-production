@@ -57,8 +57,7 @@
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="blur" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:inputText>
                 </h:panelGroup>
 
@@ -71,8 +70,7 @@
                                      disabled="#{not item.editable or readOnly}"
                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="blur" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:inputTextarea>
                 </h:panelGroup>
 
@@ -84,8 +82,7 @@
                                disabled="#{not item.editable or readOnly}"
                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="blur" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:spinner>
                 </h:panelGroup>
 
@@ -98,8 +95,7 @@
                                 showOn="button"
                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
-                        <p:ajax event="dateSelect" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="dateSelect" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="dateSelect" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:calendar>
                 </h:panelGroup>
 
@@ -113,8 +109,7 @@
                                       required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="change" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:selectManyMenu>
                 </h:panelGroup>
 
@@ -133,8 +128,7 @@
                                       itemLabel="#{msgs.notSelected}"
                                       noSelectionOption="true"/>
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax event="change" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="change" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:selectOneMenu>
                 </h:panelGroup>
 
@@ -149,8 +143,7 @@
                                       layout="grid"
                                       columns="1">
                         <f:selectItems value="#{item.items}"/>
-                        <p:ajax rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:selectOneRadio>
                 </h:panelGroup>
 
@@ -161,8 +154,7 @@
                                              disabled="#{not item.editable or readOnly}"
                                              required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                              value="#{item.active}">
-                        <p:ajax event="change" rendered="#{not item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : ''}"/>
-                        <p:ajax event="change" rendered="#{item.leading}" oncomplete="preserveMetadata(); #{request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();'}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:selectBooleanCheckbox>
                 </h:panelGroup>
 
