@@ -62,6 +62,14 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
@@ -159,15 +167,6 @@ import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
@@ -2431,7 +2430,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get the node list from metadata file by the xpath.
-     * 
+     *
      * @param process
      *            The process for which the metadata file is searched for
      * @param xpath

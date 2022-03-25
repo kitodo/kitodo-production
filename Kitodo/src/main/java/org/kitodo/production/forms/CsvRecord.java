@@ -49,7 +49,7 @@ public class CsvRecord {
     /**
      * Set csvCells.
      *
-     * @param csvCells as java.util.List<org.kitodo.production.forms.CsvCell>
+     * @param csvCells as List of CsvCell
      */
     public void setCsvCells(List<CsvCell> csvCells) {
         this.csvCells = csvCells;

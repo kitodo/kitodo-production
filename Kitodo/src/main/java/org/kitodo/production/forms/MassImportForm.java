@@ -249,7 +249,7 @@ public class MassImportForm extends BaseForm {
     /**
      * Set metadataKeys.
      *
-     * @param metadataKeys as java.util.List<java.lang.String>
+     * @param metadataKeys as List of String
      */
     public void setMetadataKeys(List<String> metadataKeys) {
         this.metadataKeys = metadataKeys;

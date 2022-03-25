@@ -18,7 +18,8 @@ public class CsvCell {
     /**
      * Empty standard constructor.
      */
-    public CsvCell() {}
+    public CsvCell() {
+    }
 
     /**
      * Constructor setting value of this CsvCell.
