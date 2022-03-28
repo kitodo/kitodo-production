@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.forms;
+package org.kitodo.production.forms.massimport;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -24,8 +24,11 @@ import javax.inject.Named;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ImportException;
+import org.kitodo.production.forms.BaseForm;
+import org.kitodo.production.forms.CsvRecord;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.MassImportService;
@@ -45,11 +48,12 @@ public class MassImportForm extends BaseForm {
     private UploadedFile file;
     private String csvSeparator = ";";
     private String previousCsvSeparator = null;
-    private List<String> metadataKeys = Collections.singletonList("ID");
+    private List<String> metadataKeys = new LinkedList<>(Collections.singletonList("ID"));
     private List<CsvRecord> records = new LinkedList<>();
     private final List<Character> csvSeparatorCharacters = Arrays.asList(',', ';');
     private final MassImportService massImportService = ServiceManager.getMassImportService();
     private static final String PROCESS_LIST_PATH = "/pages/processes.jsf?faces-redirect=true";
+    private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     /**
      * Prepare mass import.
@@ -61,8 +65,10 @@ public class MassImportForm extends BaseForm {
         this.projectId = projectId;
         this.templateId = templateId;
         try {
-            this.templateTitle = ServiceManager.getTemplateService().getById(templateId).getTitle();
-        } catch (DAOException e) {
+            Template template = ServiceManager.getTemplateService().getById(templateId);
+            this.templateTitle = template.getTitle();
+            addMetadataDialog.setRulesetManagement(ServiceManager.getRulesetService().openRuleset(template.getRuleset()));
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage(e);
         }
     }
@@ -79,7 +85,7 @@ public class MassImportForm extends BaseForm {
             metadataKeys = new LinkedList<>();
             records = new LinkedList<>();
             if (!csvLines.isEmpty()) {
-                metadataKeys = Arrays.asList(csvLines.get(0).split(csvSeparator, -1));
+                metadataKeys = new LinkedList<>(Arrays.asList(csvLines.get(0).split(csvSeparator, -1)));
                 if (csvLines.size() > 1) {
                     records = massImportService.parseLines(csvLines.subList(1, csvLines.size()), csvSeparator);
                 }
@@ -289,5 +295,14 @@ public class MassImportForm extends BaseForm {
      */
     public String getTemplateTitle() {
         return templateTitle;
+    }
+
+    /**
+     * Gets addMetadataDialog.
+     *
+     * @return value of addMetadataDialog
+     */
+    public AddMetadataDialog getAddMetadataDialog() {
+        return addMetadataDialog;
     }
 }

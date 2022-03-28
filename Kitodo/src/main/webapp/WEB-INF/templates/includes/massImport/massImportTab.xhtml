@@ -45,7 +45,7 @@
                              style="border: 1px solid black;"
                              value="#{MassImportForm.records}"
                              var="record">
-                    <p:ajax event="cellEdit"/>
+                    <p:ajax event="cellEdit" update="editForm:recordsTable"/>
                     <!--@elvariable id="columnIndex" type="java.lang.Integer"-->
                     <p:columns var="metadataKey"
                                columnIndexVar="columnIndex"
@@ -57,6 +57,17 @@
                         </p:cellEditor>
                     </p:columns>
                     <p:column styleClass="remove-column">
+                        <f:facet name="header">
+                            <p:commandButton id="addMetadataColumn"
+                                             title="#{msgs['dataEditor.addMetadata.newMetadata']}"
+                                             disabled="#{MassImportForm.records.size() eq 0}"
+                                             style="margin: 3px"
+                                             icon="fa fa-plus"
+                                             styleClass="secondary"
+                                             action="#{MassImportForm.addMetadataDialog.prepareMetadataTypes()}"
+                                             update="addMetadataDialog"
+                                             oncomplete="PF('addMetadataDialog').show();"/>
+                        </f:facet>
                         <p:commandButton id="removeLine"
                                          action="#{MassImportForm.removeLine(record)}"
                                          styleClass="secondary"

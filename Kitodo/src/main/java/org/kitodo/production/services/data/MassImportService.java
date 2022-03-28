@@ -14,6 +14,10 @@ package org.kitodo.production.services.data;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -22,9 +26,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.forms.CsvCell;
 import org.kitodo.production.forms.CsvRecord;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.file.UploadedFile;
 
@@ -133,5 +143,39 @@ public class MassImportService {
         for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
             importService.importProcess(entry.getKey(), projectId, templateId, selectedCatalog, entry.getValue());
         }
+    }
+
+    /**
+     * Get all allowed metadata.
+     * @param divisions list of StructuralElementViewInterface
+     * @param enteredMetadata collection of preset metadata
+     * @return list of allowed metadata as List of ProcessDetail
+     * @throws IOException when ruleset file could not be read
+     */
+    public List<ProcessDetail> getAddableMetadataTable(List<StructuralElementViewInterface> divisions,
+                                                       Collection<Metadata> enteredMetadata) {
+        ProcessFieldedMetadata table = new ProcessFieldedMetadata();
+        List<MetadataViewInterface> commonMetadata = new ArrayList<>();
+        for (int i = 0; i < divisions.size(); i++) {
+            List<MetadataViewInterface> metadataView =
+                    new ArrayList<>(divisions.get(i).getAddableMetadata(enteredMetadata, Collections.emptyList())
+                    .stream().sorted(Comparator.comparing(MetadataViewInterface::getLabel))
+                            .collect(Collectors.toList()));
+            if (i == 0) {
+                commonMetadata = new ArrayList<>(List.copyOf(metadataView));
+            } else {
+                commonMetadata.removeIf(item -> metadataView.stream()
+                        .noneMatch(metadataElement -> Objects.equals(item.getId(),metadataElement.getId())));
+            }
+            if (commonMetadata.isEmpty()) {
+                break;
+            }
+        }
+        for (MetadataViewInterface keyView : commonMetadata) {
+            if (!keyView.isComplex()) {
+                table.createMetadataEntryEdit((SimpleMetadataViewInterface) keyView, Collections.emptyList());
+            }
+        }
+        return table.getRows();
     }
 }
