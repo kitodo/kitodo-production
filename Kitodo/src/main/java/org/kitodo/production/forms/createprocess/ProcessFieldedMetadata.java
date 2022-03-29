@@ -236,7 +236,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     private Collection<Metadata> addLabels(Collection<Metadata> metadata) {
         Collection<Metadata> displayMetadata = metadata;
         if (Objects.nonNull(division)) {
-            displayMetadata = new ArrayList<>(metadata);
+            displayMetadata = new HashSet<>(metadata);
             for (URI contentId : division.getContentIds()) {
                 MetadataEntry contentIdEntry = new MetadataEntry();
                 contentIdEntry.setKey("CONTENTIDS");
