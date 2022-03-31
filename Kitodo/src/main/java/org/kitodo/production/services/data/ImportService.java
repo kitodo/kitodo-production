@@ -371,7 +371,7 @@ public class ImportService {
 
     /**
      * Get the parent ID from the document.
-     * @return
+     * @return parent ID
      */
     public String getParentID(Document document) throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
@@ -1215,6 +1215,15 @@ public class ImportService {
                 metadataEntry.setDomain(MdSec.DMD_SEC);
                 tempProcess.getWorkpiece().getLogicalStructure().getMetadata().add(metadataEntry);
             }
+            String title = tempProcess.getProcess().getTitle();
+            String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
+            if (StringUtils.isBlank(title)) {
+                throw new ProcessGenerationException(Helper.getTranslation("processTitleEmpty"));
+            } else if (!title.matches(validateRegEx)) {
+                throw new ProcessGenerationException(Helper.getTranslation("processTitleInvalid", title));
+            } else if (ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title) > 0) {
+                throw new ProcessGenerationException(Helper.getTranslation("processTitleAlreadyInUse", title));
+            }
             ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
             URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
             tempProcess.getProcess().setProcessBaseUri(processBaseUri);
@@ -1227,8 +1236,7 @@ public class ImportService {
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | DataException | CommandException | TransformerException e) {
             logger.error(e);
-            throw new ImportException(
-                    Helper.getTranslation("errorImporting", ppn, e.getLocalizedMessage()));
+            throw new ImportException(e.getLocalizedMessage());
         }
         return tempProcess.getProcess();
     }

@@ -85,7 +85,7 @@ public class AddMetadataDialog {
      */
     public void prepareMetadataTypes() {
         if (allRulesetDivisions.isEmpty()) {
-            allRulesetDivisions = getDevisions();
+            allRulesetDivisions = getDivisions();
         }
         metadataTypes = ServiceManager.getMassImportService().getAddableMetadataTable(allRulesetDivisions, getPresetMetadata());
         if (!metadataTypes.isEmpty()) {
@@ -94,7 +94,7 @@ public class AddMetadataDialog {
 
     }
 
-    private List<StructuralElementViewInterface> getDevisions() {
+    private List<StructuralElementViewInterface> getDivisions() {
         return rulesetManagement.getStructuralElements(priorityList).keySet().stream()
                 .map(key -> rulesetManagement.getStructuralElementView(key, acquisitionStage, priorityList))
                 .collect(Collectors.toList());

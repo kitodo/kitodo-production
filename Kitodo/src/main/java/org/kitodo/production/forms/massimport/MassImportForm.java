@@ -14,10 +14,13 @@ package org.kitodo.production.forms.massimport;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
@@ -31,7 +34,9 @@ import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.forms.CsvRecord;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.MassImportService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 
@@ -52,8 +57,8 @@ public class MassImportForm extends BaseForm {
     private List<CsvRecord> records = new LinkedList<>();
     private final List<Character> csvSeparatorCharacters = Arrays.asList(',', ';');
     private final MassImportService massImportService = ServiceManager.getMassImportService();
-    private static final String PROCESS_LIST_PATH = "/pages/processes.jsf?faces-redirect=true";
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
+    private HashMap<String, String> importSuccessMap = new HashMap<>();
 
     /**
      * Prepare mass import.
@@ -66,7 +71,7 @@ public class MassImportForm extends BaseForm {
         this.templateId = templateId;
         try {
             Template template = ServiceManager.getTemplateService().getById(templateId);
-            this.templateTitle = template.getTitle();
+            templateTitle = template.getTitle();
             addMetadataDialog.setRulesetManagement(ServiceManager.getRulesetService().openRuleset(template.getRuleset()));
         } catch (DAOException | IOException e) {
             Helper.setErrorMessage(e);
@@ -124,14 +129,37 @@ public class MassImportForm extends BaseForm {
      */
     public void startMassImport() {
         try {
-            massImportService.importRows(selectedCatalog, metadataKeys, records, projectId, templateId);
-            FacesContext context = FacesContext.getCurrentInstance();
-            String path = context.getExternalContext().getRequestContextPath() + PROCESS_LIST_PATH;
-            context.getExternalContext().redirect(path);
+            PrimeFaces.current().ajax().update("massImportResultDialog");
+            Map<String, Map<String, String>> presetMetadata = massImportService.prepareMetadata(metadataKeys, records);
+            importRecords(presetMetadata);
+            PrimeFaces.current().executeScript("PF('massImportProgressDialog').hide();");
+            PrimeFaces.current().executeScript("PF('massImportResultDialog').show();");
+            PrimeFaces.current().ajax().update("massImportResultDialog");
         } catch (IOException e) {
             Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
         } catch (ImportException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Import records by ID and add preset metadata.
+     *
+     * @param processMetadata Map containing record IDs as keys and preset metadata lists as values
+     */
+    private void importRecords(Map<String, Map<String, String>> processMetadata) {
+        ImportService importService = ServiceManager.getImportService();
+        importSuccessMap = new HashMap<>();
+        // FIXME: progress not updated!
+        PrimeFaces.current().ajax().update("massImportProgressDialog");
+        for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
+            try {
+                importService.importProcess(entry.getKey(), projectId, templateId, selectedCatalog, entry.getValue());
+                importSuccessMap.put(entry.getKey(), null);
+            } catch (ImportException e) {
+                importSuccessMap.put(entry.getKey(), e.getLocalizedMessage());
+            }
+            PrimeFaces.current().ajax().update("massImportProgressDialog");
         }
     }
 
@@ -304,5 +332,79 @@ public class MassImportForm extends BaseForm {
      */
     public AddMetadataDialog getAddMetadataDialog() {
         return addMetadataDialog;
+    }
+
+    /**
+     * Get list IDs of successfully imported processes.
+     *
+     * @return list of IDs of successfully import processes
+     */
+    public List<String> getSuccessfulImports() {
+        if (Objects.nonNull(importSuccessMap)) {
+            return importSuccessMap.entrySet().stream().filter(entry -> Objects.isNull(entry.getValue()))
+                    .map(Map.Entry::getKey).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get list of IDs failed imports.
+     *
+     * @return list of IDs of failed imports
+     */
+    public List<String> getFailedImports() {
+        if (Objects.nonNull(importSuccessMap)) {
+            return importSuccessMap.entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue()))
+                    .map(Map.Entry::getKey).collect(Collectors.toList());
+        }
+        return Collections.emptyList();
+    }
+
+    /**
+     * Get error message of import with ID 'recordId'. Return 'null' if record was imported without error.
+     *
+     * @param recordId ID of record for which error message is returned
+     * @return error message of import for ID 'recordId'; returns 'null' if no error occurred
+     */
+    public String getImportErrorMessage(String recordId) {
+        return importSuccessMap.get(recordId);
+    }
+
+
+    /**
+     * Remove metadata key and CsvCells with given index from list of metadata keys and all current CsvRecords.
+     *
+     * @param index index of metadata key and CsvCells to remove
+     */
+    public void removeMetadata(int index) {
+        if (index < metadataKeys.size()) {
+            metadataKeys.remove(index);
+            for (CsvRecord csvRecord : records) {
+                csvRecord.getCsvCells().remove(index);
+            }
+        }
+    }
+
+    /**
+     * Get mass import progress.
+     *
+     * @return mass import progress
+     */
+    public int getProgress() {
+        if (records.isEmpty()) {
+            return 0;
+        }
+        int progress = (importSuccessMap.size() / records.size()) * 100;
+        System.out.println("Progress: " + progress + "%");
+        return progress;
+    }
+
+    /**
+     * Get number of already imported records.
+     *
+     * @return number of imported records
+     */
+    public int getNumberOfProcessesRecords() {
+        return importSuccessMap.size();
     }
 }

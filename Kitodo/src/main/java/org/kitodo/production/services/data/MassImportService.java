@@ -35,7 +35,6 @@ import org.kitodo.production.forms.CsvCell;
 import org.kitodo.production.forms.CsvRecord;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
-import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.file.UploadedFile;
 
 public class MassImportService {
@@ -111,15 +110,10 @@ public class MassImportService {
     /**
      * Import records for given rows, containing IDs for individual download and optionally additional metadata
      * to be added to each record.
-     *  @param selectedCatalog
-     *            the catalog to import from.
      * @param metadataKeys metadata keys for additional metadata added to individual records during import
      * @param records list of CSV records
-     * @param projectId the project id.
-     * @param templateId the template id.
      */
-    public void importRows(String selectedCatalog, List<String> metadataKeys, List<CsvRecord> records, int projectId,
-                           int templateId)
+    public Map<String, Map<String, String>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
             throws IOException, ImportException {
         Map<String, Map<String, String>> presetMetadata = new HashMap<>();
         for (CsvRecord record : records) {
@@ -133,16 +127,7 @@ public class MassImportService {
             }
             presetMetadata.put(record.getCsvCells().get(0).getValue(), processMetadata);
         }
-        importPPNs(selectedCatalog, presetMetadata, projectId, templateId);
-    }
-
-    private void importPPNs(String selectedCatalog, Map<String, Map<String, String>> processMetadata, int projectId,
-                            int templateId)
-            throws ImportException {
-        ImportService importService = ServiceManager.getImportService();
-        for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
-            importService.importProcess(entry.getKey(), projectId, templateId, selectedCatalog, entry.getValue());
-        }
+        return presetMetadata;
     }
 
     /**
@@ -150,7 +135,6 @@ public class MassImportService {
      * @param divisions list of StructuralElementViewInterface
      * @param enteredMetadata collection of preset metadata
      * @return list of allowed metadata as List of ProcessDetail
-     * @throws IOException when ruleset file could not be read
      */
     public List<ProcessDetail> getAddableMetadataTable(List<StructuralElementViewInterface> divisions,
                                                        Collection<Metadata> enteredMetadata) {
@@ -158,9 +142,9 @@ public class MassImportService {
         List<MetadataViewInterface> commonMetadata = new ArrayList<>();
         for (int i = 0; i < divisions.size(); i++) {
             List<MetadataViewInterface> metadataView =
-                    new ArrayList<>(divisions.get(i).getAddableMetadata(enteredMetadata, Collections.emptyList())
-                    .stream().sorted(Comparator.comparing(MetadataViewInterface::getLabel))
-                            .collect(Collectors.toList()));
+                    divisions.get(i).getAddableMetadata(enteredMetadata, Collections.emptyList())
+                            .stream().sorted(Comparator.comparing(MetadataViewInterface::getLabel))
+                            .collect(Collectors.toList());
             if (i == 0) {
                 commonMetadata = new ArrayList<>(List.copyOf(metadataView));
             } else {

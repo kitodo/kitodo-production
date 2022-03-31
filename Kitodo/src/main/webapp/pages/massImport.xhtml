@@ -33,7 +33,7 @@
                          value="#{msgs.massImport}"
                          action="#{MassImportForm.startMassImport()}"
                          icon="fa fa-download fa-lg" iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                         onclick="setConfirmUnload(false);PF('massImportProgressDialog').show();PF('progressPoll').start();"
                          update="notifications, sticky-notifications"/>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
@@ -62,6 +62,8 @@
 
     <ui:define name="dialog">
         <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/addMetadata.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/massImportProgress.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/massImportResults.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

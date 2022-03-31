@@ -200,7 +200,7 @@ input.ui-state-error {
 }
 
 .ui-button.secondary .ui-icon,
-ui-menubutton.secondary .ui-icon,
+.ui-menubutton.secondary .ui-icon,
 .ui-widget-content .ui-button.secondary .ui-icon {
     color: var(--light-blue);
 }
@@ -532,6 +532,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     padding: var(--input-padding-none) var(--input-padding);
 }
 
+.ui-fileupload-files,
 .select-box {
     border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);

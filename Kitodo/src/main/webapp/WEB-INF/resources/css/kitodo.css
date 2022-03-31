@@ -1366,7 +1366,8 @@ Mass import
     width: 50px;
 }
 
-#editForm\:recordsTable .remove-column button.secondary {
+#editForm\:recordsTable .remove-column button.secondary,
+#editForm\:recordsTable .remove-metadata-column.ui-button.secondary {
     border: none;
 }
 
@@ -1381,6 +1382,15 @@ Mass import
 
 #editForm\:csvFileUpload .ui-fileupload-buttonbar {
     float: left;
+}
+
+#importResultsForm\:importResults .ui-accordion-content {
+    padding: 0;
+}
+
+#editForm\:recordsTable\:addMetadataColumn,
+#editForm\:recordsTable button.ui-button.secondary.remove-metadata-column {
+    background: var(--cloudy-gray);
 }
 
 #catalogSearchForm {

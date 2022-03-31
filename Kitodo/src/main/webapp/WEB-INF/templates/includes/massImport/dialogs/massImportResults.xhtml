@@ -1,0 +1,72 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog class="mass-import-result-dialog"
+              id="massImportResultDialog"
+              widgetVar="massImportResultDialog"
+              showHeader="false"
+              modal="true"
+              width="800px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <h3>#{msgs['massImport.results']}</h3>
+        <h:form id="importResultsForm">
+            <p:accordionPanel id="importResults">
+                <p:tab id="successfulImports"
+                       title="#{msgs['massImport.successfulImports']}: #{MassImportForm.successfulImports.size()}">
+                    <p:dataTable value="#{MassImportForm.successfulImports}"
+                                 var="id">
+                        <p:column id="succesfulImportId">
+                            <h:outputText value="#{id}"
+                                          title="#{id}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+                <p:tab id="failedImports"
+                       title="#{msgs['massImport.failedImports']}: #{MassImportForm.failedImports.size()}">
+                    <p:dataTable value="#{MassImportForm.failedImports}"
+                                 var="id">
+                        <p:column id="failedImportId">
+                            <h:outputText value="#{id}"
+                                          title="#{id}"/>
+                        </p:column>
+                        <p:column id="errorMessage">
+                            <h:outputText value="#{MassImportForm.getImportErrorMessage(id)}"
+                                          title="#{MassImportForm.getImportErrorMessage(id)}"/>
+                        </p:column>
+                    </p:dataTable>
+                </p:tab>
+            </p:accordionPanel>
+        </h:form>
+        <div class="select-selector">
+            <p:panelGrid>
+                <p:row>
+                    <p:button id="goToProcesses"
+                              value="Go to processes"
+                              styleClass="primary right"
+                              outcome="/pages/processes.jsf?tabIndex=0&amp;faces-redirect=true"/>
+                    <p:commandButton id="close"
+                                     value="#{msgs.close}"
+                                     styleClass="secondary right"
+                                     onclick="PF('massImportResultDialog').hide();"/>
+                </p:row>
+            </p:panelGrid>
+        </div>
+    </p:dialog>
+</ui:composition>
