@@ -36,7 +36,7 @@
                                    value="#{MassImportForm.progress}"
                                    labelTemplate="{value}%">
                         <p:ajax event="complete"
-                                oncomplete="PF('massImportProgressBar').stop();PF('massImportProgressDialog').hide();"/>
+                                oncomplete="PF('massImportProgressBar').cancel();PF('massImportProgressDialog').hide();"/>
                     </p:progressBar>
                     <h:outputText value="#{MassImportForm.numberOfProcessesRecords} / #{MassImportForm.records.size()}"/>
                 </h:panelGroup>
