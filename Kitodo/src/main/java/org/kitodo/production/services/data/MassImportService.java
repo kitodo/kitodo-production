@@ -114,7 +114,7 @@ public class MassImportService {
      * @param records list of CSV records
      */
     public Map<String, Map<String, String>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
-            throws IOException, ImportException {
+            throws ImportException {
         Map<String, Map<String, String>> presetMetadata = new HashMap<>();
         for (CsvRecord record : records) {
             Map<String, String> processMetadata = new HashMap<>();

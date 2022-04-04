@@ -16,33 +16,30 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:dialog class="mass-import-progress-dialog"
-              id="massImportProgressDialog"
-              widgetVar="massImportProgressDialog"
-              showHeader="false"
-              modal="true"
-              width="800px"
-              appendTo="@(body)"
-              resizable="false"
-              closable="false">
-        <h:form id="massImportProgressForm">
-            <h3>Fortschritt Massenimport</h3>
-            <h:panelGroup layout="block"
-                          style="padding: var(--default-full-size) var(--default-double-size);">
-                <p:progressBar id="massImportProgressBar"
-                               widgetVar="massImportProgressBar"
-                               ajax="true"
-                               value="#{MassImportForm.progress}"
-                               labelTemplate="{value}%">
-                    <p:ajax event="complete"
-                            oncomplete="PF('progressPoll').stop();PF('massImportProgressDialog').hide();"/>
-                </p:progressBar>
-                <h:outputText value="#{MassImportForm.numberOfProcessesRecords} / #{MassImportForm.records.size()}"/>
-            </h:panelGroup>
-            <p:poll interval="1"
-                    widgetVar="progressPoll"
-                    update="massImportProgressForm"
-                    autoStart="false"/>
-        </h:form>
-    </p:dialog>
+    <h:form id="massImportProgressForm">
+        <p:dialog class="mass-import-progress-dialog"
+                  id="massImportProgressDialog"
+                  widgetVar="massImportProgressDialog"
+                  showHeader="false"
+                  modal="true"
+                  width="800px"
+                  appendTo="@(body)"
+                  resizable="false"
+                  closable="false">
+                <h3>Fortschritt Massenimport</h3>
+                <h:panelGroup layout="block"
+                              style="padding: var(--default-full-size) var(--default-double-size);">
+                    <p:progressBar id="massImportProgressBar"
+                                   widgetVar="massImportProgressBar"
+                                   ajax="true"
+                                   interval="1000"
+                                   value="#{MassImportForm.progress}"
+                                   labelTemplate="{value}%">
+                        <p:ajax event="complete"
+                                oncomplete="PF('massImportProgressBar').stop();PF('massImportProgressDialog').hide();"/>
+                    </p:progressBar>
+                    <h:outputText value="#{MassImportForm.numberOfProcessesRecords} / #{MassImportForm.records.size()}"/>
+                </h:panelGroup>
+        </p:dialog>
+    </h:form>
 </ui:composition>

@@ -59,6 +59,7 @@ public class MassImportForm extends BaseForm {
     private final MassImportService massImportService = ServiceManager.getMassImportService();
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
     private HashMap<String, String> importSuccessMap = new HashMap<>();
+    private Integer progress = 0;
 
     /**
      * Prepare mass import.
@@ -87,8 +88,7 @@ public class MassImportForm extends BaseForm {
         file = event.getFile();
         try {
             List<String> csvLines = massImportService.getLines(file);
-            metadataKeys = new LinkedList<>();
-            records = new LinkedList<>();
+            resetValues();
             if (!csvLines.isEmpty()) {
                 metadataKeys = new LinkedList<>(Arrays.asList(csvLines.get(0).split(csvSeparator, -1)));
                 if (csvLines.size() > 1) {
@@ -98,6 +98,12 @@ public class MassImportForm extends BaseForm {
         } catch (IOException e) {
             Helper.setErrorMessage(e);
         }
+    }
+
+    private void resetValues() {
+        metadataKeys = new LinkedList<>();
+        records = new LinkedList<>();
+        importSuccessMap = new HashMap<>();
     }
 
     /**
@@ -128,18 +134,24 @@ public class MassImportForm extends BaseForm {
      * Import all records from list.
      */
     public void startMassImport() {
+        importSuccessMap = new HashMap<>();
+        PrimeFaces.current().ajax().update("massImportResultDialog");
         try {
-            PrimeFaces.current().ajax().update("massImportResultDialog");
             Map<String, Map<String, String>> presetMetadata = massImportService.prepareMetadata(metadataKeys, records);
             importRecords(presetMetadata);
-            PrimeFaces.current().executeScript("PF('massImportProgressDialog').hide();");
             PrimeFaces.current().executeScript("PF('massImportResultDialog').show();");
             PrimeFaces.current().ajax().update("massImportResultDialog");
-        } catch (IOException e) {
-            Helper.setErrorMessage(Helper.getTranslation("errorReading", file.getFileName()));
         } catch (ImportException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    /**
+     * Prepare massimport by resetting progress and import success map.
+     */
+    public void prepare() {
+        progress = 0;
+        importSuccessMap = new HashMap<>();
     }
 
     /**
@@ -149,8 +161,6 @@ public class MassImportForm extends BaseForm {
      */
     private void importRecords(Map<String, Map<String, String>> processMetadata) {
         ImportService importService = ServiceManager.getImportService();
-        importSuccessMap = new HashMap<>();
-        // FIXME: progress not updated!
         PrimeFaces.current().ajax().update("massImportProgressDialog");
         for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
             try {
@@ -392,10 +402,10 @@ public class MassImportForm extends BaseForm {
      */
     public int getProgress() {
         if (records.isEmpty()) {
-            return 0;
+            progress = 0;
+        } else {
+            progress = (importSuccessMap.size() * 100) / records.size();
         }
-        int progress = (importSuccessMap.size() / records.size()) * 100;
-        System.out.println("Progress: " + progress + "%");
         return progress;
     }
 

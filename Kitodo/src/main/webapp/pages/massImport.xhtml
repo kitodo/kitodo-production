@@ -31,10 +31,15 @@
         </h3>
         <p:commandButton id="importButton"
                          value="#{msgs.massImport}"
+                         disabled="#{empty MassImportForm.records}"
+                         actionListener="#{MassImportForm.prepare()}"
                          action="#{MassImportForm.startMassImport()}"
-                         icon="fa fa-download fa-lg" iconPos="right"
-                         onclick="setConfirmUnload(false);PF('massImportProgressDialog').show();PF('progressPoll').start();"
-                         update="notifications, sticky-notifications"/>
+                         icon="fa fa-download fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('massImportProgressDialog').show();PF('massImportProgressBar').start();"
+                         update="notifications sticky-notifications :massImportProgressForm">
+            <p:resetInput target=":massImportProgressForm"/>
+        </p:commandButton>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
