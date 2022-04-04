@@ -455,7 +455,19 @@ public class ImportService {
         }
 
         allProcesses.add(tempProcess);
-        return isParentInRecord ? null : getParentID(internalDocument);
+
+        if (!isParentInRecord) {
+            try {
+                List<String> higherLevelIdentifiers = new ArrayList<>(getHigherLevelIdentifierMetadata(ServiceManager
+                        .getTemplateService().getById(templateID).getRuleset()));
+                if (!higherLevelIdentifiers.isEmpty()) {
+                    return getParentID(internalDocument, higherLevelIdentifiers.get(0));
+                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e);
+            }
+        }
+        return null;
     }
 
     /**
@@ -1204,7 +1216,7 @@ public class ImportService {
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             List<Locale.LanguageRange> priorityList = Locale.LanguageRange
                     .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-            importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId, false);
+            String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId, false);
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
@@ -1231,6 +1243,14 @@ public class ImportService {
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            if (StringUtils.isNotBlank(parentId)) {
+                parentTempProcess = null;
+                checkForParent(parentId, template.getRuleset().getId(), projectId);
+                if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
+                    ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
+                }
+            }
+            ServiceManager.getProcessService().save(tempProcess.getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
@@ -1241,6 +1261,16 @@ public class ImportService {
         return tempProcess.getProcess();
     }
 
+    private static Collection<String> getFunctionalMetadata(Ruleset ruleset, FunctionalMetadata metadata)
+            throws IOException {
+        RulesetManagementInterface rulesetManagement
+                = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
+        String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
+        rulesetManagement.load(new File(rulesetPath));
+        return rulesetManagement.getFunctionalKeys(metadata);
+    }
+
     /**
      * Load doc type metadata keys from provided ruleset.
      * @param ruleset Ruleset from which doc type metadata keys are loaded and returned
@@ -1248,11 +1278,16 @@ public class ImportService {
      * @throws IOException thrown if ruleset file cannot be loaded
      */
     public static Collection<String> getDocTypeMetadata(Ruleset ruleset) throws IOException {
-        RulesetManagementInterface rulesetManagement
-                = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
-        String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
-        rulesetManagement.load(new File(rulesetPath));
-        return rulesetManagement.getFunctionalKeys(FunctionalMetadata.DOC_TYPE);
+        return getFunctionalMetadata(ruleset, FunctionalMetadata.DOC_TYPE);
+    }
+
+    /**
+     * Load and return higher level identifier metadata keys from provided ruleset.
+     * @param ruleset Ruleset from which higher level identifier metadata keys are loaded and returned
+     * @return list of String containing the keys of metadata defined as higher level identifier
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    public static Collection<String> getHigherLevelIdentifierMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadata(ruleset, FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
     }
 }
