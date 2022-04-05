@@ -2836,4 +2836,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         inChoiceListShownQuery.must(matchQuery);
         return ServiceManager.getProcessService().findByQuery(matchQuery, related);
     }
+
+    /**
+     * Sort results by id.
+     *
+     * @param order
+     *            ASC or DESC as SortOrder
+     * @return sort as String
+     */
+    public SortBuilder sortById(SortOrder order) {
+        return SortBuilders.fieldSort(ProcessTypeField.ID.getKey()).order(order);
+    }
 }
