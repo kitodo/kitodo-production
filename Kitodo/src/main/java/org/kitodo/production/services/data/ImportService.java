@@ -498,7 +498,7 @@ public class ImportService {
                 importDepth = 1;
             }
         } else {
-            parentMetadataKey= parentIdMetadata.toArray()[0].toString();
+            parentMetadataKey = parentIdMetadata.toArray()[0].toString();
         }
 
         String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId, false, parentMetadataKey);
@@ -1207,7 +1207,8 @@ public class ImportService {
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
-            String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId, false, parentMetadataKey);
+            String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId,
+                    false, parentMetadataKey);
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
@@ -1228,13 +1229,7 @@ public class ImportService {
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
-            if (StringUtils.isNotBlank(parentId)) {
-                parentTempProcess = null;
-                checkForParent(parentId, template.getRuleset().getId(), projectId);
-                if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
-                    ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
-                }
-            }
+            linkToParent(parentId, projectId, template, tempProcess);
             ServiceManager.getProcessService().save(tempProcess.getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
@@ -1244,6 +1239,17 @@ public class ImportService {
             throw new ImportException(e.getLocalizedMessage());
         }
         return tempProcess.getProcess();
+    }
+
+    private void linkToParent(String parentId, int projectId, Template template, TempProcess tempProcess)
+            throws DAOException, ProcessGenerationException, IOException {
+        if (StringUtils.isNotBlank(parentId)) {
+            parentTempProcess = null;
+            checkForParent(parentId, template.getRuleset().getId(), projectId);
+            if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
+                ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
+            }
+        }
     }
 
     private static Collection<String> getFunctionalMetadata(Ruleset ruleset, FunctionalMetadata metadata)
