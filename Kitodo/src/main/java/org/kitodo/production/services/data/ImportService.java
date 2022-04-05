@@ -115,7 +115,7 @@ public class ImportService {
     private static final String REPLACE_ME = "REPLACE_ME";
     // default value for identifierMetadata if no OPAC specific metadata has been configured in kitodo_opac.xml
     private static String identifierMetadata = "CatalogIDDigital";
-    private static String parentXpath = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
+    private static final String PARENT_XPATH = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private String trimMode = "";
     private LinkedList<ExemplarRecord> exemplarRecords;
@@ -371,12 +371,14 @@ public class ImportService {
 
     /**
      * Get the parent ID from the document.
+     * @param document Document to parse
+     * @param higherLevelIdentifier the given identifier
      * @return parent ID
      */
-    public String getParentID(Document document) throws XPathExpressionException {
+    public String getParentID(Document document, String higherLevelIdentifier) throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
-        NodeList nodeList = (NodeList) parentIDXpath.compile(parentXpath)
+        NodeList nodeList = (NodeList) parentIDXpath.compile(PARENT_XPATH.replace(REPLACE_ME, higherLevelIdentifier))
                 .evaluate(document, XPathConstants.NODESET);
         if (nodeList.getLength() == 1) {
             Node parentIDNode = nodeList.item(0);
@@ -388,17 +390,6 @@ public class ImportService {
         } else {
             return null;
         }
-    }
-
-    /**
-     * Gets Parent id with a specific higherLevelIdentifier.
-     * @param document the document to search for parentIds
-     * @param higherLevelIdentifier the given identifier
-     * @return the parentID from the record.
-     */
-    public String getParentID(Document document, String higherLevelIdentifier) throws XPathExpressionException {
-        parentXpath = parentXpath.replace(REPLACE_ME, higherLevelIdentifier);
-        return getParentID(document);
     }
 
     /**
@@ -434,7 +425,8 @@ public class ImportService {
     }
 
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
-                                                 int projectID, int templateID, boolean isParentInRecord)
+                                                  int projectID, int templateID, boolean isParentInRecord,
+                                                  String parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, TransformerException {
 
@@ -456,16 +448,8 @@ public class ImportService {
 
         allProcesses.add(tempProcess);
 
-        if (!isParentInRecord) {
-            try {
-                List<String> higherLevelIdentifiers = new ArrayList<>(getHigherLevelIdentifierMetadata(ServiceManager
-                        .getTemplateService().getById(templateID).getRuleset()));
-                if (!higherLevelIdentifiers.isEmpty()) {
-                    return getParentID(internalDocument, higherLevelIdentifiers.get(0));
-                }
-            } catch (DAOException e) {
-                Helper.setErrorMessage(e);
-            }
+        if (!isParentInRecord && StringUtils.isNotBlank(parentIdMetadata)) {
+            return getParentID(internalDocument, parentIdMetadata);
         }
         return null;
     }
@@ -507,26 +491,28 @@ public class ImportService {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
+        String parentMetadataKey = "";
         if (parentIdMetadata.isEmpty()) {
             if (importDepth > 1) {
                 Helper.setErrorMessage("newProcess.catalogueSearch.parentIDMetadataMissing");
                 importDepth = 1;
             }
         } else {
-            parentXpath = parentXpath.replace(REPLACE_ME, parentIdMetadata.toArray()[0].toString());
+            parentMetadataKey= parentIdMetadata.toArray()[0].toString();
         }
 
-        String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId, false);
+        String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId, false, parentMetadataKey);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         if (Objects.isNull(template.getRuleset())) {
             throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
         }
-        importParents(recordId, opac, projectId, templateId, importDepth, processes, parentID, template);
+        importParents(recordId, opac, projectId, templateId, importDepth, processes, parentID, template,
+                parentMetadataKey);
         return processes;
     }
 
     private void importParents(String recordId, String opac, int projectId, int templateId, int importDepth,
-            LinkedList<TempProcess> processes, String parentID, Template template)
+            LinkedList<TempProcess> processes, String parentID, Template template, String parentIdMetadata)
             throws ProcessGenerationException, IOException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
         int level = 1;
@@ -539,10 +525,10 @@ public class ImportService {
                 if (Objects.isNull(parentProcess)) {
                     if (OPACConfig.isParentInRecord(opac)) {
                         parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId,
-                            true);
+                            true, parentIdMetadata);
                     } else {
                         parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId,
-                            false);
+                            false, parentIdMetadata);
                     }
                     level++;
                 } else {
@@ -1216,17 +1202,16 @@ public class ImportService {
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             List<Locale.LanguageRange> priorityList = Locale.LanguageRange
                     .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
-            String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId, false);
+            String parentMetadataKey = "";
+            List<String> higherLevelIdentifiers = new ArrayList<>(getHigherLevelIdentifierMetadata(template.getRuleset()));
+            if (!higherLevelIdentifiers.isEmpty()) {
+                parentMetadataKey = higherLevelIdentifiers.get(0);
+            }
+            String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId, false, parentMetadataKey);
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, template,
                 ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
-            for (Map.Entry<String, String> presetMetadataEntry : presetMetadata.entrySet()) {
-                MetadataEntry metadataEntry = new MetadataEntry();
-                metadataEntry.setKey(presetMetadataEntry.getKey());
-                metadataEntry.setValue(presetMetadataEntry.getValue());
-                metadataEntry.setDomain(MdSec.DMD_SEC);
-                tempProcess.getWorkpiece().getLogicalStructure().getMetadata().add(metadataEntry);
-            }
+            tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
             if (StringUtils.isBlank(title)) {
@@ -1269,6 +1254,18 @@ public class ImportService {
         String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
         rulesetManagement.load(new File(rulesetPath));
         return rulesetManagement.getFunctionalKeys(metadata);
+    }
+
+    private List<MetadataEntry> createMetadata(Map<String, String> presetMetadata) {
+        List<MetadataEntry> metadata = new LinkedList<>();
+        for (Map.Entry<String, String> presetMetadataEntry : presetMetadata.entrySet()) {
+            MetadataEntry metadataEntry = new MetadataEntry();
+            metadataEntry.setKey(presetMetadataEntry.getKey());
+            metadataEntry.setValue(presetMetadataEntry.getValue());
+            metadataEntry.setDomain(MdSec.DMD_SEC);
+            metadata.add(metadataEntry);
+        }
+        return metadata;
     }
 
     /**
