@@ -19,6 +19,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -115,7 +116,7 @@ public class MassImportService {
      */
     public Map<String, Map<String, String>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
             throws ImportException {
-        Map<String, Map<String, String>> presetMetadata = new HashMap<>();
+        Map<String, Map<String, String>> presetMetadata = new LinkedHashMap<>();
         for (CsvRecord record : records) {
             Map<String, String> processMetadata = new HashMap<>();
             // skip first metadata key as it always contains the record ID to be used for search
