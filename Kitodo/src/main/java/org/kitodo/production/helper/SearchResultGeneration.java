@@ -70,7 +70,7 @@ public class SearchResultGeneration {
         List<ProcessDTO> processDTOS = new ArrayList<>();
         try {
             processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
-                    ServiceManager.getProcessService().sortById(SortOrder.ASC), false);
+                ServiceManager.getProcessService().sortById(SortOrder.ASC), true);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
@@ -184,14 +184,6 @@ public class SearchResultGeneration {
         row.createCell(4).setCellValue(numberOfProcessStructuralElements);
         row.createCell(5).setCellValue(numberOfProcessMetadata);
         row.createCell(6).setCellValue(processDTO.getProject().getTitle());
-        String sortHelperStatus = "";
-        String progress = ServiceManager.getProcessService().getProgress(null, processDTO.getTasks());
-
-        if (Objects.nonNull(progress)) {
-            sortHelperStatus = progress.substring(0, 3) + " / "
-                    + progress.substring(3, 6) + " / "
-                    + progress.substring(6);
-        }
-        row.createCell(7).setCellValue(sortHelperStatus);
+        row.createCell(7).setCellValue(processDTO.getSortHelperStatus());
     }
 }
