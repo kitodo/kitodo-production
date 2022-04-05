@@ -1367,7 +1367,7 @@ Mass import
 }
 
 #editForm\:recordsTable .remove-column button.secondary,
-#editForm\:recordsTable .remove-metadata-column.ui-button.secondary {
+#editForm\:recordsTable .remove-metadata-column {
     border: none;
 }
 
@@ -1389,7 +1389,7 @@ Mass import
 }
 
 #editForm\:recordsTable\:addMetadataColumn,
-#editForm\:recordsTable button.ui-button.secondary.remove-metadata-column {
+#editForm\:recordsTable button.remove-metadata-column {
     background: var(--cloudy-gray);
 }
 

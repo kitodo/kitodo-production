@@ -200,7 +200,6 @@ input.ui-state-error {
 }
 
 .ui-button.secondary .ui-icon,
-.ui-menubutton.secondary .ui-icon,
 .ui-widget-content .ui-button.secondary .ui-icon {
     color: var(--light-blue);
 }
