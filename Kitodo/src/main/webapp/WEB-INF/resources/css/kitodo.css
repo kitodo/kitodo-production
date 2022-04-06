@@ -1398,7 +1398,7 @@ Import form
     background: var(--pure-white);
 }
 
-#editForm\:processFromTemplateTabView\:processHierarchy_header span.ui-panel-title,
+#editForm\:processFromTemplateTabView\:processHierarchy_header .ui-panel-title,
 #editForm\:processFromTemplateTabView\:processHierarchy_header a.ui-panel-titlebar-icon {
     float: left;
 }
@@ -1433,7 +1433,7 @@ Import form
     white-space: nowrap;
 }
 
-#editForm\:processFromTemplateTabView\:processHierarchy ul.ui-orderlist-list {
+#editForm\:processFromTemplateTabView\:processHierarchy .ui-orderlist-list {
     border: solid var(--default-border-width) var(--blue);
     border-radius: 3px;
     width: 480px;
@@ -1468,11 +1468,11 @@ Import form
     list-style: none;
 }
 
-.process-button button.ui-button {
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .ui-button {
     background: var(--light-blue);
 }
 
-.process-button button.selected.ui-button {
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .selected {
     background: var(--blue);
 }
 
@@ -1481,11 +1481,11 @@ Import form
     max-width: fit-content;
 }
 
-#editForm\:processFromTemplateTabView\:processChildren ul.ui-carousel-items {
+#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-items {
     max-width: fit-content;
 }
 
-#editForm\:processFromTemplateTabView\:processChildren li.ui-carousel-item {
+#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-item {
     align-content: center;
     display: grid;
     max-width: fit-content;
@@ -3461,7 +3461,7 @@ footer {
     cursor: default;
 }
 
-hr.ui-separator.ui-state-default {
+.ui-separator {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
     margin: var(--default-half-size) 0;
     width: 100%;

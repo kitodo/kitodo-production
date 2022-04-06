@@ -28,7 +28,7 @@
             <p:dataList id="processAncestors"
                         value="#{CreateProcessForm.processAncestors}"
                         var="processAncestor"
-                        itemStyleClass="process-button process-ancestor"
+                        itemStyleClass="process-ancestor"
                         rendered="#{not empty CreateProcessForm.processAncestors}">
                 <p:commandButton action="#{CreateProcessForm.fillCreateProcessForm(processAncestor)}"
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
@@ -46,7 +46,6 @@
                         var="childProcess"
                         numVisible="3"
                         easing="easeOutBounds"
-                        itemStyleClass="process-button"
                         responsive="true">
                 <p:commandButton action="#{CreateProcessForm.fillCreateProcessForm(childProcess)}"
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
