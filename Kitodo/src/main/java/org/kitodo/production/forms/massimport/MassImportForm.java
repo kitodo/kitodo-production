@@ -152,6 +152,7 @@ public class MassImportForm extends BaseForm {
     public void prepare() {
         progress = 0;
         importSuccessMap = new HashMap<>();
+        PrimeFaces.current().ajax().update("massImportProgressForm:massImportProgress");
     }
 
     /**
@@ -406,6 +407,7 @@ public class MassImportForm extends BaseForm {
         } else {
             progress = (importSuccessMap.size() * 100) / records.size();
         }
+        PrimeFaces.current().ajax().update("massImportProgressForm:massImportProgress");
         return progress;
     }
 
