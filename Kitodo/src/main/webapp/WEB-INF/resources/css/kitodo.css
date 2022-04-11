@@ -1812,9 +1812,13 @@ Metadata Editor
     border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
-.focusable.focused {
-    border: dashed var(--contrast-border-width) var(--blue);
+#metadataEditor .focusable {
+    border: dashed var(--contrast-border-width) transparent;
     box-sizing: border-box;
+}
+
+#metadataEditor .focused {
+    border-color: var(--blue);
 }
 
 form#metadata,
