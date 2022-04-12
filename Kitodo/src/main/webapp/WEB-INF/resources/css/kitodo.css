@@ -1478,17 +1478,11 @@ Import form
 
 #editForm\:processFromTemplateTabView\:processChildren {
     margin: auto;
-    max-width: fit-content;
-}
-
-#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-items {
-    max-width: fit-content;
 }
 
 #editForm\:processFromTemplateTabView\:processChildren .ui-carousel-item {
     align-content: center;
     display: grid;
-    max-width: fit-content;
 }
 
 #progressDialog {
