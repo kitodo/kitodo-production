@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -491,7 +491,7 @@
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>
-            <version>0.4.8</version>
+            <version>0.4.17</version>
         </dependency>
         <dependency>
             <groupId>com.xebialabs.restito</groupId>
