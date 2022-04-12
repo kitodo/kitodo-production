@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -131,7 +131,7 @@
         <dependency>
             <groupId>org.camunda.bpm.model</groupId>
             <artifactId>camunda-bpmn-model</artifactId>
-            <version>7.11.0</version>
+            <version>7.16.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
