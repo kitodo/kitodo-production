@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -422,7 +422,7 @@
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-core</artifactId>
-            <version>2.6.3</version>
+            <version>2.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
