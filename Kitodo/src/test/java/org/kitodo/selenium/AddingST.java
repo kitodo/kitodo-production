@@ -226,6 +226,7 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Ruleset was not listed at rulesets table!", rulesetAvailable);
     }
 
+    @Ignore("broken: this test often causes unintentional javascript warning popups when adding roles to the user")
     @Test
     public void addUserTest() throws Exception {
         User user = UserGenerator.generateUser();
