@@ -54,4 +54,11 @@ public class StructurePanelTest {
 
         Assert.assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
     }
+
+    @Test
+    public void preventNullPointerExceptionInIsSeparateMediaOnNotFullInitializedDataEditorForm() {
+        DataEditorForm dummyDataEditorForm = new DataEditorForm();
+        final StructurePanel underTest = new StructurePanel(dummyDataEditorForm);
+        Assert.assertFalse(underTest.isSeparateMedia());
+    }
 }
