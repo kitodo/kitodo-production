@@ -3529,8 +3529,9 @@ footer {
 }
 
 #editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:not(:first-child):not(:nth-child(3)) {
+    box-sizing: border-box;
     padding-left: var(--default-half-size);
-    width: 33%;
+    width: calc(33% - var(--default-half-size));
 }
 
 #editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:nth-child(3) {

@@ -1174,8 +1174,8 @@ tr.ui-expanded-row-content:hover .ui-datatable tbody {
     border: solid var(--default-border-width) var(--medium-gray);
 }
 
-.ui-state-error ul.ui-picklist-list {
-    background: #fef1ec -moz-linear-gradient(top,rgba(255,255,255,0.8),rgba(255,255,255,0));
+.ui-state-error .ui-picklist-list {
+    background: #fef1ec;
     border: 1px solid #cd0a0a;
     color: #cd0a0a;
 }
