@@ -91,6 +91,7 @@ import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
@@ -1247,6 +1248,16 @@ public class ImportService {
             parentTempProcess = null;
             checkForParent(parentId, template.getRuleset().getId(), projectId);
             if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
+                URI parentProcessUri = ServiceManager.getProcessService()
+                        .getMetadataFileUri(parentTempProcess.getProcess());
+                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentProcessUri);
+                if (Objects.isNull(workpiece)) {
+                    throw new ProcessGenerationException("Workpiece of parent process is null!");
+                }
+                MetadataEditor.addLink(workpiece.getLogicalStructure(), tempProcess.getProcess().getId());
+                try (OutputStream outputStream = ServiceManager.getFileService().write(parentProcessUri)) {
+                    ServiceManager.getMetsService().save(workpiece, outputStream);
+                }
                 ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
             }
         }
