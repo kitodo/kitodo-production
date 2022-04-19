@@ -46,7 +46,7 @@ public enum ParameterCore implements ParameterInterface {
      */
     DIR_RULESETS(new Parameter<UndefinedParameter>("directory.rulesets")),
 
-    DIR_OCR_WORKFLOWS(new Parameter<UndefinedParameter>("directory.ocr.workflows")),
+    DIR_OCRD_WORKFLOWS(new Parameter<UndefinedParameter>("directory.ocrd.workflows")),
 
     /**
      * Absolute path to the directory that XSLT files are stored in which are used
