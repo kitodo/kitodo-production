@@ -3535,8 +3535,9 @@ footer {
 }
 
 #editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:nth-child(3) {
+    box-sizing: border-box;
     padding-left: var(--default-half-size);
-    width: 104px;
+    width: 75px;
 }
 
 #editForm\:importConfigurationTabView\:searchFieldTable .ui-datatable-tablewrapper {
