@@ -1376,9 +1376,12 @@ public class StructurePanel implements Serializable {
      *          whether metadata structure should be displayed in separate structure trees or not
      */
     public boolean isSeparateMedia() {
-        Template template = dataEditor.getProcess().getTemplate();
-        if ( Objects.nonNull(template) ) {
-            return template.getWorkflow().isSeparateStructure();
+        Process process = dataEditor.getProcess();
+        if (Objects.nonNull(process)) {
+            Template template = process.getTemplate();
+            if ( Objects.nonNull(template) ) {
+                return template.getWorkflow().isSeparateStructure();
+            }
         }
         return false;
     }
