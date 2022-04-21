@@ -21,7 +21,7 @@ public enum ProjectTypeField implements TypeInterface {
     NUMBER_OF_VOLUMES("numberOfVolumes"),
     METS_RIGTS_OWNER("metsRightsOwner"),
     ACTIVE("active"),
-    PROCESSES("processes"),
+    HAS_PROCESSES("hasProcesses"),
     TEMPLATES("templates"),
     USERS("users"),
     CLIENT_ID("client.id"),

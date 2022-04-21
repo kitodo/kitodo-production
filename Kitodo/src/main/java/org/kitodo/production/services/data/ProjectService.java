@@ -137,7 +137,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     public Long countNotIndexedDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
-
+    
     @Override
     public Long countResults(Map filters) throws DataException {
         return countDocuments(getProjectsForCurrentUserQuery());
@@ -205,7 +205,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
         clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
         projectDTO.setClient(clientDTO);
-        projectDTO.setHasProcesses(ProjectTypeField.PROCESSES.getSizeOfProperty(jsonObject) > 0);
+        projectDTO.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
         if (!related) {
             convertRelatedJSONObjects(jsonObject, projectDTO);
         } else {
