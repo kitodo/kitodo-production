@@ -43,7 +43,7 @@ public class MappingFileListView extends BaseForm {
             return ServiceManager.getMappingFileService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY,
-                    new Object[] {ObjectType.MAPPPING_FILE.getTranslationPlural() }, logger, e);
+                    new Object[] {ObjectType.MAPPING_FILE.getTranslationPlural() }, logger, e);
             return new ArrayList<>();
         }
     }
@@ -66,7 +66,7 @@ public class MappingFileListView extends BaseForm {
         try {
             ServiceManager.getMappingFileService().removeFromDatabase(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.MAPPPING_FILE.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
         }
     }
 

@@ -57,7 +57,7 @@ public class MappingFileEditView extends BaseForm {
             setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] { ObjectType.MAPPPING_FILE.getTranslationSingular(), id }, logger, e);
+                    new Object[] { ObjectType.MAPPING_FILE.getTranslationSingular(), id }, logger, e);
         }
     }
 
@@ -71,7 +71,7 @@ public class MappingFileEditView extends BaseForm {
             ServiceManager.getMappingFileService().saveToDatabase(mappingFile);
             return projectsPage;
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.MAPPPING_FILE.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -104,7 +104,7 @@ public class MappingFileEditView extends BaseForm {
             return mappingFiles.filter(f -> f.toString().endsWith(".xsl") || f.toString().endsWith("xslt"))
                     .map(Path::getFileName).sorted().collect(Collectors.toList());
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.MAPPPING_FILE.getTranslationPlural() },
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.MAPPING_FILE.getTranslationPlural() },
                 logger, e);
             return new ArrayList<>();
         }
