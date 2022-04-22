@@ -975,4 +975,40 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToRunKitodoScripts() {
         return hasAnyAuthorityForClient("runKitodoScript");
     }
+
+    /**
+     * Checks if the current user has the authority to add the ocr workflow.
+     *
+     * @return true if the current user has the authority to add the ocr workflow
+     */
+    public boolean hasAuthorityToAddOCRWorkflow() {
+        return hasAuthorityForClient("addOCRWorkflow");
+    }
+
+    /**
+     * Checks if the current user has the authority to edit the ocr workflow.
+     *
+     * @return true if the current user has the authority to edit the ocr workflow
+     */
+    public boolean hasAuthorityToEditOCRWorkflow() {
+        return hasAuthorityForClient("editOCRWorkflow");
+    }
+
+    /**
+     * Checks if the current user has the authority to delete the ocr workflow.
+     *
+     * @return true if the current user has the authority to delete the ocr workflow
+     */
+    public boolean hasAuthorityToDeleteOCRWorkflow() {
+        return hasAuthorityForClient("deleteOCRWorkflow");
+    }
+
+    /**
+     * Checks if the current user has the authority to view the ocr workflow.
+     *
+     * @return true if the current user has the authority to view the ocr workflow
+     */
+    public boolean hasAuthorityToViewOCRWorkflow() {
+        return hasAuthorityForClient("viewOCRWorkflow");
+    }
 }

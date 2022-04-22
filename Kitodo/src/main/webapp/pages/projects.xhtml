@@ -63,6 +63,9 @@
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newRuleSet}" action="#{OCRWorkflowForm.createNewOCRWorkflow()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"
+                            id="newOCRWorkflowButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -90,6 +93,10 @@
             <p:tab title="#{msgs.rulesets}" id="rulesetTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewRulesetList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/rulesetList.xhtml"/>
+            </p:tab>
+            <p:tab title="OCR Workflows" id="ocrWorkflowTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/ocrWorkflowList.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
