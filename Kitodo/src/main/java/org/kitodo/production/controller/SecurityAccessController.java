@@ -988,4 +988,38 @@ public class SecurityAccessController {
     public boolean hasAuthorityToRunKitodoScripts() {
         return securityAccessService.hasAuthorityToRunKitodoScripts();
     }
+
+    /**
+     * Check if the current user has the authority to add ocr workflow.
+     *
+     * @return true if the current user has the authority to add ocr workflow.
+     */
+    public boolean hasAuthorityToAddOCRWorkflow() {
+        return securityAccessService.hasAuthorityToAddOCRWorkflow();
+    }
+
+    /**
+     * Check if the current user has the authority to edit ocr workflow.
+     *
+     * @return true if the current user has the authority to edit ocr workflow.
+     */
+    public boolean hasAuthorityToEditOCRWorkflow() {
+        return securityAccessService.hasAuthorityToEditOCRWorkflow();
+    }
+
+    /**
+     * Check if the current user has the authority to delete ocr workflow.
+     *
+     * @return true if the current user has the authority to delete ocr workflow.
+     */
+    public boolean hasAuthorityToDeleteOCRWorkflow() {
+        return securityAccessService.hasAuthorityToDeleteOCRWorkflow();
+    }
+
+    /**
+     * Check if the current user has the authority to view ocr workflow.
+     *
+     * @return true if the current user has the authority to view ocr workflow.
+     */
+    public boolean hasAuthorityToViewOCRWorkflow() { return securityAccessService.hasAuthorityToViewOCRWorkflow(); }
 }
