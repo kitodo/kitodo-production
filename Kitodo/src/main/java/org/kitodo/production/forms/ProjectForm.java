@@ -63,6 +63,7 @@ public class ProjectForm extends BaseForm {
     private List<Template> deletedTemplates = new ArrayList<>();
     private boolean locked = true;
     private static final String TITLE_USED = "projectTitleAlreadyInUse";
+    private Boolean hasProcesses;
 
     /**
      * An encapsulation of the content generator properties of the folder in a
@@ -469,6 +470,7 @@ public class ProjectForm extends BaseForm {
         // has to be called if a page back move was done
         cancel();
         this.project = project;
+        hasProcesses = !project.getProcesses().isEmpty();
     }
 
     /**
@@ -710,4 +712,12 @@ public class ProjectForm extends BaseForm {
         return this.projectEditReferer;
     }
 
+    /**
+     * Return whether project has processes or not.
+     *
+     * @return whether project has processes or not
+     */
+    public Boolean hasProcesses() {
+        return hasProcesses;
+    }
 }
