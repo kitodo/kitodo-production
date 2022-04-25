@@ -34,13 +34,20 @@
                         <p:row>
                             <p:column colspan="2">
                                 <p:outputLabel for="path" value="#{msgs['editFolderDialog.path']}"/>
-                                <p:inputText id="path" value="#{ProjectForm.myFolder.path}" styleClass="input editDialog"/>
+                                <p:inputText id="path"
+                                             disabled="#{ProjectForm.hasProcesses()}"
+                                             value="#{ProjectForm.myFolder.path}"
+                                             title="#{ProjectForm.hasProcesses() ? msgs['editFolderDialog.path.disabled'] : ''}"
+                                             styleClass="input editDialog"/>
                             </p:column>
                         </p:row>
                         <p:row>
                             <p:column colspan="2">
                                 <p:outputLabel for="mimeType" value="#{msgs['editFolderDialog.mimeType']}"/>
-                                <p:selectOneMenu id="mimeType" value="#{ProjectForm.myFolder.mimeType}"
+                                <p:selectOneMenu id="mimeType"
+                                                 disabled="#{ProjectForm.hasProcesses()}"
+                                                 value="#{ProjectForm.myFolder.mimeType}"
+                                                 title="#{ProjectForm.hasProcesses() ? msgs['editFolderDialog.mimeType.disabled'] : ''}"
                                                  styleClass="input editDialog">
                                     <f:selectItems value="#{ProjectForm.mimeTypes}"/>
                                 </p:selectOneMenu>
