@@ -11,6 +11,8 @@
 
 package org.kitodo.dataeditor.ruleset.xml;
 
+import java.util.Objects;
+
 import javax.xml.bind.annotation.XmlAttribute;
 
 /**
@@ -25,11 +27,27 @@ class CodomainElement {
     private Type type;
 
     /**
+     * Minimum number of digits with type {@code integer}. Must be a
+     * positive integer.
+     */
+    @XmlAttribute
+    private Integer minDigits;
+
+    /**
      * The name space for URIs.
      */
     @XmlAttribute
     private String namespace;
 
+    /**
+     * Returns the minimum number of digits for integer values.
+     *
+     * @return the minimum number of digits
+     */
+    int getMinDigits() {
+        return Objects.isNull(minDigits) ? 1 : minDigits;
+    }
+    
     /**
      * Returns the name space for URIs.
      *

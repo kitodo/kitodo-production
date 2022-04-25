@@ -75,6 +75,13 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
      * @return how the input item should be displayed
      */
     InputType getInputType();
+    
+    /**
+     * Returns the minimum number of digits for integer types.
+     *
+     * @return the minimum number of digits
+     */
+    int getMinDigits();
 
     /**
      * Returns the possible values if the metadata key is a list of values. For

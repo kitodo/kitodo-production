@@ -36,12 +36,22 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
 
     ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
         super(container, settings, Objects.isNull(settings) ? value.getKey() : settings.getLabel());
-        this.value = Objects.isNull(value) ? settings.getDefaultValue() : value.getValue();
+        this.value = addLeadingZeros(Objects.isNull(value) ? settings.getDefaultValue() : value.getValue());
     }
 
     ProcessTextMetadata(ProcessTextMetadata template) {
         super(template.container, template.settings, template.label);
         this.value = template.value;
+    }
+
+    private final String addLeadingZeros(String value) {
+        if (Objects.equals(super.settings.getInputType(), InputType.INTEGER)) {
+            int valueLength = value.length();
+            int minDigits = super.settings.getMinDigits();
+            return valueLength >= minDigits ? value : "0".repeat(minDigits - valueLength).concat(value);
+        } else {
+            return value;
+        }
     }
 
     @Override
@@ -136,6 +146,6 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
      *            value to be set
      */
     public void setValue(String value) {
-        this.value = value;
+        this.value = addLeadingZeros(value);
     }
 }

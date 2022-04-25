@@ -157,6 +157,10 @@ class KeyDeclaration extends Labeled {
         }
     }
 
+    int getMinDigits() {
+        return optionalKey.isPresent() ? optionalKey.get().getMinDigits() : 1;
+    }
+
     /**
      * Returns the namespace of the key, if there is one. This is needed for
      * validation.

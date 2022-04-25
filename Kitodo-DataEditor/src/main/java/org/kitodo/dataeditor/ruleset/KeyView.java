@@ -135,6 +135,11 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
     }
 
     @Override
+    public int getMinDigits() {
+        return declaration.getMinDigits();
+    }
+    
+    @Override
     public Map<String, String> getSelectItems(List<Map<MetadataEntry, Boolean>> metadata) {
         return rule.getSelectItems(declaration.getSelectItems(priorityList), metadata);
     }
