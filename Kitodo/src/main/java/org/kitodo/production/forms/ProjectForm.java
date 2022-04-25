@@ -713,7 +713,7 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * Return whether project has processes or not
+     * Return whether project has processes or not.
      *
      * @return whether project has processes or not
      */
