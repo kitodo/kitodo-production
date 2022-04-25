@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Objects;
 
@@ -93,14 +94,21 @@ public class LocaleHelper {
 
     /**
      * Check if locale is supported.
-     * 
+     *
      * @param locale
      *            the locale to check
      * @return True or false if locale is supported
      */
     public static boolean isSupportedLocale(Locale locale) {
-        return Locale.ENGLISH.getLanguage().equals(locale.getLanguage())
-                || Locale.GERMAN.getLanguage().equals(locale.getLanguage());
+        Iterator<Locale> supportedLocales = FacesContext.getCurrentInstance().getApplication()
+                .getSupportedLocales();
+        while (supportedLocales.hasNext()) {
+            Locale supportedLocale = supportedLocales.next();
+            if (supportedLocale.getLanguage().equals(locale.getLanguage())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private static Locale getLocaleOfFacesContext(FacesContext facesContext) {
