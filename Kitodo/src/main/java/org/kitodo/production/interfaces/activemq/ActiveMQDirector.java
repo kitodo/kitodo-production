@@ -28,6 +28,7 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.ActiveMQSslConnectionFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -91,6 +92,36 @@ public class ActiveMQDirector implements Runnable, ServletContextListener {
         logger.info("Connection to Active MQ server established.");
     }
 
+    private Connection getConnectionFromActiveMQSslFactory(String server) throws Exception {
+        logger.trace("Using the ActiveMQSslConnectionFactory to establish a connection to \"" + server + "\"");
+        ActiveMQSslConnectionFactory factory = new ActiveMQSslConnectionFactory(server);
+        factory.setKeyStore(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_KEYSTORE));
+        factory.setKeyStorePassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_KEYSTORE_PASSWORD));
+        factory.setTrustStore(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_TRUSTSTORE));
+        factory.setTrustStorePassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_TRUSTSTORE_PASSWORD));
+
+        if (ConfigCore.getBooleanParameter(ParameterCore.ACTIVE_MQ_USE_AUTH, false))  {
+            logger.trace("Using authentication on connection \"" + server + "\"");
+            factory.setUserName(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_USERNAME));
+            factory.setPassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_PASSWORD));
+        }
+
+        return factory.createConnection();
+    }
+
+    private Connection getConnectionFromActiveMQFactory(String server) throws JMSException {
+        logger.trace("Using the ActiveMQConnectionFactory to establish a connection to \"" + server + "\"");
+        ActiveMQConnectionFactory factory = new ActiveMQConnectionFactory(server);
+
+        if (ConfigCore.getBooleanParameter(ParameterCore.ACTIVE_MQ_USE_AUTH, false))  {
+            logger.trace("Using authentication on connection \"" + server + "\"");
+            factory.setUserName(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_USERNAME));
+            factory.setPassword(ConfigCore.getParameter(ParameterCore.ACTIVE_MQ_AUTH_PASSWORD));
+        }
+
+        return factory.createConnection();
+    }
+
     /**
      * Sets up a connection to an active MQ server. The connection object is
      * global because it is needed later to shut down the connection.
@@ -102,11 +133,16 @@ public class ActiveMQDirector implements Runnable, ServletContextListener {
      */
     private Session connectToServer(String server) {
         try {
-            connection = new ActiveMQConnectionFactory(server).createConnection();
+            if (ConfigCore.getBooleanParameter(ParameterCore.ACTIVE_MQ_USE_SSL, false))  {
+                connection = getConnectionFromActiveMQSslFactory(server);
+            } else {
+                connection = getConnectionFromActiveMQFactory(server);
+            }
+
             connection.start();
             connection.setExceptionListener(exception -> logger.error(exception));
             return connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
-        } catch (JMSException | RuntimeException e) {
+        } catch (Exception e) {
             logger.fatal("Error connecting to ActiveMQ server, giving up.", e);
         }
         return null;
