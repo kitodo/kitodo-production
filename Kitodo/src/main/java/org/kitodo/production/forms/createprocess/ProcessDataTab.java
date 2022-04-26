@@ -159,10 +159,14 @@ public class ProcessDataTab {
                     new Object[] {getDocTypeLabel(docType), process.getRuleset().getTitle() });
             }
 
+            Process parentProcess = createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess();
+            if (processTitle.startsWith("+") && Objects.nonNull(parentProcess)) {
+                processTitle = '\'' + parentProcess.getTitle() + '\'' + processTitle;
+            }
+
             String currentTitle = TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails);
 
             if (StringUtils.isBlank(currentTitle)) {
-                Process parentProcess = createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess();
                 if (Objects.nonNull(parentProcess)) {
                     currentTitle = getTitleFromLogicalStructure(parentProcess);
                 } else {
