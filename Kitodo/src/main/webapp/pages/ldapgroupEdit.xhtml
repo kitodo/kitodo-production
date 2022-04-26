@@ -31,11 +31,6 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body"/>
-        <script>
-            window.onload = function () {
-                checkForm('editForm')
-            };
-        </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editLdapGroup} (#{LdapGroupForm.myLdapGruppe.title})"
                           styleClass="shortable"

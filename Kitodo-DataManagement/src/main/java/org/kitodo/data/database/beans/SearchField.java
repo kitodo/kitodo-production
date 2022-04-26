@@ -30,9 +30,8 @@ public class SearchField extends BaseBean {
     @Column(name = "field_value")
     private String value;
 
-    // TODO: invert (eg.g "show" instead of "hide")
-    @Column(name = "hidden")
-    private boolean hidden;
+    @Column(name = "displayed")
+    private boolean displayed;
 
     @Column(name = "parent_element")
     private boolean parentElement;
@@ -81,19 +80,19 @@ public class SearchField extends BaseBean {
     /**
      * Get hidden.
      *
-     * @return value of hidden
+     * @return value of displayed
      */
-    public boolean isHidden() {
-        return hidden;
+    public boolean isDisplayed() {
+        return displayed;
     }
 
     /**
      * Set hidden.
      *
-     * @param hidden as boolean
+     * @param displayed as boolean
      */
-    public void setHidden(boolean hidden) {
-        this.hidden = hidden;
+    public void setDisplayed(boolean displayed) {
+        this.displayed = displayed;
     }
 
     /**

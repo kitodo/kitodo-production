@@ -41,3 +41,5 @@ function compareForm(form) {
 function toggleSave() {
     jQuery('#editForm\\:saveButtonToggler').click();
 }
+
+window.onload = function () {checkForm('editForm')};

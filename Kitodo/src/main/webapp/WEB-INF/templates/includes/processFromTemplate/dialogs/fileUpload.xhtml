@@ -22,7 +22,7 @@
               id="fileUpload"
               width="578"
               modal="true"
-              visible="#{not empty CreateProcessForm.project.defaultImportConfiguration and CreateProcessForm.project.defaultImportConfiguration.configurationType eq 'PROCESS_TEMPLATE'}"
+              visible="#{not empty CreateProcessForm.project.defaultImportConfiguration and CreateProcessForm.project.defaultImportConfiguration.configurationType.toString() eq 'PROCESS_TEMPLATE'}"
               resizable="false">
         <h3>#{msgs['newProcess.fileUpload.heading']}</h3>
         <h:form id="fileUploadForm">

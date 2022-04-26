@@ -65,7 +65,7 @@ public class MappingFileDAO extends BaseDAO<MappingFile> {
      */
     @Override
     public List<MappingFile> getAllNotIndexed(int offset, int size) throws DAOException {
-        return null;
+        return getAll();
     }
 
     /**

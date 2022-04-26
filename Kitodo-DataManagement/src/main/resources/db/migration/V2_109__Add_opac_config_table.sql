@@ -82,7 +82,7 @@ CREATE TABLE IF NOT EXISTS search_field
     import_configuration_id INT(11) NOT NULL,
     field_label varchar(255) NOT NULL,
     field_value varchar(255) NOT NULL,
-    hidden tinyint(1) DEFAULT NULL,
+    displayed tinyint(1) DEFAULT 1,
     parent_element tinyint(1) DEFAULT NULL,
     PRIMARY KEY(id),
     KEY FK_search_field_import_configuration_id (import_configuration_id),

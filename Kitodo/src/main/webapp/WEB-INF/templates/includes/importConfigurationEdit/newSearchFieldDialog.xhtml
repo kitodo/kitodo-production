@@ -55,10 +55,10 @@
                     <p:row>
                         <div>
                             <p:outputLabel for="searchFieldHidden"
-                                           value="Hidden"/>
+                                           value="#{msgs.visible}"/>
                             <p:selectBooleanCheckbox id="searchFieldHidden"
                                                      styleClass="input-with-button switch"
-                                                     value="#{addSearchFieldDialogView.searchField.hidden}"/>
+                                                     value="#{addSearchFieldDialogView.searchField.displayed}"/>
                             <p:commandButton id="searchFieldHiddenHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="searchFieldHiddenHelp"

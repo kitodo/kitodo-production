@@ -3549,6 +3549,11 @@ footer {
     border-top: none;
 }
 
+#editForm\:importConfigurationTabView\:detailsTab .cell-dummy {
+    height: 54px;
+    padding: 0;
+}
+
 .help-button {
     vertical-align: top;
 }

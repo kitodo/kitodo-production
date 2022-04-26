@@ -23,7 +23,7 @@
               width="640"
               modal="true"
               appendTo="@(body)"
-              visible="#{not empty CreateProcessForm.project.defaultImportConfiguration and CreateProcessForm.project.defaultImportConfiguration.configurationType eq 'OPAC_SEARCH'}"
+              visible="#{not empty CreateProcessForm.project.defaultImportConfiguration and CreateProcessForm.project.defaultImportConfiguration.configurationType.toString() eq 'OPAC_SEARCH'}"
               resizable="false">
         <h3>#{msgs['newProcess.catalogueSearch.heading']}</h3>
         <h:form id="catalogSearchForm">

@@ -209,7 +209,7 @@ public class ImportService {
 
                 if (Objects.nonNull(searchFields)) {
                     for (SearchField searchField : searchFields) {
-                        if (searchField.isHidden()) {
+                        if (!searchField.isDisplayed()) {
                             continue;
                         }
                         fields.add(searchField.getLabel());
@@ -1337,18 +1337,28 @@ public class ImportService {
             searchFields.put(searchField.getLabel(), searchField.getValue());
         }
         dataImport.setSearchFields(searchFields);
+        dataImport.setUrlParameters(getUrlParameters(importConfiguration));
+        return dataImport;
+    }
+
+    private HashMap<String, String> getUrlParameters(ImportConfiguration importConfiguration) {
         HashMap<String, String> urlParameters = new HashMap<>();
-        // TODO: check if configurable interface type specific url parameters are non-null and throw exception otherwise!
         if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())) {
             urlParameters.put(SRU_OPERATION, SRU_SEARCH_RETRIEVE);
+            if (Objects.isNull(importConfiguration.getSruVersion()) ||
+                    Objects.isNull(importConfiguration.getSruRecordSchema())) {
+                throw new ConfigException("Either SRU version or SRU record schema is null!");
+            }
             urlParameters.put(SRU_VERSION, importConfiguration.getSruVersion());
             urlParameters.put(SRU_RECORD_SCHEMA, importConfiguration.getSruRecordSchema());
         }
         if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
             urlParameters.put(OAI_VERB, OAI_GET_RECORD);
+            if (Objects.isNull(importConfiguration.getOaiMetadataPrefix())) {
+                throw new ConfigException("OAI metadata prefix is null!");
+            }
             urlParameters.put(OAI_METADATA_PREFIX, importConfiguration.getOaiMetadataPrefix());
         }
-        dataImport.setUrlParameters(urlParameters);
-        return dataImport;
+        return urlParameters;
     }
 }

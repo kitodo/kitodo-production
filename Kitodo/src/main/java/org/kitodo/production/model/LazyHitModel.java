@@ -99,7 +99,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
      */
     public void setImportConfiguration(ImportConfiguration importConfiguration) {
         this.importConfiguration = importConfiguration;
-        if (Objects.nonNull(this.importConfiguration)) {
+        if (Objects.nonNull(importConfiguration)) {
             this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(importConfiguration));
             this.setImportDepth(ServiceManager.getImportService().getDefaultImportDepth(importConfiguration));
         }

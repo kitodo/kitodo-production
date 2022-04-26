@@ -40,9 +40,6 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
-        <script>
-            window.onload = function () {checkForm('editForm')};
-        </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editUser} (#{UserForm.userObject.fullName})"
                           styleClass="shortable"

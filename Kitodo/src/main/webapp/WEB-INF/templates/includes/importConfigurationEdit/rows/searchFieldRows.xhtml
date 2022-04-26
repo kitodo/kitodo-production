@@ -31,17 +31,17 @@
                                       title="#{field.label}"/>
                     </p:column>
                     <p:column id="fieldValue"
-                              headerText="Value">
+                              headerText="#{msgs.value}">
                         <h:outputText value="#{field.value}"
                                       title="#{field.value}"/>
                     </p:column>
                     <p:column id="fieldHidden"
-                              headerText="Hidden">
-                        <h:outputText title="#{field.hidden}">
-                            <ui:fragment rendered="#{field.hidden}">
+                              headerText="#{msgs.visible}">
+                        <h:outputText title="#{field.displayed}">
+                            <ui:fragment rendered="#{field.displayed}">
                                 <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
                             </ui:fragment>
-                            <ui:fragment rendered="#{not field.hidden}">
+                            <ui:fragment rendered="#{not field.displayed}">
                                 <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
                             </ui:fragment>
                         </h:outputText>
