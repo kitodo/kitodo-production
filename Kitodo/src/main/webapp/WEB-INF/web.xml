@@ -156,17 +156,17 @@
     <context-param>
         <param-name>org.apache.myfaces.ALGORITHM</param-name>
         <!-- default: DES -->
-        <param-value>AES</param-value>
+        <param-value>AES_256</param-value>
     </context-param>
     <context-param>
         <param-name>org.apache.myfaces.ALGORITHM.PARAMETERS</param-name>
         <!-- default: ECB/PKCS5Padding -->
-        <param-value>CBC/PKCS5Padding</param-value>
+        <param-value>GCM/NoPadding</param-value>
     </context-param>
     <context-param>
         <param-name>org.apache.myfaces.MAC_ALGORITHM</param-name>
         <!-- default: HmacSHA1 -->
-        <param-value>HMAC-SHA256</param-value>
+        <param-value>HMAC-SHA512</param-value>
     </context-param>
     <!-- security related end -->
 
