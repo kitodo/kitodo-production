@@ -224,19 +224,6 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <!-- override phase to skip jar -->
-                <executions>
-                    <execution>
-                        <id>kitodo-jar</id>
-                        <phase/>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
     </build>
 
     <profiles>
@@ -251,7 +238,7 @@
                         <configuration>
                             <configFiles>
                                 <!-- local configuration file -->
-                                <!--<configFile>${main.basedir}/config-local/flyway.properties</configFile>-->
+                                <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
                                 <configFile>src/main/resources/db/config/flyway.properties</configFile>
                             </configFiles>
                         </configuration>
