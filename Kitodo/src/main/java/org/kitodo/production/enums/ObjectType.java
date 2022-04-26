@@ -29,6 +29,7 @@ public enum ObjectType {
     PROJECT("project", "projects", true),
     PROPERTY("property", "properties", false),
     RULESET("ruleset", "rulesets", true),
+    OCR_WORKFLOW("ocrworkflow", "ocrworkflows", false),
     TASK("task", "tasks", true),
     TEMPLATE("template", "template", true),
     USER("user", "users", false),

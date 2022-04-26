@@ -14,3 +14,14 @@ INSERT IGNORE INTO authority (title) VALUES ('addOCRWorkflow_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('editOCRWorkflow_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('deleteOCRWorkflow_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('viewOCRWorkflow_clientAssignable');
+
+-- Add table "ocrworkflow"
+CREATE TABLE IF NOT EXISTS ocrworkflow (
+    id INT(10) NOT NULL AUTO_INCREMENT,
+    title varchar(255) NOT NULL,
+    file varchar(255) NOT NULL,
+    active tinyint(1) DEFAULT NULL,
+    client_id INT(10) NOT NULL,
+    PRIMARY KEY(id)
+) DEFAULT CHARACTER SET = utf8mb4
+  COLLATE utf8mb4_unicode_ci;

@@ -20,8 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-@Entity(name = "OCRWorkflow")
-@Table(name = "ocr_workflow")
+@Entity
+@Table(name = "ocrworkflow")
 public class OCRWorkflow extends BaseBean {
 
     @Column(name = "title")
@@ -34,7 +34,7 @@ public class OCRWorkflow extends BaseBean {
     private Boolean active = true;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocr_workflow_client_id"))
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocrworkflow_client_id"))
     private Client client;
 
     public String getTitle() {

@@ -45,6 +45,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageService;
 import org.kitodo.production.services.index.IndexingService;
 import org.kitodo.production.services.migration.MigrationService;
+import org.kitodo.production.services.ocr.OCRWorkflowService;
 import org.kitodo.production.services.schema.SchemaService;
 import org.kitodo.production.services.security.SecurityAccessService;
 import org.kitodo.production.services.security.SessionService;
@@ -84,6 +85,7 @@ public class ServiceManager {
     private static RoleService roleService;
     private static RulesetService rulesetService;
     private static RulesetManagementService rulesetManagementService;
+    private static OCRWorkflowService ocrWorkflowService;
     private static SchemaService schemaService;
     private static SecurityAccessService securityAccessService;
     private static SessionService sessionService;
@@ -204,6 +206,12 @@ public class ServiceManager {
     private static void initializeRulesetService() {
         if (Objects.isNull(rulesetService)) {
             rulesetService = RulesetService.getInstance();
+        }
+    }
+
+    private static void initializeOCRWorkflowService() {
+        if (Objects.isNull(ocrWorkflowService)) {
+            ocrWorkflowService = OCRWorkflowService.getInstance();
         }
     }
 
@@ -504,6 +512,18 @@ public class ServiceManager {
         initializeRulesetService();
         return rulesetService;
     }
+
+    /**
+     * Initialize OCRWorkflowService if it is not yet initialized and next return
+     * it.
+     *
+     * @return OCRWorkflowService object
+     */
+    public static OCRWorkflowService getOCRWorkflowService() {
+        initializeOCRWorkflowService();
+        return ocrWorkflowService;
+    }
+
 
     /**
      * Initialize SessionService if it is not yet initialized and next return

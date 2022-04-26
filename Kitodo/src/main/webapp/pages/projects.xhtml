@@ -63,7 +63,7 @@
                 <p:menuitem value="#{msgs.newRuleSet}" action="#{RulesetForm.createNewRuleset}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newRuleSet}" action="#{OCRWorkflowForm.createNewOCRWorkflow()}" immediate="true"
+                <p:menuitem value="#{msgs.newOCRWorkflow}" action="#{OCRWorkflowListView.newOCRWorkflow()}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"
                             id="newOCRWorkflowButton" icon="fa fa-plus"/>
             </p:menuButton>
