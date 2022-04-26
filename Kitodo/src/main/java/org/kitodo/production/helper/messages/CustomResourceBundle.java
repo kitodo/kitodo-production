@@ -32,6 +32,7 @@ import org.kitodo.production.helper.LocaleHelper;
 abstract class CustomResourceBundle extends ResourceBundle {
 
     private static final Logger logger = LogManager.getLogger(CustomResourceBundle.class);
+    private static URLClassLoader urlClassLoader;
 
     @Override
     public Enumeration<String> getKeys() {
@@ -41,6 +42,30 @@ abstract class CustomResourceBundle extends ResourceBundle {
     @Override
     protected Object handleGetObject(String key) {
         throw new UnsupportedOperationException();
+    }
+
+    /**
+     * Create a URLClassLoader that is allowed to load resource bundles from the directory
+     * containing translated messages and errors.
+     * @return
+     */
+    private static URLClassLoader getURLClassLoader() {
+        if (Objects.isNull(urlClassLoader)) {
+            File file = new File(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES));
+            if (file.exists()) {
+                try {
+                    final URL resourceURL = file.toURI().toURL();
+                    urlClassLoader = AccessController.doPrivileged(
+                        (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] { resourceURL })
+                    );
+                } catch (MalformedURLException | MissingResourceException e) {
+                    logger.info(e.getMessage(), e);
+                }
+            } else {
+                logger.warn("cannot access missing directory " + file.toString());
+            }
+        }
+        return urlClassLoader;
     }
 
     /**
@@ -56,25 +81,18 @@ abstract class CustomResourceBundle extends ResourceBundle {
      * @return available translation bundle
      */
     public static ResourceBundle getResourceBundle(String defaultBundleName, String customBundleName, Locale locale) {
-        File file = new File(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES));
-        if (file.exists()) {
-            try {
-                final URL resourceURL = file.toURI().toURL();
-                URLClassLoader urlLoader = AccessController.doPrivileged(
-                    (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
-                return ResourceBundle.getBundle(customBundleName, locale, urlLoader);
-            } catch (MalformedURLException | MissingResourceException e) {
-                logger.info(e.getMessage(), e);
-            }
+        URLClassLoader urlLoader = getURLClassLoader();
+        if (Objects.nonNull(urlLoader)) {
+            return ResourceBundle.getBundle(customBundleName, locale, urlLoader);
         }
         return ResourceBundle.getBundle(defaultBundleName, locale);
     }
 
-    ResourceBundle getBaseResources(String bundleName) {
+    protected ResourceBundle getBaseResources(String bundleName) {
         return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale());
     }
 
-    Object getValueFromExtensionBundles(String key, String bundleName) {
+    protected Object getValueFromExtensionBundles(String key, String bundleName) {
         ResourceBundle extensionResources = getExtensionResources(bundleName);
         if (Objects.nonNull(extensionResources)) {
             return extensionResources.getObject(key);
@@ -83,16 +101,9 @@ abstract class CustomResourceBundle extends ResourceBundle {
     }
 
     private ResourceBundle getExtensionResources(String bundleName) {
-        File file = new File(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES));
-        if (file.exists()) {
-            try {
-                final URL resourceURL = file.toURI().toURL();
-                URLClassLoader urlLoader = AccessController.doPrivileged(
-                    (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] {resourceURL }));
-                return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale(), urlLoader);
-            } catch (MalformedURLException | MissingResourceException e) {
-                logger.info(e.getMessage(), e);
-            }
+        URLClassLoader urlLoader = getURLClassLoader();
+        if (Objects.nonNull(urlLoader)) {
+            return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale(), urlLoader);
         }
         return null;
     }
