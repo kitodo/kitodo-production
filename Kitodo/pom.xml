@@ -29,6 +29,7 @@
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
+        <parent.basedir>${basedir}/../</parent.basedir>
         <maxAllowedViolations>15</maxAllowedViolations>
         <selenium.version>3.141.59</selenium.version>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
