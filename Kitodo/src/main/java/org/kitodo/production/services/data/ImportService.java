@@ -233,7 +233,7 @@ public class ImportService {
     public String getDefaultSearchField(ImportConfiguration importConfiguration) {
         if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
             return Helper.getTranslation("filename");
-        } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())){
+        } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
         } else {
             return "";
@@ -1345,8 +1345,8 @@ public class ImportService {
         HashMap<String, String> urlParameters = new HashMap<>();
         if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())) {
             urlParameters.put(SRU_OPERATION, SRU_SEARCH_RETRIEVE);
-            if (Objects.isNull(importConfiguration.getSruVersion()) ||
-                    Objects.isNull(importConfiguration.getSruRecordSchema())) {
+            if (Objects.isNull(importConfiguration.getSruVersion())
+                    || Objects.isNull(importConfiguration.getSruRecordSchema())) {
                 throw new ConfigException("Either SRU version or SRU record schema is null!");
             }
             urlParameters.put(SRU_VERSION, importConfiguration.getSruVersion());
