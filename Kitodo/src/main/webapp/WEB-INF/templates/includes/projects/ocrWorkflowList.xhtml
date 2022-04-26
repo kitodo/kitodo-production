@@ -12,6 +12,74 @@
 -->
 
 <ui:composition
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="item" type="org.kitodo.data.database.beans.OCRWorkflow"-->
+    <p:dataTable id="configurationTable"
+                 value="#{OCRWorkflowListView.ocrWorkflows}"
+                 var="item"
+                 styleClass="default-layout"
+                 first="#{OCRWorkflowListView.firstRow}"
+                 lazy="true"
+                 paginator="true"
+                 resizableColumns="true"
+                 liveResize="true"
+                 rows="#{LoginForm.loggedUser.tableSize}"
+                 paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
+                 currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
+                 paginatorPosition="bottom">
+
+        <p:column headerText="#{msgs.title}"
+                  sortBy="#{item.title.keyword}">
+            <h:outputText value="#{item.title}"
+                          title="#{item.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.file}"
+                  sortBy="#{item.file.keyword}">
+            <h:outputText value="#{item.file}"
+                          title="#{item.file}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.actions}"
+                  resizable="false"
+                  width="70"
+                  styleClass="actionsColumn">
+            <h:form id="actionForm">
+                <h:link id="viewImportConfiguration"
+                        outcome="importConfigurationEdit"
+                        styleClass="action"
+                        title="#{msgs.view}"
+                        rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow() and not SecurityAccessController.hasAuthorityToEditOCRWorkflow()}">
+                    <f:param name="id" value="#{item.id}"/>
+                    <i class="fa fa-eye fa-lg"/>
+                </h:link>
+
+                <h:link id="editImportConfiguration"
+                        outcome="importConfigurationEdit"
+                        styleClass="action"
+                        title="#{msgs.edit}"
+                        rendered="#{SecurityAccessController.hasAuthorityToEditOCRWorkflow()}">
+                    <f:param name="id" value="#{item.id}"/>
+                    <i class="fa fa-pencil-square-o fa-lg"/>
+                </h:link>
+
+                <p:commandLink id="deleteImportConfiguration"
+                               action="#{OCRWorkflowListView.deleteById(item.id)}"
+                               styleClass="action"
+                               title="#{msgs.delete}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteOCRWorkflow()}"
+                               update="configurationTable">
+                    <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+                    <p:confirm header="#{msgs.confirmDelete}"
+                               message="#{importConfigurationEditView.formatString('confirmDeleteOCRWorkflow', item.title)}"
+                               icon="ui-icon-alert"/>
+                </p:commandLink>
+            </h:form>
+        </p:column>
+    </p:dataTable>
 
 </ui:composition>
