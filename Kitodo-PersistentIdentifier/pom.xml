@@ -15,18 +15,19 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>kitodo-persistentidentifier</artifactId>
+
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
         <version>3.4.3-SNAPSHOT</version>
     </parent>
-    <organization>
-        <name>kitodo.org</name>
-        <url>http://kitodo.org</url>
-    </organization>
+
     <name>Kitodo - Persistent Identifier</name>
-    <url>https://github.com/kitodo/kitodo-production</url>
+    <artifactId>kitodo-persistentidentifier</artifactId>
+
+    <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
+    </properties>
 
     <dependencies>
         <dependency>

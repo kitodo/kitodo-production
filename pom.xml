@@ -16,21 +16,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+
     <groupId>org.kitodo</groupId>
     <artifactId>kitodo-production</artifactId>
     <version>3.4.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <organization>
-        <name>kitodo.org</name>
-        <url>http://kitodo.org</url>
+        <name>Kitodo. Key to digital objects e. V.</name>
+        <url>https://www.kitodo.org</url>
     </organization>
     <name>Kitodo Production</name>
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
-        <parent.basedir>${basedir}</parent.basedir>
+        <main.basedir>${project.basedir}</main.basedir>
         <phase.prop>none</phase.prop>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -69,6 +70,8 @@
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
+        <maven-help-plugin.version>3.2.0</maven-help-plugin.version>
+        <maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <spring.security.version>5.6.2</spring.security.version>

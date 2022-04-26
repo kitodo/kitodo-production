@@ -22,14 +22,12 @@
         <groupId>org.kitodo</groupId>
         <version>3.4.3-SNAPSHOT</version>
     </parent>
-    <organization>
-        <name>kitodo.org</name>
-        <url>http://kitodo.org</url>
-    </organization>
+
     <name>Kitodo - Data Management</name>
-    <url>https://github.com/kitodo/kitodo-production</url>
+    <artifactId>kitodo-data-management</artifactId>
 
     <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
         <phase.prop>install</phase.prop>
     </properties>
 
