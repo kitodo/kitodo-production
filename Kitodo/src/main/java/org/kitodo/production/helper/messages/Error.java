@@ -23,10 +23,10 @@ public class Error extends CustomResourceBundle {
 
     @Override
     protected Object handleGetObject(String key) {
-        // If there is an extension value use that
-        Object extensionValue = getValueFromExtensionBundles(key, "errors");
-        if (Objects.nonNull(extensionValue)) {
-            return extensionValue;
+        // If there is an external value use that
+        Object externalValue = getValueFromExternalResourceBundle(key, "errors");
+        if (Objects.nonNull(externalValue)) {
+            return externalValue;
         }
         // otherwise use the one defined in the property files
         return getBaseResources("messages.errors").getObject(key);

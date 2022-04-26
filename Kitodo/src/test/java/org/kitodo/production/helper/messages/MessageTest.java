@@ -15,7 +15,10 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.kitodo.FileLoader;
 
 import static org.junit.Assert.assertEquals;
@@ -24,10 +27,19 @@ import static org.junit.Assert.fail;
 
 public class MessageTest {
 
+    private static final Logger logger = LogManager.getLogger(MessageTest.class);
+
     private final Locale locale = new Locale("EN");
     private final String customBundle = "messages";
     private final String defaultBundle = "messages.messages";
+    private final File messageDirectory = new File("src/test/resources/custom");
 
+    @BeforeAll
+    public void cleanMessagesDirectory() {
+        if (messageDirectory.exists()) {
+            messageDirectory.delete();
+        }
+    }
 
     @Test
     public void shouldGetKeys() {
@@ -52,8 +64,6 @@ public class MessageTest {
 
     @Test
     public void shouldGetStringFromCustomBundle() throws Exception {
-        File messageDirectory = new File("src/test/resources/custom");
-
         if (messageDirectory.mkdir()) {
             FileLoader.createCustomMessages();
 

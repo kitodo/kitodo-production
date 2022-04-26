@@ -45,12 +45,15 @@ abstract class CustomResourceBundle extends ResourceBundle {
     }
 
     /**
-     * Create a URLClassLoader that is allowed to load resource bundles from the directory
-     * containing translated messages and errors.
+     * Create a URLClassLoader that is allowed to load resource bundles from the external directory
+     * containing translated messages and errors (e.g. /usr/local/kitodo/messages).
+     * @param reload
+     *        force re-creating a new URLClassLoader, which can be necessary if the directory has 
+     *        changed during runtime, e.g., when unit testing
      * @return
      */
-    private static URLClassLoader getURLClassLoader() {
-        if (Objects.isNull(urlClassLoader)) {
+    private static URLClassLoader getURLClassLoader(Boolean reload) {
+        if (Objects.isNull(urlClassLoader) || reload) {
             File file = new File(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES));
             if (file.exists()) {
                 try {
@@ -58,18 +61,50 @@ abstract class CustomResourceBundle extends ResourceBundle {
                     urlClassLoader = AccessController.doPrivileged(
                         (PrivilegedAction<URLClassLoader>) () -> new URLClassLoader(new URL[] { resourceURL })
                     );
-                } catch (MalformedURLException | MissingResourceException e) {
+                } catch (MalformedURLException e) {
                     logger.info(e.getMessage(), e);
                 }
             } else {
-                logger.warn("cannot access missing directory " + file.toString());
+                urlClassLoader = null;
             }
         }
         return urlClassLoader;
     }
 
     /**
-     * Get custom resource bundle. In case there is a custom version of translation
+     * Load a external resource bundle (outside jar files).
+     * @param bundleName the bundle name
+     * @param locale the locale
+     * @return the external resource bundle or null if it does not exist
+     */
+    private static ResourceBundle getExternalResourceBundle(String bundleName, Locale locale) {
+        URLClassLoader urlLoader = getURLClassLoader(false);
+        if (Objects.nonNull(urlLoader)) {
+            try {
+                return ResourceBundle.getBundle(bundleName, locale, urlLoader);
+            } catch (MissingResourceException e) {
+                try {
+                    // try again but reload URLClassLoader in case directory has changed,
+                    // which is the case when unit testing, where directories are created temporarily
+                    urlLoader = getURLClassLoader(true);
+                    if (Objects.nonNull(urlLoader)) {
+                        return ResourceBundle.getBundle(bundleName, locale, urlLoader);
+                    }
+                } catch (MissingResourceException e2) {
+                    logger.info("Could not find external resource bundle: " + e.getMessage(), e2);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static ResourceBundle getExternalResourceBundle(String bundleName) {
+        Locale locale = LocaleHelper.getCurrentLocale();
+        return getExternalResourceBundle(bundleName, locale);
+    }
+
+    /**
+     * Get resource bundle. In case there is a custom version of translation
      * files load them, if not load the default ones.
      * 
      * @param defaultBundleName
@@ -81,29 +116,32 @@ abstract class CustomResourceBundle extends ResourceBundle {
      * @return available translation bundle
      */
     public static ResourceBundle getResourceBundle(String defaultBundleName, String customBundleName, Locale locale) {
-        URLClassLoader urlLoader = getURLClassLoader();
-        if (Objects.nonNull(urlLoader)) {
-            return ResourceBundle.getBundle(customBundleName, locale, urlLoader);
+        ResourceBundle bundle = getExternalResourceBundle(customBundleName, locale);
+        if (Objects.nonNull(bundle)) {
+            return bundle;
         }
         return ResourceBundle.getBundle(defaultBundleName, locale);
     }
 
+    /**
+     * Loads default resource bundle (from inside jar files).
+     * @param bundleName the bundle name
+     * @return the resource bundle
+     */
     protected ResourceBundle getBaseResources(String bundleName) {
         return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale());
     }
 
-    protected Object getValueFromExtensionBundles(String key, String bundleName) {
-        ResourceBundle extensionResources = getExtensionResources(bundleName);
-        if (Objects.nonNull(extensionResources)) {
-            return extensionResources.getObject(key);
-        }
-        return null;
-    }
-
-    private ResourceBundle getExtensionResources(String bundleName) {
-        URLClassLoader urlLoader = getURLClassLoader();
-        if (Objects.nonNull(urlLoader)) {
-            return ResourceBundle.getBundle(bundleName, LocaleHelper.getCurrentLocale(), urlLoader);
+    /**
+     * Loads value from external resource bundles (outside jar files).
+     * @param key the key of the resource
+     * @param bundleName the bundle name
+     * @return the value or null if not exists
+     */
+    protected Object getValueFromExternalResourceBundle(String key, String bundleName) {
+        ResourceBundle bundle = getExternalResourceBundle(bundleName);
+        if (Objects.nonNull(bundle)) {
+            return bundle.getObject(key);
         }
         return null;
     }

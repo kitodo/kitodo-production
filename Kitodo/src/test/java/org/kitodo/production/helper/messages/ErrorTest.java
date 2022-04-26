@@ -15,7 +15,10 @@ import java.io.File;
 import java.util.Enumeration;
 import java.util.Locale;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
 import org.kitodo.FileLoader;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -26,10 +29,19 @@ import static org.junit.Assert.fail;
 
 public class ErrorTest {
 
-    private static final FileService fileService = ServiceManager.getFileService();
+    private static final Logger logger = LogManager.getLogger(ErrorTest.class);
+
     private final Locale locale = new Locale("EN");
     private final String customBundle = "errors";
     private final String defaultBundle = "messages.errors";
+    private final File messageDirectory = new File("src/test/resources/custom");
+
+    @BeforeAll
+    public void cleanMessagesDirectory() {
+        if (messageDirectory.exists()) {
+            messageDirectory.delete();
+        }
+    }
 
     @Test
     public void shouldGetKeys() {
@@ -53,9 +65,7 @@ public class ErrorTest {
     }
 
     @Test
-    public void shouldGetStringFromCustomBundle() throws Exception {
-        File messageDirectory = new File("src/test/resources/custom");
-
+    public void shouldGetStringFromCustomBundle() throws Exception {      
         if (messageDirectory.mkdir()) {
             FileLoader.createCustomErrors();
 
