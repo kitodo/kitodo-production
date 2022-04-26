@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.helper.cache;
 
 import java.util.Map;
@@ -13,19 +24,19 @@ import org.apache.logging.log4j.Logger;
 /**
  * Caches arbitrary objects while processing a request.
  * 
- * Stores objects in a simple hash map inside FacesContext.getAttributes(). After each request, 
- * a new FacesContext will be created, which means cached objects are not available any more.
+ * <p>Stores objects in a simple hash map inside FacesContext.getAttributes(). After each request, 
+ * a new FacesContext will be created, which means cached objects are not available any more.</p>
  * 
- * Usually, such caching is not necessary when implementing Beans annotated with @RequestScope
+ * <p>Usually, such caching is not necessary when implementing Beans annotated with @RequestScope
  * and getters that store processed values in local variables. However, a lot of beans do not 
  * follow this pattern, which means that some common methods, e.g., getting the current locale of 
  * a user (which requires a database lookup), are re-evaluated many times during processing of 
- * a request. 
+ * a request.</p>
  * 
- * Therefore, this class provides the possibility to inject a request scoped cache.
+ * <p>Therefore, this class provides the possibility to inject a request scoped cache.</p>
  * 
- * If this cache is used outside of a JSF request context, it will simply re-evaluate the supplier 
- * function upon every request.
+ * <p>If this cache is used outside of a JSF request context, it will simply re-evaluate the supplier 
+ * function upon every request.</p>
  * 
  */
 public class RequestScopeCacheHelper {
@@ -58,7 +69,7 @@ public class RequestScopeCacheHelper {
      * @param <T> the type of the object that is cached
      * @param key the key that is used to cache an object (needs to be unique application wide)
      * @param supplier a supplier function that is evaluated if the object is not found in cache 
-     * and whose result is then stored in the cache
+     *                 and whose result is then stored in the cache
      * @param clazz the class of the object type
      * @return the cached object or the object provided by supplier if it was not cached before
      */
@@ -75,5 +86,4 @@ public class RequestScopeCacheHelper {
         // cache not available, e.g., when called outside of request scope (in a background process)
         return supplier.get();
     }
-
 }

@@ -53,10 +53,10 @@ public class LocaleHelper {
      */
     public static Locale getCurrentLocale() {
         return RequestScopeCacheHelper.getFromCache(
-            "current_locale", 
-            () -> calculateCurrentLocale(), 
+            "current_locale",
+            () -> calculateCurrentLocale(),
             Locale.class
-        );        
+        );
     }
 
     /**
