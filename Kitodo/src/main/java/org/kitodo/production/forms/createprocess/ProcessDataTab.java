@@ -67,6 +67,7 @@ public class ProcessDataTab {
                 Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
             }
         }
+        updateProcessMetadata();
     }
 
     /**

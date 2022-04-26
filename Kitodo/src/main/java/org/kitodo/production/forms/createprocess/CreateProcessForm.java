@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -30,6 +31,8 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
@@ -370,9 +373,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
             if (generated) {
+                Workpiece workpiece = new Workpiece();
                 processes = new LinkedList<>(Collections.singletonList(new TempProcess(
-                        processGenerator.getGeneratedProcess(), new Workpiece())));
-                currentProcess = processes.get(0);
+                        processGenerator.getGeneratedProcess(), workpiece)));
+                        currentProcess = processes.get(0);
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
@@ -382,8 +386,9 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
-                    Map<String, String> allowedSubstructuralElements = ServiceManager.getRulesetService()
-                            .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()))
+                    RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
+                            .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
+                    Map<String, String> allowedSubstructuralElements = rulesetManagement
                             .getStructuralElementView(parentProcess.getBaseType(), "", priorityList)
                             .getAllowedSubstructuralElements();
                     List<SelectItem> docTypes = allowedSubstructuralElements.entrySet()
@@ -392,10 +397,25 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
+                    setChildCount(rulesetManagement, workpiece);
                 }
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private void setChildCount(RulesetManagementInterface rulesetManagement, Workpiece workpiece) throws IOException {
+        Collection<String> childCountKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.CHILD_COUND);
+        if (!childCountKeys.isEmpty()) {
+            String childCount = Integer.toString(titleRecordLinkTab.getTitleRecordProcess().getChildren().size() + 1);
+            for (String childCountKey : childCountKeys) {
+                MetadataEntry entry = new MetadataEntry();
+                entry.setKey(childCountKey);
+                entry.setValue(childCount);
+                workpiece.getLogicalStructure().getMetadata().add(entry);
+            }
+            updateRulesetAndDocType(getMainProcess().getRuleset());
         }
     }
 
