@@ -118,6 +118,7 @@ public abstract class MetadataImportDialog {
                     && firstProcess.getMetadataNodes().getLength() > 0) {
                 createProcessForm.getProcessMetadata().initializeProcessDetails(
                         firstProcess.getWorkpiece().getLogicalStructure());
+                this.createProcessForm.getProcessDataTab().generateProcessTitleAndTiffHeader();
             }
         }
     }

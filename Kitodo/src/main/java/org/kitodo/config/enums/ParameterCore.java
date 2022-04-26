@@ -587,6 +587,22 @@ public enum ParameterCore implements ParameterInterface {
 
     ACTIVE_MQ_HOST_URL(new Parameter<UndefinedParameter>("activeMQ.hostURL")),
 
+    ACTIVE_MQ_USE_SSL(new Parameter<>("activeMQ.useSSL", false)),
+
+    ACTIVE_MQ_KEYSTORE(new Parameter<>("activeMQ.keyStore", "")),
+
+    ACTIVE_MQ_KEYSTORE_PASSWORD(new Parameter<>("activeMQ.keyStorePassword", "")),
+
+    ACTIVE_MQ_TRUSTSTORE(new Parameter<>("activeMQ.trustStore", "")),
+
+    ACTIVE_MQ_TRUSTSTORE_PASSWORD(new Parameter<>("activeMQ.trustStorePassword", "")),
+
+    ACTIVE_MQ_USE_AUTH(new Parameter<>("activeMQ.useAuth", false)),
+
+    ACTIVE_MQ_AUTH_USERNAME(new Parameter<>("activeMQ.authUsername", "")),
+
+    ACTIVE_MQ_AUTH_PASSWORD(new Parameter<>("activeMQ.authPassword", "")),
+
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
 
     ACTIVE_MQ_USER(new Parameter<UndefinedParameter>("activeMQ.user")),
