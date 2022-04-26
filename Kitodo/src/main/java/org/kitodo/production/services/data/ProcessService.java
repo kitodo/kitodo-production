@@ -11,13 +11,12 @@
 
 package org.kitodo.production.services.data;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
+import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
+import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
+import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -82,9 +81,6 @@ import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -111,9 +107,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
-import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
-import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
-import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -167,6 +160,15 @@ import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
     private final FileService fileService = ServiceManager.getFileService();
@@ -949,7 +951,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         return statistics.getMean();
     }
-    
+
     private Double progressOfChildrenOpen(List<Process> children) {
         DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (Process child : children) {
@@ -957,7 +959,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         return statistics.getMean();
     }
-    
+
     private Double progressOfChildrenLocked(List<Process> children) {
         DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (Process child : children) {
