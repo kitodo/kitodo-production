@@ -16,6 +16,7 @@ import java.security.NoSuchAlgorithmException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -215,6 +216,9 @@ public class UserForm extends BaseForm {
     }
 
     private Set<ConstraintViolation<KitodoPassword>> getPasswordViolations() {
+        if (isLdapServerReadOnly()) {
+            return Collections.emptySet();
+        }
         KitodoPassword validPassword = new KitodoPassword(passwordToEncrypt);
         ValidatorFactory factory = Validation.buildDefaultValidatorFactory();
         Validator validator = factory.getValidator();
@@ -639,12 +643,14 @@ public class UserForm extends BaseForm {
             Helper.setErrorMessage("passwordsDontMatchOld");
         }
         try {
-            if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()) {
-                ServiceManager.getLdapServerService().changeUserPassword(userObject, this.passwordToEncrypt);
-            }
             Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
             if (passwordViolations.isEmpty()) {
-                userService.changeUserPassword(userObject, this.passwordToEncrypt);
+                if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()
+                        && Objects.nonNull(userObject.getLdapGroup())) {
+                    ServiceManager.getLdapServerService().changeUserPassword(userObject, passwordToEncrypt);
+                } else {
+                    userService.changeUserPassword(userObject, this.passwordToEncrypt);
+                }
                 Helper.setMessage("passwordChanged");
                 PrimeFaces.current().executeScript("PF('resetPasswordDialog').hide();");
             } else {

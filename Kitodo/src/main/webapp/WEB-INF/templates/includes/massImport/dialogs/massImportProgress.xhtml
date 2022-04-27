@@ -1,0 +1,46 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <h:form id="massImportProgressForm">
+        <p:dialog class="mass-import-progress-dialog"
+                  id="massImportProgressDialog"
+                  widgetVar="massImportProgressDialog"
+                  showHeader="false"
+                  modal="true"
+                  width="800px"
+                  appendTo="@(body)"
+                  resizable="false"
+                  closable="false">
+                <h3>Fortschritt Massenimport</h3>
+                <h:panelGroup layout="block"
+                              style="padding: var(--default-full-size) var(--default-double-size);">
+                    <p:progressBar id="massImportProgressBar"
+                                   widgetVar="massImportProgressBar"
+                                   ajax="true"
+                                   interval="1000"
+                                   value="#{MassImportForm.progress}"
+                                   labelTemplate="{value}%">
+                        <p:ajax event="complete"
+                                oncomplete="PF('massImportProgressBar').cancel();PF('massImportProgressDialog').hide();"/>
+                    </p:progressBar>
+                    <h:outputText id="massImportProgress"
+                                  value="#{MassImportForm.numberOfProcessesRecords} / #{MassImportForm.records.size()}"/>
+                </h:panelGroup>
+        </p:dialog>
+    </h:form>
+</ui:composition>

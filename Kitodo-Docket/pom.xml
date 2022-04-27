@@ -17,7 +17,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.4.1-SNAPSHOT</version>
+        <version>3.4.3-SNAPSHOT</version>
     </parent>
     <name>Kitodo - Docket</name>
     <modelVersion>4.0.0</modelVersion>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>
-            <version>3.4.1-SNAPSHOT</version>
+            <version>3.4.3-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -63,7 +63,7 @@
                     <groupId>commons-logging</groupId>
                     <artifactId>commons-logging</artifactId>
                 </exclusion>
-                <!-- exlcude xml-apis which provides javax.xml.transform package 
+                <!-- exlcude xml-apis which provides javax.xml.transform package
                      already included in system modules of Java 11+ -->
                 <exclusion>
                     <groupId>xml-apis</groupId>
