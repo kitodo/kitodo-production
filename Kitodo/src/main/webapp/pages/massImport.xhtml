@@ -12,7 +12,7 @@
 -->
 
 <ui:composition
-        template="/WEB-INF/templates/baseListView.xhtml"
+        template="/WEB-INF/templates/baseEditView.xhtml"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
@@ -25,30 +25,55 @@
         <f:viewAction action="#{MassImportForm.prepareMassImport(templateId, projectId)}"/>
     </f:metadata>
 
+    <ui:define name="contentHeader">
+        <h3 id="headerText">
+            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}')"/>
+        </h3>
+        <p:commandButton id="importButton"
+                         value="#{msgs.massImport}"
+                         disabled="#{empty MassImportForm.records}"
+                         actionListener="#{MassImportForm.prepare()}"
+                         action="#{MassImportForm.startMassImport()}"
+                         icon="fa fa-download fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('massImportProgressDialog').show();PF('massImportProgressBar').start();"
+                         update="notifications sticky-notifications :massImportProgressForm">
+            <p:resetInput target=":massImportProgressForm"/>
+        </p:commandButton>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+    </ui:define>
+
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}"
                    prependId="false"
                    id="projectsTabView"
                    widgetVar="projectsTabView">
             <p:ajax event="tabChange" listener="#{MassImportForm.onTabChange}"/>
-            <p:tab title="#{msgs.fileMassImport}"
-                   id="fileMassImportTab"
+            <p:tab title="#{msgs.massImport}"
+                   id="massImportTab"
                    rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                <ui:include src="/WEB-INF/templates/includes/massImport/fileMassImport.xhtml"/>
-            </p:tab>
-            <p:tab title="#{msgs.textMassImport}"
-                   id="textMassImportTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
-                <ui:include src="/WEB-INF/templates/includes/massImport/textMassImport.xhtml"/>
+                <ui:include src="/WEB-INF/templates/includes/massImport/massImportTab.xhtml"/>
             </p:tab>
 
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
     </ui:define>
 
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/addMetadata.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/massImportProgress.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/massImport/dialogs/massImportResults.xhtml"/>
+    </ui:define>
+
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.massImport}" icon="fa fa-align-center"/>
+        <p:menuitem value="#{msgs.massImport}" icon="fa fa-stack-overflow"/>
     </ui:define>
 
 </ui:composition>

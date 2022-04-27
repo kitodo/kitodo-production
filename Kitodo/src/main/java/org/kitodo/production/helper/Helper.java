@@ -136,7 +136,7 @@ public class Helper {
     public static void setErrorMessage(String title, Object... parameters) {
         if (Objects.nonNull(parameters) && parameters.length > 0) {
             setErrorMessage(getTranslation(title,
-                Arrays.stream(parameters).map(object -> Objects.toString(object)).toArray(String[]::new)));
+                Arrays.stream(parameters).map(Objects::toString).toArray(String[]::new)));
         } else {
             setErrorMessage(getTranslation(title));
         }
@@ -443,7 +443,7 @@ public class Helper {
     public static String getTranslation(String title, String... insertions) {
         String pattern = getString(desiredLanguage(), title);
         String message = MessageFormat.format(pattern, (Object[]) insertions);
-        return appenUnusedInsertions(message, insertions);
+        return appendUnusedInsertions(message, insertions);
     }
 
     /**
@@ -453,14 +453,15 @@ public class Helper {
      * function is used in error messages, which could be difficult to
      * reproduce, a loss of the additional information should be avoided.
      */
-    private static String appenUnusedInsertions(String message, String... insertions) {
-        for (int i = 0; i < insertions.length; i++) {
+    private static String appendUnusedInsertions(String message, String... insertions) {
+        StringBuilder messageBuilder = new StringBuilder(message);
+        for (String insertion : insertions) {
             String separator = ": ";
-            if (!message.contains(insertions[i])) {
-                message += separator + insertions[i];
-                separator = ", ";
+            if (!messageBuilder.toString().contains(insertion)) {
+                messageBuilder.append(separator).append(insertion);
             }
         }
+        message = messageBuilder.toString();
         return message;
     }
 
