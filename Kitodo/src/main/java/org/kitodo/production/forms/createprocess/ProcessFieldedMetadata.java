@@ -25,7 +25,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
@@ -363,7 +362,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * in this case, the metadata must be set explicitly. Then, a termination
      * must take place and the rule set must be invoked again in order to
      * correctly populate the dependent fields with options.
-     * 
+     *
      * @param view
      *            view that gives the access the select items
      * @param metadataForInput

@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
-import javax.faces.model.SelectItem;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
