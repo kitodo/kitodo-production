@@ -21,7 +21,7 @@
         <version>3.4.3-SNAPSHOT</version>
     </parent>
 
-    <name>Kitodo</name>
+    <name>Kitodo - Core</name>
     <artifactId>kitodo</artifactId>
     <packaging>war</packaging>
 
