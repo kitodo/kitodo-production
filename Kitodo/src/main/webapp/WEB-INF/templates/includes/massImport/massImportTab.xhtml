@@ -1,0 +1,136 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <p:panelGrid layout="grid"
+                 columns="2"
+                 cellpadding="10">
+        <p:row>
+            <div>
+                <p:outputLabel for="catalogueSelect"
+                               value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+                <p:selectOneMenu id="catalogueSelect"
+                                 required="#{not empty param['editForm:importButton']}"
+                                 value="#{MassImportForm.selectedCatalog}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs.selectCatalog} --"
+                                  noSelectionOption="true"
+                                  itemDisabled="true"/>
+                    <f:selectItems value="#{CreateProcessForm.catalogImportDialog.catalogs}"
+                                   var="catalog"
+                                   itemLabel="#{catalog}"
+                                   itemValue="#{catalog}"/>
+                    <p:ajax update="editForm"/>
+                </p:selectOneMenu>
+            </div>
+            <h:panelGroup id="recordsTableWrapper"
+                          layout="block">
+                <p:outputLabel for="recordsTable"
+                               value="#{msgs['records']}"/>
+                <p:dataTable id="recordsTable"
+                             resizableColumns="true"
+                             editable="true"
+                             editMode="cell"
+                             style="border: 1px solid black;"
+                             value="#{MassImportForm.records}"
+                             var="record">
+                    <p:ajax event="cellEdit"
+                            update="editForm:recordsTable"/>
+                    <!--@elvariable id="columnIndex" type="java.lang.Integer"-->
+                    <p:columns var="metadataKey"
+                               columnIndexVar="columnIndex"
+                               value="#{MassImportForm.metadataKeys}">
+                        <f:facet name="header">
+                            <h:outputText value="#{MassImportForm.getColumnHeader(columnIndex)}"/>
+                            <p:commandButton id="removeMetadataColumn"
+                                             rendered="#{columnIndex gt 0}"
+                                             styleClass="secondary remove-metadata-column"
+                                             action="#{MassImportForm.removeMetadata(columnIndex)}"
+                                             title="#{msgs.delete}"
+                                             icon="fa fa-trash-o"
+                                             update="editForm:recordsTableWrapper"/>
+                        </f:facet>
+                        <p:cellEditor>
+                            <f:facet name="output"><h:outputText value="#{record.csvCells.get(columnIndex).value}" title="#{record.csvCells.get(columnIndex).value}"/></f:facet>
+                            <f:facet name="input"><p:inputText value="#{record.csvCells.get(columnIndex).value}" style="width:100%"/></f:facet>
+                        </p:cellEditor>
+                    </p:columns>
+                    <p:column styleClass="remove-column">
+                        <f:facet name="header">
+                            <p:commandButton id="addMetadataColumn"
+                                             title="#{msgs['dataEditor.addMetadata.newMetadata']}"
+                                             disabled="#{MassImportForm.records.size() eq 0}"
+                                             style="margin: 3px"
+                                             icon="fa fa-plus"
+                                             styleClass="secondary"
+                                             action="#{MassImportForm.addMetadataDialog.prepareMetadataTypes()}"
+                                             update="addMetadataDialog"
+                                             oncomplete="PF('addMetadataDialog').show();"/>
+                        </f:facet>
+                        <p:commandButton id="removeLine"
+                                         action="#{MassImportForm.removeLine(record)}"
+                                         styleClass="secondary"
+                                         title="#{msgs.delete}"
+                                         icon="fa fa-trash-o"
+                                         update="editForm:recordsTableWrapper editForm:importButton"/>
+                    </p:column>
+                </p:dataTable>
+            </h:panelGroup>
+            <div>
+                <p:commandButton id="addCsvRecord"
+                                 action="#{MassImportForm.addRecord}"
+                                 title="#{msgs['massImport.addRow']}"
+                                 icon="fa fa-plus"
+                                 styleClass="secondary"
+                                 update="editForm:recordsTableWrapper editForm:importButton"/>
+            </div>
+        </p:row>
+        <p:row>
+            <h:panelGroup rendered="#{MassImportForm.selectedCatalog ne null}">
+                <p:outputLabel for="csvFileUpload"
+                               value="#{msgs['csvFileUpload']}"/>
+                <p:fileUpload id="csvFileUpload"
+                              value="#{MassImportForm.file}"
+                              rendered="#{MassImportForm.selectedCatalog ne null}"
+                              listener="#{MassImportForm.handleFileUpload}"
+                              allowTypes="/(\.|\/)(csv)$/"
+                              skinSimple="true"
+                              update="editForm"
+                              styleClass="input"
+                              label="#{msgs.select}"
+                              uploadLabel="#{msgs.upload}"
+                              cancelLabel="#{msgs.cancel}"
+                              chooseIcon="fa fa-plus fa-lg"
+                              uploadIcon="fa fa-upload fa-lg"
+                              cancelIcon="fa fa-times fa-lg"/>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{MassImportForm.file ne null}">
+                <p:outputLabel for="csvSeparator"
+                               value="#{msgs['csvSeparator']}"/>
+                <p:selectOneMenu id="csvSeparator"
+                                 styleClass="input"
+                                 maxlength="1"
+                                 value="#{MassImportForm.csvSeparator}">
+                    <f:selectItems value="#{MassImportForm.csvSeparatorCharacters}"/>
+                            <p:ajax event="change"
+                                    listener="#{MassImportForm.changeSeparator()}"
+                                    update="editForm:recordsTableWrapper"/>
+                </p:selectOneMenu>
+            </h:panelGroup>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>

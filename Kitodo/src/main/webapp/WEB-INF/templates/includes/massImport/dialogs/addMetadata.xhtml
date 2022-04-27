@@ -1,0 +1,141 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="addMetadataDialog"
+              widgetVar="addMetadataDialog"
+              width="400"
+              resizable="false"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+        <h:form id="addMetadataForm">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <h3>#{msgs['dataEditor.addMetadata.newMetadata']}</h3>
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogFieldWrapper">
+                        <div>
+                            <!-- metadata type -->
+                            <p:outputLabel value="#{msgs.type}"
+                                           for="metadataType"
+                                           styleClass="input"/>
+                            <p:selectOneMenu id="metadataType"
+                                             converter="#{processDetailConverter}"
+                                             value="#{MassImportForm.addMetadataDialog.metadataDetail}"
+                                             title="#{msgs.type}">
+                                <f:selectItems value="#{MassImportForm.addMetadataDialog.allMetadataTypes}"
+                                               var="metadataType"
+                                               itemValue="#{metadataType}"
+                                               itemLabel="#{metadataType.label}"/>
+                                <f:attribute name="allMetadataTypes"
+                                             value="#{MassImportForm.addMetadataDialog.allMetadataTypes}"/>
+                                <p:ajax event="change" update="@form"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div style="display: grid">
+                            <p:outputLabel value="#{msgs.value}"/>
+
+                            <p:inputText styleClass="input"
+                                         rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'inputText'}"
+                                         value="#{MassImportForm.addMetadataDialog.metadataDetail.value}">
+                                <p:ajax event="blur"/>
+                            </p:inputText>
+
+                            <p:inputTextarea value="#{MassImportForm.addMetadataDialog.metadataDetail.value}"
+                                             rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'inputTextarea'}"
+                                             styleClass="input">
+                                <p:ajax event="blur"/>
+                            </p:inputTextarea>
+
+                            <p:spinner id="spinner"
+                                       rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'spinner'}"
+                                       value="#{MassImportForm.addMetadataDialog.metadataDetail.value}"
+                                       styleClass="input">
+                                <p:ajax event="blur"/>
+                            </p:spinner>
+
+                            <p:calendar id="calendar"
+                                        value="#{MassImportForm.addMetadataDialog.metadataDetail.date}"
+                                        rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'calendar'}"
+                                        pattern="yyyy-MM-dd"
+                                        styleClass="input-with-button"
+                                        showOn="button">
+                                <p:ajax event="dateSelect"/>
+                            </p:calendar>
+
+                            <p:selectManyMenu id="selectManyMenu"
+                                              styleClass="input"
+                                              value="#{MassImportForm.addMetadataDialog.metadataDetail.selectedItems}"
+                                              rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'manyMenu'}"
+                                              showCheckbox="true">
+                                <f:selectItems value="#{MassImportForm.addMetadataDialog.metadataDetail.items}"/>
+                                <p:ajax event="change"/>
+                            </p:selectManyMenu>
+
+                            <p:selectOneMenu id="selectOneMenu"
+                                             styleClass="input"
+                                             value="#{MassImportForm.addMetadataDialog.metadataDetail.selectedItem}"
+                                             rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'oneMenu'}"
+                                             autoWidth="false">
+                                <f:selectItem itemValue="#{null}"
+                                              itemLabel="#{msgs.notSelected}"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{MassImportForm.addMetadataDialog.metadataDetail.items}"/>
+                                <p:ajax event="change"/>
+                            </p:selectOneMenu>
+
+                            <p:selectOneRadio id="selectOneRadio"
+                                              styleClass="input"
+                                              value="#{MassImportForm.addMetadataDialog.metadataDetail.selectedItem}"
+                                              rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'oneRadio'}"
+                                              layout="grid"
+                                              columns="1">
+                                <f:selectItems value="#{MassImportForm.addMetadataDialog.metadataDetail.items}"/>
+                                <p:ajax/>
+                            </p:selectOneRadio>
+
+                            <p:selectBooleanCheckbox id="selectBooleanCheckbox"
+                                                     styleClass="input"
+                                                     rendered="#{MassImportForm.addMetadataDialog.metadataDetail.input eq 'toggleSwitch'}"
+                                                     value="#{MassImportForm.addMetadataDialog.metadataDetail.active}">
+                                <p:ajax event="change"/>
+                            </p:selectBooleanCheckbox>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="apply"
+                                         action="#{MassImportForm.addMetadataDialog.addMetadata()}"
+                                         update="editForm:recordsTableWrapper"
+                                         oncomplete="PF('addMetadataDialog').hide();"
+                                         value="#{msgs.apply}"
+                                         styleClass="primary right"/>
+                        <p:commandButton id="cancel"
+                                         onclick="PF('addMetadataDialog').hide();"
+                                         value="#{msgs.cancel}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"/>
+                    </h:panelGroup>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>

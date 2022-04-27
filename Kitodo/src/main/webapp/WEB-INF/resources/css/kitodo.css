@@ -1341,26 +1341,56 @@ Import form
     margin-bottom: var(--default-double-size);
 }
 
-#fileMassImportForm .ui-panelgrid-cell,
-#textMassImportForm .ui-panelgrid-cell {
+/*----------------------------------------------------------------------
+Mass import
+----------------------------------------------------------------------*/
+
+#editForm .ui-panelgrid-cell {
     padding-left: var(--default-full-size);
 }
 
-#fileMassImportForm .ui-fileupload-buttonbar {
+#editForm .ui-fileupload-buttonbar {
     padding: 0;
 }
 
-#fileMassImportForm .ui-fileupload-buttonbar .ui-button {
+#editForm .ui-fileupload-buttonbar .ui-button {
     margin-right: var(--default-full-size);
 }
 
-#fileMassImportForm .ui-fileupload-choose .ui-button-text {
-    padding-top: 10px;
+#editForm\:recordsTable tr {
+    height: var(--input-height);
+    overflow-y: hidden;
 }
 
-#textMassImportForm\:importFromText {
-    margin-left: var(--default-full-size);
-    vertical-align: top;
+#editForm\:recordsTable .remove-column {
+    width: 50px;
+}
+
+#editForm\:recordsTable .remove-column button.secondary,
+#editForm\:recordsTable .remove-metadata-column {
+    border: none;
+}
+
+#editForm\:csvSeparator {
+    display: block;
+    width: 60px;
+}
+
+#editForm\:csvFileUpload {
+    margin-bottom: 72px;
+}
+
+#editForm\:csvFileUpload .ui-fileupload-buttonbar {
+    float: left;
+}
+
+#importResultsForm\:importResults .ui-accordion-content {
+    padding: 0;
+}
+
+#editForm\:recordsTable\:addMetadataColumn,
+#editForm\:recordsTable button.remove-metadata-column {
+    background: var(--cloudy-gray);
 }
 
 #catalogSearchForm {

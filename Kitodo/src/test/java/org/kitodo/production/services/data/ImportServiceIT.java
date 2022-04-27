@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.SystemUtils;
@@ -84,7 +85,7 @@ public class ImportServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }
-        Process importedProcess = importService.importProcess(RECORD_ID, 1, 1, "K10Plus");
+        Process importedProcess = importService.importProcess(RECORD_ID, 1, 1, "K10Plus", new HashMap<>());
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
