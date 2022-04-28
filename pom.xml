@@ -75,8 +75,6 @@
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
         <spring.security.version>5.6.3</spring.security.version>
-        <spring.core.version>5.3.18</spring.core.version>
-        <spring.expression.version>5.3.17</spring.expression.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
@@ -774,21 +772,6 @@ from system library in Java 11+ -->
                         <artifactId>spring-beans</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-beans</artifactId>
-                <version>${spring.core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-core</artifactId>
-                <version>${spring.core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-expression</artifactId>
-                <version>${spring.expression.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
