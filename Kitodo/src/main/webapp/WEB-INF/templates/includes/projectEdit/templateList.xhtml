@@ -19,8 +19,19 @@
 
     <p:dataTable id="templateTable" var="template" value="#{ProjectForm.project.templates}" sortBy="#{template.title}">
         <p:column headerText="#{msgs.template}" id="taskTitle">
-            <p:rowToggler />
             <h:outputText value="#{template.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.workflow}">
+            <h:outputText value="#{template.workflow.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.ruleset}">
+            <h:outputText value="#{template.ruleset.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.docket}">
+            <h:outputText value="#{template.docket.title}"/>
         </p:column>
 
         <p:column styleClass="actionsColumn" headerText="#{msgs.actions}">

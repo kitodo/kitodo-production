@@ -15,21 +15,18 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>kitodo-data-management</artifactId>
-    <version>3.4.3-SNAPSHOT</version>
+
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
         <version>3.4.3-SNAPSHOT</version>
     </parent>
-    <organization>
-        <name>kitodo.org</name>
-        <url>http://kitodo.org</url>
-    </organization>
+
     <name>Kitodo - Data Management</name>
-    <url>https://github.com/kitodo/kitodo-production</url>
+    <artifactId>kitodo-data-management</artifactId>
 
     <properties>
+        <main.basedir>${project.parent.basedir}</main.basedir>
         <phase.prop>install</phase.prop>
     </properties>
 
@@ -224,6 +221,19 @@
                 <directory>src/main/resources</directory>
             </resource>
         </resources>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <!-- override phase to do not generate jar -->
+                <executions>
+                    <execution>
+                        <id>kitodo-jar</id>
+                        <phase>none</phase>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
     </build>
 
     <profiles>
@@ -238,7 +248,7 @@
                         <configuration>
                             <configFiles>
                                 <!-- local configuration file -->
-                                <!--<configFile>${parent.basedir}/config-local/flyway.properties</configFile>-->
+                                <!--<configFile>${main.basedir}/config-local/flyway.properties</configFile>-->
                                 <configFile>src/main/resources/db/config/flyway.properties</configFile>
                             </configFiles>
                         </configuration>

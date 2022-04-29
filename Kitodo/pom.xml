@@ -14,22 +14,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>kitodo</artifactId>
-    <packaging>war</packaging>
+
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo-production</artifactId>
         <version>3.4.3-SNAPSHOT</version>
     </parent>
-    <organization>
-        <name>kitodo.org</name>
-        <url>http://kitodo.org</url>
-    </organization>
+
     <name>Kitodo - Core</name>
-    <url>https://github.com/kitodo/kitodo-production</url>
+    <artifactId>kitodo</artifactId>
+    <packaging>war</packaging>
 
     <properties>
-        <parent.basedir>${basedir}/../</parent.basedir>
+        <main.basedir>${project.parent.basedir}</main.basedir>
         <maxAllowedViolations>15</maxAllowedViolations>
         <selenium.version>3.141.59</selenium.version>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
