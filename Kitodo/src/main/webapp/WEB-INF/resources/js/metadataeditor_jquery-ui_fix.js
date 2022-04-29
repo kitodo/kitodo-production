@@ -30,7 +30,6 @@
  * Because of this two-phase implementation, only one page layout calculation is required.
  */
  $.ui.ddmanager.prepareOffsets = function( t, event ) {
-    const startTime = Date.now();
 
     var i, j,
         m = $.ui.ddmanager.droppables[ t.options.scope ] || [],
@@ -83,5 +82,4 @@
         } );
 
     }
-    console.log("custom jquery-ui prepareOffsets in " + (Date.now() - startTime) + "ms");
 };
