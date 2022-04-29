@@ -107,6 +107,8 @@ public class GalleryPanel {
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
+        this.mediaViewVariant = new MediaVariant("application/octet-stream", "unknownMediaView");
+        this.previewVariant = new MediaVariant("application/octet-stream", "unknownPreviewMediaView");
     }
 
     String getAcquisitionStage() {
@@ -403,9 +405,18 @@ public class GalleryPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
 
         Folder previewSettings = project.getPreview();
-        previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, physicalDivisions) : null;
+        if (Objects.nonNull(previewSettings)) {
+            previewVariant = getMediaVariant(previewSettings, physicalDivisions);
+        } else {
+            previewVariant = new MediaVariant("application/octet-stream", "unknownPreviewMediaView");
+        }
+
         Folder mediaViewSettings = project.getMediaView();
-        mediaViewVariant = Objects.nonNull(mediaViewSettings) ? getMediaVariant(mediaViewSettings, physicalDivisions) : null;
+        if (Objects.nonNull(mediaViewSettings)) {
+            mediaViewVariant = getMediaVariant(mediaViewSettings, physicalDivisions);
+        } else {
+            mediaViewVariant = new MediaVariant("application/octet-stream", "unknownMediaView");
+        }
 
         medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();

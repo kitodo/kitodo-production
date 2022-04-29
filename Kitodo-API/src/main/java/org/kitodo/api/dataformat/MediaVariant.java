@@ -38,6 +38,24 @@ public class MediaVariant {
     private String use;
 
     /**
+     * Class constructor.
+     */
+    public MediaVariant() {
+
+    }
+
+    /**
+     * Class constructor with parameters.
+     *
+     * @param mimeType Used mimetype
+     * @param use Used use case
+     */
+    public MediaVariant(String mimeType, String use) {
+        this.mimeType = mimeType;
+        this.use = use;
+    }
+
+    /**
      * Returns the MIME type of the media variant.
      *
      * @return the MIME type
