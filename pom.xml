@@ -78,6 +78,7 @@
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.7.5</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+        <jdom2.version>2.0.6.1</jdom2.version>
     </properties>
 
     <repositories>
