@@ -46,7 +46,7 @@
         <commons-codec.version>1.13</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
-        <commons-io.version>2.6</commons-io.version>
+        <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-net.version>3.8.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
@@ -62,7 +62,7 @@
         <poi.version>3.17</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-5</saxon.version>
-        <log4j.version>2.17.0</log4j.version>
+        <log4j.version>2.17.2</log4j.version>
         <junit.version>5.5.2</junit.version>
         <elasticsearch.version>7.10.2</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
@@ -71,9 +71,7 @@
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
-        <spring.security.version>5.6.2</spring.security.version>
-        <spring.core.version>5.3.18</spring.core.version>
-        <spring.expression.version>5.3.17</spring.expression.version>
+        <spring.security.version>5.6.3</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
