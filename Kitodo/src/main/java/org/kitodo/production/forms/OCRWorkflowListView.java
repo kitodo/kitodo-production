@@ -75,19 +75,4 @@ public class OCRWorkflowListView extends BaseForm {
         }
     }
 
-    /**
-     * Get list of ocr workflow filenames.
-     *
-     * @return list of ocr workflow filenames
-     */
-    public List<Path> getOCRWorkflowFilenames() {
-        try (Stream<Path> ocrWorkflowPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS)))) {
-            return ocrWorkflowPaths.filter(f -> f.toString().endsWith(".sh"))
-                    .map(Path::getFileName).sorted().collect(Collectors.toList());
-        } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCR_WORKFLOW.getTranslationPlural() },
-                logger, e);
-            return new ArrayList<>();
-        }
-    }
 }

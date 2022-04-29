@@ -11,20 +11,30 @@
 
 package org.kitodo.production.forms;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.OCRWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
-@Named
+@Named("OCRWorkflowEditView")
 @SessionScoped
 public class OCRWorkflowEditView extends BaseForm {
 
@@ -61,12 +71,29 @@ public class OCRWorkflowEditView extends BaseForm {
      */
     public String save() {
         try {
+            ocrWorkflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
             ServiceManager.getOCRWorkflowService().saveToDatabase(ocrWorkflow);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING,
                     new Object[] {ObjectType.OCR_WORKFLOW.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
+        }
+    }
+
+    /**
+     * Get list of ocr workflow filenames.
+     *
+     * @return list of ocr workflow filenames
+     */
+    public List<Path> getOCRWorkflowFilenames() {
+        try (Stream<Path> ocrWorkflowPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS)))) {
+            return ocrWorkflowPaths.filter(f -> f.toString().endsWith(".sh"))
+                    .map(Path::getFileName).sorted().collect(Collectors.toList());
+        } catch (IOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCR_WORKFLOW.getTranslationPlural() },
+                    logger, e);
+            return new ArrayList<>();
         }
     }
 
@@ -87,5 +114,6 @@ public class OCRWorkflowEditView extends BaseForm {
     public void setOcrWorkflow(OCRWorkflow ocrWorkflow) {
         this.ocrWorkflow = ocrWorkflow;
     }
+
 
 }
