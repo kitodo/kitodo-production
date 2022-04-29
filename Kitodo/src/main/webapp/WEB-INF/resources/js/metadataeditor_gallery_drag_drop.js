@@ -40,8 +40,6 @@ function registerMakeDragAndDroppable() {
 
     // apply jquery draggable and droppable to the relevant dom elements
     let makeDragAndDroppable = makeDebounced(function () {
-        const startTime = Date.now();
-
         // make individual pages draggable
         $("#imagePreviewForm\\:structuredPages .draggableStructurePagePanel").draggable({
             scope: "assignedPagesDroppable",
@@ -77,7 +75,6 @@ function registerMakeDragAndDroppable() {
             activeClass: "media-stripe-active",
             drop: onDrop,
         });
-        console.log("makeDragAndDroppable in " + (Date.now() - startTime) + "ms");
     });
 
     // update components after they have been updated via PrimeFaces
