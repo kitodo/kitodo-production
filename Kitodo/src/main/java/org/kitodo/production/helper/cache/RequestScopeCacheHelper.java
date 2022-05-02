@@ -18,9 +18,6 @@ import java.util.function.Supplier;
 
 import javax.faces.context.FacesContext;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Caches arbitrary objects while processing a request.
  * 
