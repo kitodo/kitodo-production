@@ -20,8 +20,6 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -35,9 +33,6 @@ import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
 
 public class FileXmlElementAccess {
-
-    @SuppressWarnings("unused")
-    private static final Logger logger = LogManager.getLogger(FileXmlElementAccess.class);
 
     /**
      * The data object of this file XML element access.
