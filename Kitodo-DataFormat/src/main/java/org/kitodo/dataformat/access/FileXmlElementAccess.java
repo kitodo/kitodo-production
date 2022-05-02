@@ -20,6 +20,8 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -31,9 +33,11 @@ import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
-import org.kitodo.dataformat.metskitodo.MetsType.FileSec.FileGrp;
 
 public class FileXmlElementAccess {
+
+    @SuppressWarnings("unused")
+    private static final Logger logger = LogManager.getLogger(FileXmlElementAccess.class);
 
     /**
      * The data object of this file XML element access.
@@ -60,7 +64,8 @@ public class FileXmlElementAccess {
      *            list of media variants from which the media variant for the
      *            given use is taken
      */
-    FileXmlElementAccess(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess) {
+    FileXmlElementAccess(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess, 
+            Map<FileType, String> fileUseByFileCache) {
         this();
         physicalDivision.setDivId(div.getID());
         Map<MediaVariant, URI> mediaFiles = new HashMap<>();
@@ -68,15 +73,13 @@ public class FileXmlElementAccess {
             Object fileId = fptr.getFILEID();
             if (fileId instanceof FileType) {
                 FileType file = (FileType) fileId;
-                MediaVariant mediaVariant = null;
-                for (FileGrp fileGrp : mets.getFileSec().getFileGrp()) {
-                    if (fileGrp.getFile().contains(file)) {
-                        mediaVariant = useXmlAttributeAccess.get(fileGrp.getUSE());
-                        break;
-                    }
-                }
-                if (Objects.isNull(mediaVariant)) {
+                String fileUse = fileUseByFileCache.getOrDefault(file, null);
+                if (Objects.isNull(fileUse)) {
                     throw new IllegalArgumentException("Corrupt file: <mets:fptr> not referenced in <mets:fileGrp>");
+                }
+                MediaVariant mediaVariant = useXmlAttributeAccess.getOrDefault(fileUse, null);
+                if (Objects.isNull(mediaVariant)) {
+                    throw new IllegalArgumentException("Corrupt file: file use '" + fileUse + "'' not found in <mets:fileGrp>");
                 }
                 FLocatXmlElementAccess fLocatXmlElementAccess = new FLocatXmlElementAccess(file);
                 physicalDivision.storeFileId(fLocatXmlElementAccess);
