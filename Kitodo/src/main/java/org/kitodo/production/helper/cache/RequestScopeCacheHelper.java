@@ -43,9 +43,6 @@ public class RequestScopeCacheHelper {
 
     private static final String ATTRIBUTE_NAME = "RequestScopeCacheHelper";
 
-    @SuppressWarnings("unused")
-    private static final Logger logger = LogManager.getLogger(RequestScopeCacheHelper.class);
-
     /**
      * Load or create a simple hash map in the FacesContext.getAttributes() map.
      * @return the cache
