@@ -139,15 +139,15 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions = new HashMap<>();
         if (optionalPhysicalStructMap.isPresent()) {
             DivType div = optionalPhysicalStructMap.get().getDiv();
-            Map<FileType, String> fileUseByFileCach = createFileUseByFileCache(mets);
+            Map<FileType, String> fileUseByFileCache = createFileUseByFileCache(mets);
             FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(
-                div, mets, useXmlAttributeAccess, fileUseByFileCach
+                div, mets, useXmlAttributeAccess, fileUseByFileCache
             );
             PhysicalDivision physicalDivision = fileXmlElementAccess.getPhysicalDivision();
             workpiece.setPhysicalStructure(physicalDivision);
             divIDsToPhysicalDivisions.put(div.getID(), fileXmlElementAccess);
             readMediaUnitsTreeRecursive(
-                div, mets, useXmlAttributeAccess, physicalDivision, divIDsToPhysicalDivisions, fileUseByFileCach
+                div, mets, useXmlAttributeAccess, physicalDivision, divIDsToPhysicalDivisions, fileUseByFileCache
             );
         }
         if (mets.getStructLink() == null) {
@@ -169,16 +169,16 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
 
     private void readMediaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
             PhysicalDivision physicalDivision, Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions, 
-            Map<FileType, String> fileUseByFileCach) {
+            Map<FileType, String> fileUseByFileCache) {
         for (DivType child : div.getDiv()) {
             FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(
-                child, mets, useXmlAttributeAccess, fileUseByFileCach
+                child, mets, useXmlAttributeAccess, fileUseByFileCache
             );
             PhysicalDivision childPhysicalDivision = fileXmlElementAccess.getPhysicalDivision();
             physicalDivision.getChildren().add(childPhysicalDivision);
             divIDsToPhysicalDivisions.put(child.getID(), fileXmlElementAccess);
             readMediaUnitsTreeRecursive(
-                child, mets, useXmlAttributeAccess, childPhysicalDivision, divIDsToPhysicalDivisions, fileUseByFileCach
+                child, mets, useXmlAttributeAccess, childPhysicalDivision, divIDsToPhysicalDivisions, fileUseByFileCache
             );
         }
     }
@@ -431,16 +431,19 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      */
     private Map<FileType, String> createFileUseByFileCache(Mets mets) {
         HashMap<FileType, String> fileUseMap = new HashMap<>();
-        for (FileGrp fileGrp : mets.getFileSec().getFileGrp()) {
-            String use = fileGrp.getUSE();
-            for (FileType file : fileGrp.getFile()) {
-                if (fileUseMap.containsKey(file)) {
-                    logger.error("file with id " + file.getID() + " is part of multiple groups");
-                } else {
-                    fileUseMap.put(file, use);
+        FileSec fileSec = mets.getFileSec();
+        if (Objects.nonNull(fileSec)) {
+            for (FileGrp fileGrp : fileSec.getFileGrp()) {
+                String use = fileGrp.getUSE();
+                for (FileType file : fileGrp.getFile()) {
+                    if (fileUseMap.containsKey(file)) {
+                        logger.error("Corrupt file: file with id " + file.getID() + " is part of multiple groups");
+                    } else {
+                        fileUseMap.put(file, use);
+                    }
                 }
+                
             }
-            
         }
         return fileUseMap;
     }
