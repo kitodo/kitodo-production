@@ -11,41 +11,26 @@
 
 package org.kitodo.production.helper.messages;
 
-import java.io.File;
 import java.util.Enumeration;
 import java.util.Locale;
+import java.util.MissingResourceException;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.Test;
-import org.junit.jupiter.api.BeforeAll;
-import org.kitodo.FileLoader;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.file.FileService;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 
 public class ErrorTest {
-
-    private static final Logger logger = LogManager.getLogger(ErrorTest.class);
 
     private final Locale locale = new Locale("EN");
     private final String customBundle = "errors";
     private final String defaultBundle = "messages.errors";
-    private final File messageDirectory = new File("src/test/resources/custom");
-
-    @BeforeAll
-    public void cleanMessagesDirectory() {
-        if (messageDirectory.exists()) {
-            messageDirectory.delete();
-        }
-    }
 
     @Test
     public void shouldGetKeys() {
-        Enumeration<String> keys = Message.getResourceBundle(defaultBundle, customBundle, locale).getKeys();
+        Enumeration<String> keys = Error.getResourceBundle(defaultBundle, customBundle, locale).getKeys();
 
         boolean containsKey = false;
         while (keys.hasMoreElements()) {
@@ -61,21 +46,40 @@ public class ErrorTest {
 
     @Test
     public void shouldGetStringFromDefaultBundle() {
-        assertEquals("Error...", Message.getResourceBundle(defaultBundle, customBundle, locale).getString("error"));
+        // in case custom bundle does not exist
+        assertEquals(
+            "Error...", 
+            Error.getResourceBundle(defaultBundle, "non-existent-bundle", locale).getString("error")
+        );
     }
 
     @Test
-    public void shouldGetStringFromCustomBundle() throws Exception {      
-        if (messageDirectory.mkdir()) {
-            FileLoader.createCustomErrors();
+    public void shouldGetStringFromCustomBundle() {      
+        // in case custom bundle exists, and also contains definition for the requested key
+        assertEquals(
+            "Test custom error", 
+            Error.getResourceBundle(defaultBundle, customBundle, locale).getString("error")
+        );
+    }
 
-            String value = Message.getResourceBundle(defaultBundle, customBundle, locale).getString("error");
-            assertEquals("Test custom error", value);
+    @Test
+    public void shouldThrowMissingRessourceExceptionForNonExistentKey() {
+        // in case custom bundle is loaded, but key does not exist in either resource bundles 
+        assertThrows(
+            MissingResourceException.class, 
+            () -> Error.getResourceBundle(defaultBundle, customBundle, locale).getString("non-existent-key")
+        );
 
-            FileLoader.deleteCustomErrors();
-            messageDirectory.delete();
-        } else {
-            fail("Directory for custom messages was not created!");
-        }
+        // in case custom bundle is missing, and key does also not exist in default bundle
+        assertThrows(
+            MissingResourceException.class, 
+            () -> Error.getResourceBundle(defaultBundle, "non-existent-bundle", locale).getString("non-existent-key")
+        );
+
+        // in case custom bundle is loaded, but does not include the key, even if the key exists in the default bundle
+        assertThrows(
+            MissingResourceException.class, 
+            () -> Error.getResourceBundle(defaultBundle, customBundle, locale).getString("errorOccurred")
+        );
     }
 }

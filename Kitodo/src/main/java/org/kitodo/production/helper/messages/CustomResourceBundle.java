@@ -52,8 +52,8 @@ abstract class CustomResourceBundle extends ResourceBundle {
      *        changed during runtime, e.g., when unit testing
      * @return
      */
-    private static URLClassLoader getURLClassLoader(Boolean reload) {
-        if (Objects.isNull(urlClassLoader) || reload) {
+    private static URLClassLoader getURLClassLoader() {
+        if (Objects.isNull(urlClassLoader)) {
             File file = new File(ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES));
             if (file.exists()) {
                 try {
@@ -78,21 +78,12 @@ abstract class CustomResourceBundle extends ResourceBundle {
      * @return the external resource bundle or null if it does not exist
      */
     private static ResourceBundle getExternalResourceBundle(String bundleName, Locale locale) {
-        URLClassLoader urlLoader = getURLClassLoader(false);
+        URLClassLoader urlLoader = getURLClassLoader();
         if (Objects.nonNull(urlLoader)) {
             try {
                 return ResourceBundle.getBundle(bundleName, locale, urlLoader);
             } catch (MissingResourceException e) {
-                try {
-                    // try again but reload URLClassLoader in case directory has changed,
-                    // which is the case when unit testing, where directories are created temporarily
-                    urlLoader = getURLClassLoader(true);
-                    if (Objects.nonNull(urlLoader)) {
-                        return ResourceBundle.getBundle(bundleName, locale, urlLoader);
-                    }
-                } catch (MissingResourceException e2) {
-                    logger.info("Could not find external resource bundle: " + e.getMessage(), e2);
-                }
+                logger.error("Could not find external resource bundle '" + bundleName + "': " + e.getMessage());
             }
         }
         return null;
