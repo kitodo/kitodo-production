@@ -9,6 +9,14 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+// This file requires the following globals
+
+// provided by <p:remoteCommand /> in gallery.xhtml
+var triggerOnPageDrop = triggerOnPageDrop || function() {};
+
+// provided by PrimeFaces
+var PrimeFaces = PrimeFaces || {};
+
 /**
  * Registers event handler that makes relevant components of gallery 
  * draggable and droppable via jquery-ui. 
@@ -28,7 +36,7 @@ function registerMakeDragAndDroppable() {
         return function () {
             clearTimeout(timer);
             timer = setTimeout(func, timeout);
-        }
+        };
     }
 
     function onDrop(event, ui) {
@@ -40,6 +48,7 @@ function registerMakeDragAndDroppable() {
 
     // apply jquery draggable and droppable to the relevant dom elements
     let makeDragAndDroppable = makeDebounced(function () {
+        console.log("mageDragAndDroppable");
         // make individual pages draggable
         $("#imagePreviewForm\\:structuredPages .draggableStructurePagePanel").draggable({
             scope: "assignedPagesDroppable",
