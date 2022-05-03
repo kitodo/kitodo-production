@@ -506,16 +506,12 @@ public class GalleryPanel {
      * @return GalleryStripe representing the logical structure element to which the Media is assigned
      */
     GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
-        if (Objects.nonNull(galleryMediaContent.getId())) {
-            for (GalleryStripe galleryStripe : stripes) {
-                for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
-                    if (galleryMediaContent.getId().equals(mediaContent.getId())) {
-                        return galleryStripe;
-                    }
+        for (GalleryStripe galleryStripe : stripes) {
+            for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
+                if (galleryMediaContent.getId().equals(mediaContent.getId())) {
+                    return galleryStripe;
                 }
             }
-        } else {
-            logger.error("galleryMediaContent has id of null, weird!");
         }
         return null;
     }
@@ -741,12 +737,7 @@ public class GalleryPanel {
                 if (Objects.nonNull(galleryStripe)) {
                     return dataEditor.isSelected(physicalDivision, galleryStripe.getStructure());
                 } else {
-                    GalleryStripe stripe = getLogicalStructureOfMedia(galleryMediaContent);
-                    if (Objects.nonNull(stripe)) {
-                        return dataEditor.isSelected(physicalDivision, stripe.getStructure());
-                    } else {
-                        logger.error("could not find GalleryStripe for galleryMediaContent:" + galleryMediaContent);
-                    }
+                    return dataEditor.isSelected(physicalDivision, getLogicalStructureOfMedia(galleryMediaContent).getStructure());
                 }
             }
         }
