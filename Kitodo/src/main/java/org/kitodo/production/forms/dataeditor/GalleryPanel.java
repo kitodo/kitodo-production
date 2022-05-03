@@ -51,7 +51,6 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -211,15 +210,12 @@ public class GalleryPanel {
      *            JSF drag'n'drop event description object
      */
     public void onPageDrop() {
-
         FacesContext context = FacesContext.getCurrentInstance();
         Map<String,String> params = context.getExternalContext().getRequestParameterMap();
         String dragId = params.get("dragId");
         String dropId = params.get("dropId");
         
-        logger.debug("onPageDrop event drag " + dragId + " to drop " + dropId);
         int toStripeIndex = getDropStripeIndex(dropId);
-
         if (toStripeIndex == -1 || !dragStripeIndexMatches(dragId)) {
             logger.error("Unsupported drag'n'drop event from {} to {}", dragId, dropId);
             return;
