@@ -15,10 +15,14 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
@@ -33,6 +37,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
 
     private static final Logger logger = LogManager.getLogger(CustomResourceBundle.class);
     private static URLClassLoader urlClassLoader;
+    private static Map<String, Boolean> propertiesFileExistsMap = new HashMap<String, Boolean>();
 
     @Override
     public Enumeration<String> getKeys() {
@@ -47,10 +52,8 @@ abstract class CustomResourceBundle extends ResourceBundle {
     /**
      * Create a URLClassLoader that is allowed to load resource bundles from the external directory
      * containing translated messages and errors (e.g. /usr/local/kitodo/messages).
-     * @param reload
-     *        force re-creating a new URLClassLoader, which can be necessary if the directory has 
-     *        changed during runtime, e.g., when unit testing
-     * @return
+
+     * @return instance of URLClassLoader
      */
     private static URLClassLoader getURLClassLoader() {
         if (Objects.isNull(urlClassLoader)) {
@@ -72,18 +75,55 @@ abstract class CustomResourceBundle extends ResourceBundle {
     }
 
     /**
-     * Load a external resource bundle (outside jar files).
+     * Checks if properties file for a specfiic external resource bundle does exist.
+     * Remembers existence in static map such that filesystem is not checked repeatedly.
+     * 
+     * <p>This check is required because resource bundles seem to always load if an URLClassLoader
+     * could be initialized even if the corresponding properties file in that directory does not 
+     * exist. The resulting resource bundle is simply empty then.</p>
+     * 
+     * <p>This check allows to only load from URLClassLoader, if the corresponding properties file
+     * actually exists.</p>
+     * 
+     * @param bundleName the bundle name
+     * @param locale the locale
+     * @return true if properties file for resource bundle exists, else false
+     */
+    private static Boolean externalResourceBundleFileExists(String bundleName, Locale locale) {
+        String key = bundleName + "_" + locale.getLanguage();
+        if (!propertiesFileExistsMap.containsKey(key)) {
+            String directory = ConfigCore.getParameterOrDefaultValue(ParameterCore.DIR_LOCAL_MESSAGES);
+            Path path = Paths.get(directory, bundleName + "_" + locale.getLanguage() + ".properties");
+            File file = path.toFile();
+            
+            propertiesFileExistsMap.put(key, file.exists());
+
+            if (!file.exists()) {
+                logger.error("Could not find external resource bundle '" + bundleName + "' at " + file);
+            }
+        }
+        return propertiesFileExistsMap.get(key);
+    }
+
+    /**
+     * Loads an external resource bundle (outside jar files) if a corresponding properties file 
+     * exists and an URLClassLoader could be build that has the permissions to load files from 
+     * that directory.
+     * 
      * @param bundleName the bundle name
      * @param locale the locale
      * @return the external resource bundle or null if it does not exist
      */
     private static ResourceBundle getExternalResourceBundle(String bundleName, Locale locale) {
+        if (!externalResourceBundleFileExists(bundleName, locale)) {
+            return null;
+        }
         URLClassLoader urlLoader = getURLClassLoader();
         if (Objects.nonNull(urlLoader)) {
             try {
                 return ResourceBundle.getBundle(bundleName, locale, urlLoader);
             } catch (MissingResourceException e) {
-                logger.error("Could not find external resource bundle '" + bundleName + "': " + e.getMessage());
+                logger.error("Could not load external resource bundle '" + bundleName + "': " + e.getMessage());
             }
         }
         return null;

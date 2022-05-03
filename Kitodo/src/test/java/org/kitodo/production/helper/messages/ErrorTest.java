@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class ErrorTest {
 
     private final Locale locale = new Locale("EN");
-    private final String customBundle = "errors";
+    private final String customBundle = "test_errors";
     private final String defaultBundle = "messages.errors";
 
     @Test
