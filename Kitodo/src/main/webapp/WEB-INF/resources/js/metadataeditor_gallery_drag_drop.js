@@ -12,10 +12,15 @@
 // This file requires the following globals
 
 // provided by <p:remoteCommand /> in gallery.xhtml
-var triggerOnPageDrop = triggerOnPageDrop || function() {};
+if (typeof triggerOnPageDrop === "undefined") {
+    var triggerOnPageDrop = function() {};
+}
 
 // provided by PrimeFaces
-var PrimeFaces = PrimeFaces || {};
+if (typeof PrimeFaces === "undefined") {
+    var PrimeFaces = {};
+}
+
 
 /**
  * Registers event handler that makes relevant components of gallery 
@@ -48,7 +53,6 @@ function registerMakeDragAndDroppable() {
 
     // apply jquery draggable and droppable to the relevant dom elements
     let makeDragAndDroppable = makeDebounced(function () {
-        console.log("mageDragAndDroppable");
         // make individual pages draggable
         $("#imagePreviewForm\\:structuredPages .draggableStructurePagePanel").draggable({
             scope: "assignedPagesDroppable",
