@@ -9,18 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-// This file requires the following globals
-
-// provided by <p:remoteCommand /> in gallery.xhtml
-if (typeof triggerOnPageDrop === "undefined") {
-    var triggerOnPageDrop = function() {};
-}
-
-// provided by PrimeFaces
-if (typeof PrimeFaces === "undefined") {
-    var PrimeFaces = {};
-}
-
+/* global triggerOnPageDrop, PrimeFaces */
 
 /**
  * Registers event handler that makes relevant components of gallery 
