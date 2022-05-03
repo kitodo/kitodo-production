@@ -437,7 +437,9 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 String use = fileGrp.getUSE();
                 for (FileType file : fileGrp.getFile()) {
                     if (fileUseMap.containsKey(file)) {
-                        logger.error("Corrupt file: file with id " + file.getID() + " is part of multiple groups");
+                        throw new IllegalArgumentException(
+                            "Corrupt file: file with id " + file.getID() + " is part of multiple groups"
+                        );
                     } else {
                         fileUseMap.put(file, use);
                     }

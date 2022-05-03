@@ -70,15 +70,18 @@ public class FileXmlElementAccess {
                 FileType file = (FileType) fileId;
                 String fileUse = fileUseByFileCache.getOrDefault(file, null);
                 if (Objects.isNull(fileUse)) {
-                    throw new IllegalArgumentException("Corrupt file: <mets:fptr> not referenced in <mets:fileGrp>");
+                    throw new IllegalArgumentException(
+                        "Corrupt file: file use for <mets:fptr> with id " + file.getID() + " not found in <mets:fileGrp>"
+                    );
                 }
-                MediaVariant mediaVariant = useXmlAttributeAccess.getOrDefault(fileUse, null);
-                if (Objects.isNull(mediaVariant)) {
-                    throw new IllegalArgumentException("Corrupt file: file use '" + fileUse + "'' not found in <mets:fileGrp>");
-                }
+                MediaVariant mediaVariant = useXmlAttributeAccess.get(fileUse);
                 FLocatXmlElementAccess fLocatXmlElementAccess = new FLocatXmlElementAccess(file);
                 physicalDivision.storeFileId(fLocatXmlElementAccess);
                 mediaFiles.put(mediaVariant, fLocatXmlElementAccess.getUri());
+            } else {
+                throw new IllegalArgumentException(
+                    "Corrupt file: file id for <mets:fptr> not found for div " + div.getID()
+                );
             }
         }
         physicalDivision.getMediaFiles().putAll(mediaFiles);
