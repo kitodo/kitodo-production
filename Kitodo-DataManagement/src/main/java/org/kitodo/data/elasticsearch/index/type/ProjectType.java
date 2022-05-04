@@ -12,18 +12,25 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 
 /**
  * Implementation of Project Type.
  */
 public class ProjectType extends BaseType<Project> {
+
+    private static final Logger logger = LogManager.getLogger(ProjectType.class);
 
     @Override
     Map<String, Object> getJsonObject(Project project) {
@@ -38,6 +45,19 @@ public class ProjectType extends BaseType<Project> {
             folders.add(folderObject);
         }
 
+        // query database for the amount of processes attached to a project
+        // instead of calling project.getProcesses(), which will load all processes into memory
+        Long processCount = 0L;
+        try {
+            ProjectDAO projectDAO = new ProjectDAO();
+            processCount = projectDAO.count(
+                "SELECT COUNT(*) FROM Process WHERE project_id = :id", 
+                Collections.singletonMap("id", project.getId())
+            );
+        } catch (DAOException e) {
+            logger.error("database access exception while transforming project to json for indexing.", e);
+        }
+
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(ProjectTypeField.TITLE.getKey(), preventNull(project.getTitle()));
         jsonObject.put(ProjectTypeField.START_DATE.getKey(), getFormattedDate(project.getStartDate()));
@@ -46,7 +66,7 @@ public class ProjectType extends BaseType<Project> {
         jsonObject.put(ProjectTypeField.NUMBER_OF_VOLUMES.getKey(), preventNull(project.getNumberOfVolumes()));
         jsonObject.put(ProjectTypeField.METS_RIGTS_OWNER.getKey(), project.getMetsRightsOwner());
         jsonObject.put(ProjectTypeField.ACTIVE.getKey(), project.isActive());
-        jsonObject.put(ProjectTypeField.PROCESSES.getKey(), addObjectRelation(project.getProcesses(), true));
+        jsonObject.put(ProjectTypeField.HAS_PROCESSES.getKey(), processCount > 0);
         jsonObject.put(ProjectTypeField.TEMPLATES.getKey(), addObjectRelation(project.getTemplates(), true));
         jsonObject.put(ProjectTypeField.USERS.getKey(), addObjectRelation(project.getUsers(), true));
         jsonObject.put(ProjectTypeField.CLIENT_ID.getKey(), getId(project.getClient()));

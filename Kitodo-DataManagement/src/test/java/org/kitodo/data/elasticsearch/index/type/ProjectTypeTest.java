@@ -31,7 +31,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.LinkingMode;
-import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.UserTypeField;
@@ -198,13 +197,8 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "TestClient",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
-        assertEquals("Size processes doesn't match to given value!", 1, processes.size());
-
-        Map<String, Object> process = processes.get(0);
-        assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
-        assertEquals("Key processes.title doesn't match to given value!", "Second",
-            ProcessTypeField.TITLE.getStringValue(process));
+        Boolean hasProcesses = ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual);
+        assertEquals("Has processes can only be false, because property is queried from db", false, hasProcesses);
 
         List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
@@ -317,13 +311,8 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
-        assertEquals("Size processes doesn't match to given value!", 1, processes.size());
-
-        Map<String, Object> process = processes.get(0);
-        assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
-        assertEquals("Key processes.title doesn't match to given value!", "Second",
-            ProcessTypeField.TITLE.getStringValue(process));
+        Boolean hasProcesses = ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual);
+        assertEquals("Has processes can only be false, because property is queried from db", false, hasProcesses);
 
         List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         assertEquals("Size templates doesn't match to given value!", 1, templates.size());
@@ -437,8 +426,8 @@ public class ProjectTypeTest {
         assertEquals("Key client.clientName doesn't match to given value!", "",
             ProjectTypeField.CLIENT_NAME.getStringValue(actual));
 
-        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
-        assertEquals("Size processes doesn't match to given value!", 0, processes.size());
+        Boolean hasProcesses = ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual);
+        assertEquals("Has processes can only be false, because property is queried from db", false, hasProcesses);
 
         List<Map<String, Object>> folder = ProjectTypeField.FOLDER.getJsonArray(actual);
         assertEquals("Size projectFileGroups doesn't match to given value!", 0, folder.size());
@@ -455,10 +444,6 @@ public class ProjectTypeTest {
         Map<String, Object> actual = processType.createDocument(project);
 
         assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
-
-        List<Map<String, Object>> processes = ProjectTypeField.PROCESSES.getJsonArray(actual);
-        Map<String, Object> process = processes.get(0);
-        assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
 
         List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         Map<String, Object> template = templates.get(0);
