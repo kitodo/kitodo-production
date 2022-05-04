@@ -14,22 +14,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>kitodo</artifactId>
-    <packaging>war</packaging>
+
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo-production</artifactId>
         <version>3.4.3-SNAPSHOT</version>
     </parent>
-    <organization>
-        <name>kitodo.org</name>
-        <url>http://kitodo.org</url>
-    </organization>
+
     <name>Kitodo - Core</name>
-    <url>https://github.com/kitodo/kitodo-production</url>
+    <artifactId>kitodo</artifactId>
+    <packaging>war</packaging>
 
     <properties>
-        <parent.basedir>${basedir}/../</parent.basedir>
+        <main.basedir>${project.parent.basedir}</main.basedir>
         <maxAllowedViolations>15</maxAllowedViolations>
         <selenium.version>3.141.59</selenium.version>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
@@ -78,7 +75,7 @@
         <dependency>
             <groupId>commons-cli</groupId>
             <artifactId>commons-cli</artifactId>
-            <version>1.4</version>
+            <version>1.5.0</version>
         </dependency>
         <dependency>
             <groupId>commons-httpclient</groupId>
@@ -131,7 +128,7 @@
         <dependency>
             <groupId>org.camunda.bpm.model</groupId>
             <artifactId>camunda-bpmn-model</artifactId>
-            <version>7.16.0</version>
+            <version>7.17.0</version>
         </dependency>
         <dependency>
             <groupId>org.json</groupId>
@@ -141,7 +138,7 @@
         <dependency>
             <groupId>org.passay</groupId>
             <artifactId>passay</artifactId>
-            <version>1.5.0</version>
+            <version>1.6.1</version>
         </dependency>
 
         <dependency>
@@ -288,7 +285,7 @@
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
             <artifactId>pdfbox</artifactId>
-            <version>2.0.24</version>
+            <version>2.0.25</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-logging</groupId>
@@ -358,7 +355,7 @@
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
-            <version>2.0.6</version>
+            <version>${jdom2.version}</version>
         </dependency>
         <dependency>
             <groupId>xml-apis</groupId>
