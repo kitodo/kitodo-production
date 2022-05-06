@@ -9,6 +9,8 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
+/* eslint-disable complexity */
+
 /**
  * Overwrite jquery-ui method with optimized implementation.
  * 
