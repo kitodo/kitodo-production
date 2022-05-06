@@ -700,12 +700,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         // slow for large amounts of selected images. Instead, just check whether the first logical division matches 
         // all others in a simple loop.
         Boolean theSameLogicalDivisions = true;
-        LogicalDivision firstSelectetMediaLogicalDivison = null;
+        LogicalDivision firstSelectedMediaLogicalDivison = null;
         for (Pair<PhysicalDivision, LogicalDivision> pair : selectedMedia) {
-            if (Objects.isNull(firstSelectetMediaLogicalDivison)) {
-                firstSelectetMediaLogicalDivison = pair.getRight();
+            if (Objects.isNull(firstSelectedMediaLogicalDivison)) {
+                firstSelectedMediaLogicalDivison = pair.getRight();
             } else {
-                if (!Objects.equals(firstSelectetMediaLogicalDivison, pair.getRight())) {
+                if (!Objects.equals(firstSelectedMediaLogicalDivison, pair.getRight())) {
                     theSameLogicalDivisions = false;
                     break;
                 }
