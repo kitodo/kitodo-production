@@ -35,7 +35,7 @@
                          iconPos="right"
                          rendered="#{mayWrite}"
                          style="margin-left: 16px;"
-                         onclick="setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         onclick="PF('saveExit').disable();setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -46,8 +46,8 @@
                          styleClass="secondary"
                          rendered="#{mayWrite}"
                          style="margin-left: 16px;"
-                         onclick="PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
-                         oncomplete="$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();setConfirmUnload(false);"
+                         onclick="PF('save').disable();PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
+                         oncomplete="PF('save').enable();$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();setConfirmUnload(false);"
                          update="notifications"/>
         <p:commandButton value="#{msgs.validate}"
                          actionListener="#{DataEditorForm.validate}"
@@ -57,8 +57,10 @@
                          iconPos="right"
                          style="margin-left: 16px;"
                          styleClass="secondary"/>
-        <p:commandButton value="#{msgs.exit}"
-                         onclick="setConfirmUnload(false);"
+        <p:commandButton id="close"
+                         widgetVar="close"
+                         value="#{msgs.exit}"
+                         onclick="PF('close').disable();setConfirmUnload(false);"
                          action="#{DataEditorForm.close}"
                          icon="fa fa-times fa-lg"
                          iconPos="right"
