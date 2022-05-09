@@ -8,8 +8,9 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF, scrollToStructureThumbnail,
-    scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload */
+/* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF,
+   scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload,
+   activateButtons */
 
 var metadataEditor = {
     dragging: false,
@@ -327,4 +328,18 @@ function expandMetadata(panelClass) {
 
 function setConfirmUnload(on) {
     window.onbeforeunload = (on) ? function() { return true; } : void 0;
+}
+
+function activateButtons() {
+    PF('saveExit').enable();
+    PF('save').enable();
+    PF('validate').enable();
+    PF('close').enable();
+}
+
+function deactivateButtons() {
+    PF('saveExit').disable();
+    PF('save').disable();
+    PF('validate').disable();
+    PF('close').disable();
 }
