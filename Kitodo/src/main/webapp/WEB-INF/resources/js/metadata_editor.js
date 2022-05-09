@@ -10,7 +10,8 @@
  */
 /* globals select, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF,
    scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload,
-   activateButtons */
+   activateButtons, PF */
+/*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 
 var metadataEditor = {
     dragging: false,
