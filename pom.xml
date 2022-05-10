@@ -261,7 +261,7 @@
                                     <outputDirectory>${directory.modules}</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>Kitodo/modules/</directory>
+                                            <directory>${main.basedir}/Kitodo/modules/</directory>
                                             <include>*.jar</include>
                                             <filtering>false</filtering>
                                         </resource>
