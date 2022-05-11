@@ -1444,11 +1444,10 @@ public class MockDatabase {
         SearchField ppnField = new SearchField();
         ppnField.setValue("pica.ppn");
         ppnField.setLabel("PPN");
+        ppnField.setDisplayed(true);
         ppnField.setImportConfiguration(gbvConfiguration);
 
         gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
-        ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
-
         gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
         ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
