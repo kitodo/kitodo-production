@@ -65,6 +65,7 @@
         <mapping class="org.kitodo.data.database.beans.LdapGroup"/>
         <mapping class="org.kitodo.data.database.beans.LdapServer"/>
         <mapping class="org.kitodo.data.database.beans.ListColumn"/>
+        <mapping class="org.kitodo.data.database.beans.OCRWorkflow"/>
         <mapping class="org.kitodo.data.database.beans.Process"/>
         <mapping class="org.kitodo.data.database.beans.Project"/>
         <mapping class="org.kitodo.data.database.beans.Property"/>
