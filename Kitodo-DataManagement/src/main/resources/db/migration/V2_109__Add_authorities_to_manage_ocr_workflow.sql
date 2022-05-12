@@ -25,3 +25,10 @@ CREATE TABLE IF NOT EXISTS ocrworkflow (
     PRIMARY KEY(id)
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
+
+-- Add column related to ocr workflow to template table
+ALTER TABLE template ADD ocr_workflow_id INT(11) DEFAULT NULL;
+
+-- Add foreign key
+ALTER TABLE template add constraint `FK_template_ocr_workflow_id`
+    foreign key (ocr_workflow_id) REFERENCES ocrworkflow(id);

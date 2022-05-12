@@ -15,12 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.OCRWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.OCRWorkflowDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
@@ -69,4 +68,15 @@ public class OCRWorkflowService extends SearchDatabaseService<OCRWorkflow, OCRWo
     public Long countResults(Map filters) throws DAOException, DataException {
         return null;
     }
+
+    /**
+     * Get available ocr workflows - available means that ocr workflow has status active
+     * and is assigned to selected session client.
+     *
+     * @return list of available OCRWorkflow objects
+     */
+    public List<OCRWorkflow> getAvailableOCRWorkflows() {
+        return dao.getAvailableOCRWorkflows(ServiceManager.getUserService().getSessionClientId());
+    }
+
 }

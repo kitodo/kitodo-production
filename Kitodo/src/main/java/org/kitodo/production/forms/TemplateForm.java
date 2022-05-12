@@ -25,6 +25,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.OCRWorkflow;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -257,6 +258,15 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public List<Workflow> getWorkflows() {
         return ServiceManager.getWorkflowService().getAvailableWorkflows();
+    }
+
+    /**
+     * Get list of workflows for select list.
+     *
+     * @return list of workflows
+     */
+    public List<OCRWorkflow> getOCRWorkflows() {
+        return ServiceManager.getOCRWorkflowService().getAvailableOCRWorkflows();
     }
 
     /**
