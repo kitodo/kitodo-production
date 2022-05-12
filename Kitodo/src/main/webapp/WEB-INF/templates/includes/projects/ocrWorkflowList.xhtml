@@ -27,7 +27,6 @@
                  paginator="true"
                  resizableColumns="true"
                  liveResize="true"
-                 rows="#{LoginForm.loggedUser.tableSize}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
@@ -49,8 +48,8 @@
                   width="70"
                   styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewImportConfiguration"
-                        outcome="importConfigurationEdit"
+                <h:link id="viewOCRWorkflow"
+                        outcome="ocrWorkflowEdit"
                         styleClass="action"
                         title="#{msgs.view}"
                         rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow() and not SecurityAccessController.hasAuthorityToEditOCRWorkflow()}">
@@ -58,8 +57,8 @@
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
-                <h:link id="editImportConfiguration"
-                        outcome="importConfigurationEdit"
+                <h:link id="editOCRWorkflow"
+                        outcome="ocrWorkflowEdit"
                         styleClass="action"
                         title="#{msgs.edit}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditOCRWorkflow()}">
@@ -67,7 +66,7 @@
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
-                <p:commandLink id="deleteImportConfiguration"
+                <p:commandLink id="deleteOCRWorkflow"
                                action="#{OCRWorkflowListView.deleteById(item.id)}"
                                styleClass="action"
                                title="#{msgs.delete}"
@@ -75,7 +74,7 @@
                                update="configurationTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{importConfigurationEditView.formatString('confirmDeleteOCRWorkflow', item.title)}"
+                               message="#{OCRWorkflowEditView.formatString('confirmDeleteOCRWorkflow', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

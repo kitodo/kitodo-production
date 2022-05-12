@@ -176,15 +176,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
-     * Get list of all objects from database.
-     *
-     * @return list of all objects from database
-     */
-    public List<T> getAll() throws DAOException {
-        return dao.getAll();
-    }
-
-    /**
      * Get list of all objects from database in given range.
      *
      * @param offset
@@ -195,6 +186,15 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      */
     public List<T> getAll(int offset, int size) throws DAOException {
         return dao.getAll(offset, size);
+    }
+
+    /**
+     * Get list of all objects from database.
+     *
+     * @return list of all objects from database
+     */
+    public List<T> getAll() throws DAOException {
+        return dao.getAll();
     }
 
     /**

@@ -11,6 +11,7 @@
 
 package org.kitodo.data.database.persistence;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.kitodo.data.database.beans.OCRWorkflow;
@@ -46,4 +47,19 @@ public class OCRWorkflowDAO extends BaseDAO<OCRWorkflow> {
     public void remove(Integer ocrWorkflowId) throws DAOException {
         removeObject(OCRWorkflow.class, ocrWorkflowId);
     }
+
+    /**
+     * Get available ocr workflows - available means that ocr workflow has status active and is
+     * assigned to client with given id.
+     *
+     * @param clientId
+     *            id of client to which searched ocr workflows should be assigned
+     * @return list of available ocr workflow objects
+     */
+    public List<OCRWorkflow> getAvailableOCRWorkflows(int clientId) {
+        return getByQuery(
+                "SELECT w FROM OCRWorkflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
+                Collections.singletonMap("clientId", clientId));
+    }
+
 }

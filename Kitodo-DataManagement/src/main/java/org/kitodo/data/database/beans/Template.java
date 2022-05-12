@@ -52,6 +52,10 @@ public class Template extends BaseTemplateBean {
     @JoinColumn(name = "workflow_id", foreignKey = @ForeignKey(name = "FK_template_workflow_id"))
     private Workflow workflow;
 
+    @ManyToOne
+    @JoinColumn(name = "ocr_workflow_id", foreignKey = @ForeignKey(name = "FK_template_ocr_workflow_id"))
+    private OCRWorkflow ocrWorkflow;
+
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
@@ -166,6 +170,25 @@ public class Template extends BaseTemplateBean {
      */
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+    /**
+     * Get ocr workflow.
+     *
+     * @return value of ocr workflow
+     */
+    public OCRWorkflow getOcrWorkflow() {
+        return ocrWorkflow;
+    }
+
+    /**
+     * Set ocr workflow.
+     *
+     * @param ocrWorkflow
+     *            as Workflow object
+     */
+    public void setOcrWorkflow(OCRWorkflow ocrWorkflow) {
+        this.ocrWorkflow = ocrWorkflow;
     }
 
     /**
