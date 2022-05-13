@@ -65,6 +65,16 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
+     * Method saves objects to database.
+     *
+     * @param baseIndexedBeans
+     *            beans object to store as indexed
+     */
+    public void saveAsIndexed(List<T> baseIndexedBeans) throws DAOException {
+        dao.saveAsIndexed(baseIndexedBeans);
+    }
+
+    /**
      * Method removes object from database.
      *
      * @param baseIndexedBean
