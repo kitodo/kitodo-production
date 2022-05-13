@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -63,7 +63,7 @@
         <mysql.version>8.0.16</mysql.version>
         <poi.version>3.17</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
-        <saxon.version>9.9.1-5</saxon.version>
+        <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.17.2</log4j.version>
         <junit.version>5.5.2</junit.version>
         <elasticsearch.version>7.10.2</elasticsearch.version>
