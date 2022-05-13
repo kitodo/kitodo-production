@@ -568,8 +568,8 @@ public class StructurePanel implements Serializable {
                 break;
             }
 
-            if (Objects.nonNull(temporaryChild) && Objects.isNull(temporaryView)
-                    || Objects.nonNull(temporaryChild) && temporaryChild.getOrder() <= temporaryView.getPhysicalDivision().getOrder()) {
+            if ((Objects.nonNull(temporaryChild) && Objects.isNull(temporaryView))
+                    || (Objects.nonNull(temporaryChild) && temporaryChild.getOrder() <= temporaryView.getPhysicalDivision().getOrder())) {
                 viewsShowingOnAChild.addAll(buildStructureTreeRecursively(temporaryChild, parent));
                 temporaryChildren.remove(0);
             } else {
@@ -998,7 +998,6 @@ public class StructurePanel implements Serializable {
      *              event triggering this callback function
      */
     public void onDragDrop(TreeDragDropEvent event) {
-
         Object dragNodeObject = event.getDragNode().getData();
         Object dropNodeObject = event.getDropNode().getData();
 
@@ -1257,7 +1256,6 @@ public class StructurePanel implements Serializable {
     }
 
     private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
-
         LogicalDivision dragStructure = (LogicalDivision) dragNode.getDataObject();
         LogicalDivision dropStructure = (LogicalDivision) dropNode.getDataObject();
 
@@ -1294,7 +1292,6 @@ public class StructurePanel implements Serializable {
     }
 
     private void checkPhysicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
-
         PhysicalDivision dragUnit = (PhysicalDivision) dragNode.getDataObject();
         PhysicalDivision dropUnit = (PhysicalDivision) dropNode.getDataObject();
 
