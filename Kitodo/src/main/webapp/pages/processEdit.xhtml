@@ -95,6 +95,12 @@
                     <ui:param name="isViewMode" value="#{isViewMode}" />
                 </ui:include>
             </p:tab>
+            <p:tab title="#{msgs.ocrWorkflow}" id="ocrWorkflow">
+                <ui:include src="/WEB-INF/templates/includes/processEdit/ocrWorkflowEdit.xhtml">
+                    <ui:param name="isEditMode" value="#{isEditMode}" />
+                    <ui:param name="isViewMode" value="#{isViewMode}" />
+                </ui:include>
+            </p:tab>
         </p:tabView>
     </ui:define>
 
