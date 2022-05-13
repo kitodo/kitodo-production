@@ -14,6 +14,7 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -32,6 +33,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.OCRWorkflow;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
@@ -447,6 +451,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
+
+        OCRWorkflow ocrWorkflow = getMainProcess().getTemplate().getOcrWorkflow();
+        if( Objects.nonNull(ocrWorkflow) && Objects.nonNull(ocrWorkflow.getFile()) ) {
+            URI source = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS) + getMainProcess().getTemplate().getOcrWorkflow().getFile()).toUri();
+            URI target = Paths.get(ConfigCore.getKitodoDataDirectory(),ServiceManager.getProcessService().getProcessDataDirectory(getMainProcess()).getPath(),"ocr_workflow.sh").toUri();
+            ServiceManager.getFileService().copyFile(source,target);
+        }
+
         ServiceManager.getProcessService().save(getMainProcess(), true);
     }
 
