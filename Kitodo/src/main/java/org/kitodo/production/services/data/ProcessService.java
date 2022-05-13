@@ -2265,7 +2265,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private void addNewLinks(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
         HashSet<Process> childrenToAdd = getProcessesLinkedInLogicalDivision(logicalStructure);
-        childrenToAdd.removeAll(process.getChildren());
+        process.getChildren().forEach(childrenToAdd::remove);
         for (Process childToAdd : childrenToAdd) {
             childToAdd.setParent(process);
             process.getChildren().add(childToAdd);

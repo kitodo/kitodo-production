@@ -689,7 +689,7 @@ public class AddDocStrucTypeDialog {
     /**
      * Adds the link when the user clicks OK.
      */
-    public void addLinkButtonClick() {
+    public void addProcessLink() {
         if (processNumber.trim().isEmpty()) {
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
             return;

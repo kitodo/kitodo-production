@@ -246,8 +246,11 @@
                                              styleClass="input"
                                              converter="#{processConverter}"
                                              value="#{DataEditorForm.addDocStrucTypeDialog.selectedProcess}">
-                                    <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.processes}"/>
-                                    <p:ajax update="docStructAddTypeSelection, addLinkButton"/>
+                                <f:selectItem noSelectionOption="true"
+                                              itemValue="#{null}"
+                                              itemLabel="#{msgs.selectProcess}"/>
+                                <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.processes}"/>
+                                <p:ajax event="change" update="docStructAddTypeSelection, addLinkButton"/>
                             </p:selectOneMenu>
                         </p:column>
                     </p:row>
@@ -289,7 +292,7 @@
                                   rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
                         <p:commandButton id="addLinkButton"
                                          value="#{msgs.apply}"
-                                         action="#{DataEditorForm.addDocStrucTypeDialog.addLinkButtonClick}"
+                                         action="#{DataEditorForm.addDocStrucTypeDialog.addProcessLink}"
                                          disabled="#{empty DataEditorForm.addDocStrucTypeDialog.selectedProcess}"
                                          update="structureTreeForm,paginationForm:paginationWrapperPanel"
                                          icon="fa fa-check fa-lg"
