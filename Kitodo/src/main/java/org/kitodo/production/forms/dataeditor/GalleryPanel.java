@@ -51,7 +51,6 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
-import org.primefaces.event.DragDropEvent;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
@@ -210,11 +209,15 @@ public class GalleryPanel {
      * @param event
      *            JSF drag'n'drop event description object
      */
-    public void onPageDrop(DragDropEvent event) {
-        int toStripeIndex = getDropStripeIndex(event);
-
-        if (toStripeIndex == -1 || !dragStripeIndexMatches(event)) {
-            logger.error("Unsupported drag'n'drop event from {} to {}", event.getDragId(), event.getDropId());
+    public void onPageDrop() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        Map<String,String> params = context.getExternalContext().getRequestParameterMap();
+        String dragId = params.get("dragId");
+        String dropId = params.get("dropId");
+        
+        int toStripeIndex = getDropStripeIndex(dropId);
+        if (toStripeIndex == -1 || !dragStripeIndexMatches(dragId)) {
+            logger.error("Unsupported drag'n'drop event from {} to {}", dragId, dropId);
             return;
         }
 
@@ -232,7 +235,7 @@ public class GalleryPanel {
 
         viewsToBeMoved.sort(IMAGE_ORDER_COMPARATOR);
 
-        int toMediaIndex = getMediaIndex(event);
+        int toMediaIndex = getMediaIndex(dropId);
         try {
             updateData(toStripe, viewsToBeMoved, toMediaIndex);
         } catch (Exception e) {
@@ -244,25 +247,25 @@ public class GalleryPanel {
         updateAffectedStripes(toStripe, viewsToBeMoved);
     }
 
-    private boolean dragStripeIndexMatches(DragDropEvent event) {
-        Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(event.getDragId());
-        Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(event.getDragId());
+    private boolean dragStripeIndexMatches(String dragId) {
+        Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
+        Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);
         return dragUnstructuredMediaMatcher.matches() || dragStripeImageMatcher.matches();
     }
 
-    private int getDropStripeIndex(DragDropEvent event) {
+    private int getDropStripeIndex(String dropId) {
         // empty stripe of structure element
-        Matcher dropStripeMatcher = DROP_STRIPE.matcher(event.getDropId());
+        Matcher dropStripeMatcher = DROP_STRIPE.matcher(dropId);
         // between two pages of structure element
-        Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
+        Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(dropId);
         // after last page of structure element
-        Matcher dropMediaLastAreaMatcher = DROP_MEDIA_LAST_AREA.matcher(event.getDropId());
+        Matcher dropMediaLastAreaMatcher = DROP_MEDIA_LAST_AREA.matcher(dropId);
         // empty unstructured media stripe
-        Matcher dropUnstructuredMediaStripeMatcher = DROP_UNSTRUCTURED_STRIPE.matcher(event.getDropId());
+        Matcher dropUnstructuredMediaStripeMatcher = DROP_UNSTRUCTURED_STRIPE.matcher(dropId);
         // between two pages of unstructured media stripe
-        Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
+        Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(dropId);
         // after last page of unstructured media stripe
-        Matcher dropUnstructuredMediaLastAreaMatcher = DROP_UNSTRUCTURED_MEDIA_LAST_AREA.matcher(event.getDropId());
+        Matcher dropUnstructuredMediaLastAreaMatcher = DROP_UNSTRUCTURED_MEDIA_LAST_AREA.matcher(dropId);
         if (dropStripeMatcher.matches()) {
             return Integer.parseInt(dropStripeMatcher.group(1));
         } else if (dropMediaAreaMatcher.matches()) {
@@ -279,11 +282,11 @@ public class GalleryPanel {
         }
     }
 
-    private int getMediaIndex(DragDropEvent event) {
-        Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(event.getDropId());
-        Matcher dropMediaLastAreaMatcher = DROP_MEDIA_LAST_AREA.matcher(event.getDropId());
-        Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(event.getDropId());
-        Matcher dropUnstructuredMediaLastAreaMatcher = DROP_UNSTRUCTURED_MEDIA_LAST_AREA.matcher(event.getDropId());
+    private int getMediaIndex(String dropId) {
+        Matcher dropMediaAreaMatcher = DROP_MEDIA_AREA.matcher(dropId);
+        Matcher dropMediaLastAreaMatcher = DROP_MEDIA_LAST_AREA.matcher(dropId);
+        Matcher dropUnstructuredMediaAreaMatcher = DROP_UNSTRUCTURED_MEDIA_AREA.matcher(dropId);
+        Matcher dropUnstructuredMediaLastAreaMatcher = DROP_UNSTRUCTURED_MEDIA_LAST_AREA.matcher(dropId);
         if (dropMediaAreaMatcher.matches()) {
             return Integer.parseInt(dropMediaAreaMatcher.group(2));
         } else if (dropMediaLastAreaMatcher.matches()) {

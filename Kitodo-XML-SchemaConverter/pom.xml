@@ -31,26 +31,18 @@
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>
-            <version>3.4.3-SNAPSHOT</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
-            <version>${jdom2.version}</version>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>org.junit.vintage</groupId>
             <artifactId>junit-vintage-engine</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>
             <artifactId>Saxon-HE</artifactId>
-            <version>${saxon.version}</version>
-            <scope>runtime</scope>
         </dependency>
     </dependencies>
 

@@ -111,6 +111,17 @@
         <session-timeout>120</session-timeout>
     </session-config>
 
+    <!-- gzip filter compressing resources -->
+    <filter>
+        <filter-name>gzipResponseFilter</filter-name>
+        <filter-class>org.omnifaces.filter.GzipResponseFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>gzipResponseFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+    </filter-mapping>
+
     <!-- Welcome files -->
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

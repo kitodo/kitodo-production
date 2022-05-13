@@ -26,6 +26,8 @@ import org.hibernate.Transaction;
 import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.BaseIndexedBean;
+import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 /**
@@ -86,6 +88,19 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void save(T baseBean) throws DAOException {
         storeObject(baseBean);
+    }
+
+    /**
+     * Saves base bean objects as indexed.
+     *
+     * @param baseBeans
+     *            list of base beans
+     * @throws DAOException
+     *             if the current session can't be retrieved or an exception is
+     *             thrown while performing the rollback
+     */
+    public void saveAsIndexed(List<T> baseBeans) throws DAOException {
+        storeAsIndexed(baseBeans);
     }
 
     /**
@@ -352,6 +367,14 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
             transaction.commit();
         } catch (PersistenceException e) {
             throw new DAOException(e);
+        }
+    }
+
+    void storeAsIndexed(List<T> baseBeans) throws DAOException {
+        for (BaseBean baseBean : baseBeans) {
+            BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
+            entity.setIndexAction(IndexAction.DONE);
+            storeObject((T) entity);
         }
     }
 
