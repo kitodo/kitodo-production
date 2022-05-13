@@ -128,7 +128,8 @@
                                                     a:data-order="#{media.order}"
                                                     a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                            rendered="#{media.showingInPreview}">
+                                                            rendered="#{media.showingInPreview}"
+                                                            a:loading="lazy">
                                                 <f:param name="mediaId"
                                                         value="#{media.id}" />
                                                 <f:param name="process"
@@ -182,7 +183,8 @@
                                                            a:data-stripe="0">
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                                     <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                    rendered="#{media.showingInPreview}">
+                                                                    rendered="#{media.showingInPreview}"
+                                                                    a:loading="lazy">
                                                         <f:param name="mediaId"
                                                                  value="#{media.id}"/>
                                                         <f:param name="process"
@@ -221,7 +223,8 @@
                             <p:panel a:data-order="#{media.order}">
                                 <h:panelGroup layout="block" styleClass="thumbnail-container">
                                         <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        rendered="#{media.showingInPreview}">
+                                                        rendered="#{media.showingInPreview}"
+                                                        a:loading="lazy">
                                             <f:param name="id"
                                                      value="#{media.id}"/>
                                             <f:param name="process"
@@ -261,7 +264,8 @@
                                                            styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                              rendered="#{media.showingInPreview}">
+                                                                              rendered="#{media.showingInPreview}"
+                                                                              a:loading="lazy">
                                                     <f:param name="mediaId"
                                                              value="#{media.id}" />
                                                     <f:param name="process"
