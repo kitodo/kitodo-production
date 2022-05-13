@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
  *
  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
@@ -49,7 +49,7 @@
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.11.0</commons-io.version>
-        <commons-lang3.version>3.9</commons-lang3.version>
+        <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-net.version>3.8.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
