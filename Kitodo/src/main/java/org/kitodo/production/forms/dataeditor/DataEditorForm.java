@@ -685,6 +685,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     /**
      * Checks and returns if consecutive physical divisions in one structure element are selected or not.
+     * 
+     * <p>Note: This method is called potentially thousands of times when rendering large galleries.</p>
      */
     public boolean consecutivePagesSelected() {
         if (selectedMedia.isEmpty()) {
@@ -692,8 +694,24 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
         int maxOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).max().orElseThrow(NoSuchElementException::new);
         int minOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).min().orElseThrow(NoSuchElementException::new);
-        return selectedMedia.size() - 1 == maxOrder - minOrder
-                && selectedMedia.stream().map(Pair::getValue).distinct().count() == 1;
+
+        // Check whether the set of selected media all belong to the same logical division, otherwise the selection 
+        // is not consecutive. However, do not use stream().distinct(), which will do pairwise comparisons, which is 
+        // slow for large amounts of selected images. Instead, just check whether the first logical division matches 
+        // all others in a simple loop.
+        Boolean theSameLogicalDivisions = true;
+        LogicalDivision firstSelectedMediaLogicalDivison = null;
+        for (Pair<PhysicalDivision, LogicalDivision> pair : selectedMedia) {
+            if (Objects.isNull(firstSelectedMediaLogicalDivison)) {
+                firstSelectedMediaLogicalDivison = pair.getRight();
+            } else {
+                if (!Objects.equals(firstSelectedMediaLogicalDivison, pair.getRight())) {
+                    theSameLogicalDivisions = false;
+                    break;
+                }
+            }
+        }
+        return selectedMedia.size() - 1 == maxOrder - minOrder && theSameLogicalDivisions;
     }
 
     void setSelectedMedia(List<Pair<PhysicalDivision, LogicalDivision>> media) {
