@@ -23,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.cache.RequestScopeCacheHelper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.context.i18n.LocaleContextHolder;
@@ -44,6 +45,21 @@ public class LocaleHelper {
     }
 
     /**
+     * Get the current locale from a request scoped cache to avoid repeated 
+     * queries to the database required to retrieve the current user's language 
+     * setting. 
+     *
+     * @return the current locale
+     */
+    public static Locale getCurrentLocale() {
+        return RequestScopeCacheHelper.getFromCache(
+            "current_locale",
+            () -> calculateCurrentLocale(),
+            Locale.class
+        );
+    }
+
+    /**
      * Get the current locale. If user is authenticated the locale is generated
      * based on the selected user language. If there is not an authenticated user,
      * Locale is generated based on the faces context of prime face. For this
@@ -54,7 +70,7 @@ public class LocaleHelper {
      *
      * @return the current locale
      */
-    public static Locale getCurrentLocale() {
+    private static Locale calculateCurrentLocale() {        
         Locale locale = getAuthenticatedUserLocale();
         if (Objects.nonNull(locale)) {
             LocaleContextHolder.setLocale(locale);
@@ -69,7 +85,7 @@ public class LocaleHelper {
             }
         }
 
-        return LocaleContextHolder.getLocale(); // spring locale with system default
+        return LocaleContextHolder.getLocale(); // spring locale with system default     
     }
 
     /**
