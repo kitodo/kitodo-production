@@ -224,7 +224,6 @@ public class StructurePanel implements Serializable {
         show();
         dataEditor.getMetadataPanel().clear();
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getGalleryPanel().updateMedia();
         dataEditor.getGalleryPanel().updateStripes();
         dataEditor.getPaginationPanel().show();
     }
@@ -1075,7 +1074,6 @@ public class StructurePanel implements Serializable {
                 show();
                 expandNode(event.getDropNode());
                 dataEditor.getGalleryPanel().updateStripes();
-                dataEditor.getGalleryPanel().updateMedia();
                 dataEditor.getPaginationPanel().show();
                 return;
             } else {
