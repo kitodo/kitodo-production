@@ -244,6 +244,7 @@ public class MassImportForm extends BaseForm {
     public void setImportConfigurationId(ImportConfiguration importConfiguration) {
         this.importConfiguration = importConfiguration;
     }
+
     /**
      * Get file.
      *

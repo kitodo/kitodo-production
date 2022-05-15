@@ -118,7 +118,7 @@ public class ImportService {
     private ProcessGenerator processGenerator;
     private static final String REPLACE_ME = "REPLACE_ME";
     // default value for identifierMetadata if no OPAC specific metadata has been configured in kitodo_opac.xml
-    private static String identifierMetadata = "CatalogIDDigital";
+    private static final String identifierMetadata = "CatalogIDDigital";
     private static final String PARENT_XPATH = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private LinkedList<ExemplarRecord> exemplarRecords;
@@ -1210,7 +1210,7 @@ public class ImportService {
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
-            String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
+            final String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey);
             tempProcess = processList.get(0);
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
