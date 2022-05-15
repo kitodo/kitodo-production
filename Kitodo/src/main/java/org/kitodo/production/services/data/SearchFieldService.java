@@ -74,7 +74,7 @@ public class SearchFieldService extends SearchDatabaseService<SearchField, Searc
      */
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM search_field");
+        return countDatabaseRows("SELECT COUNT(*) FROM searchfield");
     }
 
     /**

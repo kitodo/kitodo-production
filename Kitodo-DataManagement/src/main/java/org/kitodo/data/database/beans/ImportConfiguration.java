@@ -33,7 +33,7 @@ import org.kitodo.data.database.persistence.MappingFileDAO;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
 
 @Entity(name = "ImportConfiguration")
-@Table(name = "import_configuration")
+@Table(name = "importconfiguration")
 public class ImportConfiguration extends BaseBean {
 
     @Column

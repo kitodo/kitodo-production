@@ -90,8 +90,8 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private List<Template> templates;
 
     @ManyToOne
-    @JoinColumn(name = "default_import_configuration_id",
-            foreignKey = @ForeignKey(name = "FK_project_default_import_configuration_id"))
+    @JoinColumn(name = "default_importconfiguration_id",
+            foreignKey = @ForeignKey(name = "FK_project_default_importconfiguration_id"))
     private ImportConfiguration defaultImportConfiguration;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)

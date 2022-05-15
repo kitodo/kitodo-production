@@ -53,7 +53,7 @@ public class ImportConfigurationDAO extends BaseDAO<ImportConfiguration> {
      */
     @Override
     public List<ImportConfiguration> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM import_configuration ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM importconfiguration ORDER BY id ASC", offset, size);
     }
 
     /**

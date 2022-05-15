@@ -53,7 +53,7 @@ public class MappingFileDAO extends BaseDAO<MappingFile> {
      */
     @Override
     public List<MappingFile> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM mapping_file ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM mappingfile ORDER BY id ASC", offset, size);
     }
 
     /**

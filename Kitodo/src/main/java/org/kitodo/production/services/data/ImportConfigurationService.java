@@ -74,7 +74,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
      */
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM import_configuration");
+        return countDatabaseRows("SELECT COUNT(*) FROM importconfiguration");
     }
 
     /**

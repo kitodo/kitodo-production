@@ -48,7 +48,7 @@ public class SearchFieldDAO extends BaseDAO<SearchField> {
      */
     @Override
     public List<SearchField> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM search_field ORDER BY ID ASC", offset, size);
+        return retrieveObjects("FROM searchfield ORDER BY ID ASC", offset, size);
     }
 
     /**

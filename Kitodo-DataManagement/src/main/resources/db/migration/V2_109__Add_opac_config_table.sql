@@ -12,9 +12,9 @@
 --
 -- Migration: Create table for import configurations.
 --
--- 1. Add table "mapping_file"
+-- 1. Add table "mappingfile"
 
-CREATE TABLE IF NOT EXISTS mapping_file (
+CREATE TABLE IF NOT EXISTS mappingfile (
     id INT(11) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
     file varchar(255) NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE IF NOT EXISTS mapping_file (
     ) DEFAULT CHARACTER SET = utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
--- 2. Add table "import_configuration"
+-- 2. Add table "importconfiguration"
 
-CREATE TABLE IF NOT EXISTS import_configuration
+CREATE TABLE IF NOT EXISTS importconfiguration
 (
     id INT(11) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
@@ -69,25 +69,25 @@ CREATE TABLE IF NOT EXISTS import_configuration
         FOREIGN KEY (default_templateprocess_id) REFERENCES process (id),
     KEY FK_parent_mappingfile_id (parent_mappingfile_id),
     CONSTRAINT FK_parent_mappingfile_id
-        FOREIGN KEY (parent_mappingfile_id) REFERENCES mapping_file (id)
+        FOREIGN KEY (parent_mappingfile_id) REFERENCES mappingfile (id)
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
 
--- 3. Add table "search_fields"
+-- 3. Add table "searchfield"
 
-CREATE TABLE IF NOT EXISTS search_field
+CREATE TABLE IF NOT EXISTS searchfield
 (
     id INT(11) NOT NULL AUTO_INCREMENT,
-    import_configuration_id INT(11) NOT NULL,
+    importconfiguration_id INT(11) NOT NULL,
     field_label varchar(255) NOT NULL,
     field_value varchar(255) NOT NULL,
     displayed tinyint(1) DEFAULT 1,
     parent_element tinyint(1) DEFAULT NULL,
     PRIMARY KEY(id),
-    KEY FK_search_field_import_configuration_id (import_configuration_id),
-    CONSTRAINT FK_search_field_import_configuration_id
-        FOREIGN KEY (import_configuration_id) REFERENCES import_configuration (id)
+    KEY FK_searchfield_importconfiguration_id (importconfiguration_id),
+    CONSTRAINT FK_searchfield_importconfiguration_id
+        FOREIGN KEY (importconfiguration_id) REFERENCES importconfiguration (id)
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
@@ -100,14 +100,14 @@ CREATE TABLE IF NOT EXISTS importconfiguration_x_mappingfile (
     PRIMARY KEY ( importconfiguration_id, mappingfile_id ),
     KEY FK_importconfiguration_x_mappingfile_importconfiguration_id (importconfiguration_id),
     KEY FK_importconfiguration_x_mappingfile_mappingfile_id (mappingfile_id),
-    CONSTRAINT FK_importconfiguration_x_mappingfile_importconfiguration_id FOREIGN KEY (importconfiguration_id) REFERENCES import_configuration(id),
-    CONSTRAINT FK_importconfiguration_x_mappingfile_mappingfile_id FOREIGN KEY (mappingfile_id) REFERENCES mapping_file(id)
+    CONSTRAINT FK_importconfiguration_x_mappingfile_importconfiguration_id FOREIGN KEY (importconfiguration_id) REFERENCES importconfiguration(id),
+    CONSTRAINT FK_importconfiguration_x_mappingfile_mappingfile_id FOREIGN KEY (mappingfile_id) REFERENCES mappingfile(id)
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
--- 5. Add column 'default_import_configuration_id' to table 'project'
+-- 5. Add column 'default_importconfiguration_id' to table 'project'
 
-ALTER TABLE project ADD default_import_configuration_id INT(11);
+ALTER TABLE project ADD default_importconfiguration_id INT(11);
 
 -- 6. Add authorities to view and edit import configurations and mapping files
 

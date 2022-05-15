@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "search_field")
+@Table(name = "searchfield")
 public class SearchField extends BaseBean {
 
     @Column(name = "field_label")
@@ -37,8 +37,8 @@ public class SearchField extends BaseBean {
     private boolean parentElement;
 
     @ManyToOne
-    @JoinColumn(name = "import_configuration_id",
-            foreignKey = @ForeignKey(name = "FK_search_field_import_configuration_id"))
+    @JoinColumn(name = "importconfiguration_id",
+            foreignKey = @ForeignKey(name = "FK_searchfield_importconfiguration_id"))
     private ImportConfiguration importConfiguration;
 
     /**

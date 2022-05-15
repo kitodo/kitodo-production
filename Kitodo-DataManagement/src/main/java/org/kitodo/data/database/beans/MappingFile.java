@@ -20,7 +20,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity(name = "MappingFile")
-@Table(name = "mapping_file")
+@Table(name = "mappingfile")
 public class MappingFile extends BaseBean {
 
     @Column(name = "title")
