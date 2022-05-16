@@ -211,19 +211,13 @@ metadataEditor.gallery = {
             let fromThumbnail = $("#imagePreviewForm .thumbnail.last-selection");
             let fromTreeNodeId = fromThumbnail.next()[0].dataset.logicaltreenodeid;
             let toThumbnail = this.findThumbnailByTreeNodeId(toTreeNodeId);
-            
-            // check whether both are from the same stripe
-            let fromStripeTreeNodeId = fromTreeNodeId.slice(0, fromTreeNodeId.lastIndexOf("_"));
-            let toStripeTreeNodeId = toTreeNodeId.slice(0, toTreeNodeId.lastIndexOf("_"));
-            let sameStripe = fromStripeTreeNodeId === toStripeTreeNodeId;
-            let selectionClasses = sameStripe ? "selected" : "selected discontinuous";
-            
+                        
             // iterate over all thumbnails in the order they appear in the dom
             let inBetweenSelectedThumbnails = false;
             $("#imagePreviewForm .thumbnail").each(function () {
                 let currentThumbnail = $(this);
                 if (inBetweenSelectedThumbnails) {
-                    currentThumbnail.addClass(selectionClasses);
+                    currentThumbnail.addClass("selected");
                 }
                 if (!inBetweenSelectedThumbnails && (currentThumbnail.is(fromThumbnail) || currentThumbnail.is(toThumbnail))) {
                     inBetweenSelectedThumbnails = true;
@@ -239,10 +233,12 @@ metadataEditor.gallery = {
 
             // update selection status on previously selected thumbnail
             fromThumbnail.removeClass("last-selection");
-            fromThumbnail.addClass(selectionClasses);
+            fromThumbnail.addClass("selected");
 
             // update selection status for currently selected thumbnail
-            toThumbnail.addClass(selectionClasses + " last-selection");
+            toThumbnail.addClass("selected last-selection");
+
+            this.updateDiscontinuousSecletionState();
         },
 
         /**
@@ -274,6 +270,16 @@ metadataEditor.gallery = {
             if (thumbnail !== null) {
                 thumbnail.addClass("last-selection");
             }
+
+            this.updateDiscontinuousSecletionState();
+        },
+
+        /**
+         * Checks whether selection is a continuous selection and applies corresponding CSS style class.
+         */
+        updateDiscontinuousSecletionState() {
+            // reset discontinuous state
+            $("#imagePreviewForm .thumbnail.discontinuous").removeClass("discontinuous");
 
             // check whether all selected thumbnails are from the same stripe 
             let stripeTreeNodeIdSet = new Set();
