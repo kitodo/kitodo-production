@@ -99,7 +99,7 @@ abstract class CustomResourceBundle extends ResourceBundle {
             propertiesFileExistsMap.put(key, file.exists());
 
             if (!file.exists()) {
-                logger.error("Could not find external resource bundle '" + bundleName + "' at " + file);
+                logger.info("Could not find external resource bundle '" + bundleName + "' at " + file);
             }
         }
         return propertiesFileExistsMap.get(key);
