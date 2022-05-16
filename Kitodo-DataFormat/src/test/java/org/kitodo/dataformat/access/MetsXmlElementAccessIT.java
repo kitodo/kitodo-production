@@ -255,4 +255,38 @@ public class MetsXmlElementAccessIT {
                 .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")));
         assertNotNull(workpiece.getCreationDate());
     }
+
+    @Test
+    public void missingMetsFileForPointer() throws Exception {
+        try { 
+            new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/meta_missing_file.xml")));
+        } catch (IllegalArgumentException e) {
+            assertEquals("Corrupt file: file id for <mets:fptr> not found for div PHYS_0001", e.getMessage());
+        };
+    }
+
+    @Test
+    public void duplicateMetsFileDefinition() throws Exception {
+        try { 
+            new MetsXmlElementAccess().read(
+                new FileInputStream(new File("src/test/resources/meta_duplicate_file.xml"))
+            );
+        } catch (IllegalArgumentException e) {
+            assertEquals("Corrupt file: file with id FILE_0001 is part of multiple groups", e.getMessage());
+        };
+    }
+
+    @Test
+    public void missingMetsFileGroupUse() throws Exception {
+        try { 
+            new MetsXmlElementAccess().read(
+                new FileInputStream(new File("src/test/resources/meta_missing_file_use.xml"))
+            );
+        } catch (IllegalArgumentException e) {
+            assertEquals(
+                "Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>", 
+                e.getMessage()
+            );
+        };
+    }
 }
