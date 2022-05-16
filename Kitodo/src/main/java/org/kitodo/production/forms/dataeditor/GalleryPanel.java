@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -33,7 +32,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -454,55 +452,14 @@ public class GalleryPanel {
         addStripesRecursive(structure, treeNodeIdList);
     }
 
-    public static List<Pair<View, LogicalDivision>> mergeViewsAndChildren(LogicalDivision structure) {
-        List<Pair<View, LogicalDivision>> merged = new ArrayList<Pair<View, LogicalDivision>>();
-        Iterator<View> viewIterator = structure.getViews().iterator();
-        Iterator<LogicalDivision> childIterator = structure.getChildren().iterator();
-        View nextView = null;
-        LogicalDivision nextChild = null;
-        while(viewIterator.hasNext() || childIterator.hasNext() || Objects.nonNull(nextView) || Objects.nonNull(nextChild)) {
-            logger.debug("while start: view is " + nextView + ", child is " + nextChild);
-            if (Objects.isNull(nextView) && viewIterator.hasNext()) {
-                nextView = viewIterator.next();
-            }
-            if (Objects.isNull(nextChild) && childIterator.hasNext()) {
-                nextChild = childIterator.next();
-            }
-            // decide on whether to add child or view first
-            Boolean addChildNext = false;
-            if (Objects.nonNull(nextChild) && Objects.nonNull(nextView)) {
-                // compare order attribute between child and view to figure out which one is added first in tree
-                if (nextChild.getOrder() <= nextView.getPhysicalDivision().getOrder()) {
-                    addChildNext = true;
-                } else {
-                    addChildNext = false;
-                }
-            } else {
-                addChildNext = Objects.nonNull(nextChild);
-            }
-            if (addChildNext) {
-                merged.add(new ImmutablePair<View, LogicalDivision>(null, nextChild));
-                nextChild = null;
-            } else {
-                merged.add(new ImmutablePair<View, LogicalDivision>(nextView, null));
-                nextView = null;
-            }
-        }
-        return merged;
-    }
-
     private void addStripesRecursive(LogicalDivision structure, List<Integer> treeNodeIdList) {
         String stripeTreeNodeId = treeNodeIdList.stream().map(s -> String.valueOf(s)).collect(Collectors.joining("_"));
         GalleryStripe galleryStripe = new GalleryStripe(this, structure, stripeTreeNodeId);
-        // if (Objects.nonNull(structure.getLink())) {
-        //     // consider that child processes are listed first in logical tree
-        //     treeNodeIdList.add(dataEditor.getCurrentChildren().size());
-        // }
         stripes.add(galleryStripe);
 
         Integer siblingWithViewsIdx = 0;
         Integer siblingWithoutViewsIdx = 0;
-        for(Pair<View, LogicalDivision> pair : mergeViewsAndChildren(structure)) {
+        for (Pair<View, LogicalDivision> pair : StructurePanel.mergeLogicalStructureViewsAndChildren(structure)) {
             View view = pair.getLeft();
             LogicalDivision child = pair.getRight();
             if (Objects.nonNull(child)) {
@@ -570,12 +527,12 @@ public class GalleryPanel {
      * @return GalleryStripe representing the logical structure element to which the Media is assigned
      */
     GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
-            for (GalleryStripe galleryStripe : stripes) {
-                for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
-                    if (galleryMediaContent.getId().equals(mediaContent.getId())) {
-                        return galleryStripe;
-                    }
+        for (GalleryStripe galleryStripe : stripes) {
+            for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
+                if (galleryMediaContent.getId().equals(mediaContent.getId())) {
+                    return galleryStripe;
                 }
+            }
         }
         return null;
     }
