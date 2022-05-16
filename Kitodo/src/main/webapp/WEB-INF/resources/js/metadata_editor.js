@@ -67,6 +67,24 @@ metadataEditor.gallery = {
     pages: {
 
         /**
+         * Remember the current selection and its order by keeping a list of logical tree node ids.
+         */
+        currentSelection: [],
+
+        /**
+         * Remembers the logical tree node id for the thumbnail that was last selected by the user.
+         */
+        lastSelectedItem: null,
+
+        /**
+         * Populates currentSelection and lastSelectedItem when meta data editor is started.
+         */
+        init() {
+            this.currentSelection = this.findSelectedTreeNodeIds();
+            this.lastSelectedItem = this.findLastSelectedTreeNodeId();
+        },
+
+        /**
          * Handler for a mouse down event if it specially occurred above a thumbnail.
          * 
          * @param event the mouse event
@@ -80,6 +98,7 @@ metadataEditor.gallery = {
                 this.handleSelect(event, target);
             }
         },
+
         /**
          * Handler for a mouse up event if it specially occurred above a thumbnail.
          * 
@@ -117,17 +136,11 @@ metadataEditor.gallery = {
 
             // decide on type of selection (single, range, multi) depending on keyboard input
             if (event.metaKey || event.ctrlKey) {
-                // set selection
-                this.addManyToSelection([treeNodeId]);
-                metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "multi", event);
+                this.handleMultiSelect(event, target, treeNodeId);
             } else if (event.shiftKey) {
-                // range selection
-                this.addSequenceToSelection(treeNodeId);
-                metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "range", event);
+                this.handleRangeSelect(event, target, treeNodeId);
             } else {
-                // single thumbnail is selected
-                this.markManyAsSelected([treeNodeId]);
-                metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "default", event);
+                this.handleSingleSelect(event, target, treeNodeId);
             }
 
             // update selection in other components of the meta data editor
@@ -144,12 +157,132 @@ metadataEditor.gallery = {
         },
 
         /**
+         * Adds or removes single thumbnails to the current selection using the multi seletion style (ctrl key).
+         *
+         * @param event the mouse event
+         * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object 
+         * @param treeNodeId the logical tree node id of the clicked thumbnail
+         */
+        handleMultiSelect(event, target, treeNodeId) {
+            if (this.isThumbnailSelected(treeNodeId)) {
+                if (this.currentSelection.length > 1) {
+                    // there are more elements still selected, remove it from list
+                    let idx = this.currentSelection.indexOf(treeNodeId);
+                    if (idx > -1) {
+                        this.currentSelection.splice(idx, 1);
+                    } else {
+                        console.log("deselecting thumbnail that is not listed in currentSelection array");
+                    }
+                    // make last added thumbnail as last selected
+                    this.markManyAsSelected(this.currentSelection, null);
+                } else {
+                    // keep current element selected
+                    this.markManyAsSelected(this.currentSelection, treeNodeId);
+                }  
+            } else {
+                // just add the thumbnail to the current selection
+                this.currentSelection.push(treeNodeId);
+                this.markManyAsSelected(this.currentSelection, treeNodeId);
+            }
+            metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "multi", event);
+        },
+
+        /**
+         * Adds thumbnails to the set of selected thumbnails using the range selection style (shift key).
+         * 
+         * @param event the mouse event
+         * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object 
+         * @param treeNodeId the logical tree node id of the clicked thumbnail
+         */
+        handleRangeSelect(event, target, treeNodeId) {
+            if (this.currentSelection.length === 0) {
+                // there is no prior selected item that can be used to determine the start point
+                // of this range selection
+                return;
+            }
+            let that = this;
+            let fromTreeNodeId = this.currentSelection[0];
+            let fromThumbnail = this.findThumbnailByTreeNodeId(fromTreeNodeId);
+            let toTreeNodeId = treeNodeId;
+            let toThumbnail = this.findThumbnailByTreeNodeId(toTreeNodeId);
+                        
+            // iterate over all thumbnails in the order they appear in the dom
+            let inBetweenSelectedThumbnails = false;
+            let forwardSelection = true;
+            let treeNodeIds = [];
+            $("#imagePreviewForm .thumbnail").each(function () {
+                let currentThumbnail = $(this);
+                let currentTreeNodeId = that.findTreeNodeIdByThumbnail(currentThumbnail);
+                if (inBetweenSelectedThumbnails) {
+                    if (forwardSelection) {
+                        treeNodeIds.push(currentTreeNodeId);
+                    } else {
+                        treeNodeIds.unshift(currentTreeNodeId);
+                    }
+                }
+                if (!inBetweenSelectedThumbnails && (currentThumbnail.is(fromThumbnail) || currentThumbnail.is(toThumbnail))) {
+                    if (currentThumbnail.is(fromThumbnail)) {
+                        forwardSelection = true;
+                        treeNodeIds.push(currentTreeNodeId);
+                    } else {
+                        forwardSelection = false;
+                        treeNodeIds.unshift(currentTreeNodeId);
+                    }
+                    inBetweenSelectedThumbnails = true;
+                    return true;
+                }
+                if (inBetweenSelectedThumbnails && (currentThumbnail.is(fromThumbnail) || currentThumbnail.is(toThumbnail))) {
+                    inBetweenSelectedThumbnails = false;
+                    // stop iterating through thumbnails
+                    return false;
+                }
+            });
+
+            // update selection state
+            this.lastSelectedItem = toTreeNodeId;
+            this.markManyAsSelected(treeNodeIds, toTreeNodeId);
+            this.updateDiscontinuousSecletionState();
+            metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "range", event);
+        },
+
+        /**
+         * Overwrites current selection to this single thumbnail only.
+         * 
+         * @param event the mouse event
+         * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object 
+         * @param treeNodeId the logical tree node id of the clicked thumbnail
+         */
+        handleSingleSelect(event, target, treeNodeId) {
+            this.markManyAsSelected([treeNodeId], treeNodeId);
+            metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "default", event);
+        },
+
+        /**
+         * Check if thumbnail is currently selected
+         * @param treeNodeId the logical tree node id referencing the thumbnail
+         * @returns true or false
+         */
+        isThumbnailSelected(treeNodeId) {
+            return this.findThumbnailByTreeNodeId(treeNodeId).hasClass("selected");
+        },
+
+        /**
          * Finds a thumbnail dom element based on a given logical tree node id.
          * @param treeNodeId the tree node id as string
          * @returns the thumbnail dom element as jquery object
          */
         findThumbnailByTreeNodeId(treeNodeId) {
             return $("#imagePreviewForm .thumbnail-container[data-logicaltreenodeid=\"" + treeNodeId + "\"]").prev();
+        },
+
+        /**
+         * Finds a logical tree node id given a jquery object referencing a thumbnail.
+         * 
+         * @param thumbnail the thumbnail
+         * @returns the corresponding logical tree node id
+         */
+        findTreeNodeIdByThumbnail(thumbnail) {
+            return thumbnail.next()[0].dataset.logicaltreenodeid;
         },
 
         /**
@@ -197,77 +330,52 @@ metadataEditor.gallery = {
          */
         findSelectedTreeNodeIds() {
             let treeNodeIds = [];
+            let that = this;
             $("#imagePreviewForm .thumbnail.selected").each(function () {
-                treeNodeIds.push($(this).next()[0].dataset.logicaltreenodeid);
+                treeNodeIds.push(that.findTreeNodeIdByThumbnail($(this)));
             });
             return treeNodeIds;
         },
 
         /**
-         * Adds thumbnails to the set of selected thumbnails using the range selection style (shift key).
-         * @param toTreeNodeId the logical tree node id of the clicked thumbnail
+         * Returns the logical tree node id for the thumbnail that is currently marked as last-selected.
          */
-        addSequenceToSelection(toTreeNodeId) {
-            let fromThumbnail = $("#imagePreviewForm .thumbnail.last-selection");
-            let fromTreeNodeId = fromThumbnail.next()[0].dataset.logicaltreenodeid;
-            let toThumbnail = this.findThumbnailByTreeNodeId(toTreeNodeId);
-                        
-            // iterate over all thumbnails in the order they appear in the dom
-            let inBetweenSelectedThumbnails = false;
-            $("#imagePreviewForm .thumbnail").each(function () {
-                let currentThumbnail = $(this);
-                if (inBetweenSelectedThumbnails) {
-                    currentThumbnail.addClass("selected");
-                }
-                if (!inBetweenSelectedThumbnails && (currentThumbnail.is(fromThumbnail) || currentThumbnail.is(toThumbnail))) {
-                    inBetweenSelectedThumbnails = true;
-                    // continue iterating through thumbnails
-                    return true;
-                }
-                if (inBetweenSelectedThumbnails && (currentThumbnail.is(fromThumbnail) || currentThumbnail.is(toThumbnail))) {
-                    inBetweenSelectedThumbnails = false;
-                    // stop iterating through thumbnails
-                    return false;
-                }
-            });
-
-            // update selection status on previously selected thumbnail
-            fromThumbnail.removeClass("last-selection");
-            fromThumbnail.addClass("selected");
-
-            // update selection status for currently selected thumbnail
-            toThumbnail.addClass("selected last-selection");
-
-            this.updateDiscontinuousSecletionState();
+        findLastSelectedTreeNodeId() {
+            let thumbnail = $("#imagePreviewForm .thumbnail.last-selection");
+            if (thumbnail.lenght > 0) {
+                return this.findTreeNodeIdByThumbnail(thumbnail);
+            }
+            return null;
         },
 
         /**
          * Marks a list of thumbnails as the currently selected thumbnails by applying the corresponding CSS styles.
          * 
          * @param treeNodeIds the logical tree node ids identifying the newly selected thumbnails
+         * @param lastSelected the logical tree node id identifying the thumbnail that has been selected last by the user
          */
-        markManyAsSelected(treeNodeIds) {
+        markManyAsSelected(treeNodeIds, lastSelected) {
             this.resetSelectionStyle();
-            this.addManyToSelection(treeNodeIds);
-        },
-
-        /**
-         * Adds thumbnails to the set of currently selected thumbnails by applying the corresponding CSS styles.
-         * Doesn't reset the selection style before it modifies it.
-         * 
-         * @param treeNodeIds the list of logical tree node ids of thumbnails that are supposed to be selected
-         */
-        addManyToSelection(treeNodeIds) {
+            this.currentSelection = treeNodeIds;
+            if (lastSelected === null && treeNodeIds.length > 0) {
+                // use last known selected element as last selected
+                this.lastSelectedItem = treeNodeIds[treeNodeIds.length - 1];
+            } else {
+                // use provided tree node is as last selected
+                this.lastSelectedItem = lastSelected;
+            }
+            
             // keep previous selection but remove last-selection class
             $("#imagePreviewForm .thumbnail.last-selection").removeClass("last-selection");
             
             // find gallery thumbnail corresponding to each treeNodeId and add selected status
-            let thumbnail = null;
-            for(let i = 0; i < treeNodeIds.length; i++) {
-                thumbnail = this.findThumbnailByTreeNodeId(treeNodeIds[i]);
+            for(let i = 0; i < this.currentSelection.length; i++) {
+                let thumbnail = this.findThumbnailByTreeNodeId(this.currentSelection[i]);
                 thumbnail.addClass("selected");
             }
-            if (thumbnail !== null) {
+
+            if (this.lastSelectedItem !== null) {
+                let thumbnail = this.findThumbnailByTreeNodeId(this.lastSelectedItem);
                 thumbnail.addClass("last-selection");
             }
 
@@ -338,7 +446,7 @@ metadataEditor.gallery = {
                     // mark first thumbnail as selected 
                     let treeNodeId = this.findFirstThumbnailLogicalTreeNodeId(stripeTreeNodeId);
                     metadataEditor.physicalTree.markNodeAsSelected(treeNodeId);
-                    metadataEditor.gallery.pages.markManyAsSelected([treeNodeId]);
+                    metadataEditor.gallery.pages.markManyAsSelected([treeNodeId], treeNodeId);
                     metadataEditor.pagination.markManyAsSelected([treeNodeId]);
                 }
                 // send new selection to backend
@@ -467,7 +575,7 @@ metadataEditor.logicalTree = {
             && node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
         if (isPage) {
             metadataEditor.gallery.stripes.resetSelectionStyle();
-            metadataEditor.gallery.pages.markManyAsSelected([treeNodeId]);
+            metadataEditor.gallery.pages.markManyAsSelected([treeNodeId], treeNodeId);
             metadataEditor.pagination.markManyAsSelected([treeNodeId]);
         } else {
             metadataEditor.gallery.pages.resetSelectionStyle();
@@ -477,7 +585,7 @@ metadataEditor.logicalTree = {
                 let firstTreeNodeId = metadataEditor.gallery.stripes.findFirstThumbnailLogicalTreeNodeId(treeNodeId);
                 if (firstTreeNodeId !== null) {
                     metadataEditor.pagination.markManyAsSelected([firstTreeNodeId]);
-                    metadataEditor.gallery.pages.markManyAsSelected([firstTreeNodeId]);
+                    metadataEditor.gallery.pages.markManyAsSelected([firstTreeNodeId], firstTreeNodeId);
                     metadataEditor.physicalTree.markNodeAsSelected(firstTreeNodeId);
                 }
             }
@@ -546,7 +654,7 @@ metadataEditor.physicalTree = {
                 metadataEditor.logicalTree.markNodeAsSelected(stripeTreeNodeId);
                 metadataEditor.pagination.markManyAsSelected([treeNodeId]);
                 metadataEditor.gallery.stripes.markOneSelected(stripeTreeNodeId);
-                metadataEditor.gallery.pages.markManyAsSelected([treeNodeId]);
+                metadataEditor.gallery.pages.markManyAsSelected([treeNodeId], treeNodeId);
             }
         }
     },
@@ -606,7 +714,7 @@ metadataEditor.pagination = {
         let treeNodeIds = metadataEditor.gallery.pages.findTreeNodeIdsByOrderList(selectedOrder);
 
         // apply selection to other components of meta data editor
-        metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds);
+        metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, null);
         if (treeNodeIds.length > 0) {
             let lastTreeNodeId = treeNodeIds[treeNodeIds.length - 1];
             metadataEditor.logicalTree.markNodeAsSelected(lastTreeNodeId);
@@ -893,3 +1001,7 @@ function deactivateButtons() {
     PF('validate').disable();
     PF('close').disable();
 }
+
+$(function () {
+    metadataEditor.gallery.pages.init();
+});
