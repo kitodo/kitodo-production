@@ -544,9 +544,8 @@ public class AddDocStrucTypeDialog {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         selectPageOnAddNodeItems = new ArrayList<>(physicalDivisions.size());
         for (int i = 0; i < physicalDivisions.size(); i++) {
-            PhysicalDivision physicalDivision = physicalDivisions.get(i);
-            String label = Objects.isNull(physicalDivision.getOrderlabel()) ? Integer.toString(physicalDivision.getOrder())
-                    : physicalDivision.getOrder() + " : " + physicalDivision.getOrderlabel();
+            View view = View.of(physicalDivisions.get(i));
+            String label = dataEditor.getStructurePanel().buildViewLabel(view);
             selectPageOnAddNodeItems.add(new SelectItem(Integer.toString(i), label));
         }
     }

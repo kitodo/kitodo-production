@@ -584,15 +584,12 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Builds the display text for a MediaUnit in the StructurePanel.
-     * Using a regular expression to strip leading zeros. (?!$) lookahead ensures
-     * that not the entire string will be matched. Using Hashmap for subfolder caching
-     *
-     * @param view
-     *            View which holds the MediaUnit
-     * @return the display label of the MediaUnit
+     * Finds canonical id for view by checking all folders.
+     * 
+     * @param view the view
+     * @return string representing media canonical id
      */
-    private String buildViewLabel(View view) {
+    public String findCanonicalIdForView(View view) {
         PhysicalDivision mediaUnit = view.getPhysicalDivision();
         Iterator<Entry<MediaVariant, URI>> mediaFileIterator = mediaUnit.getMediaFiles().entrySet().iterator();
         String canonical = "-";
@@ -605,6 +602,21 @@ public class StructurePanel implements Serializable {
                         + "\" in project \"" + dataEditor.getProcess().getProject().getTitle()))));
             canonical = subfolder.getCanonical(mediaFileEntry.getValue());
         }
+        return canonical;
+    }
+
+    /**
+     * Builds the display text for a MediaUnit in the StructurePanel.
+     * Using a regular expression to strip leading zeros. (?!$) lookahead ensures
+     * that not the entire string will be matched. Using Hashmap for subfolder caching
+     *
+     * @param view
+     *            View which holds the MediaUnit
+     * @return the display label of the MediaUnit
+     */
+    public String buildViewLabel(View view) {
+        String canonical = findCanonicalIdForView(view);
+        PhysicalDivision mediaUnit = view.getPhysicalDivision();
         return canonical.replaceFirst("^0+(?!$)", "") + " : "
             + (Objects.isNull(mediaUnit.getOrderlabel()) ? "uncounted" : mediaUnit.getOrderlabel());
     }
