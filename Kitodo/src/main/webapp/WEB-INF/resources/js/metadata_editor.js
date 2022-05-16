@@ -352,7 +352,7 @@ metadataEditor.gallery = {
          * @param stripeTreeNodeId the tree node id of the stripe
          * @returns the thumbnail-container dom element of the first thumbnail in the stripe as jquery object
          */
-        findFirstThumbnailLogicalTreeNodeId: function (stripeTreeNodeId) {
+        findFirstThumbnailLogicalTreeNodeId(stripeTreeNodeId) {
             // let stripe = $("#imagePreviewForm .stripe[data-logicaltreenodeid=\"" + stripeTreeNodeId + "\"]");
             let firstTreeNodeId = null;
             $("#imagePreviewForm .thumbnail-container").each(function() {
@@ -504,7 +504,7 @@ metadataEditor.logicalTree = {
     markNodeAsSelected(treeNodeId) {
         this.resetSelectionStyle();
 
-        let node = $("#logicalTree\\:" + treeNodeId)
+        let node = $("#logicalTree\\:" + treeNodeId);
         let label = node.find("> .ui-treenode-content > .ui-treenode-label");
         node.attr("aria-selected", "true");
         node.removeClass("ui-treenode-unselected").addClass("ui-treenode-selected");
