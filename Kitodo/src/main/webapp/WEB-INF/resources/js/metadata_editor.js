@@ -171,7 +171,8 @@ metadataEditor.gallery = {
                     if (idx > -1) {
                         this.currentSelection.splice(idx, 1);
                     } else {
-                        console.log("deselecting thumbnail that is not listed in currentSelection array");
+                        // deselecting thumbnail that is not listed in currentSelection array
+                        // should not happen
                     }
                     // make last added thumbnail as last selected
                     this.markManyAsSelected(this.currentSelection, null);
