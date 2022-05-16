@@ -489,7 +489,12 @@ public class GalleryPanel {
             resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
-        String canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
+        // prefer canonical of preview folder
+        String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
+        if (Objects.isNull(canonical)) {
+            // if preview media not available, load canonical id from other folders
+            canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
+        }
         return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri);
     }
 
