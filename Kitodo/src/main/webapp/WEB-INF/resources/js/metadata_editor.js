@@ -12,11 +12,20 @@
    scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload,
    activateButtons, PF */
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
+/*eslint complexity: ["error", 10]*/
 
 var metadataEditor = {};
 
+/**
+ * Methods and events related to the gallery section of the meta data editor.
+ */
 metadataEditor.gallery = {
-    dragging: false,
+
+    /** 
+     * Mouse down event for all of the gallery, including both stripes and thumbnails.
+     * 
+     * @param event the corresponding mouse event
+     */
     handleMouseDown(event) {
         $(document.activeElement).blur();
         let target = $(event.target);
@@ -29,50 +38,99 @@ metadataEditor.gallery = {
         $(".focusable").removeClass("focused");
         $("#imagePreviewForm").addClass("focused");
     },
+
+    /**
+     * Handler for moues up event for all of the gallery, including both stripes and thumbnails.
+     * 
+     * @param event the corresponding mouse event
+     */
     handleMouseUp(event) {
         let target = $(event.target);
         if (target.closest(".thumbnail-container").length === 1) {
             this.pages.handleMouseUp(event, target.closest(".thumbnail-container"));
         }
     },
+
+    /**
+     * Handler for drag start event for any element in the gallery.
+     * 
+     * @param event the standard drag start event
+     */
     handleDragStart(event) {
+        // call thumbnail drag start handler, since only thumbnails are draggable
         this.pages.handleDragStart(event);
     },
+
+    /**
+     * Event handlers and methods related to individual pages or thumbnails.
+     */
     pages: {
+
+        /**
+         * Handler for a mouse down event if it specially occurred above a thumbnail.
+         * 
+         * @param event the mouse event
+         * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object
+         */
         handleMouseDown(event, target) {
             if (target.closest(".thumbnail-parent").find(".selected").length === 0) {
                 // do not trigger selection, if thumbnail was previously selected, such that 
                 // drag and drop for multiple selected thumbnails is possible
                 // otherwise, this event would select this thumbnail as only selection before dragging starts
-                this.select(event, target);
+                this.handleSelect(event, target);
             }
         },
+        /**
+         * Handler for a mouse up event if it specially occurred above a thumbnail.
+         * 
+         * @param event the mouse event
+         * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object
+         */
         handleMouseUp(event, target) {
             metadataEditor.gallery.dragdrop.removeDragAmountIcon();
-            if (metadataEditor.gallery.dragging) {
-                metadataEditor.gallery.dragging = false;
+            if (metadataEditor.gallery.dragdrop.dragging) {
+                metadataEditor.gallery.dragdrop.dragging = false;
             } else if (event.button !== 2 || target.closest(".thumbnail-parent").find(".selected").length === 0) {
-                this.select(event, target);
+                this.handleSelect(event, target);
             }
         },
+
+        /**
+         * Handler that is called when dragging of a thumbnail starts.
+         * 
+         * @param event the drag start event
+         */
         handleDragStart(event) {
-            metadataEditor.gallery.dragging = true;
+            metadataEditor.gallery.dragdrop.dragging = true;
             metadataEditor.gallery.dragdrop.addDragAmountIcon(event);
         },
-        select(event, target) {
+
+        /**
+         * Is called when a thumbnail is selected (via click).
+         * 
+         * @param event the mouse event
+         * @param target the thumbnail-container dom element of the clicked thumbnail as jquery object
+         */
+        handleSelect(event, target) {
             // get the logical tree node id of the thumbnail that is being selected
             let treeNodeId = target[0].dataset.logicaltreenodeid;
+
+            // decide on type of selection (single, range, multi) depending on keyboard input
             if (event.metaKey || event.ctrlKey) {
+                // set selection
                 this.addManyToSelection([treeNodeId]);
-                metadataEditor.gallery.select(target[0].dataset.order, target[0].dataset.stripe, "multi", event);
+                metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "multi", event);
             } else if (event.shiftKey) {
+                // range selection
                 this.addSequenceToSelection(treeNodeId);
-                metadataEditor.gallery.select(target[0].dataset.order, target[0].dataset.stripe, "range", event);
+                metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "range", event);
             } else {
                 // single thumbnail is selected
                 this.markManyAsSelected([treeNodeId]);
-                metadataEditor.gallery.select(target[0].dataset.order, target[0].dataset.stripe, "default", event);
+                metadataEditor.gallery.sendSelectionToBackend(target[0].dataset.order, target[0].dataset.stripe, "default", event);
             }
+
+            // update selection in other components of the meta data editor
             metadataEditor.pagination.markManyAsSelected(this.findSelectedTreeNodeIds());
             if (metadataEditor.physicalTree.isAvailable()) {
                 let stripeTreeNodeId = treeNodeId.slice(0, treeNodeId.lastIndexOf("_"));
@@ -84,46 +142,82 @@ metadataEditor.gallery = {
                 metadataEditor.logicalTree.markNodeAsSelected(treeNodeId);
             }
         },
-        findThumbnailByTreeNodeId: function(treeNodeId) {
+
+        /**
+         * Finds a thumbnail dom element based on a given logical tree node id.
+         * @param treeNodeId the tree node id as string
+         * @returns the thumbnail dom element as jquery object
+         */
+        findThumbnailByTreeNodeId(treeNodeId) {
             return $("#imagePreviewForm .thumbnail-container[data-logicaltreenodeid=\"" + treeNodeId + "\"]").prev();
         },
-        findOrderByTreeNodeId: function(treeNodeId) {
+
+        /**
+         * Finds the order-value for a thumbnail given a logical tree node id identifying the corresponding thumbnail.
+         * @param treeNodeId the tree node id as string
+         * @returns the corresponding order value attached to the thumbnail-container dom element
+         */
+        findOrderByTreeNodeId(treeNodeId) {
             let div = $("#imagePreviewForm .thumbnail-container[data-logicaltreenodeid=\"" + treeNodeId + "\"]");
             if (div.length > 0) {
                 return div[0].dataset.order;
             }
             return null;
         },
-        findTreeNodeIdByOrder: function(order) {
+
+        /**
+         * Finds a logical tree node id for a given order-value identifying the corresponding thumbnail.
+         * @param order the order-value
+         * @returns the corresponding logical tree node id attached to the thumbnail-container dom element
+         */
+        findTreeNodeIdByOrder(order) {
             let div = $("#imagePreviewForm .thumbnail-container[data-order=\"" + order + "\"]");
             if (div.length > 0) {
                 return div[0].dataset.logicaltreenodeid;
             }
             return null;
         },
-        findTreeNodeIdsByOrderList: function(orderList) {
+
+        /**
+         * Find all logical tree node ids for a list of order-values.
+         * @param orderList the list order values
+         * @returns the correspoding tree node ids for each thumbnail identified by each order value
+         */
+        findTreeNodeIdsByOrderList(orderList) {
             let treeNodeIds = [];
             for (let i = 0; i < orderList.length; i++) {
                 treeNodeIds.push(this.findTreeNodeIdByOrder(orderList[i]));
             }
             return treeNodeIds;
         },
-        findSelectedTreeNodeIds: function() {
+
+        /**
+         * Returns logical tree node ids for all thumbnails that are currently selected.
+         * @returns the list of tree node ids
+         */
+        findSelectedTreeNodeIds() {
             let treeNodeIds = [];
             $("#imagePreviewForm .thumbnail.selected").each(function () {
                 treeNodeIds.push($(this).next()[0].dataset.logicaltreenodeid);
             });
             return treeNodeIds;
         },
-        addSequenceToSelection: function(toTreeNodeId) {
+
+        /**
+         * Adds thumbnails to the set of selected thumbnails using the range selection style (shift key).
+         * @param toTreeNodeId the logical tree node id of the clicked thumbnail
+         */
+        addSequenceToSelection(toTreeNodeId) {
             let fromThumbnail = $("#imagePreviewForm .thumbnail.last-selection");
             let fromTreeNodeId = fromThumbnail.next()[0].dataset.logicaltreenodeid;
             let toThumbnail = this.findThumbnailByTreeNodeId(toTreeNodeId);
+            
             // check whether both are from the same stripe
             let fromStripeTreeNodeId = fromTreeNodeId.slice(0, fromTreeNodeId.lastIndexOf("_"));
             let toStripeTreeNodeId = toTreeNodeId.slice(0, toTreeNodeId.lastIndexOf("_"));
-            let sameStripe = fromStripeTreeNodeId == toStripeTreeNodeId;
+            let sameStripe = fromStripeTreeNodeId === toStripeTreeNodeId;
             let selectionClasses = sameStripe ? "selected" : "selected discontinuous";
+            
             // iterate over all thumbnails in the order they appear in the dom
             let inBetweenSelectedThumbnails = false;
             $("#imagePreviewForm .thumbnail").each(function () {
@@ -142,17 +236,32 @@ metadataEditor.gallery = {
                     return false;
                 }
             });
+
             // update selection status on previously selected thumbnail
             fromThumbnail.removeClass("last-selection");
             fromThumbnail.addClass(selectionClasses);
+
             // update selection status for currently selected thumbnail
             toThumbnail.addClass(selectionClasses + " last-selection");
         },
-        markManyAsSelected: function(treeNodeIds) {
+
+        /**
+         * Marks a list of thumbnails as the currently selected thumbnails by applying the corresponding CSS styles.
+         * 
+         * @param treeNodeIds the logical tree node ids identifying the newly selected thumbnails
+         */
+        markManyAsSelected(treeNodeIds) {
             this.resetSelectionStyle();
             this.addManyToSelection(treeNodeIds);
         },
-        addManyToSelection: function(treeNodeIds) {
+
+        /**
+         * Adds thumbnails to the set of currently selected thumbnails by applying the corresponding CSS styles.
+         * Doesn't reset the selection style before it modifies it.
+         * 
+         * @param treeNodeIds the list of logical tree node ids of thumbnails that are supposed to be selected
+         */
+        addManyToSelection(treeNodeIds) {
             // keep previous selection but remove last-selection class
             $("#imagePreviewForm .thumbnail.last-selection").removeClass("last-selection");
             
@@ -181,19 +290,33 @@ metadataEditor.gallery = {
             
             // update discontinuous style class
             $("#imagePreviewForm .thumbnail.discontinuous").removeClass("discontinuous");
-            if (stripeTreeNodeIdSet.size > 1 || (maxNumber - minNumber != treeNodeLastNumbers.length - 1)) {
+            if (stripeTreeNodeIdSet.size > 1 || (maxNumber - minNumber !== treeNodeLastNumbers.length - 1)) {
                 // selection is not continuous
                 $("#imagePreviewForm .thumbnail.selected").addClass("discontinuous");
             }
         },
-        resetSelectionStyle: function() {
+
+        /**
+         * Resets the selection CSS style of all thumbails.
+         */
+        resetSelectionStyle() {
             // remove current selection styling from thumbnails
             $("#imagePreviewForm .thumbnail.discontinuous").removeClass("discontinuous");
             $("#imagePreviewForm .thumbnail.selected").removeClass("selected");
             $("#imagePreviewForm .thumbnail.last-selection").removeClass("last-selection");
         }
     },
+
+    /** 
+     * Event handlers methods related to gallery stripes
+     */
     stripes: {
+
+        /**
+         * Handler for mouse down event if it specially occurred above a gallery stripe header.
+         * 
+         * @param event the mouse event
+         */
         handleMouseDown(event) {
             if (!$(event.target).hasClass("selected")) {
                 // retrieve logical tree node id for stripe that is being clicked on
@@ -204,7 +327,7 @@ metadataEditor.gallery = {
                 metadataEditor.gallery.pages.resetSelectionStyle();
                 metadataEditor.pagination.resetSelectionStyle();
                 // mark gallery stripe as selected
-                this.markOneSelected(stripeTreeNodeId)
+                this.markOneSelected(stripeTreeNodeId);
                 if (metadataEditor.physicalTree.isAvailable()) {
                     // mark first thumbnail as selected 
                     let treeNodeId = this.findFirstThumbnailLogicalTreeNodeId(stripeTreeNodeId);
@@ -213,16 +336,23 @@ metadataEditor.gallery = {
                     metadataEditor.pagination.markManyAsSelected([treeNodeId]);
                 }
                 // send new selection to backend
-                metadataEditor.gallery.select(null, event.target.dataset.stripe, "default", event);
+                metadataEditor.gallery.sendSelectionToBackend(null, event.target.dataset.stripe, "default", event);
             }
         },
+
+        /**
+         * Finds the first thumbnail in the gallery stripe matching the provided logical tree node id.
+         * 
+         * @param stripeTreeNodeId the tree node id of the stripe
+         * @returns the thumbnail-container dom element of the first thumbnail in the stripe as jquery object
+         */
         findFirstThumbnailLogicalTreeNodeId: function (stripeTreeNodeId) {
             // let stripe = $("#imagePreviewForm .stripe[data-logicaltreenodeid=\"" + stripeTreeNodeId + "\"]");
             let firstTreeNodeId = null;
             $("#imagePreviewForm .thumbnail-container").each(function() {
                 let treeNodeId = this.dataset.logicaltreenodeid;
                 let currentStripeTreeNodeId = treeNodeId.slice(0, treeNodeId.lastIndexOf("_"));
-                if (currentStripeTreeNodeId == stripeTreeNodeId) {
+                if (currentStripeTreeNodeId === stripeTreeNodeId) {
                     firstTreeNodeId = treeNodeId;
                     return false;
                 }
@@ -230,17 +360,40 @@ metadataEditor.gallery = {
             });
             return firstTreeNodeId;
         },
-        markOneSelected: function(stripeTreeNodeId) {
+
+        /**
+         * Marks exactly one stripe as selected by applying the corresponding CSS styling.
+         * 
+         * @param stripeTreeNodeId the logical tree node id of the stripe that is supposed to be selected
+         */
+        markOneSelected(stripeTreeNodeId) {
             this.resetSelectionStyle();
             let stripe = $("#imagePreviewForm .stripe[data-logicaltreenodeid=\"" + stripeTreeNodeId + "\"]");
             stripe.addClass("selected");
         },
-        resetSelectionStyle: function() {
-            // remove current selection styling from gallery stripes
+
+        /**
+         * Resets the CSS selection style of all stripes of the gallery.
+         */
+        resetSelectionStyle() {
             $("#imagePreviewForm .stripe.selected").removeClass("selected");
         },
     },
+
+    /** 
+     * Handlers and methods managing the drag-&-drop behavior.
+    */
     dragdrop: {
+        /**
+         * Whether drag-&-drop is currently ongoing.
+         */
+        dragging: false,
+
+        /**
+         * Adds a dom element to the currently dragged thumbnail visualizing the number of selected thumbnails.
+         * 
+         * @param event the drag start event
+         */
         addDragAmountIcon(event) {
             var dragAmount = document.querySelectorAll(".thumbnail.selected").length;
             if (dragAmount > 1) {
@@ -250,6 +403,10 @@ metadataEditor.gallery = {
                 event.target.appendChild(element);
             }
         },
+
+        /** 
+         * Removes the dom element visualizing the number of currently selected thumbnails from the dragged thumbnail.
+         */
         removeDragAmountIcon() {
             var element = document.getElementById("dragAmount");
             if (element !== null) {
@@ -257,7 +414,16 @@ metadataEditor.gallery = {
             }
         }
     },
-    select(pageIndex, stripeIndex, selectionType, triggerEvent = null) {
+
+    /**
+     * Forwards selection events to the backend by calling the corresponding Primefaces remoteCommand.
+     * 
+     * @param pageIndex the order-value of the clicked thumbnail (if it was clicked)
+     * @param stripeIndex the stripe-data-value of the stripe that is clicked (if it was clicked)
+     * @param selectionType the selecting type (range, multi, default)
+     * @param triggerEvent the corresponding mouse event (if there was a mouse involved)
+     */
+    sendSelectionToBackend(pageIndex, stripeIndex, selectionType, triggerEvent = null) {
         // call the remoteCommand in gallery.xhtml
         if (triggerEvent == null) {
             sendGallerySelect([
@@ -278,8 +444,18 @@ metadataEditor.gallery = {
     },
 };
 
+/**
+ * Event handlers and methods related to the logical structure tree.
+ */
 metadataEditor.logicalTree = {
-    onNodeClick: function (node, event) {
+
+    /**
+     * Handler that is called by Primefaces when a tree node is clicked.
+     * 
+     * @param node the tree node that is clicked as jquery object
+     * @param event the mouse event
+     */
+    onNodeClick(node, event) {
         let treeNodeId = node.attr("id").split(":")[1];
         let isPage = node.hasClass("ui-treenode-leaf") 
             && node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
@@ -301,7 +477,11 @@ metadataEditor.logicalTree = {
             }
         }
     },
-    resetSelectionStyle: function() {
+
+    /**
+     * Resets the CSS selection style of the Primefaces tree component.
+     */
+    resetSelectionStyle() {
         // make all tree nodes not selected
         let nodes = $("#logicalTree .ui-treenode.ui-treenode-selected");
         nodes.removeClass("ui-treenode-selected").addClass("ui-treenode-unselected");
@@ -309,11 +489,16 @@ metadataEditor.logicalTree = {
         $("#logicalTree .ui-treenode-label.ui-state-highlight").removeClass("ui-state-highlight");
         $("#logicalTree .ui-treenode-label.ui-treenode-outline").removeClass("ui-treenode-outline");
     },
-    markNodeAsSelected: function(treeNodeId) {
+
+    /**
+     * Marks one node as selected by applying the CSS styles to the specified tree node.
+     * 
+     * @param treeNodeId the logical tree node id as string, identifying the tree node
+     */
+    markNodeAsSelected(treeNodeId) {
         this.resetSelectionStyle();
-        this.styleNodeAsSelected($("#logicalTree\\:" + treeNodeId));
-    },
-    styleNodeAsSelected: function(node) {
+
+        let node = $("#logicalTree\\:" + treeNodeId)
         let label = node.find("> .ui-treenode-content > .ui-treenode-label");
         node.attr("aria-selected", "true");
         node.removeClass("ui-treenode-unselected").addClass("ui-treenode-selected");
@@ -321,13 +506,33 @@ metadataEditor.logicalTree = {
     }
 };
 
+/**
+ * Event handlers and methods related to the physical structure tree.
+ */
 metadataEditor.physicalTree = {
-    isAvailable: function() {
+
+    /**
+     * Checks whether a physical structure tree is actually present in the dom tree, meaning whether
+     * the view mode "separate structure" is enabled.
+     * 
+     * @returns true if there is a physical structure tree being visualized
+     */
+    isAvailable() {
         return $("#physicalTree").length > 0;
     },
-    onNodeClick: function (node, event) {
+
+    /**
+     * Handler that is called by Primefaces when a tree node is clicked.
+     * 
+     * @param node the clicked tree node as jquery object
+     * @param event the mouse event
+     */
+    onNodeClick(node, event) {
+        // find logical tree node id for the clicked tree node
         let order = node.find("> .ui-treenode-content span[data-order]")[0].dataset.order;
         let treeNodeId = metadataEditor.gallery.pages.findTreeNodeIdByOrder(order);
+
+        // apply selection to other components of the metadata editor
         if (treeNodeId !== null) {
             let isPage = node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
             if (isPage) {
@@ -339,7 +544,12 @@ metadataEditor.physicalTree = {
             }
         }
     },
-    resetSelectionStyle: function() {
+
+    /**
+     * Resets the CSS selection style of the physical structure tree, meaning all nodes are 
+     * removed from the selection.
+     */
+    resetSelectionStyle() {
         // make all tree nodes not selected
         let nodes = $("#physicalTree .ui-treenode.ui-treenode-selected");
         nodes.removeClass("ui-treenode-selected").addClass("ui-treenode-unselected");
@@ -347,32 +557,49 @@ metadataEditor.physicalTree = {
         $("#physicalTree .ui-treenode-label.ui-state-highlight").removeClass("ui-state-highlight");
         $("#physicalTree .ui-treenode-label.ui-treenode-outline").removeClass("ui-treenode-outline");
     },
-    markNodeAsSelected: function(treeNodeId) {
+
+    /**
+     * Mark a single tree node as selected by appyling the corresponding CSS styles.
+     * @param treeNodeId the logical tree node id of the newly selected node
+     */
+    markNodeAsSelected(treeNodeId) {
         this.resetSelectionStyle();
         let order = metadataEditor.gallery.pages.findOrderByTreeNodeId(treeNodeId);
         if (order !== null) {
             let span = $("#physicalTree span[data-order=\"" + order + "\"]");
             let node = span.closest(".ui-treenode");
-            this.styleNodeAsSelected(node);
+            let label = node.find("> .ui-treenode-content > .ui-treenode-label");
+            node.attr("aria-selected", "true");
+            node.removeClass("ui-treenode-unselected").addClass("ui-treenode-selected");
+            label.addClass("ui-state-highlight ui-treenode-outline");
         }
     },
-    styleNodeAsSelected: function(node) {
-        let label = node.find("> .ui-treenode-content > .ui-treenode-label");
-        node.attr("aria-selected", "true");
-        node.removeClass("ui-treenode-unselected").addClass("ui-treenode-selected");
-        label.addClass("ui-state-highlight ui-treenode-outline");
-    }
-}
+};
 
+
+/** 
+ * Event handlers and methods related to the pagination panel.
+ */
 metadataEditor.pagination = {
-    onChange: function(event) {
+
+    /**
+     * Handler that is called when the selection state of the page list changes, e.g., when the user selects 
+     * or deselects a page by clicking a checkbox.
+     * 
+     * @param event the mouse event
+     */
+    onChange(event) {
+        // check which pages are selected
         let selectedOrder = [];
         for(let i = 0; i < event.target.length; i++) {
             if ($(event.target[i]).prop("selected")) {
                 selectedOrder.push(event.target[i].index + 1);
             }
         }
+        // find corresponding logical tree node ids for all selected pages
         let treeNodeIds = metadataEditor.gallery.pages.findTreeNodeIdsByOrderList(selectedOrder);
+
+        // apply selection to other components of meta data editor
         metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds);
         if (treeNodeIds.length > 0) {
             let lastTreeNodeId = treeNodeIds[treeNodeIds.length - 1];
@@ -380,20 +607,31 @@ metadataEditor.pagination = {
             metadataEditor.physicalTree.markNodeAsSelected(lastTreeNodeId);
         }
     },
-    resetSelectionStyle: function() {
+
+    /**
+     * Reset CSS selection style of pagination list.
+     */
+    resetSelectionStyle() {
         $("#paginationForm\\:paginationSelection .ui-state-highlight").removeClass("ui-state-highlight");
         $("#paginationForm\\:paginationSelection .ui-icon-check").removeClass("ui-icon-check").addClass("ui-icon-blank");
         $("#paginationForm\\:paginationSelection .ui-state-active").removeClass("ui-state-active");
         $("#paginationForm\\:paginationSelection select option").removeAttr("selected");
         $("#paginationForm\\:paginationSelection select option").prop("selected", false);
     },
-    markManyAsSelected: function(treeNodeIds) {
+
+    /**
+     * Mark a list of pages a selected by applying corresponding CSS styles to each list item.
+     * 
+     * @param {*} treeNodeIds the list of logical tree node ids that is supposed to be selected
+     */
+    markManyAsSelected(treeNodeIds) {
         this.resetSelectionStyle();
         for (let i = 0; i < treeNodeIds.length; i++) {
             // find treeNode in gallery view
             let thumbnailContainer = metadataEditor.gallery.pages.findThumbnailByTreeNodeId(treeNodeIds[i]).next();
             if (thumbnailContainer.length > 0) {
                 let order = thumbnailContainer[0].dataset.order;
+                
                 // make checkbox checked
                 let selectManyMenu = $("#paginationForm\\:paginationSelection");
                 let selectListBox = selectManyMenu.find(".ui-selectlistbox-list");
@@ -401,14 +639,15 @@ metadataEditor.pagination = {
                 selectItem.addClass("ui-state-highlight");
                 selectItem.find(".ui-chkbox-box").addClass("ui-state-active");
                 selectItem.find(".ui-chkbox-icon").removeClass("ui-icon-blank").addClass("ui-icon-check");
-                // mark invisible select
+                
+                // mark invisible select option as selected
                 let options = $("#paginationForm\\:paginationSelection select option");
                 options.eq(order - 1).attr("selected", "selected");
                 options.eq(order - 1).prop("selected", true);
             }
         }        
     }
-}
+};
 
 metadataEditor.contextMenu = {
     listen() {
@@ -455,7 +694,11 @@ metadataEditor.shortcuts = {
         }
         let newIndex = currentIndex + delta;
         if (currentIndex >= 0 && newIndex >= 0 && newIndex < selectableThumbnails.length) {
-            metadataEditor.gallery.select(selectableThumbnails[newIndex].dataset.order, selectableThumbnails[newIndex].dataset.stripe, "default");
+            metadataEditor.gallery.sendSelectionToBackend(
+                selectableThumbnails[newIndex].dataset.order, 
+                selectableThumbnails[newIndex].dataset.stripe, 
+                "default"
+            );
             let galleryViewMode = this.getGalleryViewMode();
             if (galleryViewMode === "LIST") {
                 scrollToStructureThumbnail(selectableThumbnails.eq(newIndex), $("#imagePreviewForm\\:structuredPagesField"));
