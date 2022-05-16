@@ -206,10 +206,8 @@ public class GalleryPanel {
     }
 
     /**
-     * Handle event of page being dragged and dropped in gallery.
-     *
-     * @param event
-     *            JSF drag'n'drop event description object
+     * Handle event of page being dragged and dropped in gallery. Parameters are provided by 
+     * remoteCommand "triggerOnPageDrop", see gallery.xhtml.
      */
     public void onPageDrop() {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -420,8 +418,8 @@ public class GalleryPanel {
     /** 
      * Recreate gallery stripes, e.g., after drag and drop.
      * 
-     * Always update media when recreating gallery stripes such that horizontal 
-     * gallery stripes and vertical thumbnail list of detail view are in sync.
+     * <p>Always update media when recreating gallery stripes such that horizontal 
+     * gallery stripes and vertical thumbnail list of detail view are in sync.</p>
      */
     public void updateStripes() {
         updateMedia();
