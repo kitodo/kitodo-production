@@ -489,12 +489,12 @@ public class GalleryPanel {
      * @return GalleryStripe representing the logical structure element to which the Media is assigned
      */
     GalleryStripe getLogicalStructureOfMedia(GalleryMediaContent galleryMediaContent) {
-            for (GalleryStripe galleryStripe : stripes) {
-                for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
-                    if (galleryMediaContent.getId().equals(mediaContent.getId())) {
-                        return galleryStripe;
-                    }
+        for (GalleryStripe galleryStripe : stripes) {
+            for (GalleryMediaContent mediaContent : galleryStripe.getMedias()) {
+                if (galleryMediaContent.getId().equals(mediaContent.getId())) {
+                    return galleryStripe;
                 }
+            }
         }
         return null;
     }
