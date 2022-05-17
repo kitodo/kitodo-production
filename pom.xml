@@ -56,7 +56,7 @@
         <hibernate.version>5.4.33.Final</hibernate.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
-        <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
+        <jaxb2-basics-runtime.version>1.11.1-PUBLISHED-BY-MISTAKE</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jhove.version>1.20.1</jhove.version>
         <myfaces.version>2.3.9</myfaces.version>
