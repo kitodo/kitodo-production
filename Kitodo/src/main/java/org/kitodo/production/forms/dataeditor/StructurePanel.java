@@ -762,6 +762,21 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Builds the parent link tree in a temporary primefaces tree in order to determine how many 
+     * nodes are added to the tree. The number of nodes influences the order of nodes in the logical 
+     * structure tree and is needed to determine the correct tree node id, see 
+     * `GalleryPanel.addStripesRecursive`.
+     * 
+     * @return the number of root nodes (first level children) that are 
+     *         added as a result of calling `addParentLinksRecursive`.
+     */
+    public Integer getNumberOfParentLinkRootNodesAdded() {
+        DefaultTreeNode node = new DefaultTreeNode();
+        addParentLinksRecursive(dataEditor.getProcess(), node);
+        return node.getChildCount();
+    }
+
+    /**
      * Creates the media tree.
      *
      * @param mediaRoot

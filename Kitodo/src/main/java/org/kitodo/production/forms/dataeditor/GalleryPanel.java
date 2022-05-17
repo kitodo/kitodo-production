@@ -445,8 +445,9 @@ public class GalleryPanel {
         Integer idx = 0;
         Process process = dataEditor.getProcess();
         if (Objects.nonNull(process) && Objects.nonNull(process.getParent())) {
-            // Workaroud, because additional tree nodes are added for parent processes
-            idx = 2;
+            // determine how many additional tree nodes are added for parent processes 
+            // before the actual logical structure
+            idx = dataEditor.getStructurePanel().getNumberOfParentLinkRootNodesAdded();
         }
         treeNodeIdList.add(idx);
         addStripesRecursive(structure, treeNodeIdList);
