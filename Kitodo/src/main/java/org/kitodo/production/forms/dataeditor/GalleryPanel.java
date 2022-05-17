@@ -471,10 +471,10 @@ public class GalleryPanel {
                     } else {
                         childTreeNodeIdList.add(siblingWithViewsIdx);
                     }
-                    siblingWithViewsIdx += 1;
-                    siblingWithoutViewsIdx += 1;
                     addStripesRecursive(child, childTreeNodeIdList);
                 }
+                siblingWithViewsIdx += 1;
+                siblingWithoutViewsIdx += 1;
             } else {
                 // add view
                 for (GalleryMediaContent galleryMediaContent : medias) {
