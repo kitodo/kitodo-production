@@ -31,7 +31,7 @@ public class SearchField extends BaseBean {
     private String value;
 
     @Column(name = "displayed")
-    private boolean displayed;
+    private boolean displayed = true;
 
     @Column(name = "parent_element")
     private boolean parentElement;
