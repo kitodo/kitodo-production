@@ -45,7 +45,7 @@
         <tomcat.version>9.0.62</tomcat.version>
         <awaitility.version>4.0.1</awaitility.version>
         <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
-        <commons-codec.version>1.13</commons-codec.version>
+        <commons-codec.version>1.15</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.11.0</commons-io.version>
