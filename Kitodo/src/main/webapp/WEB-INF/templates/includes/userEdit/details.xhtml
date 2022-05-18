@@ -26,20 +26,29 @@
         <p:row>
             <div>
                 <p:outputLabel for="surname" value="#{msgs.surname}"/>
-                <p:inputText id="surname" class="input" disabled="#{isViewMode || isConfigMode}"
-                             placeholder="#{msgs.surname}" value="#{UserForm.userObject.surname}"
+                <p:inputText id="surname"
+                             class="input"
+                             disabled="#{isViewMode || (isConfigMode and UserForm.user.ldapGroup ne null)}"
+                             placeholder="#{msgs.surname}"
+                             value="#{UserForm.userObject.surname}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="firstName" value="#{msgs.firstName}"/>
-                <p:inputText id="firstName" class="input" disabled="#{isViewMode || isConfigMode}"
-                             placeholder="#{msgs.firstName}" value="#{UserForm.userObject.name}"
+                <p:inputText id="firstName"
+                             class="input"
+                             disabled="#{isViewMode || (isConfigMode and UserForm.user.ldapGroup ne null)}"
+                             placeholder="#{msgs.firstName}"
+                             value="#{UserForm.userObject.name}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
             <div>
                 <p:outputLabel for="location" value="#{msgs.location}"/>
-                <p:inputText id="location" class="input" disabled="#{isViewMode || isConfigMode}"
-                             placeholder="#{msgs.location}" value="#{UserForm.userObject.location}"/>
+                <p:inputText id="location"
+                             class="input"
+                             disabled="#{isViewMode || (isConfigMode and UserForm.user.ldapGroup ne null)}"
+                             placeholder="#{msgs.location}"
+                             value="#{UserForm.userObject.location}"/>
             </div>
             <div>
                 <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
