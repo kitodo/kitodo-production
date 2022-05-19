@@ -23,19 +23,19 @@
                     <p:selectBooleanCheckbox 
                     id="showPageRange"
                     value="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree}" 
-                    itemLabel="#{msgs.showFirstAndLastMediaLabel}">
+                    itemLabel="#{msgs.showAssignedPages}">
                         <p:ajax event="change" 
                             update="@this logicalTree"/>
                     </p:selectBooleanCheckbox>
                 </li>
                 <li>
                     <p:selectBooleanCheckbox 
-                    id="showMediaCheckbox"
-                    value="#{DataEditorForm.structurePanel.showMediaInLogicalTree}" 
+                    id="hideMediaCheckbox"
+                    value="#{DataEditorForm.structurePanel.hideMediaInLogicalTree}" 
                     disabled="#{DataEditorForm.structurePanel.separateMedia}"
-                    itemLabel="#{msgs.showMedia}">
+                    itemLabel="#{msgs.showOnlyStructureElements}">
                         <p:ajax event="change" 
-                            listener="#{DataEditorForm.structurePanel.onShowMediaInLogicalTreeChange}" 
+                            listener="#{DataEditorForm.structurePanel.onHideMediaInLogicalTreeChange}" 
                             update="@this logicalTree imagePreviewForm"/>
                     </p:selectBooleanCheckbox>
                 </li>

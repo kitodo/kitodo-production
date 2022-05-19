@@ -127,7 +127,7 @@ public class StructurePanel implements Serializable {
      * Determines whether the logical tree is built as a combination of physical media nodes and 
      * logical structure nodes (default) or whether it only contains structure nodes.
      */
-    private boolean showMediaInLogicalTree = true;
+    private boolean hideMediaInLogicalTree = false;
 
     /** 
      * Determines whether a page range is show together with the label of a logical structure node. 
@@ -359,7 +359,7 @@ public class StructurePanel implements Serializable {
             this.preserveLogical();
             this.preservePhysical();
         } else {
-            if (!isShowMediaInLogicalTree()) {
+            if (isHideMediaInLogicalTree()) {
                 this.preserveLogical();
             } else {
                 this.preserveLogicalAndPhysical();
@@ -1762,32 +1762,32 @@ public class StructurePanel implements Serializable {
      * @return true if logical structure tree contains media
      */
     public boolean logicalStructureTreeContainsMedia() {
-        return !this.isSeparateMedia() && this.isShowMediaInLogicalTree();
+        return !this.isSeparateMedia() && !this.isHideMediaInLogicalTree();
     }
 
     /**
-     * Return true if the users selected the option to show media in the logical structure tree.
+     * Return true if the users selected the option to hide media in the logical structure tree.
      * 
-     * @return true if the user want to see media in the logical structure tree
+     * @return true if the user want to hide media in the logical structure tree
      */
-    public boolean isShowMediaInLogicalTree() {
-        return this.showMediaInLogicalTree;
+    public boolean isHideMediaInLogicalTree() {
+        return this.hideMediaInLogicalTree;
     }
 
     /**
      * Sets whether media should be shown in the logical structure tree.
      * 
-     * @param showMediaInLogicalTree boolean
+     * @param hideMediaInLogicalTree boolean
      */
-    public void setShowMediaInLogicalTree(boolean showMediaInLogicalTree) {
-        this.showMediaInLogicalTree = showMediaInLogicalTree;
+    public void setHideMediaInLogicalTree(boolean hideMediaInLogicalTree) {
+        this.hideMediaInLogicalTree = hideMediaInLogicalTree;
     }
 
     /**
      * Listener that is called when the user changes the UI option to show or hide
      * media in the logical structure tree.
      */
-    public void onShowMediaInLogicalTreeChange() {
+    public void onHideMediaInLogicalTreeChange() {
         this.show();
         this.dataEditor.getGalleryPanel().show();
     }

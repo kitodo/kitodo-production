@@ -145,7 +145,7 @@ metadataEditor.gallery = {
 
             // update selection in other components of the meta data editor
             metadataEditor.pagination.markManyAsSelected(this.findSelectedTreeNodeIds());
-            if (metadataEditor.physicalTree.isAvailable() || !metadataEditor.logicalTree.isShowMediaChecked()) {
+            if (metadataEditor.physicalTree.isAvailable() || metadataEditor.logicalTree.isHideMediaChecked()) {
                 let stripeTreeNodeId = treeNodeId.slice(0, treeNodeId.lastIndexOf("_"));
                 metadataEditor.gallery.stripes.markOneSelected(stripeTreeNodeId);
                 metadataEditor.logicalTree.markNodeAsSelected(stripeTreeNodeId);
@@ -572,8 +572,8 @@ metadataEditor.logicalTree = {
      * 
      * @returns true if checkbox "show media" is checked
      */
-    isShowMediaChecked() {
-        return $("#logicalStructureMenuForm\\:showMediaCheckbox input").attr("aria-checked") == "true";
+    isHideMediaChecked() {
+        return $("#logicalStructureMenuForm\\:hideMediaCheckbox input").attr("aria-checked") == "true";
     },
 
     /**
