@@ -2325,6 +2325,34 @@ Column content
     margin-right: 3px;
 }
 
+#structureTreeForm .ui-treenode .pageRange {
+    margin-left: 0.3em;
+}
+
+#logicalStructureHeader {
+    padding: 5px;
+    display: flex;
+}
+
+#logicalStructureHeader .logicalStructureTitle {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+#logicalStructureHeader .logicalStructureMenuWrapper {
+    flex-grow: 0;
+    flex-shrink: 0;
+}
+
+#logicalStructureMenuForm ul {
+    list-style: none;
+    margin: 0.25em 0;
+}
+
+#logicalStructureMenuForm ul li {
+    padding: 0.5em 0.25em;
+}
+
 #commentsPanel {
     margin-top: 5px;
     height: 100%;

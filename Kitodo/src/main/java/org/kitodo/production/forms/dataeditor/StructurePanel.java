@@ -124,6 +124,19 @@ public class StructurePanel implements Serializable {
     private String titleMetadata = "type";
 
     /**
+     * Determines whether the logical tree is built as a combination of physical media nodes and 
+     * logical structure nodes (default) or whether it only contains structure nodes.
+     */
+    private boolean showMediaInLogicalTree = true;
+
+    /** 
+     * Determines whether a page range is show together with the label of a logical structure node. 
+     * The page consists of the label of the first and last media of the logical division, 
+     * e.g. "4 : iv - 6 : vi".
+     */
+    private boolean showPageRangeInLogicalTree = false;
+
+    /**
      * Creates a new structure panel.
      *
      * @param dataEditor
@@ -346,7 +359,11 @@ public class StructurePanel implements Serializable {
             this.preserveLogical();
             this.preservePhysical();
         } else {
-            preserveLogicalAndPhysical();
+            if (!isShowMediaInLogicalTree()) {
+                this.preserveLogical();
+            } else {
+                this.preserveLogicalAndPhysical();
+            }
         }
     }
 
@@ -494,6 +511,23 @@ public class StructurePanel implements Serializable {
     }
 
     /**
+     * Constructs a page range string by combining the labels of the first and last view
+     * of the provided logical division.
+     * 
+     * @param structure the logical divsion
+     * @return the page range string
+     */
+    private String buildPageRangeFromLogicalDivision(LogicalDivision structure) {
+        LinkedList<View> views = structure.getViews();
+        if (views.size() > 1) {
+            return buildViewLabel(views.getFirst()) + " | " + buildViewLabel(views.getLast());
+        } else if (views.size() > 0) {
+            return buildViewLabel(views.getFirst());
+        }
+        return null;
+    }
+
+    /**
      * Build a StructureTreeNode for a logical division, which is then visualized in the logical structure tree.
      * 
      * @param structure the logical division
@@ -504,10 +538,12 @@ public class StructurePanel implements Serializable {
         if (Objects.isNull(structure.getLink())) {
             StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 structure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-            node = new StructureTreeNode(divisionView.getLabel(),
-                    divisionView.isUndefined() && Objects.nonNull(structure.getType()), false, structure);
+            String label = divisionView.getLabel();
+            String pageRange = buildPageRangeFromLogicalDivision(structure);
+            boolean undefined = divisionView.isUndefined() && Objects.nonNull(structure.getType());
+            node = new StructureTreeNode(label, pageRange, undefined, false, structure);
         } else {
-            node = new StructureTreeNode(structure.getLink().getUri().toString(), true, true, structure);
+            node = new StructureTreeNode(structure.getLink().getUri().toString(), null, true, true, structure);
             for (Process child : dataEditor.getCurrentChildren()) {
                 try {
                     String type = ServiceManager.getProcessService().getBaseType(child.getId());
@@ -516,11 +552,11 @@ public class StructurePanel implements Serializable {
                         StructuralElementViewInterface view = dataEditor.getRulesetManagement().getStructuralElementView(
                             type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                         node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
-                                + child.getTitle(), view.isUndefined(), true, structure);
+                                + child.getTitle(), null, view.isUndefined(), true, structure);
                     }
                 } catch (DataException e) {
                     Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-                    node = new StructureTreeNode(child.getTitle(), true, true, child);
+                    node = new StructureTreeNode(child.getTitle(), null, true, true, child);
                 }
             }
         }
@@ -547,7 +583,7 @@ public class StructurePanel implements Serializable {
         }
 
         Set<View> viewsShowingOnAChild = new HashSet<>();
-        if (this.isSeparateMedia()) {
+        if (!this.logicalStructureTreeContainsMedia()) {
             for (LogicalDivision child : structure.getChildren()) {
                 viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
             }
@@ -692,7 +728,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode addTreeNode(String label, boolean undefined, boolean linked, Object dataObject,
             DefaultTreeNode parent) {
-        DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(label, undefined, linked, dataObject),
+        DefaultTreeNode node = new DefaultTreeNode(new StructureTreeNode(label, null, undefined, linked, dataObject),
                 parent);
         if (dataObject instanceof PhysicalDivision && physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, node)
                 || dataObject instanceof LogicalDivision
@@ -891,7 +927,7 @@ public class StructurePanel implements Serializable {
             }
             if (Objects.nonNull(structure)) {
                 TreeNode selectedTreeNode;
-                if (this.isSeparateMedia()) {
+                if (!this.logicalStructureTreeContainsMedia()) {
                     selectedTreeNode = updateLogicalNodeSelectionRecursive(structure, logicalTree);
                 } else {
                     selectedTreeNode = updatePhysSelectionInLogTreeRecursive(galleryMediaContent.getView().getPhysicalDivision(), structure,
@@ -1327,7 +1363,7 @@ public class StructurePanel implements Serializable {
             if (!dragParents.isEmpty()) {
                 LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    if (isSeparateMedia()) {
+                    if (!this.logicalStructureTreeContainsMedia()) {
                         preserveLogical();
                     } else {
                         preserveLogicalAndPhysical();
@@ -1718,6 +1754,59 @@ public class StructurePanel implements Serializable {
                 .map(key -> new SelectItem(key,dataEditor.getRulesetManagement().getTranslationForKey(
                         key,dataEditor.getPriorityList()).orElse(key)))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media). 
+     * 
+     * @return true if logical structure tree contains media
+     */
+    public boolean logicalStructureTreeContainsMedia() {
+        return !this.isSeparateMedia() && this.isShowMediaInLogicalTree();
+    }
+
+    /**
+     * Return true if the users selected the option to show media in the logical structure tree.
+     * 
+     * @return true if the user want to see media in the logical structure tree
+     */
+    public boolean isShowMediaInLogicalTree() {
+        return this.showMediaInLogicalTree;
+    }
+
+    /**
+     * Sets whether media should be shown in the logical structure tree.
+     * 
+     * @param showMediaInLogicalTree boolean
+     */
+    public void setShowMediaInLogicalTree(boolean showMediaInLogicalTree) {
+        this.showMediaInLogicalTree = showMediaInLogicalTree;
+    }
+
+    /**
+     * Listener that is called when the user changes the UI option to show or hide
+     * media in the logical structure tree.
+     */
+    public void onShowMediaInLogicalTreeChange() {
+        this.show();
+        this.dataEditor.getGalleryPanel().show();
+    }
+
+    /**
+     * Returns whether the user selected to show the page range for each logical structure node.
+     * 
+     * @return value of showPageRangeInLogicalTree
+     */
+    public boolean isShowPageRangeInLogicalTree() {
+        return this.showPageRangeInLogicalTree;
+    }
+
+    /**
+     * Set whether the page range should be shown for each logical structure node.
+     * @param showPageRangeInLogicalTree boolean
+     */
+    public void setShowPageRangeInLogicalTree(boolean showPageRangeInLogicalTree) {
+        this.showPageRangeInLogicalTree = showPageRangeInLogicalTree;
     }
 
 }
