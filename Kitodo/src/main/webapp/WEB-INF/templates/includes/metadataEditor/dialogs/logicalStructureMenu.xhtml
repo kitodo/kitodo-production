@@ -21,7 +21,7 @@
             <ul>
                 <li>
                     <p:selectBooleanCheckbox 
-                    id="logicalStructureMenuShowPageRange"
+                    id="showPageRange"
                     value="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree}" 
                     itemLabel="#{msgs.showFirstAndLastMediaLabel}">
                         <p:ajax event="change" 
@@ -30,7 +30,7 @@
                 </li>
                 <li>
                     <p:selectBooleanCheckbox 
-                    id="logicalStructureMenuShowMediaCheckbox"
+                    id="showMediaCheckbox"
                     value="#{DataEditorForm.structurePanel.showMediaInLogicalTree}" 
                     disabled="#{DataEditorForm.structurePanel.separateMedia}"
                     itemLabel="#{msgs.showMedia}">
