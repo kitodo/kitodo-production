@@ -2627,6 +2627,20 @@ Column content
     overflow-x: hidden;
 }
 
+#imagePreviewForm\:olWrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 100%;
+}
+
+#map {
+    flex-grow: 1;
+    flex-shrink: 1;
+    width: 100%;
+    height: 100%;
+}
+
 #map > i {
     color: var(--pure-white);
     left: 50%;
@@ -2702,20 +2716,33 @@ Column content
 }
 
 #imagePreviewForm\:thumbnailStripe {
-    display: inline-block;
-    float: right;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
     height: 100%;
     border-left: 1px solid var(--blue);
     overflow: hidden;
     width: 100px;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 #thumbnailStripeScrollableContent {
-    box-sizing: content-box;
-    height: calc(100% - 136px);
     overflow-y: scroll;
-    padding-right: 50px;
+    scrollbar-width: none; /* hide scrollbar in Firefox */
+    -ms-overflow-style: none;  /* hide scrollbar in Internet Explorer 10+ */
+
+    flex-grow: 1;
+    flex-shrink: 1;
+    height: 100%;
     width: 100%;
+}
+
+#thumbnailStripeScrollableContent::-webkit-scrollbar { 
+    /* hide scrollbar in WebKit */
+    width: 0;
+    height: 0;
 }
 
 #imagePreviewForm\:thumbnailWrapper {

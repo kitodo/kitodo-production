@@ -249,8 +249,10 @@
                 <h:panelGroup id="olWrapper"
                               layout="block"
                               a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
-                              a:onmouseup="metadataEditor.gallery.handleMouseUp(event)"
-                              style="overflow-x: auto; height: 100%;">
+                              a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
+                    <div id="map" class="map">
+                        <i class="fa fa-spinner fa-spin"/>
+                    </div>
                     <h:panelGroup layout="block" id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
@@ -285,11 +287,6 @@
                             </h:panelGroup>
                         </div>
                         <p:commandButton icon="fa fa-arrow-down fa-lg" id="scroll-down" styleClass="scroll-button"/>
-                    </h:panelGroup>
-                    <h:panelGroup id="mapWrapper">
-                        <div id="map" class="map" style="width: calc(100% - 101px); height: 100%; display: inline-block; float: left;">
-                            <i class="fa fa-spinner fa-spin"/>
-                        </div>
                     </h:panelGroup>
                 </h:panelGroup>
             </ui:fragment>
