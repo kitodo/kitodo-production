@@ -33,6 +33,16 @@
             <h:outputText value="#{msgs.taskDetails} (#{ProcessForm.task.title})"
                           rendered="#{not empty ProcessForm.task.title}"/>
         </h3>
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  outcome="#{ProcessForm.taskEditReferer}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{ProcessForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton id="save" value="#{msgs.save}"
                          action="#{ProcessForm.saveTaskAndRedirect}"
                          icon="fa fa-floppy-o fa-lg"
@@ -40,16 +50,6 @@
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.taskSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          disabled="#{ProcessForm.saveDisabled}"
                          update="notifications"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProcessForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="#{ProcessForm.taskEditReferer}"
-                  onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

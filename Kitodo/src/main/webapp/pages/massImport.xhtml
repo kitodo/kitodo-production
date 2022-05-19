@@ -29,6 +29,13 @@
         <h3 id="headerText">
             <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}')"/>
         </h3>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
         <p:commandButton id="importButton"
                          value="#{msgs.massImport}"
                          disabled="#{empty MassImportForm.records}"
@@ -40,13 +47,6 @@
                          update="notifications sticky-notifications :massImportProgressForm">
             <p:resetInput target=":massImportProgressForm"/>
         </p:commandButton>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="projects"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

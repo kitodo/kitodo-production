@@ -53,6 +53,14 @@
             <h:outputText value="#{msgs.userConfiguration}"
                           rendered="#{isConfigMode}"/>
         </h3>
+        <p:button id="cancel" value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                  process="@this"
+                  immediate="#{true}"
+                  actionListener="#{UserForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton value="#{msgs.save}"
                          action="#{UserForm.save}"
                          id="save"
@@ -63,14 +71,6 @@
                          iconPos="right"
                          disabled="#{UserForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.userSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
-        <p:commandButton id="saveButtonToggler"
-                         process="@this"
-                         immediate="#{true}"
-                         actionListener="#{UserForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

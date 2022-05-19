@@ -34,23 +34,8 @@
         <p:panel id="titleProcess">
             <h3>#{msgs.processes}</h3> <h5> #{msgs.hits}: #{ProcessForm.amount}</h5>
         </p:panel>
-        <h:form id="configureColumnsForm"
-                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  label=""
-                                  converter="#{listColumnConverter}"
-                                  title="#{msgs.configureColumns}"
-                                  value="#{ProcessForm.selectedColumns}">
-                <f:selectItems value="#{ProcessForm.columns}" />
-                <p:ajax listener="#{ProcessForm.saveSelectedColumns()}"
-                        update="processesTabView"/>
-            </p:selectCheckboxMenu>
-        </h:form>
 
         <!-- filters -->
-        <p:button id="search" value="#{msgs.extendedSearch}"
-                  icon="fa fa-search" iconPos="right"
-                  outcome="extendedSearch"/>
         <h:panelGroup id="filterMenuWrapper">
             <h:form id="filterMenu"
                     rendered="#{ProcessForm.activeTabIndex eq 0}">
@@ -91,6 +76,23 @@
                 </div>
             </h:form>
         </h:panelGroup>
+
+        <p:button id="search" value="#{msgs.extendedSearch}"
+                  icon="fa fa-search" iconPos="right"
+                  outcome="extendedSearch"/>
+
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                  label=""
+                                  converter="#{listColumnConverter}"
+                                  title="#{msgs.configureColumns}"
+                                  value="#{ProcessForm.selectedColumns}">
+                <f:selectItems value="#{ProcessForm.columns}" />
+                <p:ajax listener="#{ProcessForm.saveSelectedColumns()}"
+                        update="processesTabView"/>
+            </p:selectCheckboxMenu>
+        </h:form>
     </ui:define>
 
     <ui:define name="pageTabView">

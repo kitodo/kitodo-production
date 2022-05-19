@@ -41,6 +41,17 @@
             <h:outputText value="#{msgs.createNewProcess}"
                           rendered="#{empty ProcessForm.process.title}"/>
         </h3>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  outcome="#{ProcessForm.processEditReferer}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{ProcessForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
@@ -50,17 +61,6 @@
                          disabled="#{ProcessForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.processSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProcessForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  outcome="#{ProcessForm.processEditReferer}"
-                  onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

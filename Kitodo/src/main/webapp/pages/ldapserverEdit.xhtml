@@ -40,6 +40,13 @@
             <h:outputText value="#{msgs.viewLdapServer}"
                           rendered="#{isViewMode}"/>
         </h3>
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{LdapServerForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
@@ -51,13 +58,6 @@
                          disabled="#{LdapServerForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.ldapServerSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{LdapServerForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
-                  outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg" iconPos="right" styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

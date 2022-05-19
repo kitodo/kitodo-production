@@ -26,24 +26,14 @@
         <h3 id="headerText" class="calendar-heading">
             <h:outputText value="#{msgs.calendar}"/>
         </h3>
-        <p:commandButton id="save"
-                         value="#{msgs['granularity.create']}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         action="#{CalendarForm.checkDuplicatedTitles()}"
-                         actionListener="#{CalendarForm.setGranularity(CalendarForm.granularity)}"
-                         onclick="setConfirmUnload(false);"
-                         update="notifications"/>
-        <p:commandButton value="#{msgs.fileDownload}"
-                         icon="fa fa-download fa-lg"
-                         iconPos="right"
-                         type="button"
-                         ajax="false"
-                         rendered="false"
-                         styleClass="secondary">
-            <!-- TODO disabled for now, because method is never called -->
-            <p:fileDownload value="#{CalendarForm.download()}"/>
-        </p:commandButton>
+                
+        <p:button value="#{msgs.cancel}"
+                  outcome="#{CalendarForm.getReferer()}"
+                  onclick="setConfirmUnload(false)"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+
         <!-- TODO disabled for now, because file is not transferred in uploadFileDialog.xhtml -->
         <p:commandButton value="#{msgs['calendar.upload']}"
                          onclick="PF('uploadFileDialog').show()"
@@ -52,12 +42,26 @@
                          type="button"
                          rendered="false"
                          styleClass="secondary"/>
-        <p:button value="#{msgs.cancel}"
-                  outcome="#{CalendarForm.getReferer()}"
-                  onclick="setConfirmUnload(false)"
-                  icon="fa fa-times fa-lg"
+
+        <p:commandButton value="#{msgs.fileDownload}"
+                  icon="fa fa-download fa-lg"
                   iconPos="right"
-                  styleClass="secondary"/>
+                  type="button"
+                  ajax="false"
+                  rendered="false"
+                  styleClass="secondary">
+            <!-- TODO disabled for now, because method is never called -->
+            <p:fileDownload value="#{CalendarForm.download()}"/>
+        </p:commandButton>
+
+        <p:commandButton id="save"
+                  value="#{msgs['granularity.create']}"
+                  icon="fa fa-floppy-o fa-lg"
+                  iconPos="right"
+                  action="#{CalendarForm.checkDuplicatedTitles()}"
+                  actionListener="#{CalendarForm.setGranularity(CalendarForm.granularity)}"
+                  onclick="setConfirmUnload(false);"
+                  update="notifications"/>
     </ui:define>
 
     <ui:define name="pageTabView">

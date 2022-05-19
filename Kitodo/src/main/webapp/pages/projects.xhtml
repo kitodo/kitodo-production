@@ -32,6 +32,18 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
+        <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                  scrollHeight="300"
+                                  label=""
+                                  converter="#{listColumnConverter}"
+                                  title="#{msgs.configureColumns}"
+                                  value="#{ProjectForm.selectedColumns}">
+                <f:selectItems value="#{ProjectForm.columns}" />
+                <p:ajax listener="#{ProjectForm.saveSelectedColumns()}"
+                        update="projectsTabView"/>
+            </p:selectCheckboxMenu>
+        </h:form>
         <h:form id="projectForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnProjectPage()}">
             <p:menuButton id="newElementButton" value="#{msgs.newElement}" icon="fa fa-plus"
                           iconPos="right" styleClass="callto" menuStyleClass="new-element-menu">
@@ -52,18 +64,6 @@
                             rendered="#{SecurityAccessController.hasAuthorityToAddRuleset()}"
                             id="newRulesetButton" icon="fa fa-plus"/>
             </p:menuButton>
-        </h:form>
-        <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  scrollHeight="300"
-                                  label=""
-                                  converter="#{listColumnConverter}"
-                                  title="#{msgs.configureColumns}"
-                                  value="#{ProjectForm.selectedColumns}">
-                <f:selectItems value="#{ProjectForm.columns}" />
-                <p:ajax listener="#{ProjectForm.saveSelectedColumns()}"
-                        update="projectsTabView"/>
-            </p:selectCheckboxMenu>
         </h:form>
     </ui:define>
 
