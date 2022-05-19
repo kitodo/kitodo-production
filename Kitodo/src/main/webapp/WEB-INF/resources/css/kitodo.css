@@ -657,8 +657,11 @@ section#content-section {
     position: relative;
 }
 
-.content-header .ui-panel-content {
+.content-header > .ui-panel-content {
     display: flex;
+}
+
+.content-header .ui-panel-content {
     padding: 0;
 }
 
@@ -1215,8 +1218,22 @@ h3#headerText {
     width: calc(100% - 48px);
 }
 
-#titleProcess :is(h3, h5) {
-    float: left;
+#titleProcess {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+#titleProcess > .ui-panel-content {
+    display: flex;
+}
+
+#titleProcess h3 {
+    display: inline-block;
+    flex-grow: 0;
+}
+
+#titleProcess h5 {
+    display: inline-block;
 }
 
 /*----------------------------------------------------------------------
