@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/mods.xsd http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd http://www.loc.gov/mix/v10 http://www.loc.gov/standards/mix/mix10/mix10.xsd" xmlns:mets="http://www.loc.gov/METS/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <mets:metsHdr CREATEDATE="2018-04-18T14:03:18">
+    <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+      <mets:name>Kitodo - kitodo-ugh-2.1.0-kitodo-ugh-2.1.0 - 22−May−2017</mets:name>
+      <mets:note>Kitodo</mets:note>
+    </mets:agent>
+  </mets:metsHdr>
+  <mets:dmdSec ID="DMDLOG_0000">
+    <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
+      <mets:xmlData>
+        <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
+          <kitodo:metadata name="singleDigCollection">Collection 2</kitodo:metadata>
+          <kitodo:metadata name="PublicationYearSorting">1910</kitodo:metadata>
+          <kitodo:metadata name="PlaceOfPublication">Berlin</kitodo:metadata>
+          <kitodo:metadata name="SizeSourcePrint">VI, 134 S.</kitodo:metadata>
+          <kitodo:metadata name="TitleDocMain">Das Pharmazeutische Institut der Universität Berlin</kitodo:metadata>
+          <kitodo:metadata name="TitleDocMainShort">Pharmazeutische Institut der Universität Berlin</kitodo:metadata>
+          <kitodo:metadata name="CatalogIDDigital">644901748</kitodo:metadata>
+          <kitodo:metadata name="shelfmarksource">Online Ressource</kitodo:metadata>
+          <kitodo:metadata name="DocLanguage">ger</kitodo:metadata>
+          <kitodo:metadata name="TSL_ATS">ThomDas</kitodo:metadata>
+          <kitodo:metadata name="PublisherName">Bornträger</kitodo:metadata>
+        </kitodo:kitodo>
+      </mets:xmlData>
+    </mets:mdWrap>
+  </mets:dmdSec>
+  <mets:dmdSec ID="DMDPHYS_0000">
+    <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="Kitodo">
+      <mets:xmlData>
+        <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
+          <kitodo:metadata name="copyrightimageset">Copyright: Universitätsbibliothek Braunschweig</kitodo:metadata>
+          <kitodo:metadata name="shelfmarksource">2726-0409</kitodo:metadata>
+          <kitodo:metadata name="pathimagefiles">file:///mnt/data/metadata/6/images/ThomPhar_644901748_tif</kitodo:metadata>
+        </kitodo:kitodo>
+      </mets:xmlData>
+    </mets:mdWrap>
+  </mets:dmdSec>
+  <mets:fileSec>
+    <mets:fileGrp USE="LOCAL">
+      <mets:file ID="FILE_0002" MIMETYPE="image/tiff">
+        <mets:FLocat LOCTYPE="URL" xlink:href="images/ThomPhar_644901748_media/00000002.tif" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+      </mets:file>
+    </mets:fileGrp>
+  </mets:fileSec>
+  <mets:structMap TYPE="LOGICAL">
+    <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph" />
+  </mets:structMap>
+  <mets:structMap TYPE="PHYSICAL">
+    <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence">
+      <mets:div ID="PHYS_0001" ORDER="1" ORDERLABEL="uncounted" TYPE="page">
+        <mets:fptr FILEID="FILE_0001"/>
+      </mets:div>
+    </mets:div>
+  </mets:structMap>
+  <mets:structLink>
+    <mets:smLink xlink:to="PHYS_0001" xlink:from="LOG_0000" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+  </mets:structLink>
+</mets:mets>

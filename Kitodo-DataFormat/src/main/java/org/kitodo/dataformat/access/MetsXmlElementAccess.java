@@ -37,6 +37,8 @@ import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
@@ -82,6 +84,8 @@ import org.kitodo.utils.JAXBContextCache;
  * @see "https://www.zvdd.de/fileadmin/AGSDD-Redaktion/METS_Anwendungsprofil_2.0.pdf"
  */
 public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
+    private static final Logger logger = LogManager.getLogger(MetsXmlElementAccess.class);
+
     /**
      * The data object of this mets XML element access.
      */
@@ -135,11 +139,16 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions = new HashMap<>();
         if (optionalPhysicalStructMap.isPresent()) {
             DivType div = optionalPhysicalStructMap.get().getDiv();
-            FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(div, mets, useXmlAttributeAccess);
+            Map<FileType, String> fileUseByFileCache = createFileUseByFileCache(mets);
+            FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(
+                div, mets, useXmlAttributeAccess, fileUseByFileCache
+            );
             PhysicalDivision physicalDivision = fileXmlElementAccess.getPhysicalDivision();
             workpiece.setPhysicalStructure(physicalDivision);
             divIDsToPhysicalDivisions.put(div.getID(), fileXmlElementAccess);
-            readMeadiaUnitsTreeRecursive(div, mets, useXmlAttributeAccess, physicalDivision, divIDsToPhysicalDivisions);
+            readMediaUnitsTreeRecursive(
+                div, mets, useXmlAttributeAccess, physicalDivision, divIDsToPhysicalDivisions, fileUseByFileCache
+            );
         }
         if (mets.getStructLink() == null) {
             mets.setStructLink(new StructLink());
@@ -153,19 +162,24 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             }
         }
         workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1)).collect(Collectors.toList())
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1))
+                .collect(Collectors.toList())
                 .iterator().next());
     }
 
-    private void readMeadiaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
-            PhysicalDivision physicalDivision, Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions) {
-
+    private void readMediaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
+            PhysicalDivision physicalDivision, Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions, 
+            Map<FileType, String> fileUseByFileCache) {
         for (DivType child : div.getDiv()) {
-            FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(child, mets, useXmlAttributeAccess);
+            FileXmlElementAccess fileXmlElementAccess = new FileXmlElementAccess(
+                child, mets, useXmlAttributeAccess, fileUseByFileCache
+            );
             PhysicalDivision childPhysicalDivision = fileXmlElementAccess.getPhysicalDivision();
             physicalDivision.getChildren().add(childPhysicalDivision);
             divIDsToPhysicalDivisions.put(child.getID(), fileXmlElementAccess);
-            readMeadiaUnitsTreeRecursive(child, mets, useXmlAttributeAccess, childPhysicalDivision, divIDsToPhysicalDivisions);
+            readMediaUnitsTreeRecursive(
+                child, mets, useXmlAttributeAccess, childPhysicalDivision, divIDsToPhysicalDivisions, fileUseByFileCache
+            );
         }
     }
 
@@ -407,5 +421,32 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
             return smLink;
         }).collect(Collectors.toList()));
         return structLink;
+    }
+
+    /**
+     * Create a map that stores a file's use parameter for each existing file (e.g. MAX, THUMB, LOCAL). 
+     * 
+     * @param mets the mets file
+     * @return the map from file to file group use
+     */
+    private Map<FileType, String> createFileUseByFileCache(Mets mets) {
+        HashMap<FileType, String> fileUseMap = new HashMap<>();
+        FileSec fileSec = mets.getFileSec();
+        if (Objects.nonNull(fileSec)) {
+            for (FileGrp fileGrp : fileSec.getFileGrp()) {
+                String use = fileGrp.getUSE();
+                for (FileType file : fileGrp.getFile()) {
+                    if (fileUseMap.containsKey(file)) {
+                        throw new IllegalArgumentException(
+                            "Corrupt file: file with id " + file.getID() + " is part of multiple groups"
+                        );
+                    } else {
+                        fileUseMap.put(file, use);
+                    }
+                }
+                
+            }
+        }
+        return fileUseMap;
     }
 }

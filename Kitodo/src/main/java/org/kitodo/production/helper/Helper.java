@@ -442,7 +442,12 @@ public class Helper {
      */
     public static String getTranslation(String title, String... insertions) {
         String pattern = getString(desiredLanguage(), title);
-        String message = MessageFormat.format(pattern, (Object[]) insertions);
+        String message = pattern;
+        try {
+            message = MessageFormat.format(pattern, (Object[]) insertions);
+        } catch (IllegalArgumentException e) {
+            logger.catching(Level.WARN, e);
+        }
         return appendUnusedInsertions(message, insertions);
     }
 
