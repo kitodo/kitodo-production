@@ -45,7 +45,7 @@
         <tomcat.version>9.0.62</tomcat.version>
         <awaitility.version>4.0.1</awaitility.version>
         <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
-        <commons-codec.version>1.13</commons-codec.version>
+        <commons-codec.version>1.15</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.11.0</commons-io.version>
@@ -53,20 +53,20 @@
         <commons-net.version>3.8.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
-        <hibernate.version>5.4.33.Final</hibernate.version>
+        <hibernate.version>5.6.7.Final</hibernate.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jhove.version>1.20.1</jhove.version>
-        <myfaces.version>2.3.4</myfaces.version>
-        <mysql.version>8.0.16</mysql.version>
-        <poi.version>5.2.1</poi.version>
+        <myfaces.version>2.3.9</myfaces.version>
+        <mysql.version>8.0.29</mysql.version>
+        <poi.version>5.2.2</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.17.2</log4j.version>
         <junit.version>5.5.2</junit.version>
-        <elasticsearch.version>7.10.2</elasticsearch.version>
+        <elasticsearch.version>7.17.3</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
@@ -74,7 +74,7 @@
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.6.3</spring.security.version>
+        <spring.security.version>5.6.4</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
