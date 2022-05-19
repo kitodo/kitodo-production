@@ -224,6 +224,17 @@ function scrollToSelectedTreeNode() {
     }
 }
 
+function scrollToSelectedPaginationRow() {
+    let container = $("#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer");
+    let scrollTo = container.find("li.ui-state-highlight");
+    if (scrollTo.length === 1) {
+        container.animate({
+            scrollTop: scrollTo.offset().top + container.scrollTop() - container.offset().top - container.height()/2
+        }, 180, null, null);
+    }
+}
+
+
 $(document).ready(function () {
     if ($("#thumbnailStripeScrollableContent")[0] != null) {
         initialize();

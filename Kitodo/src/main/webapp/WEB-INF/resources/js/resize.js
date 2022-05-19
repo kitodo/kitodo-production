@@ -515,6 +515,7 @@ function updateMetadataEditorView(showMetadataColumn) {
     scrollToSelectedThumbnail();
     initializeImage();
     scrollToSelectedTreeNode();
+    scrollToSelectedPaginationRow();
 }
 
 function resizeMap() {

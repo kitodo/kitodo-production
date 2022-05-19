@@ -30,7 +30,10 @@
                 dragdropScope="physicalTree">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
-                    oncomplete="initializeImage();expandMetadata('physical-metadata-tab');"
+                    oncomplete="scrollToSelectedThumbnail();
+                                scrollToSelectedPaginationRow();
+                                initializeImage();
+                                expandMetadata('physical-metadata-tab');"
                     update="@(.thumbnail)
                             @(.stripe)
                             galleryHeadingWrapper
