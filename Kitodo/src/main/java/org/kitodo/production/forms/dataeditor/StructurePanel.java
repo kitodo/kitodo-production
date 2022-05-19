@@ -1088,6 +1088,7 @@ public class StructurePanel implements Serializable {
                 expandNode(event.getDropNode());
                 dataEditor.getGalleryPanel().updateStripes();
                 dataEditor.getGalleryPanel().updateMedia();
+                dataEditor.getPaginationPanel().show();
                 return;
             } else {
                 Helper.setErrorMessage(
@@ -1290,6 +1291,7 @@ public class StructurePanel implements Serializable {
                         preserveLogicalAndPhysical();
                     }
                     this.dataEditor.getGalleryPanel().updateStripes();
+                    this.dataEditor.getPaginationPanel().show();
                 } else {
                     Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
                         dragNode.getLabel()));
