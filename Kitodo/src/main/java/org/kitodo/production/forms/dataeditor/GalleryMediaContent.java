@@ -104,6 +104,18 @@ public class GalleryMediaContent {
     }
 
     /**
+     * Returns the shortened ID of the media by removing leading zeros.
+     * @return the shortened id of the media file
+     */
+    public String getShortId() {
+        if (Objects.nonNull(id)) {
+            return id.replaceFirst("^0+(?!$)", "");
+        } else {
+            return "-";
+        }
+    }
+
+    /**
      * Returns the media content. This is the method that is called when the web
      * browser wants to retrieve the media file itself.
      *

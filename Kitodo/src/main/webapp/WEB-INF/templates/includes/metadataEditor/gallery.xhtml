@@ -139,7 +139,7 @@
                                                         rendered="#{media.assignedSeveralTimes}"
                                                         styleClass="assigned-several-times"/>
                                             <h:panelGroup class="thumbnail-overlay">
-                                                #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
                                             </h:panelGroup>
                                         </p:outputPanel>
                                     </p:outputPanel>
@@ -194,7 +194,7 @@
                                                                  value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
                                                     </p:graphicImage>
                                                     <h:panelGroup class="thumbnail-overlay">
-                                                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                        #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
                                                     </h:panelGroup>
                                             </p:outputPanel>
                                         </h:panelGroup>
@@ -234,7 +234,7 @@
                                                      value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
                                         </p:graphicImage>
                                     <h:panelGroup styleClass="thumbnail-overlay">
-                                        #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                        #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
                                     </h:panelGroup>
                                 </h:panelGroup>
                             </p:panel>
@@ -278,7 +278,7 @@
                                                              value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
                                                 </p:graphicImage></h:outputText>
                                                 <h:panelGroup layout="block" styleClass="thumbnail-overlay">
-                                                    #{msgs.image} #{media.order}, #{msgs.page} #{media.orderlabel}
+                                                    #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
                                                 </h:panelGroup>
                                             </p:outputPanel>
                                         </h:panelGroup>

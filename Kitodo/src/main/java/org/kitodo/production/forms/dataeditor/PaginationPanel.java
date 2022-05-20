@@ -274,9 +274,8 @@ public class PaginationPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         paginationSelectionItems = new ArrayList<>(physicalDivisions.size());
         for (int i = 0; i < physicalDivisions.size(); i++) {
-            PhysicalDivision physicalDivision = physicalDivisions.get(i);
-            String label = Objects.isNull(physicalDivision.getOrderlabel()) ? Integer.toString(physicalDivision.getOrder())
-                    : physicalDivision.getOrder() + " : " + physicalDivision.getOrderlabel();
+            View view = View.of(physicalDivisions.get(i));
+            String label = dataEditor.getStructurePanel().buildViewLabel(view);
             paginationSelectionItems.add(new SelectItem(i, label));
         }
     }

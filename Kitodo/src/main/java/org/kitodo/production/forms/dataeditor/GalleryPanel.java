@@ -510,7 +510,12 @@ public class GalleryPanel {
             resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
+        // prefer canonical of preview folder
         String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
+        if (Objects.isNull(canonical)) {
+            // if preview media not available, load canonical id from other folders
+            canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
+        }
         String treeNodeId = "unknown";
         if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(idx)) {
             treeNodeId = stripeTreeNodeId + "_" + String.valueOf(idx);
