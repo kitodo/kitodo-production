@@ -34,17 +34,14 @@
                 selection="#{DataEditorForm.structurePanel.selectedLogicalNode}"
                 draggable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                 droppable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
-                dragdropScope="logicalTree">
+                dragdropScope="logicalTree"
+                onNodeClick="metadataEditor.logicalTree.onNodeClick(node,event)">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();changeToMapView();expandMetadata('logical-metadata-tab');"
-                    update="@(.stripe)
-                            @(.thumbnail)
-                            galleryHeadingWrapper
+                    update="galleryHeadingWrapper
                             imagePreviewForm:mediaViewData
                             contextMenuLogicalTree
-                            physicalTree
-                            paginationForm:paginationWrapperPanel
                             imagePreviewForm:stripeContextMenu
                             imagePreviewForm:mediaContextMenu
                             metadataAccordion:logicalMetadataWrapperPanel"/>

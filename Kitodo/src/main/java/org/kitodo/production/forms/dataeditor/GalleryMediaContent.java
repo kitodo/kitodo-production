@@ -55,6 +55,20 @@ public class GalleryMediaContent {
     private final View view;
 
     /**
+     * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
+     * tree. This id can be used in the user interface to identify which gallery thumbnail 
+     * corresponds to which tree node in the logical structure tree.
+     * 
+     * <p>It consists of a sequence of numbers separated by underscore, e.g. "0_1_4". Each number
+     * describes the position of a child amongst its siblings at that level. For example, "0_1_4" 
+     * references the node that is reached when moving from root node to leaf node using the first 
+     * child, then the second child, and then the fifth child.</p>
+     * 
+     * <p>The root node itself is never referenced, as it is not visualized anyway.</p>
+     */
+    private String logicalTreeNodeId;
+
+    /**
      * Creates a new gallery media content.
      *
      * @param panel
@@ -70,12 +84,13 @@ public class GalleryMediaContent {
      *            URI to the content for the media view. Can be {@code null},
      *            then no media view is offered.
      */
-    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri) {
+    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri, String logicalTreeNodeId) {
         this.panel = panel;
         this.view = view;
         this.id = canonical;
         this.previewUri = previewUri;
         this.mediaViewUri = mediaViewUri;
+        this.logicalTreeNodeId = logicalTreeNodeId;
     }
 
     /**
@@ -203,5 +218,24 @@ public class GalleryMediaContent {
             return view.getPhysicalDivision().getLogicalDivisions().size() > 1;
         }
         return false;
+    }
+
+    /**
+     * Returns the id to the corresponding tree node of the primefaces tree component used to 
+     * visualize the logical structure tree.
+     * 
+     * @return the logical tree node id
+     */
+    public String getLogicalTreeNodeId() {
+        return this.logicalTreeNodeId;
+    }
+
+    /**
+     * Sets the id of the corresponding tree node of the primefaces tree component used to 
+     * visualize the logical structure tree.
+     * @param treeNodeId the tree node id
+     */
+    public void setLogicalTreeNodeId(String treeNodeId) {
+        this.logicalTreeNodeId = treeNodeId;
     }
 }
