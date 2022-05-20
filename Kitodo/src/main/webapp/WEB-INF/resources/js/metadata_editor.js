@@ -573,7 +573,7 @@ metadataEditor.logicalTree = {
      * @returns true if checkbox "show media" is checked
      */
     isHideMediaChecked() {
-        return $("#logicalStructureMenuForm\\:hideMediaCheckbox input").attr("aria-checked") == "true";
+        return $("#logicalStructureMenuForm\\:hideMediaCheckbox input").attr("aria-checked") === "true";
     },
 
     /**
