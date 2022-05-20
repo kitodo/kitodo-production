@@ -33,45 +33,6 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
-        <h:form id="newElementForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnUserPage()}">
-            <p:menuButton value="#{msgs.newElement}"
-                          id="newElementButton"
-                          icon="fa fa-plus"
-                          iconPos="right"
-                          styleClass="callto"
-                          menuStyleClass="new-element-menu">
-                <p:menuitem value="#{msgs.newUser}" id="newUserButton"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddUser()}"
-                            action="#{UserForm.newUser}" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddRole()}"
-                            action="#{RoleForm.newRole}" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddClient()}"
-                            action="#{ClientForm.newClient}" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGroupForm.newLdapGroup}"
-                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"
-                            icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
-                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"
-                            icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newAuthority}" id="newAuthority" action="#{AuthorityForm.newAuthority}"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddAuthority()}"
-                            icon="fa fa-plus"/>
-            </p:menuButton>
-        </h:form>
-        <h:form id="configureColumnsForm"
-                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
-            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
-                                  label=""
-                                  converter="#{listColumnConverter}"
-                                  title="#{msgs.configureColumns}"
-                                  value="#{UserForm.selectedColumns}">
-                <f:selectItems value="#{UserForm.columns}"/>
-                <p:ajax listener="#{UserForm.saveSelectedColumns()}"
-                        update="usersTabView"/>
-            </p:selectCheckboxMenu>
-        </h:form>
         <h:panelGroup id="filterMenuWrapper">
             <h:form id="filterMenu"
                     rendered="#{UserForm.activeTabIndex eq 0}">
@@ -111,6 +72,45 @@
                 </h:panelGroup>
             </h:form>
         </h:panelGroup>
+        <h:form id="configureColumnsForm"
+                rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
+            <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
+                                  label=""
+                                  converter="#{listColumnConverter}"
+                                  title="#{msgs.configureColumns}"
+                                  value="#{UserForm.selectedColumns}">
+                <f:selectItems value="#{UserForm.columns}"/>
+                <p:ajax listener="#{UserForm.saveSelectedColumns()}"
+                        update="usersTabView"/>
+            </p:selectCheckboxMenu>
+        </h:form>
+        <h:form id="newElementForm" rendered="#{SecurityAccessController.hasAuthorityToAddOnUserPage()}">
+            <p:menuButton value="#{msgs.newElement}"
+                          id="newElementButton"
+                          icon="fa fa-plus"
+                          iconPos="right"
+                          styleClass="callto"
+                          menuStyleClass="new-element-menu">
+                <p:menuitem value="#{msgs.newUser}" id="newUserButton"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddUser()}"
+                            action="#{UserForm.newUser}" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newRole}" id="newRoleButton"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddRole()}"
+                            action="#{RoleForm.newRole}" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newClient}" id="newClientButton" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddClient()}"
+                            action="#{ClientForm.newClient}" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newLdapGroup}" id="newLdapGroupButton" action="#{LdapGroupForm.newLdapGroup}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapGroup')}"
+                            icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newLdapServer}" id="newLdapServerButton" action="#{LdapServerForm.newLdapServer}"
+                            rendered="#{SecurityAccessController.hasAuthorityGlobal('addLdapServer')}"
+                            icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newAuthority}" id="newAuthority" action="#{AuthorityForm.newAuthority}"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddAuthority()}"
+                            icon="fa fa-plus"/>
+            </p:menuButton>
+        </h:form>        
     </ui:define>
 
     <ui:define name="pageTabView">

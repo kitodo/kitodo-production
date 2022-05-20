@@ -41,6 +41,17 @@
             <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewLdapGroup}" rendered="#{isViewMode}"/>
         </h3>
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  outcome="users?keepPagination=true"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{LdapGroupForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
@@ -51,17 +62,6 @@
                          disabled="#{LdapGroupForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.ldapGroupSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{LdapGroupForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  outcome="users?keepPagination=true"
-                  onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

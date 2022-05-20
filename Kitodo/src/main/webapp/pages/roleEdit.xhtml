@@ -42,24 +42,7 @@
             <h:outputText value="#{msgs.createNewRole}" rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewRole} (#{RoleForm.role.title})" rendered="#{isViewMode}"/>
         </h3>
-        <p:commandButton id="save"
-                         widgetVar="save"
-                         rendered="#{isEditMode || isCreateMode}"
-                         value="#{msgs.save}"
-                         action="#{RoleForm.save}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({
-                                        'summary':'#{msgs.roleSaving}',
-                                        'detail':'#{msgs.youWillBeRedirected}',
-                                        'severity':'info'});"
-
-                         update="notifications"
-                         disabled="#{RoleForm.saveDisabled}"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{RoleForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
+        
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
@@ -67,6 +50,26 @@
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
+
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{RoleForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
+
+        <p:commandButton id="save"
+                  widgetVar="save"
+                  rendered="#{isEditMode || isCreateMode}"
+                  value="#{msgs.save}"
+                  action="#{RoleForm.save}"
+                  icon="fa fa-floppy-o fa-lg"
+                  iconPos="right"
+                  onclick="setConfirmUnload(false);PF('notifications').renderMessage({
+                                 'summary':'#{msgs.roleSaving}',
+                                 'detail':'#{msgs.youWillBeRedirected}',
+                                 'severity':'info'});"
+
+                  update="notifications"
+                  disabled="#{RoleForm.saveDisabled}"/>
     </ui:define>
 
     <ui:define name="pageTabView">

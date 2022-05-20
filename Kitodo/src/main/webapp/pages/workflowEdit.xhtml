@@ -56,6 +56,15 @@
             <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
         </h3>
+        <p:commandButton value="#{isViewMode ? msgs.close : msgs.cancel}"
+                  action="#{WorkflowForm.cancel()}"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="#{isViewMode ? 'primary' : 'secondary'}"/>
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{WorkflowForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton id="save"
                          action="#{WorkflowForm.saveAndRedirect}"
                          widgetVar="save"
@@ -69,15 +78,6 @@
                               'detail':'#{msgs.youWillBeRedirected}',
                               'severity':'info'});"
                          disabled="#{WorkflowForm.saveDisabled}"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{WorkflowForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:commandButton value="#{isViewMode ? msgs.close : msgs.cancel}"
-                  action="#{WorkflowForm.cancel()}"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="#{isViewMode ? 'primary' : 'secondary'}"/>
     </ui:define>
 
     <ui:define name="pageTabView">

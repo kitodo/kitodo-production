@@ -42,7 +42,18 @@
             <h:outputText value="#{msgs.viewAuthority}"
                           rendered="#{isViewMode}"/>
         </h3>
-        <p:commandButton id="save"
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="users?keepPagination=true"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{AuthorityForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+                         <p:commandButton id="save"
                          rendered="#{isEditMode || isCreateMode}"
                          widgetVar="save"
                          value="#{msgs.save}"
@@ -52,17 +63,6 @@
                          iconPos="right"
                          disabled="#{AuthorityForm.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.authoritySaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{AuthorityForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="users?keepPagination=true"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

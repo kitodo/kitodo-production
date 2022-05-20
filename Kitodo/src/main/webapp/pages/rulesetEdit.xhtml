@@ -42,6 +42,16 @@
             <h:outputText value="#{msgs.editRuleset} (#{RulesetForm.ruleset.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.viewRuleset} (#{RulesetForm.ruleset.title})" rendered="#{isViewMode}"/>
         </h3>
+        <p:button value="#{msgs.cancel}"
+                  outcome="projects?keepPagination=true"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                  actionListener="#{RulesetForm.setSaveDisabled(false)}"
+                  update="save"
+                  style="display:none;"/>
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
@@ -52,16 +62,6 @@
                          rendered="#{isEditMode || isCreateMode}"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.rulesetSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          disabled="#{RulesetForm.saveDisabled}"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{RulesetForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button value="#{msgs.cancel}"
-                  outcome="projects?keepPagination=true"
-                  onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

@@ -39,25 +39,6 @@
             <h:outputText value="#{msgs.duplicateProject}"
                           rendered="#{ProjectForm.project.id eq null and not empty ProjectForm.project.title}"/>
         </h3>
-        <p:commandButton id="save"
-                         widgetVar="save"
-                         value="#{msgs.save}"
-                         action="#{ProjectForm.save()}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         disabled="#{ProjectForm.saveDisabled}"
-                         update="notifications"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{ProjectForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="#{not empty param['referer'] ? param['referer'] : ProjectForm.projectEditReferer}"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
         <p:commandButton
                 value="#{ProjectForm.locked ? msgs.locked : msgs.unlocked}"
                 icon="#{ProjectForm.locked ? 'fa fa-lock fa-lg' : 'fa fa-unlock fa-lg'}"
@@ -67,6 +48,25 @@
                 update="editForm"
                 action="#{ProjectForm.switchLock()}">
         </p:commandButton>
+        <p:button value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="#{not empty param['referer'] ? param['referer'] : ProjectForm.projectEditReferer}"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{ProjectForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         value="#{msgs.save}"
+                         action="#{ProjectForm.save()}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                         disabled="#{ProjectForm.saveDisabled}"
+                         update="notifications"/>
     </ui:define>
 
     <ui:define name="pageTabView">

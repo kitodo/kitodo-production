@@ -19,14 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.extendedSearch}</h3>
-        <p:commandButton id="submitProcessSearch"
-                         value="#{msgs.searchForVolume}"
-                         action="#{SearchForm.filterProcesses}"
-                         onclick="setConfirmUnload(false)"
-                         icon="fa fa-search"
-                         iconPos="right"
-                         styleClass="right"
-                         rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"/>
+
         <p:commandButton id="submitTaskSearch"
                          value="#{msgs.searchForTask}"
                          action="#{SearchForm.filterTasks}"
@@ -35,6 +28,14 @@
                          iconPos="right"
                          styleClass="right"
                          rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}"/>
+        <p:commandButton id="submitProcessSearch"
+                         value="#{msgs.searchForVolume}"
+                         action="#{SearchForm.filterProcesses}"
+                         onclick="setConfirmUnload(false)"
+                         icon="fa fa-search"
+                         iconPos="right"
+                         styleClass="right"
+                         rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"/>
     </ui:define>
 
     <ui:define name="pageTabView">

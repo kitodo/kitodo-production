@@ -49,6 +49,20 @@
             <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})" rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.viewTemplate} (#{TemplateForm.template.title})" rendered="#{isViewMode}"/>
         </h3>
+
+        <p:button id="cancel"
+                  value="#{isViewMode ? msgs.close : msgs.cancel}"
+                  outcome="#{'projects'}"
+                  onclick="setConfirmUnload(false);"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{TemplateForm.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+
         <p:commandButton id="save"
                          widgetVar="save"
                          value="#{msgs.save}"
@@ -60,17 +74,7 @@
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.templateSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          update="notifications"
                          immediate="true"/>
-        <p:commandButton id="saveButtonToggler"
-                         actionListener="#{TemplateForm.setSaveDisabled(false)}"
-                         update="save"
-                         style="display:none;"/>
-        <p:button id="cancel"
-                  value="#{isViewMode ? msgs.close : msgs.cancel}"
-                  outcome="#{'projects'}"
-                  onclick="setConfirmUnload(false);"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
+        
     </ui:define>
 
     <ui:define name="pageTabView">

@@ -35,21 +35,16 @@
     <ui:define name="contentHeader">
         <h3 id="headerText">
             <h:outputText value="#{msgs.createNewProcess} (#{msgs.template}: '#{CreateProcessForm.template.title}')"/>
-        </h3>
-        <p:commandButton id="save"
-                         value="#{msgs.save}"
-                         action="#{CreateProcessForm.createNewProcess}"
-                         icon="fa fa-floppy-o fa-lg" iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
-                         update="notifications, sticky-notifications"/>
-        <p:commandButton id="saveContinue"
-                         value="#{msgs.save} + #{msgs.newElement}"
-                         action="#{CreateProcessForm.createNewProcessAndContinue}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
-                         update="notifications, sticky-notifications"
-                         styleClass="secondary"/>
+        </h3>       
+        
+        <p:button id="cancel"
+                  value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="#{not empty param['referrer'] ? param['referrer'] : not empty CreateProcessForm.referringView ? CreateProcessForm.referringView : 'desktop'}"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+
         <p:menuButton id="dataTransfer"
                       value="#{msgs.dataTransfer}"
                       icon="fa fa-book"
@@ -83,13 +78,22 @@
                 <p:resetInput target="searchEditForm"/>
             </p:menuitem>
         </p:menuButton>
-        <p:button id="cancel"
-                  value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="#{not empty param['referrer'] ? param['referrer'] : not empty CreateProcessForm.referringView ? CreateProcessForm.referringView : 'desktop'}"
-                  icon="fa fa-times fa-lg"
+
+        <p:commandButton id="saveContinue"
+                  value="#{msgs.save} + #{msgs.newElement}"
+                  action="#{CreateProcessForm.createNewProcessAndContinue}"
+                  icon="fa fa-floppy-o fa-lg"
                   iconPos="right"
+                  onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                  update="notifications, sticky-notifications"
                   styleClass="secondary"/>
+
+        <p:commandButton id="save"
+                  value="#{msgs.save}"
+                  action="#{CreateProcessForm.createNewProcess}"
+                  icon="fa fa-floppy-o fa-lg" iconPos="right"
+                  onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                  update="notifications, sticky-notifications"/>
     </ui:define>
 
     <ui:define name="pageTabView">

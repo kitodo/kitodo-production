@@ -653,9 +653,12 @@ section#content-section {
 }
 
 .content-header {
-    flex: 0 1 36px;
     padding: var(--input-padding) var(--default-full-size);
     position: relative;
+}
+
+.content-header > .ui-panel-content {
+    display: flex;
 }
 
 .content-header .ui-panel-content {
@@ -664,6 +667,8 @@ section#content-section {
 
 .content-header .ui-panel-content > h3 {
     display: inline;
+    flex-grow: 1;
+    flex-shrink: 1;
     line-height: 36px;
 }
 
@@ -671,7 +676,7 @@ section#content-section {
 .content-header .ui-panel-content > button,
 .ui-menubutton,
 .ui-selectbooleanbutton {
-    float: right;
+    white-space: nowrap;
     margin-left: var(--default-full-size);
 }
 
@@ -1104,7 +1109,6 @@ h3#headerText {
     display: inline-block;
     overflow-x: hidden;
     text-overflow: ellipsis;
-    width: calc(100% - 820px);
     white-space: nowrap;
 }
 
@@ -1214,8 +1218,22 @@ h3#headerText {
     width: calc(100% - 48px);
 }
 
-#titleProcess :is(h3, h5) {
-    float: left;
+#titleProcess {
+    flex-grow: 1;
+    flex-shrink: 1;
+}
+
+#titleProcess > .ui-panel-content {
+    display: flex;
+}
+
+#titleProcess h3 {
+    display: inline-block;
+    flex-grow: 0;
+}
+
+#titleProcess h5 {
+    display: inline-block;
 }
 
 /*----------------------------------------------------------------------
