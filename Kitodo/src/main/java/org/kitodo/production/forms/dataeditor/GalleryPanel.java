@@ -204,10 +204,8 @@ public class GalleryPanel {
     }
 
     /**
-     * Handle event of page being dragged and dropped in gallery.
-     *
-     * @param event
-     *            JSF drag'n'drop event description object
+     * Handle event of page being dragged and dropped in gallery. Parameters are provided by 
+     * remoteCommand "triggerOnPageDrop", see gallery.xhtml.
      */
     public void onPageDrop() {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -244,7 +242,16 @@ public class GalleryPanel {
         }
         dataEditor.getStructurePanel().show();
         dataEditor.getPaginationPanel().show();
-        updateAffectedStripes(toStripe, viewsToBeMoved);
+        this.updateStripes();
+        dataEditor.getSelectedMedia().clear();
+
+        // mark previously selected thumbnail in new stripe as selected
+        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
+        for (GalleryMediaContent toStripeMedia : toStripe.getMedias()) {
+            if (movedViews.contains(toStripeMedia.getView())) {
+                select(toStripeMedia, toStripe, "multi");
+            }
+        }
     }
 
     private boolean dragStripeIndexMatches(String dragId) {
@@ -305,39 +312,6 @@ public class GalleryPanel {
         dataEditor.getStructurePanel().reorderPhysicalDivisions(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
-    }
-
-    private void updateAffectedStripes(GalleryStripe toStripe, List<Pair<View, LogicalDivision>> viewsToBeMoved) {
-        for (Pair<View, LogicalDivision> viewToBeMoved : viewsToBeMoved) {
-            GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
-            if (Objects.nonNull(fromStripe)) {
-                fromStripe.getMedias().clear();
-                for (View remainingView : fromStripe.getStructure().getViews()) {
-                    fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
-                }
-            }
-        }
-        toStripe.getMedias().clear();
-
-        dataEditor.getSelectedMedia().clear();
-
-        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
-        for (View toStripeView : toStripe.getStructure().getViews()) {
-            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
-            toStripe.getMedias().add(galleryMediaContent);
-            if (movedViews.contains(toStripeView)) {
-                select(galleryMediaContent, toStripe, "multi");
-            }
-        }
-    }
-
-    private GalleryStripe getGalleryStripe(LogicalDivision structuralElement) {
-        for (GalleryStripe galleryStripe : stripes) {
-            if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
-                return galleryStripe;
-            }
-        }
-        return null;
     }
 
     /**
@@ -413,16 +387,18 @@ public class GalleryPanel {
         cachingUUID = UUID.randomUUID().toString();
 
         previewFolder = new Subfolder(process, project.getPreview());
-        updateMedia();
+        updateStripes();
 
-        addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
         }
     }
 
-    void updateMedia() {
+    /** 
+     * Recreate media list from workpiece, which provides medias in correct order after drag and drop.
+     */
+    private void updateMedia() {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         medias = new ArrayList<>(physicalDivisions.size());
         previewImageResolver = new HashMap<>();
@@ -437,7 +413,14 @@ public class GalleryPanel {
         }
     }
 
-    void updateStripes() {
+    /** 
+     * Recreate gallery stripes, e.g., after drag and drop.
+     * 
+     * <p>Always update media when recreating gallery stripes such that horizontal 
+     * gallery stripes and vertical thumbnail list of detail view are in sync.</p>
+     */
+    public void updateStripes() {
+        updateMedia();
         stripes = new ArrayList<>();
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
     }
