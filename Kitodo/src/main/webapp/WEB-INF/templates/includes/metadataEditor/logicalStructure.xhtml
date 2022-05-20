@@ -38,7 +38,10 @@
                 onNodeClick="metadataEditor.logicalTree.onNodeClick(node,event)">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
-                    oncomplete="scrollToSelectedThumbnail();changeToMapView();expandMetadata('logical-metadata-tab');"
+                    oncomplete="scrollToSelectedThumbnail();
+                                scrollToSelectedPaginationRow();
+                                changeToMapView();
+                                expandMetadata('logical-metadata-tab');"
                     update="galleryHeadingWrapper
                             imagePreviewForm:mediaViewData
                             contextMenuLogicalTree
@@ -48,7 +51,10 @@
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     onstart="$('#contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
-                    oncomplete="scrollToSelectedThumbnail();changeToMapView();PF('contextMenuLogicalTree').show(currentEvent)"
+                    oncomplete="scrollToSelectedThumbnail();
+                                scrollToSelectedPaginationRow();
+                                changeToMapView();
+                                PF('contextMenuLogicalTree').show(currentEvent)"
                     update="@(.stripe)
                             @(.thumbnail)
                             galleryHeadingWrapper

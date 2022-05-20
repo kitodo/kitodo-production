@@ -32,7 +32,10 @@
                 onNodeClick="metadataEditor.physicalTree.onNodeClick(node,event)">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
-                    oncomplete="initializeImage();expandMetadata('physical-metadata-tab');scrollToSelectedThumbnail();"
+                    oncomplete="scrollToSelectedThumbnail();
+                                scrollToSelectedPaginationRow();
+                                initializeImage();
+                                expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
                             imagePreviewForm:mediaViewData
                             metadataAccordion:physicalMetadataWrapperPanel"/>

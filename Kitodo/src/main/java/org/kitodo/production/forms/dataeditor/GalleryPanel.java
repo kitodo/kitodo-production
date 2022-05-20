@@ -797,10 +797,11 @@ public class GalleryPanel {
         GalleryMediaContent currentSelection = getGalleryMediaContent(selectedPhysicalDivision);
         select(currentSelection, parentStripe, selectionType);
 
+        String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
-            PrimeFaces.current().executeScript("checkScrollPosition();initializeImage();scrollToSelectedTreeNode()");
+            PrimeFaces.current().executeScript("checkScrollPosition();initializeImage();" + scrollScripts);
         } else {
-            PrimeFaces.current().executeScript("scrollToSelectedTreeNode()");
+            PrimeFaces.current().executeScript(scrollScripts);
         }
     }
 
@@ -808,7 +809,7 @@ public class GalleryPanel {
         LogicalDivision logicalDivision = stripes.get(Integer.parseInt(stripeIndex)).getStructure();
         dataEditor.getSelectedMedia().clear();
         dataEditor.getStructurePanel().updateLogicalNodeSelection(logicalDivision);
-        PrimeFaces.current().executeScript("scrollToSelectedTreeNode()");
+        PrimeFaces.current().executeScript("scrollToSelectedTreeNode();scrollToSelectedPaginationRow();");
     }
 
     /**
