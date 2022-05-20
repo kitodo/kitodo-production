@@ -31,19 +31,15 @@
                 actionListener="#{DataEditorForm.galleryPanel.onPageDrop}" 
                 update="@(.pageList)
                         logicalTree
+                        physicalTree
                         paginationForm:paginationWrapperPanel"/>
             
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
 
-            <p:remoteCommand name="select"
+            <p:remoteCommand name="sendGallerySelect"
                              action="#{DataEditorForm.galleryPanel.select}"
-                             update="@(.stripe)
-                                     @(.thumbnail)
-                                     galleryHeadingWrapper
+                             update="galleryHeadingWrapper
                                      imagePreviewForm:mediaViewData
-                                     logicalTree
-                                     physicalTree
-                                     paginationForm:paginationWrapperPanel
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
                                      metadataAccordion:logicalMetadataWrapperPanel"/>
@@ -93,9 +89,9 @@
             <!-- Pages in structured view -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' and not empty DataEditorForm.galleryPanel.stripes}">
                 <p:fieldset id="structuredPagesField"
-                            a:onmousedown="metadataEditor.handleMouseDown(event)"
-                            a:onmouseup="metadataEditor.handleMouseUp(event)"
-                            a:ondragstart="metadataEditor.handleDragStart(event)">
+                            a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
+                            a:onmouseup="metadataEditor.gallery.handleMouseUp(event)"
+                            a:ondragstart="metadataEditor.gallery.handleDragStart(event)">
                     <!--@elvariable id="currentElement" type="org.kitodo.production.forms.dataeditor.GalleryStripe"-->
                     <p:dataList id="structuredPages"
                                 var="stripe"
@@ -107,6 +103,7 @@
                         <p:outputLabel value="#{DataEditorForm.structurePanel.titleMetadata eq 'type' ? stripe.label : DataEditorForm.getStructureElementTitle(stripe.structure)}"
                                        styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
+                                       a:data-logicalTreeNodeId="#{stripe.logicalTreeNodeId}"
                                        rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
                         <p:outputPanel>
                             <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
@@ -126,7 +123,8 @@
                                         <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
                                         <p:outputPanel styleClass="thumbnail-container"
                                                     a:data-order="#{media.order}"
-                                                    a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}">
+                                                    a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
+                                                    a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                             <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                             rendered="#{media.showingInPreview}"
                                                             a:loading="lazy">
@@ -159,7 +157,9 @@
                     <p:outputPanel>
                         <p:outputLabel value="#{msgs['dataEditor.unstructuredMedia']}"
                                        styleClass="gallery-stripe-header stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(DataEditorForm.galleryPanel.stripes.get(0).getStructure()) ? 'selected' : ''}"
-                                       a:data-stripe="0"/>
+                                       a:data-stripe="0"
+                                       a:data-logicalTreeNodeId="#{DataEditorForm.galleryPanel.stripes.get(0).logicalTreeNodeId}"
+                                       />
                         <h:panelGroup id="unstructuredMedia"
                                       layout="block">
                             <p:outputPanel>
@@ -180,7 +180,8 @@
                                             <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
                                             <p:outputPanel styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}"
-                                                           a:data-stripe="0">
+                                                           a:data-stripe="0"
+                                                           a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                                     <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                                     rendered="#{media.showingInPreview}"
@@ -214,9 +215,9 @@
             <!-- Pages in UNstructured view -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' and not empty DataEditorForm.galleryPanel.medias}">
                 <div class="thumbnail-wrapper"
-                     a:onmousedown="metadataEditor.handleMouseDown(event)"
-                     a:onmouseup="metadataEditor.handleMouseUp(event)"
-                     a:ondragstart="metadataEditor.handleDragStart(event)">
+                     a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
+                     a:onmouseup="metadataEditor.gallery.handleMouseUp(event)"
+                     a:ondragstart="metadataEditor.gallery.handleDragStart(event)">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
                         <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
@@ -247,8 +248,8 @@
                 <!-- OpenLayers Kitodo custom controls -->
                 <h:panelGroup id="olWrapper"
                               layout="block"
-                              a:onmousedown="metadataEditor.handleMouseDown(event)"
-                              a:onmouseup="metadataEditor.handleMouseUp(event)">
+                              a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
+                              a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
                     <div id="map" class="map">
                         <i class="fa fa-spinner fa-spin"/>
                     </div>
@@ -264,7 +265,8 @@
                                             <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
                                             <p:outputPanel layout="block"
                                                            styleClass="thumbnail-container"
-                                                           a:data-order="#{media.order}">
+                                                           a:data-order="#{media.order}"
+                                                           a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                                 <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
                                                                               rendered="#{media.showingInPreview}"
                                                                               a:loading="lazy">

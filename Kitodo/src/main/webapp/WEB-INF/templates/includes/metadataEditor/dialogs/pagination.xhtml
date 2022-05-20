@@ -43,11 +43,12 @@
                                               disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                               filter="true"
                                               filterMatchMode="contains"
+                                              onchange="metadataEditor.pagination.onChange(event);"
                                               showCheckbox="true">
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
                                 <p:ajax event="change"
-                                        oncomplete="scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
-                                        update="structureTreeForm,galleryWrapperPanel,metadataAccordion:logicalMetadataWrapperPanel"/>
+                                        oncomplete="changeToMapView();scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
+                                        update="galleryHeadingWrapper,imagePreviewForm:mediaViewData,metadataAccordion:logicalMetadataWrapperPanel"/>
                             </p:selectManyMenu>
                         </div>
                         <div>

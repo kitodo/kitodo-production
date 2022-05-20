@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -224,7 +225,6 @@ public class StructurePanel implements Serializable {
         show();
         dataEditor.getMetadataPanel().clear();
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getGalleryPanel().updateMedia();
         dataEditor.getGalleryPanel().updateStripes();
         dataEditor.getPaginationPanel().show();
     }
@@ -493,7 +493,13 @@ public class StructurePanel implements Serializable {
         return invisibleRootNode;
     }
 
-    private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result) {
+    /**
+     * Build a StructureTreeNode for a logical division, which is then visualized in the logical structure tree.
+     * 
+     * @param structure the logical division
+     * @return the StructureTreeNode instance
+     */
+    private StructureTreeNode buildStructureTreeNode(LogicalDivision structure) {
         StructureTreeNode node;
         if (Objects.isNull(structure.getLink())) {
             StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
@@ -518,6 +524,18 @@ public class StructurePanel implements Serializable {
                 }
             }
         }
+        return node;
+    }
+
+    /**
+     * Recursively build the logical structure tree.
+     * 
+     * @param structure the current logical structure 
+     * @param result the current corresponding primefaces tree node
+     * @return a collection of views that contains all views of the full sub-tree
+     */
+    private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result) {
+        StructureTreeNode node = buildStructureTreeNode(structure);
         /*
          * Creating the tree node by handing over the parent node automatically
          * appends it to the parent as a child. That’s the logic of the JSF
@@ -534,53 +552,77 @@ public class StructurePanel implements Serializable {
                 viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
             }
         } else {
-            orderChildrenAndViews(new ArrayList<>(structure.getChildren()), new ArrayList<>(structure.getViews()), parent,
-                    viewsShowingOnAChild);
+            // iterate through children and views ordered by the ORDER attribute
+            List<Pair<View, LogicalDivision>> merged = mergeLogicalStructureViewsAndChildren(structure);
+            for (Pair<View, LogicalDivision> pair : merged) {
+                if (Objects.nonNull(pair.getRight())) {
+                    // add child an their views
+                    viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent));
+                } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
+                    // add views of current logical division as leaf nodes
+                    addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
+                    viewsShowingOnAChild.add(pair.getLeft());
+                }
+            }
         }
         return viewsShowingOnAChild;
     }
 
-    /**
-     * This method appends LogicalDivision children and assigned views while considering the ORDER attribute to create the
-     * combined tree with the correct order of logical and physical elements.
-     * @param children List of LogicalDivisions which are children of the element represented by the DefaultTreeNode parent
-     * @param views List of Views assigned to the element represented by the DefaultTreeNode parent
-     * @param parent DefaultTreeNode representing the logical element where all new elements should be appended
-     * @param viewsShowingOnAChild Collection of Views displayed in the combined tree
+    /** 
+     * Returns a list containing both views and children of a LogicalDivision ordered by their ORDER attribute.
+     * This ordering reflects how tree nodes are visualized in the logical structure tree.
+     * 
+     * <p>Unfortunately, the mets ORDER attribute of logical divisions and physical divisions is maintained and stored
+     * separately, which means the order does not reflect a consistent tree traversal strategy, e.g. depth-first search.
+     * Instead, the ORDER-attribute is partially updated upon various drag-&-drop operations, which can lead to 
+     * arbitrary ORDER-values, e.g. a view can have the same ORDER-value as a child.</p>
+     * 
+     * @param structure the logical division
+     * @return a sorted list of Views and LogicalDivisions, each pair only containing one or the other
      */
-    private void orderChildrenAndViews(List<LogicalDivision> children, List<View> views, DefaultTreeNode parent,
-                                       Set<View> viewsShowingOnAChild) {
-        List<LogicalDivision> temporaryChildren = new ArrayList<>(children);
-        List<View> temporaryViews = new ArrayList<>(views);
-        temporaryChildren.removeAll(Collections.singletonList(null));
-        temporaryViews.removeAll(Collections.singletonList(null));
-        while (temporaryChildren.size() > 0 || temporaryViews.size() > 0) {
-            LogicalDivision temporaryChild = null;
-            View temporaryView = null;
+    public static List<Pair<View, LogicalDivision>> mergeLogicalStructureViewsAndChildren(LogicalDivision structure) {
+        List<Pair<View, LogicalDivision>> merged = new ArrayList<Pair<View, LogicalDivision>>();
+        
+        Iterator<View> viewIterator = structure.getViews().iterator();
+        Iterator<LogicalDivision> childIterator = structure.getChildren().iterator();
+        View nextView = null;
+        LogicalDivision nextChild = null;
 
-            if (temporaryChildren.size() > 0) {
-                temporaryChild = temporaryChildren.get(0);
+        // iterate through both the list of children and views at the same time
+        while (viewIterator.hasNext() || childIterator.hasNext() || Objects.nonNull(nextView) || Objects.nonNull(nextChild)) {
+            // pull the next view from the list of remaining views
+            if (Objects.isNull(nextView) && viewIterator.hasNext()) {
+                nextView = viewIterator.next();
             }
-            if (temporaryViews.size() > 0) {
-                temporaryView = temporaryViews.get(0);
-            }
-
-            if (Objects.isNull(temporaryChild) && Objects.isNull(temporaryView)) {
-                break;
+            // pull the next child from the list of remaining children
+            if (Objects.isNull(nextChild) && childIterator.hasNext()) {
+                nextChild = childIterator.next();
             }
 
-            if (Objects.nonNull(temporaryChild) && Objects.isNull(temporaryView)
-                    || Objects.nonNull(temporaryChild) && temporaryChild.getOrder() <= temporaryView.getPhysicalDivision().getOrder()) {
-                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(temporaryChild, parent));
-                temporaryChildren.remove(0);
-            } else {
-                if (!viewsShowingOnAChild.contains(temporaryView)) {
-                    addTreeNode(buildViewLabel(temporaryView), false, false, temporaryView, parent);
-                    viewsShowingOnAChild.add(temporaryView);
+            // decide on whether to add child or view first
+            Boolean addChildNext = false;
+            if (Objects.nonNull(nextChild) && Objects.nonNull(nextView)) {
+                // compare order attribute between child and view to figure out which one is added first in tree
+                if (nextChild.getOrder() <= nextView.getPhysicalDivision().getOrder()) {
+                    addChildNext = true;
+                } else {
+                    addChildNext = false;
                 }
-                temporaryViews.remove(0);
+            } else {
+                addChildNext = Objects.nonNull(nextChild);
+            }
+
+            // add child or view to the merged result list
+            if (addChildNext) {
+                merged.add(new ImmutablePair<View, LogicalDivision>(null, nextChild));
+                nextChild = null;
+            } else {
+                merged.add(new ImmutablePair<View, LogicalDivision>(nextView, null));
+                nextView = null;
             }
         }
+
+        return merged;
     }
 
     /**
@@ -729,6 +771,21 @@ public class StructurePanel implements Serializable {
             Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
             addTreeNode(parent.getTitle(), true, true, parent, tree);
         }
+    }
+
+    /**
+     * Builds the parent link tree in a temporary primefaces tree in order to determine how many 
+     * nodes are added to the tree. The number of nodes influences the order of nodes in the logical 
+     * structure tree and is needed to determine the correct tree node id, see 
+     * `GalleryPanel.addStripesRecursive`.
+     * 
+     * @return the number of root nodes (first level children) that are 
+     *         added as a result of calling `addParentLinksRecursive`.
+     */
+    public Integer getNumberOfParentLinkRootNodesAdded() {
+        DefaultTreeNode node = new DefaultTreeNode();
+        addParentLinksRecursive(dataEditor.getProcess(), node);
+        return node.getChildCount();
     }
 
     /**
@@ -1011,7 +1068,6 @@ public class StructurePanel implements Serializable {
      *              event triggering this callback function
      */
     public void onDragDrop(TreeDragDropEvent event) {
-
         Object dragNodeObject = event.getDragNode().getData();
         Object dropNodeObject = event.getDropNode().getData();
 
@@ -1087,7 +1143,6 @@ public class StructurePanel implements Serializable {
                 show();
                 expandNode(event.getDropNode());
                 dataEditor.getGalleryPanel().updateStripes();
-                dataEditor.getGalleryPanel().updateMedia();
                 dataEditor.getPaginationPanel().show();
                 return;
             } else {
@@ -1271,7 +1326,6 @@ public class StructurePanel implements Serializable {
     }
 
     private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
-
         LogicalDivision dragStructure = (LogicalDivision) dragNode.getDataObject();
         LogicalDivision dropStructure = (LogicalDivision) dropNode.getDataObject();
 
@@ -1308,7 +1362,6 @@ public class StructurePanel implements Serializable {
     }
 
     private void checkPhysicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
-
         PhysicalDivision dragUnit = (PhysicalDivision) dragNode.getDataObject();
         PhysicalDivision dropUnit = (PhysicalDivision) dropNode.getDataObject();
 
