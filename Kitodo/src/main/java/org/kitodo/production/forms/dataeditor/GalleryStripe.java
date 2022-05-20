@@ -38,6 +38,20 @@ public class GalleryStripe {
     private final LogicalDivision structure;
 
     /**
+     * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
+     * tree. This id can be used in the user interface to identify which gallery stripe corresponds 
+     * to which tree node in the logical structure tree.
+     * 
+     * <p>It consists of a sequence of numbers separated by underscore, e.g. "0_1_4". Each number
+     * describes the position of a child amongst its siblings at that level. For example, "0_1_4" 
+     * references the node that is reached when moving from root node to leaf node using the first 
+     * child, then the second child, and then the fifth child.</p>
+     * 
+     * <p>The root node itself is never referenced, as it is not visualized anyway.</p>
+     */
+    private final String logicalTreeNodeId;
+
+    /**
      * Creates a new gallery stripe.
      *
      * @param panel
@@ -45,8 +59,9 @@ public class GalleryStripe {
      * @param structure
      *            structure this gallery stripe is related to
      */
-    GalleryStripe(GalleryPanel panel, LogicalDivision structure) {
+    GalleryStripe(GalleryPanel panel, LogicalDivision structure, String logicalTreeNodeId) {
         this.structure = structure;
+        this.logicalTreeNodeId = logicalTreeNodeId;
         this.label = getLabel(panel, structure);
     }
 
@@ -91,5 +106,13 @@ public class GalleryStripe {
      */
     public LogicalDivision getStructure() {
         return structure;
+    }
+
+    /**
+     * Returns the logical tree node id corresponding to this stripe.
+     * @return the logical tree node id
+     */
+    public String getLogicalTreeNodeId() {
+        return logicalTreeNodeId;
     }
 }

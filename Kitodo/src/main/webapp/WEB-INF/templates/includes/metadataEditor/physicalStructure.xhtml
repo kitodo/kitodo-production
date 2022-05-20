@@ -15,7 +15,8 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
     <div class="scroll-up-area"></div>
     <div class="scroll-wrapper">
         <p:tree id="physicalTree"
@@ -27,18 +28,16 @@
                 selection="#{DataEditorForm.structurePanel.selectedPhysicalNode}"
                 draggable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                 droppable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
-                dragdropScope="physicalTree">
+                dragdropScope="physicalTree"
+                onNodeClick="metadataEditor.physicalTree.onNodeClick(node,event)">
             <p:ajax event="select"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
                                 initializeImage();
                                 expandMetadata('physical-metadata-tab');"
-                    update="@(.thumbnail)
-                            @(.stripe)
-                            galleryHeadingWrapper
+                    update="galleryHeadingWrapper
                             imagePreviewForm:mediaViewData
-                            logicalTree
                             metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
@@ -64,7 +63,10 @@
                         collapsedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
                 <!--@elvariable id="physicalElementType" type="java.lang.String"-->
                 <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
-                <h:outputText value="#{empty physicalElementType ? msgs['dataEditor.withoutType'] : physicalElementType}" style="#{physicalNode.undefined ? 'background-color: gold' : ''}"/>
+                <h:outputText 
+                        value="#{empty physicalElementType ? msgs['dataEditor.withoutType'] : physicalElementType}" 
+                        style="#{physicalNode.undefined ? 'background-color: gold' : ''}"
+                        a:data-order="#{physicalNode.order}" />
                 <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
                 <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
             </p:treeNode>

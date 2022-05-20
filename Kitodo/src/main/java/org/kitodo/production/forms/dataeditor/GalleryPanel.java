@@ -204,10 +204,8 @@ public class GalleryPanel {
     }
 
     /**
-     * Handle event of page being dragged and dropped in gallery.
-     *
-     * @param event
-     *            JSF drag'n'drop event description object
+     * Handle event of page being dragged and dropped in gallery. Parameters are provided by 
+     * remoteCommand "triggerOnPageDrop", see gallery.xhtml.
      */
     public void onPageDrop() {
         FacesContext context = FacesContext.getCurrentInstance();
@@ -222,7 +220,7 @@ public class GalleryPanel {
         }
 
         GalleryStripe toStripe = stripes.get(toStripeIndex);
-
+        
         // move views
         List<Pair<View, LogicalDivision>> viewsToBeMoved = new ArrayList<>();
         for (Pair<PhysicalDivision, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
@@ -244,7 +242,16 @@ public class GalleryPanel {
         }
         dataEditor.getStructurePanel().show();
         dataEditor.getPaginationPanel().show();
-        updateAffectedStripes(toStripe, viewsToBeMoved);
+        this.updateStripes();
+        dataEditor.getSelectedMedia().clear();
+
+        // mark previously selected thumbnail in new stripe as selected
+        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
+        for (GalleryMediaContent toStripeMedia : toStripe.getMedias()) {
+            if (movedViews.contains(toStripeMedia.getView())) {
+                select(toStripeMedia, toStripe, "multi");
+            }
+        }
     }
 
     private boolean dragStripeIndexMatches(String dragId) {
@@ -305,39 +312,6 @@ public class GalleryPanel {
         dataEditor.getStructurePanel().reorderPhysicalDivisions(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
-    }
-
-    private void updateAffectedStripes(GalleryStripe toStripe, List<Pair<View, LogicalDivision>> viewsToBeMoved) {
-        for (Pair<View, LogicalDivision> viewToBeMoved : viewsToBeMoved) {
-            GalleryStripe fromStripe = getGalleryStripe(viewToBeMoved.getValue());
-            if (Objects.nonNull(fromStripe)) {
-                fromStripe.getMedias().clear();
-                for (View remainingView : fromStripe.getStructure().getViews()) {
-                    fromStripe.getMedias().add(createGalleryMediaContent(remainingView));
-                }
-            }
-        }
-        toStripe.getMedias().clear();
-
-        dataEditor.getSelectedMedia().clear();
-
-        List<View> movedViews = viewsToBeMoved.stream().map(Pair::getKey).collect(Collectors.toList());
-        for (View toStripeView : toStripe.getStructure().getViews()) {
-            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(toStripeView);
-            toStripe.getMedias().add(galleryMediaContent);
-            if (movedViews.contains(toStripeView)) {
-                select(galleryMediaContent, toStripe, "multi");
-            }
-        }
-    }
-
-    private GalleryStripe getGalleryStripe(LogicalDivision structuralElement) {
-        for (GalleryStripe galleryStripe : stripes) {
-            if (Objects.equals(galleryStripe.getStructure(), structuralElement)) {
-                return galleryStripe;
-            }
-        }
-        return null;
     }
 
     /**
@@ -413,23 +387,25 @@ public class GalleryPanel {
         cachingUUID = UUID.randomUUID().toString();
 
         previewFolder = new Subfolder(process, project.getPreview());
-        updateMedia();
+        updateStripes();
 
-        addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
         if (imagesInStructuredView > 200) {
             logger.warn("Number of images in structured view: {}", imagesInStructuredView);
         }
     }
 
-    void updateMedia() {
+    /** 
+     * Recreate media list from workpiece, which provides medias in correct order after drag and drop.
+     */
+    private void updateMedia() {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         medias = new ArrayList<>(physicalDivisions.size());
         previewImageResolver = new HashMap<>();
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setPhysicalDivision(physicalDivision);
-            GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView);
+            GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
             medias.add(mediaContent);
             if (mediaContent.isShowingInPreview()) {
                 previewImageResolver.put(mediaContent.getId(), mediaContent);
@@ -437,7 +413,14 @@ public class GalleryPanel {
         }
     }
 
-    void updateStripes() {
+    /** 
+     * Recreate gallery stripes, e.g., after drag and drop.
+     * 
+     * <p>Always update media when recreating gallery stripes such that horizontal 
+     * gallery stripes and vertical thumbnail list of detail view are in sync.</p>
+     */
+    public void updateStripes() {
+        updateMedia();
         stripes = new ArrayList<>();
         addStripesRecursive(dataEditor.getWorkpiece().getLogicalStructure());
     }
@@ -458,27 +441,62 @@ public class GalleryPanel {
     }
 
     private void addStripesRecursive(LogicalDivision structure) {
-        GalleryStripe galleryStripe = new GalleryStripe(this, structure);
-        for (View view : structure.getViews()) {
-            for (GalleryMediaContent galleryMediaContent : medias) {
-                if (Objects.equals(view.getPhysicalDivision(), galleryMediaContent.getView().getPhysicalDivision())) {
-                    galleryStripe.getMedias().add(galleryMediaContent);
-                    if (galleryMediaContent.isShowingInPreview()) {
-                        previewImageResolver.put(galleryMediaContent.getId(), galleryMediaContent);
-                    }
-                    break;
-                }
-            }
+        List<Integer> treeNodeIdList = new ArrayList<Integer>();
+        Integer idx = 0;
+        Process process = dataEditor.getProcess();
+        if (Objects.nonNull(process) && Objects.nonNull(process.getParent())) {
+            // determine how many additional tree nodes are added for parent processes 
+            // before the actual logical structure
+            idx = dataEditor.getStructurePanel().getNumberOfParentLinkRootNodesAdded();
         }
+        treeNodeIdList.add(idx);
+        addStripesRecursive(structure, treeNodeIdList);
+    }
+
+    private void addStripesRecursive(LogicalDivision structure, List<Integer> treeNodeIdList) {
+        String stripeTreeNodeId = treeNodeIdList.stream().map(s -> String.valueOf(s)).collect(Collectors.joining("_"));
+        GalleryStripe galleryStripe = new GalleryStripe(this, structure, stripeTreeNodeId);
         stripes.add(galleryStripe);
-        for (LogicalDivision child : structure.getChildren()) {
-            if (Objects.isNull(child.getLink())) {
-                addStripesRecursive(child);
+
+        Integer siblingWithViewsIdx = 0;
+        Integer siblingWithoutViewsIdx = 0;
+        for (Pair<View, LogicalDivision> pair : StructurePanel.mergeLogicalStructureViewsAndChildren(structure)) {
+            View view = pair.getLeft();
+            LogicalDivision child = pair.getRight();
+            if (Objects.nonNull(child)) {
+                // add child
+                if (Objects.isNull(child.getLink())) {
+                    List<Integer> childTreeNodeIdList = new ArrayList<Integer>(treeNodeIdList);
+                    if (dataEditor.getStructurePanel().isSeparateMedia()) {
+                        childTreeNodeIdList.add(siblingWithoutViewsIdx);
+                    } else {
+                        childTreeNodeIdList.add(siblingWithViewsIdx);
+                    }
+                    addStripesRecursive(child, childTreeNodeIdList);
+                }
+                siblingWithViewsIdx += 1;
+                siblingWithoutViewsIdx += 1;
+            } else {
+                // add view
+                for (GalleryMediaContent galleryMediaContent : medias) {
+                    if (Objects.equals(view.getPhysicalDivision(), galleryMediaContent.getView().getPhysicalDivision())) {
+                        galleryStripe.getMedias().add(galleryMediaContent);
+                        List<Integer> viewTreeNodeIdList = new ArrayList<Integer>(treeNodeIdList);
+                        viewTreeNodeIdList.add(siblingWithViewsIdx);
+                        String viewTreeNodeId = viewTreeNodeIdList.stream().map(s -> String.valueOf(s)).collect(Collectors.joining("_"));
+                        galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
+                        if (galleryMediaContent.isShowingInPreview()) {
+                            previewImageResolver.put(galleryMediaContent.getId(), galleryMediaContent);
+                        }
+                        siblingWithViewsIdx += 1;
+                        break;
+                    }
+                }
             }
         }
     }
 
-    private GalleryMediaContent createGalleryMediaContent(View view) {
+    private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer idx) {
         PhysicalDivision physicalDivision = view.getPhysicalDivision();
         URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
         URI resourcePreviewUri = null;
@@ -493,7 +511,11 @@ public class GalleryPanel {
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
         String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
-        return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri);
+        String treeNodeId = "unknown";
+        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(idx)) {
+            treeNodeId = stripeTreeNodeId + "_" + String.valueOf(idx);
+        }
+        return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri, treeNodeId);
     }
 
     /**

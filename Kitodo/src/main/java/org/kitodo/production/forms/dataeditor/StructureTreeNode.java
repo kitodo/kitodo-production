@@ -86,6 +86,23 @@ public class StructureTreeNode implements Serializable {
     }
 
     /**
+     * Return order of dataObject if dataObject is instance of PhysicalDivision, LogicalDivision or View.
+     *
+     * @return label
+     */
+    public Integer getOrder() {
+        if (this.dataObject instanceof PhysicalDivision) {
+            return ((PhysicalDivision) this.dataObject).getOrder();
+        } else if (this.dataObject instanceof LogicalDivision) {
+            return ((LogicalDivision) this.dataObject).getOrder();
+        } else if (this.dataObject instanceof View) {
+            return ((View) this.dataObject).getPhysicalDivision().getOrder();
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Check if the StructureTreeNode's PhysicalDivision is assigned to several LogicalDivisions.
      *
      * @return {@code true} when the PhysicalDivision is assigned to more than one logical element
