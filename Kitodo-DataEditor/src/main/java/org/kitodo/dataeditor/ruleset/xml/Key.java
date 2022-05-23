@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import javax.xml.bind.annotation.XmlAccessType;
@@ -141,9 +142,18 @@ public class Key {
     }
 
     /**
+     * Returns the minimum number of digits for integer values.
+     *
+     * @return the minimum number of digits
+     */
+    public int getMinDigits() {
+        return Objects.isNull(codomain) ? 1 : codomain.getMinDigits();
+    }    
+    
+    /**
      * Returns the namespace, if one has been set.
      *
-     * @return the namespace, if annie
+     * @return the namespace, if any
      */
     public Optional<String> getNamespace() {
         if (codomain == null) {
