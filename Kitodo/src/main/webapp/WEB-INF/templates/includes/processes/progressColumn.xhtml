@@ -19,7 +19,7 @@
     <h:panelGroup
             class="process-progress"
             title="#{ProcessForm.getCurrentTaskTitles(process)}"
-            rendered="#{not empty process.tasks or process.hasChildren() and not process.progressClosed eq 'NaN'}"
+            rendered="#{not empty process.tasks or process.hasChildren() and process.progressClosed ne 'NaN'}"
             style="
                 background-image: linear-gradient(
                     to right,
