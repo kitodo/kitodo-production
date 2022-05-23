@@ -28,7 +28,7 @@ public class LdapUserDetailsContextMapper extends LdapUserDetailsMapper implemen
 
     @Override
     public UserDetails mapUserFromContext(DirContextOperations ctx, String username, Collection<? extends GrantedAuthority> authorities) {
-        User user = ServiceManager.getUserService().getByLdapLoginWithFallback(username);
+        User user = ServiceManager.getUserService().getByLdapLoginOrLogin(username);
         SecurityLdapUserDetails securityLdapUserDetails = new SecurityLdapUserDetails(user);
         securityLdapUserDetails.setDn(ctx.getDn().toString());
         return securityLdapUserDetails;

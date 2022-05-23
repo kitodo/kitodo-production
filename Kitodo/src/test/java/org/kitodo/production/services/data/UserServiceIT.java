@@ -228,13 +228,13 @@ public class UserServiceIT {
 
     @Test
     public void shouldGetUserByLdapLogin() throws DAOException {
-        User user = userService.getByLdapLogin("kowalLDP");
+        User user = userService.getByLdapLoginOrLogin("kowalLDP");
         assertEquals("User surname is incorrect!", "Kowalski", user.getSurname());
     }
 
     @Test
     public void shouldGetUserTasksInProgress() throws DAOException {
-        User user = userService.getByLdapLogin("nowakLDP");
+        User user = userService.getByLdapLoginOrLogin("nowakLDP");
         List<Task> tasks = userService.getTasksInProgress(user);
         assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
         assertEquals("Title of task is incorrect!", "Progress", tasks.get(0).getTitle());
