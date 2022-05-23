@@ -253,7 +253,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
             openMetsFile();
             if (!workpiece.getId().equals(process.getId().toString())) {
-                Helper.setErrorMessage("metadataConfusion", new Object[] {process.getId(), workpiece.getId() });
+                Helper.setErrorMessage("metadataConfusion", process.getId(), workpiece.getId());
                 return referringView;
             }
             selectedMedia = new LinkedList<>();
@@ -446,6 +446,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         try {
             metadataPanel.preserve();
             structurePanel.preserve();
+            ServiceManager.getProcessService().updateChildrenFromLogicalStructure(process, workpiece.getLogicalStructure());
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
