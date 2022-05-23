@@ -74,14 +74,19 @@ public class FileUploadDialog extends MetadataImportDialog {
             LinkedList<TempProcess> processes = new LinkedList<>();
             processes.add(tempProcess);
 
-            String parentID = importService.getParentID(internalDocument, this.createProcessForm.getRulesetManagement()
-                    .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER).toArray()[0].toString());
-            importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset().getId(),
-                createProcessForm.getProject().getId());
-            if (Objects.isNull(importService.getParentTempProcess())) {
-                TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
-                if (Objects.nonNull(parentTempProcess)) {
-                    processes.add(parentTempProcess);
+            Collection<String> higherLevelIdentifier = this.createProcessForm.getRulesetManagement()
+                    .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
+
+            if (!higherLevelIdentifier.isEmpty()) {
+                String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0]
+                        .toString());
+                importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset().getId(),
+                        createProcessForm.getProject().getId());
+                if (Objects.isNull(importService.getParentTempProcess())) {
+                    TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
+                    if (Objects.nonNull(parentTempProcess)) {
+                        processes.add(parentTempProcess);
+                    }
                 }
             }
             fillCreateProcessForm(processes);
