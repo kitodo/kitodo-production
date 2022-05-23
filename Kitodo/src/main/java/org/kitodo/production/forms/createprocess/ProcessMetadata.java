@@ -151,6 +151,9 @@ public class ProcessMetadata {
         }
     }
 
+    /**
+     * Updates the logical division of the process details.
+     */
     public void update() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         LogicalDivision logicalDivision = (LogicalDivision) processDetails.getDivision();
         if (Objects.nonNull(logicalDivision)) {

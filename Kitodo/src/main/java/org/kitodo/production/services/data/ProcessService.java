@@ -72,6 +72,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.join.ScoreMode;
@@ -919,6 +920,51 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
         processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
         processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
+
+        if (processDTO.hasChildren()) {
+            List<Process> children;
+            try {
+                children = ServiceManager.getProcessService().getById(processDTO.getId()).getChildren();
+                processDTO.setProgressClosed(progressOfChildrenClosed(children));
+                processDTO.setProgressInProcessing(progressOfChildrenInProcessing(children));
+                processDTO.setProgressOpen(progressOfChildrenOpen(children));
+                processDTO.setProgressLocked(progressOfChildrenLocked(children));
+            } catch (DAOException dao) {
+                throw new DataException(dao);
+            }
+        }
+    }
+    
+    private Double progressOfChildrenClosed(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressClosed(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+    
+    private Double progressOfChildrenInProcessing(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressInProcessing(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+
+    private Double progressOfChildrenOpen(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressOpen(child.getTasks(), null));
+        }
+        return statistics.getMean();
+    }
+
+    private Double progressOfChildrenLocked(List<Process> children) {
+        DescriptiveStatistics statistics = new DescriptiveStatistics();
+        for (Process child : children) {
+            statistics.addValue(getProgressLocked(child.getTasks(), null));
+        }
+        return statistics.getMean();
     }
 
     private List<BatchDTO> getBatchesForProcessDTO(Map<String, Object> jsonObject) throws DataException {
