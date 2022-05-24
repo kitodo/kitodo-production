@@ -645,12 +645,13 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     }
 
     /**
-     * Get ID metadata.
+     * Get value of metadata configured to hold the catalog ID, e.g. "identifierMetadata"
+     * (see OPACConfig.getIdentifierMetadata for details).
      *
      * @param tempProcess TempProcess whose ID metadata is returned
      * @return ID metadata
      */
-    public String getID(TempProcess tempProcess) {
+    public String getIdMetadata(TempProcess tempProcess) {
         if (Objects.nonNull(tempProcess)
                 && Objects.nonNull(tempProcess.getMetadataNodes())
                 && tempProcess.getMetadataNodes().getLength() > 0) {
