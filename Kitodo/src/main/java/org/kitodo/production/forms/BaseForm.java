@@ -26,6 +26,8 @@ import org.kitodo.data.database.beans.ListColumn;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
@@ -170,6 +172,7 @@ public class BaseForm implements Serializable {
             return;
         }
         ServiceManager.getUserService().addFilter(getUser(), this.filter);
+        updateUser();
     }
 
     /**
@@ -187,6 +190,7 @@ public class BaseForm implements Serializable {
             return;
         }
         ServiceManager.getUserService().removeFilter(getUser(), filter);
+        updateUser();
     }
 
     /**
@@ -415,5 +419,14 @@ public class BaseForm implements Serializable {
      */
     public String formatString(String messageKey, String... replacements) {
         return Helper.getTranslation(messageKey, replacements);
+    }
+
+    private void updateUser() {
+        try {
+            user = ServiceManager.getUserService().getById(getUser().getId());
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_ONE, ObjectType.USER.getTranslationSingular(),
+                    getUser().getId());
+        }
     }
 }
