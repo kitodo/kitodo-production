@@ -34,7 +34,7 @@
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
                                  process="@this"
                                  styleClass="#{CreateProcessForm.currentProcess.equals(processAncestor) ? 'selected' : ''}"
-                                 value="#{CreateProcessForm.getIdMetadata(processAncestor)}"
+                                 value="#{CreateProcessForm.getCatalogId(processAncestor)}"
                                  update="editForm:processFromTemplateTabView:processData
                                          editForm:processFromTemplateTabView:processHierarchy"/>
             </p:dataList>
@@ -50,7 +50,7 @@
                                  actionListener="#{CreateProcessForm.processMetadata.preserve()}"
                                  process="@this"
                                  styleClass="#{CreateProcessForm.currentProcess.equals(childProcess) ? 'selected' : ''}"
-                                 value="#{CreateProcessForm.getIdMetadata(childProcess)}"
+                                 value="#{CreateProcessForm.getCatalogId(childProcess)}"
                                  update="editForm:processFromTemplateTabView:processData
                                          editForm:processFromTemplateTabView:processHierarchy"/>
             </p:carousel>

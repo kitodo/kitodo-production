@@ -651,7 +651,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param tempProcess TempProcess whose ID metadata is returned
      * @return ID metadata
      */
-    public String getIdMetadata(TempProcess tempProcess) {
+    public String getCatalogId(TempProcess tempProcess) {
         if (Objects.nonNull(tempProcess)
                 && Objects.nonNull(tempProcess.getMetadataNodes())
                 && tempProcess.getMetadataNodes().getLength() > 0) {
