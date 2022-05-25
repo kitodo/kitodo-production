@@ -537,14 +537,10 @@ from system library in Java 11+ -->
                 <version>${hibernate.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.hibernate</groupId>
+                <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>5.4.3.Final</version>
+                <version>6.2.3.Final</version>
                 <exclusions>
-                    <exclusion>
-                        <groupId>com.fasterxml</groupId>
-                        <artifactId>classmate</artifactId>
-                    </exclusion>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
                         <artifactId>jboss-logging</artifactId>
