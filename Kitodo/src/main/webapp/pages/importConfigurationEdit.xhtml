@@ -42,6 +42,11 @@
             <h:outputText value="#{msgs['importConfig.mode.view']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isViewMode}"/>
         </h3>
 
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects?keepPagination=true"
+                  icon="fa fa-times fa-lg" iconPos="right"
+                  styleClass="secondary"/>
         <p:commandButton id="save"
                          value="#{msgs.save}"
                          action="#{importConfigurationEditView.save}"
@@ -58,11 +63,6 @@
                          actionListener="#{importConfigurationEditView.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="projects?keepPagination=true"
-                  icon="fa fa-times fa-lg" iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">

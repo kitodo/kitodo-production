@@ -42,6 +42,12 @@
             <h:outputText value="#{msgs['mappingFile.mode.view']} (#{mappingFileEditView.mappingFile.title})" rendered="#{isViewMode}"/>
         </h3>
 
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects?keepPagination=true"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
         <p:commandButton id="save"
                          value="#{msgs.save}"
                          action="#{mappingFileEditView.save}"
@@ -58,12 +64,6 @@
                          actionListener="#{mappingFileEditView.setSaveDisabled(false)}"
                          update="save"
                          style="display:none;"/>
-        <p:button id="cancel" value="#{msgs.cancel}"
-                  onclick="setConfirmUnload(false);"
-                  outcome="projects?keepPagination=true"
-                  icon="fa fa-times fa-lg"
-                  iconPos="right"
-                  styleClass="secondary"/>
     </ui:define>
 
     <ui:define name="pageTabView">
