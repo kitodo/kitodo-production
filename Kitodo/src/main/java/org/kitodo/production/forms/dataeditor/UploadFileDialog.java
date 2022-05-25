@@ -434,8 +434,8 @@ public class UploadFileDialog {
             dataEditor.getGalleryPanel().show();
             dataEditor.getStructurePanel().updateLogicalNodeSelection(
                     dataEditor.getGalleryPanel().getGalleryMediaContent(selectedMedia.get(selectedMedia.size() - 1).getKey()), parent);
-            StructureTreeNode structureTreeNode = new StructureTreeNode(selectedMedia.get(selectedMedia.size() - 1).getKey().getLabel(),
-                    false, false,
+            StructureTreeNode structureTreeNode = new StructureTreeNode(selectedMedia.get(selectedMedia.size() - 1).getKey().getLabel(), 
+                    null, false, false,
                     MetadataEditor.createUnrestrictedViewOn(selectedMedia.get(selectedMedia.size() - 1).getKey()));
             dataEditor.switchStructure(structureTreeNode, false);
             dataEditor.getPaginationPanel().show();

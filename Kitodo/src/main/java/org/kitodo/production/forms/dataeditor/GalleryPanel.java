@@ -467,7 +467,7 @@ public class GalleryPanel {
                 // add child
                 if (Objects.isNull(child.getLink())) {
                     List<Integer> childTreeNodeIdList = new ArrayList<Integer>(treeNodeIdList);
-                    if (dataEditor.getStructurePanel().isSeparateMedia()) {
+                    if (!dataEditor.getStructurePanel().logicalStructureTreeContainsMedia()) {
                         childTreeNodeIdList.add(siblingWithoutViewsIdx);
                     } else {
                         childTreeNodeIdList.add(siblingWithViewsIdx);

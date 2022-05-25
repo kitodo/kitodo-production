@@ -145,11 +145,13 @@ metadataEditor.gallery = {
 
             // update selection in other components of the meta data editor
             metadataEditor.pagination.markManyAsSelected(this.findSelectedTreeNodeIds());
-            if (metadataEditor.physicalTree.isAvailable()) {
+            if (metadataEditor.physicalTree.isAvailable() || metadataEditor.logicalTree.isHideMediaChecked()) {
                 let stripeTreeNodeId = treeNodeId.slice(0, treeNodeId.lastIndexOf("_"));
                 metadataEditor.gallery.stripes.markOneSelected(stripeTreeNodeId);
                 metadataEditor.logicalTree.markNodeAsSelected(stripeTreeNodeId);
-                metadataEditor.physicalTree.markNodeAsSelected(treeNodeId);
+                if (metadataEditor.physicalTree.isAvailable()) {
+                    metadataEditor.physicalTree.markNodeAsSelected(treeNodeId);
+                }
             } else {
                 metadataEditor.gallery.stripes.resetSelectionStyle();
                 metadataEditor.logicalTree.markNodeAsSelected(treeNodeId);
@@ -563,6 +565,16 @@ metadataEditor.gallery = {
  * Event handlers and methods related to the logical structure tree.
  */
 metadataEditor.logicalTree = {
+
+    /**
+     * Returns true if the checkbox "show media" is checked, meaning the logical tree
+     * will contain individual nodes for each media.
+     * 
+     * @returns true if checkbox "show media" is checked
+     */
+    isHideMediaChecked() {
+        return $("#logicalStructureMenuForm\\:hideMediaCheckbox input").attr("aria-checked") === "true";
+    },
 
     /**
      * Handler that is called by Primefaces when a tree node is clicked.

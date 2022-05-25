@@ -1,0 +1,45 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:overlayPanel for="logicalStructureMenuButton" style="display: none;">
+        <h:form id="logicalStructureMenuForm">
+            <ul>
+                <li>
+                    <p:selectBooleanCheckbox 
+                    id="showPageRange"
+                    value="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree}" 
+                    itemLabel="#{msgs.showAssignedPages}">
+                        <p:ajax event="change" 
+                            update="@this logicalTree"/>
+                    </p:selectBooleanCheckbox>
+                </li>
+                <li>
+                    <p:selectBooleanCheckbox 
+                    id="hideMediaCheckbox"
+                    value="#{DataEditorForm.structurePanel.hideMediaInLogicalTree}" 
+                    disabled="#{DataEditorForm.structurePanel.separateMedia}"
+                    itemLabel="#{msgs.showOnlyStructureElements}">
+                        <p:ajax event="change" 
+                            listener="#{DataEditorForm.structurePanel.onHideMediaInLogicalTreeChange}" 
+                            update="@this logicalTree @(.pageList) imagePreviewForm:thumbnailStripe"/>
+                    </p:selectBooleanCheckbox>
+                </li>
+            </ul>
+        </h:form>
+    </p:overlayPanel>
+</ui:composition>
