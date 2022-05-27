@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
@@ -32,7 +33,6 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
-import org.apache.commons.httpclient.util.URIUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -108,7 +108,13 @@ public class FileService {
      *             an IOException
      */
     URI createMetaDirectory(URI parentFolderUri, String directoryName) throws IOException, CommandException {
-        URI directoryUri = asDirectory(parentFolderUri).resolve(URIUtil.encodePath(directoryName));
+        String encodedPath = "";
+        try {
+            encodedPath = (new URI(null, null, directoryName, null)).toString();
+        } catch (URISyntaxException e) {
+            throw new IllegalArgumentException(e.getMessage(), e);
+        }
+        URI directoryUri = asDirectory(parentFolderUri).resolve(encodedPath);
         if (fileExist(directoryUri)) {
             logger.info("Metadata directory: {} already existed! No new directory was created", directoryName);
         } else {

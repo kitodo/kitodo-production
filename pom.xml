@@ -47,7 +47,6 @@
         <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
-        <commons-httpclient.version>3.1</commons-httpclient.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-net.version>3.8.0</commons-net.version>
@@ -184,17 +183,6 @@
                 <groupId>commons-io</groupId>
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>commons-httpclient</groupId>
-                <artifactId>commons-httpclient</artifactId>
-                <version>${commons-httpclient.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>commons-logging</groupId>
