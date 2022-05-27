@@ -336,10 +336,12 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             return this.stayOnCurrentPage;
         }
         createNewProcess();
+        Process parentProcess = titleRecordLinkTab.getTitleRecordProcess();
         return FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath()
                 + "?referrer=" + referringView
                 + "&templateId=" + template.getId()
                 + "&projectId=" + project.getId()
+                + (Objects.nonNull(parentProcess) ? "&parentId=" + parentProcess.getId() : "")
                 + "&faces-redirect=true";
     }
 
