@@ -43,6 +43,7 @@ import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.Indexer;
@@ -154,12 +155,13 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task");
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin"));
     }
 
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
+                + " AND indexAction = 'INDEX' OR indexAction IS NULL");
     }
 
     @Override
@@ -176,7 +178,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
     @Override
     public List<Task> getAllNotIndexed() {
-        return getByQuery("FROM Task WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        return getByQuery("FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
+                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
     }
 
     @Override
