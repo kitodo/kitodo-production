@@ -106,7 +106,7 @@
                                       readonly="#{not item.editable}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       disabled="#{not item.editable or readOnly}"
-                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                      required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
@@ -121,7 +121,7 @@
                                      readonly="#{not item.editable}"
                                      autoWidth="false"
                                      disabled="#{not item.editable or readOnly}"
-                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                     required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{readOnly ? 'read-only' : ''}">
                         <f:selectItem itemValue="#{null}"
                                       itemDisabled="#{item.required}"
