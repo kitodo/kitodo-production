@@ -33,7 +33,7 @@
                      update="@(.ui-tree, .stripe.selected) metadataTable" />
 
     <p:remoteCommand name="updateProcessMetadata"
-                     actionListener="#{CreateProcessForm.processMetadata.update}"
+                     actionListener="#{CreateProcessForm.processMetadata.update(CreateProcessForm)}"
                      update="metadataTable" />
 
     <p:treeTable value="#{root}"
@@ -55,9 +55,9 @@
                     <p:inputText id="inputText"
                                  value="#{item.value}"
                                  disabled="#{not item.editable or readOnly}"
-                                 required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                 required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                  styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:inputText>
                 </h:panelGroup>
 
@@ -68,9 +68,9 @@
                                      value="#{item.value}"
                                      rows="2"
                                      disabled="#{not item.editable or readOnly}"
-                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                     required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:inputTextarea>
                 </h:panelGroup>
 
@@ -80,9 +80,9 @@
                     <p:spinner id="spinner"
                                value="#{item.value}"
                                disabled="#{not item.editable or readOnly}"
-                               required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                               required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
-                        <p:ajax event="blur" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
+                        <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:spinner>
                 </h:panelGroup>
 
@@ -93,7 +93,7 @@
                                 pattern="yyyy-MM-dd"
                                 styleClass="input-with-button #{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                 showOn="button"
-                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                 disabled="#{not item.editable or readOnly}">
                         <p:ajax event="dateSelect" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:calendar>
@@ -106,7 +106,7 @@
                                       readonly="#{not item.editable}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
                                       disabled="#{not item.editable or readOnly}"
-                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                      required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="change" oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
@@ -121,7 +121,7 @@
                                      readonly="#{not item.editable}"
                                      autoWidth="false"
                                      disabled="#{not item.editable or readOnly}"
-                                     required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
+                                     required="#{request.requestURI.contains('metadataEditor') and item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{readOnly ? 'read-only' : ''}">
                         <f:selectItem itemValue="#{null}"
                                       itemDisabled="#{item.required}"
@@ -163,6 +163,7 @@
                               rendered="#{item.input eq 'dataTable' and not readOnly}"
                               styleClass="metadata-button">
                     <p:commandButton id="addMetadataToGroup"
+                                     process="@this"
                                      action="#{Form.prepareAddableMetadataForGroup(node)}"
                                      disabled="#{not Form.metadataAddableToGroup(node)}"
                                      icon="fa fa-plus"
@@ -203,5 +204,5 @@
             </span>
         </p:column>
     </p:treeTable>
-    <p:remoteCommand  name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)"  />
+    <p:remoteCommand name="updateTitleMetadata" update="@(.ui-tree, .stripe.selected)"  />
 </ui:composition>

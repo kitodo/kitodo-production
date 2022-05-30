@@ -23,6 +23,7 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.forms.createprocess.ProcessMetadata;
 import org.kitodo.production.services.data.ImportService;
 import org.w3c.dom.NodeList;
 
@@ -37,6 +38,14 @@ public class TempProcess {
 
     private NodeList metadataNodes;
 
+    private String tiffHeaderDocumentName;
+
+    private String tiffHeaderImageDescription;
+
+    private int guessedImages;
+
+    private final ProcessMetadata processMetadata;
+
     /**
      * Constructor that creates an instance of TempProcess with the given Process
      * and Workpiece instances.
@@ -47,6 +56,7 @@ public class TempProcess {
     public TempProcess(Process process, Workpiece workpiece) {
         this.process = process;
         this.workpiece = workpiece;
+        this.processMetadata = new ProcessMetadata();
     }
 
     /**
@@ -66,6 +76,7 @@ public class TempProcess {
             this.workpiece.getLogicalStructure().getMetadata().addAll(
                     ImportService.importMetadata(this.metadataNodes, MdSec.DMD_SEC));
         }
+        this.processMetadata = new ProcessMetadata();
     }
 
     /**
@@ -114,6 +125,69 @@ public class TempProcess {
     }
 
     /**
+     * Get tiffHeaderDocumentName.
+     *
+     * @return value of tiffHeaderDocumentName
+     */
+    public String getTiffHeaderDocumentName() {
+        return tiffHeaderDocumentName;
+    }
+
+    /**
+     * Set tiffHeaderDocumentName.
+     *
+     * @param tiffHeaderDocumentName as java.lang.String
+     */
+    public void setTiffHeaderDocumentName(String tiffHeaderDocumentName) {
+        this.tiffHeaderDocumentName = tiffHeaderDocumentName;
+    }
+
+    /**
+     * Get tiffHeaderImageDescription.
+     *
+     * @return value of tiffHeaderImageDescription
+     */
+    public String getTiffHeaderImageDescription() {
+        return tiffHeaderImageDescription;
+    }
+
+    /**
+     * Set tiffHeaderImageDescription.
+     *
+     * @param tiffHeaderImageDescription as java.lang.String
+     */
+    public void setTiffHeaderImageDescription(String tiffHeaderImageDescription) {
+        this.tiffHeaderImageDescription = tiffHeaderImageDescription;
+    }
+
+    /**
+     * Get guessedImages.
+     *
+     * @return value of guessedImages
+     */
+    public int getGuessedImages() {
+        return guessedImages;
+    }
+
+    /**
+     * Set guessedImages.
+     *
+     * @param guessedImages as int
+     */
+    public void setGuessedImages(int guessedImages) {
+        this.guessedImages = guessedImages;
+    }
+
+    /**
+     * Get processMetadata.
+     *
+     * @return value of processMetadata
+     */
+    public ProcessMetadata getProcessMetadata() {
+        return processMetadata;
+    }
+
+    /**
      * Verify the doc type of the process. This Method checks whether the process has a metadata
      * of type "docType" and if its value equals the type of the logical root element. If not, the
      * logical root is set to the value of the "docType" metadata.
@@ -125,7 +199,8 @@ public class TempProcess {
         if (Objects.nonNull(process.getRuleset())) {
             Collection<String> doctypeMetadata = ImportService.getDocTypeMetadata(process.getRuleset());
             if (doctypeMetadata.isEmpty()) {
-                throw new ProcessGenerationException(Helper.getTranslation("newProcess.docTypeMetadataMissing"));
+                throw new ProcessGenerationException(Helper.getTranslation("newProcess.docTypeMetadataMissing",
+                        process.getRuleset().getTitle()));
             }
             if (Objects.nonNull(this.getWorkpiece().getLogicalStructure().getMetadata())) {
                 Optional<Metadata> docTypeMetadata = this.getWorkpiece().getLogicalStructure().getMetadata()

@@ -408,7 +408,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
 
     /**
      * Returns the only metadata entry or null. Throws an IllegalStateException
-     * if the value is ambiguous or cannot be casted.
+     * if the value is ambiguous or cannot be cast.
      *
      * @param <T>
      *
@@ -730,11 +730,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public int getOccurrences(String metadataKey) {
         int occ = 0;
-        Iterator<TreeNode> treeNodesIterator = treeNode.getChildren().iterator();
-        while (treeNodesIterator.hasNext()) {
-            TreeNode treeNode = treeNodesIterator.next();
+        for (TreeNode treeNode : treeNode.getChildren()) {
             if (((ProcessDetail) treeNode.getData()).getMetadataID().equals(metadataKey)) {
-                occ ++;
+                occ++;
             }
         }
         return occ;

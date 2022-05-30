@@ -52,7 +52,6 @@ import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
-import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
@@ -71,7 +70,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private final SearchDialog searchDialog = new SearchDialog(this);
     private final ProcessDataTab processDataTab = new ProcessDataTab(this);
     private final TitleRecordLinkTab titleRecordLinkTab = new TitleRecordLinkTab(this);
-    private final ProcessMetadata processMetadata = new ProcessMetadata(this);
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     private RulesetManagementInterface rulesetManagement;
@@ -85,6 +83,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private final String processListPath = MessageFormat.format(REDIRECT_PATH, "processes");
     private String referringView = "";
     private int progress;
+    private TempProcess currentProcess;
 
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
 
@@ -177,7 +176,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return value of processMetadata
      */
     public ProcessMetadata getProcessMetadata() {
-        return processMetadata;
+        return currentProcess.getProcessMetadata();
     }
 
     /**
@@ -373,6 +372,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (generated) {
                 processes = new LinkedList<>(Collections.singletonList(new TempProcess(
                         processGenerator.getGeneratedProcess(), new Workpiece())));
+                currentProcess = processes.get(0);
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
@@ -389,7 +389,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
-
                 }
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
@@ -412,7 +411,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         ProcessService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
         processAncestors();
         processChildren();
-        // main process and it's ancestors need to be saved so they have IDs before creating their process directories
+        // main process and it's ancestors need to be saved, so they have IDs before creating their process directories
         ServiceManager.getProcessService().save(getMainProcess(), true);
         if (!createProcessesLocation(this.processes)) {
             throw new IOException("Unable to create directories for process hierarchy!");
@@ -424,7 +423,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         saveProcessHierarchyMetadata();
         // TODO: do the same 'ensureNonEmptyTitles' for child processes?
         if (ImportService.ensureNonEmptyTitles(this.processes)) {
-            // saving the main process automatically saves it's parent and ancestor processes as well!
+            // saving the main process automatically saves its parent and ancestor processes as well!
             ServiceManager.getProcessService().save(getMainProcess(), true);
         }
 
@@ -481,8 +480,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private void processChildren() {
         // set parent relations between main process and its imported child processes!
         try {
-            ImportService.processProcessChildren(getMainProcess(), this.childProcesses, template,
-                    rulesetManagement, acquisitionStage, priorityList);
+            ImportService.processProcessChildren(getMainProcess(), childProcesses, rulesetManagement,
+                    acquisitionStage, priorityList);
         } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
@@ -493,26 +492,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         for (TempProcess tempProcess : this.processes) {
             Process process = tempProcess.getProcess();
             // set parent relations between all consecutive process pairs
-            int index = this.processes.indexOf(tempProcess);
-            if (index < this.processes.size() - 1) {
-                ProcessService.setParentRelations(this.processes.get(index + 1).getProcess(), process);
+            int index = processes.indexOf(tempProcess);
+            if (index < processes.size() - 1) {
+                ProcessService.setParentRelations(processes.get(index + 1).getProcess(), process);
             }
-            if (index == 0) {
-                List<ProcessDetail> processDetails = processMetadata.getProcessDetailsElements();
-                process.setSortHelperImages(processDataTab.getGuessedImages());
-                // FIXME: this always triggers 'processTitleAlreadyInUse' now, because the process has already been saved
-                //  with this title in ImportService.processProcessChildren (line 884)!
-                if (!ProcessValidator.isContentValid(process.getTitle(), processDetails, true)) {
-                    throw new ProcessGenerationException("Error creating process hierarchy: invalid process content!");
-                }
-                processMetadata.preserve();
-                ImportService.addProperties(process, template, processDetails, processDataTab.getDocType(),
-                        processDataTab.getTiffHeaderImageDescription());
-                ImportService.updateTasks(process);
-            } else if (Objects.nonNull(tempProcess.getMetadataNodes())) {
+            if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 try {
-                    ImportService.processTempProcess(tempProcess, template, rulesetManagement,
-                            acquisitionStage, priorityList);
+                    tempProcess.getProcessMetadata().preserve();
+                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
                 } catch (RulesetNotFoundException e) {
@@ -529,7 +516,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         // save ancestor processes meta.xml files
         for (TempProcess tempProcess : this.processes) {
             if (this.processes.indexOf(tempProcess) == 0) {
-                processMetadata.preserve();
+                tempProcess.getProcessMetadata().preserve();
             }
             saveTempProcessMetadata(tempProcess);
         }
@@ -571,21 +558,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         return true;
     }
 
-    /**
-     * Initialize the list of created processes.
-     */
-    public void initializeProcesses() {
-        try {
-            ProcessGenerator processGenerator = new ProcessGenerator();
-            processGenerator.generateProcess(template.getId(), project.getId());
-            this.processes = new LinkedList<>(Collections.singletonList(
-                    new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece())));
-            this.processMetadata.initializeProcessDetails(getProcesses().get(0).getWorkpiece().getLogicalStructure());
-        } catch (ProcessGenerationException e) {
-            logger.error(e.getLocalizedMessage());
-        }
-    }
-
     public int getProgress() {
         return this.progress;
     }
@@ -608,12 +580,12 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
         if (Objects.isNull(treeNode.getParent().getParent())) {
-            if (Objects.nonNull(processMetadata.getSelectedMetadataTreeNode())
+            if (Objects.nonNull(currentProcess.getProcessMetadata().getSelectedMetadataTreeNode())
                     || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
                 this.addMetadataDialog.prepareAddableMetadataForStructure();
             }
-        } else if (!Objects.equals(processMetadata.getSelectedMetadataTreeNode(), treeNode.getParent())
-                || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
+        } else if (!Objects.equals(currentProcess.getProcessMetadata().getSelectedMetadataTreeNode(),
+                treeNode.getParent()) || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
             prepareAddableMetadataForGroup(treeNode.getParent());
         }
         if (Objects.nonNull(addMetadataDialog.getAddableMetadata())) {
@@ -652,5 +624,76 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(getMainProcess().getRuleset(), treeNode);
+    }
+
+    /**
+     * Get process ancestors.
+     *
+     * @return process ancestors
+     */
+    public List<TempProcess> getProcessAncestors() {
+        return this.processes;
+    }
+
+    /**
+     * Get process children.
+     *
+     * @return process children
+     */
+    public List<TempProcess> getProcessChildren() {
+        return this.childProcesses;
+    }
+
+    /**
+     * Get value of metadata configured to hold the catalog ID, e.g. "identifierMetadata"
+     * (see OPACConfig.getIdentifierMetadata for details).
+     *
+     * @param tempProcess TempProcess whose ID metadata is returned
+     * @return ID metadata
+     */
+    public String getCatalogId(TempProcess tempProcess) {
+        if (Objects.nonNull(tempProcess)
+                && Objects.nonNull(tempProcess.getMetadataNodes())
+                && tempProcess.getMetadataNodes().getLength() > 0) {
+            return tempProcess.getMetadataNodes().item(0).getFirstChild().getTextContent();
+        } else {
+            return " - ";
+        }
+    }
+
+    /**
+     * Fill metadata fields in metadata tab with metadata values of given temp process on successful import.
+     * @param tempProcess TempProcess for which metadata is displayed
+     */
+    public void fillCreateProcessForm(TempProcess tempProcess)
+            throws ProcessGenerationException, IOException {
+        if (Objects.nonNull(tempProcess)) {
+            currentProcess = tempProcess;
+            if (Objects.nonNull(tempProcess.getWorkpiece())
+                    && Objects.nonNull(tempProcess.getWorkpiece().getLogicalStructure())
+                    && Objects.nonNull(tempProcess.getWorkpiece().getLogicalStructure().getType())) {
+                tempProcess.verifyDocType();
+                processDataTab.setDocType(tempProcess.getWorkpiece().getLogicalStructure().getType());
+                processDataTab.updateProcessMetadata();
+            }
+        }
+    }
+
+    /**
+     * Get currentProcess.
+     *
+     * @return value of currentProcess
+     */
+    public TempProcess getCurrentProcess() {
+        return currentProcess;
+    }
+
+    /**
+     * Set currentProcess.
+     *
+     * @param currentProcess as org.kitodo.production.helper.TempProcess
+     */
+    public void setCurrentProcess(TempProcess currentProcess) {
+        this.currentProcess = currentProcess;
     }
 }

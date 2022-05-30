@@ -2338,9 +2338,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Generate and set the title to process.
      */
-    public static void generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
+    public static String generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
             throws ProcessGenerationException {
-        generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
+        return generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
             TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails));
     }
 

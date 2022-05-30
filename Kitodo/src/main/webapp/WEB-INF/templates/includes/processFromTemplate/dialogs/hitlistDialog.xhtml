@@ -41,7 +41,6 @@
                                    onclick="PF('hitlistDialog').hide()"
                                    update="editForm"
                                    immediate="true"
-                                   actionListener="#{CreateProcessForm.initializeProcesses()}"
                                    action="#{CreateProcessForm.catalogImportDialog.getSelectedRecord()}">
                         <f:param name="ID" value="#{hit.identifier}"/>
                     </p:commandLink>

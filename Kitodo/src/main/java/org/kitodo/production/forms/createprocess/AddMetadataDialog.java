@@ -59,6 +59,16 @@ public class AddMetadataDialog {
     }
 
     /**
+     * Check and return whether any further metadata can be added to the currently selected structure element or not.
+     *
+     * @return whether any further metadata can be added to currently selected structure element.
+     */
+    public boolean metadataAddableToStructureElement() throws InvalidMetadataValueException {
+        prepareAddableMetadataForStructure();
+        return !getAddableMetadata().isEmpty();
+    }
+
+    /**
      * Prepare addable metadata for logical structure element.
      * @throws InvalidMetadataValueException invalidMetadataValueException
      */

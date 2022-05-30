@@ -59,7 +59,8 @@ public final class ProcessValidator {
         for (ProcessDetail detail : processDetailsList) {
             if (detail.isRequired() && !detail.isValid()) {
                 valid = false;
-                Helper.setErrorMessage(INCOMPLETE_DATA, "processCreationErrorFieldIsEmpty");
+                Helper.setErrorMessage(INCOMPLETE_DATA, Helper.getTranslation("processCreationErrorFieldIsEmpty",
+                        detail.getLabel()));
             }
         }
         return valid;

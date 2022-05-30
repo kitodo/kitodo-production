@@ -93,6 +93,7 @@ import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
+import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -401,8 +402,8 @@ public class ImportService {
      * @return a temporary process
      */
     public TempProcess createTempProcessFromDocument(String opac, Document document, int templateID, int projectID)
-            throws ProcessGenerationException, IOException, TransformerException {
-
+            throws ProcessGenerationException, IOException, TransformerException, InvalidMetadataValueException,
+            NoSuchMetadataFieldException {
         Process process = null;
         // "processGenerator" needs to be initialized when function is called for the first time
         if (Objects.isNull(processGenerator)) {
@@ -411,25 +412,39 @@ public class ImportService {
         if (processGenerator.generateProcess(templateID, projectID)) {
             process = processGenerator.getGeneratedProcess();
         }
-
+        TempProcess tempProcess;
         if (OPACConfig.isPrestructuredImport(opac)) {
             // logical structure is created by import XSLT file!
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document);
-            return new TempProcess(process, workpiece);
+            tempProcess = new TempProcess(process, workpiece);
         } else if (Objects.nonNull(process) && Objects.nonNull(process.getRuleset())) {
             String docType = getRecordDocType(document, process.getRuleset());
             NodeList metadataNodes = extractMetadataNodeList(document);
-            return new TempProcess(process, metadataNodes, docType);
+            tempProcess = new TempProcess(process, metadataNodes, docType);
         } else {
             throw new ProcessGenerationException("Ruleset missing!");
         }
+        addTitleAndTiffHeaderDataToTempProcess(tempProcess);
+        return tempProcess;
+    }
+
+    private void addTitleAndTiffHeaderDataToTempProcess(TempProcess tempProcess) throws IOException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException {
+        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService()
+                .openRuleset(tempProcess.getProcess().getRuleset());
+        String acquisitionStage = "create";
+        List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
+        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
+                acquisitionStage, priorityList);
+        createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
     }
 
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
                                                   int projectID, int templateID, boolean isParentInRecord,
                                                   String parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, TransformerException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, TransformerException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException {
 
         Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty(), isParentInRecord);
         TempProcess tempProcess = createTempProcessFromDocument(opac, internalDocument, templateID, projectID);
@@ -488,7 +503,7 @@ public class ImportService {
                                                           int importDepth, Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException,
-            TransformerException {
+            TransformerException, InvalidMetadataValueException, NoSuchMetadataFieldException {
         importModule = initializeImportModule();
         processGenerator = new ProcessGenerator();
         LinkedList<TempProcess> processes = new LinkedList<>();
@@ -515,7 +530,8 @@ public class ImportService {
     private void importParents(String recordId, String opac, int projectId, int templateId, int importDepth,
             LinkedList<TempProcess> processes, String parentID, Template template, String parentIdMetadata)
             throws ProcessGenerationException, IOException, XPathExpressionException, ParserConfigurationException,
-            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException {
+            NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException {
         int level = 1;
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
@@ -621,7 +637,8 @@ public class ImportService {
     public LinkedList<TempProcess> getChildProcesses(String opac, String elementID, int projectId, int templateId,
                                                      int rows)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
-            NoRecordFoundException, IOException, ProcessGenerationException, TransformerException {
+            NoRecordFoundException, IOException, ProcessGenerationException, TransformerException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException {
         loadOpacConfiguration(opac);
         importModule = initializeImportModule();
         List<DataRecord> childRecords = searchChildRecords(opac, elementID, rows);
@@ -994,16 +1011,22 @@ public class ImportService {
      * @throws ProcessGenerationException thrown if generating the Process title or the TifHeader fails
      */
     public static void createProcessTitle(TempProcess tempProcess,
-                                            RulesetManagementInterface rulesetManagementInterface,
-                                            String acquisitionStage, List<Locale.LanguageRange> priorityList,
-                                            List<ProcessDetail> processDetails)
+                                          RulesetManagementInterface rulesetManagementInterface,
+                                          String acquisitionStage, List<Locale.LanguageRange> priorityList,
+                                          List<ProcessDetail> processDetails)
             throws ProcessGenerationException {
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
         StructuralElementViewInterface docTypeView = rulesetManagementInterface
                 .getStructuralElementView(docType, acquisitionStage, priorityList);
         String processTitle = docTypeView.getProcessTitle().orElse("");
-        ProcessService.generateProcessTitle(processDetails,
+        String atstsl = ProcessService.generateProcessTitle(processDetails,
                 processTitle, tempProcess.getProcess());
+        tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
+        String tiffDefinition = ServiceManager.getImportService().getTiffDefinition();
+        if (Objects.nonNull(tiffDefinition)) {
+            tempProcess.setTiffHeaderImageDescription(ProcessService.generateTiffHeader(processDetails, atstsl,
+                    tiffDefinition, docType));
+        }
     }
 
     /**
@@ -1068,8 +1091,8 @@ public class ImportService {
      * @throws ProcessGenerationException thrown if process title cannot be created
      */
     public static void processProcessChildren(Process mainProcess, LinkedList<TempProcess> childProcesses,
-                                              Template template, RulesetManagementInterface managementInterface,
-                                              String acquisitionStage, List<Locale.LanguageRange> priorityList)
+                                              RulesetManagementInterface managementInterface, String acquisitionStage,
+                                              List<Locale.LanguageRange> priorityList)
             throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             ProcessGenerationException, IOException {
         for (TempProcess tempProcess : childProcesses) {
@@ -1077,7 +1100,7 @@ public class ImportService {
                 logger.error("Child process {} is null => Skip!", childProcesses.indexOf(tempProcess) + 1);
                 continue;
             }
-            processTempProcess(tempProcess, template, managementInterface, acquisitionStage, priorityList);
+            processTempProcess(tempProcess, managementInterface, acquisitionStage, priorityList);
             Process childProcess = tempProcess.getProcess();
             ServiceManager.getProcessService().save(childProcess, true);
             ProcessService.setParentRelations(mainProcess, childProcess);
@@ -1161,7 +1184,6 @@ public class ImportService {
      * updating the process' tasks.
      *
      * @param tempProcess TempProcess that will be processed
-     * @param template Template of the process
      * @param managementInterface RulesetManagementInterface to create metadata and tiff header
      * @param acquisitionStage String containing the acquisition stage
      * @param priorityList List of LanguageRange objects
@@ -1169,17 +1191,20 @@ public class ImportService {
      * @throws NoSuchMetadataFieldException thrown if the process contains undefined metadata
      * @throws ProcessGenerationException thrown if process title could not be generated
      */
-    public static void processTempProcess(TempProcess tempProcess, Template template,
-                                          RulesetManagementInterface managementInterface, String acquisitionStage,
-                                          List<Locale.LanguageRange> priorityList)
+    public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface managementInterface,
+                                          String acquisitionStage, List<Locale.LanguageRange> priorityList)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
+        if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
+            throw new ProcessGenerationException("Unable to create process");
+        }
         List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
                 acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
-        createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
         Process process = tempProcess.getProcess();
-        addProperties(tempProcess.getProcess(), template, processDetails, docType, tempProcess.getProcess().getTitle());
+        process.setSortHelperImages(tempProcess.getGuessedImages());
+        addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
+                tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
     }
@@ -1211,8 +1236,8 @@ public class ImportService {
             String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId,
                     false, parentMetadataKey);
             tempProcess = processList.get(0);
-            processTempProcess(tempProcess, template,
-                ServiceManager.getRulesetService().openRuleset(template.getRuleset()), "create", priorityList);
+            processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
+                    "create", priorityList);
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);

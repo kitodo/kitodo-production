@@ -26,27 +26,21 @@ import org.primefaces.model.TreeNode;
 public class ProcessMetadata {
     private static final Logger logger = LogManager.getLogger(ProcessMetadata.class);
 
-    private final CreateProcessForm createProcessForm;
-
     private ProcessFieldedMetadata processDetails = ProcessFieldedMetadata.EMPTY;
 
     private TreeNode selectedMetadataTreeNode;
 
     private String addMetadataKeySelectedItem = "";
 
-    public ProcessMetadata(CreateProcessForm createProcessForm) {
-        this.createProcessForm = createProcessForm;
-    }
 
     /**
      * initialize process details table.
      * @param structure
      *          which its Metadata are wanted to be shown
      */
-    public ProcessFieldedMetadata initializeProcessDetails(LogicalDivision structure) {
-        processDetails = ImportService.initializeProcessDetails(structure, this.createProcessForm.getRulesetManagement(),
-                this.createProcessForm.getAcquisitionStage(), this.createProcessForm.getPriorityList());
-        return processDetails;
+    public void initializeProcessDetails(LogicalDivision structure, CreateProcessForm form) {
+        processDetails = ImportService.initializeProcessDetails(structure, form.getRulesetManagement(),
+                form.getAcquisitionStage(), form.getPriorityList());
     }
 
     /**
@@ -69,8 +63,6 @@ public class ProcessMetadata {
 
     /**
      * Set processDetails.
-     * @param processDetails
-     *          as ProcessFieldedMetadata
      */
     void setProcessDetails(ProcessFieldedMetadata processDetails) {
         this.processDetails = processDetails;
@@ -125,16 +117,6 @@ public class ProcessMetadata {
     }
 
     /**
-     * Check and return whether any further metadata can be added to the currently selected structure element or not.
-     *
-     * @return whether any further metadata can be added to currently selected structure element.
-     */
-    public boolean metadataAddableToStructureElement() throws InvalidMetadataValueException {
-        createProcessForm.getAddMetadataDialog().prepareAddableMetadataForStructure();
-        return !(createProcessForm.getAddMetadataDialog().getAddableMetadata().isEmpty());
-    }
-
-    /**
      * Adds an empty table line with 'addMetadataKeySelectedItem' type.
      */
     public void addMetadataEntry() {
@@ -154,11 +136,11 @@ public class ProcessMetadata {
     /**
      * Updates the logical division of the process details.
      */
-    public void update() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    public void update(CreateProcessForm form) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         LogicalDivision logicalDivision = (LogicalDivision) processDetails.getDivision();
         if (Objects.nonNull(logicalDivision)) {
             processDetails.preserve();
-            processDetails = initializeProcessDetails(logicalDivision);
+            initializeProcessDetails(logicalDivision, form);
         }
     }
 }

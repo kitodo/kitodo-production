@@ -1295,11 +1295,11 @@ Import form
     box-sizing: border-box;
     display: inline-block;
     margin-right: var(--default-half-size);
-    max-width: calc(50% - 93px);
+    max-width: calc(100% - 93px);
     overflow: hidden;
     text-overflow: ellipsis;
     vertical-align: top;
-    width: 50%;
+    width: 100%;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-selectoneradio {
@@ -1319,7 +1319,7 @@ Import form
 #editForm\:processFromTemplateTabView\:addMetadataButtonWrapper {
     border-radius: var(--default-border-radius);
     box-shadow: var(--second-level-shadow);
-    margin-left: 60%;
+    float: right;
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable .ui-outputlabel {
@@ -1333,7 +1333,7 @@ Import form
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield {
-    width: calc(50% - var(--default-double-size) - 93px);
+    width: calc(100% - var(--default-double-size) - 93px);
 }
 
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content:not([data-prk='root']) span > .ui-inputfield.hasDatepicker {
@@ -1347,6 +1347,142 @@ Import form
 #editForm\:processFromTemplateTabView\:metadataTable tr.ui-widget-content span > .ui-button.ui-datepicker-trigger {
     margin-right: var(--default-half-size);
     margin-left: 0;
+}
+
+#editForm\:processFromTemplateTabView\:processDataTab,
+#editForm\:processFromTemplateTabView\:processData,
+#editForm\:processFromTemplateTabView\:processData_content,
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g,
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell,
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panelgrid > .ui-panelgrid-content,
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panelgrid > .ui-panelgrid-content > .ui-g,
+#editForm\:processFromTemplateTabView\:processData_content > div.ui-g > div.ui-panelgrid-cell > .ui-panelgrid > .ui-panelgrid-content > .ui-g > div.ui-panelgrid-cell {
+    height: 100%;
+}
+
+#editForm\:processFromTemplateTabView\:processDataTab.ui-helper-hidden {
+    display: none;
+}
+
+#editForm\:processFromTemplateTabView\:processDataTab:not(.ui-helper-hidden) {
+    display: flex;
+    flex-direction: column;
+}
+
+#editForm\:processFromTemplateTabView\:processData {
+    overflow-y: hidden;
+}
+
+#editForm\:processFromTemplateTabView\:processDataEditGrid_content > .ui-g > .ui-panelgrid-cell {
+    padding-left: 0;
+}
+
+#editForm\:processFromTemplateTabView\:processDataEditGrid,
+#editForm\:processFromTemplateTabView .metadata-tree-wrapper {
+    height: calc(100% - 52px);
+    overflow-y: scroll;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+#editForm\:processFromTemplateTabView div.ui-tabs-panels {
+    overflow-y: hidden;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy {
+    padding: 0;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy_header {
+    color: var(--carbon-blue);
+    background: var(--pure-white);
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy_header .ui-panel-title,
+#editForm\:processFromTemplateTabView\:processHierarchy_header a.ui-panel-titlebar-icon {
+    float: left;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy_header a.ui-panel-titlebar-icon {
+    display: contents;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy_content {
+    margin-left: var(--default-full-size);
+    margin-right: var(--default-full-size);
+    margin-bottom: var(--default-full-size);
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy_content,
+#editForm\:processFromTemplateTabView\:processDataEditGrid,
+#editForm\:processFromTemplateTabView .metadata-tree-wrapper {
+    border: solid var(--contrast-border-width) var(--medium-gray);
+    border-radius: 3px;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy .import-table-section-title {
+    padding-left: var(--default-full-size);
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchyContent {
+    width: 80%;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy button {
+    margin: 3px 0;
+    white-space: nowrap;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy .ui-orderlist-list {
+    border: solid var(--default-border-width) var(--blue);
+    border-radius: 3px;
+    width: 480px;
+}
+
+#editForm\:processFromTemplateTabView\:processAncestors {
+    display: block;
+    margin: auto;
+    width: max-content;
+}
+
+#editForm\:processFromTemplateTabView\:processAncestors ul {
+    transform: rotate(180deg);
+}
+
+#editForm\:processFromTemplateTabView\:processAncestors li {
+    transform: rotate(-180deg);
+    width: auto;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchy\:processHierarchyContent,
+#editForm\:processFromTemplateTabView\:processChildren div.ui-panelgrid-content {
+    border: solid var(--default-border-width) var(--blue);
+    border-radius: 3px;
+}
+
+#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-header-title {
+    text-overflow: ellipsis;
+}
+
+.process-ancestor {
+    list-style: none;
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .ui-button {
+    background: var(--light-blue);
+}
+
+#editForm\:processFromTemplateTabView\:processHierarchyContent .ui-widget-content .selected {
+    background: var(--blue);
+}
+
+#editForm\:processFromTemplateTabView\:processChildren {
+    margin: auto;
+}
+
+#editForm\:processFromTemplateTabView\:processChildren .ui-carousel-item {
+    align-content: center;
+    display: grid;
 }
 
 #progressDialog {
@@ -3319,8 +3455,13 @@ footer {
     cursor: default;
 }
 
-.ot-folder-use {
+.ui-separator {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
+    margin: var(--default-half-size) 0;
+    width: 100%;
+}
+
+.ot-folder-use {
     font-weight: bold;
     padding: .75em 1.5em;
 }
@@ -3334,15 +3475,11 @@ footer {
     width: calc(100% - 64px);
 }
 
-.basicDataTitle {
+.import-table-section-title,
+.ui-panelgrid-cell > .import-table-section-title {
     font-weight: bold;
-    padding: .75em 3em;
-}
-
-.metadataTitle {
-    border-top: solid var(--contrast-border-width) var(--medium-gray);
-    font-weight: bold;
-    padding: .75em 1.5em;
+    height: 36px;
+    margin-bottom: 0.5em;
 }
 
 #tasksTabView\:actionForm {

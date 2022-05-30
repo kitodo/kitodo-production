@@ -34,6 +34,8 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
@@ -89,18 +91,21 @@ public class FileUploadDialog extends MetadataImportDialog {
                     }
                 }
             }
-            fillCreateProcessForm(processes);
+            this.createProcessForm.setProcesses(processes);
+            this.createProcessForm.fillCreateProcessForm(processes.getFirst());
             showRecord();
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
                 | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException
-                | TransformerException | DAOException e) {
+                | TransformerException | DAOException | InvalidMetadataValueException
+                | NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
 
     private TempProcess extractParentRecordFromFile(UploadedFile uploadedFile, Document internalDocument)
             throws XPathExpressionException, UnsupportedFormatException, URISyntaxException, IOException,
-            ParserConfigurationException, SAXException, ProcessGenerationException, TransformerException {
+            ParserConfigurationException, SAXException, ProcessGenerationException, TransformerException,
+            InvalidMetadataValueException, NoSuchMetadataFieldException {
         Collection<String> higherLevelIdentifier = this.createProcessForm.getRulesetManagement()
                 .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
 

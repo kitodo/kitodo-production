@@ -45,9 +45,6 @@ public class ProcessDataTab {
     private List<SelectItem> allDocTypes;
     private final CreateProcessForm createProcessForm;
     private String docType;
-    private String tiffHeaderImageDescription = "";
-    private String tiffHeaderDocumentName = "";
-    private int guessedImages = 0;
 
     ProcessDataTab(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
@@ -69,14 +66,21 @@ public class ProcessDataTab {
                 this.docType = (String) allDocTypes.get(0).getValue();
                 Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
             }
-            if (!this.createProcessForm.getProcesses().isEmpty()) {
-                this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure().setType(this.docType);
-                if (this.docType.isEmpty()) {
-                    this.createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
-                } else {
-                    this.createProcessForm.getProcessMetadata()
-                            .initializeProcessDetails(this.createProcessForm.getProcesses().get(0).getWorkpiece().getLogicalStructure());
-                }
+        }
+    }
+
+    /**
+     * Update process metadata of currently selected process.
+     */
+    public void updateProcessMetadata() {
+        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())) {
+            createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
+            if (this.docType.isEmpty()) {
+                createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
+            } else {
+                createProcessForm.getProcessMetadata()
+                        .initializeProcessDetails(createProcessForm.getCurrentProcess().getWorkpiece()
+                                .getLogicalStructure(), createProcessForm);
             }
         }
     }
@@ -118,60 +122,6 @@ public class ProcessDataTab {
     }
 
     /**
-     * Get tiffHeaderImageDescription.
-     *
-     * @return value of tiffHeaderImageDescription
-     */
-    public String getTiffHeaderImageDescription() {
-        return tiffHeaderImageDescription;
-    }
-
-    /**
-     * Set tiffHeaderImageDescription.
-     *
-     * @param tiffHeaderImageDescription as java.lang.String
-     */
-    public void setTiffHeaderImageDescription(String tiffHeaderImageDescription) {
-        this.tiffHeaderImageDescription = tiffHeaderImageDescription;
-    }
-
-    /**
-     * Get tiffHeaderDocumentName.
-     *
-     * @return value of tiffHeaderDocumentName
-     */
-    public String getTiffHeaderDocumentName() {
-        return tiffHeaderDocumentName;
-    }
-
-    /**
-     * Set tiffHeaderDocumentName.
-     *
-     * @param tiffHeaderDocumentName as java.lang.String
-     */
-    public void setTiffHeaderDocumentName(String tiffHeaderDocumentName) {
-        this.tiffHeaderDocumentName = tiffHeaderDocumentName;
-    }
-
-    /**
-     * Get guessedImages.
-     *
-     * @return value of guessedImages
-     */
-    public int getGuessedImages() {
-        return guessedImages;
-    }
-
-    /**
-     * Set guessedImages.
-     *
-     * @param guessedImages as int
-     */
-    public void setGuessedImages(int guessedImages) {
-        this.guessedImages = guessedImages;
-    }
-
-    /**
      * Get all document types.
      *
      * @return list of all ruleset divisions
@@ -199,7 +149,7 @@ public class ProcessDataTab {
      */
     public void generateProcessTitleAndTiffHeader() {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadata().getProcessDetailsElements();
-        Process process = this.createProcessForm.getMainProcess();
+        Process process = this.createProcessForm.getCurrentProcess().getProcess();
         try {
             StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement().getStructuralElementView(
                     docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
@@ -224,14 +174,15 @@ public class ProcessDataTab {
                 currentTitle);
 
             // document name is generally equal to process title
-            this.tiffHeaderDocumentName = process.getTitle();
-            this.tiffHeaderImageDescription = ProcessService.generateTiffHeader(processDetails, atstsl,
-                ServiceManager.getImportService().getTiffDefinition(), this.docType);
+            createProcessForm.getCurrentProcess().setTiffHeaderDocumentName(process.getTitle());
+            createProcessForm.getCurrentProcess().setTiffHeaderImageDescription(ProcessService.generateTiffHeader(
+                    processDetails, atstsl, ServiceManager.getImportService().getTiffDefinition(), this.docType));
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
-            "editForm:processFromTemplateTabView:processMetadata");
+                "editForm:processFromTemplateTabView:processMetadata",
+                "editForm:processFromTemplateTabView:processAncestors");
     }
 
     private String getTitleFromLogicalStructure(Process process) {
@@ -305,6 +256,7 @@ public class ProcessDataTab {
     public void prepare() {
         try {
             ServiceManager.getImportService().prepare(createProcessForm.getProject().getTitle());
+            updateProcessMetadata();
         } catch (IOException | DoctypeMissingException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

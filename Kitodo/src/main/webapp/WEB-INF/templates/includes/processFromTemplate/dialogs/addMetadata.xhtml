@@ -41,11 +41,13 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="apply"
                                          action="#{CreateProcessForm.processMetadata.addMetadataEntry}"
+                                         process="addMetadataDialog"
                                          update="editForm:processFromTemplateTabView:metadataTable editForm:processFromTemplateTabView:addMetadataButtonWrapper"
                                          oncomplete="PF('addMetadataDialog').hide();"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
+                                         process="@none"
                                          onclick="PF('addMetadataDialog').hide();"
                                          value="#{msgs.cancel}"
                                          icon="fa fa-times fa-lg"
