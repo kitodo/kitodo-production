@@ -46,7 +46,7 @@ public class ImportConfiguration extends BaseBean {
     private String configurationType;
 
     @Column(name = "prestructured_import")
-    private Boolean prestructuredImport;
+    private Boolean prestructuredImport = false;
 
     @Column(name = "interface_type")
     private String interfaceType;
@@ -82,7 +82,7 @@ public class ImportConfiguration extends BaseBean {
     private Integer port;
 
     @Column(name = "anonymous_access")
-    private boolean anonymousAccess;
+    private boolean anonymousAccess = false;
 
     @Column
     private String username;

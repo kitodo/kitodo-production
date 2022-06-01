@@ -13,7 +13,6 @@
 -- Migration: Create table for import configurations.
 --
 -- 1. Add table "mappingfile"
-
 CREATE TABLE IF NOT EXISTS mappingfile (
     id INT(11) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
@@ -25,14 +24,13 @@ CREATE TABLE IF NOT EXISTS mappingfile (
     COLLATE utf8mb4_unicode_ci;
 
 -- 2. Add table "importconfiguration"
-
 CREATE TABLE IF NOT EXISTS importconfiguration
 (
     id INT(11) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
     description varchar(255) NOT NULL,
     configuration_type varchar(255) NOT NULL,
-    prestructured_import tinyint(1) DEFAULT NULL,
+    prestructured_import tinyint(1) DEFAULT 0,
     interface_type varchar(255) DEFAULT NULL,
     return_format varchar(255) DEFAULT NULL,
     metadata_format varchar(255) DEFAULT NULL,
@@ -50,7 +48,7 @@ CREATE TABLE IF NOT EXISTS importconfiguration
     host varchar(255) DEFAULT NULL,
     port INT(11) DEFAULT NULL,
     path varchar(255) DEFAULT NULL,
-    anonymous_access tinyint(1) DEFAULT NULL,
+    anonymous_access tinyint(1) DEFAULT 0,
     username varchar(255) DEFAULT NULL,
     password varchar(255) DEFAULT NULL,
     query_delimiter varchar(255) DEFAULT NULL,
@@ -75,7 +73,6 @@ CREATE TABLE IF NOT EXISTS importconfiguration
 
 
 -- 3. Add table "searchfield"
-
 CREATE TABLE IF NOT EXISTS searchfield
 (
     id INT(11) NOT NULL AUTO_INCREMENT,
@@ -83,7 +80,7 @@ CREATE TABLE IF NOT EXISTS searchfield
     field_label varchar(255) NOT NULL,
     field_value varchar(255) NOT NULL,
     displayed tinyint(1) DEFAULT 1,
-    parent_element tinyint(1) DEFAULT NULL,
+    parent_element tinyint(1) DEFAULT 0,
     PRIMARY KEY(id),
     KEY FK_searchfield_importconfiguration_id (importconfiguration_id),
     CONSTRAINT FK_searchfield_importconfiguration_id
@@ -93,7 +90,6 @@ CREATE TABLE IF NOT EXISTS searchfield
 
 
 -- 4. Add table "importconfiguration_x_mappingfile"
-
 CREATE TABLE IF NOT EXISTS importconfiguration_x_mappingfile (
     importconfiguration_id INT(11) NOT NULL,
     mappingfile_id INT(11) NOT NULL,
@@ -106,11 +102,33 @@ CREATE TABLE IF NOT EXISTS importconfiguration_x_mappingfile (
   COLLATE utf8mb4_unicode_ci;
 
 -- 5. Add column 'default_importconfiguration_id' to table 'project'
-
 ALTER TABLE project ADD default_importconfiguration_id INT(11);
 
--- 6. Add authorities to view and edit import configurations and mapping files
+-- 6. Add PICA to Kitodo mapping file
+INSERT IGNORE INTO mappingfile (title, file, input_metadata_format, output_metadata_format)
+VALUES ('PICA to Kitodo mapping', 'pica2kitodo.xsl', 'PICA', 'KITODO');
 
+-- 7. Add default K10Plus PICA SRU import configuration
+INSERT IGNORE INTO importconfiguration (title, description, configuration_type, interface_type, return_format,
+                                        default_searchfield_id, identifier_searchfield_id, metadata_format, scheme,
+                                        host, path, sru_version, sru_record_schema)
+VALUES ('K10Plus-SLUB-PICA', 'K10Plus OPAC PICA', 'OPAC_SEARCH', 'SRU', 'XML', 2, 2, 'PICA', 'https', 'sru.k10plus.de',
+        'gvk', '1.1', 'picaxml');
+
+-- 8. Add search fields for K10Plus import configuration
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'Titel', 'pica.tit');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'PPN', 'pica.ppn');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'Author', 'pica.per');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'ISSN', 'pica.iss');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'ISBN', 'pica.isb');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'Erscheinungsort', 'pica.plc');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'Erscheinungsjahr', 'pica.jah');
+INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'Volltext', 'pica.txt');
+
+-- 9. Set mapping file for K10Plus import configuration
+INSERT IGNORE INTO importconfiguration_x_mappingfile (importconfiguration_id, mappingfile_id) VALUES (1, 1);
+
+-- 10. Add authorities to view and edit import configurations and mapping files
 INSERT IGNORE INTO authority (title) VALUES ('addImportConfiguration_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('editImportConfiguration_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('viewImportConfiguration_clientAssignable');

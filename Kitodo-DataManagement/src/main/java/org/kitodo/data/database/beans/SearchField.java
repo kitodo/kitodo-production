@@ -34,7 +34,7 @@ public class SearchField extends BaseBean {
     private boolean displayed = true;
 
     @Column(name = "parent_element")
-    private boolean parentElement;
+    private boolean parentElement = false;
 
     @ManyToOne
     @JoinColumn(name = "importconfiguration_id",
