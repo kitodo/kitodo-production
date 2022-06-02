@@ -382,7 +382,7 @@ public class UserForm extends BaseForm {
     public List<String> getClientProjects() {
         if (Objects.nonNull(this.removeClientId)) {
             return this.userObject.getProjects().stream()
-                    .filter(p -> p.getClient().getId().equals(this.removeClientId))
+                    .filter(project -> project.getClient().getId().equals(this.removeClientId))
                     .map(Project::getTitle).collect(Collectors.toList());
         } else {
             return Collections.emptyList();
