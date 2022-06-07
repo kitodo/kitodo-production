@@ -399,4 +399,11 @@ public class CommentForm extends BaseForm {
             return Helper.getTranslation("closeTask");
         }
     }
+
+    /**
+     * Returns true if a correction comment is allowed to be added.
+     */
+    public boolean isCorrectionCommentAllowed() {
+        return getSizeOfPreviousStepsForProblemReporting() > 0 && !isConcurrentTaskInWork() && !isCorrectionWorkflow();
+    }
 }

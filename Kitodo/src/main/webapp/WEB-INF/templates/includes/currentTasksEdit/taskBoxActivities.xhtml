@@ -121,6 +121,7 @@
                     <p:commandLink id="addCorrectionComment"
                                    action="#{CommentForm.newComment(true)}"
                                    oncomplete="PF('newCommentDialog').show()"
+                                   rendered="#{CommentForm.correctionCommentAllowed}"
                                    update=":newCommentForm">
                         <h:outputText><i class="fa fa-commenting" /> #{msgs.correctionMessageWrite}</h:outputText>
                     </p:commandLink>
