@@ -206,18 +206,6 @@ public class SearchResultForm extends ProcessListBaseView {
     }
 
     /**
-     * Download to home for selected processes.
-     */
-    public void downloadToHomeForSelection() {
-        try {
-            ProcessService.downloadToHome(this.getSelectedProcesses());
-            Helper.setMessage("createdInUserHomeAll");
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error downloading processes to home directory!");
-        }
-    }
-
-    /**
      * Gets the filtered list.
      *
      * @return a list of ProcessDTO

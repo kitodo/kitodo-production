@@ -2557,6 +2557,24 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
     }
 
+    /** 
+     * Upload from home for list of processes for current user. 
+     * Deletes symlinks in home directory of current user.
+     * 
+     * @param processes the list of processes
+     */
+    public static void uploadFromHome(List<Process> processes) {
+        WebDav webDav = new WebDav();
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        for (Process process : processes) {
+            try {
+                webDav.uploadFromHome(currentUser, process);
+            } catch (RuntimeException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
     /**
      * Check and return whether the process with the ID 'processId' has any correction comments or not.
      *

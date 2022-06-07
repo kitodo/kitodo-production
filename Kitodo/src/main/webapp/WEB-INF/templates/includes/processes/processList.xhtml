@@ -254,7 +254,7 @@
                                 icon="fa fa-download"/>
                     <p:menuitem id="uploadAll"
                                 value="#{msgs.deleteLinkHomeDirectory}"
-                                action="#{ProcessForm.uploadFromHomeForAll}"
+                                action="#{ProcessForm.uploadFromHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-upload">
                         <f:setPropertyActionListener value="#{process.id}" target="#{ProcessForm.processByID}"/>
