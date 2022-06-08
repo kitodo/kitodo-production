@@ -253,7 +253,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public Long countNotIndexedDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate")
-                + " AND ( indexAction = 'INDEX' OR indexAction ) IS NULL");
+                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
     }
 
     @Override
