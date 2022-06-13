@@ -45,7 +45,7 @@ public class TaskDAO extends BaseDAO<Task> {
     @Override
     public List<Task> getAllNotIndexed(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Task WHERE " + getDateFilter("processingBegin")
-                + " AND ( indexAction = 'INDEX' OR indexAction ) IS NULL ORDER BY id ASC",
+                + " AND (indexAction = 'INDEX' OR indexAction IS NULL) ORDER BY id ASC",
             offset,
             size);
     }

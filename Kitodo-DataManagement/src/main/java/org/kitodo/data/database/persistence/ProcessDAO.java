@@ -41,7 +41,7 @@ public class ProcessDAO extends BaseDAO<Process> {
     @Override
     public List<Process> getAllNotIndexed(int offset, int size) throws DAOException {
         return retrieveObjects("FROM Process WHERE " + getDateFilter("creationDate")
-                + " AND indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+                + " AND (indexAction = 'INDEX' OR indexAction IS NULL) ORDER BY id ASC",
             offset, size);
     }
 
