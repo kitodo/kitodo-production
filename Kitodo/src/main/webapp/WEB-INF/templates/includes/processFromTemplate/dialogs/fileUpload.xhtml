@@ -43,8 +43,14 @@
                     </div>
                 </p:row>
             </p:panelGrid>
-            <p:panelGrid>
+            <p:panelGrid rendered="#{not empty CreateProcessForm.fileUploadDialog.selectedCatalog}">
                 <p:row>
+                    <div>
+                        <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
+                        <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.fileUploadDialog.additionalImport}" >
+                            <p:ajax event="change" update="fileUploadForm" />
+                        </p:selectBooleanCheckbox>
+                    </div>
                     <div>
                         <p:fileUpload rendered="#{CreateProcessForm.fileUploadDialog.selectedCatalog ne null}"
                                       listener="#{CreateProcessForm.fileUploadDialog.handleFileUpload}"

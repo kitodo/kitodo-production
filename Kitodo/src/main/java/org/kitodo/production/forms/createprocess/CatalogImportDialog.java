@@ -61,6 +61,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     private boolean importChildren = false;
     private int numberOfChildren = 0;
     private String opacErrorMessage = "";
+    private boolean additionalImport = false;
 
     /**
      * Standard constructor.
@@ -172,22 +173,26 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                         this.createProcessForm.getRulesetManagement().getFunctionalKeys(
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
-                this.createProcessForm.setProcesses(processes);
-                this.createProcessForm.fillCreateProcessForm(processes.getFirst());
+                if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
+                    extendsMetadataTableOfMetadataTab(processes);
+                } else {
+                    this.createProcessForm.setProcesses(processes);
+                    this.createProcessForm.fillCreateProcessForm(processes.getFirst());
 
-                String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
-                String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
-                        String.valueOf(processes.size()), opac);
-                showGrowlMessage(summary, detail);
-
-                if (this.importChildren) {
-                    summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
-                    detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
-                            String.valueOf(this.createProcessForm.getChildProcesses().size()));
+                    String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
+                    String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
+                            String.valueOf(processes.size()), opac);
                     showGrowlMessage(summary, detail);
-                }
 
-                showRecord();
+                    if (this.importChildren) {
+                        summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
+                        detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
+                                String.valueOf(this.createProcessForm.getChildProcesses().size()));
+                        showGrowlMessage(summary, detail);
+                    }
+
+                    showRecord();
+                }
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
                     | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
@@ -302,4 +307,25 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         return Helper.getTranslation("newProcess.catalogueSearch.manyChildrenWarning",
             String.valueOf(this.numberOfChildren));
     }
+
+
+    /**
+     * Checks the additional import.
+     *
+     * @return true if is additional import
+     */
+    public boolean isAdditionalImport() {
+        return additionalImport;
+    }
+
+    /**
+     * Set additional import.
+     *
+     * @param additionalImport
+     *            the value if is additional import
+     */
+    public void setAdditionalImport(boolean additionalImport) {
+        this.additionalImport = additionalImport;
+    }
+
 }

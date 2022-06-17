@@ -118,9 +118,58 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView) {
         this(null, structure, divisionView, null, null, structure.getMetadata());
-        this.treeNode = new DefaultTreeNode();
+        buildTreeNodeAndCreateMetadataTable();
+    }
+
+    /**
+     * Add the metadata of this fielded metadata.
+     *
+     * @param potentialMetadataItems
+     *            metadata to add if not exist
+     */
+    public void addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
+        Collection<Metadata> metadataToAdd = new ArrayList<>();
+        potentialMetadataItems.forEach( potentialMetadataItem -> {
+            if ( metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey())) ) {
+                metadataToAdd.add(potentialMetadataItem);
+            }
+        });
+        metadata.addAll(metadataToAdd);
+
+        TreeNode editedTreeNode = treeNode;
+
+        buildTreeNodeAndCreateMetadataTable();
+
+        overwriteTreeNodes(editedTreeNode.getChildren(), treeNode.getChildren());
+    }
+
+    private void buildTreeNodeAndCreateMetadataTable() {
+        treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
         createMetadataTable();
+    }
+
+    /**
+     * Overwrites the target list with source list of tree nodes based on the
+     * metadata id.
+     *
+     * @param source
+     *            The list of source tree nodes
+     * @param target
+     *            The list of target tree nodes
+     */
+    private static void overwriteTreeNodes(List<TreeNode> source, List<TreeNode> target) {
+        int index = 0;
+        for (TreeNode targetNode : target) {
+            ProcessDetail row = (ProcessDetail) targetNode.getData();
+            Optional<TreeNode> treeNodeOptional = source.stream().filter(
+                            sourceNode -> ((ProcessDetail) sourceNode.getData()).getMetadataID().equals(row.getMetadataID()))
+                    .findFirst();
+            if (treeNodeOptional.isPresent()) {
+                target.set(index, treeNodeOptional.get());
+            }
+            index++;
+        }
     }
 
     /**
@@ -700,9 +749,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public void setMetadata(Collection<Metadata> metadata) {
         this.metadata.clear();
         this.metadata.addAll(metadata);
-        this.treeNode = new DefaultTreeNode();
-        treeNode.setExpanded(true);
-        createMetadataTable();
+        buildTreeNodeAndCreateMetadataTable();
     }
 
     /**
