@@ -2487,13 +2487,15 @@ Column content
 }
 
 #logicalStructureHeader {
-    padding: 5px;
+    border-bottom: 1px solid var(--cloudy-gray);
     display: flex;
+    padding: var(--default-half-size);
 }
 
 #logicalStructureHeader .logicalStructureTitle {
     flex-grow: 1;
     flex-shrink: 1;
+    margin-right: var(--default-half-size);
 }
 
 #logicalStructureHeader .logicalStructureMenuWrapper {
@@ -2544,10 +2546,6 @@ Column content
 
 .ui-tree-draghelper.ui-draggable-dragging {
     pointer-events: none;
-}
-
-#structureTreeForm button.secondary {
-    margin: 4px;
 }
 
 .pagination-active {
