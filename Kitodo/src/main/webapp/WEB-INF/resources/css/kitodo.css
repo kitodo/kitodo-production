@@ -2421,8 +2421,11 @@ Column content
     box-sizing: border-box;
     height: 100%;
     overflow: auto;
-    padding: var(--default-full-size) var(--default-double-size);
     width: 100%;
+}
+
+#structureAccordion .scroll-wrapper .ui-tree {
+    padding: var(--default-full-size) var(--default-double-size);
 }
 
 .scroll-up-area,
