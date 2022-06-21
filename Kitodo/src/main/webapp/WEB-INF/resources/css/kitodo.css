@@ -1948,6 +1948,22 @@ Metadata Editor
 
 #metadataEditorHeader h3 {
     width: calc(100% - 715px);
+    display: flex;
+}
+
+#metadataEditorHeader h3 .process-title {
+    flex-grow: 0;
+    flex-shrink: 1;
+    overflow-x: hidden;
+    padding: 0 var(--default-half-size);
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+#metadataEditorHeader h3 .process-id {
+    color: var(--medium-gray);
+    flex-grow: 0;
+    flex-shrink: 0;
 }
 
 #metadataEditorHeader button.ui-state-disabled {

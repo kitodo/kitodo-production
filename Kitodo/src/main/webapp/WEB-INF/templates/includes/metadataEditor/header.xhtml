@@ -24,8 +24,8 @@
                                     SecurityAccessController.hasAuthorityToEditProcessPagination()}"/>
     <p:panel styleClass="content-header">
         <h3 id="headerText">
-            <h:outputText value="#{DataEditorForm.processTitle} (#{msgs.id}: #{DataEditorForm.process.id})"
-                          title="#{DataEditorForm.processTitle} (#{msgs.id}: #{DataEditorForm.process.id})"/>
+            <h:outputText styleClass="process-title" value="#{DataEditorForm.processTitle}" title="#{DataEditorForm.processTitle}"/>
+            <h:outputText styleClass="process-id" value="(#{msgs.id}: #{DataEditorForm.process.id})"/>
         </h3>
         <h:form id="metadataEditorLayoutForm">
             <p:commandButton onclick="saveLayout()"
