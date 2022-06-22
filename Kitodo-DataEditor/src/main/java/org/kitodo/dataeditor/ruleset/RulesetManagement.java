@@ -218,7 +218,7 @@ public class RulesetManagement implements RulesetManagementInterface {
      */
     @Override
     public void load(File rulesetFile) throws IOException {
-        this.ruleset = read(Ruleset.class, rulesetFile);
+        this.ruleset = read(rulesetFile);
         initializeNamespaces(ruleset.getKeys(), rulesetFile.getParentFile());
     }
 
@@ -262,6 +262,18 @@ public class RulesetManagement implements RulesetManagementInterface {
         }
     }
 
+    private static Ruleset read(File rulesetFile) throws IOException {
+        Ruleset result = new Ruleset();
+        Ruleset base = read(Ruleset.class, rulesetFile);
+        for (String include : base.getIncludes()) {
+            File includedFile = new File(rulesetFile.getParentFile(), include);
+            Ruleset included = read(Ruleset.class, includedFile);
+            result.addAll(included);
+        }
+        result.addAll(base);
+        return result;
+    }
+
     /**
      * Reads an object from a file. For this purpose, a marshal eliminator of
      * Java XML bindings is created, which eliminates the class of marshals and
@@ -278,7 +290,7 @@ public class RulesetManagement implements RulesetManagementInterface {
      *             if I/O fails
      */
     @SuppressWarnings("unchecked")
-    private <T> T read(Class<T> objectClass, File inputFile) throws IOException {
+    private static <T> T read(Class<T> objectClass, File inputFile) throws IOException {
         try {
             return JAXBContextCache.getInstance().getUnmarshalled(objectClass, inputFile);
         } catch (JAXBException e) {
