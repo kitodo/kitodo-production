@@ -826,10 +826,13 @@ public class GalleryPanel {
         String physicalDivisionOrder = params.get("page");
         String stripeIndex = params.get("stripe");
         String selectionType = params.get("selectionType");
-        int pageX = Integer.parseInt(params.get("pageX"));
-        int pageY = Integer.parseInt(params.get("pageY"));
         boolean triggerContextMenu = Boolean.parseBoolean(params.get("triggerContextMenu"));
-        String createEvent = "(function(){let e=new Event('mousedown');e.pageX=" + pageX + ";e.pageY=" + pageY + ";return e})()";
+        String createEvent = "";
+        if (triggerContextMenu) {
+            int pageX = Integer.parseInt(params.get("pageX"));
+            int pageY = Integer.parseInt(params.get("pageY"));
+            createEvent = "(function(){let e=new Event('mousedown');e.pageX=" + pageX + ";e.pageY=" + pageY + ";return e})()";
+        }
 
         if (StringUtils.isNotBlank(physicalDivisionOrder)) {
             selectMedia(physicalDivisionOrder, stripeIndex, selectionType);

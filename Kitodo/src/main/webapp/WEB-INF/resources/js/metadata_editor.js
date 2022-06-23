@@ -143,6 +143,15 @@ metadataEditor.gallery = {
                 this.handleSingleSelect(event, target, treeNodeId);
             }
 
+            this.handleSelectionUpdates(treeNodeId);
+        },
+
+        /**
+         * Updates other components of the meta data editor after changes to the current gallery selection.
+         * 
+         * @param treeNodeId treeNodeId of newly selected thumbnail
+         */
+        handleSelectionUpdates(treeNodeId) {
             // update selection in other components of the meta data editor
             metadataEditor.pagination.markManyAsSelected(this.findSelectedTreeNodeIds());
             if (metadataEditor.physicalTree.isAvailable() || metadataEditor.logicalTree.isHideMediaChecked()) {
@@ -821,11 +830,10 @@ metadataEditor.shortcuts = {
         }
         let newIndex = currentIndex + delta;
         if (currentIndex >= 0 && newIndex >= 0 && newIndex < selectableThumbnails.length) {
-            metadataEditor.gallery.sendSelectionToBackend(
-                selectableThumbnails[newIndex].dataset.order, 
-                selectableThumbnails[newIndex].dataset.stripe, 
-                "default"
-            );
+            let newThumbnailContainer = selectableThumbnails[newIndex];
+            let treeNodeId = newThumbnailContainer.dataset.logicaltreenodeid;
+            metadataEditor.gallery.pages.handleSingleSelect(null, $(newThumbnailContainer), treeNodeId);
+            metadataEditor.gallery.pages.handleSelectionUpdates(treeNodeId);
             let galleryViewMode = this.getGalleryViewMode();
             if (galleryViewMode === "LIST") {
                 scrollToStructureThumbnail(selectableThumbnails.eq(newIndex), $("#imagePreviewForm\\:structuredPagesField"));
