@@ -45,12 +45,15 @@
         </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editUser} (#{UserForm.userObject.fullName})"
+                          styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.userCreate}"
+                          styleClass="shortable"
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewUser}"
                           rendered="#{isViewMode}"/>
             <h:outputText value="#{msgs.userConfiguration}"
+                          styleClass="shortable"
                           rendered="#{isConfigMode}"/>
         </h3>
         <p:button id="cancel" value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"

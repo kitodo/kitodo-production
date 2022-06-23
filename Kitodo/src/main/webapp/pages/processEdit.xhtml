@@ -36,10 +36,10 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editProcess} (#{ProcessForm.process.title}, #{msgs.id}: #{ProcessForm.process.id})"
-                          rendered="#{not empty ProcessForm.process.title}"/>
-            <h:outputText value="#{msgs.createNewProcess}"
-                          rendered="#{empty ProcessForm.process.title}"/>
+            <h:outputText styleClass="shortable"
+                          value="#{ProcessForm.process.title}"/>
+            <h:outputText styleClass="set-apart"
+                          value="(#{msgs.id}: #{ProcessForm.process.id})"/>
         </h3>
         <p:button id="cancel"
                   value="#{msgs.cancel}"

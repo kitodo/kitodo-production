@@ -51,10 +51,18 @@
             };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
-            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.createNewWorkflow}"
+                          styleClass="shortable"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.duplicateWorkflow}"
+                          styleClass="shortable"
+                          rendered="#{isDuplicateMode}"/>
+            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
+                          styleClass="shortable"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})"
+                          styleClass="shortable"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton value="#{isViewMode ? msgs.close : msgs.cancel}"
                   action="#{WorkflowForm.cancel()}"

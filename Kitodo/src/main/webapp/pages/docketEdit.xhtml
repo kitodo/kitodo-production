@@ -38,9 +38,15 @@
             window.onload = function () {checkForm('editForm')};
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.createNewDocket}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.editDocket} (#{DocketForm.docket.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewDocket} (#{DocketForm.docket.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.createNewDocket}"
+                          styleClass="shortable"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.editDocket} (#{DocketForm.docket.title})"
+                          styleClass="shortable"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewDocket} (#{DocketForm.docket.title})"
+                          styleClass="shortable"
+                          rendered="#{isViewMode}"/>
         </h3>
 
         <p:button id="cancel" value="#{msgs.cancel}"

@@ -659,17 +659,36 @@ section#content-section {
 
 .content-header > .ui-panel-content {
     display: flex;
-}
-
-.content-header .ui-panel-content {
     padding: 0;
 }
 
-.content-header .ui-panel-content > h3 {
-    display: inline;
+.content-header > .ui-panel-content > h3 {
+    display: flex;
     flex-grow: 1;
     flex-shrink: 1;
     line-height: 36px;
+    overflow: hidden;
+}
+
+.content-header > .ui-panel-content > h3 span.shortable {
+    flex-grow: 0;
+    flex-shrink: 1;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.content-header > .ui-panel-content > h3 span.set-apart {
+    color: var(--medium-gray);
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 0 var(--default-half-size);
+}
+
+.content-header #processCount {
+    font-size: 14px;
+    line-height: 14px;
+    margin: 0 var(--default-half-size);
 }
 
 .content-header .ui-panel-content > form,
@@ -1105,13 +1124,6 @@ main i.fa {
     width: 220px;
 }
 
-h3#headerText {
-    display: inline-block;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 #dropDownMenus {
     float: left;
     margin-top: calc((var(--input-height) + var(--input-padding)) * -1);
@@ -1216,24 +1228,6 @@ h3#headerText {
     display: inline-block;
     margin-right: 8px;
     width: calc(100% - 48px);
-}
-
-#titleProcess {
-    flex-grow: 1;
-    flex-shrink: 1;
-}
-
-#titleProcess > .ui-panel-content {
-    display: flex;
-}
-
-#titleProcess h3 {
-    display: inline-block;
-    flex-grow: 0;
-}
-
-#titleProcess h5 {
-    display: inline-block;
 }
 
 /*----------------------------------------------------------------------
@@ -1948,22 +1942,6 @@ Metadata Editor
 
 #metadataEditorHeader h3 {
     width: calc(100% - 715px);
-    display: flex;
-}
-
-#metadataEditorHeader h3 .process-title {
-    flex-grow: 0;
-    flex-shrink: 1;
-    overflow-x: hidden;
-    padding: 0 var(--default-half-size);
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
-#metadataEditorHeader h3 .process-id {
-    color: var(--medium-gray);
-    flex-grow: 0;
-    flex-shrink: 0;
 }
 
 #metadataEditorHeader button.ui-state-disabled {
@@ -1998,7 +1976,6 @@ Metadata Editor
 
 #messagesWrapper #error-messages {
     overflow: auto;
-    margin: 10px 0;
     max-height: 300px;
 }
 
@@ -3610,6 +3587,18 @@ min 1200px
 
     body {
         background-size: 100% auto;
+    }
+
+    .breadcrumb-menu ul li:not(:first-child) .ui-menuitem-icon {
+        padding-left: var(--default-half-size);
+    }
+
+    .breadcrumb-menu ul li .ui-menuitem-link {
+        width: auto;
+    }
+
+    .breadcrumb-menu ul li .ui-menuitem-text {
+        padding: 0 var(--default-half-size);
     }
 }
 

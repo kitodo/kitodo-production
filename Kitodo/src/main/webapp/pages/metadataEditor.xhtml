@@ -230,7 +230,7 @@
         <p:menuitem value="#{msgs.processes}" url="processes.jsf" icon="fa fa-clipboard" rendered="#{request.getHeader('referer').contains('process')}" />
         <p:menuitem value="#{msgs.tasks}" url="tasks.jsf" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
         <p:menuitem value="#{msgs.taskDetails}" url="#{DataEditorForm.referringView}" rendered="#{request.getHeader('referer').contains('currentTasksEdit')}" icon="fa fa-paperclip"/>
-        <p:menuitem value="#{msgs.metadataEdit} (#{DataEditorForm.processTitle})" icon="fa fa-list-alt"/>
+        <p:menuitem value="#{msgs.metadataEdit}" icon="fa fa-list-alt"/>
     </ui:define>
 
     <ui:define name="page-scripts">

@@ -235,12 +235,12 @@
                     <p:menuitem id="processingStatusUpSelection"
                                 value="#{msgs.processingStatusUp}"
                                 action="#{ProcessForm.setTaskStatusUpForSelection}"
-                                update="processesTabView:processesForm:processesTable,titleProcess"
+                                update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-up"/>
                     <p:menuitem id="processingStatusDownSelection"
                                 value="#{msgs.processingStatusDown}"
                                 action="#{ProcessForm.setTaskStatusDownForSelection}"
-                                update="processesTabView:processesForm:processesTable,titleProcess"
+                                update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-down"/>
                     <p:menuitem id="executeScriptSelection"
                                 rendered="#{SecurityAccessController.hasAuthorityToRunKitodoScripts()}"
@@ -281,7 +281,7 @@
                                 onstart="PF('processesTable').getPaginator().setPage(0);"
                                 rendered="#{ProcessForm.showClosedProcesses eq false}"
                                 icon="fa fa-eye"
-                                update="processesTabView:processesForm,titleProcess">
+                                update="processesTabView:processesForm,processCount">
                         <f:setPropertyActionListener target="#{ProcessForm.showClosedProcesses}" value="#{true}"/>
                     </p:menuitem>
                     <p:menuitem id="hideCompletedProcesses"
@@ -289,7 +289,7 @@
                                 onstart="PF('processesTable').getPaginator().setPage(0);"
                                 icon="fa fa-eye-slash"
                                 rendered="#{ProcessForm.showClosedProcesses eq true}"
-                                update="processesTabView:processesForm,titleProcess">
+                                update="processesTabView:processesForm,processCount">
                         <f:setPropertyActionListener target="#{ProcessForm.showClosedProcesses}" value="#{false}"/>
                     </p:menuitem>
                 </p:menu>
