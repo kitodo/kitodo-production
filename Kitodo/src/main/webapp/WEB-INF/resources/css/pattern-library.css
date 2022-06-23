@@ -784,6 +784,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     border-color: var(--medium-gray);
 }
 
+.ui-selectcheckboxmenu-panel {
+    padding: var(--default-full-size);
+}
+
 .ui-selectcheckboxmenu-panel,
 .ui-selectcheckboxmenu-items-wrapper,
 .ui-selectcheckboxmenu-items {
@@ -794,10 +798,6 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     min-width: 200px;
     overflow: initial;
     overflow-y: scroll;
-}
-
-.ui-selectcheckboxmenu-label-container {
-    padding-right: var(--default-full-size);
 }
 
 .ui-selectcheckboxmenu-trigger::after {
