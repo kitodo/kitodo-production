@@ -470,19 +470,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Download to home for selected processes.
-     */
-    public void downloadToHomeForSelection() {
-        try {
-            ProcessService.downloadToHome(getSelectedProcesses());
-            // TODO: fix message
-            Helper.setMessage("createdInUserHomeAll");
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error downloading processes to home directory!");
-        }
-    }
-
-    /**
      * Download to home for all found processes.
      */
     public void downloadToHomeForAll() {

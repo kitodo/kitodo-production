@@ -45,7 +45,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
 
-public class ProcessListBaseView<T> extends BaseForm {
+public class ProcessListBaseView extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ProcessListBaseView.class);
     private ChartMode chartMode;
@@ -56,7 +56,7 @@ public class ProcessListBaseView<T> extends BaseForm {
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
-    List<T> selectedProcessesOrProcessDTOs = new ArrayList<>();
+    List<? extends Object> selectedProcessesOrProcessDTOs = new ArrayList<>();
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
@@ -71,24 +71,30 @@ public class ProcessListBaseView<T> extends BaseForm {
     }
 
     /**
-     * Get selectedProcesses.
+     * Returns the list of the processes currently selected in the user interface.
+     * Converts ProcessDTO instances to Process instances in case of displaying search results.
      *
      * @return value of selectedProcesses
      */
+    @SuppressWarnings("unchecked")
     public List<Process> getSelectedProcesses() {
+        List<Process> selectedProcesses = new ArrayList<>();
         if (selectedProcessesOrProcessDTOs.size() > 0) {
             if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
+                // list contains ProcessDTO instances
                 try {
-                    selectedProcessesOrProcessDTOs = (List<T>) ServiceManager.getProcessService()
+                    selectedProcesses = ServiceManager.getProcessService()
                             .convertDtosToBeans((List<ProcessDTO>) selectedProcessesOrProcessDTOs);
                 } catch (DAOException e) {
                     Helper.setErrorMessage(ERROR_LOADING_MANY,
                         new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
                 }
+            } else if (selectedProcessesOrProcessDTOs.get(0) instanceof Process) {
+                // list contains Process instances
+                selectedProcesses = (List<Process>) selectedProcessesOrProcessDTOs;    
             }
-            return (List<Process>) selectedProcessesOrProcessDTOs;
         }
-        return new ArrayList<>();
+        return selectedProcesses;
     }
 
     /**
@@ -322,6 +328,26 @@ public class ProcessListBaseView<T> extends BaseForm {
     }
 
     /**
+     * Download to home for selected processes.
+     */
+    public void downloadToHomeForSelection() {
+        try {
+            ProcessService.downloadToHome(this.getSelectedProcesses());
+            Helper.setMessage("createdInUserHomeAll");
+        } catch (DAOException e) {
+            Helper.setErrorMessage("Error downloading processes to home directory!");
+        }
+    }
+
+    /**
+     * Upload selected processes from home.
+     */
+    public void uploadFromHomeForSelection() {
+        ProcessService.uploadFromHome(this.getSelectedProcesses());
+        Helper.setMessage("directoryRemovedSelected");
+    }
+
+    /**
      * Upload all processes from home.
      */
     public void uploadFromHomeForAll() {
@@ -518,11 +544,18 @@ public class ProcessListBaseView<T> extends BaseForm {
         }
     }
 
-    public List<T> getSelectedProcessesOrProcessDTOs() {
+    /**
+     * Returns the list of currently selected processes. This list is used both when displaying search results 
+     * and when displaying the process list, which is why it may contain either instances of Process or 
+     * instances of ProcessDTO.
+     * 
+     * @return list of instances of Process or ProcessDTO
+     */
+    public List<? extends Object> getSelectedProcessesOrProcessDTOs() {
         return selectedProcessesOrProcessDTOs;
     }
 
-    public void setSelectedProcessesOrProcessDTOs(List<T> selectedProcessesOrProcessDTOs) {
+    public void setSelectedProcessesOrProcessDTOs(List<? extends Object> selectedProcessesOrProcessDTOs) {
         this.selectedProcessesOrProcessDTOs = selectedProcessesOrProcessDTOs;
     }
 
