@@ -1592,7 +1592,7 @@ Mass import
 
 #tasksTabView\:filterForm .ui-selectcheckboxmenu-label,
 #tasksTabView\:statusForm .ui-selectcheckboxmenu-label {
-    padding-right: var(--default-double-size);
+    padding-right: var(--input-height);
 }
 
 /*----------------------------------------------------------------------
@@ -2280,6 +2280,7 @@ form#metadata div label,
 }
 
 #metadataEditorContainer {
+    box-shadow: var(--default-shadow);
     margin: auto 16px;
     overflow: hidden;
     padding: 0;
