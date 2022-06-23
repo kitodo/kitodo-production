@@ -97,25 +97,26 @@ public abstract class MetadataImportDialog {
     }
 
     /**
-     * Add not existing metadata fields to metadata table with metadata values of first process in
-     * given list "processes" on successful import.
+     * Add not existing metadata fields to metadata table with metadata values of
+     * first process in given list "processes" on successful import.
      *
      * @param processes
      *            The linked list of TempProcess instances
+     * @return returns count of added metadata
      */
-    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
-        if (processes.size() == 0) {
-            return;
-        }
-        TempProcess process = processes.getFirst();
-        if (process.getMetadataNodes().getLength() > 0) {
-            if (createProcessForm.getProcessDataTab().getDocType()
-                    .equals(process.getWorkpiece().getLogicalStructure().getType())) {
-                Collection<Metadata> metadata = ImportService.importMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
-                createProcessForm.getProcessMetadata().getProcessDetails().addMetadataIfNotExists(metadata);
-            } else {
-                Helper.setWarnMessage(Helper.getTranslation("errorAdditionalImport"));
+    int extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
+        if (processes.size() > 0) {
+            TempProcess process = processes.getFirst();
+            if (process.getMetadataNodes().getLength() > 0) {
+                if (createProcessForm.getProcessDataTab().getDocType()
+                        .equals(process.getWorkpiece().getLogicalStructure().getType())) {
+                    Collection<Metadata> metadata = ImportService.importMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
+                    return createProcessForm.getProcessMetadata().getProcessDetails().addMetadataIfNotExists(metadata);
+                } else {
+                    Helper.setWarnMessage(Helper.getTranslation("errorAdditionalImport"));
+                }
             }
         }
+        return 0;
     }
 }

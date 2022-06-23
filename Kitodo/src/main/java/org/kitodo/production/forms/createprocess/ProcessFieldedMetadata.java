@@ -126,8 +126,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *
      * @param potentialMetadataItems
      *            metadata to add if not exist
+     * @return returns count of added metadata
      */
-    public void addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
+    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
         Collection<Metadata> metadataToAdd = new ArrayList<>();
         potentialMetadataItems.forEach( potentialMetadataItem -> {
             if ( metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey())) ) {
@@ -141,6 +142,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         buildTreeNodeAndCreateMetadataTable();
 
         overwriteTreeNodes(editedTreeNode.getChildren(), treeNode.getChildren());
+
+        return metadataToAdd.size();
     }
 
     private void buildTreeNodeAndCreateMetadataTable() {

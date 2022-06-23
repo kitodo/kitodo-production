@@ -95,8 +95,14 @@ public class FileUploadDialog extends MetadataImportDialog {
             }
 
             if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
-                extendsMetadataTableOfMetadataTab(processes);
+                int countOfAddedMetadata = extendsMetadataTableOfMetadataTab(processes);
                 Ajax.update(FORM_CLIENTID);
+
+                String summary = Helper
+                        .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulSummary");
+                String detail = Helper.getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulDetail",
+                        String.valueOf(countOfAddedMetadata));
+                showGrowlMessage(summary, detail);
             } else {
                 this.createProcessForm.setProcesses(processes);
                 this.createProcessForm.fillCreateProcessForm(processes.getFirst());

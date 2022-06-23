@@ -152,8 +152,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             Helper.setErrorMessage("No record selected!");
         } else {
             try {
-                createProcessForm.setChildProcesses(new LinkedList<>());
-                createProcessForm.setProcesses(new LinkedList<>());
+
                 int projectId = this.createProcessForm.getProject().getId();
                 int templateId = this.createProcessForm.getTemplate().getId();
                 String opac = this.hitModel.getSelectedCatalog();
@@ -174,10 +173,21 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
                 if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
-                    extendsMetadataTableOfMetadataTab(processes);
+                    int countOfAddedMetadata = extendsMetadataTableOfMetadataTab(processes);
+                    Ajax.update(FORM_CLIENTID);
+
+                    String summary = Helper
+                            .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulSummary");
+                    String detail = Helper.getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulDetail",
+                        String.valueOf(countOfAddedMetadata));
+                    showGrowlMessage(summary, detail);
                 } else {
-                    this.createProcessForm.setProcesses(processes);
-                    this.createProcessForm.fillCreateProcessForm(processes.getFirst());
+                    // reset processes
+                    createProcessForm.setChildProcesses(new LinkedList<>());
+                    createProcessForm.setProcesses(new LinkedList<>());
+
+                    createProcessForm.setProcesses(processes);
+                    createProcessForm.fillCreateProcessForm(processes.getFirst());
 
                     String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
                     String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
