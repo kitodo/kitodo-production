@@ -131,7 +131,7 @@ public class CommentForm extends BaseForm {
         } catch (DAOException | CustomResponseException | DataException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
-        newComment();
+        newComment(false);
         if (comment.getType().equals(CommentType.ERROR)) {
             reportProblem(comment);
             return MessageFormat.format(REDIRECT_PATH, "tasks");
@@ -292,14 +292,14 @@ public class CommentForm extends BaseForm {
     /**
      * Set default comment.
      */
-    public void newComment() {
+    public void newComment(Boolean isCorrectionComment) {
         if (getSizeOfPreviousStepsForProblemReporting() > 0) {
             setCorrectionTaskId(getPreviousStepsForProblemReporting().get(0).getId().toString());
         } else {
             setCorrectionTaskId("");
         }
         setCommentMessage("");
-        setCorrectionComment(false);
+        setCorrectionComment(isCorrectionComment);
     }
 
     /**
@@ -398,5 +398,12 @@ public class CommentForm extends BaseForm {
         } else {
             return Helper.getTranslation("closeTask");
         }
+    }
+
+    /**
+     * Returns true if a correction comment is allowed to be added.
+     */
+    public boolean isCorrectionCommentAllowed() {
+        return getSizeOfPreviousStepsForProblemReporting() > 0 && !isConcurrentTaskInWork() && !isCorrectionWorkflow();
     }
 }

@@ -117,6 +117,15 @@
                         <h:outputText><i class="fa fa-cog"/> #{msgs.generateMissingImages}</h:outputText>
                     </p:commandLink>
 
+                    <!-- add correction comment -->
+                    <p:commandLink id="addCorrectionComment"
+                                   action="#{CommentForm.newComment(true)}"
+                                   oncomplete="PF('newCommentDialog').show()"
+                                   rendered="#{CommentForm.correctionCommentAllowed}"
+                                   update=":newCommentForm">
+                        <h:outputText><i class="fa fa-commenting" /> #{msgs.correctionMessageWrite}</h:outputText>
+                    </p:commandLink>
+
                     <!-- Edit Cancel-buttons -->
                     <p:commandLink id="cancel" action="#{CurrentTaskForm.releaseTask}" title="#{msgs.releaseTask}">
                         <h:outputText><i class="fa fa-ban"/> #{msgs.releaseTask}</h:outputText>

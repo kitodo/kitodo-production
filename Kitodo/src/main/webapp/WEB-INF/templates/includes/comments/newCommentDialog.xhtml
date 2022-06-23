@@ -68,7 +68,7 @@
                         <p:outputLabel value="#{msgs.correctionMessage}" for="correctionMessageSwitch"/>
                         <p:selectBooleanCheckbox id="correctionMessageSwitch"
                                                  value="#{CommentForm.correctionComment}"
-                                                 disabled="#{CommentForm.sizeOfPreviousStepsForProblemReporting lt 1 || CommentForm.concurrentTaskInWork || CommentForm.correctionWorkflow}"
+                                                 disabled="#{!CommentForm.correctionCommentAllowed}"
                                                  title="#{CommentForm.correctionMessageSwitchTooltip}"
                                                  immediate="true"
                                                  styleClass="switch input">
