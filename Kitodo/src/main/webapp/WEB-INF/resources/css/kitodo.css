@@ -2432,16 +2432,15 @@ Column content
     overflow: initial;
 }
 
-#containerStructure.ui-accordion-content,
 #structureAccordion .scroll-wrapper {
     box-sizing: border-box;
-    height: 100%;
-    overflow: auto;
+    height: calc(100% - 53px);
+    overflow: hidden scroll;
     width: 100%;
 }
 
 #structureAccordion .scroll-wrapper .ui-tree {
-    padding: var(--default-full-size) var(--default-double-size);
+    padding: var(--default-half-size);
 }
 
 .scroll-up-area,
