@@ -24,7 +24,11 @@
             <p:ajax event="change" update="@(.ui-tree, .stripe)"/>
         </p:selectOneMenu>
         <p:outputPanel styleClass="logicalStructureMenuWrapper">
-            <p:commandButton id="logicalStructureMenuButton" type="button" icon="fa fa-ellipsis-v" styleClass="secondary"/>
+            <p:commandButton id="logicalStructureMenuButton"
+                             type="button"
+                             icon="fa fa-ellipsis-v"
+                             styleClass="secondary"
+                             title="#{msgs['dataEditor.structure.customizeDisplay']}"/>
         </p:outputPanel>
     </p:outputPanel>
     <div class="scroll-up-area"></div>
