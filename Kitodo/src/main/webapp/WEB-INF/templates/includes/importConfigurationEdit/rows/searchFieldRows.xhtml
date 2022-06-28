@@ -63,10 +63,10 @@
                            value="Define search fields available in this search interface"/>
                 <p:commandButton icon="fa fa-plus"
                                  styleClass="secondary"
-                                 type="button"
-                                 onclick="PF('addSearchFieldDialog').show()">
-                    <p:resetInput target=":addSearchFieldForm"/>
-                </p:commandButton>
+                                 action="#{addSearchFieldDialogView.init()}"
+                                 process="@this"
+                                 update="addSearchFieldDialog"
+                                 oncomplete="PF('addSearchFieldDialog').show()"/>
             </div>
         </p:row>
         <p:row>

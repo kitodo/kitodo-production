@@ -26,7 +26,7 @@ public class AddSearchFieldDialogView {
      * Default constructor.
      */
     public AddSearchFieldDialogView() {
-        this.searchField = new SearchField();
+        init();
     }
 
     /**
@@ -45,5 +45,12 @@ public class AddSearchFieldDialogView {
      */
     public void setSearchField(SearchField searchField) {
         this.searchField = searchField;
+    }
+
+    /**
+     * Initialize search field.
+     */
+    public void init() {
+        searchField = new SearchField();
     }
 }
