@@ -33,11 +33,13 @@
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewOCRWorkflow()}"/>
 
     <ui:define name="contentHeader">
-        <h:outputScript name="js/save.js" target="body" />
+        <h:outputScript name="js/save.js" target="body"/>
         <h3 id="headerText">
             <h:outputText value="#{msgs.createNewOCRWorkflow}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.editOCRWorkflow} (#{OCRWorkflowEditView.ocrWorkflow.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewOCRWorkflow} (#{OCRWorkflowEditView.ocrWorkflow.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.editOCRWorkflow} (#{OCRWorkflowEditView.ocrWorkflow.title})"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewOCRWorkflow} (#{OCRWorkflowEditView.ocrWorkflow.title})"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
                          widgetVar="save"
@@ -74,8 +76,12 @@
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.file}"/>
-                            <p:selectOneMenu id="file" value="#{OCRWorkflowEditView.ocrWorkflow.file}" disabled="#{isViewMode}">
-                                <f:selectItems value="#{OCRWorkflowEditView.OCRWorkflowFilenames}" var="ocrWorkflowFile" itemValue="#{ocrWorkflowFile}"
+                            <p:selectOneMenu id="file"
+                                             value="#{OCRWorkflowEditView.ocrWorkflow.file}"
+                                             disabled="#{isViewMode}" >
+                                <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                                <f:selectItems value="#{OCRWorkflowEditView.OCRWorkflowFilenames}" var="ocrWorkflowFile"
+                                               itemValue="#{ocrWorkflowFile}"
                                                itemLabel="#{ocrWorkflowFile}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
@@ -84,14 +90,6 @@
                 </p:panelGrid>
             </p:tab>
         </p:tabView>
-    </ui:define>
-
-    <ui:define name="breadcrumbs">
-        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
-        <p:menuitem value="#{msgs.createNewOCRWorkflow}" rendered="#{isCreateMode}" icon="fa fa-file-code-o"/>
-        <p:menuitem value="#{msgs.editOCRWorkflow}" rendered="#{isEditMode}" icon="fa fa-file-code-o"/>
-        <p:menuitem value="#{msgs.viewOCRWorkflow}" rendered="#{isViewMode}" icon="fa fa-file-code-o"/>
     </ui:define>
 
 </ui:composition>
