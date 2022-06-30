@@ -76,6 +76,10 @@
                                    value="#{CreateProcessForm.catalogImportDialog.hitModel.importDepth}"
                                    min="1"
                                    max="5"/>
+                        <div>
+                            <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
+                            <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
+                        </div>
                     </div>
                 </p:row>
                 <p:row>
@@ -109,7 +113,7 @@
                                  action="#{CreateProcessForm.catalogImportDialog.search}"
                                  value="#{msgs.searchOPAC}"
                                  title="#{msgs.searchOPAC}"
-                                 process="@this importChildren searchTerm importDepth fieldSelectMenu catalogueSelectMenu"
+                                 process="@this importChildren searchTerm importDepth additionalImport fieldSelectMenu catalogueSelectMenu"
                                  onstart="$('#loadingScreen').show()"
                                  oncomplete="$('#loadingScreen').hide();PF('catalogSearchDialog').hide();"
                                  icon="fa fa-search" iconPos="right"

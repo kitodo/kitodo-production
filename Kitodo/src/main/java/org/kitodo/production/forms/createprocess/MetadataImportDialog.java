@@ -11,17 +11,19 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import java.io.IOException;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.api.MdSec;
+import org.kitodo.api.Metadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -92,5 +94,29 @@ public abstract class MetadataImportDialog {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return new LinkedList<>();
         }
+    }
+
+    /**
+     * Add not existing metadata fields to metadata table with metadata values of
+     * first process in given list "processes" on successful import.
+     *
+     * @param processes
+     *            The linked list of TempProcess instances
+     * @return returns count of added metadata
+     */
+    int extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
+        if (processes.size() > 0) {
+            TempProcess process = processes.getFirst();
+            if (process.getMetadataNodes().getLength() > 0) {
+                if (createProcessForm.getProcessDataTab().getDocType()
+                        .equals(process.getWorkpiece().getLogicalStructure().getType())) {
+                    Collection<Metadata> metadata = ImportService.importMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
+                    return createProcessForm.getProcessMetadata().getProcessDetails().addMetadataIfNotExists(metadata);
+                } else {
+                    Helper.setWarnMessage(Helper.getTranslation("errorAdditionalImport"));
+                }
+            }
+        }
+        return 0;
     }
 }
