@@ -30,7 +30,7 @@ public class OCRWorkflowService extends SearchDatabaseService<OCRWorkflow, OCRWo
     /**
      * Constructor necessary to use searcher in child classes.
      */
-    public OCRWorkflowService() {
+    private OCRWorkflowService() {
         super(new OCRWorkflowDAO());
     }
 

@@ -13,6 +13,7 @@ package org.kitodo.data.database.persistence;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.data.database.beans.OCRWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -22,7 +23,7 @@ public class OCRWorkflowDAO extends BaseDAO<OCRWorkflow> {
     @Override
     public OCRWorkflow getById(Integer id) throws DAOException {
         OCRWorkflow ocrWorkflow = retrieveObject(OCRWorkflow.class, id);
-        if (ocrWorkflow == null) {
+        if (Objects.isNull(ocrWorkflow)) {
             throw new DAOException("Object cannot be found in database");
         }
         return ocrWorkflow;
