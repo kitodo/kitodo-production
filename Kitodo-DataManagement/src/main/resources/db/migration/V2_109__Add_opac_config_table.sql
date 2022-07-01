@@ -113,7 +113,7 @@ INSERT IGNORE INTO importconfiguration (title, description, configuration_type, 
                                         default_searchfield_id, identifier_searchfield_id, metadata_format, scheme,
                                         host, path, sru_version, sru_record_schema)
 VALUES ('K10Plus-SLUB-PICA', 'K10Plus OPAC PICA', 'OPAC_SEARCH', 'SRU', 'XML', 2, 2, 'PICA', 'https', 'sru.k10plus.de',
-        'gvk', '1.1', 'picaxml');
+        '/gvk', '1.1', 'picaxml');
 
 -- 8. Add search fields for K10Plus import configuration
 INSERT IGNORE INTO searchfield (importconfiguration_id, field_label, field_value) VALUES (1, 'Titel', 'pica.tit');

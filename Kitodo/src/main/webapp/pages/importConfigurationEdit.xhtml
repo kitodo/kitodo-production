@@ -48,17 +48,14 @@
                   icon="fa fa-times fa-lg" iconPos="right"
                   styleClass="secondary"/>
         <p:commandButton id="save"
+                         widgetVar="save"
                          value="#{msgs.save}"
                          action="#{importConfigurationEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
                          rendered="#{isEditMode || isCreateMode}"
                          disabled="#{importConfigurationEditView.saveDisabled}"
-                         onclick="setConfirmUnload(false);"
-                         onsuccess="PF('notifications').renderMessage({
-                            'summary':'#{msgs.configurationSaving}',
-                            'detail':'#{msgs.youWillBeRedirected}',
-                            'severity':'info'});"/>
+                         onclick="setConfirmUnload(false);PF('save').disable();"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{importConfigurationEditView.setSaveDisabled(false)}"
                          update="save"

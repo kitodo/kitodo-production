@@ -63,20 +63,24 @@
                             <p:ajax event="change"
                                     oncomplete="toggleSave()"/>
                         </p:selectOneMenu>
-                        <p:inputText id="host" styleClass="input url-part"
+                        <p:inputText id="host"
+                                     styleClass="input url-part"
                                      value="#{importConfigurationEditView.importConfiguration.host}"
                                      placeholder="#{msgs['importConfig.field.host']}"
                                      disabled="#{isViewMode}"
                                      required="#{not empty param['editForm:save']}"/>
-                        <p:inputText id="port" styleClass="input url-part"
+                        <p:inputText id="port"
+                                     styleClass="input url-part"
                                      value="#{importConfigurationEditView.importConfiguration.port}"
                                      placeholder="#{msgs['importConfig.field.port']}"
                                      disabled="#{isViewMode}">
                             <p:keyFilter mask="int"/>
                         </p:inputText>
-                        <p:inputText id="path" styleClass="input url-part"
+                        <p:inputText id="path"
+                                     styleClass="input url-part"
                                      value="#{importConfigurationEditView.importConfiguration.path}"
                                      placeholder="#{msgs['importConfig.field.path']}"
+                                     validator="AbsolutePathValidator"
                                      disabled="#{isViewMode}"/>
                     </p:panelGrid>
                     <p:commandButton id="urlHelp" type="button"
