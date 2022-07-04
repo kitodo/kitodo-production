@@ -16,9 +16,12 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ImportConfigurationInUseException;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
@@ -88,5 +91,24 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
     @Override
     public Long countResults(Map filters) throws DAOException, DataException {
         return countDatabaseRows();
+    }
+
+    /**
+     * Delete import configuration identified by ID. If the corresponding configuration is currently used as default
+     * configuration for a project, an exception is thrown.
+     * @param id of import configuration to delete
+     * @throws DAOException if import configuration could not be deleted from database
+     * @throws ImportConfigurationInUseException if import configuration is assigned as default configuration to at
+     *         least one project
+     */
+    @Override
+    public void removeFromDatabase(Integer id) throws DAOException, ImportConfigurationInUseException {
+        for (Project project : ServiceManager.getProjectService().getAll()) {
+            ImportConfiguration defaultConfiguration = project.getDefaultImportConfiguration();
+            if (Objects.nonNull(defaultConfiguration) && Objects.equals(defaultConfiguration.getId(), id)) {
+                throw new ImportConfigurationInUseException(defaultConfiguration.getTitle(), project.getTitle());
+            }
+        }
+        dao.remove(id);
     }
 }

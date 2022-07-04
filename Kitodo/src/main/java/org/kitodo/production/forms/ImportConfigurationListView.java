@@ -22,6 +22,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -67,6 +68,10 @@ public class ImportConfigurationListView extends BaseForm {
             ServiceManager.getImportConfigurationService().removeFromDatabase(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.IMPORT_CONFIGURATION.getTranslationSingular() }, logger, e);
+        } catch (ImportConfigurationInUseException e) {
+            Helper.setErrorMessage(
+                    Helper.getTranslation(ERROR_DELETING, ObjectType.IMPORT_CONFIGURATION.getTranslationSingular()),
+                    e.getMessage());
         }
     }
 }
