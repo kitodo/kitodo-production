@@ -665,7 +665,7 @@ public class ImportConfiguration extends BaseBean {
      * @param idSearchField as org.kitodo.data.database.beans.SearchField
      */
     public void setIdSearchField(SearchField idSearchField) {
-       this.idSearchField = idSearchField;
+        this.idSearchField = idSearchField;
     }
 
     /**
