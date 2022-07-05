@@ -35,6 +35,7 @@ import org.kitodo.exceptions.ParameterNotFoundException;
  * The class OPACConfig is currently not used because OPAC configurations are now saved to
  * the database instead of an XML configuration file.
  *
+ * <p>
  * NOTE: the class is not removed because it will be used to create an "OPAC configuration importer"
  *       that converts existing "kitodo_opac.xml" files to the new format saved to the database.
  */
