@@ -112,16 +112,14 @@ public class SearchResultGeneration {
             title.createCell(i).setCellValue("");
         }
 
-        HSSFRow rowHeader = sheet.createRow(1);
-        rowHeader.createCell(0).setCellValue(Helper.getTranslation("title"));
-        rowHeader.createCell(1).setCellValue(Helper.getTranslation("ID"));
-        rowHeader.createCell(2).setCellValue(Helper.getTranslation("Datum"));
-        rowHeader.createCell(3).setCellValue(Helper.getTranslation("CountImages"));
-        rowHeader.createCell(4).setCellValue(Helper.getTranslation("CountStructuralElements"));
-        rowHeader.createCell(5).setCellValue(Helper.getTranslation("CountMetadata"));
-        rowHeader.createCell(6).setCellValue(Helper.getTranslation("Project"));
-        rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
+        setRowHeader(sheet);
 
+        insertRowData(sheet);
+
+        return workbook;
+    }
+
+    private void insertRowData(HSSFSheet sheet) {
         int rowCounter = 2;
         int numberOfProcessedProcesses = 0;
         int elasticsearchLimit = 9999;
@@ -155,7 +153,18 @@ public class SearchResultGeneration {
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
-        return workbook;
+    }
+
+    private void setRowHeader(HSSFSheet sheet) {
+        HSSFRow rowHeader = sheet.createRow(1);
+        rowHeader.createCell(0).setCellValue(Helper.getTranslation("title"));
+        rowHeader.createCell(1).setCellValue(Helper.getTranslation("ID"));
+        rowHeader.createCell(2).setCellValue(Helper.getTranslation("Datum"));
+        rowHeader.createCell(3).setCellValue(Helper.getTranslation("CountImages"));
+        rowHeader.createCell(4).setCellValue(Helper.getTranslation("CountStructuralElements"));
+        rowHeader.createCell(5).setCellValue(Helper.getTranslation("CountMetadata"));
+        rowHeader.createCell(6).setCellValue(Helper.getTranslation("Project"));
+        rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
     private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessDTO processDTO) {

@@ -306,67 +306,63 @@ public class Course extends ArrayList<Block> {
             if (!(processNode instanceof Element) || !processNode.getNodeName().equals(ELEMENT_PROCESS)) {
                 continue;
             }
-            List<IndividualIssue> process = new ArrayList<>(initialCapacity);
-            for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
-                    .getNextSibling()) {
-                if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
-                    continue;
-                }
-                String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
-                for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
-                        .getNextSibling()) {
-                    if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
-                        continue;
-                    }
-                    String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
-                    String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
-                    if (date == null) {
-                        throw new NullPointerException(ATTRIBUTE_DATE);
-                    }
-                    String after = ((Element) issueNode).getAttribute(ATTRIBUTE_AFTER);
-                    List<String> before = Objects.isNull(after) ? Collections.emptyList()
-                            : splitAtSpaces(after);
-                    LocalDate localDate = LocalDate.parse(date);
-                    IndividualIssue individualIssue = addAddition(variant, before, issue, localDate);
-                    IndividualIssue previousIssue = lastIssueForDate.get(localDate);
-                    if (previousIssue != null) {
-                        Integer sortingNumber = previousIssue.getSortingNumber();
-                        if (sortingNumber == null) {
-                            sortingNumber = 1;
-                            previousIssue.setSortingNumber(sortingNumber);
-                        }
-                        individualIssue.setSortingNumber(sortingNumber + 1);
-                    }
-                    lastIssueForDate.put(localDate, individualIssue);
-                    process.add(individualIssue);
-                    for (Node metadataNode = issueNode
-                            .getFirstChild(); metadataNode != null; metadataNode = metadataNode.getNextSibling()) {
-                        if (!(metadataNode instanceof Element)
-                                || !metadataNode.getNodeName().equals(ELEMENT_METADATA)) {
-                            continue;
-                        }
-                        RecoveredMetadata recovered = new RecoveredMetadata(LocalDate.parse(date), issue);
-                        recovered.setMetadataType(((Element) metadataNode).getAttribute(ATTRIBUTE_METADATA_TYPE));
-                        if (recovered.getMetadataType() == null) {
-                            throw new NullPointerException(ATTRIBUTE_METADATA_TYPE);
-                        }
-                        recovered.setValue(((Element) metadataNode).getAttribute(ATTRIBUTE_VALUE));
-                        if (recovered.getValue() == null) {
-                            throw new NullPointerException(ATTRIBUTE_VALUE);
-                        }
-                        String increment = ((Element) metadataNode).getAttribute(ATTRIBUTE_INCREMENT);
-                        try {
-                            recovered.setStepSize(Granularity.valueOf(increment.toUpperCase()));
-                        } catch (IllegalArgumentException e) {
-                            recovered.setStepSize(null);
-                        }
-                        recoveredMetadata.add(recovered);
-                    }
-                }
-            }
-            processes.add(process);
-            initialCapacity = (int) Math.round(1.1 * process.size());
+            initialCapacity = processProcessNode(initialCapacity, lastIssueForDate, recoveredMetadata, processNode);
         }
+        processRecoveredMetadata(recoveredMetadata);
+        recalculateRegularityOfIssues();
+        processesAreVolatile = true;
+    }
+
+    private int processProcessNode(int initialCapacity, Map<LocalDate, IndividualIssue> lastIssueForDate,
+                                   List<RecoveredMetadata> recoveredMetadata, Node processNode) {
+        List<IndividualIssue> process = new ArrayList<>(initialCapacity);
+        for (Node blockNode = processNode.getFirstChild(); blockNode != null; blockNode = blockNode
+                .getNextSibling()) {
+            if (!(blockNode instanceof Element) || !blockNode.getNodeName().equals(ELEMENT_BLOCK)) {
+                continue;
+            }
+            processBlockNode(lastIssueForDate, recoveredMetadata, process, blockNode);
+        }
+        processes.add(process);
+        initialCapacity = (int) Math.round(1.1 * process.size());
+        return initialCapacity;
+    }
+
+    private void processBlockNode(Map<LocalDate, IndividualIssue> lastIssueForDate,
+                                  List<RecoveredMetadata> recoveredMetadata, List<IndividualIssue> process,
+                                  Node blockNode) {
+        String variant = ((Element) blockNode).getAttribute(ATTRIBUTE_VARIANT);
+        for (Node issueNode = blockNode.getFirstChild(); issueNode != null; issueNode = issueNode
+                .getNextSibling()) {
+            if (!(issueNode instanceof Element) || !issueNode.getNodeName().equals(ELEMENT_APPEARED)) {
+                continue;
+            }
+            String issue = ((Element) issueNode).getAttribute(ATTRIBUTE_ISSUE_HEADING);
+            String date = ((Element) issueNode).getAttribute(ATTRIBUTE_DATE);
+            if (date == null) {
+                throw new NullPointerException(ATTRIBUTE_DATE);
+            }
+            String after = ((Element) issueNode).getAttribute(ATTRIBUTE_AFTER);
+            List<String> before = Objects.isNull(after) ? Collections.emptyList()
+                    : splitAtSpaces(after);
+            LocalDate localDate = LocalDate.parse(date);
+            IndividualIssue individualIssue = addAddition(variant, before, issue, localDate);
+            IndividualIssue previousIssue = lastIssueForDate.get(localDate);
+            if (previousIssue != null) {
+                Integer sortingNumber = previousIssue.getSortingNumber();
+                if (sortingNumber == null) {
+                    sortingNumber = 1;
+                    previousIssue.setSortingNumber(sortingNumber);
+                }
+                individualIssue.setSortingNumber(sortingNumber + 1);
+            }
+            lastIssueForDate.put(localDate, individualIssue);
+            process.add(individualIssue);
+            findToBeRecoveredMetadata(recoveredMetadata, issueNode, issue, date);
+        }
+    }
+
+    private void processRecoveredMetadata(List<RecoveredMetadata> recoveredMetadata) {
         Map<Pair<Block, String>, CountableMetadata> last = new HashMap<>();
         for (RecoveredMetadata metaDatum : recoveredMetadata) {
             Block foundBlock = null;
@@ -391,8 +387,33 @@ public class Course extends ArrayList<Block> {
             foundBlock.addMetadata(metadata);
             last.put(Pair.of(foundBlock, metaDatum.getMetadataType()), metadata);
         }
-        recalculateRegularityOfIssues();
-        processesAreVolatile = true;
+    }
+
+    private void findToBeRecoveredMetadata(List<RecoveredMetadata> recoveredMetadata, Node issueNode,
+                                           String issue, String date) {
+        for (Node metadataNode = issueNode
+                .getFirstChild(); metadataNode != null; metadataNode = metadataNode.getNextSibling()) {
+            if (!(metadataNode instanceof Element)
+                    || !metadataNode.getNodeName().equals(ELEMENT_METADATA)) {
+                continue;
+            }
+            RecoveredMetadata recovered = new RecoveredMetadata(LocalDate.parse(date), issue);
+            recovered.setMetadataType(((Element) metadataNode).getAttribute(ATTRIBUTE_METADATA_TYPE));
+            if (recovered.getMetadataType() == null) {
+                throw new NullPointerException(ATTRIBUTE_METADATA_TYPE);
+            }
+            recovered.setValue(((Element) metadataNode).getAttribute(ATTRIBUTE_VALUE));
+            if (recovered.getValue() == null) {
+                throw new NullPointerException(ATTRIBUTE_VALUE);
+            }
+            String increment = ((Element) metadataNode).getAttribute(ATTRIBUTE_INCREMENT);
+            try {
+                recovered.setStepSize(Granularity.valueOf(increment.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                recovered.setStepSize(null);
+            }
+            recoveredMetadata.add(recovered);
+        }
     }
 
     /**

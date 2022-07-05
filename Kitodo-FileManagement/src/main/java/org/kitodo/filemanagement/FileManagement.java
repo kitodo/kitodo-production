@@ -49,6 +49,7 @@ public class FileManagement implements FileManagementInterface {
 
     private final CommandInterface commandService = new KitodoServiceLoader<CommandInterface>(CommandInterface.class)
             .loadModule();
+
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
         if (file) {

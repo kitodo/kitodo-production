@@ -179,44 +179,36 @@ public class ExportXmlLog {
     private List<Element> getProcessInformation(Namespace xmlns, Process process) {
         List<Element> processElements = new ArrayList<>();
 
-        processElements.add(createElement("title", process.getTitle(), xmlns));
-        processElements.add(createElement("project", process.getProject().getTitle(), xmlns));
+        processProcessInformation(xmlns, process, processElements);
 
-        Element date = createElement("time", String.valueOf(process.getCreationDate()), xmlns);
-        date.setAttribute("type", "creation date");
-        processElements.add(date);
+        processBatchInformation(xmlns, process, processElements);
 
-        processElements.add(createElement("ruleset", process.getRuleset().getFile(), xmlns));
-        processElements.add(createElement("comment", process.getWikiField(), xmlns));
-
-        String batches = getBatches(process.getBatches());
-
-        if (!batches.isEmpty()) {
-            processElements.add(createElement("batch", batches, xmlns));
-        }
-
-        List<Element> processProperties = prepareProperties(process.getProperties(), xmlns);
-
-        if (!processProperties.isEmpty()) {
-            Element properties = new Element(PROPERTIES, xmlns);
-            properties.addContent(processProperties);
-            processElements.add(properties);
-        }
+        processProcessPropertyInformation(xmlns, process, processElements);
 
         // task information
         Element tasks = createTasksElement(process.getTasks(), xmlns);
         processElements.add(tasks);
 
         // template information
-        Element templates = new Element("originals", xmlns);
-        List<Element> templateElements = new ArrayList<>();
-
-        Element template = createTemplateElement(process, xmlns);
-        templateElements.add(template);
-        templates.addContent(templateElements);
-        processElements.add(templates);
+        processTemplateInformation(xmlns, process, processElements);
 
         // digital document information
+        processDigitalDocumentInformtion(xmlns, process, processElements);
+
+        // METS information
+        processMetsInformation(xmlns, process, processElements);
+
+        return processElements;
+    }
+
+    private void processMetsInformation(Namespace xmlns, Process process, List<Element> processElements) {
+        Element metsElement = new Element("metsInformation", xmlns);
+        List<Element> metadataElements = createMetadataElements(xmlns, process);
+        metsElement.addContent(metadataElements);
+        processElements.add(metsElement);
+    }
+
+    private void processDigitalDocumentInformtion(Namespace xmlns, Process process, List<Element> processElements) {
         List<Element> docElements = new ArrayList<>();
 
         Element dd = new Element("digitalDocument", xmlns);
@@ -234,14 +226,46 @@ public class ExportXmlLog {
         Element digdoc = new Element("digitalDocuments", xmlns);
         digdoc.addContent(docElements);
         processElements.add(digdoc);
+    }
 
-        // METS information
-        Element metsElement = new Element("metsInformation", xmlns);
-        List<Element> metadataElements = createMetadataElements(xmlns, process);
-        metsElement.addContent(metadataElements);
-        processElements.add(metsElement);
+    private void processTemplateInformation(Namespace xmlns, Process process, List<Element> processElements) {
+        Element templates = new Element("originals", xmlns);
+        List<Element> templateElements = new ArrayList<>();
 
-        return processElements;
+        Element template = createTemplateElement(process, xmlns);
+        templateElements.add(template);
+        templates.addContent(templateElements);
+        processElements.add(templates);
+    }
+
+    private void processProcessPropertyInformation(Namespace xmlns, Process process, List<Element> processElements) {
+        List<Element> processProperties = prepareProperties(process.getProperties(), xmlns);
+
+        if (!processProperties.isEmpty()) {
+            Element properties = new Element(PROPERTIES, xmlns);
+            properties.addContent(processProperties);
+            processElements.add(properties);
+        }
+    }
+
+    private void processBatchInformation(Namespace xmlns, Process process, List<Element> processElements) {
+        String batches = getBatches(process.getBatches());
+
+        if (!batches.isEmpty()) {
+            processElements.add(createElement("batch", batches, xmlns));
+        }
+    }
+
+    private void processProcessInformation(Namespace xmlns, Process process, List<Element> processElements) {
+        processElements.add(createElement("title", process.getTitle(), xmlns));
+        processElements.add(createElement("project", process.getProject().getTitle(), xmlns));
+
+        Element date = createElement("time", String.valueOf(process.getCreationDate()), xmlns);
+        date.setAttribute("type", "creation date");
+        processElements.add(date);
+
+        processElements.add(createElement("ruleset", process.getRuleset().getFile(), xmlns));
+        processElements.add(createElement("comment", process.getWikiField(), xmlns));
     }
 
     private String getBatches(List<Batch> batchList) {

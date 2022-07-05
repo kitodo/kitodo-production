@@ -167,7 +167,7 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
-     * Update the tasks of the templates associated with the current workflow
+     * Update the tasks of the templates associated with the current workflow.
      */
     private void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
         Converter converter = new Converter(this.workflow.getTitle());
