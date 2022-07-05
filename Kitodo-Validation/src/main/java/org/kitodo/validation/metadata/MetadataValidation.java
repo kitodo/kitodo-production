@@ -290,8 +290,8 @@ public class MetadataValidation implements MetadataValidationInterface {
                             ((MetadataGroup) metadata).getGroup(),
                             (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                             translations);
-                        if (validationResult.getState().equals(State.WARNING)) {
-                            warning = true;
+                        if (validationResult.getState().equals(State.ERROR)) {
+                            error = true;
                         }
                         messages.addAll(validationResult.getResultMessages());
                     } else {
