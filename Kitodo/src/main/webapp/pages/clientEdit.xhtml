@@ -36,10 +36,13 @@
         </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editClient}"
+                          styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.clientNew}"
+                          styleClass="shortable"
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewClient}"
+                          styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
 

@@ -33,10 +33,13 @@
         </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
+                          styleClass="shortable"
                           rendered="#{ProjectForm.project.id ne null}"/>
             <h:outputText value="#{msgs.newProject}"
+                          styleClass="shortable"
                           rendered="#{ProjectForm.project.id eq null and empty ProjectForm.project.title}"/>
             <h:outputText value="#{msgs.duplicateProject}"
+                          styleClass="shortable"
                           rendered="#{ProjectForm.project.id eq null and not empty ProjectForm.project.title}"/>
         </h3>
         <p:commandButton

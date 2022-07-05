@@ -44,10 +44,18 @@
         </script>
 
         <h3 id="headerText">
-            <h:outputText value="#{msgs.newTemplate}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.duplicateTemplate}" rendered="#{isDuplicateMode}"/>
-            <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewTemplate} (#{TemplateForm.template.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.newTemplate}"
+                          styleClass="shortable"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.duplicateTemplate}"
+                          styleClass="shortable"
+                          rendered="#{isDuplicateMode}"/>
+            <h:outputText value="#{msgs.editTemplate} (#{TemplateForm.template.title})"
+                          styleClass="shortable"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewTemplate} (#{TemplateForm.template.title})"
+                          styleClass="shortable"
+                          rendered="#{isViewMode}"/>
         </h3>
 
         <p:button id="cancel"

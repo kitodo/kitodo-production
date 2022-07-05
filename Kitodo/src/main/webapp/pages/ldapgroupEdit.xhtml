@@ -37,9 +37,15 @@
             };
         </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.editLdapGroup} (#{LdapGroupForm.myLdapGruppe.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.createNewLdapGroup}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.viewLdapGroup}" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.editLdapGroup} (#{LdapGroupForm.myLdapGruppe.title})"
+                          styleClass="shortable"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.createNewLdapGroup}"
+                          styleClass="shortable"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.viewLdapGroup}"
+                          styleClass="shortable"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:button id="cancel"
                   value="#{msgs.cancel}"

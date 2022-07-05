@@ -64,10 +64,8 @@ public class EditingST extends BaseTestSelenium {
 
     @Test
     public void editProcessTest() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
-
         processesPage.editProcess().changeProcessData();
-        assertEquals("Header for edit process is incorrect", "Vorgang bearbeiten (First process, ID: 1)",
+        assertEquals("Header for edit process is incorrect", "First process\n(ID: 1)",
             Pages.getProcessEditPage().getHeaderText());
 
         Pages.getProcessEditPage().save();

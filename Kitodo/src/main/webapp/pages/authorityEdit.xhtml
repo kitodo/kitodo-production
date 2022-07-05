@@ -36,10 +36,13 @@
         </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editAuthority}"
+                          styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.newAuthority}"
+                          styleClass="shortable"
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewAuthority}"
+                          styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:button id="cancel"

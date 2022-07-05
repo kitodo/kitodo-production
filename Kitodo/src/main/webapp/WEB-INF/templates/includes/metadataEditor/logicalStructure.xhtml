@@ -18,13 +18,17 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
     <p:outputPanel id="logicalStructureHeader">
-        <p:selectOneMenu styleClass="logicalStructureTitle" value="#{DataEditorForm.structurePanel.titleMetadata}" style="width: 90%">
+        <p:selectOneMenu styleClass="logicalStructureTitle" value="#{DataEditorForm.structurePanel.titleMetadata}">
             <f:selectItem itemLabel="#{msgs.typ}" itemValue="type"/>
             <f:selectItems value="#{DataEditorForm.structurePanel.getTitleMetadataItems()}"/>
             <p:ajax event="change" update="@(.ui-tree, .stripe)"/>
         </p:selectOneMenu>
         <p:outputPanel styleClass="logicalStructureMenuWrapper">
-            <p:commandButton id="logicalStructureMenuButton" type="button" icon="fa fa-ellipsis-v"/>
+            <p:commandButton id="logicalStructureMenuButton"
+                             type="button"
+                             icon="fa fa-ellipsis-v"
+                             styleClass="secondary"
+                             title="#{msgs['dataEditor.structure.customizeDisplay']}"/>
         </p:outputPanel>
     </p:outputPanel>
     <div class="scroll-up-area"></div>

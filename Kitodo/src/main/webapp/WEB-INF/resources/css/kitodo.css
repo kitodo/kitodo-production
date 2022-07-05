@@ -659,17 +659,36 @@ section#content-section {
 
 .content-header > .ui-panel-content {
     display: flex;
-}
-
-.content-header .ui-panel-content {
     padding: 0;
 }
 
-.content-header .ui-panel-content > h3 {
-    display: inline;
+.content-header > .ui-panel-content > h3 {
+    display: flex;
     flex-grow: 1;
     flex-shrink: 1;
     line-height: 36px;
+    overflow: hidden;
+}
+
+.content-header > .ui-panel-content > h3 span.shortable {
+    flex-grow: 0;
+    flex-shrink: 1;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.content-header > .ui-panel-content > h3 span.set-apart {
+    color: var(--medium-gray);
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 0 var(--default-half-size);
+}
+
+.content-header #processCount {
+    font-size: 14px;
+    line-height: 14px;
+    margin: 0 var(--default-half-size);
 }
 
 .content-header .ui-panel-content > form,
@@ -1105,13 +1124,6 @@ main i.fa {
     width: 220px;
 }
 
-h3#headerText {
-    display: inline-block;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-}
-
 #dropDownMenus {
     float: left;
     margin-top: calc((var(--input-height) + var(--input-padding)) * -1);
@@ -1216,24 +1228,6 @@ h3#headerText {
     display: inline-block;
     margin-right: 8px;
     width: calc(100% - 48px);
-}
-
-#titleProcess {
-    flex-grow: 1;
-    flex-shrink: 1;
-}
-
-#titleProcess > .ui-panel-content {
-    display: flex;
-}
-
-#titleProcess h3 {
-    display: inline-block;
-    flex-grow: 0;
-}
-
-#titleProcess h5 {
-    display: inline-block;
 }
 
 /*----------------------------------------------------------------------
@@ -1592,7 +1586,7 @@ Mass import
 
 #tasksTabView\:filterForm .ui-selectcheckboxmenu-label,
 #tasksTabView\:statusForm .ui-selectcheckboxmenu-label {
-    padding-right: var(--default-double-size);
+    padding-right: var(--input-height);
 }
 
 /*----------------------------------------------------------------------
@@ -1982,7 +1976,6 @@ Metadata Editor
 
 #messagesWrapper #error-messages {
     overflow: auto;
-    margin: 10px 0;
     max-height: 300px;
 }
 
@@ -2264,6 +2257,7 @@ form#metadata div label,
 }
 
 #metadataEditorContainer {
+    box-shadow: var(--default-shadow);
     margin: auto 16px;
     overflow: hidden;
     padding: 0;
@@ -2416,13 +2410,15 @@ Column content
     overflow: initial;
 }
 
-#containerStructure.ui-accordion-content,
 #structureAccordion .scroll-wrapper {
     box-sizing: border-box;
-    height: 100%;
-    overflow: auto;
-    padding: var(--default-full-size) var(--default-double-size);
+    height: calc(100% - 53px);
+    overflow: hidden scroll;
     width: 100%;
+}
+
+#structureAccordion .scroll-wrapper .ui-tree {
+    padding: var(--default-half-size);
 }
 
 .scroll-up-area,
@@ -2484,13 +2480,15 @@ Column content
 }
 
 #logicalStructureHeader {
-    padding: 5px;
+    border-bottom: 1px solid var(--cloudy-gray);
     display: flex;
+    padding: var(--default-half-size);
 }
 
 #logicalStructureHeader .logicalStructureTitle {
     flex-grow: 1;
     flex-shrink: 1;
+    margin-right: var(--default-half-size);
 }
 
 #logicalStructureHeader .logicalStructureMenuWrapper {
@@ -2541,10 +2539,6 @@ Column content
 
 .ui-tree-draghelper.ui-draggable-dragging {
     pointer-events: none;
-}
-
-#structureTreeForm button.secondary {
-    margin: 4px;
 }
 
 .pagination-active {
@@ -3593,6 +3587,18 @@ min 1200px
 
     body {
         background-size: 100% auto;
+    }
+
+    .breadcrumb-menu ul li:not(:first-child) .ui-menuitem-icon {
+        padding-left: var(--default-half-size);
+    }
+
+    .breadcrumb-menu ul li .ui-menuitem-link {
+        width: auto;
+    }
+
+    .breadcrumb-menu ul li .ui-menuitem-text {
+        padding: 0 var(--default-half-size);
     }
 }
 

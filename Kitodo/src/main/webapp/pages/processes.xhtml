@@ -31,9 +31,13 @@
     </f:metadata>
 
     <ui:define name="contentHeader">
-        <p:panel id="titleProcess">
-            <h3>#{msgs.processes}</h3> <h5> #{msgs.hits}: #{ProcessForm.amount}</h5>
-        </p:panel>
+        <h3 id="headerText">
+            <h:outputText value="#{msgs.processes}"
+                          styleClass="shortable" />
+            <h:outputText id="processCount"
+                          value=" #{msgs.hits}: #{ProcessForm.amount}"
+                          styleClass="shortable" />
+        </h3>
 
         <!-- filters -->
         <h:panelGroup id="filterMenuWrapper">
@@ -47,7 +51,7 @@
                         <p:ajax event="change"
                                 listener="#{ProcessForm.changeFilter(ProcessForm.filter)}"
                                 onstart="PF('processesTable').getPaginator().setPage(0);"
-                                update="processesTabView:processesForm:processesTable titleProcess"/>
+                                update="processesTabView:processesForm:processesTable processCount"/>
                     </p:inputText>
                     <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
                     <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">

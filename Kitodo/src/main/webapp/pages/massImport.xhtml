@@ -27,7 +27,8 @@
 
     <ui:define name="contentHeader">
         <h3 id="headerText">
-            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}')"/>
+            <h:outputText value="#{msgs.massImport} (#{msgs.template}: '#{MassImportForm.templateTitle}')"
+                          styleClass="shortable" />
         </h3>
         <p:button id="cancel"
                   value="#{msgs.cancel}"
