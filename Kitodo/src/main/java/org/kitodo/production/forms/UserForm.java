@@ -189,24 +189,28 @@ public class UserForm extends BaseForm {
         }
 
         try {
-            if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
-                // save the password only when user is created else changePasswordForCurrentUser is used
-                if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
-                    userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
-                }
-                userService.saveToDatabase(userObject);
-
-                if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
-                    loginForm.setLoggedUser(this.userObject);
-                    ServiceManager.getSecurityAccessService().updateAuthentication(this.userObject);
-                }
-                return usersPage;
-            } else {
-                Helper.setErrorMessage("loginInUse");
-                return this.stayOnCurrentPage;
-            }
+            return loginHandling(login);
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+            return this.stayOnCurrentPage;
+        }
+    }
+
+    private String loginHandling(String login) throws DAOException {
+        if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
+            // save the password only when user is created else changePasswordForCurrentUser is used
+            if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
+                userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
+            }
+            userService.saveToDatabase(userObject);
+
+            if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
+                loginForm.setLoggedUser(this.userObject);
+                ServiceManager.getSecurityAccessService().updateAuthentication(this.userObject);
+            }
+            return usersPage;
+        } else {
+            Helper.setErrorMessage("loginInUse");
             return this.stayOnCurrentPage;
         }
     }

@@ -166,7 +166,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         for (TreeNode targetNode : target) {
             ProcessDetail row = (ProcessDetail) targetNode.getData();
             Optional<TreeNode> treeNodeOptional = source.stream().filter(
-                            sourceNode -> ((ProcessDetail) sourceNode.getData()).getMetadataID().equals(row.getMetadataID()))
+                sourceNode -> ((ProcessDetail) sourceNode.getData()).getMetadataID().equals(row.getMetadataID()))
                     .findFirst();
             if (treeNodeOptional.isPresent()) {
                 target.set(index, treeNodeOptional.get());

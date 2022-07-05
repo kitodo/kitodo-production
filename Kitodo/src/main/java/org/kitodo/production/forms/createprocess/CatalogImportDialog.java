@@ -158,13 +158,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 String opac = this.hitModel.getSelectedCatalog();
                 // import children
                 if (this.importChildren) {
-                    try {
-                        this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
-                                opac, this.currentRecordId, projectId, templateId, numberOfChildren));
-                    } catch (NoRecordFoundException e) {
-                        this.createProcessForm.setChildProcesses(new LinkedList<>());
-                        showGrowlMessage("Import error", e.getLocalizedMessage());
-                    }
+                    importChildren(projectId, templateId, opac);
                 }
                 // import ancestors
                 LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
@@ -183,25 +177,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     showGrowlMessage(summary, detail);
                 } else {
                     // reset processes
-                    createProcessForm.setChildProcesses(new LinkedList<>());
-                    createProcessForm.setProcesses(new LinkedList<>());
-
-                    createProcessForm.setProcesses(processes);
-                    createProcessForm.fillCreateProcessForm(processes.getFirst());
-
-                    String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
-                    String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
-                            String.valueOf(processes.size()), opac);
-                    showGrowlMessage(summary, detail);
-
-                    if (this.importChildren) {
-                        summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
-                        detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
-                                String.valueOf(this.createProcessForm.getChildProcesses().size()));
-                        showGrowlMessage(summary, detail);
-                    }
-
-                    showRecord();
+                    resetProcess(opac, processes);
                 }
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
@@ -209,6 +185,41 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     | NoSuchMetadataFieldException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             }
+        }
+    }
+
+    private void resetProcess(String opac, LinkedList<TempProcess> processes) throws ProcessGenerationException, IOException {
+        createProcessForm.setChildProcesses(new LinkedList<>());
+        createProcessForm.setProcesses(new LinkedList<>());
+
+        createProcessForm.setProcesses(processes);
+        createProcessForm.fillCreateProcessForm(processes.getFirst());
+
+        String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
+        String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
+                String.valueOf(processes.size()), opac);
+        showGrowlMessage(summary, detail);
+
+        if (this.importChildren) {
+            summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
+            detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
+                    String.valueOf(this.createProcessForm.getChildProcesses().size()));
+            showGrowlMessage(summary, detail);
+        }
+
+        showRecord();
+    }
+
+    private void importChildren(int projectId, int templateId, String opac)
+            throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
+            IOException, ProcessGenerationException, TransformerException, InvalidMetadataValueException,
+            NoSuchMetadataFieldException {
+        try {
+            this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
+                    opac, this.currentRecordId, projectId, templateId, numberOfChildren));
+        } catch (NoRecordFoundException e) {
+            this.createProcessForm.setChildProcesses(new LinkedList<>());
+            showGrowlMessage("Import error", e.getLocalizedMessage());
         }
     }
 

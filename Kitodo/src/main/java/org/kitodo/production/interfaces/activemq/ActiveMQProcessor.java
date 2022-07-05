@@ -105,31 +105,18 @@ public abstract class ActiveMQProcessor implements MessageListener {
 
         try {
             // Basic check message
-            if (arg instanceof MapMessage) {
-                message = new MapMessageObjectReader((MapMessage) arg);
-            } else {
-                throw new IllegalArgumentException("Incompatible types.");
-            }
+            message = getMessageFromObjectReader(arg);
             ticketID = message.getMandatoryString("id");
 
             // turn on logging
-            Map<String, String> loggingConfig = new HashMap<>();
-            loggingConfig.put("queueName", queueName);
-            loggingConfig.put("id", ticketID);
-            Helper.setActiveMQReporting(loggingConfig);
+            turnOnLogging(ticketID);
 
             // set default user
             Optional<String> optionalLogin = ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_USER);
             SecurityContext securityContext = SecurityContextHolder.getContext();
             if (optionalLogin.isPresent()) {
                 if (Objects.isNull(securityContext.getAuthentication())) {
-                    User user = ServiceManager.getUserService().getByLogin(optionalLogin.get());
-                    SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
-                    Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
-                            securityUserDetails.getAuthorities());
-                    Client clientId = ServiceManager.getClientService().getById(user.getClients().get(0).getId());
-                    securityUserDetails.setSessionClient(clientId);
-                    securityContext.setAuthentication(auth);
+                    setUserAuthentification(optionalLogin, securityContext);
                 } else {
                     optionalLogin = Optional.empty();
                 }
@@ -151,6 +138,33 @@ public abstract class ActiveMQProcessor implements MessageListener {
             // report any errors
             new WebServiceResult(queueName, ticketID, ReportLevel.FATAL, e.getMessage()).send();
         }
+    }
+
+    private void setUserAuthentification(Optional<String> optionalLogin, SecurityContext securityContext) throws DAOException {
+        User user = ServiceManager.getUserService().getByLogin(optionalLogin.get());
+        SecurityUserDetails securityUserDetails = new SecurityUserDetails(user);
+        Authentication auth = new UsernamePasswordAuthenticationToken(securityUserDetails, null,
+                securityUserDetails.getAuthorities());
+        Client clientId = ServiceManager.getClientService().getById(user.getClients().get(0).getId());
+        securityUserDetails.setSessionClient(clientId);
+        securityContext.setAuthentication(auth);
+    }
+
+    private void turnOnLogging(String ticketID) {
+        Map<String, String> loggingConfig = new HashMap<>();
+        loggingConfig.put("queueName", queueName);
+        loggingConfig.put("id", ticketID);
+        Helper.setActiveMQReporting(loggingConfig);
+    }
+
+    private MapMessageObjectReader getMessageFromObjectReader(Message arg) {
+        MapMessageObjectReader message;
+        if (arg instanceof MapMessage) {
+            message = new MapMessageObjectReader((MapMessage) arg);
+        } else {
+            throw new IllegalArgumentException("Incompatible types.");
+        }
+        return message;
     }
 
     /**

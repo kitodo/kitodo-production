@@ -239,6 +239,18 @@ public class MetadataEditor {
         }
         LogicalDivision newStructure = new LogicalDivision();
         newStructure.setType(type);
+
+        handlePosition(workpiece, logicalDivision, position, viewsToAdd, parents, siblings, newStructure);
+
+        if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
+            handleViewsToAdd(viewsToAdd, newStructure);
+        }
+        return newStructure;
+    }
+
+    private static void handlePosition(Workpiece workpiece, LogicalDivision logicalDivision, InsertionPosition position,
+                                       List<View> viewsToAdd, LinkedList<LogicalDivision> parents,
+                                       List<LogicalDivision> siblings, LogicalDivision newStructure) {
         switch (position) {
             case AFTER_CURRENT_ELEMENT:
                 siblings.add(siblings.indexOf(logicalDivision) + 1, newStructure);
@@ -276,18 +288,18 @@ public class MetadataEditor {
             default:
                 throw new IllegalStateException("complete switch");
         }
-        if (Objects.nonNull(viewsToAdd) && !viewsToAdd.isEmpty()) {
-            for (View viewToAdd : viewsToAdd) {
-                List<LogicalDivision> logicalDivisions = viewToAdd.getPhysicalDivision().getLogicalDivisions();
-                for (LogicalDivision elementToUnassign : logicalDivisions) {
-                    elementToUnassign.getViews().remove(viewToAdd);
-                }
-                logicalDivisions.clear();
-                logicalDivisions.add(newStructure);
+    }
+
+    private static void handleViewsToAdd(List<View> viewsToAdd, LogicalDivision newStructure) {
+        for (View viewToAdd : viewsToAdd) {
+            List<LogicalDivision> logicalDivisions = viewToAdd.getPhysicalDivision().getLogicalDivisions();
+            for (LogicalDivision elementToUnassign : logicalDivisions) {
+                elementToUnassign.getViews().remove(viewToAdd);
             }
-            newStructure.getViews().addAll(viewsToAdd);
+            logicalDivisions.clear();
+            logicalDivisions.add(newStructure);
         }
-        return newStructure;
+        newStructure.getViews().addAll(viewsToAdd);
     }
 
     /**

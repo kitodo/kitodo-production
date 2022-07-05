@@ -165,48 +165,8 @@ public class TaskSitter implements Runnable, ServletContextListener {
         EmptyTask task;
         try {
             while (position.hasNext()) {
-                task = position.next();
-                switch (task.getTaskState()) {
-                    case WORKING:
-                    case STOPPING:
-                        availableClearance = Math.max(availableClearance - 1, 0);
-                        break;
-                    case NEW:
-                        if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviour())) {
-                            position.remove();
-                        } else {
-                            launchableThreads.addLast(task);
-                        }
-                        break;
-                    default: // cases STOPPED, FINISHED, CRASHED
-                        switch (task.getBehaviour()) {
-                            case DELETE_IMMEDIATELY:
-                                position.remove();
-                                break;
-                            case PREPARE_FOR_RESTART:
-                                EmptyTask replacement = task.replace();
-                                if (Objects.nonNull(replacement)) {
-                                    position.set(replacement);
-                                    launchableThreads.addLast(replacement);
-                                }
-                                break;
-                            default: // case KEEP_FOR_A_WHILE
-                                boolean taskFinishedSuccessfully = Objects.isNull(task.getException());
-                                Duration durationDead = task.getDurationDead();
-                                if (Objects.isNull(durationDead)) {
-                                    task.setTimeOfDeath();
-                                } else if (durationDead.compareTo(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge) > 0) {
-                                    position.remove();
-                                    break;
-                                }
-                                if (taskFinishedSuccessfully) {
-                                    finishedThreads.add(task);
-                                } else {
-                                    failedThreads.add(task);
-                                }
-                                break;
-                        }
-                }
+                availableClearance = handleTaskModification(launchableThreads, finishedThreads, failedThreads,
+                        availableClearance, successfulMaxAge, failedMaxAge, position);
             }
         } catch (ConcurrentModificationException e) {
             return;
@@ -226,6 +186,56 @@ public class TaskSitter implements Runnable, ServletContextListener {
         while ((task = launchableThreads.pollFirst()) != null) {
             task.start();
         }
+    }
+
+    private int handleTaskModification(LinkedList<EmptyTask> launchableThreads, LinkedList<EmptyTask> finishedThreads,
+                                       LinkedList<EmptyTask> failedThreads, int availableClearance,
+                                       Duration successfulMaxAge, Duration failedMaxAge,
+                                       ListIterator<EmptyTask> position) {
+        EmptyTask task;
+        task = position.next();
+        switch (task.getTaskState()) {
+            case WORKING:
+            case STOPPING:
+                availableClearance = Math.max(availableClearance - 1, 0);
+                break;
+            case NEW:
+                if (Behaviour.DELETE_IMMEDIATELY.equals(task.getBehaviour())) {
+                    position.remove();
+                } else {
+                    launchableThreads.addLast(task);
+                }
+                break;
+            default: // cases STOPPED, FINISHED, CRASHED
+                switch (task.getBehaviour()) {
+                    case DELETE_IMMEDIATELY:
+                        position.remove();
+                        break;
+                    case PREPARE_FOR_RESTART:
+                        EmptyTask replacement = task.replace();
+                        if (Objects.nonNull(replacement)) {
+                            position.set(replacement);
+                            launchableThreads.addLast(replacement);
+                        }
+                        break;
+                    default: // case KEEP_FOR_A_WHILE
+                        boolean taskFinishedSuccessfully = Objects.isNull(task.getException());
+                        Duration durationDead = task.getDurationDead();
+                        if (Objects.isNull(durationDead)) {
+                            task.setTimeOfDeath();
+                        } else if (durationDead.compareTo(taskFinishedSuccessfully ? successfulMaxAge : failedMaxAge) > 0) {
+                            position.remove();
+                            break;
+                        }
+                        if (taskFinishedSuccessfully) {
+                            finishedThreads.add(task);
+                        } else {
+                            failedThreads.add(task);
+                        }
+                        break;
+                }
+        }
+        return availableClearance;
     }
 
     /**

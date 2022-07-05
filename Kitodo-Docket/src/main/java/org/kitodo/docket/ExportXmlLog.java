@@ -133,17 +133,92 @@ public class ExportXmlLog {
 
         Namespace xmlns = Namespace.getNamespace(NAMESPACE);
         processElm.setNamespace(xmlns);
+
         // namespace declaration
-        if (addNamespace) {
+        processNamespaceDeclaration(addNamespace, processElm);
 
-            Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
-            processElm.addNamespaceDeclaration(xsi);
-            Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
-                    xsi);
-            processElm.setAttribute(attSchema);
-        }
         // process information
+        ArrayList<Element> processElements = processProcessInformation(docketData, xmlns);
 
+        // template information
+        processTemplateInformation(docketData, xmlns, processElements);
+
+        // digital document information
+        processDigitalDocumentInformation(docketData, xmlns, processElements);
+
+        processElm.setContent(processElements);
+        return doc;
+    }
+
+    private void processDigitalDocumentInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
+        ArrayList<Element> docElements = new ArrayList<>();
+        Element dd = new Element("digitalDocument", xmlns);
+
+        List<Element> docProperties = prepareProperties(docketData.getWorkpieceProperties(), xmlns);
+
+        if (!docProperties.isEmpty()) {
+            Element properties = new Element(PROPERTIES, xmlns);
+            properties.addContent(docProperties);
+            dd.addContent(properties);
+        }
+        docElements.add(dd);
+
+        Element digdoc = new Element("digitalDocuments", xmlns);
+        digdoc.addContent(docElements);
+        processElements.add(digdoc);
+    }
+
+    private void processTemplateInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
+        ArrayList<Element> templateElements = new ArrayList<>();
+        Element template = new Element("original", xmlns);
+
+        ArrayList<Element> templateProperties = new ArrayList<>();
+        if (docketData.getTemplateProperties() != null) {
+            processTemplateProperties(docketData, xmlns, templateProperties);
+        }
+        if (!templateProperties.isEmpty()) {
+            Element properties = new Element(PROPERTIES, xmlns);
+            properties.addContent(templateProperties);
+            template.addContent(properties);
+        }
+        templateElements.add(template);
+
+        Element templates = new Element("originals", xmlns);
+        templates.addContent(templateElements);
+        processElements.add(templates);
+    }
+
+    private void processTemplateProperties(DocketData docketData, Namespace xmlns, ArrayList<Element> templateProperties) {
+        for (Property prop : docketData.getTemplateProperties()) {
+            Element property = new Element(PROPERTY, xmlns);
+            property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
+            if (prop.getValue() != null) {
+                property.setAttribute(VALUE, replacer(prop.getValue()));
+            } else {
+                property.setAttribute(VALUE, "");
+            }
+
+            Element label = new Element(LABEL, xmlns);
+
+            label.setText(prop.getTitle());
+            property.addContent(label);
+
+            templateProperties.add(property);
+            if (prop.getTitle().equals("Signatur")) {
+                Element secondProperty = new Element(PROPERTY, xmlns);
+                secondProperty.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle() + "Encoded");
+                if (prop.getValue() != null) {
+                    secondProperty.setAttribute(VALUE, "vorl:" + replacer(prop.getValue()));
+                    Element secondLabel = new Element(LABEL, xmlns);
+                    secondLabel.setText(prop.getTitle());
+                    secondProperty.addContent(secondLabel);
+                    templateProperties.add(secondProperty);
+                }
+            }
+        }
+    }
+
+    private ArrayList<Element> processProcessInformation(DocketData docketData, Namespace xmlns) {
         ArrayList<Element> processElements = new ArrayList<>();
         Element processTitle = new Element("title", xmlns);
         processTitle.setText(docketData.getProcessName());
@@ -173,71 +248,18 @@ public class ExportXmlLog {
             properties.addContent(processProperties);
             processElements.add(properties);
         }
+        return processElements;
+    }
 
-        // template information
-        ArrayList<Element> templateElements = new ArrayList<>();
-        Element template = new Element("original", xmlns);
+    private void processNamespaceDeclaration(boolean addNamespace, Element processElm) {
+        if (addNamespace) {
 
-        ArrayList<Element> templateProperties = new ArrayList<>();
-        if (docketData.getTemplateProperties() != null) {
-            for (Property prop : docketData.getTemplateProperties()) {
-                Element property = new Element(PROPERTY, xmlns);
-                property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
-                if (prop.getValue() != null) {
-                    property.setAttribute(VALUE, replacer(prop.getValue()));
-                } else {
-                    property.setAttribute(VALUE, "");
-                }
-
-                Element label = new Element(LABEL, xmlns);
-
-                label.setText(prop.getTitle());
-                property.addContent(label);
-
-                templateProperties.add(property);
-                if (prop.getTitle().equals("Signatur")) {
-                    Element secondProperty = new Element(PROPERTY, xmlns);
-                    secondProperty.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle() + "Encoded");
-                    if (prop.getValue() != null) {
-                        secondProperty.setAttribute(VALUE, "vorl:" + replacer(prop.getValue()));
-                        Element secondLabel = new Element(LABEL, xmlns);
-                        secondLabel.setText(prop.getTitle());
-                        secondProperty.addContent(secondLabel);
-                        templateProperties.add(secondProperty);
-                    }
-                }
-            }
+            Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
+            processElm.addNamespaceDeclaration(xsi);
+            Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
+                    xsi);
+            processElm.setAttribute(attSchema);
         }
-        if (!templateProperties.isEmpty()) {
-            Element properties = new Element(PROPERTIES, xmlns);
-            properties.addContent(templateProperties);
-            template.addContent(properties);
-        }
-        templateElements.add(template);
-
-        Element templates = new Element("originals", xmlns);
-        templates.addContent(templateElements);
-        processElements.add(templates);
-
-        // digital document information
-        ArrayList<Element> docElements = new ArrayList<>();
-        Element dd = new Element("digitalDocument", xmlns);
-
-        List<Element> docProperties = prepareProperties(docketData.getWorkpieceProperties(), xmlns);
-
-        if (!docProperties.isEmpty()) {
-            Element properties = new Element(PROPERTIES, xmlns);
-            properties.addContent(docProperties);
-            dd.addContent(properties);
-        }
-        docElements.add(dd);
-
-        Element digdoc = new Element("digitalDocuments", xmlns);
-        digdoc.addContent(docElements);
-        processElements.add(digdoc);
-
-        processElm.setContent(processElements);
-        return doc;
     }
 
     private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
