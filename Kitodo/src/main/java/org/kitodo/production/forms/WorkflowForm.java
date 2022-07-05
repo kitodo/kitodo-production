@@ -40,6 +40,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -49,7 +51,9 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
 
@@ -141,6 +145,9 @@ public class WorkflowForm extends BaseForm {
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
+                if (!this.workflow.getTemplates().isEmpty()) {
+                    updateTemplateTasks();
+                }
                 if (migration) {
                     migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
@@ -149,13 +156,30 @@ public class WorkflowForm extends BaseForm {
             } else {
                 return this.stayOnCurrentPage;
             }
-        } catch (IOException e) {
+        } catch (IOException | DAOException | DataException e) {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
             Helper.setErrorMessage("errorDiagramTask", new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
                 e);
             return this.stayOnCurrentPage;
+        }
+    }
+
+    /**
+     * Update the tasks of the templates associated with the current workflow
+     */
+    private void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
+        Converter converter = new Converter(this.workflow.getTitle());
+        for (Template workflowTemplate : this.workflow.getTemplates()) {
+            List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
+            if (!templateTasks.isEmpty()) {
+                workflowTemplate.getTasks().clear();
+                TemplateService templateService = ServiceManager.getTemplateService();
+                converter.convertWorkflowToTemplate(workflowTemplate);
+                templateService.save(workflowTemplate, true);
+                new WorkflowControllerService().activateNextTasks(workflowTemplate.getTasks());
+            }
         }
     }
 
