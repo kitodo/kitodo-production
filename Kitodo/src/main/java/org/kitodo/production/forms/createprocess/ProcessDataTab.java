@@ -37,13 +37,14 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
 
 public class ProcessDataTab {
 
     private static final Logger logger = LogManager.getLogger(ProcessDataTab.class);
 
     private List<SelectItem> allDocTypes;
-    private final CreateProcessForm createProcessForm;
+    protected final CreateProcessForm createProcessForm;
     private String docType;
 
     ProcessDataTab(CreateProcessForm createProcessForm) {
@@ -184,9 +185,11 @@ public class ProcessDataTab {
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-        Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
-                "editForm:processFromTemplateTabView:processMetadata",
-                "editForm:processFromTemplateTabView:processAncestors");
+        if (Objects.nonNull(Faces.getContext())) {
+            Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
+                    "editForm:processFromTemplateTabView:processMetadata",
+                    "editForm:processFromTemplateTabView:processAncestors");
+        }
     }
 
     private String getTitleFromLogicalStructure(Process process) {
@@ -194,7 +197,7 @@ public class ProcessDataTab {
             LegacyMetsModsDigitalDocumentHelper metsModsDigitalDocumentHelper = ServiceManager.getProcessService()
                     .readMetadataFile(process);
             return getTitleFromMetadata(metsModsDigitalDocumentHelper.getWorkpiece().getLogicalStructure().getMetadata());
-        } catch (IOException e) {
+        } catch (IOException | NullPointerException e) {
             logger.error(e.getMessage(), e);
         }
         return StringUtils.EMPTY;

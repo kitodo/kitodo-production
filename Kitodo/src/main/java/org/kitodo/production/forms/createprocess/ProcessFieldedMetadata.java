@@ -94,7 +94,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     /**
      * The tree node that JSF has to display.
      */
-    private TreeNode treeNode;
+    protected TreeNode treeNode;
 
     /**
      * Creates an empty metadata group.

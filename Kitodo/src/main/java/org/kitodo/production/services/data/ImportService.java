@@ -133,7 +133,7 @@ public class ImportService {
     private static final String VOLUME = "Volume";
     private static final String MULTI_VOLUME_WORK = "MultiVolumeWork";
 
-    private String tiffDefinition;
+    private String tiffDefinition = "";
     private boolean usingTemplates;
 
     private TempProcess parentTempProcess;
