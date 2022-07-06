@@ -28,7 +28,7 @@
         <h:panelGroup id="messageWrapper">
             <h3>
                 <h:outputFormat value="#{err['catalogError']}">
-                    <f:param value="#{CreateProcessForm.catalogImportDialog.hitModel.selectedCatalog}"/>
+                    <f:param value="#{CreateProcessForm.catalogImportDialog.hitModel.importConfiguration.title}"/>
                 </h:outputFormat>
             </h3>
             <div class="select-note ui-messages-error">

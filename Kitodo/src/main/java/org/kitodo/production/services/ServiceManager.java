@@ -23,16 +23,19 @@ import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.DocketService;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.FolderService;
+import org.kitodo.production.services.data.ImportConfigurationService;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.LdapGroupService;
 import org.kitodo.production.services.data.LdapServerService;
 import org.kitodo.production.services.data.ListColumnService;
+import org.kitodo.production.services.data.MappingFileService;
 import org.kitodo.production.services.data.MassImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.PropertyService;
 import org.kitodo.production.services.data.RoleService;
 import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.services.data.SearchFieldService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.data.UserService;
@@ -75,9 +78,11 @@ public class ServiceManager {
     private static ListColumnService listColumnService;
     private static LongTermPreservationValidationService longTermPreservationValidationService;
     private static MetadataValidationService metadataValidationService;
+    private static MappingFileService mappingFileService;
     private static MassImportService massImportService;
     private static MetsService metsService;
     private static MigrationService migrationService;
+    private static ImportConfigurationService importConfigurationService;
     private static PropertyService propertyService;
     private static ProcessService processService;
     private static ProjectService projectService;
@@ -85,6 +90,7 @@ public class ServiceManager {
     private static RulesetService rulesetService;
     private static RulesetManagementService rulesetManagementService;
     private static SchemaService schemaService;
+    private static SearchFieldService searchFieldService;
     private static SecurityAccessService securityAccessService;
     private static SessionService sessionService;
     private static TaskService taskService;
@@ -324,6 +330,24 @@ public class ServiceManager {
     private static void initializeDataEditorSettingService() {
         if (Objects.isNull(dataEditorSettingService)) {
             dataEditorSettingService = DataEditorSettingService.getInstance();
+        }
+    }
+
+    private static void initializeOpacConfigurationService() {
+        if (Objects.isNull(importConfigurationService)) {
+            importConfigurationService = ImportConfigurationService.getInstance();
+        }
+    }
+
+    private static void initializeSearchFieldService() {
+        if (Objects.isNull(searchFieldService)) {
+            searchFieldService = SearchFieldService.getInstance();
+        }
+    }
+
+    private static void initializeMappingFileService() {
+        if (Objects.isNull(mappingFileService)) {
+            mappingFileService = MappingFileService.getInstance();
         }
     }
 
@@ -725,5 +749,35 @@ public class ServiceManager {
     public static DataEditorSettingService getDataEditorSettingService() {
         initializeDataEditorSettingService();
         return dataEditorSettingService;
+    }
+
+    /**
+     * Get importConfigurationService.
+     *
+     * @return value of importConfigurationService
+     */
+    public static ImportConfigurationService getImportConfigurationService() {
+        initializeOpacConfigurationService();
+        return importConfigurationService;
+    }
+
+    /**
+     * Get searchFieldService.
+     *
+     * @return value of searchFieldService
+     */
+    public static SearchFieldService getSearchFieldService() {
+        initializeSearchFieldService();
+        return searchFieldService;
+    }
+
+    /**
+     * Get mappingFileService.
+     *
+     * @return value of mappingFileService
+     */
+    public static MappingFileService getMappingFileService() {
+        initializeMappingFileService();
+        return mappingFileService;
     }
 }

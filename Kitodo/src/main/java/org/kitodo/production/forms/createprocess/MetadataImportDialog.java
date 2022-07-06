@@ -20,6 +20,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
@@ -87,10 +89,10 @@ public abstract class MetadataImportDialog {
      *
      * @return list of catalogs
      */
-    public List<String> getCatalogs() {
+    public List<ImportConfiguration> getImportConfigurations() {
         try {
-            return ServiceManager.getImportService().getAvailableCatalogs();
-        } catch (IllegalArgumentException e) {
+            return ServiceManager.getImportConfigurationService().getAll();
+        } catch (IllegalArgumentException | DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return new LinkedList<>();
         }

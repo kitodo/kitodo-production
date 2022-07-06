@@ -154,7 +154,7 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Save user if there is not other user with the same login.
+     * Save user if there is no other user with the same login.
      *
      * @return page or empty String
      */

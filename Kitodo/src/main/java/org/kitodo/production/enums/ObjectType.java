@@ -35,6 +35,8 @@ public enum ObjectType {
     ROLE("role", "roles", false),
     WORKFLOW("workflow", "workflows", true),
     FILTER("filter", "filters", true),
+    IMPORT_CONFIGURATION("importConfig.configuration", "importConfig.configurations", false),
+    MAPPING_FILE("mappingFile.file", "mappingFile.files", false),
     NONE("", "", false);
 
     private final String messageKeySingular;

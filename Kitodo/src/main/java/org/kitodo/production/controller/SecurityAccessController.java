@@ -146,6 +146,25 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to add new import configuration.
+     *
+     * @return true if the current user has the authority to add new import configuration
+     */
+    public boolean hasAuthorityToAddImportConfiguration() {
+        return securityAccessService.hasAuthorityToAddImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the authority to add new mapping file.
+     *
+     * @return true if the current user has the authority to add new mapping file.
+     */
+
+    public boolean hasAuthorityToAddMappingFile() {
+        return securityAccessService.hasAuthorityToAddMappingFile();
+    }
+
+    /**
      * Check if the current user has the authority to add the user.
      *
      * @return True if the current user has the authority to add the user
@@ -273,6 +292,24 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToDeleteRuleset() {
         return securityAccessService.hasAuthorityToDeleteRuleset();
+    }
+
+    /**
+     * Check if the current user has the authority to delete import configuration.
+     *
+     * @return true if the current user has the authority to delete import configuration
+     */
+    public boolean hasAuthorityToDeleteImportConfiguration() {
+        return securityAccessService.hasAuthorityToDeleteImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the authority to delete mapping file object.
+     *
+     * @return true if the current user has the authority to delete mapping file object
+     */
+    public boolean hasAuthorityToDeleteMappingFile() {
+        return securityAccessService.hasAuthorityToDeleteMappingFile();
     }
 
     /**
@@ -423,6 +460,24 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to edit import configuration.
+     *
+     * @return True if the current user has the authority to edit import configuration
+     */
+    public boolean hasAuthorityToEditImportConfiguration() {
+        return securityAccessService.hasAuthorityToEditImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the authority to edit mapping file.
+     *
+     * @return True if the current user has the authority to edit mapping file
+     */
+    public boolean hasAuthorityToEditMappingFile() {
+        return securityAccessService.hasAuthorityToEditMappingFile();
+    }
+
+    /**
      * Check if the current user has the authority to unassign all tasks in progress of a user.
      *
      * @return true if the current user has the authority to unassign all tasks in progress of a user
@@ -558,6 +613,24 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewRuleset() {
         return securityAccessService.hasAuthorityToViewRuleset();
+    }
+
+    /**
+     * Check if the current user has the authority to view import configuration.
+     *
+     * @return true if the current user has the authority to view import configuration
+     */
+    public boolean hasAuthorityToViewImportConfiguration() {
+        return securityAccessService.hasAuthorityToViewImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the authority to view mapping file.
+     *
+     * @return true if the current user has the authority to view mapping file
+     */
+    public boolean hasAuthorityToViewMappingFile() {
+        return securityAccessService.hasAuthorityToViewMappingFile();
     }
 
     /**
@@ -782,6 +855,26 @@ public class SecurityAccessController {
      */
     public boolean hasAuthorityToViewRulesetList() {
         return securityAccessService.hasAuthorityToViewRulesetList();
+    }
+
+    /**
+     * Check if current user has authority to view import configuration list. It returns true if
+     * user has "viewAllImportConfigurations" authority for client.
+     *
+     * @return true if user has authority 'viewAllImportConfigurations' for client
+     */
+    public boolean hasAuthorityToViewImportConfigurationList() {
+        return securityAccessService.hasAuthorityToViewImportConfigurationList();
+    }
+
+    /**
+     * Check if current user has authority to view mapping file list. It returns true if
+     * user has "viewAllMappingFiles" authority for client.
+     *
+     * @return true if user has authority 'viewAllMappingFiles' for client
+     */
+    public boolean hasAuthorityToViewMappingFileList() {
+        return securityAccessService.hasAuthorityToViewMappingFileList();
     }
 
     /**

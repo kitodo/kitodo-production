@@ -26,11 +26,6 @@
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h:outputScript name="js/toggleLock.js" target="body"/>
-        <script>
-            window.onload = function () {
-                checkForm('editForm')
-            };
-        </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
                           styleClass="shortable"
@@ -86,6 +81,9 @@
             </p:tab>
             <p:tab title="#{msgs.templates}" id="templates">
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['importConfig.configurations']}" id="importConfigurations">
+                <ui:include src="/WEB-INF/templates/includes/projectEdit/defaultImportConfiguration.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>

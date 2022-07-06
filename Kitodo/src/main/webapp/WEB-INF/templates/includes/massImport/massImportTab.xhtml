@@ -25,15 +25,16 @@
                                value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
                 <p:selectOneMenu id="catalogueSelect"
                                  required="#{not empty param['editForm:importButton']}"
-                                 value="#{MassImportForm.selectedCatalog}">
+                                 converter="#{importConfigurationConverter}"
+                                 value="#{MassImportForm.importConfigurationId}">
                     <f:selectItem itemValue="#{null}"
                                   itemLabel="-- #{msgs.selectCatalog} --"
                                   noSelectionOption="true"
                                   itemDisabled="true"/>
-                    <f:selectItems value="#{CreateProcessForm.catalogImportDialog.catalogs}"
-                                   var="catalog"
-                                   itemLabel="#{catalog}"
-                                   itemValue="#{catalog}"/>
+                    <f:selectItems value="#{CreateProcessForm.catalogImportDialog.importConfigurations}"
+                                   var="configuration"
+                                   itemLabel="#{configuration.title}"
+                                   itemValue="#{configuration}"/>
                     <p:ajax update="editForm"/>
                 </p:selectOneMenu>
             </div>
@@ -100,12 +101,12 @@
             </div>
         </p:row>
         <p:row>
-            <h:panelGroup rendered="#{MassImportForm.selectedCatalog ne null}">
+            <h:panelGroup rendered="#{MassImportForm.importConfigurationId ne null}">
                 <p:outputLabel for="csvFileUpload"
                                value="#{msgs['csvFileUpload']}"/>
                 <p:fileUpload id="csvFileUpload"
                               value="#{MassImportForm.file}"
-                              rendered="#{MassImportForm.selectedCatalog ne null}"
+                              rendered="#{MassImportForm.importConfigurationId ne null}"
                               listener="#{MassImportForm.handleFileUpload}"
                               allowTypes="/(\.|\/)(csv)$/"
                               skinSimple="true"

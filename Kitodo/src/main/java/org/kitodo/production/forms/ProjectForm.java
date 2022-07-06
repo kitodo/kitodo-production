@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -104,7 +105,7 @@ public class ProjectForm extends BaseForm {
      */
     /*
      * This is a hack. The clean solution would be to have an inner class bean
-     * for the data table row an dialog, but this approach was introduced
+     * for the data table row a dialog, but this approach was introduced
      * decades ago and has been maintained until today.
      */
     private Folder myFolder;
@@ -230,7 +231,6 @@ public class ProjectForm extends BaseForm {
                 addFirstUserToNewProject();
 
                 commitTemplates();
-
                 commitFolders();
 
                 ServiceManager.getProjectService().save(project, true);
@@ -377,6 +377,20 @@ public class ProjectForm extends BaseForm {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TEMPLATE.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
+        }
+    }
+
+    /**
+     * Get import configurations.
+     *
+     * @return import configurations
+     */
+    public List<ImportConfiguration> getImportConfigurations() {
+        try {
+            return ServiceManager.getImportConfigurationService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return Collections.emptyList();
         }
     }
 

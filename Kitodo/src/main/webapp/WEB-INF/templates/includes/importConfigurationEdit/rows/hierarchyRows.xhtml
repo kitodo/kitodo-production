@@ -1,0 +1,91 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:row>
+            <div>
+                <p:outputLabel for="parentElementXPath" value="#{msgs['importConfig.field.parentElementXPath']}"/>
+                <p:inputText id="parentElementXPath" styleClass="input-with-button"
+                             validator="XPathValidator"
+                             value="#{importConfigurationEditView.importConfiguration.parentElementXPath}"
+                             placeholder="#{msgs['importConfig.field.parentElementXPath']}"
+                             disabled="#{isViewMode}">
+                    <p:ajax event="change"
+                            update="editForm:importConfigurationTabView:parentElementType"/>
+                </p:inputText>
+                <p:commandButton id="parentElementXPathHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentElementXPathHelp"
+                           value="Specifiy the XPath to the element in the imported document containing the ID of the parent element"/>
+            </div>
+            <div>
+                <p:outputLabel for="parentElementType" value="#{msgs['importConfig.field.parentElementType']}"/>
+                <p:selectOneMenu id="parentElementType"
+                                 styleClass="input-with-button"
+                                 disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.parentElementXPath}"
+                                 value="#{importConfigurationEditView.importConfiguration.parentElementType}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectParentElementType']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.parentElementTypes}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="parentElementHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentElementHelp"
+                           value="Define the XML element containing information about the parent process"/>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="parentElementTrimMode" value="#{msgs['importConfig.field.parentElementTrimMode']}" />
+                <p:selectOneMenu id="parentElementTrimMode"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.importConfiguration.parentElementTrimMode}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectTrimMode']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.parentElementTrimModes}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="parentElementTrimModeHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentElementTrimModeHelp"
+                           value="Parent element trim mode"/>
+            </div>
+            <div>
+                <p:outputLabel for="defaultImportDepth" value="#{msgs['importConfig.field.defaultImportDepth']} *"/>
+                <p:spinner id="defaultImportDepth"
+                           styleClass="input-with-button"
+                           immediate="true"
+                           min="1"
+                           max="5"
+                           required="#{not empty param['editForm:save']}"
+                           onchange="toggleSave();"
+                           value="#{importConfigurationEditView.importConfiguration.defaultImportDepth}"/>
+                <p:commandButton id="defaultImportDepthHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultImportDepthHelpButton"
+                           value="Configure the number of hierarchichal processes to be imported by default"/>
+            </div>
+        </p:row>
+
+    </f:view>
+</ui:composition>

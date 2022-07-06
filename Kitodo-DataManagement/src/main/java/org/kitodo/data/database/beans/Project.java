@@ -89,6 +89,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<Template> templates;
 
+    @ManyToOne
+    @JoinColumn(name = "default_importconfiguration_id",
+            foreignKey = @ForeignKey(name = "FK_project_default_importconfiguration_id"))
+    private ImportConfiguration defaultImportConfiguration;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Folder> folders;
 
@@ -468,6 +473,24 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public void setPreview(Folder preview) {
         this.preview = preview;
+    }
+
+    /**
+     * Get defaultImportConfiguration.
+     *
+     * @return value of defaultImportConfiguration
+     */
+    public ImportConfiguration getDefaultImportConfiguration() {
+        return defaultImportConfiguration;
+    }
+
+    /**
+     * Set defaultImportConfiguration.
+     *
+     * @param defaultImportConfiguration as org.kitodo.data.database.beans.ImportConfiguration
+     */
+    public void setDefaultImportConfiguration(ImportConfiguration defaultImportConfiguration) {
+        this.defaultImportConfiguration = defaultImportConfiguration;
     }
 
     @Override

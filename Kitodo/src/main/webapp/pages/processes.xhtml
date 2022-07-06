@@ -106,7 +106,7 @@
             <p:ajax event="tabChange"
                     listener="#{ProcessForm.onTabChange}"
                     update="filterMenuWrapper"/>
-            <p:tab title="#{msgs.processList}" id="processTab"
+            <p:tab title="#{msgs.processes}" id="processTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}">
                 <ui:include src="/WEB-INF/templates/includes/processes/processList.xhtml"/>
             </p:tab>

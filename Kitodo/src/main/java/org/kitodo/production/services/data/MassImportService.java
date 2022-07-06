@@ -150,7 +150,7 @@ public class MassImportService {
                 commonMetadata = new ArrayList<>(List.copyOf(metadataView));
             } else {
                 commonMetadata.removeIf(item -> metadataView.stream()
-                        .noneMatch(metadataElement -> Objects.equals(item.getId(),metadataElement.getId())));
+                        .noneMatch(metadataElement -> Objects.equals(item.getId(), metadataElement.getId())));
             }
             if (commonMetadata.isEmpty()) {
                 break;
