@@ -76,8 +76,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     private RulesetManagementInterface rulesetManagement;
-    private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
-            .getCurrentMetadataLanguage();
+    private final List<Locale.LanguageRange> priorityList;
     private final String acquisitionStage = "create";
     private Project project;
     private Template template;
@@ -89,6 +88,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private TempProcess currentProcess;
 
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
+
+    public CreateProcessForm() {
+        priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
+    }
+
+    CreateProcessForm(List<Locale.LanguageRange> priorityList) {
+        this.priorityList = priorityList;
+    }
 
     /**
      * Returns the ruleset management to access the ruleset.
@@ -376,7 +383,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 Workpiece workpiece = new Workpiece();
                 processes = new LinkedList<>(Collections.singletonList(new TempProcess(
                         processGenerator.getGeneratedProcess(), workpiece)));
-                        currentProcess = processes.get(0);
+                currentProcess = processes.get(0);
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
@@ -397,7 +404,9 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
-                    setChildCount(rulesetManagement, workpiece);
+                    if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
+                        updateRulesetAndDocType(getMainProcess().getRuleset());
+                    }
                 }
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
@@ -405,18 +414,19 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         }
     }
 
-    private void setChildCount(RulesetManagementInterface rulesetManagement, Workpiece workpiece) throws IOException {
-        Collection<String> childCountKeys = rulesetManagement.getFunctionalKeys(FunctionalMetadata.CHILD_COUND);
-        if (!childCountKeys.isEmpty()) {
-            String childCount = Integer.toString(titleRecordLinkTab.getTitleRecordProcess().getChildren().size() + 1);
-            for (String childCountKey : childCountKeys) {
-                MetadataEntry entry = new MetadataEntry();
-                entry.setKey(childCountKey);
-                entry.setValue(childCount);
-                workpiece.getLogicalStructure().getMetadata().add(entry);
-            }
-            updateRulesetAndDocType(getMainProcess().getRuleset());
+    static boolean setChildCount(Process parent, RulesetManagementInterface ruleset, Workpiece workpiece) throws IOException {
+        Collection<String> childCountKeys = ruleset.getFunctionalKeys(FunctionalMetadata.CHILD_COUND);
+        if (childCountKeys.isEmpty()) {
+            return false;
+        } 
+        String childCount = Integer.toString(parent.getChildren().size() + 1);
+        for (String childCountKey : childCountKeys) {
+            MetadataEntry entry = new MetadataEntry();
+            entry.setKey(childCountKey);
+            entry.setValue(childCount);
+            workpiece.getLogicalStructure().getMetadata().add(entry);
         }
+        return true;
     }
 
     /**
