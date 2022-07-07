@@ -426,6 +426,8 @@
 
                 'authorLastName' The value is used as the author's last name to form the author-title key.
 
+                'childCount' will set the (1-based) child number, when creating child documents.
+
                 'dataSource' Internal identifier of the data source in order to be able to update the imported
                     metadata entries from the data source later.
 
@@ -448,6 +450,7 @@
                     <xs:simpleType>
                         <xs:restriction base="xs:token">
                             <xs:enumeration value="authorLastName"/>
+                            <xs:enumeration value="childCount"/>
                             <xs:enumeration value="dataSource"/>
                             <xs:enumeration value="displaySummary"/>
                             <xs:enumeration value="higherlevelIdentifier"/>

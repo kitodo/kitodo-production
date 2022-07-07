@@ -30,6 +30,14 @@ public enum FunctionalMetadata {
     AUTHOR_LAST_NAME("authorLastName"),
 
     /**
+     * The number of the child, when creating a child process from a parent
+     * process using the plus button. This will set the value on process
+     * creation. The value is the current number of children of the parent
+     * process plus one, i.e. it creates a one-based counting.
+     */
+    CHILD_COUND("childCount"),
+
+    /**
      * The name of the data source from which the record was imported. This is
      * saved for later comparison of the data records.
      */
