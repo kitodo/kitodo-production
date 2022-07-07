@@ -73,8 +73,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     private RulesetManagementInterface rulesetManagement;
-    private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
-            .getCurrentMetadataLanguage();
+    private final List<Locale.LanguageRange> priorityList;
     private final String acquisitionStage = "create";
     private Project project;
     private Template template;
@@ -86,6 +85,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private TempProcess currentProcess;
 
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
+
+    public CreateProcessForm() {
+        priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
+    }
+
+    CreateProcessForm(List<Locale.LanguageRange> priorityList) {
+        this.priorityList = priorityList;
+    }
 
     /**
      * Returns the ruleset management to access the ruleset.

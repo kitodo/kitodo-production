@@ -419,6 +419,15 @@ public class TitleRecordLinkTab {
     }
 
     /**
+     * Sets the process of the selected title record.
+     *
+     * @param titleRecordProcess the process of the selected title record
+     */
+    public void setTitleRecordProcess(Process titleRecordProcess) {
+        this.titleRecordProcess = titleRecordProcess;
+    }
+
+    /**
      * Set given process "parentProcess" as parent title record of new process.
      * @param parentProcess process to set as parent title record
      */
