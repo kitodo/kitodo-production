@@ -11,19 +11,36 @@
 
 package org.kitodo.docket;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Objects;
 
+import org.apache.commons.configuration.ConfigurationException;
+import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.jaxen.JaxenException;
+import org.jaxen.jdom.JDOMXPath;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
+import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.Property;
+import org.kitodo.config.KitodoConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,7 +71,7 @@ public class ExportXmlLog {
      * @throws IOException
      *             Throws IOException, when document creation fails.
      */
-    void startExport(DocketData docketData, OutputStream os) throws IOException {
+    static void startExport(DocketData docketData, OutputStream os) throws IOException {
         try {
             Document doc = createDocument(docketData, true);
 
@@ -80,7 +97,7 @@ public class ExportXmlLog {
      *            The output stream, to write the docket to.
      */
 
-    void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream) {
+    static void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream) {
         Document answer = new Document();
         Element root = new Element("processes");
         answer.setRootElement(root);
@@ -124,7 +141,7 @@ public class ExportXmlLog {
      *            the docketData to export
      * @return a new xml document
      */
-    private Document createDocument(DocketData docketData, boolean addNamespace) {
+    private static Document createDocument(DocketData docketData, boolean addNamespace) {
 
         Element processElm = new Element("process");
         final Document doc = new Document(processElm);
@@ -146,11 +163,17 @@ public class ExportXmlLog {
         // digital document information
         processDigitalDocumentInformation(docketData, xmlns, processElements);
 
+        // METS information
+        Element metsElement = new Element("metsInformation", xmlns);
+        List<Element> metadataElements = createMetadataElements(xmlns, docketData);
+        metsElement.addContent(metadataElements);
+        processElements.add(metsElement);
+
         processElm.setContent(processElements);
         return doc;
     }
 
-    private void processDigitalDocumentInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
+    private static void processDigitalDocumentInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
         ArrayList<Element> docElements = new ArrayList<>();
         Element dd = new Element("digitalDocument", xmlns);
 
@@ -168,7 +191,7 @@ public class ExportXmlLog {
         processElements.add(digdoc);
     }
 
-    private void processTemplateInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
+    private static void processTemplateInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
         ArrayList<Element> templateElements = new ArrayList<>();
         Element template = new Element("original", xmlns);
 
@@ -188,7 +211,7 @@ public class ExportXmlLog {
         processElements.add(templates);
     }
 
-    private void processTemplateProperties(DocketData docketData, Namespace xmlns, ArrayList<Element> templateProperties) {
+    private static void processTemplateProperties(DocketData docketData, Namespace xmlns, ArrayList<Element> templateProperties) {
         for (Property prop : docketData.getTemplateProperties()) {
             Element property = new Element(PROPERTY, xmlns);
             property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
@@ -218,7 +241,7 @@ public class ExportXmlLog {
         }
     }
 
-    private ArrayList<Element> processProcessInformation(DocketData docketData, Namespace xmlns) {
+    private static ArrayList<Element> processProcessInformation(DocketData docketData, Namespace xmlns) {
         ArrayList<Element> processElements = new ArrayList<>();
         Element processTitle = new Element("title", xmlns);
         processTitle.setText(docketData.getProcessName());
@@ -251,7 +274,7 @@ public class ExportXmlLog {
         return processElements;
     }
 
-    private void processNamespaceDeclaration(boolean addNamespace, Element processElm) {
+    private static void processNamespaceDeclaration(boolean addNamespace, Element processElm) {
         if (addNamespace) {
 
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -262,7 +285,7 @@ public class ExportXmlLog {
         }
     }
 
-    private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
+    private static List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
         ArrayList<Element> preparedProperties = new ArrayList<>();
         for (Property property : properties) {
             Element propertyElement = new Element(PROPERTY, xmlns);
@@ -282,7 +305,119 @@ public class ExportXmlLog {
         return preparedProperties;
     }
 
-    private String replacer(String in) {
+    private static List<Element> createMetadataElements(Namespace xmlns, DocketData docketData) {
+        List<Element> metadataElements = new ArrayList<>();
+        try {
+            HashMap<String, String> names = getNamespacesFromConfig();
+            Namespace[] namespaces = new Namespace[names.size()];
+            int index = 0;
+            for (var entries = names.entrySet().iterator(); entries.hasNext(); index++) {
+                Entry<String, String> entry = entries.next();
+                namespaces[index] = Namespace.getNamespace(entry.getKey(), entry.getValue());
+            }
+
+            prepareMetadataElements(metadataElements, false, docketData, namespaces, xmlns);
+            if (Objects.nonNull(docketData.getParent())) {
+                prepareMetadataElements(metadataElements, true, docketData.getParent(), namespaces, xmlns);
+            }
+
+        } catch (IOException | JDOMException | IllegalArgumentException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return metadataElements;
+    }
+
+    private static HashMap<String, String> getNamespacesFromConfig() {
+        HashMap<String, String> nss = new HashMap<>();
+        try {
+            File file = new File(KitodoConfig.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
+            if (file.exists() && file.canRead()) {
+                XMLConfiguration config = new XMLConfiguration(file);
+                config.setListDelimiter('&');
+                config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+                int count = config.getMaxIndex("namespace");
+                for (int i = 0; i <= count; i++) {
+                    String name = config.getString("namespace(" + i + ")[@name]");
+                    String value = config.getString("namespace(" + i + ")[@value]");
+                    nss.put(name, value);
+                }
+            }
+        } catch (ConfigurationException | RuntimeException e) {
+            logger.debug(e.getMessage(), e);
+            nss = new HashMap<>();
+        }
+        return nss;
+    }
+
+    private static void prepareMetadataElements(List<Element> metadataElements, boolean useAnchor, DocketData docketData,
+            Namespace[] namespaces, Namespace xmlns)
+            throws IOException, JDOMException {
+        HashMap<String, String> fields = getMetsFieldsFromConfig(useAnchor);
+        Document metsDoc = new SAXBuilder().build(docketData.metadataFile());
+        prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
+    }
+
+    private static void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,
+            Namespace[] namespaces, Namespace xmlns) {
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            List<Element> metsValues = getMetsValues(entry.getValue(), document, namespaces);
+            for (Element element : metsValues) {
+                Element ele = new Element(PROPERTY, xmlns);
+                ele.setAttribute("name", key);
+                ele.addContent(element.getTextTrim());
+                metadataElements.add(ele);
+            }
+        }
+    }
+
+    private static HashMap<String, String> getMetsFieldsFromConfig(boolean useAnchor) {
+        String xmlpath = "mets." + PROPERTY;
+        if (useAnchor) {
+            xmlpath = "anchor." + PROPERTY;
+        }
+
+        HashMap<String, String> fields = new HashMap<>();
+        try {
+            File file = new File(KitodoConfig.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
+            if (file.exists() && file.canRead()) {
+                XMLConfiguration config = new XMLConfiguration(file);
+                config.setListDelimiter('&');
+                config.setReloadingStrategy(new FileChangedReloadingStrategy());
+
+                int count = config.getMaxIndex(xmlpath);
+                for (int i = 0; i <= count; i++) {
+                    String name = config.getString(xmlpath + "(" + i + ")[@name]");
+                    String value = config.getString(xmlpath + "(" + i + ")[@value]");
+                    fields.put(name, value);
+                }
+            }
+        } catch (ConfigurationException | RuntimeException e) {
+            logger.debug(e.getMessage(), e);
+            fields = new HashMap<>();
+        }
+        return fields;
+    }
+
+    /**
+     * Get METS values.
+     *
+     * @param expr
+     *            String
+     * @param element
+     *            Object
+     * @param namespaces
+     *            HashMap
+     * @return list of elements
+     */
+    private static List<Element> getMetsValues(String expr, Document document, Namespace[] namespaces) {
+        XPathExpression<Element> xpath = XPathFactory.instance().compile(expr.trim().replace("\n", ""),
+            Filters.element(), Collections.emptyMap(), namespaces);
+        return xpath.evaluate(document);
+    }
+
+    private static String replacer(String in) {
         in = in.replace("°", "?");
         in = in.replace("^", "?");
         in = in.replace("|", "?");

@@ -17,29 +17,81 @@ import java.util.Objects;
 
 public class DocketData {
 
+    /** The metadata file. */
+    private String metadataFile;
+
+    /** The docket data of the parent. */
+    private DocketData parent;
+
     /** The name of the process. */
     private String processName;
+
     /** The id of the process. */
     private String processId;
+
     /** The name of the project. */
     private String projectName;
+
     /** The name of the used ruleset. */
     private String rulesetName;
+
     /** The creation Date of the process. */
     private String creationDate;
+
     /** A comment. */
     private String comment;
+
     /** The template properties. */
     private List<Property> templateProperties;
+
     /** The workpiece properties. */
     private List<Property> workpieceProperties;
+
     /** The process properties. */
     private List<Property> processProperties;
+
+    /**
+     * Gets the metadataFile.
+     * 
+     * @return The metadataFile.
+     */
+    public String metadataFile() {
+        return metadataFile;
+    }
+
+    /**
+     * Sets the metadataFile.
+     * 
+     * @param metadataFile
+     *            The metadata file.
+     */
+    public void setMetadataFile(String metadataFile) {
+        this.metadataFile = metadataFile;
+    }
 
     /**
      * Gets the processName.
      * 
      * @return The processName.
+     */
+    public DocketData getParent() {
+        return parent;
+    }
+
+    /**
+     * Sets the parent.
+     * 
+     * @param parent
+     *            The docket data of the parent.
+     */
+    public void setParent(DocketData parent) {
+        this.parent = parent;
+    }
+
+    /**
+     * Gets the parent.
+     * 
+     * @return The parent.
      */
     public String getProcessName() {
         return processName;

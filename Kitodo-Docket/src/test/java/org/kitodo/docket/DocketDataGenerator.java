@@ -22,6 +22,7 @@ public class DocketDataGenerator {
     public DocketData createDocketData(String processID, String signatur, String docType) {
         DocketData docketdata = new DocketData();
         docketdata.setCreationDate("01.01.2100");
+        docketdata.setMetadataFile("src/test/resources/metadata/" + processID + "/meta.xml");
         docketdata.setProcessId(processID);
         docketdata.setProcessName("ProcessTitle");
         docketdata.setProjectName("projectTitle");

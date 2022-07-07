@@ -47,10 +47,9 @@ public class ExportDocket {
      * @throws IOException
      *             Throws IOException, when pdfGeneration fails
      */
-    void startExport(DocketData docketData, OutputStream outputStream, File xsltFile) throws IOException {
-        ExportXmlLog exl = new ExportXmlLog();
+    static void startExport(DocketData docketData, OutputStream outputStream, File xsltFile) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        exl.startExport(docketData, out);
+        ExportXmlLog.startExport(docketData, out);
 
         byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
@@ -68,17 +67,16 @@ public class ExportDocket {
      * @throws IOException
      *             Throws IOException, when pdfGeneration fails.
      */
-    void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
-        ExportXmlLog exl = new ExportXmlLog();
+    static void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        exl.startMultipleExport(docketDataList, out);
+        ExportXmlLog.startMultipleExport(docketDataList, out);
 
         byte[] pdfBytes = generatePdfBytes(out, xsltFile);
 
         os.write(pdfBytes);
     }
 
-    private byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltFile) throws IOException {
+    private static byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltFile) throws IOException {
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
         StreamSource transformSource = new StreamSource(xsltFile);
