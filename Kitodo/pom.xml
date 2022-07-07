@@ -27,7 +27,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <maxAllowedViolations>5</maxAllowedViolations>
+        <maxAllowedViolations>4</maxAllowedViolations>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
         <jsf.projectStage>Production</jsf.projectStage>
         <myfaces.resourceMaxTimeExpires>604800000</myfaces.resourceMaxTimeExpires>
