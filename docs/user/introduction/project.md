@@ -12,17 +12,17 @@ Es sollte jedoch auch bedacht werden, dass viele Projekte den Verwaltungsaufwand
 
 <ol> 
 <li>Um ein Projekt anzulegen, klicken Sie im "<b>Dashboard</b>" auf "<b>Projekte</b>". 
-<center><img src= "/user/pictures/DashboardProjekte.png" alt="Bild" width= 75% height= auto></center>
+<center><img src= "../../../user/pictures/DashboardProjekte.png" alt="Bild" width= 75% height= auto></center>
 </li>
-<li> Anschließend gelangen Sie auf die Seite <i>Projekte</i>. Dort klicken Sie auf den Button "<b>Neu</b>" und in der Schaltfläche auf "<b>+ Neues Projekt</b>". <img src= "/user/pictures/NeuNeuesProjekt.png" alt="Bild"></li>
+<li> Anschließend gelangen Sie auf die Seite <i>Projekte</i>. Dort klicken Sie auf den Button "<b>Neu</b>" und in der Schaltfläche auf "<b>+ Neues Projekt</b>". <img src= "../../../user/pictures/NeuNeuesProjekt.png" alt="Bild"></li>
 <li> Auf der Seite <i>Neues Projekt</i> geben Sie die Daten für Ihr Projekt unter den 3 Reitern <i>Details</i>, <i>Technische Daten</i>, <i>Mets Parameter</i> ein. 
-<center><img src= "/user/pictures/EingabeNeuesProjekt.png" alt="Bild" width= 75% height= auto></center>
+<center><img src= "../../../user/pictures/EingabeNeuesProjekt.png" alt="Bild" width= 75% height= auto></center>
 </li>
 <li> Wählen Sie eine Produktionsvorlage aus, indem Sie auf den Button "<b>Produktionsvorlage auswählen</b>" klicken.
-<center><img src= "/user/pictures/ProjektProduktionsvorlageHinzufügen.png" alt="Bild" width= 75% height= auto></center>
+<center><img src= "../../../user/pictures/ProjektProduktionsvorlageHinzufügen.png" alt="Bild" width= 75% height= auto></center>
 <li> Klicken Sie anschließend auf "<b>Speichern</b>". </li>
-<img src= "/user/pictures/NeuesProjektSpeichern.png" alt="Bild">
+<img src= "../../../user/pictures/NeuesProjektSpeichern.png" alt="Bild">
 <li> Das neu angelegte Projekt erscheint nun auf der Seite <i>Projekte</i> in der <i>Projektliste</i>.
-<center><img src= "/user/pictures/ProjekteProjektliste.png" alt="Bild" width= 50% height= auto></center>
+<center><img src= "../../../user/pictures/ProjekteProjektliste.png" alt="Bild" width= 50% height= auto></center>
 </li>
 </ol>

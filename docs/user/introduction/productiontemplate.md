@@ -8,4 +8,4 @@ Einer Produktionsvorlage muss immer ein Projekt zugewiesen werden. Diesem Projek
 
 Hier ist ersichtlich, dass eine Produktionsvorlage aus mehreren Aufgaben besteht und einem Projekt zugeordnet ist.
 
-<center><img src= "/user/pictures/ProduktionsvorlagenWorkflow.png" alt="Bild" width= 80% height= auto></center>
+<center><img src= "../../../user/pictures/ProduktionsvorlagenWorkflow.png" alt="Bild" width= 80% height= auto></center>
