@@ -115,17 +115,6 @@ public class ExportDms extends ExportMets {
         return exportSuccessful;
     }
 
-    private boolean exportCompletedChildren(List<Process> children) throws DataException {
-        for (Process child:children) {
-            if (processService.getProgress(child.getTasks(), null).equals(COMPLETED) && !child.isExported()) {
-                if (!startExport(child)) {
-                    return false;
-                }
-            }
-        }
-        return true;
-    }
-
     /**
      * Export to the DMS.
      *
@@ -210,6 +199,17 @@ public class ExportDms extends ExportMets {
         }
 
         return prepareExportLocation(process, gdzfile);
+    }
+
+    private boolean exportCompletedChildren(List<Process> children) throws DataException {
+        for (Process child:children) {
+            if (processService.getProgress(child.getTasks(), null).equals(COMPLETED) && !child.isExported()) {
+                if (!startExport(child)) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     private boolean prepareExportLocation(Process process,
