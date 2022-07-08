@@ -78,8 +78,7 @@ public class MetsService {
      *             not found)
      */
     public String getBaseType(URI uri) throws IOException {
-        Workpiece workpiece = loadWorkpiece(uri);
-        return getBaseType(workpiece);
+        return getBaseType(loadWorkpiece(uri));
 
     }
 

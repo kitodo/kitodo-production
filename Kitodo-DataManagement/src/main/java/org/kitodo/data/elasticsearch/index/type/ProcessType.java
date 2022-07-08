@@ -17,8 +17,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.kitodo.api.dataformat.PhysicalDivision;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
