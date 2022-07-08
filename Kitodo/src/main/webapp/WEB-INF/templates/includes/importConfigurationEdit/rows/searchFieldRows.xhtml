@@ -80,12 +80,28 @@
                                   noSelectionOption="true"/>
                     <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
                     <p:ajax event="change"
+                            update="editForm:importConfigurationTabView:idParameterPrefix"
                             oncomplete="toggleSave();"/>
                 </p:selectOneMenu>
                 <p:commandButton id="idSearchFieldHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="idSearchFieldHelp"
                            value="URL parameter for unique identifiers. This parameter is used for importing individual records from the search interface."/>
+            </div>
+            <div>
+                <p:outputLabel for="idParameterPrefix"
+                               value="#{msgs['importConfig.searchFields.idPrefix']}"/>
+                <p:inputText id="idParameterPrefix"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.idPrefix}"
+                             disabled="#{importConfigurationEditView.idSearchField eq null}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="idParameterPrefixHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="idParameterPrefixHelp"
+                           value="This optional string will be prepended to each ID when querying datasets by ID. This can be used to simplify querying OAI interfaces for example, where each identifier must be preceedded with a valid set identification."/>
             </div>
             <div>
                 <p:outputLabel for="defaultSearchField" value="#{msgs['importConfig.searchFields.defaultField']}"/>
