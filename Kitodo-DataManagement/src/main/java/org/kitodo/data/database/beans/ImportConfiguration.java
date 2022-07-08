@@ -25,6 +25,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 
 import org.apache.commons.lang.StringUtils;
@@ -131,6 +132,7 @@ public class ImportConfiguration extends BaseBean {
     private Process defaultTemplateProcess;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
+    @OrderColumn(name = "sorting")
     @JoinTable(name = "importconfiguration_x_mappingfile", joinColumns = {
             @JoinColumn(name = "importconfiguration_id",
                     foreignKey = @ForeignKey(name = "FK_importconfiguration_x_mappingfile_importconfiguration_id")) },
