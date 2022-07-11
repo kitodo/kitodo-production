@@ -11,11 +11,8 @@
 
 package org.kitodo.production.helper;
 
-import java.io.IOException;
-import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -25,14 +22,11 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
-import org.kitodo.api.dataformat.PhysicalDivision;
-import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.dataformat.MetsService;
 
 public class SearchResultGeneration {
 
@@ -133,7 +127,7 @@ public class SearchResultGeneration {
                     RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
                     rangeQueryBuilder.gte(queriedIds).lt(queriedIds + elasticsearchLimit);
                     BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
-                    queryForFilter.should(rangeQueryBuilder);
+                    queryForFilter.must(rangeQueryBuilder);
                     processDTOS = ServiceManager.getProcessService().findByQuery(queryForFilter,
                         ServiceManager.getProcessService().sortById(SortOrder.ASC), true);
                     queriedIds += elasticsearchLimit;
@@ -172,26 +166,9 @@ public class SearchResultGeneration {
         row.createCell(0).setCellValue(processDTO.getTitle());
         row.createCell(1).setCellValue(processDTO.getId());
         row.createCell(2).setCellValue(processDTO.getCreationDate());
-
-        URI metadataFilePath;
-        int numberOfProcessImages = 0;
-        int numberOfProcessStructuralElements = 0;
-        int numberOfProcessMetadata = 0;
-        try {
-            metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(processDTO);
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-            numberOfProcessImages = (int) Workpiece.treeStream(workpiece.getPhysicalStructure())
-                    .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count();
-            numberOfProcessStructuralElements = (int) Workpiece.treeStream(workpiece.getLogicalStructure()).count();
-            numberOfProcessMetadata = Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
-
-        } catch (IOException e) {
-            logger.debug("Metadata file not found for process with id: {}", processDTO.getId());
-        }
-
-        row.createCell(3).setCellValue(numberOfProcessImages);
-        row.createCell(4).setCellValue(numberOfProcessStructuralElements);
-        row.createCell(5).setCellValue(numberOfProcessMetadata);
+        row.createCell(3).setCellValue(processDTO.getNumberOfImages());
+        row.createCell(4).setCellValue(processDTO.getNumberOfStructures());
+        row.createCell(5).setCellValue(processDTO.getNumberOfMetadata());
         row.createCell(6).setCellValue(processDTO.getProject().getTitle());
         row.createCell(7).setCellValue(processDTO.getSortHelperStatus());
     }

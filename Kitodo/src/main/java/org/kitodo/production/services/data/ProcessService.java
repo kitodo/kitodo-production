@@ -97,6 +97,8 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -111,6 +113,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
@@ -155,6 +158,7 @@ import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
+import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
@@ -304,18 +308,45 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     @Override
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
-        process.setMetadata(getMetadataForIndex(process));
-        process.setBaseType(getBaseType(process));
+
+        enrichProcessData(process, false);
+
         super.saveToIndex(process, forceRefresh);
     }
 
+    private int getNumberOfImagesForIndex(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getPhysicalStructure())
+                .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count());
+    }
+
+    private int getNumberOfMetadata(Workpiece workpiece) {
+        return Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
+    }
+
+    private int getNumberOfStructures(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getLogicalStructure()).count());
+    }
+
     @Override
-    public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException {
+    public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException, IOException {
         for (Process process : processes) {
-            process.setMetadata(getMetadataForIndex(process, true));
-            process.setBaseType(getBaseType(process));
+            enrichProcessData(process, true);
         }
         super.addAllObjectsToIndex(processes);
+    }
+
+    private void enrichProcessData(Process process, boolean forIndexingAll) throws IOException {
+        process.setMetadata(getMetadataForIndex(process, forIndexingAll));
+        URI metadataFilePath = fileService.getMetadataFilePath(process, false, forIndexingAll);
+        if (!fileService.fileExist(metadataFilePath)) {
+            logger.info("No metadata file for indexing: {}", metadataFilePath);
+        } else {
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
+            process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
+            process.setNumberOfStructures(getNumberOfStructures(workpiece));
+            process.setBaseType(getBaseType(workpiece));
+        }
     }
 
     /**
@@ -874,6 +905,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
             processDTO.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
             processDTO.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
+            processDTO.setNumberOfImages(ProcessTypeField.NUMBER_OF_IMAGES.getIntValue(jsonObject));
+            processDTO.setNumberOfMetadata(ProcessTypeField.NUMBER_OF_METADATA.getIntValue(jsonObject));
+            processDTO.setNumberOfStructures(ProcessTypeField.NUMBER_OF_STRUCTURES.getIntValue(jsonObject));
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
 
             List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
@@ -1781,6 +1815,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             return ServiceManager.getMetsService().getBaseType(metadataFilePath);
         } catch (IOException | IllegalArgumentException e) {
             logger.info("Could not determine base type for process {}: {}", process, e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * Returns the type of the top element of the logical structure, and thus the
+     * type of the workpiece of the process.
+     *
+     * @param workpiece
+     *            workpiece whose root type is to be determined
+     * @return the type of the logical structure of the workpiece, "" if unreadable
+     */
+    public String getBaseType(Workpiece workpiece) {
+        try {
+            return ServiceManager.getMetsService().getBaseType(workpiece);
+        } catch (IllegalArgumentException e) {
+            logger.info("Could not determine base type for process {}: {}", workpiece.getId(), e.getMessage());
             return "";
         }
     }
@@ -2697,8 +2748,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.get(rulesetId);
         } else {
-            functionalDivisions = ServiceManager.getRulesetService()
-                    .getFunctionalDivisions(rulesetId, FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
             RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.put(rulesetId, functionalDivisions);
         }
         return functionalDivisions.contains(processDTO.getBaseType());
@@ -2722,8 +2774,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
         } else {
-            functionalDivisions = ServiceManager.getRulesetService()
-                    .getFunctionalDivisions(rulesetId, FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
             RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
         }
         return functionalDivisions.contains(processDTO.getBaseType());

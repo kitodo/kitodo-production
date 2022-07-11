@@ -11,6 +11,7 @@
 
 package org.kitodo.production.helper;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
@@ -20,7 +21,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchService;
 
 public class IndexWorker implements Runnable {
@@ -78,7 +78,7 @@ public class IndexWorker implements Runnable {
                     indexChunks(batchSize);
                 }
             }
-        } catch (CustomResponseException | DAOException | DataException | HibernateException e) {
+        } catch (CustomResponseException | DAOException  | HibernateException | IOException e) {
             logger.error(e.getMessage(), e);
         }
     }
@@ -92,7 +92,7 @@ public class IndexWorker implements Runnable {
     }
 
     @SuppressWarnings("unchecked")
-    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, DataException {
+    private void indexChunks(int batchSize) throws CustomResponseException, DAOException, IOException {
         List<Object> objectsToIndex;
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
         while (this.indexedObjects < indexLimit) {
@@ -112,7 +112,7 @@ public class IndexWorker implements Runnable {
     }
 
     @SuppressWarnings("unchecked")
-    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException {
+    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException, IOException {
         this.searchService.addAllObjectsToIndex(objectsToIndex);
         this.indexedObjects = this.indexedObjects + objectsToIndex.size();
     }
