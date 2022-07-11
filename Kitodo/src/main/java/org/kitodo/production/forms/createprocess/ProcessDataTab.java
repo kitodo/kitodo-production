@@ -68,7 +68,6 @@ public class ProcessDataTab {
                 Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
             }
         }
-        updateProcessMetadata();
     }
 
     /**
@@ -80,9 +79,23 @@ public class ProcessDataTab {
             if (this.docType.isEmpty()) {
                 createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
-                createProcessForm.getProcessMetadata()
-                        .initializeProcessDetails(createProcessForm.getCurrentProcess().getWorkpiece()
-                                .getLogicalStructure(), createProcessForm);
+                createProcessForm.getProcessMetadata().initializeProcessDetails(
+                    createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
+                overwriteProcessMetadata();
+            }
+        }
+    }
+
+    private void overwriteProcessMetadata() {
+        TempProcess currentProcess = createProcessForm.getCurrentProcess();
+        if (StringUtils.isNotBlank(currentProcess.getAtstsl())) {
+            for (ProcessDetail processDetail : currentProcess.getProcessMetadata().getProcessDetailsElements()) {
+                if (TitleGenerator.TSL_ATS.equals(processDetail.getMetadataID()) && processDetail instanceof ProcessTextMetadata) {
+                    ProcessTextMetadata processTextMetadata = (ProcessTextMetadata) processDetail;
+                    if (StringUtils.isBlank(processTextMetadata.getValue())) {
+                        processTextMetadata.setValue(currentProcess.getAtstsl());
+                    }
+                }
             }
         }
     }
@@ -176,13 +189,16 @@ public class ProcessDataTab {
                 }
             }
 
-            String atstsl = ProcessService.generateProcessTitleAndGetAtstsl(processDetails, processTitle, process,
-                currentTitle);
+            createProcessForm.getCurrentProcess().setAtstsl(
+                ProcessService.generateProcessTitleAndGetAtstsl(processDetails, processTitle, process, currentTitle));
 
             // document name is generally equal to process title
             createProcessForm.getCurrentProcess().setTiffHeaderDocumentName(process.getTitle());
-            createProcessForm.getCurrentProcess().setTiffHeaderImageDescription(ProcessService.generateTiffHeader(
-                    processDetails, atstsl, ServiceManager.getImportService().getTiffDefinition(), this.docType));
+            createProcessForm.getCurrentProcess()
+                    .setTiffHeaderImageDescription(ProcessService.generateTiffHeader(processDetails,
+                        createProcessForm.getCurrentProcess().getAtstsl(),
+                        ServiceManager.getImportService().getTiffDefinition(), this.docType));
+            updateProcessMetadata();
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

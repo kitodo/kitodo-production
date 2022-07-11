@@ -38,6 +38,8 @@ public class TempProcess {
 
     private NodeList metadataNodes;
 
+    private String atstsl;
+
     private String tiffHeaderDocumentName;
 
     private String tiffHeaderImageDescription;
@@ -214,5 +216,23 @@ public class TempProcess {
                 }
             }
         }
+    }
+
+    /**
+     * Get atstsl.
+     *
+     * @return value of atstsl
+     */
+    public String getAtstsl() {
+        return atstsl;
+    }
+
+    /**
+     * Set atstsl.
+     *
+     * @param atstsl as string
+     */
+    public void setAtstsl(String atstsl) {
+        this.atstsl = atstsl;
     }
 }

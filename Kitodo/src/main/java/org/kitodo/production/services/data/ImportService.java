@@ -996,12 +996,12 @@ public class ImportService {
         StructuralElementViewInterface docTypeView = rulesetManagementInterface
                 .getStructuralElementView(docType, acquisitionStage, priorityList);
         String processTitle = docTypeView.getProcessTitle().orElse("");
-        String atstsl = ProcessService.generateProcessTitle(processDetails,
-                processTitle, tempProcess.getProcess());
+        tempProcess.setAtstsl(ProcessService.generateProcessTitle(processDetails,
+                processTitle, tempProcess.getProcess()));
         tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
         String tiffDefinition = ServiceManager.getImportService().getTiffDefinition();
         if (Objects.nonNull(tiffDefinition)) {
-            tempProcess.setTiffHeaderImageDescription(ProcessService.generateTiffHeader(processDetails, atstsl,
+            tempProcess.setTiffHeaderImageDescription(ProcessService.generateTiffHeader(processDetails, tempProcess.getAtstsl(),
                     tiffDefinition, docType));
         }
     }
