@@ -65,7 +65,7 @@ public class ProcessDataTab {
                 this.docType = docType;
             } else {
                 this.docType = (String) allDocTypes.get(0).getValue();
-                Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
+                Helper.setErrorMessage("docTypeNotFound", new Object[] {docType });
             }
         }
     }
@@ -74,7 +74,8 @@ public class ProcessDataTab {
      * Update process metadata of currently selected process.
      */
     public void updateProcessMetadata() {
-        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())) {
+        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())
+                && Objects.nonNull(createProcessForm.getCurrentProcess().getWorkpiece())) {
             createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
                 createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
@@ -90,7 +91,8 @@ public class ProcessDataTab {
         TempProcess currentProcess = createProcessForm.getCurrentProcess();
         if (StringUtils.isNotBlank(currentProcess.getAtstsl())) {
             for (ProcessDetail processDetail : currentProcess.getProcessMetadata().getProcessDetailsElements()) {
-                if (TitleGenerator.TSL_ATS.equals(processDetail.getMetadataID()) && processDetail instanceof ProcessTextMetadata) {
+                if (TitleGenerator.TSL_ATS.equals(processDetail.getMetadataID())
+                        && processDetail instanceof ProcessTextMetadata) {
                     ProcessTextMetadata processTextMetadata = (ProcessTextMetadata) processDetail;
                     if (StringUtils.isBlank(processTextMetadata.getValue())) {
                         processTextMetadata.setValue(currentProcess.getAtstsl());
@@ -162,12 +164,13 @@ public class ProcessDataTab {
     /**
      * Generate process titles and other details.
      */
-    public void generateProcessTitleAndTiffHeader() {
+    public void generateAtstslFields() {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadata().getProcessDetailsElements();
         Process process = this.createProcessForm.getCurrentProcess().getProcess();
         try {
-            StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement().getStructuralElementView(
-                    docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
+            StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement()
+                    .getStructuralElementView(docType, createProcessForm.getAcquisitionStage(),
+                        createProcessForm.getPriorityList());
             String processTitle = docTypeView.getProcessTitle().orElse("");
             if (processTitle.isEmpty()) {
                 Helper.setErrorMessage("newProcess.titleGeneration.creationRuleNotFound",
