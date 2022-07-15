@@ -35,7 +35,8 @@
                                          autoWidth="false"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          immediate="true"
-                                         value="#{CreateProcessForm.fileUploadDialog.importConfiguration}">
+                                         value="#{CreateProcessForm.fileUploadDialog.importConfiguration}"
+                                         converter="#{importConfigurationConverter}">
                             <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
                             <f:selectItems value="#{CreateProcessForm.fileUploadDialog.importConfigurations}"
                                            var="importconfig"
