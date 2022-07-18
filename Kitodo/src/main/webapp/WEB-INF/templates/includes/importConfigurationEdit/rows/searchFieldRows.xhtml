@@ -47,13 +47,22 @@
                         </h:outputText>
                     </p:column>
                     <p:column id="actionColumn" styleClass="actionsColumn">
+                        <p:commandLink id="editSearchField"
+                                       styleClass="action"
+                                       update="editSearchFieldDialog"
+                                       oncomplete="PF('editSearchFieldDialog').show();">
+                            <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
+                            <f:setPropertyActionListener target="#{updateSearchFieldDialogView.searchField}"
+                                                         value="#{field}"/>
+                        </p:commandLink>
                         <p:commandLink id="removeSearchField"
+                                       styleClass="action"
                                        action="#{importConfigurationEditView.removeSearchField(field)}"
                                        update="editForm:importConfigurationTabView:searchFieldTable
                                                            editForm:importConfigurationTabView:defaultSearchField
                                                            editForm:importConfigurationTabView:idSearchField"
                                        oncomplete="toggleSave()">
-                            <i class="fa fa-trash-o fa-lg"/>
+                            <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                         </p:commandLink>
                     </p:column>
                 </p:dataTable>

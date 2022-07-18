@@ -1375,7 +1375,7 @@ Popup dialogs
     height: 100%;
 }
 
-.ui-dialog:not(#calendarSettingsDialog):not(#calendarDayDialog):not(#resetPasswordDialog):not(#changePasswordDialog):not(#dialogAddDocStrucTypeDialog):not(#addSearchFieldDialog) div.dialogFieldWrapper {
+.ui-dialog:not(#calendarSettingsDialog):not(#calendarDayDialog):not(#resetPasswordDialog):not(#changePasswordDialog):not(#dialogAddDocStrucTypeDialog):not(#addSearchFieldDialog):not(#editSearchFieldDialog) div.dialogFieldWrapper {
     max-height: calc(100% - 100px);
     overflow-y: scroll;
 }
