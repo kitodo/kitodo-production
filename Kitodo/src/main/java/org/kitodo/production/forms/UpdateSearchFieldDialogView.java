@@ -12,6 +12,7 @@
 package org.kitodo.production.forms;
 
 import java.io.Serializable;
+
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
