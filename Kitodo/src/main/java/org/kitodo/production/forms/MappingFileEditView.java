@@ -101,7 +101,8 @@ public class MappingFileEditView extends BaseForm {
      */
     public List<Path> getFilenames() {
         try (Stream<Path> mappingFiles = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)))) {
-            return mappingFiles.filter(f -> f.toString().endsWith(".xsl") || f.toString().endsWith("xslt"))
+            return mappingFiles.filter(Files::isRegularFile)
+                    .filter(f -> f.toString().endsWith(".xsl") || f.toString().endsWith("xslt"))
                     .map(Path::getFileName).sorted().collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.MAPPING_FILE.getTranslationPlural() },
