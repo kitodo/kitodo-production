@@ -81,10 +81,10 @@
                            styleClass="action"
                            title="#{msgs.delete}"
                            rendered="#{SecurityAccessController.hasAuthorityToDeleteMappingFile()}"
-                           update="configurationTable">
+                           update="mappingTable">
                <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                <p:confirm header="#{msgs.confirmDelete}"
-                          message="#{mappingFileEditView.formatString('confirmDeleteDocket', item.title)}"
+                          message="#{mappingFileEditView.formatString('confirmDeleteMappingFile', item.title)}"
                           icon="ui-icon-alert"/>
             </p:commandLink>
          </h:form>
