@@ -22,7 +22,6 @@
                 <div>
                     <p:outputLabel for="uploadFileFormat" value="#{msgs['importConfig.fileupload.fileformat']} *"/>
                     <p:selectOneMenu id="uploadFileFormat"
-                                     disabled="#{true}"
                                      styleClass="input-with-button"
                                      required="#{not empty param['editForm:save']}"
                                      value="#{importConfigurationEditView.importConfiguration.returnFormat}">

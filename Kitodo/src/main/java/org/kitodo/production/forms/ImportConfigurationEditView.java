@@ -126,12 +126,12 @@ public class ImportConfigurationEditView extends BaseForm {
     }
 
     /**
-     * Get file formats.
+     * Get file formats. Currently only XML is supported.
      *
      * @return file formats
      */
     public List<FileFormat> getFileFormats() {
-        return List.of(FileFormat.values());
+        return Collections.singletonList(FileFormat.XML);
     }
 
     /**
