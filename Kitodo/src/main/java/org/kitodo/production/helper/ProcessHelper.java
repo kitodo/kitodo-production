@@ -1,9 +1,19 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.helper;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -92,6 +102,24 @@ public class ProcessHelper {
         return new ProcessFieldedMetadata(structure, divisionView);
     }
 
+    /**
+     * Generates TSL/ATS dependent fields of temp process.
+     *
+     * @param tempProcess
+     *            the temp process to generate TSL/ATS dependent fields
+     * @param parents
+     *            the parent temp processes
+     * @param acquisitionStage
+     *            current acquisition level
+     * @throws ProcessGenerationException
+     *             thrown if process title cannot be created
+     * @throws InvalidMetadataValueException
+     *             thrown if process workpiece contains invalid metadata
+     * @throws NoSuchMetadataFieldException
+     *             thrown if process workpiece contains undefined metadata
+     * @throws IOException
+     *             thrown if ruleset file cannot be loaded
+     */
     public static void generateAtstslFields(TempProcess tempProcess, List<TempProcess> parents, String acquisitionStage)
             throws ProcessGenerationException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             IOException {
@@ -105,6 +133,28 @@ public class ProcessHelper {
             acquisitionStage, priorityList, null);
     }
 
+    /**
+     * Generates TSL/ATS dependent fields of temp process.
+     *
+     * @param tempProcess
+     *            the temp process to generate TSL/ATS dependent fields
+     * @param processDetails
+     *            the process details of temp process
+     * @param parents
+     *            the parent temp processes of temp process
+     * @param docType
+     *            current division
+     * @param rulesetManagementInterface
+     *            interface that provides access to the ruleset
+     * @param acquisitionStage
+     *            current acquisition level
+     * @param priorityList
+     *            weighted list of user-preferred display languages
+     * @param parentProcess
+     *            the process of the selected title record
+     * @throws ProcessGenerationException
+     *             thrown if process title cannot be created
+     */
     public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails,
             List<TempProcess> parents, String docType, RulesetManagementInterface rulesetManagementInterface,
             String acquisitionStage, List<Locale.LanguageRange> priorityList, Process parentProcess)
@@ -134,28 +184,24 @@ public class ProcessHelper {
         }
     }
 
+    /**
+     * Get the process title of doc type view.
+     *
+     * @param rulesetManagementInterface
+     *            interface that provides access to the ruleset
+     * @param docType
+     *            current division
+     * @param acquisitionStage
+     *            current acquisition level
+     * @param priorityList
+     *            weighted list of user-preferred display languages
+     * @return the process title of doc type view
+     */
     public static String getProcessTitleOfDocTypeView(RulesetManagementInterface rulesetManagementInterface,
             String docType, String acquisitionStage, List<Locale.LanguageRange> priorityList) {
         StructuralElementViewInterface docTypeView = rulesetManagementInterface.getStructuralElementView(docType,
             acquisitionStage, priorityList);
         return docTypeView.getProcessTitle().orElse("");
-    }
-
-    /**
-     * Generate and set the title to process using current title parameter and gets
-     * the atstsl.
-     *
-     * @param title
-     *            of the work to generate atstsl
-     * @return String atstsl
-     */
-    public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
-            Process process, String title) throws ProcessGenerationException {
-        TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
-        String newTitle = titleGenerator.generateTitle(titleDefinition, null, title);
-        process.setTitle(newTitle);
-        // atstsl is created in title generator and next used in tiff header generator
-        return titleGenerator.getAtstsl();
     }
 
     /**
@@ -199,7 +245,24 @@ public class ProcessHelper {
     }
 
     /**
-     * Calculate tiff header.
+     * Generate and set the title to process using current title parameter and gets
+     * the atstsl.
+     *
+     * @param title
+     *            of the work to generate atstsl
+     * @return String atstsl
+     */
+    private static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
+            Process process, String title) throws ProcessGenerationException {
+        TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
+        String newTitle = titleGenerator.generateTitle(titleDefinition, null, title);
+        process.setTitle(newTitle);
+        // atstsl is created in title generator and next used in tiff header generator
+        return titleGenerator.getAtstsl();
+    }
+
+    /**
+     * Generate tiff header.
      */
     private static String generateTiffHeader(List<ProcessDetail> processDetails, String atstsl, String tiffDefinition,
             String docType) throws ProcessGenerationException {
@@ -226,8 +289,6 @@ public class ProcessHelper {
             return StringUtils.EMPTY;
         }
 
-        // get title of ancestors where TitleDocMain exists when several processes were
-        // imported
         for (TempProcess tempProcess : parents) {
             ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess,
                 rulesetManagementInterface, acquisitionStage, priorityList);

@@ -26,7 +26,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 

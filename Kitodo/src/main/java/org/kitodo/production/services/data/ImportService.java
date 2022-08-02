@@ -1063,7 +1063,7 @@ public class ImportService {
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
         }
-        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
+        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
                 acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
         Process process = tempProcess.getProcess();
