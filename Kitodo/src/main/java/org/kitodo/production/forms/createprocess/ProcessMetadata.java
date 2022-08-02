@@ -20,6 +20,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.TreeNode;
 
@@ -39,7 +40,7 @@ public class ProcessMetadata {
      *          which its Metadata are wanted to be shown
      */
     public void initializeProcessDetails(LogicalDivision structure, CreateProcessForm form) {
-        processDetails = ImportService.initializeProcessDetails(structure, form.getRulesetManagement(),
+        processDetails = ProcessHelper.initializeProcessDetails(structure, form.getRulesetManagement(),
                 form.getAcquisitionStage(), form.getPriorityList());
     }
 

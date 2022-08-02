@@ -76,7 +76,7 @@ public class TempProcess {
         this.workpiece.getLogicalStructure().setType(docType);
         if (nodeList.getLength() != 0) {
             this.workpiece.getLogicalStructure().getMetadata().addAll(
-                    ImportService.importMetadata(this.metadataNodes, MdSec.DMD_SEC));
+                    ProcessHelper.convertMetadata(this.metadataNodes, MdSec.DMD_SEC));
         }
         this.processMetadata = new ProcessMetadata();
     }
