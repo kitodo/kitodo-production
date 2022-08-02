@@ -171,7 +171,7 @@ public class ProcessDataTab {
 
             LinkedList<TempProcess> parents = new LinkedList<>();
             int processesSize = createProcessForm.getProcesses().size();
-            if( processesSize > 1 ) {
+            if ( processesSize > 1 ) {
                 int indexCurrent = createProcessForm.getProcesses().indexOf(createProcessForm.getCurrentProcess());
                 parents.addAll(createProcessForm.getProcesses().subList(indexCurrent + 1, processesSize));
             }
