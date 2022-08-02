@@ -1060,16 +1060,22 @@ public class ImportService {
                                           String acquisitionStage, List<Locale.LanguageRange> priorityList)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
+
+        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
+            acquisitionStage, priorityList);
+        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
+
+        ProcessHelper.generateAtstslFields(tempProcess, processDetails, docType, managementInterface,
+            acquisitionStage, priorityList);
+
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
         }
-        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
-                acquisitionStage, priorityList);
-        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
+
         Process process = tempProcess.getProcess();
         process.setSortHelperImages(tempProcess.getGuessedImages());
         addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
-                tempProcess.getProcess().getTitle());
+            tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
     }

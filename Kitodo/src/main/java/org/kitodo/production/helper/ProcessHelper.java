@@ -106,8 +106,41 @@ public class ProcessHelper {
      * Generates TSL/ATS dependent fields of temp process.
      *
      * @param tempProcess
+     *            the temp process to generate TSL/ATS dependent field
+     * @param processDetails
+     *            the process details of temp process
+     * @param docType
+     *            current division
+     * @param rulesetManagementInterface
+     *            interface that provides access to the ruleset
+     * @param acquisitionStage
+     *            current acquisition level
+     * @param priorityList
+     *            weighted list of user-preferred display languages
+     * @param acquisitionStage
+     *            current acquisition level
+     * @throws ProcessGenerationException
+     *             thrown if process title cannot be created
+     * @throws InvalidMetadataValueException
+     *             thrown if process workpiece contains invalid metadata
+     * @throws NoSuchMetadataFieldException
+     *             thrown if process workpiece contains undefined metadata
+     * @throws IOException
+     *             thrown if ruleset file cannot be loaded
+     */
+    public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails, String docType,
+            RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
+            List<Locale.LanguageRange> priorityList) throws ProcessGenerationException {
+        generateAtstslFields(tempProcess, processDetails, null, docType, rulesetManagementInterface, acquisitionStage,
+            priorityList, null);
+    }
+
+    /**
+     * Generates TSL/ATS dependent fields of temp process.
+     *
+     * @param tempProcess
      *            the temp process to generate TSL/ATS dependent fields
-     * @param parents
+     * @param parentTempProcesses
      *            the parent temp processes
      * @param acquisitionStage
      *            current acquisition level
@@ -120,16 +153,16 @@ public class ProcessHelper {
      * @throws IOException
      *             thrown if ruleset file cannot be loaded
      */
-    public static void generateAtstslFields(TempProcess tempProcess, List<TempProcess> parents, String acquisitionStage)
-            throws ProcessGenerationException, InvalidMetadataValueException, NoSuchMetadataFieldException,
-            IOException {
+    public static void generateAtstslFields(TempProcess tempProcess, List<TempProcess> parentTempProcesses,
+            String acquisitionStage) throws ProcessGenerationException, InvalidMetadataValueException,
+            NoSuchMetadataFieldException, IOException {
         RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetService()
                 .openRuleset(tempProcess.getProcess().getRuleset());
         List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
         List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, rulesetManagementInterface,
             acquisitionStage, priorityList);
-        generateAtstslFields(tempProcess, processDetails, parents, docType, rulesetManagementInterface,
+        generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType, rulesetManagementInterface,
             acquisitionStage, priorityList, null);
     }
 
@@ -140,7 +173,7 @@ public class ProcessHelper {
      *            the temp process to generate TSL/ATS dependent fields
      * @param processDetails
      *            the process details of temp process
-     * @param parents
+     * @param parentTempProcesses
      *            the parent temp processes of temp process
      * @param docType
      *            current division
@@ -156,9 +189,9 @@ public class ProcessHelper {
      *             thrown if process title cannot be created
      */
     public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails,
-            List<TempProcess> parents, String docType, RulesetManagementInterface rulesetManagementInterface,
-            String acquisitionStage, List<Locale.LanguageRange> priorityList, Process parentProcess)
-            throws ProcessGenerationException {
+            List<TempProcess> parentTempProcesses, String docType,
+            RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
+            List<Locale.LanguageRange> priorityList, Process parentProcess) throws ProcessGenerationException {
         String processTitleOfDocTypeView = getProcessTitleOfDocTypeView(rulesetManagementInterface, docType,
             acquisitionStage, priorityList);
 
@@ -169,13 +202,15 @@ public class ProcessHelper {
                     processTitleOfDocTypeView = '\'' + parentProcess.getTitle() + '\'' + processTitleOfDocTypeView;
                 }
                 currentTitle = getTitleFromLogicalStructure(parentProcess);
-            } else {
-                currentTitle = getTitleFromParents(parents, rulesetManagementInterface, acquisitionStage, priorityList);
+            } else if (Objects.nonNull(parentTempProcesses)) {
+                currentTitle = getTitleFromParents(parentTempProcesses, rulesetManagementInterface, acquisitionStage,
+                    priorityList);
             }
         }
 
         tempProcess.setAtstsl(generateProcessTitleAndGetAtstsl(processDetails, processTitleOfDocTypeView,
             tempProcess.getProcess(), currentTitle));
+
         tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
         String tiffDefinition = ServiceManager.getImportService().getTiffDefinition();
         if (Objects.nonNull(tiffDefinition)) {
