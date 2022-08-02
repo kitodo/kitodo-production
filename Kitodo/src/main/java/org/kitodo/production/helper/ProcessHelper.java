@@ -117,8 +117,6 @@ public class ProcessHelper {
      *            current acquisition level
      * @param priorityList
      *            weighted list of user-preferred display languages
-     * @param acquisitionStage
-     *            current acquisition level
      * @throws ProcessGenerationException
      *             thrown if process title cannot be created
      * @throws InvalidMetadataValueException
