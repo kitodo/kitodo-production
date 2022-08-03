@@ -17,6 +17,7 @@ public enum MetadataFormat {
     MODS,
     MARC,
     PICA,
+    OTHER,
     KITODO;
 
     /**

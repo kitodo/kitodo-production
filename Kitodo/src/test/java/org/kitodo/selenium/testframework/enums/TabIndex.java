@@ -34,6 +34,8 @@ public enum TabIndex {
     WORKFLOWS(2),
     DOCKETS(3),
     RULESETS(4),
+    IMPORT_CONFIGURATIONS(5),
+    MAPPING_FILES(6),
 
     // template edit page
     TEMPLATE_DETAILS(0),
