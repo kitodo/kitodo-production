@@ -169,6 +169,17 @@ public class ImportConfigurationEditView extends BaseForm {
     }
 
     /**
+     * Replace SearchField with index 'searchFieldIndex' in ImportConfiguration's SearchField list with given
+     * SearchField 'searchField'.
+     * @param searchField new SearchField
+     * @param searchFieldIndex index in ImportConfigurations SearchField list
+     */
+    public void updateSearchField(SearchField searchField, int searchFieldIndex) {
+        importConfiguration.getSearchFields().remove(searchFieldIndex);
+        importConfiguration.getSearchFields().add(searchFieldIndex, searchField);
+    }
+
+    /**
      * Remove given SearchField from ImportConfiguration.
      *
      * @param searchField SearchField

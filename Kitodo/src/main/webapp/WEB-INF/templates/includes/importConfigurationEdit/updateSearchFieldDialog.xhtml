@@ -16,14 +16,14 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
-    <p:dialog id="addSearchFieldDialog"
+    <p:dialog id="editSearchFieldDialog"
               width="640"
               resizable="false"
               modal="true"
               dynamic="true"
-              widgetVar="addSearchFieldDialog">
-        <h:form id="addSearchFieldForm">
-            <h3>#{msgs['importConfig.addSearchField']}</h3>
+              widgetVar="editSearchFieldDialog">
+        <h:form id="editSearchFieldForm">
+            <h3>#{msgs['importConfig.editSearchField']}</h3>
             <h:panelGroup layout="block"
                           styleClass="dialogFieldWrapper">
                 <p:panelGrid columns="1" layout="grid">
@@ -33,7 +33,7 @@
                                            value="#{msgs['importConfig.searchField.label']}"/>
                             <p:inputText id="searchFieldLabel"
                                          styleClass="input-with-button"
-                                         value="#{addSearchFieldDialogView.searchField.label}"/>
+                                         value="#{updateSearchFieldDialogView.searchField.label}"/>
                             <p:commandButton id="searchFieldLabelHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="searchFieldLabelHelp"
@@ -46,7 +46,7 @@
                                            value="#{msgs['importConfig.searchField.value']}"/>
                             <p:inputText id="searchFieldValue"
                                          styleClass="input-with-button"
-                                         value="#{addSearchFieldDialogView.searchField.value}"/>
+                                         value="#{updateSearchFieldDialogView.searchField.value}"/>
                             <p:commandButton id="searchFieldValueHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="searchFieldValueHelp"
@@ -59,7 +59,7 @@
                                            value="#{msgs.visible}"/>
                             <p:selectBooleanCheckbox id="searchFieldHidden"
                                                      styleClass="input-with-button switch"
-                                                     value="#{addSearchFieldDialogView.searchField.displayed}"/>
+                                                     value="#{updateSearchFieldDialogView.searchField.displayed}"/>
                             <p:commandButton id="searchFieldHiddenHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="searchFieldHiddenHelp"
@@ -72,17 +72,16 @@
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">
                 <p:commandButton id="apply"
-                                 action="#{importConfigurationEditView.addSearchField(addSearchFieldDialogView.searchField)}"
+                                 action="#{importConfigurationEditView.updateSearchField(updateSearchFieldDialogView.searchField, updateSearchFieldDialogView.searchFieldIndex)}"
                                  update="editForm:importConfigurationTabView:searchFieldTable
                                                            editForm:importConfigurationTabView:defaultSearchField
-                                                           editForm:importConfigurationTabView:idSearchField
-                                                           editForm:importConfigurationTabView:parentIdSearchField"
-                                 oncomplete="PF('addSearchFieldDialog').hide();toggleSave();"
+                                                           editForm:importConfigurationTabView:idSearchField"
+                                 oncomplete="PF('editSearchFieldDialog').hide();toggleSave();"
                                  value="#{msgs.apply}"
                                  styleClass="primary right"/>
                 <p:commandButton id="cancel"
                                  type="button"
-                                 onclick="PF('addSearchFieldDialog').hide();"
+                                 onclick="PF('editSearchFieldDialog').hide();"
                                  value="#{msgs.cancel}"
                                  icon="fa fa-times fa-lg"
                                  iconPos="right"
