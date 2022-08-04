@@ -85,7 +85,7 @@ public class FileUploadDialog extends MetadataImportDialog {
                 String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0]
                                 .toString(), importConfiguration.getParentElementTrimMode());
                 importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset().getId(),
-                    createProcessForm.getProject().getId());
+                    createProcessForm.getProject().getId(), importConfiguration.getIdentifierMetadata());
                 if (Objects.isNull(importService.getParentTempProcess())) {
                     TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
                     if (Objects.nonNull(parentTempProcess)) {
