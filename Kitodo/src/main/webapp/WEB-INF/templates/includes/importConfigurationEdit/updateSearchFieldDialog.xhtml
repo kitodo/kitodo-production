@@ -30,7 +30,7 @@
                     <p:row>
                         <div>
                             <p:outputLabel for="searchFieldLabel"
-                                           value="Search field label"/>
+                                           value="#{msgs['importConfig.searchField.label']}"/>
                             <p:inputText id="searchFieldLabel"
                                          styleClass="input-with-button"
                                          value="#{updateSearchFieldDialogView.searchField.label}"/>
@@ -42,7 +42,8 @@
                     </p:row>
                     <p:row>
                         <div>
-                            <p:outputLabel for="searchFieldValue" value="Search field value"/>
+                            <p:outputLabel for="searchFieldValue"
+                                           value="#{msgs['importConfig.searchField.value']}"/>
                             <p:inputText id="searchFieldValue"
                                          styleClass="input-with-button"
                                          value="#{updateSearchFieldDialogView.searchField.value}"/>
