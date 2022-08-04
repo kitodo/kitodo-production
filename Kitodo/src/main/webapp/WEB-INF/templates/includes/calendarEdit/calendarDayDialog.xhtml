@@ -47,7 +47,7 @@
         </h:panelGrid>
         <h:form id="calendarDayForm">
             <h:panelGroup layout="block"
-                          styleClass="dialogFieldWrapper">
+                          styleClass="not-scrollable dialogFieldWrapper">
                 <p:panelGrid columns="1" layout="grid">
                     <p:repeat
                             value="#{CalendarForm.calendarSheet.get(date.dayOfMonth - 1).get(date.monthValue - 1).issues}"
