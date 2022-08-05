@@ -35,6 +35,8 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
@@ -389,7 +391,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 updateRulesetAndDocType(getMainProcess().getRuleset());
                 processDataTab.prepare();
                 if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
-                    catalogImportDialog.getHitModel().setImportConfiguration(project.getDefaultImportConfiguration());
+                    setDefaultImportConfiguration(project.getDefaultImportConfiguration());
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
@@ -414,11 +416,24 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         }
     }
 
+    private void setDefaultImportConfiguration(ImportConfiguration importConfiguration) {
+        if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
+            catalogImportDialog.getHitModel().setImportConfiguration(importConfiguration);
+            PrimeFaces.current().ajax().update("catalogSearchDialog");
+        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(importConfiguration.getConfigurationType())) {
+            searchDialog.setOriginalProcess(importConfiguration.getDefaultTemplateProcess());
+            PrimeFaces.current().ajax().update("searchEditDialog");
+        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {
+            fileUploadDialog.setImportConfiguration(importConfiguration);
+            PrimeFaces.current().ajax().update("fileUploadDialog");
+        }
+    }
+
     static boolean setChildCount(Process parent, RulesetManagementInterface ruleset, Workpiece workpiece) throws IOException {
         Collection<String> childCountKeys = ruleset.getFunctionalKeys(FunctionalMetadata.CHILD_COUND);
         if (childCountKeys.isEmpty()) {
             return false;
-        } 
+        }
         String childCount = Integer.toString(parent.getChildren().size() + 1);
         for (String childCountKey : childCountKeys) {
             MetadataEntry entry = new MetadataEntry();
