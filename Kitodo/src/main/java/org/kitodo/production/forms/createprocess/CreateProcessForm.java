@@ -420,10 +420,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
             catalogImportDialog.getHitModel().setImportConfiguration(importConfiguration);
             PrimeFaces.current().ajax().update("catalogSearchDialog");
-        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(importConfiguration.getConfigurationType())) {
+        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {
             searchDialog.setOriginalProcess(importConfiguration.getDefaultTemplateProcess());
             PrimeFaces.current().ajax().update("searchEditDialog");
-        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {
+        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(importConfiguration.getConfigurationType())) {
             fileUploadDialog.setImportConfiguration(importConfiguration);
             PrimeFaces.current().ajax().update("fileUploadDialog");
         }
