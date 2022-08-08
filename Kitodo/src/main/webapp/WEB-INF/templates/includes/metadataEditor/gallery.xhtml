@@ -138,9 +138,9 @@
                                             <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
                                                         rendered="#{media.assignedSeveralTimes}"
                                                         styleClass="assigned-several-times"/>
-                                            <h:panelGroup class="thumbnail-overlay">
+                                            <p:outputPanel class="thumbnail-overlay">
                                                 #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                            </h:panelGroup>
+                                            </p:outputPanel>
                                         </p:outputPanel>
                                     </p:outputPanel>
                                 </p:panel>
@@ -193,9 +193,9 @@
                                                         <f:param name="sessionId"
                                                                  value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
                                                     </p:graphicImage>
-                                                    <h:panelGroup class="thumbnail-overlay">
+                                                    <p:outputPanel class="thumbnail-overlay">
                                                         #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                                    </h:panelGroup>
+                                                    </p:outputPanel>
                                             </p:outputPanel>
                                         </h:panelGroup>
                                     </p:panel>
@@ -233,9 +233,9 @@
                                             <f:param name="sessionId"
                                                      value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
                                         </p:graphicImage>
-                                    <h:panelGroup styleClass="thumbnail-overlay">
+                                    <p:outputPanel class="thumbnail-overlay">
                                         #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                    </h:panelGroup>
+                                    </p:outputPanel>
                                 </h:panelGroup>
                             </p:panel>
                         </p:outputPanel>
@@ -277,9 +277,9 @@
                                                     <f:param name="sessionId"
                                                              value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
                                                 </p:graphicImage></h:outputText>
-                                                <h:panelGroup layout="block" styleClass="thumbnail-overlay">
+                                                <p:outputPanel layout="block" class="thumbnail-overlay">
                                                     #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                                </h:panelGroup>
+                                                </p:outputPanel>
                                             </p:outputPanel>
                                         </h:panelGroup>
                                     </p:outputPanel>

@@ -220,7 +220,7 @@
                                  onclick="window.pagesScrollPosition = $('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop();
                                           PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
                                  oncomplete="$('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop(pagesScrollPosition);"
-                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), imagePreviewForm, metadataAccordion:logicalMetadataWrapperPanel"
+                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"
