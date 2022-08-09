@@ -147,6 +147,20 @@
                 <p:tooltip for="parentIdSearchFieldHelp"
                            value="The parent ID search field is used to query for records whose parent record has the provided ID value (not supported by all interfaces)"/>
             </div>
+            <div>
+                <p:outputLabel for="catalogIdMetadata"
+                               value="#{msgs['importConfig.catalogIdMetadata']}"/>
+                <p:inputText id="catalogIdMetadata"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.identifierMetadata}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="catalogIdMetadataHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="catalogIdMetadataHelp"
+                           value="Metadata key used to store the catalog ID of the imported record. (Note: this metadata must exist in the ruleset used during process creation!)"/>
+            </div>
         </p:row>
     </f:view>
 </ui:composition>

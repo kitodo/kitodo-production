@@ -118,7 +118,6 @@ public class ImportService {
     private ProcessGenerator processGenerator;
     private static final String REPLACE_ME = "REPLACE_ME";
     // default value for identifierMetadata if no OPAC specific metadata has been configured in kitodo_opac.xml
-    private static final String identifierMetadata = "CatalogIDDigital";
     private static final String PARENT_XPATH = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
     private LinkedList<ExemplarRecord> exemplarRecords;
@@ -510,7 +509,7 @@ public class ImportService {
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
             HashMap<String, String> parentIDMetadata = new HashMap<>();
-            parentIDMetadata.put(identifierMetadata, parentID);
+            parentIDMetadata.put(importConfiguration.getIdentifierMetadata(), parentID);
             try {
                 Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
                 if (Objects.isNull(parentProcess)) {
@@ -540,15 +539,16 @@ public class ImportService {
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId);
+            checkForParent(parentID, template.getRuleset().getId(), projectId,
+                    importConfiguration.getIdentifierMetadata());
         }
     }
 
     /**
      * Check if there already is a parent process in Database.
      */
-    public void checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
-            ProcessGenerationException {
+    public void checkForParent(String parentID, int rulesetID, int projectID, String identifierMetadata)
+            throws DAOException, IOException, ProcessGenerationException {
         if (Objects.isNull(parentID)) {
             this.parentTempProcess = null;
             return;
@@ -1232,7 +1232,7 @@ public class ImportService {
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
-            linkToParent(parentId, projectId, template, tempProcess);
+            linkToParent(parentId, projectId, template, tempProcess, importConfiguration.getIdentifierMetadata());
             ServiceManager.getProcessService().save(tempProcess.getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
@@ -1244,11 +1244,11 @@ public class ImportService {
         return tempProcess.getProcess();
     }
 
-    private void linkToParent(String parentId, int projectId, Template template, TempProcess tempProcess)
-            throws DAOException, ProcessGenerationException, IOException {
+    private void linkToParent(String parentId, int projectId, Template template, TempProcess tempProcess,
+                              String idMetadata) throws DAOException, ProcessGenerationException, IOException {
         if (StringUtils.isNotBlank(parentId)) {
             parentTempProcess = null;
-            checkForParent(parentId, template.getRuleset().getId(), projectId);
+            checkForParent(parentId, template.getRuleset().getId(), projectId, idMetadata);
             if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
                 URI parentProcessUri = ServiceManager.getProcessService()
                         .getMetadataFileUri(parentTempProcess.getProcess());
