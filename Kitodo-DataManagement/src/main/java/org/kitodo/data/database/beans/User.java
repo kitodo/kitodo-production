@@ -80,8 +80,8 @@ public class User extends BaseBean {
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_x_role", joinColumns = {@JoinColumn(name = "user_id",
-        foreignKey = @ForeignKey(name = "FK_user_x_role_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "role_id",
-            foreignKey = @ForeignKey(name = "FK_user_x_role_role_id")) })
+            foreignKey = @ForeignKey(name = "FK_user_x_role_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "role_id",
+                    foreignKey = @ForeignKey(name = "FK_user_x_role_role_id")) })
     private List<Role> roles;
 
     @OneToMany(mappedBy = "processingUser", cascade = CascadeType.PERSIST)
@@ -89,14 +89,14 @@ public class User extends BaseBean {
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "project_x_user", joinColumns = {@JoinColumn(name = "user_id",
-        foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "project_id",
-            foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
+            foreignKey = @ForeignKey(name = "FK_project_x_user_user_id")) }, inverseJoinColumns = {@JoinColumn(name = "project_id",
+                    foreignKey = @ForeignKey(name = "FK_project_x_user_project_id")) })
     private List<Project> projects;
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "client_x_user", joinColumns = {@JoinColumn(name = "user_id",
             foreignKey = @ForeignKey(name = "FK_client_x_user_user_id")) }, inverseJoinColumns = {
-            @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_client_x_user_client_id")) })
+                @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_client_x_user_client_id")) })
     private List<Client> clients;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)

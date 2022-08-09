@@ -39,7 +39,7 @@ class EditingElement {
      *
      * @param name
      *            name of the acquisition stage
-     * @return
+     * @return an optional object of type AcquisitionStage
      */
     Optional<AcquisitionStage> getAcquisitionStage(String name) {
         return acquisitionStages.parallelStream().filter(acquisitionStage -> name.equals(acquisitionStage.getName()))

@@ -90,21 +90,21 @@ public class Process extends BaseTemplateBean {
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "process_x_property", joinColumns = {
-            @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
+        @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "template_x_property", joinColumns = {
-            @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_x_property_process_id")) }, inverseJoinColumns = {
+        @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_x_property_process_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
     private List<Property> templates;
 
     @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "workpiece_x_property", joinColumns = {
-            @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_process_id")) },
-                inverseJoinColumns = {
-            @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
+        @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_process_id")) },
+            inverseJoinColumns = {
+                @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
     private List<Property> workpieces;
 
     @ManyToMany(mappedBy = "processes")
