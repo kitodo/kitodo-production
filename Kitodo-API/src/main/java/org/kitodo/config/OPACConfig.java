@@ -514,6 +514,11 @@ public class OPACConfig {
         return config;
     }
 
+    /**
+     * Retrieve and return the XML configuration of Kitodo OPACs from the 'kitodo_opac.xml' file.
+     * @return XMLConfiguration containing the catalog configurations of the 'kitodo_opac.xml' file
+     * @throws ConfigurationException if 'kitodo_opac.xml' file does not exist
+     */
     public static XMLConfiguration getKitodoOpacConfiguration() throws ConfigurationException {
         KitodoConfigFile kitodoConfigOpacFile = KitodoConfigFile.OPAC_CONFIGURATION;
         if (!kitodoConfigOpacFile.exists()) {
