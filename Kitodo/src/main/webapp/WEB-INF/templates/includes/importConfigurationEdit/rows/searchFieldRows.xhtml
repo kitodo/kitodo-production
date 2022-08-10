@@ -81,8 +81,12 @@
         </p:row>
         <p:row>
             <div>
-                <p:outputLabel for="idSearchField" value="#{msgs['importConfig.searchFields.idSearchField']}"/>
+                <p:outputLabel for="idSearchField"
+                               value="#{msgs['importConfig.searchFields.idSearchField']} *"/>
                 <p:selectOneMenu id="idSearchField"
+                                 required="#{not empty param['editForm:save'] and
+                                             (importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                              importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM')}"
                                  styleClass="input-with-button"
                                  value="#{importConfigurationEditView.idSearchField}">
                     <f:selectItem itemValue="#{null}"

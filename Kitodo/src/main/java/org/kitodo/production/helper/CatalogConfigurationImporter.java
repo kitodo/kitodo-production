@@ -58,11 +58,12 @@ public class CatalogConfigurationImporter {
      * @throws MappingFilesMissingException when XML catalog configuration does not contain mandatory 'mappingFiles'
      *                                       element.
      */
-    private void convertOpacConfig(String opacTitle) throws DAOException, UndefinedMappingFileException,
-            MappingFilesMissingException, MandatoryParameterMissingException {
+    private void convertOpacConfig(String opacTitle, List<String> currentConfigurations) throws DAOException,
+            UndefinedMappingFileException, MappingFilesMissingException, MandatoryParameterMissingException {
         HierarchicalConfiguration opacConfiguration = OPACConfig.getCatalog(opacTitle);
-        if (OPACConfig.getFileUploadConfig(opacTitle)) {
-            createFileUploadConfiguration(opacTitle);
+        String fileUploadTitle = opacTitle + FILE_UPLOAD_DEFAULT_POSTFIX;
+        if (OPACConfig.getFileUploadConfig(opacTitle) && !currentConfigurations.contains(fileUploadTitle)) {
+            createFileUploadConfiguration(opacTitle, fileUploadTitle);
         }
         ImportConfiguration importConfiguration = null;
         if (Objects.nonNull(opacConfiguration)) {
@@ -77,6 +78,7 @@ public class CatalogConfigurationImporter {
             setUrl(importConfiguration, opacTitle);
             setItemFields(importConfiguration, opacTitle);
             importConfiguration.setDefaultImportDepth(OPACConfig.getDefaultImportDepth(opacTitle));
+            importConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(opacTitle));
 
             try {
                 importConfiguration.setUsername(OPACConfig.getUsername(opacTitle));
@@ -100,7 +102,10 @@ public class CatalogConfigurationImporter {
                 logger.info("No query delimiter configured for configuration '" + opacTitle + "'.");
             }
 
-            setSearchFields(importConfiguration, opacTitle);
+            if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())
+                    || SearchInterfaceType.CUSTOM.name().equals(importConfiguration.getInterfaceType())) {
+                setSearchFields(importConfiguration, opacTitle);
+            }
 
             // Set mapping files
             importConfiguration.setMappingFiles(getMappingFiles(importConfiguration));
@@ -159,7 +164,7 @@ public class CatalogConfigurationImporter {
             }
         }
         for (SearchField searchField : importConfiguration.getSearchFields()) {
-            if (OPACConfig.getIdentifierParameter(opacTitle).equals(searchField.getLabel())) {
+            if (OPACConfig.getIdentifierParameter(opacTitle).equals(searchField.getValue())) {
                 importConfiguration.setIdSearchField(searchField);
                 break;
             }
@@ -174,8 +179,8 @@ public class CatalogConfigurationImporter {
         importConfiguration.setItemFieldSignatureMetadata(OPACConfig.getExemplarFieldSignatureMetadata(opacTitle));
     }
 
-    private void createFileUploadConfiguration(String catalogTitle) throws DAOException, UndefinedMappingFileException,
-            MappingFilesMissingException {
+    private void createFileUploadConfiguration(String catalogTitle, String fileUploadConfigurationTitle)
+            throws DAOException, UndefinedMappingFileException, MappingFilesMissingException {
         ImportConfiguration fileUploadConfiguration = new ImportConfiguration();
         fileUploadConfiguration.setConfigurationType(ImportConfigurationType.FILE_UPLOAD.name());
         fileUploadConfiguration.setTitle(catalogTitle);
@@ -193,9 +198,9 @@ public class CatalogConfigurationImporter {
             fileUploadConfiguration.setParentMappingFile(parentMappingFile);
         }
         fileUploadConfiguration.setMappingFiles(getMappingFiles(fileUploadConfiguration));
-        // TODO: add necessary fields for FileUpload configuration: identifierMetadata (?)
+        fileUploadConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(catalogTitle));
         // update title to include "File upload" postfix! (original title is required until here to load mapping files!)
-        fileUploadConfiguration.setTitle(catalogTitle + FILE_UPLOAD_DEFAULT_POSTFIX);
+        fileUploadConfiguration.setTitle(fileUploadConfigurationTitle);
         ServiceManager.getImportConfigurationService().saveToDatabase(fileUploadConfiguration);
     }
 
@@ -289,16 +294,22 @@ public class CatalogConfigurationImporter {
         List<String> currentConfigurations = ServiceManager.getImportConfigurationService().getAll()
                 .stream().map(ImportConfiguration::getTitle).collect(Collectors.toList());
         for (String catalog : catalogs) {
-            if (!currentConfigurations.contains(catalog)) {
+            if (currentConfigurations.contains(catalog)) {
+                conversions.put(catalog, Helper.getTranslation("importConfig.migration.error.configurationExists"));
+            } else {
                 try {
-                    convertOpacConfig(catalog);
+                    convertOpacConfig(catalog, currentConfigurations);
                     conversions.put(catalog, null);
-                } catch (DAOException | UndefinedMappingFileException | MappingFilesMissingException |
+                } catch (UndefinedMappingFileException | MappingFilesMissingException |
                          MandatoryParameterMissingException e) {
                     conversions.put(catalog, e.getMessage());
+                } catch (DAOException e) {
+                    if (Objects.nonNull(e.getCause()) && Objects.nonNull(e.getCause().getCause())) {
+                        conversions.put(catalog, e.getCause().getCause().getMessage());
+                    } else {
+                        conversions.put(catalog, e.getMessage());
+                    }
                 }
-            } else {
-                conversions.put(catalog, Helper.getTranslation("importConfig.migration.error.configurationExists"));
             }
         }
         return conversions;
