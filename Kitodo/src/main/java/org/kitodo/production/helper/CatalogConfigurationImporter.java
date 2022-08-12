@@ -72,42 +72,20 @@ public class CatalogConfigurationImporter {
             importConfiguration.setDescription(OPACConfig.getOPACDescription(opacTitle));
             importConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.toString());
             importConfiguration.setReturnFormat(OPACConfig.getReturnFormat(opacTitle).toUpperCase());
-
             setMetadataFormat(importConfiguration, opacTitle);
             setSearchInterfaceType(importConfiguration, opacTitle);
             setUrl(importConfiguration, opacTitle);
             setItemFields(importConfiguration, opacTitle);
             importConfiguration.setDefaultImportDepth(OPACConfig.getDefaultImportDepth(opacTitle));
             importConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(opacTitle));
-
-            try {
-                importConfiguration.setUsername(OPACConfig.getUsername(opacTitle));
-                importConfiguration.setPassword(OPACConfig.getPassword(opacTitle));
-            } catch (IllegalArgumentException e) {
-                logger.info("No credentials configured for configuration '" + opacTitle + "'.");
-            }
-            try {
-                importConfiguration.setIdPrefix(OPACConfig.getIdentifierPrefix(opacTitle));
-            } catch (IllegalArgumentException e) {
-                logger.info("No ID prefix configured for configuration '" + opacTitle + "'.");
-            }
-            try {
-                importConfiguration.setParentElementTrimMode(OPACConfig.getParentIDTrimMode(opacTitle));
-            } catch (IllegalArgumentException e) {
-                logger.info("No parent element trim mode configured for configuration '" + opacTitle + "'.");
-            }
-            try {
-                importConfiguration.setQueryDelimiter(OPACConfig.getQueryDelimiter(opacTitle));
-            } catch (IllegalArgumentException e) {
-                logger.info("No query delimiter configured for configuration '" + opacTitle + "'.");
-            }
-
+            setCredentials(importConfiguration, opacTitle);
+            importConfiguration.setIdPrefix(OPACConfig.getIdentifierPrefix(opacTitle));
+            importConfiguration.setParentElementTrimMode(OPACConfig.getParentIDTrimMode(opacTitle));
+            importConfiguration.setQueryDelimiter(OPACConfig.getQueryDelimiter(opacTitle));
             if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())
                     || SearchInterfaceType.CUSTOM.name().equals(importConfiguration.getInterfaceType())) {
                 setSearchFields(importConfiguration, opacTitle);
             }
-
-            // Set mapping files
             importConfiguration.setMappingFiles(getMappingFiles(importConfiguration));
             importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(opacTitle));
         }
@@ -122,6 +100,15 @@ public class CatalogConfigurationImporter {
         Integer port = OPACConfig.getPort(opacTitle);
         if (Objects.nonNull(port)) {
             importConfiguration.setPort(port);
+        }
+    }
+
+    private void setCredentials(ImportConfiguration importConfiguration, String opacTitle) {
+        try {
+            importConfiguration.setUsername(OPACConfig.getUsername(opacTitle));
+            importConfiguration.setPassword(OPACConfig.getPassword(opacTitle));
+        } catch (IllegalArgumentException e) {
+            logger.info("No credentials configured for configuration '" + opacTitle + "'.");
         }
     }
 
@@ -300,8 +287,8 @@ public class CatalogConfigurationImporter {
                 try {
                     convertOpacConfig(catalog, currentConfigurations);
                     conversions.put(catalog, null);
-                } catch (UndefinedMappingFileException | MappingFilesMissingException |
-                         MandatoryParameterMissingException e) {
+                } catch (UndefinedMappingFileException | MappingFilesMissingException
+                         | MandatoryParameterMissingException e) {
                     conversions.put(catalog, e.getMessage());
                 } catch (DAOException e) {
                     if (Objects.nonNull(e.getCause()) && Objects.nonNull(e.getCause().getCause())) {

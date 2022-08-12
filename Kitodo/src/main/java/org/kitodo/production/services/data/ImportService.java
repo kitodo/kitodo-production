@@ -543,9 +543,9 @@ public class ImportService {
         }
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
-        if (Objects.nonNull(parentID) && level == importDepth) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId,
-                    importConfiguration.getIdentifierMetadata());
+        String idMetadata = importConfiguration.getIdentifierMetadata();
+        if (Objects.nonNull(parentID) && level == importDepth && Objects.nonNull(idMetadata)) {
+            checkForParent(parentID, template.getRuleset().getId(), projectId, idMetadata);
         }
     }
 

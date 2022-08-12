@@ -20,7 +20,7 @@ import org.kitodo.production.helper.Helper;
 public class UndefinedMappingFileException extends CatalogConfigurationImportException {
 
     /**
-     * Constructor with given XSLT filename
+     * Constructor with given XSLT filename.
      * @param xsltFilename as String
      */
     public UndefinedMappingFileException(String xsltFilename) {

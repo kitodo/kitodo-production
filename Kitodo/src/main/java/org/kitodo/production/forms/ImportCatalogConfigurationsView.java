@@ -87,7 +87,7 @@ public class ImportCatalogConfigurationsView implements Serializable {
     /**
      * Set catalogs.
      *
-     * @param catalogs as java.util.List<java.lang.String>
+     * @param catalogs as List of String
      */
     public void setCatalogs(List<String> catalogs) {
         this.catalogs = catalogs;
@@ -108,7 +108,7 @@ public class ImportCatalogConfigurationsView implements Serializable {
     /**
      * Set selectedCatalogs.
      *
-     * @param selectedCatalogs as java.util.List<java.lang.String>
+     * @param selectedCatalogs as List of String
      */
     public void setSelectedCatalogs(List<String> selectedCatalogs) {
         this.selectedCatalogs = selectedCatalogs;
