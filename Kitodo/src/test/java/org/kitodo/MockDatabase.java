@@ -1276,8 +1276,8 @@ public class MockDatabase {
         firstRole.setClient(client);
 
         // insert administration authorities
-        for (Authority authority : allAuthorities) {
-            firstRole.getAuthorities().add(authority);
+        for (int i = 0; i < 34; i++) {
+            firstRole.getAuthorities().add(allAuthorities.get(i));
         }
 
         ServiceManager.getRoleService().saveToDatabase(firstRole);

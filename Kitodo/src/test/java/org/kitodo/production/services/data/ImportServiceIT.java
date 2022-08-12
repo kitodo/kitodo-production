@@ -56,6 +56,8 @@ public class ImportServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
         MockDatabase.insertProcessesFull();
         MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
