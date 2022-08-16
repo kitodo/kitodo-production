@@ -13,14 +13,12 @@ package org.kitodo.production.forms.createprocess;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -59,7 +57,7 @@ public class ProcessDataTabTest {
         createProcessForm.getProcessMetadata().setProcessDetails(processDetails);
 
         underTest.generateAtstslFields();
-        assertEquals("TSL/ATS is does not match expected value", "Titl",
+        assertEquals("TSL/ATS does not match expected value", "Titl",
             createProcessForm.getCurrentProcess().getAtstsl());
 
     }

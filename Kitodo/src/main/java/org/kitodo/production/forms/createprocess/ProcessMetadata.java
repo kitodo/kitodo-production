@@ -21,7 +21,6 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
-import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.TreeNode;
 
 public class ProcessMetadata {
