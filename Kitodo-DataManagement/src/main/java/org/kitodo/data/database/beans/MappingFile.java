@@ -35,6 +35,9 @@ public class MappingFile extends BaseBean {
     @Column(name = "output_metadata_format")
     private String outputMetadataFormat;
 
+    @Column(name = "prestructured_import")
+    private Boolean prestructuredImport = false;
+
     @ManyToMany(mappedBy = "mappingFiles", cascade = CascadeType.PERSIST)
     private List<ImportConfiguration> importConfigurations;
 
@@ -126,6 +129,24 @@ public class MappingFile extends BaseBean {
      */
     public void setImportConfigurations(List<ImportConfiguration> importConfigurations) {
         this.importConfigurations = importConfigurations;
+    }
+
+    /**
+     * Get prestructuredImport.
+     *
+     * @return value of prestructuredImport
+     */
+    public Boolean getPrestructuredImport() {
+        return prestructuredImport;
+    }
+
+    /**
+     * Set prestructuredImport.
+     *
+     * @param prestructuredImport as java.lang.Boolean
+     */
+    public void setPrestructuredImport(Boolean prestructuredImport) {
+        this.prestructuredImport = prestructuredImport;
     }
 
     @Override
