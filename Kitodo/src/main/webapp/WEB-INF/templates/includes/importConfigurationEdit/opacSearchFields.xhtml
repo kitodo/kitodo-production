@@ -37,7 +37,7 @@
                     <p:commandButton id="interfaceTypeHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="interfaceTypeHelp"
-                               value="Type of the search interface"/>
+                               value="#{msgs['tooltip.importConfig.interfaceTypeHelp']}"/>
                 </div>
                 <div>
                     <p:outputLabel for="queryDelimiter" value="#{msgs['importConfig.field.queryDelimiter']}" />
@@ -48,7 +48,7 @@
                     <p:commandButton id="queryDelimiterHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="queryDelimiterHelp"
-                               value="A query delimiter can be used to enclose the search in some specific character if required by the search interface"/>
+                               value="#{msgs['tooltip.importConfig.queryDelimiterHelp']}"/>
                 </div>
             </p:row>
             <p:row>
@@ -86,7 +86,7 @@
                     <p:commandButton id="urlHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="urlHelp"
-                               value="URL of the search interface"/>
+                               value="#{msgs['tooltip.importConfig.urlHelp']}"/>
                 </div>
                 <div>
                     <p:outputLabel for="prestructuredImport" value="#{msgs['importConfig.field.prestructuredImport']}" />
@@ -98,7 +98,7 @@
                     <p:commandButton id="prestructuredImportHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="prestructuredImportHelp"
-                               value="Prestructured import facilitates importing existing structural elements; Important: the configured XSLT mapping file is responsible of creating a valid METS structure!"/>
+                               value="#{msgs['tooltip.importConfig.prestructuredImportHelp']}"/>
                 </div>
             </p:row>
         </p:panelGrid>

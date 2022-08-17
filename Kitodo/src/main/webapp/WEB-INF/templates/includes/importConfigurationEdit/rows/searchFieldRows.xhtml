@@ -70,7 +70,7 @@
                 <p:commandButton id="searchFieldHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="searchFieldHelp"
-                           value="Define search fields available in this search interface"/>
+                           value="#{msgs['tooltip.importConfig.searchFieldHelp']}"/>
                 <p:commandButton icon="fa fa-plus"
                                  styleClass="secondary"
                                  action="#{addSearchFieldDialogView.init()}"
@@ -96,7 +96,7 @@
                 <p:commandButton id="idSearchFieldHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="idSearchFieldHelp"
-                           value="URL parameter for unique identifiers. This parameter is used for importing individual records from the search interface."/>
+                           value="#{msgs['tooltip.importConfig.idSearchFieldHelp']}"/>
             </div>
             <div>
                 <p:outputLabel for="idParameterPrefix"
@@ -111,7 +111,7 @@
                 <p:commandButton id="idParameterPrefixHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="idParameterPrefixHelp"
-                           value="This optional string will be prepended to each ID when querying datasets by ID. This can be used to simplify querying OAI interfaces for example, where each identifier must be preceedded with a valid set identification."/>
+                           value="#{msgs['tooltip.importConfig.idParameterPrefixHelp']}"/>
             </div>
             <div>
                 <p:outputLabel for="defaultSearchField" value="#{msgs['importConfig.searchFields.defaultField']}"/>
@@ -128,7 +128,7 @@
                 <p:commandButton id="defaultSearchFieldHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="defaultSearchFieldHelp"
-                           value="Default search field for this import configuration; will be pre-selected when creating a new process from this configuration"/>
+                           value="#{msgs['tooltip.importConfig.defaultSearchFieldHelp']}"/>
             </div>
             <div>
                 <p:outputLabel for="parentIdSearchField" value="#{msgs['importConfig.searchFields.parentIdField']}"/>
@@ -145,7 +145,7 @@
                 <p:commandButton id="parentIdSearchFieldHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="parentIdSearchFieldHelp"
-                           value="The parent ID search field is used to query for records whose parent record has the provided ID value (not supported by all interfaces)"/>
+                           value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
             </div>
             <div>
                 <p:outputLabel for="catalogIdMetadata"
@@ -159,7 +159,7 @@
                 <p:commandButton id="catalogIdMetadataHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="catalogIdMetadataHelp"
-                           value="Metadata key used to store the catalog ID of the imported record. (Note: this metadata must exist in the ruleset used during process creation!)"/>
+                           value="#{msgs['tooltip.importConfig.catalogIdMetadataHelp']}"/>
             </div>
         </p:row>
     </f:view>

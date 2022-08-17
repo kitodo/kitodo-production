@@ -33,7 +33,7 @@
                     <p:commandButton id="uploadFileFormatHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="uploadFileFormatHelp"
-                               value="File format of upload files (currently only XML is supported)"/>
+                               value="#{msgs['tooltip.importConfig.uploadFileFormatHelp']}"/>
                 </div>
             </p:row>
             <p:row>
@@ -50,7 +50,7 @@
                     <p:commandButton id="uploadMetadataFormatHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="uploadMetadataFormatHelp"
-                               value="Metadata format of upload files (e.g. MODS, MARC etc.)"/>
+                               value="#{msgs['tooltip.importConfig.uploadMetadataFormatHelp']}"/>
                 </div>
             </p:row>
             <p:row>
@@ -75,7 +75,7 @@
                     <p:commandButton id="parentMappingFileHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="parentMappingFileHelp"
-                               value="Mapping file used to extract parent metadata from upload file"/>
+                               value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
                 </div>
             </p:row>
         </p:panelGrid>

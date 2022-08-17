@@ -31,7 +31,7 @@
                 <p:commandButton id="parentElementXPathHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="parentElementXPathHelp"
-                           value="Specifiy the XPath to the element in the imported document containing the ID of the parent element"/>
+                           value="#{msgs['tooltip.importConfig.parentElementXpathHelp']}"/>
             </div>
             <div>
                 <p:outputLabel for="parentElementType" value="#{msgs['importConfig.field.parentElementType']}"/>
@@ -46,10 +46,10 @@
                     <p:ajax event="change"
                             oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-                <p:commandButton id="parentElementHelp" type="button"
+                <p:commandButton id="parentElementTypeHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="parentElementHelp"
-                           value="Define the XML element containing information about the parent process"/>
+                <p:tooltip for="parentElementTypeHelp"
+                           value="#{msgs['tooltip.importConfig.parentElementTypeHelp']}"/>
             </div>
         </p:row>
         <p:row>
@@ -68,7 +68,7 @@
                 <p:commandButton id="parentElementTrimModeHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="parentElementTrimModeHelp"
-                           value="Parent element trim mode"/>
+                           value="#{msgs['tooltip.importConfig.parentElementTrimModeHelp']}"/>
             </div>
             <div>
                 <p:outputLabel for="defaultImportDepth" value="#{msgs['importConfig.field.defaultImportDepth']} *"/>
@@ -83,7 +83,7 @@
                 <p:commandButton id="defaultImportDepthHelpButton" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="defaultImportDepthHelpButton"
-                           value="Configure the number of hierarchichal processes to be imported by default"/>
+                           value="#{msgs['tooltip.importConfig.defaultImportDepthHelp']}"/>
             </div>
         </p:row>
 
