@@ -1233,6 +1233,8 @@ public class ImportService {
         }
         dataImport.setSearchFields(searchFields);
         dataImport.setUrlParameters(getUrlParameters(importConfiguration));
+        dataImport.setRecordIdXPath(importConfiguration.getMetadataRecordIdXPath());
+        dataImport.setRecordTitleXPath(importConfiguration.getMetadataRecordTitleXPath());
         return dataImport;
     }
 

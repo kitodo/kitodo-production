@@ -33,6 +33,21 @@
                 <p:tooltip for="returnFormatHelp"
                            value="#{msgs['tooltip.importConfig.returnFormatHelp']}"/>
             </div>
+            <div>
+                <p:outputLabel for="metadataRecordIdXPath"
+                               value="Metadata record ID XPath *"/>
+                <p:inputText id="metadataRecordIdXPath"
+                             styleClass="input-with-button"
+                             validator="XPathValidator"
+                             required="#{not empty param['editForm:save']}"
+                             value="#{importConfigurationEditView.importConfiguration.metadataRecordIdXPath}"/>
+                <p:commandButton id="metadataRecordIdXPathHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="metadataRecordIdXPathHelp"
+                           value="XPath for XML element that contains catalog ID in imported documents"/>
+            </div>
         </p:row>
         <p:row>
             <div>
@@ -49,6 +64,21 @@
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="metadataFormatHelp"
                            value="#{msgs['tooltip.importConfig.metadataFormatHelp']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="metadataRecordTitleXPath"
+                               value="Metadata record title XPath *"/>
+                <p:inputText id="metadataRecordTitleXPath"
+                             styleClass="input-with-button"
+                             validator="XPathValidator"
+                             required="#{not empty param['editForm:save']}"
+                             value="#{importConfigurationEditView.importConfiguration.metadataRecordTitleXPath}"/>
+                <p:commandButton id="metadataRecordTitleXPathHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="metadataRecordTitleXPathHelp"
+                           value="XPath for XML element that contains title in imported documents"/>
             </div>
         </p:row>
     </f:view>

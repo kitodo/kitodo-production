@@ -169,7 +169,7 @@ public class XMLUtils {
 
     /**
      * Compile given String "xpathString" and check whether it contains a valid XPath (e.g. if the syntax is correct)
-     * Throws an exception if syntax is incorrect. Can be used to validate XPathes.
+     * Throws an exception if syntax is incorrect. Can be used to validate XPaths.
      *
      * @param xpathString String to be checked for correct XPath syntax
      * @throws XPathExpressionException if provided String does not contain valid XPath syntax
