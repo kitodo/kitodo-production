@@ -51,6 +51,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -167,13 +168,18 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
-     * Update the tasks of the templates associated with the current workflow.
+     * Update the tasks of the templates associated with the current workflow and delete associated
+     * editor settings.
      */
     private void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
         Converter converter = new Converter(this.workflow.getTitle());
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
             if (!templateTasks.isEmpty()) {
+                for (Task templatetask: templateTasks) {
+                    DataEditorSettingService dataEditorSettingService =  ServiceManager.getDataEditorSettingService();
+                    dataEditorSettingService.removeFromDatabaseByTaskId(templatetask.getId());
+                }
                 workflowTemplate.getTasks().clear();
                 TemplateService templateService = ServiceManager.getTemplateService();
                 converter.convertWorkflowToTemplate(workflowTemplate);

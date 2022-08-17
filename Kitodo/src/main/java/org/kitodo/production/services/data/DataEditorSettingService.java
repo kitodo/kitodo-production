@@ -68,12 +68,33 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
         return countDatabaseRows();
     }
 
+    /**
+     * Delete data editor settings identified by task id. 
+     * @param taskId ID of the associated task
+     * @throws DAOException if data editor setting could not be deleted from database
+     * 
+     */
+    public void removeFromDatabaseByTaskId(int taskId) throws DAOException {
+        List<DataEditorSetting> dataEditorSettings = getByTaskId(taskId);
+        for (DataEditorSetting dataEditorSetting: dataEditorSettings) {
+            dao.remove(dataEditorSetting.getId());
+        }
+    }
+    
+    private List<DataEditorSetting> getByTaskId(int taskId) {
+        Map<String, Object> parameterMap = new HashMap<>();
+        parameterMap.put("taskId", taskId);
+        return getByQuery("FROM DataEditorSetting WHERE task_id = :taskId ORDER BY id ASC", parameterMap);
+    }
+    
     private List<DataEditorSetting> getByUserAndTask(int userId, int taskId) {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("userId", userId);
         parameterMap.put("taskId", taskId);
         return getByQuery("FROM DataEditorSetting WHERE user_id = :userId AND task_id = :taskId ORDER BY id ASC", parameterMap);
     }
+
+
 
     /**
      * Load DataEditorSetting from database or return null if no entry matches the specified ids.
