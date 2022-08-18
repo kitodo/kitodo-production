@@ -571,7 +571,7 @@ public class ImportService {
             throw new ConfigException("Unable to find parent ID search field for catalog '" + config.getTitle() + "'!");
         }
         return importModule.getMultipleFullRecordsFromQuery(createDataImportFromImportConfiguration(config),
-                parenIDSearchField.getValue(), parentId, numberOfRows);
+                parenIDSearchField.getLabel(), parentId, numberOfRows);
     }
 
     /**
@@ -587,7 +587,7 @@ public class ImportService {
             throw new ConfigException("Unable to find parent ID search field for catalog '"
                     + importConfiguration.getTitle() + "'!");
         }
-        SearchResult searchResult = performSearch(parentIDSearchField.getValue(), parentId, importConfiguration, 0, 0);
+        SearchResult searchResult = performSearch(parentIDSearchField.getLabel(), parentId, importConfiguration, 0, 0);
         if (Objects.nonNull(searchResult)) {
             return searchResult.getNumberOfHits();
         } else {
@@ -905,14 +905,14 @@ public class ImportService {
     }
 
     /**
-     * Check and return whether 'parentElement' has been configured for OPAC with name 'catalogName'.
+     * Check and return whether the "parentIdSearchField" is configured in the current ImportConfiguration.
      *
      * @param importConfiguration name of the OPAC to check
-     * @return whether 'parentElement has been configured or not
+     * @return whether "parentIdSearchField" is configured for current ImportConfiguration
      * @throws ConfigException thrown if configuration for OPAC 'catalogName' could not be found
      */
-    public boolean isParentElementConfigured(ImportConfiguration importConfiguration) throws ConfigException {
-        return Objects.nonNull(importConfiguration.getParentElementType());
+    public boolean isParentIdSearchFieldConfigured(ImportConfiguration importConfiguration) throws ConfigException {
+        return Objects.nonNull(importConfiguration.getParentSearchField());
     }
 
     /**
