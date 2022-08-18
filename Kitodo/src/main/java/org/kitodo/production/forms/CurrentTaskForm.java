@@ -72,6 +72,7 @@ public class CurrentTaskForm extends BaseForm {
     private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
     private Property property;
+    private final String desktopPath = MessageFormat.format(REDIRECT_PATH, "desktop");
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
@@ -137,15 +138,20 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
         } else {
-            this.workflowControllerService.assignTaskToUser(this.currentTask);
             try {
-                ServiceManager.getTaskService().save(this.currentTask);
-            } catch (DataException e) {
+                if (this.currentTask.isTypeAcceptClose()) {
+                    this.workflowControllerService.close(this.currentTask);
+                    return desktopPath;
+                } else {
+                    this.workflowControllerService.assignTaskToUser(this.currentTask);
+                    ServiceManager.getTaskService().save(this.currentTask);
+                }
+            } catch (DataException | IOException | DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
+            return taskEditPath + "&id=" + getTaskIdForPath();
         }
-        return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
     /**
