@@ -150,8 +150,8 @@ public class CurrentTaskForm extends BaseForm {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
-            return taskEditPath + "&id=" + getTaskIdForPath();
         }
+        return taskEditPath + "&id=" + getTaskIdForPath();
     }
 
     /**
