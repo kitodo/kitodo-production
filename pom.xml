@@ -59,7 +59,7 @@
         <jaxen.version>1.2.0</jaxen.version>
         <jhove.version>1.20.1</jhove.version>
         <myfaces.version>2.3.10</myfaces.version>
-        <mysql.version>8.0.29</mysql.version>
+        <mysql.version>8.0.30</mysql.version>
         <poi.version>5.2.2</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
