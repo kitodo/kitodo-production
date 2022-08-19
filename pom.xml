@@ -52,7 +52,7 @@
         <commons-net.version>3.8.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
-        <hibernate.version>5.6.9.Final</hibernate.version>
+        <hibernate.version>5.6.10.Final</hibernate.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
