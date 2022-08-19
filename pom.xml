@@ -77,7 +77,7 @@
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.5</mariadb-java-client.version>
+        <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
 
         <powermock.version>1.7.4</powermock.version>
