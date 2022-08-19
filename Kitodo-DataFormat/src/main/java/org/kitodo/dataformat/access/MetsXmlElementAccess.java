@@ -339,7 +339,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * @param mediaFilesToIDFiles
      *            In this map, for each physical division, the corresponding XML file
      *            element is added, so that it can be used for linking later.
-     * @return
+     * @return an object of type FileSec
      */
     private FileSec generateFileSec(Map<URI, FileType> mediaFilesToIDFiles) {
         FileSec fileSec = new FileSec();

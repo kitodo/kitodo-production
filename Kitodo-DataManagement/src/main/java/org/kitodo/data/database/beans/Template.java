@@ -60,9 +60,9 @@ public class Template extends BaseTemplateBean {
 
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "project_x_template", joinColumns = {
-            @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_project_x_template_template_id")) },
+        @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_project_x_template_template_id")) },
             inverseJoinColumns = {
-                    @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_template_project_id")) })
+                @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_template_project_id")) })
     private List<Project> projects;
 
     /**

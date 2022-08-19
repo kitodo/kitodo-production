@@ -60,7 +60,7 @@ public class Batch extends BaseIndexedBean {
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "batch_x_process", joinColumns = {
-            @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
+        @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })
     private List<Process> processes;
 

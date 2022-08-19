@@ -142,8 +142,8 @@ public class Task extends BaseIndexedBean {
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "task_x_role", joinColumns = {
-            @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_role_task_id")) }, inverseJoinColumns = {
-                    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_task_x_user_role_id")) })
+        @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_role_task_id")) }, inverseJoinColumns = {
+            @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_task_x_user_role_id")) })
     private List<Role> roles;
 
     @Transient

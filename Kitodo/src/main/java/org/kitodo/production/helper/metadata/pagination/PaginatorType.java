@@ -94,6 +94,7 @@ public enum PaginatorType {
      */
     private static final Map<Integer, PaginatorType> codeMap = new HashMap<>(
             (int) Math.ceil(values().length / .75));
+
     static {
         for (PaginatorType member : PaginatorType.values()) {
             codeMap.put(member.code, member);

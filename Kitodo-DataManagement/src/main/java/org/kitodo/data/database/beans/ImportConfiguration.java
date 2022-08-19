@@ -134,11 +134,11 @@ public class ImportConfiguration extends BaseBean {
     @ManyToMany(cascade = CascadeType.PERSIST)
     @OrderColumn(name = "sorting")
     @JoinTable(name = "importconfiguration_x_mappingfile", joinColumns = {
-            @JoinColumn(name = "importconfiguration_id",
-                    foreignKey = @ForeignKey(name = "FK_importconfiguration_x_mappingfile_importconfiguration_id")) },
+        @JoinColumn(name = "importconfiguration_id",
+                foreignKey = @ForeignKey(name = "FK_importconfiguration_x_mappingfile_importconfiguration_id")) },
             inverseJoinColumns = {
-                    @JoinColumn(name = "mappingfile_id",
-                            foreignKey = @ForeignKey(name = "FK_importconfiguration_x_mappingfile_mappingfile_id")) })
+                @JoinColumn(name = "mappingfile_id",
+                    foreignKey = @ForeignKey(name = "FK_importconfiguration_x_mappingfile_mappingfile_id")) })
     private List<MappingFile> mappingFiles;
 
     @ManyToOne

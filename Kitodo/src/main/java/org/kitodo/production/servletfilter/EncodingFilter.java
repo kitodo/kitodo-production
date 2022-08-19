@@ -25,7 +25,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.annotation.WebInitParam;
 
 @WebFilter(filterName = "EncodingFilter", urlPatterns = "/*", initParams = {
-        @WebInitParam(name = "requestEncoding", value = "UTF-8") })
+    @WebInitParam(name = "requestEncoding", value = "UTF-8") })
 public class EncodingFilter implements Filter {
 
     private String encoding;
