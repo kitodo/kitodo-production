@@ -111,6 +111,23 @@
                             <p:tooltip for="fileHelp"
                                        value="Mapping file used to map metadata from one format to another"/>
                         </div>
+                        <div>
+                            <p:outputLabel for="prestructuredImport"
+                                           value="#{msgs['importConfig.field.prestructuredImport']}"/>
+                            <p:selectBooleanCheckbox id="prestructuredImport"
+                                                     styleClass="switch input-with-button"
+                                                     value="#{mappingFileEditView.mappingFile.prestructuredImport}"
+                                                     disabled="#{isViewMode}">
+                                <p:ajax event="change"
+                                        oncomplete="toggleSave()"/>
+                            </p:selectBooleanCheckbox>
+                            <p:commandButton id="prestructuredImportHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="prestructuredImportHelp"
+                                       value="If this is set to 'true' this mapping file is responsible for creating the METS container format including its structure maps"/>
+                        </div>
                     </p:row>
                     <p:row>
                         <div>

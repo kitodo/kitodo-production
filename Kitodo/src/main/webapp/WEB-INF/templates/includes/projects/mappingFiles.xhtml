@@ -52,6 +52,17 @@
                        title="#{item.outputMetadataFormat}"/>
       </p:column>
 
+      <p:column headerText="#{msgs['importConfig.field.prestructuredImport']}"
+                styleClass="checkboxColumn">
+         <h:outputText>
+            <ui:fragment rendered="#{item.prestructuredImport}">
+               <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+            </ui:fragment>
+            <ui:fragment rendered="#{not item.prestructuredImport}">
+               <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
+            </ui:fragment>
+         </h:outputText>
+      </p:column>
 
       <p:column headerText="#{msgs.actions}"
                 resizable="false"
