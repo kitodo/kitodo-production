@@ -19,6 +19,7 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -72,6 +73,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.DoctypeMissingException;
@@ -657,7 +659,7 @@ public class ImportService {
     public Document convertDataRecordToInternal(DataRecord dataRecord, ImportConfiguration importConfiguration,
                                                 boolean isParentInRecord)
             throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException,
-            SAXException {
+            SAXException, XPathExpressionException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(importConfiguration, isParentInRecord);
@@ -679,7 +681,27 @@ public class ImportService {
                     + internalRecord.getOriginalData().getClass().getName() + "' found!");
         }
 
-        return XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
+        Document resultDocument = null;
+        try {
+            resultDocument = XMLUtils.parseXMLString((String) internalRecord.getOriginalData());
+        } catch (SAXParseException e) {
+            String interfaceName = importConfiguration.getInterfaceType();
+            if (Arrays.stream(SearchInterfaceType.values()).anyMatch(sit -> sit.name().equals(interfaceName))) {
+                SearchInterfaceType searchInterfaceType = SearchInterfaceType.valueOf(interfaceName);
+                String errorMessageXpath = searchInterfaceType.getErrorMessageXpath();
+                if (Objects.nonNull(errorMessageXpath) && dataRecord.getOriginalData() instanceof String) {
+                    Element originalDocument = XMLUtils.parseXMLString((String) dataRecord.getOriginalData()).getDocumentElement();
+                    String errorMessage = XPathFactory.newInstance().newXPath().evaluate(errorMessageXpath, originalDocument);
+                    if (StringUtils.isNotBlank(errorMessage)) {
+                        errorMessage = interfaceName.toUpperCase() + " error: '" + errorMessage + "'";
+                        throw new CatalogException(errorMessage);
+                    }
+                }
+            } else {
+                throw e;
+            }
+        }
+        return resultDocument;
     }
 
     private NodeList extractMetadataNodeList(Document document) throws ProcessGenerationException {
@@ -1131,7 +1153,7 @@ public class ImportService {
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | DataException | CommandException | TransformerException e) {
+                | DataException | CommandException | TransformerException | CatalogException e) {
             logger.error(e);
             throw new ImportException(e.getLocalizedMessage());
         }
