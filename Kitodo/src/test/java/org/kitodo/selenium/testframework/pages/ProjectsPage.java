@@ -614,6 +614,10 @@ public class ProjectsPage extends Page<ProjectsPage> {
         return true;
     }
 
+    /**
+     * Get catalog configuration import error messages.
+     * @return catalog configuration import error messages
+     */
     public List<String> getCatalogConfigurationImportErrorsMessages() {
         List<WebElement> errorMessages = Browser.getDriver().findElementById("importResultsForm:failedImports")
                 .findElements(By.xpath(".//td[@class='error-message-column']/span"));
