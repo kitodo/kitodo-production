@@ -82,6 +82,7 @@ public class CatalogConfigurationImporter {
             importConfiguration.setIdPrefix(OPACConfig.getIdentifierPrefix(opacTitle));
             importConfiguration.setParentElementTrimMode(OPACConfig.getParentIDTrimMode(opacTitle));
             importConfiguration.setQueryDelimiter(OPACConfig.getQueryDelimiter(opacTitle));
+            importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(opacTitle));
             if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())
                     || SearchInterfaceType.CUSTOM.name().equals(importConfiguration.getInterfaceType())) {
                 setSearchFields(importConfiguration, opacTitle);

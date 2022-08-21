@@ -66,6 +66,11 @@
                     <p:ajax event="change"
                             update="mappingFileFormatsForm:ok"/>
                 </p:selectOneMenu>
+                <p:outputLabel for="prestructuredImport"
+                               value="#{msgs['importConfig.field.prestructuredImport']}"/>
+                <p:selectBooleanCheckbox id="prestructuredImport"
+                                         styleClass="input switch"
+                                         value="#{importCatalogConfigurationsView.currentMappingFile.prestructuredImport}"/>
             </h:panelGroup>
             <h:panelGroup layout="block"
                           styleClass="dialogButtonWrapper">
