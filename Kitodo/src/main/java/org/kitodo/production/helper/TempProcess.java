@@ -38,6 +38,8 @@ public class TempProcess {
 
     private NodeList metadataNodes;
 
+    private String atstsl;
+
     private String tiffHeaderDocumentName;
 
     private String tiffHeaderImageDescription;
@@ -74,7 +76,7 @@ public class TempProcess {
         this.workpiece.getLogicalStructure().setType(docType);
         if (nodeList.getLength() != 0) {
             this.workpiece.getLogicalStructure().getMetadata().addAll(
-                    ImportService.importMetadata(this.metadataNodes, MdSec.DMD_SEC));
+                    ProcessHelper.convertMetadata(this.metadataNodes, MdSec.DMD_SEC));
         }
         this.processMetadata = new ProcessMetadata();
     }
@@ -214,5 +216,23 @@ public class TempProcess {
                 }
             }
         }
+    }
+
+    /**
+     * Get atstsl.
+     *
+     * @return value of atstsl
+     */
+    public String getAtstsl() {
+        return atstsl;
+    }
+
+    /**
+     * Set atstsl.
+     *
+     * @param atstsl as string
+     */
+    public void setAtstsl(String atstsl) {
+        this.atstsl = atstsl;
     }
 }

@@ -29,6 +29,11 @@ public class TitleGenerator extends Generator {
     public static final String TITLE_DOC_MAIN = "TitleDocMain";
 
     /**
+     * Metadata identifier for tsl/ats.
+     */
+    public static final String TSL_ATS = "TSL_ATS";
+
+    /**
      * Constructor for TitleGenerator.
      *
      * @param atstsl                     field used for title generation
@@ -171,11 +176,9 @@ public class TitleGenerator extends Generator {
             String rowMetadataID = row.getMetadataID();
             String rowValue = ImportService.getProcessDetailValue(row);
             // if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
-            if ("TSL_ATS".equals(rowMetadataID)) {
+            if (TSL_ATS.equals(rowMetadataID)) {
                 if (StringUtils.isBlank(rowValue)) {
-                    this.atstsl = createAtstsl(currentTitle, currentAuthors);
-                    ImportService.setProcessDetailValue(row, this.atstsl);
-                    rowValue = this.atstsl;
+                    rowValue = createAtstsl(currentTitle, currentAuthors);
                 }
                 this.atstsl = rowValue;
             }

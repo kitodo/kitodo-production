@@ -23,9 +23,9 @@ import org.kitodo.api.Metadata;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -112,7 +112,7 @@ public abstract class MetadataImportDialog {
             if (process.getMetadataNodes().getLength() > 0) {
                 if (createProcessForm.getProcessDataTab().getDocType()
                         .equals(process.getWorkpiece().getLogicalStructure().getType())) {
-                    Collection<Metadata> metadata = ImportService.importMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
+                    Collection<Metadata> metadata = ProcessHelper.convertMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
                     return createProcessForm.getProcessMetadata().getProcessDetails().addMetadataIfNotExists(metadata);
                 } else {
                     Helper.setWarnMessage(Helper.getTranslation("errorAdditionalImport"));

@@ -12,30 +12,23 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
-import org.kitodo.api.Metadata;
-import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
-import org.kitodo.production.services.data.ProcessService;
 import org.omnifaces.util.Ajax;
 import org.omnifaces.util.Faces;
 
@@ -65,24 +58,39 @@ public class ProcessDataTab {
                 this.docType = docType;
             } else {
                 this.docType = (String) allDocTypes.get(0).getValue();
-                Helper.setErrorMessage("docTypeNotFound", new Object[]{docType});
+                Helper.setErrorMessage("docTypeNotFound", new Object[] {docType });
             }
         }
-        updateProcessMetadata();
     }
 
     /**
      * Update process metadata of currently selected process.
      */
     public void updateProcessMetadata() {
-        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())) {
+        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())
+                && Objects.nonNull(createProcessForm.getCurrentProcess().getWorkpiece())) {
             createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
                 createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
-                createProcessForm.getProcessMetadata()
-                        .initializeProcessDetails(createProcessForm.getCurrentProcess().getWorkpiece()
-                                .getLogicalStructure(), createProcessForm);
+                createProcessForm.getProcessMetadata().initializeProcessDetails(
+                    createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
+                overwriteProcessMetadata();
+            }
+        }
+    }
+
+    private void overwriteProcessMetadata() {
+        TempProcess currentProcess = createProcessForm.getCurrentProcess();
+        if (StringUtils.isNotBlank(currentProcess.getAtstsl())) {
+            for (ProcessDetail processDetail : currentProcess.getProcessMetadata().getProcessDetailsElements()) {
+                if (TitleGenerator.TSL_ATS.equals(processDetail.getMetadataID())
+                        && processDetail instanceof ProcessTextMetadata) {
+                    ProcessTextMetadata processTextMetadata = (ProcessTextMetadata) processDetail;
+                    if (StringUtils.isBlank(processTextMetadata.getValue())) {
+                        processTextMetadata.setValue(currentProcess.getAtstsl());
+                    }
+                }
             }
         }
     }
@@ -149,103 +157,38 @@ public class ProcessDataTab {
     /**
      * Generate process titles and other details.
      */
-    public void generateProcessTitleAndTiffHeader() {
+    public void generateAtstslFields() {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadata().getProcessDetailsElements();
         Process process = this.createProcessForm.getCurrentProcess().getProcess();
         try {
-            StructuralElementViewInterface docTypeView = createProcessForm.getRulesetManagement().getStructuralElementView(
-                    docType, createProcessForm.getAcquisitionStage(), createProcessForm.getPriorityList());
-            String processTitle = docTypeView.getProcessTitle().orElse("");
-            if (processTitle.isEmpty()) {
+            String processTitleOfDocTypeView = ProcessHelper.getProcessTitleOfDocTypeView(
+                createProcessForm.getRulesetManagement(), docType, createProcessForm.getAcquisitionStage(),
+                createProcessForm.getPriorityList());
+            if (processTitleOfDocTypeView.isEmpty()) {
                 Helper.setErrorMessage("newProcess.titleGeneration.creationRuleNotFound",
                     new Object[] {getDocTypeLabel(docType), process.getRuleset().getTitle() });
             }
 
-            Process parentProcess = createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess();
-            if (processTitle.startsWith("+") && Objects.nonNull(parentProcess)) {
-                processTitle = '\'' + parentProcess.getTitle() + '\'' + processTitle;
+            LinkedList<TempProcess> parents = new LinkedList<>();
+            int processesSize = createProcessForm.getProcesses().size();
+            if ( processesSize > 1 ) {
+                int indexCurrent = createProcessForm.getProcesses().indexOf(createProcessForm.getCurrentProcess());
+                parents.addAll(createProcessForm.getProcesses().subList(indexCurrent + 1, processesSize));
             }
+            
+            ProcessHelper.generateAtstslFields(createProcessForm.getCurrentProcess(), processDetails, parents, docType,
+                createProcessForm.getRulesetManagement(), createProcessForm.getAcquisitionStage(),
+                createProcessForm.getPriorityList(), createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess());
 
-            String currentTitle = TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails);
-
-            if (StringUtils.isBlank(currentTitle)) {
-                if (Objects.nonNull(parentProcess)) {
-                    currentTitle = getTitleFromLogicalStructure(parentProcess);
-                } else {
-                    currentTitle = getTitleFromAncestors();
-                }
-            }
-
-            String atstsl = ProcessService.generateProcessTitleAndGetAtstsl(processDetails, processTitle, process,
-                currentTitle);
-
-            // document name is generally equal to process title
-            createProcessForm.getCurrentProcess().setTiffHeaderDocumentName(process.getTitle());
-            createProcessForm.getCurrentProcess().setTiffHeaderImageDescription(ProcessService.generateTiffHeader(
-                    processDetails, atstsl, ServiceManager.getImportService().getTiffDefinition(), this.docType));
+            updateProcessMetadata();
         } catch (ProcessGenerationException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         if (Objects.nonNull(Faces.getContext())) {
             Ajax.update("editForm:processFromTemplateTabView:processDataEditGrid",
-                    "editForm:processFromTemplateTabView:processMetadata",
-                    "editForm:processFromTemplateTabView:processAncestors");
+                "editForm:processFromTemplateTabView:processMetadata",
+                "editForm:processFromTemplateTabView:processAncestors");
         }
-    }
-
-    private String getTitleFromLogicalStructure(Process process) {
-        try {
-            LegacyMetsModsDigitalDocumentHelper metsModsDigitalDocumentHelper = ServiceManager.getProcessService()
-                    .readMetadataFile(process);
-            return getTitleFromMetadata(metsModsDigitalDocumentHelper.getWorkpiece().getLogicalStructure().getMetadata());
-        } catch (IOException | NullPointerException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return StringUtils.EMPTY;
-    }
-
-    private String getTitleFromAncestors() {
-        int processesSize = createProcessForm.getProcesses().size();
-
-        if (processesSize <= 1) {
-            return StringUtils.EMPTY;
-        }
-
-        List<TempProcess> ancestors = createProcessForm.getProcesses().subList(1, processesSize);
-
-        // get title of ancestors where TitleDocMain exists when several processes were
-        // imported
-        for (TempProcess tempProcess : ancestors) {
-            ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess);
-            String title = getTitleFromMetadata(processFieldedMetadata.getChildMetadata());
-            if (StringUtils.isNotBlank(title)) {
-                return title;
-            }
-        }
-        return StringUtils.EMPTY;
-    }
-
-    private String getTitleFromMetadata(Collection<Metadata> metadata) {
-        Optional<Metadata> metadataOptional = metadata.parallelStream()
-                .filter(metadataItem -> TitleGenerator.TITLE_DOC_MAIN.equals(metadataItem.getKey())).findFirst();
-        if (metadataOptional.isPresent() && metadataOptional.get() instanceof MetadataEntry) {
-            return ((MetadataEntry) metadataOptional.get()).getValue();
-        }
-        return StringUtils.EMPTY;
-    }
-
-    /**
-     * initialize process details table.
-     *
-     * @param tempProcess
-     *            whose metadata should be queried
-     */
-    private ProcessFieldedMetadata initializeTempProcessDetails(TempProcess tempProcess) {
-        ProcessFieldedMetadata metadata = ImportService.initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
-            createProcessForm.getRulesetManagement(), createProcessForm.getAcquisitionStage(),
-            createProcessForm.getPriorityList());
-        metadata.setMetadata(ImportService.importMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
-        return metadata;
     }
 
     private String getDocTypeLabel(String docType) {

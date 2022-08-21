@@ -25,6 +25,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
@@ -44,11 +45,8 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.DataImport;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
@@ -91,6 +89,7 @@ import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.forms.createprocess.ProcessSelectMetadata;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -109,6 +108,7 @@ import org.xml.sax.SAXParseException;
 public class ImportService {
 
     private static final Logger logger = LogManager.getLogger(ImportService.class);
+    public static final String ACQUISITION_STAGE_CREATE = "create";
 
     private static volatile ImportService instance = null;
     private static ExternalDataImportInterface importModule;
@@ -396,19 +396,7 @@ public class ImportService {
         } else {
             throw new ProcessGenerationException("Ruleset missing!");
         }
-        addTitleAndTiffHeaderDataToTempProcess(tempProcess);
         return tempProcess;
-    }
-
-    private void addTitleAndTiffHeaderDataToTempProcess(TempProcess tempProcess) throws IOException,
-            InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException {
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService()
-                .openRuleset(tempProcess.getProcess().getRuleset());
-        String acquisitionStage = "create";
-        List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
-        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
-                acquisitionStage, priorityList);
-        createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
     }
 
     private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses,
@@ -496,6 +484,17 @@ public class ImportService {
         }
         importParents(recordId, importConfiguration, projectId, templateId, importDepth, processes, parentID, template,
                 parentMetadataKey);
+
+        ListIterator<TempProcess> processesIterator = processes.listIterator();
+        while (processesIterator.hasNext()) {
+            int fromIndex = processesIterator.nextIndex() + 1;
+            List<TempProcess> parents = new ArrayList<>();
+            if (fromIndex < processes.size()) {
+                parents = processes.subList(fromIndex, processes.size());
+            }
+            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE);
+        }
+
         return processes;
     }
 
@@ -720,46 +719,6 @@ public class ImportService {
     }
 
     /**
-     * Converts DOM node list of Kitodo metadata elements to metadata objects.
-     *
-     * @param nodes
-     *            node list to convert to metadata
-     * @param domain
-     *            domain of metadata
-     * @return metadata from node list
-     */
-    public static List<Metadata> importMetadata(NodeList nodes, MdSec domain) {
-        List<Metadata> allMetadata = new ArrayList<>();
-        for (int index = 0; index < nodes.getLength(); index++) {
-            Node node = nodes.item(index);
-            if (!(node instanceof Element)) {
-                continue;
-            }
-            Element element = (Element) node;
-            Metadata metadata;
-            switch (element.getLocalName()) {
-                case "metadata":
-                    MetadataEntry entry = new MetadataEntry();
-                    entry.setValue(element.getTextContent());
-                    metadata = entry;
-                    break;
-                case "metadataGroup": {
-                    MetadataGroup group = new MetadataGroup();
-                    group.setGroup(importMetadata(element.getChildNodes(), null));
-                    metadata = group;
-                    break;
-                }
-                default:
-                    continue;
-            }
-            metadata.setKey(element.getAttribute("name"));
-            metadata.setDomain(domain);
-            allMetadata.add(metadata);
-        }
-        return allMetadata;
-    }
-
-    /**
      * Get the value of a specific processDetail in the processDetails.
      *
      * @param processDetail
@@ -956,77 +915,6 @@ public class ImportService {
     }
 
     /**
-     * Create and return a List of ProcessDetail objects for the given TempProcess 'tempProcess'.
-     *
-     * @param tempProcess the TempProcess for which the List of ProcessDetail objects is created
-     * @param managementInterface RulesetManagementInterface used to create the metadata of the process
-     * @param acquisitionStage String containing the acquisitionStage
-     * @param priorityList List of LanguageRange objects used as priority list
-     * @return List of ProcessDetail objects
-     * @throws InvalidMetadataValueException thrown if TempProcess contains invalid metadata
-     * @throws NoSuchMetadataFieldException thrown if TempProcess contains undefined metadata
-     */
-    public static List<ProcessDetail> transformToProcessDetails(TempProcess tempProcess,
-                                                         RulesetManagementInterface managementInterface,
-                                                         String acquisitionStage,
-                                                         List<Locale.LanguageRange> priorityList)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
-                managementInterface, acquisitionStage, priorityList);
-        metadata.preserve();
-        return metadata.getRows();
-    }
-
-    /**
-     * Create a process title for the given TempProcess using the provided parameters.
-     *
-     * @param tempProcess the TempProcess for which the TifHeader is created
-     * @param rulesetManagementInterface RulesetManagementInterface used to create TifHeader
-     * @param acquisitionStage String containing name of acquisitionStage
-     * @param priorityList List of LanguageRange objects used as priority list
-     * @param processDetails List of ProcessDetail objects containing the metadata of the process
-     * @throws ProcessGenerationException thrown if generating the Process title or the TifHeader fails
-     */
-    public static void createProcessTitle(TempProcess tempProcess,
-                                          RulesetManagementInterface rulesetManagementInterface,
-                                          String acquisitionStage, List<Locale.LanguageRange> priorityList,
-                                          List<ProcessDetail> processDetails)
-            throws ProcessGenerationException {
-        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
-        StructuralElementViewInterface docTypeView = rulesetManagementInterface
-                .getStructuralElementView(docType, acquisitionStage, priorityList);
-        String processTitle = docTypeView.getProcessTitle().orElse("");
-        String atstsl = ProcessService.generateProcessTitle(processDetails,
-                processTitle, tempProcess.getProcess());
-        tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
-        String tiffDefinition = ServiceManager.getImportService().getTiffDefinition();
-        if (Objects.nonNull(tiffDefinition)) {
-            tempProcess.setTiffHeaderImageDescription(ProcessService.generateTiffHeader(processDetails, atstsl,
-                    tiffDefinition, docType));
-        }
-    }
-
-    /**
-     * Create and return an instance of 'ProcessFieldedMetadata' for the given LogicalDivision 'structure',
-     * RulesetManagementInterface 'managementInterface', acquisition stage String 'stage' and List of LanguageRange
-     * 'priorityList'.
-     *
-     * @param structure LogicalDivision for which to create a ProcessFieldedMetadata
-     * @param managementInterface RulesetManagementInterface used to create ProcessFieldedMetadata
-     * @param stage String containing acquisition stage used to create ProcessFieldedMetadata
-     * @param priorityList List of LanguageRange objects used to create ProcessFieldedMetadata
-     * @return the created ProcessFieldedMetadata
-     */
-    public static ProcessFieldedMetadata initializeProcessDetails(LogicalDivision structure,
-                                                                  RulesetManagementInterface managementInterface,
-                                                                  String stage,
-                                                                  List<Locale.LanguageRange> priorityList) {
-        StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
-                stage, priorityList);
-        return new ProcessFieldedMetadata(structure, divisionView);
-    }
-
-    /**
      * Ensure all processes in given list 'tempProcesses' have a non empty title.
      *
      * @param tempProcesses list of TempProcesses to be checked
@@ -1172,16 +1060,22 @@ public class ImportService {
                                           String acquisitionStage, List<Locale.LanguageRange> priorityList)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
+
+        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
+            acquisitionStage, priorityList);
+        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
+
+        ProcessHelper.generateAtstslFields(tempProcess, processDetails, docType, managementInterface,
+            acquisitionStage, priorityList);
+
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
         }
-        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
-                acquisitionStage, priorityList);
-        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
+
         Process process = tempProcess.getProcess();
         process.setSortHelperImages(tempProcess.getGuessedImages());
         addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
-                tempProcess.getProcess().getTitle());
+            tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
     }

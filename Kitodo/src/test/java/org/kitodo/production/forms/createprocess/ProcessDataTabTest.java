@@ -27,9 +27,40 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.process.TitleGenerator;
 import org.primefaces.model.DefaultTreeNode;
 
 public class ProcessDataTabTest {
+
+    @Test
+    public void testGenerationOfAtstslField() throws Exception {
+        CreateProcessForm createProcessForm = new CreateProcessForm(Locale.LanguageRange.parse("en"));
+
+        Ruleset ruleset = new Ruleset();
+        ruleset.setFile("ruleset_test.xml");
+        createProcessForm.updateRulesetAndDocType(ruleset);
+
+        ProcessDataTab underTest = createProcessForm.getProcessDataTab();
+        underTest.setDocType("Child");
+
+        createProcessForm.setCurrentProcess(new TempProcess(new Process(), null));
+
+        DefaultTreeNode titleDocMainTreeNode = getTreeNode(TitleGenerator.TITLE_DOC_MAIN, TitleGenerator.TITLE_DOC_MAIN,
+            "TitleOfPa_1234567X");
+        DefaultTreeNode tslatsTreeNode = getTreeNode(TitleGenerator.TSL_ATS, TitleGenerator.TSL_ATS, "");
+        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata() {
+            {
+                treeNode.getChildren().add(titleDocMainTreeNode);
+                treeNode.getChildren().add(tslatsTreeNode);
+            }
+        };
+        createProcessForm.getProcessMetadata().setProcessDetails(processDetails);
+
+        underTest.generateAtstslFields();
+        assertEquals("TSL/ATS does not match expected value", "Titl",
+            createProcessForm.getCurrentProcess().getAtstsl());
+
+    }
 
     @Test
     public void shouldCreateChildProcessTitlePrefixedByParentItile() throws Exception {
@@ -47,27 +78,31 @@ public class ProcessDataTabTest {
         underTest.setDocType("Child");
 
         createProcessForm.setCurrentProcess(new TempProcess(new Process(), null));
-        MetadataEntry metadata = new MetadataEntry();
-        metadata.setKey("ChildCount");
-        metadata.setValue("8888");
-        DefaultTreeNode metdataTreeNode = new DefaultTreeNode();
-        ProcessDetail processDetail = new ProcessTextMetadata(null,getSettingsObject(),metadata);
-        metdataTreeNode.setData(processDetail);
+        DefaultTreeNode metadataTreeNode = getTreeNode("ChildCount", "ChildCount", "8888");
         ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata() {
             {
-                treeNode.getChildren().add(metdataTreeNode);
+                treeNode.getChildren().add(metadataTreeNode);
             }
         };
         createProcessForm.getProcessMetadata().setProcessDetails(processDetails);
 
-        underTest.generateProcessTitleAndTiffHeader();
+        underTest.generateAtstslFields();
 
         assertEquals("Process title could not be build", "TitlOfPa_1234567X_8888",
             createProcessForm.getCurrentProcess().getTiffHeaderDocumentName());
     }
 
-    private static SimpleMetadataViewInterface getSettingsObject() {
-        
+    private static DefaultTreeNode getTreeNode(String metadataId, String metadataKey, String metadataValue) {
+        DefaultTreeNode metdataTreeNode = new DefaultTreeNode();
+        MetadataEntry metadataEntry = new MetadataEntry();
+        metadataEntry.setKey(metadataKey);
+        metadataEntry.setValue(metadataValue);
+        metdataTreeNode.setData(new ProcessTextMetadata(null, getSettingsObject(metadataId), metadataEntry));
+        return metdataTreeNode;
+    }
+
+    private static SimpleMetadataViewInterface getSettingsObject(String metadataId) {
+
         SimpleMetadataViewInterface settings = new SimpleMetadataViewInterface() {
 
             @Override
@@ -77,8 +112,7 @@ public class ProcessDataTabTest {
 
             @Override
             public String getId() {
-                // TODO Auto-generated method stub
-                return "ChildCount";
+                return metadataId;
             }
 
             @Override
@@ -129,7 +163,8 @@ public class ProcessDataTabTest {
             @Override
             public boolean isValid(String value, List<Map<MetadataEntry, Boolean>> metadata) {
                 throw new UnsupportedOperationException("Not implemented");
-            }};
+            }
+        };
 
         return settings;
     }
