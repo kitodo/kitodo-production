@@ -30,6 +30,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -105,24 +106,26 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      * Call search method of ImportService.
      */
     public void search() {
-        List<?> hits;
         try {
-            hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+            if (SearchInterfaceType.OAI.name().equals(hitModel.getImportConfiguration().getInterfaceType())) {
+                getRecordById(hitModel.getSearchTerm());
+            } else {
+                List<?> hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+                if (hits.size() == 1) {
+                    getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+                } else {
+                    try {
+                        ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
+                        PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
+                    } catch (IllegalArgumentException e) {
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                    }
+                }
+            }
         } catch (CatalogException e) {
             this.opacErrorMessage = e.getMessage();
             PrimeFaces.current().ajax().update("opacErrorDialog");
             PrimeFaces.current().executeScript("PF('opacErrorDialog').show();");
-            return;
-        }
-        if (hits.size() == 1) {
-            getRecordById(((SingleHit) hits.get(0)).getIdentifier());
-        } else {
-            try {
-                ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
-                PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
-            } catch (IllegalArgumentException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
         }
     }
 
