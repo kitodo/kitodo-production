@@ -640,7 +640,8 @@ public class ImportService {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(
-                createDataImportFromImportConfiguration(importConfiguration), identifier);
+                createDataImportFromImportConfiguration(importConfiguration),
+                getSearchTermWithDelimiter(identifier, importConfiguration));
         if (extractExemplars) {
             exemplarRecords = extractExemplarRecords(dataRecord, importConfiguration);
         }
