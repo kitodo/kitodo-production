@@ -107,6 +107,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      */
     public void search() {
         try {
+            createProcessForm.setIdentifierMetadata(hitModel.getImportConfiguration().getIdentifierMetadata());
             if (SearchInterfaceType.OAI.name().equals(hitModel.getImportConfiguration().getInterfaceType())) {
                 getRecordById(hitModel.getSearchTerm());
             } else {

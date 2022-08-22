@@ -68,6 +68,7 @@ public class FileUploadDialog extends MetadataImportDialog {
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile uploadedFile = event.getFile();
         ImportService importService = ServiceManager.getImportService();
+        createProcessForm.setIdentifierMetadata(importConfiguration.getIdentifierMetadata());
         try {
             Document internalDocument = importService.convertDataRecordToInternal(
                 createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
