@@ -61,9 +61,6 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "default_import_depth")
     private Integer defaultImportDepth;
 
-    @Column(name = "parent_element_xpath")
-    private String parentElementXPath;
-
     @Column(name = "parent_element_type")
     private String parentElementType;
 
@@ -307,24 +304,6 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setDefaultImportDepth(Integer defaultImportDepth) {
         this.defaultImportDepth = defaultImportDepth;
-    }
-
-    /**
-     * Get parentElementXPath.
-     *
-     * @return value of parentElementXPath
-     */
-    public String getParentElementXPath() {
-        return parentElementXPath;
-    }
-
-    /**
-     * Set parentElementXPath.
-     *
-     * @param parentElementXPath as java.lang.String
-     */
-    public void setParentElementXPath(String parentElementXPath) {
-        this.parentElementXPath = parentElementXPath;
     }
 
     /**

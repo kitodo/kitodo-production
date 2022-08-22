@@ -19,25 +19,10 @@
         <!--@elvariable id="isViewMode" type="boolean"-->
         <p:row>
             <div>
-                <p:outputLabel for="parentElementXPath" value="#{msgs['importConfig.field.parentElementXPath']}"/>
-                <p:inputText id="parentElementXPath" styleClass="input-with-button"
-                             validator="XPathValidator"
-                             value="#{importConfigurationEditView.importConfiguration.parentElementXPath}"
-                             placeholder="#{msgs['importConfig.field.parentElementXPath']}"
-                             disabled="#{isViewMode}">
-                    <p:ajax event="change"
-                            update="editForm:importConfigurationTabView:parentElementType"/>
-                </p:inputText>
-                <p:commandButton id="parentElementXPathHelp" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="parentElementXPathHelp"
-                           value="#{msgs['tooltip.importConfig.parentElementXpathHelp']}"/>
-            </div>
-            <div>
                 <p:outputLabel for="parentElementType" value="#{msgs['importConfig.field.parentElementType']}"/>
                 <p:selectOneMenu id="parentElementType"
                                  styleClass="input-with-button"
-                                 disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.parentElementXPath}"
+                                 disabled="#{isViewMode}"
                                  value="#{importConfigurationEditView.importConfiguration.parentElementType}">
                     <f:selectItem itemValue="#{null}"
                                   itemLabel="-- #{msgs['importConfig.selectParentElementType']} --"
