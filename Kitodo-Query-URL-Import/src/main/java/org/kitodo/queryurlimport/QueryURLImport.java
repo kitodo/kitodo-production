@@ -74,7 +74,6 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
-import org.kitodo.exceptions.ResponseHandlerNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -94,15 +93,6 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private CloseableHttpClient httpClient = HttpClientBuilder.create().build();
     private final FTPClient ftpClient = new FTPClient();
-
-    private static final HashMap<String, XmlResponseHandler> formatHandlers;
-
-    static {
-        formatHandlers = new HashMap<>();
-        formatHandlers.put(MetadataFormat.MODS.name(), new ModsResponseHandler());
-        formatHandlers.put(MetadataFormat.MARC.name(), new MarcResponseHandler());
-        formatHandlers.put(MetadataFormat.PICA.name(), new PicaResponseHandler());
-    }
 
     @Override
     public DataRecord getFullRecordById(DataImport dataImport, String identifier) throws NoRecordFoundException {
@@ -199,22 +189,14 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private SearchResult performQuery(DataImport dataImport, String queryURL)
-            throws ResponseHandlerNotFoundException {
+    private SearchResult performQuery(DataImport dataImport, String queryURL) {
         try {
             this.reinitializeHttpClient(dataImport.getUsername(), dataImport.getPassword());
             logger.debug("Requesting: {}", queryURL);
             HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
-                String metadataFormat = dataImport.getMetadataFormat().name();
-                if (formatHandlers.containsKey(metadataFormat)) {
-                    return formatHandlers.get(metadataFormat).getSearchResult(response,
-                            dataImport.getSearchInterfaceType());
-                } else {
-                    throw new ResponseHandlerNotFoundException("No ResponseHandler found for metadata format "
-                            + metadataFormat);
-                }
+                return XmlResponseHandler.getSearchResult(response, dataImport);
             } else {
                 throw new CatalogException(response.getStatusLine().getReasonPhrase() + " (Http status code "
                         + responseStatusCode + ")");
@@ -350,7 +332,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 }
             }
             return performQuery(dataImport, queryString + createSearchFieldString(interfaceType, searchFieldMap));
-        } catch (URISyntaxException | ResponseHandlerNotFoundException e) {
+        } catch (URISyntaxException e) {
             throw new CatalogException(e.getLocalizedMessage());
         }
     }

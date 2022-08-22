@@ -33,6 +33,8 @@ public class DataImport {
     private String idParameter;
     private Map<String, String> searchFields;
     private Map<String, String> urlParameters;
+    private String recordIdXPath;
+    private String recordTitleXPath;
 
     /**
      * Get title.
@@ -303,4 +305,41 @@ public class DataImport {
     public void setUrlParameters(Map<String, String> urlParameters) {
         this.urlParameters = urlParameters;
     }
+
+    /**
+     * Get recordIdXPath.
+     *
+     * @return value of recordIdXPath
+     */
+    public String getRecordIdXPath() {
+        return recordIdXPath;
+    }
+
+    /**
+     * Set recordIdXPath.
+     *
+     * @param recordIdXPath as java.lang.String
+     */
+    public void setRecordIdXPath(String recordIdXPath) {
+        this.recordIdXPath = recordIdXPath;
+    }
+
+    /**
+     * Get recordTitleXPath.
+     *
+     * @return value of recordTitleXPath
+     */
+    public String getRecordTitleXPath() {
+        return recordTitleXPath;
+    }
+
+    /**
+     * Set recordTitleXPath.
+     *
+     * @param recordTitleXPath as java.lang.String
+     */
+    public void setRecordTitleXPath(String recordTitleXPath) {
+        this.recordTitleXPath = recordTitleXPath;
+    }
+
 }

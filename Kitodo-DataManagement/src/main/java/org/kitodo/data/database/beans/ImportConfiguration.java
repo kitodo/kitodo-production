@@ -154,6 +154,12 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "identifier_metadata")
     private String identifierMetadata;
 
+    @Column(name = "metadata_record_id_xpath")
+    private String metadataRecordIdXPath;
+
+    @Column(name = "metadata_record_title_xpath")
+    private String metadataRecordTitleXPath;
+
     /**
      * Default constructor.
      */
@@ -798,6 +804,42 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setIdentifierMetadata(String identifierMetadata) {
         this.identifierMetadata = identifierMetadata;
+    }
+
+    /**
+     * Get metadataRecordIdXPath.
+     *
+     * @return value of metadataRecordIdXPath
+     */
+    public String getMetadataRecordIdXPath() {
+        return metadataRecordIdXPath;
+    }
+
+    /**
+     * Set metadataRecordIdXPath.
+     *
+     * @param metadataRecordIdXPath as java.lang.String
+     */
+    public void setMetadataRecordIdXPath(String metadataRecordIdXPath) {
+        this.metadataRecordIdXPath = metadataRecordIdXPath;
+    }
+
+    /**
+     * Get metadataRecordTitleXPath.
+     *
+     * @return value of metadataRecordTitleXPath
+     */
+    public String getMetadataRecordTitleXPath() {
+        return metadataRecordTitleXPath;
+    }
+
+    /**
+     * Set metadataRecordTitleXPath.
+     *
+     * @param metadataRecordTitleXPath as java.lang.String
+     */
+    public void setMetadataRecordTitleXPath(String metadataRecordTitleXPath) {
+        this.metadataRecordTitleXPath = metadataRecordTitleXPath;
     }
 
     /**
