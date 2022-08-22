@@ -52,7 +52,8 @@
                            value="#{msgs['tooltip.importConfig.metadataRecordIdXPathHelp']}"/>
             </h:panelGroup>
             <div>
-                <p:outputLabel for="parentMappingFile" value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
+                <p:outputLabel for="parentMappingFile"
+                               value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
                 <p:selectOneMenu id="parentMappingFile"
                                  styleClass="input-with-button"
                                  validator="ParentMappingValidator"
@@ -72,7 +73,7 @@
                 <p:commandButton id="parentMappingFileHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="parentMappingFileHelp"
-                           value="Mapping file used to extract parent metadata from imported XML document"/>
+                           value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
             </div>
         </p:row>
         <p:row>
