@@ -55,8 +55,8 @@
             </p:row>
             <p:row>
                 <div>
-                    <p:outputLabel for="parentMappingFile" value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
-                    <p:selectOneMenu id="parentMappingFile"
+                    <p:outputLabel for="uploadParentMappingFile" value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
+                    <p:selectOneMenu id="uploadParentMappingFile"
                                      styleClass="input-with-button"
                                      validator="ParentMappingValidator"
                                      converter="#{mappingFileConverter}"
@@ -72,9 +72,9 @@
                                 update="editForm:importConfigurationTabView"
                                 oncomplete="toggleSave()"/>
                     </p:selectOneMenu>
-                    <p:commandButton id="parentMappingFileHelp" type="button"
+                    <p:commandButton id="uploadParentMappingFileHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                    <p:tooltip for="parentMappingFileHelp"
+                    <p:tooltip for="uploadParentMappingFileHelp"
                                value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
                 </div>
             </p:row>

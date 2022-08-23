@@ -25,6 +25,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessMetadata;
 import org.kitodo.production.services.data.ImportService;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -47,6 +48,7 @@ public class TempProcess {
     private int guessedImages;
 
     private final ProcessMetadata processMetadata;
+    private String catalogId = "";
 
     /**
      * Constructor that creates an instance of TempProcess with the given Process
@@ -234,5 +236,28 @@ public class TempProcess {
      */
     public void setAtstsl(String atstsl) {
         this.atstsl = atstsl;
+    }
+
+    /**
+     * Get catalog ID of this temp process.
+     *
+     * @param identifierMetadata metadata key of identifier metadata
+     * @return catalog ID
+     */
+    public String getCatalogId(String identifierMetadata) {
+        if (catalogId.isEmpty() && Objects.nonNull(metadataNodes) && metadataNodes.getLength() > 0) {
+            for (int i = 0; i < metadataNodes.getLength(); i++) {
+                Node item = metadataNodes.item(i);
+                Node name = item.getAttributes().getNamedItem("name");
+                if (Objects.nonNull(name) && name.getTextContent().equals(identifierMetadata)) {
+                    catalogId = item.getTextContent();
+                    break;
+                }
+            }
+        }
+        if (catalogId.isEmpty()) {
+            catalogId = " - ";
+        }
+        return catalogId;
     }
 }

@@ -43,7 +43,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
-import org.omnifaces.util.Ajax;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.w3c.dom.Document;
@@ -68,6 +67,7 @@ public class FileUploadDialog extends MetadataImportDialog {
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile uploadedFile = event.getFile();
         ImportService importService = ServiceManager.getImportService();
+        createProcessForm.setIdentifierMetadata(importConfiguration.getIdentifierMetadata());
         try {
             Document internalDocument = importService.convertDataRecordToInternal(
                 createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
@@ -95,14 +95,7 @@ public class FileUploadDialog extends MetadataImportDialog {
             }
 
             if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
-                int countOfAddedMetadata = extendsMetadataTableOfMetadataTab(processes);
-                Ajax.update(FORM_CLIENTID);
-
-                String summary = Helper
-                        .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulSummary");
-                String detail = Helper.getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulDetail",
-                        String.valueOf(countOfAddedMetadata));
-                showGrowlMessage(summary, detail);
+                extendsMetadataTableOfMetadataTab(processes);
             } else {
                 this.createProcessForm.setProcesses(processes);
                 this.createProcessForm.fillCreateProcessForm(processes.getFirst());
