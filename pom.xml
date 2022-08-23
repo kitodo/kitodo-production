@@ -42,7 +42,7 @@
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
         <maxAllowedViolations>0</maxAllowedViolations>
         <tomcat.baseversion>9</tomcat.baseversion>
-        <tomcat.version>9.0.64</tomcat.version>
+        <tomcat.version>9.0.65</tomcat.version>
         <awaitility.version>4.0.1</awaitility.version>
         <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
