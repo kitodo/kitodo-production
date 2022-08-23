@@ -167,7 +167,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             Helper.setErrorMessage("No record selected!");
         } else {
             try {
-
+                createProcessForm.setChildProcesses(new LinkedList<>());
                 int projectId = this.createProcessForm.getProject().getId();
                 int templateId = this.createProcessForm.getTemplate().getId();
                 ImportConfiguration importConfiguration = this.hitModel.getImportConfiguration();
@@ -197,9 +197,6 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
 
     private void resetProcess(ImportConfiguration importConfiguration, LinkedList<TempProcess> processes)
             throws ProcessGenerationException, IOException {
-        createProcessForm.setChildProcesses(new LinkedList<>());
-        createProcessForm.setProcesses(new LinkedList<>());
-
         createProcessForm.setProcesses(processes);
         createProcessForm.fillCreateProcessForm(processes.getFirst());
 
@@ -306,14 +303,14 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     }
 
     /**
-     * Check and return whether the "parentElement" is configured in kitodo_opac.xml for the currently selected OPAC.
+     * Check and return whether the "parentIdSearchField" is configured in the current ImportConfiguration.
      *
-     * @return whether "parentElement" is configured for current OPAC
+     * @return whether "parentIdSearchField" is configured for current ImportConfiguration
      */
-    public boolean isParentElementConfigured() {
+    public boolean isParentIdSearchFieldConfigured() {
         try {
             return Objects.nonNull(this.hitModel.getImportConfiguration()) && ServiceManager.getImportService()
-                    .isParentElementConfigured(this.hitModel.getImportConfiguration());
+                    .isParentIdSearchFieldConfigured(this.hitModel.getImportConfiguration());
         } catch (ConfigException e) {
             return false;
         }

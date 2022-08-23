@@ -103,8 +103,8 @@
                                        value="#{msgs.importChildren}"/>
                         <p:selectBooleanCheckbox id="importChildren"
                                                  class="input switch"
-                                                 title="#{CreateProcessForm.catalogImportDialog.parentElementConfigured ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
-                                                 disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or not CreateProcessForm.catalogImportDialog.isParentElementConfigured()}"
+                                                 title="#{CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured() ? msgs['importChildren'] : msgs['newProcess.catalogueSearch.parentIDParameterMissing']}"
+                                                 disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or not CreateProcessForm.catalogImportDialog.isParentIdSearchFieldConfigured()}"
                                                  value="#{CreateProcessForm.catalogImportDialog.importChildren}"/>
                     </div>
                 </p:row>
