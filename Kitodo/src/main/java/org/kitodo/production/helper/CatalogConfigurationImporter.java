@@ -140,7 +140,8 @@ public class CatalogConfigurationImporter {
         } else {
             importConfiguration.setMetadataFormat(MetadataFormat.OTHER.name());
         }
-
+        importConfiguration.setMetadataRecordIdXPath(MetadataFormat.getDefaultRecordIdXpath(metadataFormat));
+        importConfiguration.setMetadataRecordTitleXPath(MetadataFormat.getDefaultRecordTitleXpath(metadataFormat));
     }
 
     private void setSearchFields(ImportConfiguration importConfiguration, String opacTitle) {

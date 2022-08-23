@@ -108,7 +108,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     public void search() {
         try {
             createProcessForm.setIdentifierMetadata(hitModel.getImportConfiguration().getIdentifierMetadata());
-            if (SearchInterfaceType.OAI.name().equals(hitModel.getImportConfiguration().getInterfaceType())) {
+            if (skipHitList(hitModel.getImportConfiguration(), hitModel.getSelectedField())) {
                 getRecordById(hitModel.getSearchTerm());
             } else {
                 List<?> hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
@@ -128,6 +128,17 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             PrimeFaces.current().ajax().update("opacErrorDialog");
             PrimeFaces.current().executeScript("PF('opacErrorDialog').show();");
         }
+    }
+
+    private boolean skipHitList(ImportConfiguration importConfiguration, String searchField) {
+        if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+            return true;
+        }
+        if (searchField.equals(importConfiguration.getIdSearchField().getLabel())) {
+            return true;
+        }
+        return (Objects.isNull(importConfiguration.getMetadataRecordIdXPath())
+                || Objects.isNull(importConfiguration.getMetadataRecordTitleXPath()));
     }
 
     /**

@@ -156,6 +156,7 @@
                                value="#{msgs['importConfig.catalogIdMetadata']}"/>
                 <p:inputText id="catalogIdMetadata"
                              styleClass="input-with-button"
+                             required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.configurationType ne 'PROCESS_TEMPLATE'}"
                              value="#{importConfigurationEditView.importConfiguration.identifierMetadata}">
                     <p:ajax event="change"
                             oncomplete="toggleSave();"/>
