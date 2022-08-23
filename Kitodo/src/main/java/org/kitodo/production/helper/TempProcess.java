@@ -257,7 +257,6 @@ public class TempProcess {
         }
         if (catalogId.isEmpty()) {
             catalogId = " - ";
-            Helper.setErrorMessage("Imported metadata does not contain mandatory metadata '" + identifierMetadata + "' for storing catalog ID!");
         }
         return catalogId;
     }

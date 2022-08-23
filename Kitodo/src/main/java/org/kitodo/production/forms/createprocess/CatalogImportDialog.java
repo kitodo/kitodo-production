@@ -182,17 +182,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
 
                 if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
-                    int countOfAddedMetadata = extendsMetadataTableOfMetadataTab(processes);
-                    Ajax.update(FORM_CLIENTID);
-
-                    String summary = Helper
-                            .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulSummary");
-                    String detail = Helper
-                            .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulDetail",
-                        String.valueOf(countOfAddedMetadata));
-                    showGrowlMessage(summary, detail);
+                    extendsMetadataTableOfMetadataTab(processes);
                 } else {
-                    // reset processes
                     resetProcess(importConfiguration, processes);
                 }
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException

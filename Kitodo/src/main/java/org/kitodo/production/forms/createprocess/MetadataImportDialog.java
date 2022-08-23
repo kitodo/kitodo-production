@@ -104,21 +104,29 @@ public abstract class MetadataImportDialog {
      *
      * @param processes
      *            The linked list of TempProcess instances
-     * @return returns count of added metadata
      */
-    int extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
+    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
+        int countOfAddedMetadata = 0;
         if (processes.size() > 0) {
             TempProcess process = processes.getFirst();
             if (process.getMetadataNodes().getLength() > 0) {
                 if (createProcessForm.getProcessDataTab().getDocType()
                         .equals(process.getWorkpiece().getLogicalStructure().getType())) {
-                    Collection<Metadata> metadata = ProcessHelper.convertMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
-                    return createProcessForm.getProcessMetadata().getProcessDetails().addMetadataIfNotExists(metadata);
+                    Collection<Metadata> metadata = ProcessHelper
+                            .convertMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
+                    countOfAddedMetadata = createProcessForm.getProcessMetadata().getProcessDetails()
+                            .addMetadataIfNotExists(metadata);
                 } else {
                     Helper.setWarnMessage(Helper.getTranslation("errorAdditionalImport"));
                 }
             }
         }
-        return 0;
+        Ajax.update(FORM_CLIENTID);
+        String summary = Helper
+                .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulSummary");
+        String detail = Helper
+                .getTranslation("newProcess.catalogueSearch.additionalImportSuccessfulDetail",
+                        String.valueOf(countOfAddedMetadata));
+        showGrowlMessage(summary, detail);
     }
 }
