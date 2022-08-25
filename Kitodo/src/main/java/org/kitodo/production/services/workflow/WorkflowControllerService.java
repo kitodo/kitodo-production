@@ -57,7 +57,6 @@ import org.kitodo.production.thread.TaskScriptThread;
 public class WorkflowControllerService {
 
     private List<Task> automaticTasks = new ArrayList<>();
-    private List<Task> tasksToFinish = new ArrayList<>();
     private boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
@@ -243,7 +242,6 @@ public class WorkflowControllerService {
         taskService.save(task);
 
         automaticTasks = new ArrayList<>();
-        tasksToFinish = new ArrayList<>();
 
         activateTasksForClosedTask(task);
     }
@@ -444,9 +442,6 @@ public class WorkflowControllerService {
             TaskScriptThread thread = new TaskScriptThread(automaticTask);
             TaskManager.addTask(thread);
         }
-        for (Task finish : tasksToFinish) {
-            close(finish);
-        }
 
         closeParent(process);
     }
@@ -600,7 +595,7 @@ public class WorkflowControllerService {
             task.setProcessingTime(new Date());
             task.setEditType(TaskEditType.AUTOMATIC);
 
-            verifyTask(task);
+            checkForAutomaticTask(task);
 
             taskService.save(task);
         } else {
@@ -652,14 +647,12 @@ public class WorkflowControllerService {
         return ServiceManager.getProcessService().getNodeListFromMetadataFile(process, xpath).getLength() > 0;
     }
 
-    private void verifyTask(Task task) {
+    private void checkForAutomaticTask(Task task) {
         // if it is an automatic task with script
         if (task.isTypeAutomatic()) {
             task.setProcessingStatus(TaskStatus.INWORK);
             automaticTasks.add(task);
-        } else if (task.isTypeAcceptClose()) {
-            tasksToFinish.add(task);
-        }
+        } 
     }
 
     /**
