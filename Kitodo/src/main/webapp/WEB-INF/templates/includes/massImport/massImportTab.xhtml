@@ -66,8 +66,15 @@
                                              update="editForm:recordsTableWrapper"/>
                         </f:facet>
                         <p:cellEditor>
-                            <f:facet name="output"><h:outputText value="#{record.csvCells.get(columnIndex).value}" title="#{record.csvCells.get(columnIndex).value}"/></f:facet>
-                            <f:facet name="input"><p:inputText value="#{record.csvCells.get(columnIndex).value}" style="width:100%"/></f:facet>
+                            <f:facet name="output">
+                                <h:outputText value="#{record.csvCells.get(columnIndex).value}"
+                                              title="#{record.csvCells.get(columnIndex).value}"/>
+                            </f:facet>
+                            <f:facet name="input">
+                                <p:inputText value="#{record.csvCells.get(columnIndex).value}">
+                                    <p:ajax update="editForm:recordsTable"/>
+                                </p:inputText>
+                            </f:facet>
                         </p:cellEditor>
                     </p:columns>
                     <p:column styleClass="remove-column">

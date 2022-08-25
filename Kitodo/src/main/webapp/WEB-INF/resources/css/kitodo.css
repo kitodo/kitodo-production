@@ -1537,6 +1537,10 @@ Mass import
     border: none;
 }
 
+#editForm\:recordsTable input.ui-inputtext {
+    width: 100%;
+}
+
 #editForm\:csvSeparator {
     display: block;
     width: 60px;
