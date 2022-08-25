@@ -11,14 +11,6 @@
 
 package org.kitodo.production.helper;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -42,6 +34,15 @@ import org.kitodo.production.services.ServiceManager;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
 
 public class ProcessHelper {
 
@@ -98,39 +99,19 @@ public class ProcessHelper {
     public static ProcessFieldedMetadata initializeProcessDetails(LogicalDivision structure,
             RulesetManagementInterface managementInterface, String stage, List<Locale.LanguageRange> priorityList) {
         StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
-            stage, priorityList);
+                stage, priorityList);
         return new ProcessFieldedMetadata(structure, divisionView);
     }
 
-    /**
-     * Generates TSL/ATS dependent fields of temp process.
-     *
-     * @param tempProcess
-     *            the temp process to generate TSL/ATS dependent field
-     * @param processDetails
-     *            the process details of temp process
-     * @param docType
-     *            current division
-     * @param rulesetManagementInterface
-     *            interface that provides access to the ruleset
-     * @param acquisitionStage
-     *            current acquisition level
-     * @param priorityList
-     *            weighted list of user-preferred display languages
-     * @throws ProcessGenerationException
-     *             thrown if process title cannot be created
-     * @throws InvalidMetadataValueException
-     *             thrown if process workpiece contains invalid metadata
-     * @throws NoSuchMetadataFieldException
-     *             thrown if process workpiece contains undefined metadata
-     * @throws IOException
-     *             thrown if ruleset file cannot be loaded
-     */
-    public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails, String docType,
-            RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
-            List<Locale.LanguageRange> priorityList) throws ProcessGenerationException {
-        generateAtstslFields(tempProcess, processDetails, null, docType, rulesetManagementInterface, acquisitionStage,
-            priorityList, null);
+    public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails,
+            TempProcess parentTempProcess, String docType, RulesetManagementInterface rulesetManagementInterface,
+            String acquisitionStage, List<Locale.LanguageRange> priorityList) throws ProcessGenerationException {
+        List<TempProcess> parentTempProcesses = null;
+        if (Objects.nonNull(parentTempProcess)) {
+            parentTempProcesses = Collections.singletonList(parentTempProcess);
+        }
+        generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType, rulesetManagementInterface,
+                acquisitionStage, priorityList, null);
     }
 
     /**
