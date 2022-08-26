@@ -34,10 +34,12 @@ public class CurrenTaskFormIT {
 
     private CurrentTaskForm currentTaskForm = new CurrentTaskForm();
     private static final TaskService taskService = ServiceManager.getTaskService();
-    
+
     /**
      * Setup Database and start elasticsearch.
-     * @throws Exception If databaseConnection failed.
+     * 
+     * @throws Exception
+     *             If databaseConnection failed.
      */
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -64,8 +66,8 @@ public class CurrenTaskFormIT {
         process.setProcessBaseUri(URI.create("5"));
 
         ServiceManager.getProcessService().save(process);
-        Task taskTypeAcceptClose =  createAndSaveTask(TaskStatus.OPEN, 1, process, null, true);
-        Task followingTask =  createAndSaveTask(TaskStatus.LOCKED, 2, process, null, true);
+        Task taskTypeAcceptClose = createAndSaveTask(TaskStatus.OPEN, 1, process, null, true);
+        Task followingTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, null, true);
         currentTaskForm.setTaskById(taskTypeAcceptClose.getId());
         currentTaskForm.takeOverTask();
         Task taskTypeAcceptCloseUpdated = taskService.getById(taskTypeAcceptClose.getId());
@@ -73,9 +75,8 @@ public class CurrenTaskFormIT {
 
         assertEquals("Task of type typeAcceptClose was closed!", TaskStatus.DONE,
             taskTypeAcceptCloseUpdated.getProcessingStatus());
-        assertEquals("Folowing task is open!", TaskStatus.OPEN,
-            followingTaskUpdated.getProcessingStatus());
-        
+        assertEquals("Folowing task is open!", TaskStatus.OPEN, followingTaskUpdated.getProcessingStatus());
+
     }
 
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,
@@ -90,5 +91,5 @@ public class CurrenTaskFormIT {
         taskService.save(task);
         return task;
     }
-    
+
 }
