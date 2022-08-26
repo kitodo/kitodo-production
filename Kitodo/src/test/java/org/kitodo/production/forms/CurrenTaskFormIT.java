@@ -68,13 +68,13 @@ public class CurrenTaskFormIT {
         Task followingTask =  createAndSaveTask(TaskStatus.LOCKED, 2, process, null, true);
         currentTaskForm.setTaskById(taskTypeAcceptClose.getId());
         currentTaskForm.takeOverTask();
-        Task taskTypeAcceptClose_updated = taskService.getById(taskTypeAcceptClose.getId());
-        Task followingTask_updated = taskService.getById(followingTask.getId());
+        Task taskTypeAcceptCloseUpdated = taskService.getById(taskTypeAcceptClose.getId());
+        Task followingTaskUpdated = taskService.getById(followingTask.getId());
 
         assertEquals("Task of type typeAcceptClose was closed!", TaskStatus.DONE,
-            taskTypeAcceptClose_updated.getProcessingStatus());
+            taskTypeAcceptCloseUpdated.getProcessingStatus());
         assertEquals("Folowing task is open!", TaskStatus.OPEN,
-            followingTask_updated.getProcessingStatus());
+            followingTaskUpdated.getProcessingStatus());
         
     }
     
