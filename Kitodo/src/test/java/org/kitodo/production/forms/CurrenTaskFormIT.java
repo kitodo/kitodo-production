@@ -45,7 +45,7 @@ public class CurrenTaskFormIT {
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
-    
+
     /**
      * Cleanup the database and stop elasticsearch.
      *
@@ -57,7 +57,7 @@ public class CurrenTaskFormIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
-    
+
     @Test
     public void testCloseTaskOnAccept() throws DataException, DAOException {
         Process process = new Process();
@@ -77,7 +77,7 @@ public class CurrenTaskFormIT {
             followingTaskUpdated.getProcessingStatus());
         
     }
-    
+
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,
             WorkflowCondition workflowCondition, Boolean typeAcceptClose) throws DataException {
         Task task = new Task();
