@@ -11,34 +11,6 @@
 
 package org.kitodo.production.services.data;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -106,6 +78,33 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ImportService {
 
@@ -998,15 +997,22 @@ public class ImportService {
     /**
      * Add workpiece and template properties to given Process 'process'.
      *
-     * @param process Process to which properties are added
-     * @param template Template of process
-     * @param processDetails metadata of process
-     * @param docType String containing document type
-     * @param imageDescription String containing image description
+     * @param tempProcess
+     *         TempProcess that will be processed
+     * @param template
+     *         Template of process
+     * @param processDetails
+     *         metadata of process
+     * @param docType
+     *         String containing document type
+     * @param imageDescription
+     *         String containing image description
      */
-    public static void addProperties(Process process, Template template, List<ProcessDetail> processDetails,
-                                     String docType, String imageDescription) {
+    public static void addProperties(TempProcess tempProcess, Template template, List<ProcessDetail> processDetails,
+            String docType, String imageDescription) {
+        Process process = tempProcess.getProcess();
         addMetadataProperties(processDetails, process);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TSL/ATS", tempProcess.getAtstsl());
         ProcessGenerator.addPropertyForWorkpiece(process, "DocType", docType);
         ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderImagedescription", imageDescription);
         ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderDocumentname", process.getTitle());
@@ -1088,8 +1094,12 @@ public class ImportService {
                 acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
 
-        ProcessHelper.generateAtstslFields(tempProcess, processDetails, parentTempProcess, docType, managementInterface,
-                acquisitionStage, priorityList);
+        List<TempProcess> parentTempProcesses = new ArrayList<>();
+        if (Objects.nonNull(parentTempProcess)) {
+            parentTempProcesses.add(parentTempProcess);
+        }
+        ProcessHelper.generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType,
+                managementInterface, acquisitionStage, priorityList);
 
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
@@ -1097,7 +1107,7 @@ public class ImportService {
 
         Process process = tempProcess.getProcess();
         process.setSortHelperImages(tempProcess.getGuessedImages());
-        addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
+        addProperties(tempProcess, tempProcess.getProcess().getTemplate(), processDetails, docType,
                 tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
@@ -1129,8 +1139,8 @@ public class ImportService {
             }
             final String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey);
-            tempProcess = processList.get(0);
             setParentProcess(parentId, projectId, template, importConfiguration.getIdentifierMetadata());
+            tempProcess = processList.get(0);
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
                     "create", priorityList, parentTempProcess);
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
