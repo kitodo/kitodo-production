@@ -72,7 +72,7 @@ public class CurrentTaskForm extends BaseForm {
     private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
     private Property property;
-    private final String tasksPath = MessageFormat.format(REDIRECT_PATH, "desktop");
+    private final String tasksPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
