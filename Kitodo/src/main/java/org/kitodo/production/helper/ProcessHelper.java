@@ -11,6 +11,14 @@
 
 package org.kitodo.production.helper;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,14 +42,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
 
 public class ProcessHelper {
 
@@ -103,6 +103,8 @@ public class ProcessHelper {
     }
 
     /**
+     * Generates TSL/ATS dependent fields of temp process.
+     *
      * @param tempProcess
      *         the temp process to generate TSL/ATS dependent fields
      * @param processDetails

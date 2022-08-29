@@ -11,6 +11,34 @@
 
 package org.kitodo.production.services.data;
 
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -78,33 +106,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class ImportService {
 
@@ -1129,11 +1130,9 @@ public class ImportService {
         Template template;
         try {
             template = ServiceManager.getTemplateService().getById(templateId);
-            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-            List<Locale.LanguageRange> priorityList = Locale.LanguageRange
-                    .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             String parentMetadataKey = "";
-            List<String> higherLevelIdentifiers = new ArrayList<>(getHigherLevelIdentifierMetadata(template.getRuleset()));
+            List<String> higherLevelIdentifiers = new ArrayList<>(
+                    getHigherLevelIdentifierMetadata(template.getRuleset()));
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
@@ -1141,8 +1140,10 @@ public class ImportService {
                     templateId, false, parentMetadataKey);
             setParentProcess(parentId, projectId, template, importConfiguration.getIdentifierMetadata());
             tempProcess = processList.get(0);
+            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
-                    "create", priorityList, parentTempProcess);
+                    "create", Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage),
+                    parentTempProcess);
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
@@ -1162,10 +1163,10 @@ public class ImportService {
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
             linkToParent(tempProcess);
             ServiceManager.getProcessService().save(tempProcess.getProcess());
-        } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException |
-                ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException |
-                URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException |
-                DataException | CommandException | TransformerException | CatalogException e) {
+        } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
+                | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
+                | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
+                | DataException | CommandException | TransformerException | CatalogException e) {
             logger.error(e);
             throw new ImportException(e.getLocalizedMessage());
         }
