@@ -10,6 +10,8 @@
 --
 -- Migration: Add 'metadata_record_id_xpath' and 'metadata_record_title_xpath' columns to importconfiguration
 
+SET SQL_SAFE_UPDATES = 0;
+
 ALTER TABLE importconfiguration ADD metadata_record_id_xpath varchar(255) NOT NULL;
 ALTER TABLE importconfiguration ADD metadata_record_title_xpath varchar(255) NOT NULL;
 
@@ -20,3 +22,5 @@ UPDATE importconfiguration SET metadata_record_id_xpath = './/*[local-name()=''d
 UPDATE importconfiguration SET metadata_record_title_xpath = './/*[local-name()=''titleInfo'']/*[local-name()=''title'']/text()' WHERE metadata_format = 'MODS';
 UPDATE importconfiguration SET metadata_record_title_xpath = './/*[local-name()=''controlfield''][@tag=''001'']/text()' WHERE metadata_format = 'MARC';
 UPDATE importconfiguration SET metadata_record_title_xpath = './/*[local-name()=''datafield''][@tag=''021A'']/*[local-name()=''subfield''][@code=''a'']/text()' WHERE metadata_format = 'PICA';
+
+SET SQL_SAFE_UPDATES = 1;
