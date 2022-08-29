@@ -61,7 +61,7 @@ public class CurrenTaskFormIT {
     }
 
     /**
-     * Test the automatic closing of tasks of type typeAcceptClose
+     * Test the automatic closing of tasks of type typeAcceptClose.
      * 
      */
     @Test
