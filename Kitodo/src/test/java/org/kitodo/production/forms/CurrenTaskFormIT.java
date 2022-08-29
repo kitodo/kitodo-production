@@ -60,6 +60,12 @@ public class CurrenTaskFormIT {
         MockDatabase.cleanDatabase();
     }
 
+    /**
+     * Test the automatic closing of tasks of type typeAcceptClose
+     * 
+     * @throws DataException,
+     *             DAOException
+     */
     @Test
     public void testCloseTaskOnAccept() throws DataException, DAOException {
         Process process = new Process();
@@ -75,7 +81,7 @@ public class CurrenTaskFormIT {
 
         assertEquals("Task of type typeAcceptClose was closed!", TaskStatus.DONE,
             taskTypeAcceptCloseUpdated.getProcessingStatus());
-        assertEquals("Folowing task is open!", TaskStatus.OPEN, followingTaskUpdated.getProcessingStatus());
+        assertEquals("Following task is open!", TaskStatus.OPEN, followingTaskUpdated.getProcessingStatus());
 
     }
 

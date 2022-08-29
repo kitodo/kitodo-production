@@ -173,9 +173,9 @@ public class WorkflowControllerService {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(task.getProcess());
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File(Paths.get(
-                ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
-                task.getProcess().getRuleset().getFile()).toString()));
+        ruleset.load(new File(
+                Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS), task.getProcess().getRuleset().getFile())
+                        .toString()));
         ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset);
         if (State.ERROR.equals(validationResult.getState())) {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
@@ -248,7 +248,9 @@ public class WorkflowControllerService {
 
     /**
      * Checks if all children of a process are closed.
-     * @param process the process to check
+     * 
+     * @param process
+     *            the process to check
      * @return true if all children are closed
      */
     public static boolean allChildrenClosed(Process process) {
@@ -339,7 +341,8 @@ public class WorkflowControllerService {
     /**
      * Unified method for report problem .
      *
-     * @param comment as Comment object
+     * @param comment
+     *            as Comment object
      */
     public void reportProblem(Comment comment) throws DataException {
         Task currentTask = comment.getCurrentTask();
@@ -368,7 +371,7 @@ public class WorkflowControllerService {
      * Unified method for solve problem.
      *
      * @param comment
-     *              as Comment object
+     *            as Comment object
      */
     public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
         closeTaskByUser(comment.getCorrectionTask());
@@ -379,7 +382,7 @@ public class WorkflowControllerService {
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
         } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
+            Helper.setErrorMessage("errorSaving", new Object[] {"comment" }, logger, e);
         }
     }
 
@@ -595,7 +598,7 @@ public class WorkflowControllerService {
             task.setProcessingTime(new Date());
             task.setEditType(TaskEditType.AUTOMATIC);
 
-            checkForAutomaticTask(task);
+            processAutomaticTask(task);
 
             taskService.save(task);
         } else {
@@ -634,8 +637,8 @@ public class WorkflowControllerService {
         LegacyMetsModsDigitalDocumentHelper legacyMetsModsDigitalDocumentHelper = ServiceManager.getProcessService()
                 .readMetadataFile(ServiceManager.getFileService().getMetadataFilePath(process), legacyPrefsHelper)
                 .getDigitalDocument();
-        VariableReplacer replacer = new VariableReplacer(legacyMetsModsDigitalDocumentHelper.getWorkpiece(),
-                process, null);
+        VariableReplacer replacer = new VariableReplacer(legacyMetsModsDigitalDocumentHelper.getWorkpiece(), process,
+                null);
 
         script = replacer.replace(script);
 
@@ -647,12 +650,12 @@ public class WorkflowControllerService {
         return ServiceManager.getProcessService().getNodeListFromMetadataFile(process, xpath).getLength() > 0;
     }
 
-    private void checkForAutomaticTask(Task task) {
+    private void processAutomaticTask(Task task) {
         // if it is an automatic task with script
         if (task.isTypeAutomatic()) {
             task.setProcessingStatus(TaskStatus.INWORK);
             automaticTasks.add(task);
-        } 
+        }
     }
 
     /**
@@ -695,7 +698,7 @@ public class WorkflowControllerService {
                 setTasksStatusUp(processForStatus);
             } catch (DataException | IOException | DAOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
-                        new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("up"), processForStatus.getId() }, logger, e);
             }
         }
     }
@@ -711,7 +714,7 @@ public class WorkflowControllerService {
                 updateProcessSortHelperStatus(processForStatus);
             } catch (DataException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",
-                        new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
+                    new Object[] {Helper.getTranslation("down"), processForStatus.getId() }, logger, e);
             }
         }
     }
