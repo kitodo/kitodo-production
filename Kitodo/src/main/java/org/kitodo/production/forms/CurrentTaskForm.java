@@ -164,11 +164,10 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Take over batch of tasks - all tasks assigned to the same batch with the
-     * same title.
+     * Take over batch of tasks - all tasks assigned to the same batch with the same
+     * title.
      *
-     * @return page for edit one task, page for edit many or stay on the same
-     *         page
+     * @return page for edit one task, page for edit many or stay on the same page
      */
     public String takeOverBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
@@ -240,8 +239,7 @@ public class CurrentTaskForm extends BaseForm {
      * Edit batch of tasks - all tasks assigned to the same batch with the same
      * title.
      *
-     * @return page for edit one task, page for edit many or stay on the same
-     *         page
+     * @return page for edit one task, page for edit many or stay on the same page
      */
     public String editBatchTasks() {
         String taskTitle = this.currentTask.getTitle();
@@ -267,8 +265,8 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Release task - set up task status to open and make available for other
-     * users to take over.
+     * Release task - set up task status to open and make available for other users
+     * to take over.
      *
      * @return page
      */
@@ -372,11 +370,11 @@ public class CurrentTaskForm extends BaseForm {
     public void executeScript() throws DAOException, DataException {
         Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
         if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
-            Helper.setMessageWithoutDescription(MessageFormat.format(Helper.getTranslation("scriptExecutionSuccessful"),
-                this.currentTask.getScriptName()));
+            Helper.setMessageWithoutDescription(MessageFormat.format(
+                    Helper.getTranslation("scriptExecutionSuccessful"), this.currentTask.getScriptName()));
         } else {
-            Helper.setErrorMessagesWithoutDescription(
-                MessageFormat.format(Helper.getTranslation("scriptExecutionError"), this.currentTask.getScriptName()));
+            Helper.setErrorMessagesWithoutDescription(MessageFormat.format(
+                    Helper.getTranslation("scriptExecutionError"), this.currentTask.getScriptName()));
         }
     }
 
@@ -422,8 +420,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Set selected tasks: Set tasks in old list to false and set new list to
-     * true.
+     * Set selected tasks: Set tasks in old list to false and set new list to true.
      *
      * @param selectedTasks
      *            provided by data table
@@ -453,7 +450,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     public void setTaskStatusRestriction(List<TaskStatus> taskStatus) {
-        ((LazyTaskDTOModel) this.lazyDTOModel).setTaskStatusRestriction(taskStatus);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setTaskStatusRestriction(taskStatus);
     }
 
     /**
@@ -463,7 +460,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
-        ((LazyTaskDTOModel) this.lazyDTOModel).setOnlyOwnTasks(onlyOwnTasks);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setOnlyOwnTasks(onlyOwnTasks);
     }
 
     /**
@@ -478,8 +475,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Set task filters.
      *
-     * @param filters
-     *            task filters
+     * @param filters task filters
      */
     public void setTaskFilters(List<String> filters) {
         this.taskFilters = filters;
@@ -497,8 +493,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Set selected task filters.
      *
-     * @param selectedFilters
-     *            selected task filters
+     * @param selectedFilters selected task filters
      */
     public void setSelectedTaskFilters(List<String> selectedFilters) {
         this.selectedTaskFilters = selectedFilters;
@@ -525,8 +520,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Set task status.
      *
-     * @param status
-     *            task status
+     * @param status task status
      */
     public void setTaskStatus(List<TaskStatus> status) {
         this.taskStatus = status;
@@ -544,8 +538,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Set selected task status.
      *
-     * @param selectedStatus
-     *            selected task status
+     * @param selectedStatus selected task status
      */
     public void setSelectedTaskStatus(List<TaskStatus> selectedStatus) {
         this.selectedTaskStatus = selectedStatus;
@@ -559,8 +552,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Checks if the task type is "generateImages" and thus the generate images
-     * links are shown.
+     * Checks if the task type is "generateImages" and thus the generate images links are shown.
      *
      * @return whether action links should be displayed
      */
@@ -570,12 +562,11 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Checks if folders for generation are configured in the project.
-     * 
      * @return whether the folders are configured.
      */
     public boolean isImageGenerationPossible() {
-        return TaskService.generatableFoldersFromProjects(Stream.of(currentTask.getProcess().getProject())).findAny()
-                .isPresent();
+        return TaskService.generatableFoldersFromProjects(Stream.of(currentTask.getProcess().getProject()))
+                .findAny().isPresent();
     }
 
     /**
@@ -585,7 +576,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        ((LazyTaskDTOModel) this.lazyDTOModel).setShowAutomaticTasks(showAutomaticTasks);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setShowAutomaticTasks(showAutomaticTasks);
     }
 
     /**
@@ -594,7 +585,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return boolean
      */
     public boolean isHideCorrectionTasks() {
-        return ((LazyTaskDTOModel) this.lazyDTOModel).isHideCorrectionTasks();
+        return ((LazyTaskDTOModel)this.lazyDTOModel).isHideCorrectionTasks();
     }
 
     /**
@@ -604,7 +595,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        ((LazyTaskDTOModel) this.lazyDTOModel).setHideCorrectionTasks(hideCorrectionTasks);
+        ((LazyTaskDTOModel)this.lazyDTOModel).setHideCorrectionTasks(hideCorrectionTasks);
     }
 
     /**
@@ -717,8 +708,8 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve and return the list of tasks that are assigned to the user that
-     * are currently in progress.
+     * Retrieve and return the list of tasks that are assigned to the user that are
+     * currently in progress.
      *
      * @return list of tasks that are currently assigned to the user that are
      *         currently in progress.
@@ -742,7 +733,6 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Return array of task custom column names.
-     * 
      * @return array of task custom column names
      */
     public String[] getTaskCustomColumnNames() {
@@ -750,27 +740,20 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve and return process property value of property with given name
-     * 'propertyName' from process of given TaskDTO 'task'.
-     * 
-     * @param task
-     *            the TaskDTO object from which the property value is retrieved
-     * @param propertyName
-     *            name of the property for the property value is retrieved
-     * @return property value if process has property with name 'propertyName',
-     *         empty String otherwise
+     * Retrieve and return process property value of property with given name 'propertyName' from process of given
+     * TaskDTO 'task'.
+     * @param task the TaskDTO object from which the property value is retrieved
+     * @param propertyName name of the property for the property value is retrieved
+     * @return property value if process has property with name 'propertyName', empty String otherwise
      */
     public static String getTaskProcessPropertyValue(TaskDTO task, String propertyName) {
         return ProcessService.getPropertyValue(task.getProcess(), propertyName);
     }
 
     /**
-     * Get the id of the template task corresponding to the given task. The
-     * corresponding template task was the blueprint when creating the given
-     * task.
-     * 
-     * @param task
-     *            task to find the corresponding template task for
+     * Get the id of the template task corresponding to the given task.
+     * The corresponding template task was the blueprint when creating the given task.
+     * @param task task to find the corresponding template task for
      * @return id of the template task or -1 if no matching task could be found
      */
     public static int getCorrespondingTemplateTaskId(Task task) {
@@ -780,8 +763,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Calculate and return age of given tasks process as a String.
      *
-     * @param task
-     *            TaskDTO object whose process is used
+     * @param task TaskDTO object whose process is used
      * @return process age of given tasks process
      */
     public String getProcessDuration(TaskDTO task) {
@@ -812,34 +794,30 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Check and return whether the process of the given task has any correction
-     * comments or not.
+     * Check and return whether the process of the given task has any correction comments or not.
      *
      * @param task
-     *            TaskDTO to check
-     * @return 0, if process of given task has no correction comment 1, if
-     *         process of given task has correction comments that are all
-     *         corrected 2, if process of given task has at least one open
-     *         correction comment
+     *          TaskDTO to check
+     * @return 0, if process of given task has no correction comment
+     *         1, if process of given task has correction comments that are all corrected
+     *         2, if process of given task has at least one open correction comment
      */
     public int hasCorrectionComment(TaskDTO task) {
         try {
             return ProcessService.hasCorrectionComment(task.getProcess().getId()).getValue();
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.PROCESS.getTranslationSingular(), task.getProcess().getId() }, logger, e);
+            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
+                    task.getProcess().getId() }, logger, e);
             return 0;
         }
     }
 
     /**
-     * Retrieve correction comments of process of given task and return them as
-     * a tooltip String.
+     * Retrieve correction comments of process of given task and return them as a tooltip String.
      *
      * @param taskDTO
-     *            task for which comment tooltip is created and returned
-     * @return String containing correction comment messages for process of
-     *         given task
+     *          task for which comment tooltip is created and returned
+     * @return String containing correction comment messages for process of given task
      */
     public String getCorrectionMessages(TaskDTO taskDTO) {
         try {
@@ -851,9 +829,9 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Download to home for single process. First check if this volume is
-     * currently being edited by another user and placed in his home directory,
-     * otherwise download.
+     * Download to home for single process. First check if this volume is currently
+     * being edited by another user and placed in his home directory, otherwise
+     * download.
      */
     public void downloadToHome(int processId) {
         try {
