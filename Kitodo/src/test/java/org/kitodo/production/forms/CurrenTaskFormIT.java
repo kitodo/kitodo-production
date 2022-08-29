@@ -63,8 +63,6 @@ public class CurrenTaskFormIT {
     /**
      * Test the automatic closing of tasks of type typeAcceptClose
      * 
-     * @throws DataException,
-     *             DAOException
      */
     @Test
     public void testCloseTaskOnAccept() throws DataException, DAOException {
