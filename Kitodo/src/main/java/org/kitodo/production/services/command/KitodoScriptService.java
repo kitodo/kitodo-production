@@ -13,6 +13,7 @@ package org.kitodo.production.services.command;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.text.MessageFormat;
@@ -22,11 +23,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -54,7 +61,14 @@ public class KitodoScriptService {
     private static volatile KitodoScriptService instance = null;
     private Map<String, String> parameters;
     private static final Logger logger = LogManager.getLogger(KitodoScriptService.class);
+
     private final FileService fileService = ServiceManager.getFileService();
+    private final MetsService metsService = ServiceManager.getMetsService();
+    private final ProcessService processService = ServiceManager.getProcessService();
+
+    private static final String ATTRIBUTE = "attribute";
+    private static final String KEY = "key";
+    private static final String OVERWRITE = "overwrite";
     private static final String RULESET = "ruleset";
     private static final String SCRIPT = "script";
     private static final String SOURCE_FOLDER = "sourcefolder";
@@ -227,6 +241,9 @@ public class KitodoScriptService {
                 break;
             case "searchForMedia":
                 searchForMedia(processes);
+                break;
+            case "addLabel":
+                addLabel(processes);
                 break;
             default:
                 Helper.setErrorMessage("Unknown action",
@@ -767,6 +784,90 @@ public class KitodoScriptService {
             ServiceManager.getTaskService().save(task);
         } catch (DataException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
+        }
+    }
+
+    private void addLabel(List<Process> processes) {
+        String key = parameters.get(KEY);
+        if (Objects.isNull(key)) {
+            Helper.setErrorMessage("addLabelErrorMissingKey", logger);
+            return;
+        }
+
+        Function<Division<?>, Boolean> test;
+        BiConsumer<Division<?>, String> setter;
+        String attribute = parameters.getOrDefault(ATTRIBUTE, "label");
+        switch (attribute.toLowerCase()) {
+            case "label":
+                test = divsion -> Strings.isEmpty(divsion.getLabel());
+                setter = Division::setLabel;
+                break;
+            case "orderlabel":
+                test = divsion -> Strings.isEmpty(divsion.getOrderlabel());
+                setter = Division::setOrderlabel;
+                break;
+            default:
+                Helper.setErrorMessage("addLabelErrorUnsupportedAttribute", attribute, logger);
+                return;
+        }
+
+        boolean overwrite = Boolean.parseBoolean(parameters.getOrDefault(OVERWRITE, "false").toLowerCase());
+        addLabel(processes, key, overwrite ? null : test, setter);
+    }
+
+    /**
+     * Adds the label or oderlabel in the logical structure of all processes.
+     * 
+     * @param processes
+     *            processes to edit
+     * @param key
+     *            metadata key as value input
+     * @param test
+     *            the label or orderlabel will only be set if the test is
+     *            {@code null} (“overwrite” mode) or the test returns true
+     * @param setter
+     *            function to set the label or orderlabel
+     */
+    private void addLabel(List<Process> processes, String key, Function<Division<?>, Boolean> test,
+            BiConsumer<Division<?>, String> setter) {
+        for (Process process : processes) {
+            try {
+                URI metadataUri = processService.getMetadataFileUri(process);
+                Workpiece workpiece = metsService.loadWorkpiece(metadataUri);
+                addLabel(workpiece.getLogicalStructure(), key, test, setter);
+                fileService.createBackupFile(process);
+                try (OutputStream out = fileService.write(metadataUri)) {
+                    metsService.save(workpiece, out);
+                }
+            } catch (IOException e) {
+                Helper.setErrorMessage("addLabelErrorCannotEdit", process.getTitle(), e, logger);
+            }
+        }
+    }
+
+    /**
+     * Recursively sets the label or orderlabel attribute.
+     * 
+     * @param div
+     *            division to work on
+     * @param key
+     *            metadata key
+     * @param test
+     *            the label or orderlabel will only be set if the test is
+     *            {@code null} or the test returns true
+     * @param setter
+     *            setter to set the label or orderlabel
+     */
+    private void addLabel(Division<?> div, String key, Function<Division<?>, Boolean> test,
+            BiConsumer<Division<?>, String> setter) {
+        Optional<String> optionalValue = div.getMetadata().parallelStream().filter(MetadataEntry.class::isInstance)
+                .filter(metadata -> key.equals(metadata.getKey())).map(MetadataEntry.class::cast)
+                .map(MetadataEntry::getValue).findAny();
+        if (optionalValue.isPresent() && (Objects.isNull(test) || test.apply(div))) {
+            setter.accept(div, optionalValue.get());
+        }
+        for (Division<?> child : div.getChildren()) {
+            addLabel(child, key, test, setter);
         }
     }
 }
