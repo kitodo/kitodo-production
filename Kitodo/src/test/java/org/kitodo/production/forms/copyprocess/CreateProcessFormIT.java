@@ -21,7 +21,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;

@@ -32,7 +32,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
