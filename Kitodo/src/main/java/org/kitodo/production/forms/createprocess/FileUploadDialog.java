@@ -43,6 +43,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
+import org.omnifaces.util.Ajax;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.w3c.dom.Document;
@@ -98,8 +99,10 @@ public class FileUploadDialog extends MetadataImportDialog {
                 extendsMetadataTableOfMetadataTab(processes);
             } else {
                 this.createProcessForm.setProcesses(processes);
-                this.createProcessForm.fillCreateProcessForm(processes.getFirst());
-                showRecord();
+                TempProcess currentTempProcess = processes.getFirst();
+                attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
+                createProcessForm.fillCreateProcessForm(currentTempProcess);
+                Ajax.update(FORM_CLIENTID);
             }
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
                 | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException

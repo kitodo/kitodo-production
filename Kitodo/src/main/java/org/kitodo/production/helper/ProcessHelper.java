@@ -119,12 +119,6 @@ public class ProcessHelper {
      *            weighted list of user-preferred display languages
      * @throws ProcessGenerationException
      *             thrown if process title cannot be created
-     * @throws InvalidMetadataValueException
-     *             thrown if process workpiece contains invalid metadata
-     * @throws NoSuchMetadataFieldException
-     *             thrown if process workpiece contains undefined metadata
-     * @throws IOException
-     *             thrown if ruleset file cannot be loaded
      */
     public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails, String docType,
             RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
@@ -323,9 +317,15 @@ public class ProcessHelper {
         }
 
         for (TempProcess tempProcess : parents) {
-            ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess,
-                rulesetManagementInterface, acquisitionStage, priorityList);
-            String title = getTitleFromMetadata(processFieldedMetadata.getChildMetadata());
+            String title;
+            if (Objects.isNull(tempProcess.getMetadataNodes())) {
+                title = getTitleFromLogicalStructure(tempProcess.getProcess());
+            } else {
+                ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess,
+                        rulesetManagementInterface, acquisitionStage, priorityList);
+                title = getTitleFromMetadata(processFieldedMetadata.getChildMetadata());
+            }
+
             if (StringUtils.isNotBlank(title)) {
                 return title;
             }
@@ -337,7 +337,7 @@ public class ProcessHelper {
             RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
             List<Locale.LanguageRange> priorityList) {
         ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
-            rulesetManagementInterface, acquisitionStage, priorityList);
+                rulesetManagementInterface, acquisitionStage, priorityList);
         metadata.setMetadata(convertMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
         return metadata;
     }

@@ -139,9 +139,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         return this.hitModel.getHits();
     }
 
-    @Override
-    void showRecord() {
-        super.showRecord();
+    void showExemplarRecord() {
+        Ajax.update(FORM_CLIENTID);
         // if more than one exemplar record was found, display a selection dialog to the user
         LinkedList<ExemplarRecord> exemplarRecords = ServiceManager.getImportService().getExemplarRecords();
         if (exemplarRecords.size() == 1) {
@@ -185,7 +184,11 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
                     extendsMetadataTableOfMetadataTab(processes);
                 } else {
-                    resetProcess(importConfiguration, processes);
+                    createProcessForm.setProcesses(processes);
+                    TempProcess currentTempProcess = processes.getFirst();
+                    attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
+                    createProcessForm.fillCreateProcessForm(currentTempProcess);
+                    showMessageAndRecord(importConfiguration, processes);
                 }
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
@@ -196,11 +199,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         }
     }
 
-    private void resetProcess(ImportConfiguration importConfiguration, LinkedList<TempProcess> processes)
-            throws ProcessGenerationException, IOException {
-        createProcessForm.setProcesses(processes);
-        createProcessForm.fillCreateProcessForm(processes.getFirst());
-
+    private void showMessageAndRecord(ImportConfiguration importConfiguration, LinkedList<TempProcess> processes) {
         String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
         String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
                 String.valueOf(processes.size()), importConfiguration.getTitle());
@@ -212,8 +211,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     String.valueOf(this.createProcessForm.getChildProcesses().size()));
             showGrowlMessage(summary, detail);
         }
-
-        showRecord();
+        showExemplarRecord();
     }
 
     private void importChildren(int projectId, int templateId, ImportConfiguration importConfiguration, List<TempProcess> parentProcesses)

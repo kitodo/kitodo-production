@@ -11,21 +11,28 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -41,15 +48,16 @@ public abstract class MetadataImportDialog {
     /**
      * Standard constructor.
      *
-     * @param createProcessForm CreateProcessForm instance to which this ImportDialog is assigned.
+     * @param createProcessForm
+     *         CreateProcessForm instance to which this ImportDialog is assigned.
      */
     MetadataImportDialog(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
     }
 
-    void showRecord() {
-        Ajax.update(FORM_CLIENTID);
-
+    void attachToExistingParentAndGenerateAtstslIfNotExist(TempProcess tempProcess)
+            throws ProcessGenerationException, IOException, InvalidMetadataValueException,
+            NoSuchMetadataFieldException {
         // if fewer processes are imported than configured in the frontend, it can mean that
         // - the OPAC does not have as many processes in the hierarchy or
         // - one process of the hierarchy was already in the DB and import ended at this point
@@ -69,6 +77,11 @@ public abstract class MetadataImportDialog {
             if (Objects.nonNull(parentTempProcess)) {
                 this.createProcessForm.getProcesses().add(parentTempProcess);
             }
+        }
+
+        if (StringUtils.isBlank(tempProcess.getAtstsl()) && Objects.nonNull(parentTempProcess)) {
+            ProcessHelper.generateAtstslFields(tempProcess, Collections.singletonList(parentTempProcess),
+                    ImportService.ACQUISITION_STAGE_CREATE);
         }
     }
 
