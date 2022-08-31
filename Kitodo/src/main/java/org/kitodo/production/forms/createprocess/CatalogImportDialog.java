@@ -171,15 +171,16 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 int projectId = this.createProcessForm.getProject().getId();
                 int templateId = this.createProcessForm.getTemplate().getId();
                 ImportConfiguration importConfiguration = this.hitModel.getImportConfiguration();
-                // import children
-                if (this.importChildren) {
-                    importChildren(projectId, templateId, importConfiguration);
-                }
-                // import ancestors
+
+                // import current and ancestors
                 LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
                         currentRecordId, importConfiguration, projectId, templateId, hitModel.getImportDepth(),
                         createProcessForm.getRulesetManagement().getFunctionalKeys(
                                 FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
+                // import children
+                if (this.importChildren) {
+                    importChildren(projectId, templateId, importConfiguration, processes);
+                }
 
                 if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
                     extendsMetadataTableOfMetadataTab(processes);
@@ -215,13 +216,13 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         showRecord();
     }
 
-    private void importChildren(int projectId, int templateId, ImportConfiguration importConfiguration)
+    private void importChildren(int projectId, int templateId, ImportConfiguration importConfiguration, List<TempProcess> parentProcesses)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
             IOException, ProcessGenerationException, TransformerException, InvalidMetadataValueException,
             NoSuchMetadataFieldException {
         try {
             this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
-                    importConfiguration, this.currentRecordId, projectId, templateId, numberOfChildren));
+                    importConfiguration, this.currentRecordId, projectId, templateId, numberOfChildren, parentProcesses));
         } catch (NoRecordFoundException e) {
             this.createProcessForm.setChildProcesses(new LinkedList<>());
             showGrowlMessage("Import error", e.getLocalizedMessage());
