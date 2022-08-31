@@ -1089,11 +1089,13 @@ public class ImportService {
             IOException {
 
         List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
-            acquisitionStage, priorityList);
+                acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
 
-        ProcessHelper.generateAtstslFields(tempProcess, processDetails, docType, managementInterface,
-            acquisitionStage, priorityList);
+        if (StringUtils.isBlank(tempProcess.getAtstsl())) {
+            ProcessHelper.generateAtstslFields(tempProcess, processDetails, docType, managementInterface,
+                    acquisitionStage, priorityList);
+        }
 
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
@@ -1102,7 +1104,7 @@ public class ImportService {
         Process process = tempProcess.getProcess();
         process.setSortHelperImages(tempProcess.getGuessedImages());
         addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
-            tempProcess.getProcess().getTitle());
+                tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
     }
