@@ -358,7 +358,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public String createNewProcessAndContinue() {
         String destination = createNewProcess();
-        if(!destination.equals(processListPath)) {
+        if (!destination.equals(processListPath)) {
             return destination;
         }
         Process parentProcess = titleRecordLinkTab.getTitleRecordProcess();
@@ -378,7 +378,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 return false;
             }
             String forbiddenParentType = parentTypeIfForbidden();
-            if(Objects.nonNull(forbiddenParentType)) {
+            if (Objects.nonNull(forbiddenParentType)) {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
                     processDataTab.getDocType(), forbiddenParentType));
                 return false;
@@ -388,16 +388,19 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     }
 
     private String parentTypeIfForbidden() throws IOException {
-        URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(titleRecordLinkTab.getTitleRecordProcess());
+        URI metadataFileUri = ServiceManager.getProcessService()
+                .getMetadataFileUri(titleRecordLinkTab.getTitleRecordProcess());
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
-        List<String> indices = Arrays.asList(titleRecordLinkTab.getSelectedInsertionPosition().split(Pattern.quote(MetadataEditor.INSERTION_POSITION_SEPARATOR)));
+        List<String> indices = Arrays.asList(titleRecordLinkTab.getSelectedInsertionPosition()
+                .split(Pattern.quote(MetadataEditor.INSERTION_POSITION_SEPARATOR)));
         LogicalDivision logicalDivision = workpiece.getLogicalStructure();
         for (int index = 0; index < indices.size(); index++) {
             if (index < indices.size() - 1) {
                 logicalDivision = logicalDivision.getChildren().get(Integer.parseInt(indices.get(index)));
             } else {
                 String parentType = logicalDivision.getType();
-                StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType, acquisitionStage, priorityList);
+                StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType,
+                    acquisitionStage, priorityList);
                 if (divisionView.getAllowedSubstructuralElements().containsKey(processDataTab.getDocType())) {
                     return null;
                 } else {
