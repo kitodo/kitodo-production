@@ -399,7 +399,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
-                processDataTab.prepare();
                 if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
                     setDefaultImportConfiguration(project.getDefaultImportConfiguration());
                 }
@@ -420,6 +419,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                         updateRulesetAndDocType(getMainProcess().getRuleset());
                     }
                 }
+                processDataTab.prepare();
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
