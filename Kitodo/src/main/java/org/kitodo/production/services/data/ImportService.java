@@ -494,7 +494,7 @@ public class ImportService {
             if (fromIndex < processes.size()) {
                 parents = processes.subList(fromIndex, processes.size());
             }
-            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE);
+            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE, false);
         }
 
         return processes;
@@ -627,7 +627,7 @@ public class ImportService {
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
                 TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, childDocument,
                         templateId, projectId);
-                ProcessHelper.generateAtstslFields(tempProcess, parentProcesses, ACQUISITION_STAGE_CREATE);
+                ProcessHelper.generateAtstslFields(tempProcess, parentProcesses, ACQUISITION_STAGE_CREATE, false);
                 childProcesses.add(tempProcess);
             }
 
