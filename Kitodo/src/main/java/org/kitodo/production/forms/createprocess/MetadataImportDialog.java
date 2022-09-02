@@ -81,7 +81,7 @@ public abstract class MetadataImportDialog {
 
         if (StringUtils.isBlank(tempProcess.getAtstsl()) && Objects.nonNull(parentTempProcess)) {
             ProcessHelper.generateAtstslFields(tempProcess, Collections.singletonList(parentTempProcess),
-                    ImportService.ACQUISITION_STAGE_CREATE);
+                    ImportService.ACQUISITION_STAGE_CREATE, true);
         }
     }
 
