@@ -28,10 +28,10 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.text.StrTokenizer;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.Workpiece;
@@ -799,11 +799,11 @@ public class KitodoScriptService {
         String attribute = parameters.getOrDefault(ATTRIBUTE, "label");
         switch (attribute.toLowerCase()) {
             case "label":
-                test = divsion -> Strings.isEmpty(divsion.getLabel());
+                test = divsion -> StringUtils.isEmpty(divsion.getLabel());
                 setter = Division::setLabel;
                 break;
             case "orderlabel":
-                test = divsion -> Strings.isEmpty(divsion.getOrderlabel());
+                test = divsion -> StringUtils.isEmpty(divsion.getOrderlabel());
                 setter = Division::setOrderlabel;
                 break;
             default:
