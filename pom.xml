@@ -274,7 +274,6 @@ from system library in Java 11+ -->
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
                 <version>${saxon.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>

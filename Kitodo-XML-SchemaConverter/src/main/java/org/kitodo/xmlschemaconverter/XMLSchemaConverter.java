@@ -44,6 +44,8 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
+import net.sf.saxon.TransformerFactoryImpl;
+
 import org.apache.commons.io.FileUtils;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
@@ -68,7 +70,6 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         supportedSourceMetadataFormats.put(MetadataFormat.MARC, Arrays.asList(
                 MetadataFormatConversion.MARC_2_MODS, MetadataFormatConversion.MODS_2_KITODO));
         supportedSourceMetadataFormats.put(MetadataFormat.PICA, Collections.singletonList(MetadataFormatConversion.PICA_2_KITODO));
-        System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
     }
 
     private static MetadataFormat supportedTargetMetadataFormat = MetadataFormat.KITODO;
@@ -162,7 +163,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         factory.setNamespaceAware(true);
         try {
             StringWriter stringWriter = new StringWriter();
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = new TransformerFactoryImpl();
             transformerFactory.setURIResolver((href, base) -> new StreamSource(href.replace("http:", "https:")));
             System.setProperty("http.agent", "Chrome");
             Transformer xsltTransformer = transformerFactory.newTransformer(new StreamSource(stylesheetFile));
