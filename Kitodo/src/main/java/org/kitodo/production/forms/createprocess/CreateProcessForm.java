@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -34,6 +36,8 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -321,10 +325,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Create the process and save the metadata.
      */
     public String createNewProcess() {
-        if (!canCreateProcess()) {
-            return this.stayOnCurrentPage;
-        }
         try {
+            if (!canCreateProcess()) {
+                return this.stayOnCurrentPage;
+            }
             createProcessHierarchy();
             if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
@@ -353,10 +357,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return path to reload current view
      */
     public String createNewProcessAndContinue() {
-        if (!canCreateProcess()) {
-            return this.stayOnCurrentPage;
+        String destination = createNewProcess();
+        if (!destination.equals(processListPath)) {
+            return destination;
         }
-        createNewProcess();
         Process parentProcess = titleRecordLinkTab.getTitleRecordProcess();
         return FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath()
                 + "?referrer=" + referringView
@@ -366,14 +370,45 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 + "&faces-redirect=true";
     }
 
-    private boolean canCreateProcess() {
-        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())
-                && (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
-                        || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty())) {
-            Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
-            return false;
+    private boolean canCreateProcess() throws IOException {
+        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+            if ((Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                    || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty())) {
+                Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
+                return false;
+            }
+            String forbiddenParentType = parentTypeIfForbidden();
+            if (Objects.nonNull(forbiddenParentType)) {
+                Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+                    processDataTab.getDocType(), forbiddenParentType));
+                return false;
+            }
         }
         return true;
+    }
+
+    private String parentTypeIfForbidden() throws IOException {
+        URI metadataFileUri = ServiceManager.getProcessService()
+                .getMetadataFileUri(titleRecordLinkTab.getTitleRecordProcess());
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        List<String> indices = Arrays.asList(titleRecordLinkTab.getSelectedInsertionPosition()
+                .split(Pattern.quote(MetadataEditor.INSERTION_POSITION_SEPARATOR)));
+        LogicalDivision logicalDivision = workpiece.getLogicalStructure();
+        for (int index = 0; index < indices.size(); index++) {
+            if (index < indices.size() - 1) {
+                logicalDivision = logicalDivision.getChildren().get(Integer.parseInt(indices.get(index)));
+            } else {
+                String parentType = logicalDivision.getType();
+                StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType,
+                    acquisitionStage, priorityList);
+                if (divisionView.getAllowedSubstructuralElements().containsKey(processDataTab.getDocType())) {
+                    return null;
+                } else {
+                    return parentType;
+                }
+            }
+        }
+        return "";
     }
 
     /**
