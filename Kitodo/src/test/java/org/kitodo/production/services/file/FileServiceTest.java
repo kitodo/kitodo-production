@@ -22,7 +22,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
