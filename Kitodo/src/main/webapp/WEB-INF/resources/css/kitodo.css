@@ -1200,6 +1200,21 @@ main i.fa {
     text-overflow: clip;
 }
 
+#showInactiveTemplatesForm {
+    height: 100%;
+}
+
+#showInactiveTemplatesForm .ui-outputlabel {
+    display: inline-block;
+    height: 100%;
+    margin-right: var(--default-half-size);
+    vertical-align: middle;
+}
+
+#showInactiveTemplatesForm .switch {
+    display: inline;
+}
+
 .hierarchy-info {
     width: calc(var(--default-double-size) + var(--default-full-size));
 }
