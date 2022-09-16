@@ -175,6 +175,9 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @FindBy(id = RULESET_TABLE + ":0:actionForm:deleteRuleset")
     private WebElement deleteFirstRulesetButton;
 
+    @FindBy(id = "showInactiveTemplateWrapper")
+    private WebElement toggleHiddenTemplatesWrapper;
+
     public ProjectsPage() {
         super("pages/projects.jsf");
     }
@@ -629,5 +632,13 @@ public class ProjectsPage extends Page<ProjectsPage> {
      */
     public Long getNumberOfMappingFiles() {
         return (long) Browser.getRowsOfTable(Browser.getDriver().findElementById(MAPPING_FILE_TABLE)).size();
+    }
+
+    /**
+     * Toggle switch to hide/show inactive templates.
+     */
+    public void toggleHiddenTemplates() {
+        toggleHiddenTemplatesWrapper.findElement(By.className("ui-chkbox-box")).click();
+
     }
 }
