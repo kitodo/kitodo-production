@@ -744,6 +744,10 @@ section#content-section {
     width: calc(100% - 44px);
 }
 
+.input-with-button > input.ui-selectonemenu-label.ui-inputfield {
+    width: 100%;
+}
+
 .ui-panelgrid-cell .ui-selectonemenu.input-with-button {
     display: inline-block;
 }
