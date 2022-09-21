@@ -70,6 +70,7 @@
             <p:column id="progressColumn"
                       styleClass="progressColumn"
                       headerText="#{msgs.status}"
+                      sortBy="#{process.sortHelperStatus.keyword}"
                       rendered="#{ProcessForm.showColumn('process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
@@ -103,11 +104,13 @@
                               rendered="#{ProcessForm.hasCorrectionTask(process.id) gt 0}"/>
             </p:column>
             <p:column headerText="#{msgs.project}"
+                      sortBy="#{process.project.title.keyword}"
                       rendered="#{ProcessForm.showColumn('process.project')}">
                 <h:outputText value="#{process.project.title}"
                               title="#{process.project.title}"/>
             </p:column>
             <p:column headerText="#{msgs.duration}"
+                      sortBy="#{process.creationDate}"
                       rendered="#{ProcessForm.showColumn('process.duration')}">
                 <h:outputText value="#{ProcessForm.getProcessDuration(process)}"
                               title="#{ProcessForm.getProcessDuration(process)}"/>
