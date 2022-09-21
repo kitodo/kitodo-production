@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -313,7 +314,9 @@ public class SearchResultForm extends ProcessListBaseView {
      * in the default order.</p>
      */
     public void resetSearchResultTableViewState() {
-        PrimeFaces.current().multiViewState().clear(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID);
+        if (!Objects.isNull(FacesContext.getCurrentInstance())) {
+            PrimeFaces.current().multiViewState().clear(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID);
+        }
     }
 
 }
