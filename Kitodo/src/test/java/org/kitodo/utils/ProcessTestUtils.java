@@ -52,7 +52,6 @@ public class ProcessTestUtils {
      *         the metadata id
      * @return the simple metadata view
      */
-    @SuppressWarnings("checkstyle:methodlength")
     public static SimpleMetadataViewInterface getSettingsObject(String id) {
         return new SimpleMetadataViewInterface() {
             public Optional<Domain> getDomain() {
