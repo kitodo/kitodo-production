@@ -131,19 +131,21 @@ public class ProcessHelper {
      * Generates TSL/ATS dependent fields of temp process.
      *
      * @param tempProcess
-     *            the temp process to generate TSL/ATS dependent fields
+     *         the temp process to generate TSL/ATS dependent fields
      * @param parentTempProcesses
-     *            the parent temp processes
+     *         the parent temp processes
      * @param acquisitionStage
-     *            current acquisition level
+     *         current acquisition level
+     * @param force
+     *         force regeneration atstsl fields if process title already exists
      * @throws ProcessGenerationException
-     *             thrown if process title cannot be created
+     *         thrown if process title cannot be created
      * @throws InvalidMetadataValueException
-     *             thrown if process workpiece contains invalid metadata
+     *         thrown if process workpiece contains invalid metadata
      * @throws NoSuchMetadataFieldException
-     *             thrown if process workpiece contains undefined metadata
+     *         thrown if process workpiece contains undefined metadata
      * @throws IOException
-     *             thrown if ruleset file cannot be loaded
+     *         thrown if ruleset file cannot be loaded
      */
     public static void generateAtstslFields(TempProcess tempProcess, List<TempProcess> parentTempProcesses,
             String acquisitionStage, boolean force)
@@ -169,7 +171,7 @@ public class ProcessHelper {
      * @param parentTempProcesses
      *            the parent temp processes of temp process
      * @param docType
-     *            current division
+     *            current division or docType to get the title definition from
      * @param rulesetManagementInterface
      *            interface that provides access to the ruleset
      * @param acquisitionStage
@@ -179,7 +181,7 @@ public class ProcessHelper {
      * @param parentProcess
      *            the process of the selected title record
      * @param force
-     *            force regeneration atstsl fields
+     *            force regeneration atstsl fields if process title already exists
      * @throws ProcessGenerationException
      *             thrown if process title cannot be created
      */
@@ -192,13 +194,13 @@ public class ProcessHelper {
             return;
         }
 
-        String processTitleOfDocTypeView = getProcessTitleOfDocTypeView(rulesetManagementInterface, docType,
-                acquisitionStage, priorityList);
+        String titleDefinition = getTitleDefinition(rulesetManagementInterface, docType, acquisitionStage,
+                priorityList);
         String currentTitle = TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails);
         if (StringUtils.isBlank(currentTitle)) {
             if (Objects.nonNull(parentProcess)) {
-                if (processTitleOfDocTypeView.startsWith("+")) {
-                    processTitleOfDocTypeView = '\'' + parentProcess.getTitle() + '\'' + processTitleOfDocTypeView;
+                if (titleDefinition.startsWith("+")) {
+                    titleDefinition = '\'' + parentProcess.getTitle() + '\'' + titleDefinition;
                 }
                 currentTitle = getTitleFromLogicalStructure(parentProcess);
             } else if (Objects.nonNull(parentTempProcesses)) {
@@ -208,7 +210,7 @@ public class ProcessHelper {
         }
 
         tempProcess.setAtstsl(
-                generateProcessTitleAndGetAtstsl(processDetails, processTitleOfDocTypeView, tempProcess.getProcess(),
+                generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, tempProcess.getProcess(),
                         currentTitle));
 
         tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
@@ -220,22 +222,22 @@ public class ProcessHelper {
     }
 
     /**
-     * Get the process title of doc type view.
+     * Get the title definition of doc type view.
      *
      * @param rulesetManagementInterface
-     *            interface that provides access to the ruleset
+     *         interface that provides access to the ruleset
      * @param docType
-     *            current division
+     *         current division
      * @param acquisitionStage
-     *            current acquisition level
+     *         current acquisition level
      * @param priorityList
-     *            weighted list of user-preferred display languages
+     *         weighted list of user-preferred display languages
      * @return the process title of doc type view
      */
-    public static String getProcessTitleOfDocTypeView(RulesetManagementInterface rulesetManagementInterface,
-            String docType, String acquisitionStage, List<Locale.LanguageRange> priorityList) {
+    public static String getTitleDefinition(RulesetManagementInterface rulesetManagementInterface, String docType,
+            String acquisitionStage, List<Locale.LanguageRange> priorityList) {
         StructuralElementViewInterface docTypeView = rulesetManagementInterface.getStructuralElementView(docType,
-            acquisitionStage, priorityList);
+                acquisitionStage, priorityList);
         return docTypeView.getProcessTitle().orElse("");
     }
 
