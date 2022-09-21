@@ -17,7 +17,6 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.config.KitodoConfig;
@@ -40,6 +39,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String PROCESS_TITLE = "Second process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
+    private static final String WAIT_FOR_TITLE_COLUMN_SORT = "Wait for title column sorting";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -354,15 +354,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
         processesTableTitleColumn.click();
 
         // wait for the sorting to be applied (which requires ajax request to backend)
-        await("title column sorting changed")
+        await(WAIT_FOR_TITLE_COLUMN_SORT)
             .pollDelay(200, TimeUnit.MILLISECONDS)
             .atMost(10, TimeUnit.SECONDS)
             .ignoreExceptions()
-            .until(new Callable<Boolean>() {
-                public Boolean call() {
-                    // check aria-sort attribute has changed (either empty, "ascending" or "descending")
-                    return !processesTableTitleColumn.getAttribute("aria-sort").equals(previousAriaSort);
-                }
-            });
+            .until(() -> !processesTableTitleColumn.getAttribute("aria-sort").equals(previousAriaSort));
     }
 }
