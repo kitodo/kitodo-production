@@ -67,14 +67,14 @@ public class ProcessDataTab {
      * Update process metadata of currently selected process.
      */
     public void updateProcessMetadata() {
-        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())
-                && Objects.nonNull(createProcessForm.getCurrentProcess().getWorkpiece())) {
+        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess()) && Objects.nonNull(
+                createProcessForm.getCurrentProcess().getWorkpiece())) {
             createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
                 createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
                 createProcessForm.getProcessMetadata().initializeProcessDetails(
-                    createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
+                        createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
                 overwriteProcessMetadata();
             }
         }
@@ -162,7 +162,7 @@ public class ProcessDataTab {
         TempProcess currentProcess = createProcessForm.getCurrentProcess();
         Process process = currentProcess.getProcess();
         try {
-            String processTitleOfDocTypeView = ProcessHelper.getProcessTitleOfDocTypeView(
+            String processTitleOfDocTypeView = ProcessHelper.getTitleDefinition(
                     createProcessForm.getRulesetManagement(), docType, createProcessForm.getAcquisitionStage(),
                     createProcessForm.getPriorityList());
             if (processTitleOfDocTypeView.isEmpty()) {
