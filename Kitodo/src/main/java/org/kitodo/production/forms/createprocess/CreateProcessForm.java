@@ -592,7 +592,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 try {
                     tempProcess.getProcessMetadata().preserve();
-                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList);
+                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
                 } catch (RulesetNotFoundException e) {
