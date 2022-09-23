@@ -68,40 +68,46 @@
                               title="#{process.title}"/>
             </p:column>
             <p:column id="progressColumn"
-                      styleClass="progressColumn"
+                      styleClass="progressColumn genericSortIcon"
                       headerText="#{msgs.status}"
-                      sortBy="#{process.sortHelperStatus.keyword}"
+                      sortBy="#{process.progressCombined}"
                       rendered="#{ProcessForm.showColumn('process.state')}">
                 <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
             </p:column>
 
             <p:column id="lastTaskHandledByColumn"
                       headerText="#{msgs.lastEditingUser}"
+                      sortBy="#{process.lastEditingUser}"
                       rendered="#{ProcessForm.showColumn('process.lastEditingUser')}">
-                <h:outputText value="#{ProcessForm.getUserHandlingLastTask(process)}"
-                              title="#{ProcessForm.getUserHandlingLastTask(process)}"/>
+                <h:outputText value="#{process.lastEditingUser}"
+                              title="#{process.lastEditingUser}"/>
             </p:column>
             <p:column id="lastTaskProcessingBeginColumn"
                       headerText="#{msgs.processingBeginLastTask}"
+                      styleClass="numeric"
+                      sortBy="#{process.processingBeginLastTask}"
                       rendered="#{ProcessForm.showColumn('process.processingBeginLastTask')}">
-                <h:outputText value="#{ProcessForm.getProcessingBeginOfLastTask(process)}"
-                              title="#{ProcessForm.getProcessingBeginOfLastTask(process)}"/>
+                <h:outputText value="#{ProcessForm.convertProcessingDate(process.processingBeginLastTask)}"
+                              title="#{ProcessForm.convertProcessingDate(process.processingBeginLastTask)}"/>
             </p:column>
             <p:column id="lastTaskProcessingEndColumn"
                       headerText="#{msgs.processingEndLastTask}"
+                      styleClass="numeric"
+                      sortBy="#{process.processingEndLastTask}"
                       rendered="#{ProcessForm.showColumn('process.processingEndLastTask')}">
-                <h:outputText value="#{ProcessForm.getProcessingEndOfLastTask(process)}"
-                              title="#{ProcessForm.getProcessingEndOfLastTask(process)}"/>
+                <h:outputText value="#{ProcessForm.convertProcessingDate(process.processingEndLastTask)}"
+                              title="#{ProcessForm.convertProcessingDate(process.processingEndLastTask)}"/>
             </p:column>
 
-            <p:column styleClass="correction-column"
+            <p:column styleClass="correction-column genericSortIcon"
                       width="85"
+                      sortBy="#{process.correctionCommentStatus}"
                       rendered="#{ProcessForm.showColumn('process.correctionMessage')}"
                       headerText="#{msgs.correction}">
                 <h:outputText value="#{msgs.correctionK}"
                               title="#{ProcessForm.getCorrectionMessages(process)}"
-                              styleClass="correction-marker #{ProcessForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
-                              rendered="#{ProcessForm.hasCorrectionTask(process.id) gt 0}"/>
+                              styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                              rendered="#{process.correctionCommentStatus gt 0}"/>
             </p:column>
             <p:column headerText="#{msgs.project}"
                       sortBy="#{process.project.title.keyword}"
@@ -111,6 +117,7 @@
             </p:column>
             <p:column headerText="#{msgs.duration}"
                       sortBy="#{process.creationDate}"
+                      styleClass="numeric"
                       rendered="#{ProcessForm.showColumn('process.duration')}">
                 <h:outputText value="#{ProcessForm.getProcessDuration(process)}"
                               title="#{ProcessForm.getProcessDuration(process)}"/>
