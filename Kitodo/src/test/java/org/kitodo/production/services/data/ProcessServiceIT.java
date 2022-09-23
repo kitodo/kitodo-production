@@ -424,7 +424,7 @@ public class ProcessServiceIT {
     public void shouldGetProgress() throws Exception {
         Process process = processService.getById(1);
 
-        String progress = ProcessConverter.getCombinedProgressAsString(process);
+        String progress = ProcessConverter.getCombinedProgressAsString(process, true);
         assertEquals("Progress doesn't match given plain text!", "040020020020", progress);
     }
 
@@ -432,7 +432,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressClosed() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process).get(TaskStatus.DONE);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.DONE);
         assertEquals("Progress doesn't match given plain text!", 40, condition, 0);
     }
 
@@ -440,7 +440,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressInProcessing() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process).get(TaskStatus.INWORK);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.INWORK);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
@@ -464,7 +464,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressOpen() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process).get(TaskStatus.OPEN);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.OPEN);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
@@ -472,7 +472,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressLocked() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process).get(TaskStatus.LOCKED);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.LOCKED);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 

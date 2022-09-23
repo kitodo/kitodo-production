@@ -107,14 +107,14 @@ public class ProcessType extends BaseType<Process> {
      */
     private void convertProgressStatus(Map<String, Object> jsonObject, Process process) {
         // calculate and save process status
-        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(process);
+        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(process, true);
         jsonObject.put(ProcessTypeField.PROGRESS_CLOSED.getKey(), taskProgress.get(TaskStatus.DONE));
         jsonObject.put(ProcessTypeField.PROGRESS_IN_PROCESSING.getKey(), taskProgress.get(TaskStatus.INWORK));
         jsonObject.put(ProcessTypeField.PROGRESS_OPEN.getKey(), taskProgress.get(TaskStatus.OPEN));
         jsonObject.put(ProcessTypeField.PROGRESS_LOCKED.getKey(), taskProgress.get(TaskStatus.LOCKED));
         jsonObject.put(
             ProcessTypeField.PROGRESS_COMBINED.getKey(), 
-            ProcessConverter.getCombinedProgressAsString(process)
+            ProcessConverter.getCombinedProgressAsString(process, true)
         );
     }
 

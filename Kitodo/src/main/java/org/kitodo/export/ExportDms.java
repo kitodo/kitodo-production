@@ -204,7 +204,7 @@ public class ExportDms extends ExportMets {
 
     private boolean exportCompletedChildren(List<Process> children) throws DataException {
         for (Process child:children) {
-            if (ProcessConverter.getCombinedProgressAsString(child).equals(COMPLETED) && !child.isExported()) {
+            if (ProcessConverter.getCombinedProgressAsString(child, false).equals(COMPLETED) && !child.isExported()) {
                 if (!startExport(child)) {
                     return false;
                 }

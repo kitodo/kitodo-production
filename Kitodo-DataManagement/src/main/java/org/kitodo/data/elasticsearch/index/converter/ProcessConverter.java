@@ -84,18 +84,21 @@ public class ProcessConverter {
      * <p>For process that have children, their repective tasks are also included.</p>
      * 
      * @param process the process
+     * @param considerChildren whether to include tasks of children processes
      * @return the list of tasks of the process (and potentially its children)
      */
-    private static List<Task> getListOfTasksForProgressCalculation(Process process) {
+    private static List<Task> getListOfTasksForProgressCalculation(Process process, Boolean considerChildren) {
         // consider the tasks of the process for progress calculation
         List<Task> tasks = new ArrayList<>();
         tasks.addAll(process.getTasks());
 
         // if the process has children, also consider these tasks for progress calculation
-        List<Process> children = process.getChildren();
-        if (children.size() > 0) {
-            for (Process child : children) {
-                tasks.addAll(child.getTasks());
+        if (considerChildren) {
+            List<Process> children = process.getChildren();
+            if (children.size() > 0) {
+                for (Process child : children) {
+                    tasks.addAll(child.getTasks());
+                }
             }
         }
         return tasks;
@@ -206,10 +209,11 @@ public class ProcessConverter {
      * Returns the percentaged task progress of a process as a map of doubles.
      * 
      * @param process the process
+     * @param considerChildren whether to also count tasks of children processes
      * @return a map providing the percentage of tasks having a certain status (done, open, locked, inwork)
      */
-    public static Map<TaskStatus, Double> getTaskProgressPercentageOfProcess(Process process) {
-        List<Task> tasks = getListOfTasksForProgressCalculation(process);
+    public static Map<TaskStatus, Double> getTaskProgressPercentageOfProcess(Process process, Boolean considerChildren) {
+        List<Task> tasks = getListOfTasksForProgressCalculation(process, considerChildren);
         Map<TaskStatus, Integer> counts = countTasksStatusOfProcess(tasks);
         Integer total = counts.values().stream().reduce(0, Integer::sum);
         
@@ -230,10 +234,11 @@ public class ProcessConverter {
      * "000000025075" means that 25% of tasks are open, and 75% of tasks are locked.</p>
      *
      * @param process the process
+     * @param considerChildren whether to also count tasks of children processes
      * @return string the string representing the combined progress of the process
      */
-    public static String getCombinedProgressAsString(Process process) {
-        Map<TaskStatus, Double> percentages = getTaskProgressPercentageOfProcess(process);
+    public static String getCombinedProgressAsString(Process process, Boolean considerChildren) {
+        Map<TaskStatus, Double> percentages = getTaskProgressPercentageOfProcess(process, considerChildren);
 
         DecimalFormat decimalFormat = new DecimalFormat("#000");
         return decimalFormat.format(percentages.get(TaskStatus.DONE)) 
