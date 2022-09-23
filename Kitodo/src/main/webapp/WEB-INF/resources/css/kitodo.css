@@ -2608,6 +2608,10 @@ Column content
     overflow-y: scroll;
 }
 
+#metadataAccordion\:metadata\:metadataTable table[role='treegrid'] {
+    margin-bottom: 42px;
+}
+
 #metadataAccordion\:metadata\:metadataTable_data,
 #metadataAccordion\:physicalMetadata\:metadataTable_data,
 #metadataAccordion\:metadata\:metadataTable_data tr,
