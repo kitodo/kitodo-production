@@ -900,16 +900,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setNumberOfStructures(ProcessTypeField.NUMBER_OF_STRUCTURES.getIntValue(jsonObject));
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
             processDTO.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
-            String processingBeginLastTask = ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getStringValue(jsonObject);
-            processDTO.setProcessingBeginLastTask(Helper.parseDateFromFormattedString(processingBeginLastTask));
-            String processingEndLastTask = ProcessTypeField.PROCESSING_END_LAST_TASK.getStringValue(jsonObject);
-            processDTO.setProcessingEndLastTask(Helper.parseDateFromFormattedString(processingEndLastTask));
             processDTO.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-            processDTO.setProgressClosed(ProcessTypeField.PROGRESS_CLOSED.getDoubleValue(jsonObject));
-            processDTO.setProgressInProcessing(ProcessTypeField.PROGRESS_IN_PROCESSING.getDoubleValue(jsonObject));
-            processDTO.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
-            processDTO.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
-            processDTO.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
+            convertLastProcessingDates(jsonObject, processDTO);
+            convertTaskProgress(jsonObject, processDTO);
 
             List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
             List<PropertyDTO> properties = new ArrayList<>();
@@ -936,6 +929,34 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return processDTO;
+    }
+
+
+    /**
+     * Parses last processing dates from the jsonObject and adds them to the processDTO bean.
+     * 
+     * @param jsonObject the json object retrieved from elastic search
+     * @param processDTO the processDTO bean that will receive the processing dates
+     */
+    private void convertLastProcessingDates(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
+        String processingBeginLastTask = ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getStringValue(jsonObject);
+        processDTO.setProcessingBeginLastTask(Helper.parseDateFromFormattedString(processingBeginLastTask));
+        String processingEndLastTask = ProcessTypeField.PROCESSING_END_LAST_TASK.getStringValue(jsonObject);
+        processDTO.setProcessingEndLastTask(Helper.parseDateFromFormattedString(processingEndLastTask));
+    }
+
+    /**
+     * Parses task progress properties from the jsonObject and adds them to the processDTO bean.
+     * 
+     * @param jsonObject the json object retrieved from elastic search
+     * @param processDTO the processDTO bean that will receive the progress information
+     */
+    private void convertTaskProgress(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
+        processDTO.setProgressClosed(ProcessTypeField.PROGRESS_CLOSED.getDoubleValue(jsonObject));
+        processDTO.setProgressInProcessing(ProcessTypeField.PROGRESS_IN_PROCESSING.getDoubleValue(jsonObject));
+        processDTO.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
+        processDTO.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
+        processDTO.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
     }
 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {

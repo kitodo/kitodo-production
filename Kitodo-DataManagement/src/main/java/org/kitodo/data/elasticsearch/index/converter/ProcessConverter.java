@@ -32,8 +32,8 @@ import org.kitodo.data.database.enums.TaskStatus;
  * This class provides static methods that derive basic information from a process, 
  * e.g. the current task progress status.
  * 
- * The derived information is needed as for indexing, such that processes can be 
- * filtered or sorted by these derived attributes.
+ * <p>The derived information is needed as for indexing, such that processes can be 
+ * filtered or sorted by these derived attributes.</p>
  */
 public class ProcessConverter {
 

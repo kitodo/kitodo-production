@@ -73,6 +73,23 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), process.getInChoiceListShown());
         jsonObject.put(ProcessTypeField.LAST_EDITING_USER.getKey(), ProcessConverter.getLastEditingUser(process));
         jsonObject.put(
+            ProcessTypeField.CORRECTION_COMMENT_STATUS.getKey(), 
+            ProcessConverter.getCorrectionCommentStatus(process).getValue()
+        );
+        convertLastProcessingTask(jsonObject, process);
+        convertProgressStatus(jsonObject, process);
+        
+        return jsonObject;
+    }
+
+    /**
+     * Adds last processing task dates to json object for indexing.
+     * 
+     * @param jsonObject the json object used for indexing
+     * @param process the process being index
+     */
+    private void convertLastProcessingTask(Map<String, Object> jsonObject, Process process) {
+        jsonObject.put(
             ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getKey(), 
             getFormattedDate(ProcessConverter.getLastProcessingBegin(process))
         );
@@ -80,11 +97,15 @@ public class ProcessType extends BaseType<Process> {
             ProcessTypeField.PROCESSING_END_LAST_TASK.getKey(), 
             getFormattedDate(ProcessConverter.getLastProcessingEnd(process))
         );
-        jsonObject.put(
-            ProcessTypeField.CORRECTION_COMMENT_STATUS.getKey(), 
-            ProcessConverter.getCorrectionCommentStatus(process).getValue()
-        );
+    }
 
+    /**
+     * Adds progress status properties to json object for indexing.
+     * 
+     * @param jsonObject the json object used for indexing
+     * @param process the process being index
+     */
+    private void convertProgressStatus(Map<String, Object> jsonObject, Process process) {
         // calculate and save process status
         Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(process);
         jsonObject.put(ProcessTypeField.PROGRESS_CLOSED.getKey(), taskProgress.get(TaskStatus.DONE));
@@ -95,7 +116,6 @@ public class ProcessType extends BaseType<Process> {
             ProcessTypeField.PROGRESS_COMBINED.getKey(), 
             ProcessConverter.getCombinedProgressAsString(process)
         );
-        return jsonObject;
     }
 
     private List<Map<String, String>> getProperties(Process process) {
