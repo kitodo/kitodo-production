@@ -322,11 +322,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
         taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
         taskDTO.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-        
-        ProjectDTO projectDTO = new ProjectDTO();
-        projectDTO.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
-        projectDTO.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-        taskDTO.setProject(projectDTO);
+        convertTaskProjectFromJsonObjectToDTO(jsonObject, taskDTO);
 
         /*
          * We read the list of the process but not the list of templates, because only process tasks
@@ -351,6 +347,19 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             taskDTO.setProcessingUser(userDTO);
         }
         return taskDTO;
+    }
+
+    /**
+     * Parses and adds properties related to the project of a task to the taskDTO.
+     * 
+     * @param jsonObject the jsonObject retrieved from the ElasticSearch index for a task
+     * @param taskDTO the taskDTO
+     */
+    private void convertTaskProjectFromJsonObjectToDTO(Map<String, Object> jsonObject, TaskDTO taskDTO) throws DataException {
+        ProjectDTO projectDTO = new ProjectDTO();
+        projectDTO.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
+        projectDTO.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
+        taskDTO.setProject(projectDTO);
     }
 
     private List<Integer> convertJSONValuesToList(List<Map<String, Object>> jsonObject) {

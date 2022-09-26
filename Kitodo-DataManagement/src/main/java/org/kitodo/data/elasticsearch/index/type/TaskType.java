@@ -34,7 +34,6 @@ public class TaskType extends BaseType<Task> {
         int processingStatus = task.getProcessingStatus() != null ? task.getProcessingStatus().getValue() : 0;
         int editType = task.getEditType() != null ? task.getEditType().getValue() : 0;
         int processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
-        Date processCreationDate = Objects.isNull(task.getProcess()) ? null : task.getProcess().getCreationDate();
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
@@ -66,7 +65,7 @@ public class TaskType extends BaseType<Task> {
         }
         jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), getId(task.getProcess()));
         jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), getTitle(task.getProcess()));
-        jsonObject.put(TaskTypeField.PROCESS_CREATION_DATE.getKey(), getFormattedDate(processCreationDate));
+        jsonObject.put(TaskTypeField.PROCESS_CREATION_DATE.getKey(), getFormattedDate(getProcessCreationDate(task)));
         jsonObject.put(TaskTypeField.CLIENT_ID.getKey(), getClientId(task));
         jsonObject.put(TaskTypeField.PROJECT_ID.getKey(), getProjectId(task));
         jsonObject.put(TaskTypeField.PROJECT_TITLE.getKey(), getProjectTitle(task));
@@ -119,6 +118,19 @@ public class TaskType extends BaseType<Task> {
     private Integer getProjectId(Task task) {
         if (Objects.nonNull(task.getProcess())) {
             return getId(task.getProcess().getProject());
+        }
+        return null;
+    }
+
+    /**
+     * Extracts process creation date from a task.
+     * 
+     * @param task the task
+     * @return the process creation date or null
+     */
+    private Date getProcessCreationDate(Task task) {
+        if (Objects.nonNull(task.getProcess())) {
+            return task.getProcess().getCreationDate();
         }
         return null;
     }
