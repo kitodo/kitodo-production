@@ -17,18 +17,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import javax.faces.push.PushContext;
 import javax.json.Json;
@@ -298,6 +295,15 @@ public class IndexingService {
         );
     }
 
+    /**
+     * Create multiple indexing worker threads and wait until they are finished.
+     * 
+     * <p>This method is executed in the `IndexAllThread`.</p>
+     * 
+     * @param type the object type to be indexed
+     * @param pollingChannel the UI polling channel for triggering updates
+     * @param indexAllObjects whehter all or only remaining objects are indexed
+     */
     private void runIndexing(ObjectType type, PushContext pollingChannel, boolean indexAllObjects) throws DAOException {
         // declare that indexing for type has started
         currentIndexState = type;
@@ -331,6 +337,17 @@ public class IndexingService {
         }
     }
 
+    /**
+     * Wait and check whether index worker threads have finished or failed. 
+     * 
+     * <p>Also trigger UI updates every second.</p>
+     * 
+     * <p>This method is executed in the `IndexAllThread`.</p>
+     * 
+     * @param type the object type currently being indexed
+     * @param futures a list of futures allowing to check the status of the worker threads
+     * @param pollingChannel the UI polling channel
+     */
     private void waitWhileIndexing(ObjectType type, List<Future<?>> futures, PushContext pollingChannel) {
         while (true) {
             // check whether all jobs are done

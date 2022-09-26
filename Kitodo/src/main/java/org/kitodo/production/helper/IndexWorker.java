@@ -55,7 +55,7 @@ public class IndexWorker implements Runnable {
         int maxAttempts = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_ATTEMPTS);
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         int maxBatch = indexWorkerStatus.getMaxBatch();
-        
+
         Integer nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
         while (nextBatch < maxBatch) {
             // nextBatch is a valid batch that needs to be processed
