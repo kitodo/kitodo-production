@@ -115,11 +115,11 @@ public class TaskType extends BaseType<Task> {
      * @param task the task
      * @return the project id or null
      */
-    private Integer getProjectId(Task task) {
+    private int getProjectId(Task task) {
         if (Objects.nonNull(task.getProcess())) {
             return getId(task.getProcess().getProject());
         }
-        return null;
+        return 0;
     }
 
     /**
@@ -145,7 +145,7 @@ public class TaskType extends BaseType<Task> {
         if (Objects.nonNull(task.getProcess())) {
             return getTitle(task.getProcess().getProject());
         }
-        return null;
+        return "";
     }
 
     private int getClientId(Task task) {
