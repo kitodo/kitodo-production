@@ -13,6 +13,7 @@ package org.kitodo.production.services.index;
 
 import javax.faces.push.PushContext;
 
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
@@ -22,10 +23,12 @@ public class IndexAllThread extends Thread {
 
     private final PushContext context;
     private final IndexingService indexingService;
+    private final boolean indexAllObjects;
 
-    IndexAllThread(PushContext pushContext, IndexingService service) {
+    IndexAllThread(PushContext pushContext, IndexingService service, boolean indexAllObjects) {
         context = pushContext;
         indexingService = service;
+        this.indexAllObjects = indexAllObjects;
     }
 
     @Override
@@ -34,8 +37,12 @@ public class IndexAllThread extends Thread {
 
         for (ObjectType objectType : ObjectType.getIndexableObjectTypes()) {
             try {
-                indexingService.startIndexing(objectType, context);
-            } catch (DataException | CustomResponseException | RuntimeException e) {
+                if (indexAllObjects) {
+                    indexingService.startIndexing(objectType, context);
+                } else {
+                    indexingService.startIndexingRemaining(objectType, context);
+                }
+            } catch (DataException | CustomResponseException | DAOException | RuntimeException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);
                 Thread.currentThread().interrupt();
             }
