@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -1055,25 +1056,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Check and return whether the process with the ID 'processId' has any correction comments or not.
-     *
-     * @param processId
-     *          ID of process to check
-     * @return 0, if process has no correction comment
-     *         1, if process has correction comments that are all corrected
-     *         2, if process has at least one open correction comment
-     */
-    public int hasCorrectionTask(int processId) {
-        try {
-            return ProcessService.hasCorrectionComment(processId).getValue();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                processId}, logger, e);
-            return 0;
-        }
-    }
-
-    /**
      * Retrieve correction comments of given process and return them as a tooltip String.
      *
      * @param processDTO
@@ -1097,36 +1079,14 @@ public class ProcessForm extends TemplateBaseForm {
         return this.processesPage;
     }
 
-    /**
-     * Retrieve and return UserName of last user processing a task of the current process.
-     *
-     * @param processDTO Process for which the UserName is returned
-     * @return username
+    /** 
+     * Returns the provided date as string in the format of "yyyy-MM-dd HH:mm:ss".
+     * @param date the date to be converted
+     * @return the converted date as string
      */
-    public String getUserHandlingLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getUserHandlingLastTask(processDTO);
+    public String convertProcessingDate(Date date) {
+        return Helper.getDateAsFormattedString(date);
     }
-
-    /**
-     * Retrieve and return timestamp of last tasks processing begin.
-     *
-     * @param processDTO Process for which the timestamp is returned
-     * @return timestamp of last tasks processing begin
-     */
-    public String getProcessingBeginOfLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getLastProcessingStart(processDTO);
-    }
-
-    /**
-     * Retrieve and return timestamp of last tasks processing end.
-     *
-     * @param processDTO Process for which the timestamp is returned
-     * @return timestamp of last tasks processing end
-     */
-    public String getProcessingEndOfLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getLastProcessingEnd(processDTO);
-    }
-
 
     /**
      * Get all tasks of given process which should be visible to the user.
