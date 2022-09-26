@@ -53,6 +53,7 @@ import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.enums.GenerationMode;
@@ -88,7 +89,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     private TaskService() {
         super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class),
-                TaskTypeField.CLIENT_ID.getKey(), TaskTypeField.PROJECT_ID.getKey());
+                TaskTypeField.CLIENT_ID.getKey(), TaskTypeField.RELATED_PROJECT_IDS.getKey());
     }
 
     /**
@@ -320,6 +321,12 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
         taskDTO.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
         taskDTO.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
         taskDTO.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
+        taskDTO.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+        
+        ProjectDTO projectDTO = new ProjectDTO();
+        projectDTO.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
+        projectDTO.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
+        taskDTO.setProject(projectDTO);
 
         /*
          * We read the list of the process but not the list of templates, because only process tasks
@@ -340,7 +347,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             userDTO.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(jsonObject));
             userDTO.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(jsonObject));
             userDTO.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(jsonObject));
-            userDTO.setFullName(ServiceManager.getUserService().getFullName(userDTO));
+            userDTO.setFullName(TaskTypeField.PROCESSING_USER_FULLNAME.getStringValue(jsonObject));
             taskDTO.setProcessingUser(userDTO);
         }
         return taskDTO;

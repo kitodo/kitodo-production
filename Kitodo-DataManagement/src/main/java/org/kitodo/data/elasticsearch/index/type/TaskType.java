@@ -12,6 +12,7 @@
 package org.kitodo.data.elasticsearch.index.type;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 
 /**
@@ -32,6 +34,7 @@ public class TaskType extends BaseType<Task> {
         int processingStatus = task.getProcessingStatus() != null ? task.getProcessingStatus().getValue() : 0;
         int editType = task.getEditType() != null ? task.getEditType().getValue() : 0;
         int processingUser = task.getProcessingUser() != null ? task.getProcessingUser().getId() : 0;
+        Date processCreationDate = Objects.isNull(task.getProcess()) ? null : task.getProcess().getCreationDate();
 
         Map<String, Object> jsonObject = new HashMap<>();
         jsonObject.put(TaskTypeField.TITLE.getKey(), preventNull(task.getTitle()));
@@ -54,22 +57,43 @@ public class TaskType extends BaseType<Task> {
             jsonObject.put(TaskTypeField.PROCESSING_USER_LOGIN.getKey(), user.getLogin());
             jsonObject.put(TaskTypeField.PROCESSING_USER_NAME.getKey(), user.getName());
             jsonObject.put(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), user.getSurname());
+            jsonObject.put(TaskTypeField.PROCESSING_USER_FULLNAME.getKey(), user.getFullName());
         } else {
             jsonObject.put(TaskTypeField.PROCESSING_USER_LOGIN.getKey(),"");
             jsonObject.put(TaskTypeField.PROCESSING_USER_NAME.getKey(), "");
             jsonObject.put(TaskTypeField.PROCESSING_USER_SURNAME.getKey(), "");
+            jsonObject.put(TaskTypeField.PROCESSING_USER_FULLNAME.getKey(), "");
         }
         jsonObject.put(TaskTypeField.PROCESS_ID.getKey(), getId(task.getProcess()));
         jsonObject.put(TaskTypeField.PROCESS_TITLE.getKey(), getTitle(task.getProcess()));
+        jsonObject.put(TaskTypeField.PROCESS_CREATION_DATE.getKey(), getFormattedDate(processCreationDate));
         jsonObject.put(TaskTypeField.CLIENT_ID.getKey(), getClientId(task));
-        jsonObject.put(TaskTypeField.PROJECT_ID.getKey(), getProjectIds(task));
+        jsonObject.put(TaskTypeField.PROJECT_ID.getKey(), getProjectId(task));
+        jsonObject.put(TaskTypeField.PROJECT_TITLE.getKey(), getProjectTitle(task));
+        jsonObject.put(TaskTypeField.RELATED_PROJECT_IDS.getKey(), getRelatedProjectIds(task));
         jsonObject.put(TaskTypeField.TEMPLATE_ID.getKey(), getId(task.getTemplate()));
         jsonObject.put(TaskTypeField.TEMPLATE_TITLE.getKey(), getTitle(task.getTemplate()));
         jsonObject.put(TaskTypeField.ROLES.getKey(), addObjectRelation(task.getRoles()));
+        jsonObject.put(
+            TaskTypeField.CORRECTION_COMMENT_STATUS.getKey(), 
+            ProcessConverter.getCorrectionCommentStatus(task.getProcess()).getValue()
+        );
         return jsonObject;
     }
 
-    private List<Integer> getProjectIds(Task task) {
+    /**
+     * Returns related project ids for a task.
+     * 
+     * <p>This includes both the project id of the task's process, 
+     * but also the project ids of the task's templates.</p>
+     * 
+     * <p>Presumbly, this is used to be able to filter tasks based on the 
+     * the projects the current user is allowed to see, see TaskService.</p>
+     * 
+     * @param task the task
+     * @return the list of related project ids
+     */
+    private List<Integer> getRelatedProjectIds(Task task) {
         ArrayList<Integer> projectIds = new ArrayList<>();
 
         if (Objects.nonNull(task.getProcess())) {
@@ -84,6 +108,32 @@ public class TaskType extends BaseType<Task> {
             return projectIds;
         }
         return projectIds;
+    }
+
+    /**
+     * Extracts the project id from a task if it has a process.
+     * 
+     * @param task the task
+     * @return the project id or null
+     */
+    private Integer getProjectId(Task task) {
+        if (Objects.nonNull(task.getProcess())) {
+            return getId(task.getProcess().getProject());
+        }
+        return null;
+    }
+
+    /**
+     * Extracts the project title from a task if it has a process.
+     * 
+     * @param task the task
+     * @return the project title or null
+     */
+    private String getProjectTitle(Task task) {
+        if (Objects.nonNull(task.getProcess())) {
+            return getTitle(task.getProcess().getProject());
+        }
+        return null;
     }
 
     private int getClientId(Task task) {

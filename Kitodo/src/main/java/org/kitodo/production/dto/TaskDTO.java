@@ -34,16 +34,19 @@ public class TaskDTO extends BaseDTO {
     private String processingBegin;
     private String processingEnd;
     private ProcessDTO process;
+    private ProjectDTO project;
     private TemplateDTO template;
     private List<Integer> roleIds = new ArrayList<>();
     private int rolesSize;
     private boolean correction;
+    private Integer correctionCommentStatus;
     private boolean typeAutomatic;
     private boolean typeMetadata;
     private boolean typeImagesRead;
     private boolean typeImagesWrite;
     private boolean batchStep;
     private boolean batchAvailable;
+    
 
     /**
      * Get title.
@@ -274,6 +277,25 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
+     * Get project.
+     *
+     * @return project as ProjectDTO
+     */
+    public ProjectDTO getProject() {
+        return project;
+    }
+
+    /**
+     * Set project.
+     *
+     * @param project
+     *            as ProjectDTO
+     */
+    public void setProject(ProjectDTO project) {
+        this.project = project;
+    }
+
+    /**
      * Get template as TemplateDTO.
      *
      * @return template as TemplateDTO
@@ -463,4 +485,23 @@ public class TaskDTO extends BaseDTO {
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
     }
+
+    /**
+     * Get the correction comment status, see CorrectionComments enum, as int value.
+     * 
+     * @return the correction comment status as integer
+     */
+    public Integer getCorrectionCommentStatus() {
+        return this.correctionCommentStatus;
+    }
+
+    /**
+     * Set the correction comment status as int value.
+     * 
+     * @param status the status as integer
+     */
+    public void setCorrectionCommentStatus(Integer status) {
+        this.correctionCommentStatus = status;
+    }
+
 }
