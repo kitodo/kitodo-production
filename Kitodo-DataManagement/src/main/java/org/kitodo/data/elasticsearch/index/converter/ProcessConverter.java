@@ -69,7 +69,9 @@ public class ProcessConverter {
         if (tasks.isEmpty()) {
             tasks = getCompletedTasks(process);
         }
-        tasks = tasks.stream().filter(t -> Objects.nonNull(t.getProcessingUser())).collect(Collectors.toList());
+        tasks = tasks.stream()
+            .filter(t -> Objects.nonNull(t.getProcessingUser()) && Objects.nonNull(t.getProcessingBegin()))
+            .collect(Collectors.toList());
         if (tasks.isEmpty()) {
             return null;
         } else {
