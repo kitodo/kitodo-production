@@ -71,16 +71,19 @@
                         <p:column id="titleColumn"
                                   headerText="#{msgs.processTitle}"
                                   filterBy="#{process.title}"
+                                  sortBy="#{process.title}"
                                   rendered="#{ProcessForm.showColumn('process.title')}">
                             <h:outputText value="#{process.title}"/>
                         </p:column>
                         <p:column id="progressColumn"
-                                  styleClass="progressColumn"
+                                  styleClass="progressColumn genericSortIcon"
                                   headerText="#{msgs.status}"
+                                  sortBy="#{process.progressCombined}"
                                   rendered="#{ProcessForm.showColumn('process.state')}">
                             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
                         </p:column>
                         <p:column headerText="#{msgs.project}"
+                                  sortBy="#{process.project.title}"
                                   rendered="#{ProcessForm.showColumn('process.project')}">
                             <h:outputText value="#{process.project.title}"/>
                         </p:column>
