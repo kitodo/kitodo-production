@@ -54,6 +54,7 @@ public class IndexWorker implements Runnable {
     public void run() {
         int maxAttempts = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_ATTEMPTS);
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
+        int timeBetweenAttempts = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_TIME_BETWEEN_ATTEMPTS);
         int maxBatch = indexWorkerStatus.getMaxBatch();
 
         Integer nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
@@ -78,7 +79,7 @@ public class IndexWorker implements Runnable {
                     logger.error(e.getMessage(), e);
                     attempt += 1;
                     try {
-                        Thread.sleep(2000);
+                        Thread.sleep(timeBetweenAttempts);
                     } catch (InterruptedException e2) {
                         // ignore
                     }
