@@ -89,10 +89,10 @@
                                            var="step"
                                            itemLabel="#{step.localizedLabel}"
                                            itemValue="#{step.title}"/>
-                            <p:ajax event="change"
+                            <p:ajax event="valueChange"
                                     oncomplete="updateProcessMetadata();"
                                     listener="#{CreateProcessForm.titleRecordLinkTab.createInsertionPositionSelectionTree()}"
-                                    update="editForm:processFromTemplateTabView:metadataTable,editForm:processFromTemplateTabView:insertionTree"/>
+                                    update="editForm:processFromTemplateTabView:insertionTree"/>
                         </p:selectOneMenu>
                     </div>
 
@@ -181,5 +181,6 @@
                      actionListener="#{CreateProcessForm.processMetadata.preserve}"/>
 
     <p:remoteCommand name="updateProcessMetadata"
+                     update="metadataTable"
                      actionListener="#{CreateProcessForm.processDataTab.updateProcessMetadata()}"/>
 </ui:composition>
