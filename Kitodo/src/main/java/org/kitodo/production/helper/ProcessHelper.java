@@ -19,7 +19,7 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
@@ -98,7 +98,7 @@ public class ProcessHelper {
     public static ProcessFieldedMetadata initializeProcessDetails(LogicalDivision structure,
             RulesetManagementInterface managementInterface, String stage, List<Locale.LanguageRange> priorityList) {
         StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
-            stage, priorityList);
+                stage, priorityList);
         return new ProcessFieldedMetadata(structure, divisionView);
     }
 
@@ -106,21 +106,24 @@ public class ProcessHelper {
      * Generates TSL/ATS dependent fields of temp process.
      *
      * @param tempProcess
-     *            the temp process to generate TSL/ATS dependent field
+     *         the temp process to generate TSL/ATS dependent fields
      * @param processDetails
-     *            the process details of temp process
+     *         the process details of temp process
+     * @param parentTempProcesses
+     *         the parent temp processes
      * @param docType
-     *            current division
+     *         current division
      * @param rulesetManagementInterface
-     *            interface that provides access to the ruleset
+     *         interface that provides access to the ruleset
      * @param acquisitionStage
-     *            current acquisition level
+     *         current acquisition level
      * @param priorityList
-     *            weighted list of user-preferred display languages
+     *         weighted list of user-preferred display languages
      * @throws ProcessGenerationException
-     *             thrown if process title cannot be created
+     *         thrown if process title cannot be created
      */
-    public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails, String docType,
+    public static void generateAtstslFields(TempProcess tempProcess, List<ProcessDetail> processDetails,
+            List<TempProcess> parentTempProcesses, String docType,
             RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
             List<Locale.LanguageRange> priorityList) throws ProcessGenerationException {
         generateAtstslFields(tempProcess, processDetails, null, docType, rulesetManagementInterface, acquisitionStage,
@@ -202,7 +205,7 @@ public class ProcessHelper {
                 if (titleDefinition.startsWith("+")) {
                     titleDefinition = '\'' + parentProcess.getTitle() + '\'' + titleDefinition;
                 }
-                currentTitle = getTitleFromLogicalStructure(parentProcess);
+                currentTitle = getTitleFromWorkpiece(parentProcess);
             } else if (Objects.nonNull(parentTempProcesses)) {
                 currentTitle = getTitleFromParents(parentTempProcesses, rulesetManagementInterface, acquisitionStage,
                         priorityList);
@@ -252,31 +255,33 @@ public class ProcessHelper {
      */
     public static List<Metadata> convertMetadata(NodeList nodes, MdSec domain) {
         List<Metadata> allMetadata = new ArrayList<>();
-        for (int index = 0; index < nodes.getLength(); index++) {
-            Node node = nodes.item(index);
-            if (!(node instanceof Element)) {
-                continue;
-            }
-            Element element = (Element) node;
-            Metadata metadata;
-            switch (element.getLocalName()) {
-                case "metadata":
-                    MetadataEntry entry = new MetadataEntry();
-                    entry.setValue(element.getTextContent());
-                    metadata = entry;
-                    break;
-                case "metadataGroup": {
-                    MetadataGroup group = new MetadataGroup();
-                    group.setGroup(convertMetadata(element.getChildNodes(), null));
-                    metadata = group;
-                    break;
-                }
-                default:
+        if (Objects.nonNull(nodes)) {
+            for (int index = 0; index < nodes.getLength(); index++) {
+                Node node = nodes.item(index);
+                if (!(node instanceof Element)) {
                     continue;
+                }
+                Element element = (Element) node;
+                Metadata metadata;
+                switch (element.getLocalName()) {
+                    case "metadata":
+                        MetadataEntry entry = new MetadataEntry();
+                        entry.setValue(element.getTextContent());
+                        metadata = entry;
+                        break;
+                    case "metadataGroup": {
+                        MetadataGroup group = new MetadataGroup();
+                        group.setGroup(convertMetadata(element.getChildNodes(), null));
+                        metadata = group;
+                        break;
+                    }
+                    default:
+                        continue;
+                }
+                metadata.setKey(element.getAttribute("name"));
+                metadata.setDomain(domain);
+                allMetadata.add(metadata);
             }
-            metadata.setKey(element.getAttribute("name"));
-            metadata.setDomain(domain);
-            allMetadata.add(metadata);
         }
         return allMetadata;
     }
@@ -310,33 +315,33 @@ public class ProcessHelper {
         return tiffHeaderGenerator.generateTiffHeader(tiffDefinition, docType);
     }
 
-    private static String getTitleFromLogicalStructure(Process process) {
+    private static String getTitleFromWorkpiece(Process process) {
         try {
             LegacyMetsModsDigitalDocumentHelper metsModsDigitalDocumentHelper = ServiceManager.getProcessService()
                     .readMetadataFile(process);
             return getTitleFromMetadata(
-                metsModsDigitalDocumentHelper.getWorkpiece().getLogicalStructure().getMetadata());
+                    metsModsDigitalDocumentHelper.getWorkpiece().getLogicalStructure().getMetadata());
         } catch (IOException | NullPointerException e) {
             logger.error(e.getMessage(), e);
         }
         return StringUtils.EMPTY;
     }
 
-    private static String getTitleFromParents(List<TempProcess> parents,
+    private static String getTitleFromParents(List<TempProcess> parentTempProcesses,
             RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
             List<Locale.LanguageRange> priorityList) {
-        if (parents.size() == 0) {
+        if (parentTempProcesses.size() == 0) {
             return StringUtils.EMPTY;
         }
 
-        for (TempProcess tempProcess : parents) {
+        for (TempProcess tempProcess : parentTempProcesses) {
             String title;
-            if (Objects.isNull(tempProcess.getMetadataNodes())) {
-                title = getTitleFromLogicalStructure(tempProcess.getProcess());
-            } else {
+            if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 ProcessFieldedMetadata processFieldedMetadata = initializeTempProcessDetails(tempProcess,
                         rulesetManagementInterface, acquisitionStage, priorityList);
                 title = getTitleFromMetadata(processFieldedMetadata.getChildMetadata());
+            } else {
+                title = getTitleFromWorkpiece(tempProcess.getProcess());
             }
 
             if (StringUtils.isNotBlank(title)) {

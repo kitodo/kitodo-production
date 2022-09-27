@@ -65,7 +65,7 @@
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.18.0</log4j.version>
         <junit.version>5.5.2</junit.version>
-        <elasticsearch.version>7.17.5</elasticsearch.version>
+        <elasticsearch.version>7.17.6</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
@@ -73,7 +73,7 @@
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.2</spring.security.version>
+        <spring.security.version>5.7.3</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
@@ -244,11 +244,6 @@ from system library in Java 11+ -->
                 <version>${jaxen.version}</version>
             </dependency>
             <dependency>
-                <groupId>jdom</groupId>
-                <artifactId>jdom</artifactId>
-                <version>1.1</version>
-            </dependency>
-            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
@@ -274,7 +269,6 @@ from system library in Java 11+ -->
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
                 <version>${saxon.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
@@ -522,7 +516,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.2.3.Final</version>
+                <version>6.2.4.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -626,7 +620,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.passay</groupId>
                 <artifactId>passay</artifactId>
-                <version>1.6.1</version>
+                <version>1.6.2</version>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
