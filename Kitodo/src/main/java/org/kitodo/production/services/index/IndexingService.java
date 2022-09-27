@@ -234,7 +234,8 @@ public class IndexingService {
      * @param type
      *            type objects that get indexed
      */
-    public void runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) throws DataException, CustomResponseException, DAOException {
+    public void runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) 
+            throws DataException, CustomResponseException, DAOException {
         SearchService searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
 
@@ -627,8 +628,6 @@ public class IndexingService {
     public void startAllIndexingRemaining(PushContext pushContext) {
         startIndexingThread(pushContext, false, null);
     }
-
-    
 
     void setIndexingAll(boolean indexing) {
         indexingAll = indexing;
