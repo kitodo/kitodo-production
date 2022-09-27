@@ -64,7 +64,8 @@ public class IndexWorker implements Runnable {
             while (attempt < maxAttempts) {
                 try {
                     int offset = nextBatch * batchSize;
-                    logger.info("index " + objectType.toString() + " with offset " + offset + " and attempt " + attempt);
+                    logger.info("index " + objectType.toString() + " with offset " + offset + " and attempt " 
+                        + attempt + "/" + maxAttempts);
 
                     if (indexAllObjects) {
                         indexObjects(searchService.getAll(offset, batchSize));
@@ -73,7 +74,7 @@ public class IndexWorker implements Runnable {
                     }
 
                     break;
-                } catch (CustomResponseException | DAOException  | HibernateException | IOException e) {
+                } catch (Exception e) {
                     logger.error(e.getMessage(), e);
                     attempt += 1;
                     try {

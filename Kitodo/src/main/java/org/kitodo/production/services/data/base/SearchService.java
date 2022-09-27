@@ -207,7 +207,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException, IOException {
         indexer.setMethod(HttpMethod.PUT);
         if (!baseIndexedBeans.isEmpty()) {
-            indexer.performMultipleRequests(baseIndexedBeans, type, true);
+            indexer.performMultipleRequests(baseIndexedBeans, type, false);
             saveAsIndexed(baseIndexedBeans);
         }
     }

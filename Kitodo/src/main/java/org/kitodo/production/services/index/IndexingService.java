@@ -79,7 +79,7 @@ public class IndexingService {
 
     static final int PAUSE = 1000;
 
-    private IndexAllThread indexAllThread = null;
+    private IndexManagmentThread indexAllThread = null;
     private boolean indexingAll = false;
 
     private ObjectType currentIndexState = ObjectType.NONE;
@@ -227,43 +227,37 @@ public class IndexingService {
     }
 
     /**
-     * Index all objects of given type 'objectType', independent of whether they are already indexed. 
+     * Manage indexing for a given object type.
      * 
-     * <p>This method is executed in the `IndexAllThread`.</p>
+     * <p>This method is executed in the `IndexManagementThread`.</p>
      *
      * @param type
      *            type objects that get indexed
      */
-    public void startIndexing(ObjectType type, PushContext pushContext) throws DataException, CustomResponseException, DAOException {
+    public void runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) throws DataException, CustomResponseException, DAOException {
         SearchService searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
 
         if (countDatabaseObjects.get(type) > 0) {
-            Long amountInIndex = searchService.count();
-            long offset = 0L;
+            if (indexAllObjects) {
+                // only check for loose index data when indexing full objects
+                Long amountInIndex = searchService.count();
+                long offset = 0L;
 
-            // remove documents in index that are no longer available in database
-            // by iterating over all indexed documents in elastic search
-            while (offset < amountInIndex) {
-                searchService.removeLooseIndexData(searchService.findAllIDs(offset, indexLimit));
-                offset += indexLimit;
+                // remove documents in index that are no longer available in database
+                // by iterating over all indexed documents in elastic search
+                try {
+                    while (offset < amountInIndex) {
+                        // TODO: actually iterate over all elastic search documents
+                        searchService.removeLooseIndexData(searchService.findAllIDs(offset, indexLimit));
+                        offset += indexLimit;
+                    }
+                } catch (Exception e) {
+                    logger.info("Cannot check documents beyond elastic search max_result_window, continuing ...");
+                }
             }
 
-            runIndexing(type, pushContext, true);
-        }
-    }
-
-    /**
-     * Index all objects of given type 'objectType' that are not yet indexed.
-     * 
-     * <p>This method is executed in the `IndexAllThread`.</p>
-     *
-     * @param type
-     *            type objects that get indexed
-     */
-    public void startIndexingRemaining(ObjectType type, PushContext context) throws DAOException {
-        if (countDatabaseObjects.get(type) > 0) {
-            runIndexing(type, context, false);
+            spawnIndexingThreads(type, pushContext, indexAllObjects);
         }
     }
 
@@ -304,7 +298,7 @@ public class IndexingService {
      * @param pollingChannel the UI polling channel for triggering updates
      * @param indexAllObjects whehter all or only remaining objects are indexed
      */
-    private void runIndexing(ObjectType type, PushContext pollingChannel, boolean indexAllObjects) throws DAOException {
+    private void spawnIndexingThreads(ObjectType type, PushContext pollingChannel, boolean indexAllObjects) throws DAOException {
         // declare that indexing for type has started
         currentIndexState = type;
         currentState = IndexStates.INDEXING_STARTED;
@@ -590,27 +584,51 @@ public class IndexingService {
         }
     }
 
-    /**
-     * Start indexing of all database objects in separate thread.
-     */
-    public void startAllIndexing(PushContext context) {
-        startIndexingThread(context, true);
-    }
-
-    /**
-     * Starts the process of indexing all objects to the ElasticSearch index.
-     */
-    public void startAllIndexingRemaining(PushContext pushContext) {
-        startIndexingThread(pushContext, false);
-    }
-
-    private void startIndexingThread(PushContext context, boolean indexAllObjects) {
+    private void startIndexingThread(PushContext context, boolean indexAllObjects, ObjectType objectType) throws IllegalStateException {
         if (Objects.isNull(indexAllThread) || !indexAllThread.isAlive()) {
-            indexAllThread = new IndexAllThread(context, this, indexAllObjects);
-            indexAllThread.setName("IndexAllThread");
+            indexAllThread = new IndexManagmentThread(context, this, objectType, indexAllObjects);
+            indexAllThread.setName("IndexManagementThread");
             indexAllThread.start();
+        } else {
+            throw new IllegalStateException("indexing already in progress, can not start again");
         }
     }
+
+    /**
+     * Start indexing of all objects of specific object type.
+     * 
+     * @param context the UI context
+     * @param objectType the object type to index
+     */
+    public void startIndexing(PushContext context, ObjectType objectType) {
+        startIndexingThread(context, true, objectType);
+    }
+
+    /**
+     * Start indexing of remaining objects of specific object type.
+     * 
+     * @param context the UI context
+     * @param objectType the object type to index
+     */
+    public void startIndexingRemaining(PushContext context, ObjectType objectType) {
+        startIndexingThread(context, false, objectType);
+    }
+
+    /**
+     * Start indexing of all database objects independent of object type.
+     */
+    public void startAllIndexing(PushContext context) {
+        startIndexingThread(context, true, null);
+    }
+
+    /**
+     * Starts indexing all remaining database objects independent of object type.
+     */
+    public void startAllIndexingRemaining(PushContext pushContext) {
+        startIndexingThread(pushContext, false, null);
+    }
+
+    
 
     void setIndexingAll(boolean indexing) {
         indexingAll = indexing;
