@@ -171,14 +171,14 @@ public class WorkflowForm extends BaseForm {
      * Update the tasks of the templates associated with the current workflow and delete associated
      * editor settings.
      */
-    private void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
+    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
         Converter converter = new Converter(this.workflow.getTitle());
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
             if (!templateTasks.isEmpty()) {
-                for (Task templatetask: templateTasks) {
-                    DataEditorSettingService dataEditorSettingService =  ServiceManager.getDataEditorSettingService();
-                    dataEditorSettingService.removeFromDatabaseByTaskId(templatetask.getId());
+                DataEditorSettingService dataEditorSettingService =  ServiceManager.getDataEditorSettingService();
+                for (Task templateTask: templateTasks) {
+                    dataEditorSettingService.removeFromDatabaseByTaskId(templateTask.getId());
                 }
                 workflowTemplate.getTasks().clear();
                 TemplateService templateService = ServiceManager.getTemplateService();
@@ -187,6 +187,26 @@ public class WorkflowForm extends BaseForm {
                 new WorkflowControllerService().activateNextTasks(workflowTemplate.getTasks());
             }
         }
+    }
+
+    /**
+     * Check if there are data editor setting for the tasks of the current workflow.
+     *
+     * @return true if one of the tasks has data editor settings defined
+     */
+    public boolean hasWorkflowDataEditorSettingsDefined() {
+        DataEditorSettingService dataEditorSettingService =  ServiceManager.getDataEditorSettingService();
+        for (Template workflowTemplate : this.workflow.getTemplates()) {
+            List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
+            if (!templateTasks.isEmpty()) {
+                for (Task templateTask: templateTasks) {
+                    if (!dataEditorSettingService.getByTaskId(templateTask.getId()).isEmpty()){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     /**

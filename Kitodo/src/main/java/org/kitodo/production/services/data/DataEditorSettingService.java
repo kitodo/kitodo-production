@@ -81,7 +81,7 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
         }
     }
     
-    private List<DataEditorSetting> getByTaskId(int taskId) {
+    public List<DataEditorSetting> getByTaskId(int taskId) {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("taskId", taskId);
         return getByQuery("FROM DataEditorSetting WHERE task_id = :taskId ORDER BY id ASC", parameterMap);

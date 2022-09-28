@@ -80,7 +80,11 @@
                               'summary':'#{msgs.workflowSaving}',
                               'detail':'#{msgs.youWillBeRedirected}',
                               'severity':'info'});"
-                         disabled="#{WorkflowForm.saveDisabled}"/>
+                         disabled="#{WorkflowForm.saveDisabled}">
+            <p:confirm header="#{msgs.confirmDelete}" message="Wollen sie das wirklich tun?"
+                       disabled="#{not WorkflowForm.hasWorkflowDataEditorSettingsDefined()}"
+                       icon="ui-icon-alert"/>
+        </p:commandButton>
     </ui:define>
 
     <ui:define name="pageTabView">

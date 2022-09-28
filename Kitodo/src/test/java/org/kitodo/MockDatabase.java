@@ -202,6 +202,7 @@ public class MockDatabase {
         insertTasks();
         insertDataForParallelTasks();
         insertDataForScriptParallelTasks();
+        insertDataEditorSettings();
     }
 
     public static void insertRolesFull() throws DAOException {
