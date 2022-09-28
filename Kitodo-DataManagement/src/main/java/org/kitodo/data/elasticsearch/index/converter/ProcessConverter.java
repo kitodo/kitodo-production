@@ -81,6 +81,20 @@ public class ProcessConverter {
     }
 
     /**
+     * Find and adds all tasks of children processes to the list of tasks.
+     * 
+     * @param process the process
+     * @param tasks the task list to be populated with tasks
+     */
+    private static void findTasksOfChildProcessesRecursive(Process process, List<Task> tasks) {
+        tasks.addAll(process.getTasks());
+        List<Process> children = process.getChildren();
+        for (Process child : children) {
+            findTasksOfChildProcessesRecursive(child, tasks);
+        }
+    }
+
+    /**
      * Returns a list of tasks that are the basis of calculating the status of the process.
      * 
      * <p>For process that have children, their repective tasks are also included.</p>
@@ -97,10 +111,8 @@ public class ProcessConverter {
         // if the process has children, also consider these tasks for progress calculation
         if (considerChildren) {
             List<Process> children = process.getChildren();
-            if (children.size() > 0) {
-                for (Process child : children) {
-                    tasks.addAll(child.getTasks());
-                }
+            for (Process child : children) {
+                findTasksOfChildProcessesRecursive(child, tasks);
             }
         }
         return tasks;
