@@ -425,10 +425,10 @@ public class VariableReplacer {
     public String replaceWithFilenames(String stringWithVariables, String filename) {
     	if (Objects.isNull(stringWithVariables)) {
             return "";
-    	}
-        
+        }
+
         stringWithVariables = invokeLegacyVariableReplacer(stringWithVariables);
-    	
+
     	Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(stringWithVariables);
     	boolean stringChanged = false;
     	StringBuffer replacedStringBuffer = null;
@@ -446,7 +446,7 @@ public class VariableReplacer {
             return stringWithVariables;
     	}
     }
-    
+
     /**
      * If a filename is to be determined, it is determined here.
      * 
@@ -471,7 +471,7 @@ public class VariableReplacer {
                 return variableFinder.group();
     	}
     }
-    
+
     /**
      * Determines replacement for full file name.
      * 
