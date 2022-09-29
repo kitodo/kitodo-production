@@ -11,6 +11,12 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -23,15 +29,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
-import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.data.WorkflowService;
-
-import java.io.IOException;
-import java.net.URI;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class WorkflowFormIT {
 
@@ -63,7 +61,7 @@ public class WorkflowFormIT {
     }
 
     /**
-     * Test
+     * Test the update of a workflow and the deletion of existing editor settings.
      *
      */
     @Test
@@ -79,7 +77,8 @@ public class WorkflowFormIT {
         DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
 
         int numberOfTasksBeforeUpdate = firstTemplate.getTasks().size();
-        List<DataEditorSetting> dataEditorSettingListBeforeUpdate = dataEditorSettingService.getByTaskId(firstTemplate.getTasks().get(0).getId());
+        List<DataEditorSetting> dataEditorSettingListBeforeUpdate = dataEditorSettingService.getByTaskId(
+                firstTemplate.getTasks().get(0).getId());
         assertEquals(dataEditorSettingListBeforeUpdate.size(), 1);
         assertEquals(numberOfTasksBeforeUpdate, 5);
 
@@ -88,7 +87,8 @@ public class WorkflowFormIT {
         firstTemplate = ServiceManager.getTemplateService().getById(1);
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
         assertEquals(numberOfTasksAfterUpdate, 1);
-        List<DataEditorSetting> dataEditorSettingListAfterUpdate = dataEditorSettingService.getByTaskId(firstTemplate.getTasks().get(0).getId());
+        List<DataEditorSetting> dataEditorSettingListAfterUpdate = dataEditorSettingService.getByTaskId(
+                firstTemplate.getTasks().get(0).getId());
         assertEquals(dataEditorSettingListAfterUpdate.size(), 0);
     }
 
