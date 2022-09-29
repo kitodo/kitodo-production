@@ -77,7 +77,7 @@ public class VariableReplacerTest {
 
     	assertEquals("String was replaced incorrectly!", expected, replaced);
     }
-    
+
     @Test
     public void shouldReplaceFilename() {
     	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
