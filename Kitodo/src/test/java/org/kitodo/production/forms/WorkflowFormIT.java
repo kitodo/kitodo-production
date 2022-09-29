@@ -21,8 +21,10 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.*;
-import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.DataEditorSetting;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -74,7 +76,7 @@ public class WorkflowFormIT {
         currentWorkflowForm.setWorkflow(workflow);
 
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
-        workflow.setTemplates(Arrays.asList(ServiceManager.getTemplateService().getById(1)));
+        workflow.setTemplates(Arrays.asList(firstTemplate));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         workflowService.save(workflow);
 
