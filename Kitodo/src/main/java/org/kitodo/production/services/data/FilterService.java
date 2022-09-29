@@ -21,7 +21,9 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -62,6 +64,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
+    private static final Pattern CONDITION_PATTERN = Pattern.compile("\\(([^\\)]+)\\)|([^\\(\\)]+)");
+
     public static final String FILTER_STRING = "filterString";
 
     /**
@@ -143,10 +147,22 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * depending on which data structures are used for applying filtering
      * restrictions conjunctions are formed and collect the restrictions and
      * then will be applied on the corresponding criteria. A criteria is only
-     * added if needed for the presence of filters applying to it. Prefix "-"
-     * means that negated query should be created.
+     * added if needed for the presence of filters applying to it. 
+     * 
+     * <p>Filters are enclosed in double quotes and separated via a space. 
+     * Each filter can be a disjunction of conditions separated by space and 
+     * optionally enclosed in parentheses. Conditions can be negated by adding the 
+     * prefix "-".</p>
+     * 
+     * <p>Some examples are: the default filter "word", which filters task or 
+     * processes by their title; a filter "stepinwork:Scanning", which filters 
+     * processes or tasks by the task state "Scanning" which are also currently in 
+     * progress. The negation thereof would be "-stepinwork:Scanning". A disjunction 
+     * of conditions would be "stepinwork:Scanning stepinwork:QC". In case that 
+     * values contain a space, conditions can be enclosed in parentheses, meaning
+     * "(stepinwork:Scanning Step) stepinwork:QC".</p>
      *
-     * @param filter
+     * @param filters
      *            as String
      * @param objectType
      *            as ObjectType - "PROCESS", "TEMPLATE" or "TASK"
@@ -156,10 +172,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            as Boolean
      * @return query as {@link BoolQueryBuilder}
      */
-    public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean onlyOpenTasks,
+    public BoolQueryBuilder queryBuilder(String filters, ObjectType objectType, Boolean onlyOpenTasks,
             Boolean onlyUserAssignedTasks) throws DataException {
 
-        filter = replaceLegacyFilters(filter);
+        filters = replaceLegacyFilters(filters);
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         // this is needed if we filter task
@@ -167,68 +183,78 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks);
         }
 
-        for (String tokenizedFilter : prepareFilters(filter)) {
-            if (evaluateFilterString(tokenizedFilter, FilterString.TASK, null)) {
-                query.must(createHistoricFilter(tokenizedFilter));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKLOCKED, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKOPEN, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONE, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONETITLE, null)) {
-                String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
-                query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONEUSER, null)
-                    && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
-                query.must(filterTaskDoneUser(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKAUTOMATIC, null)) {
-                query.must(filterAutomaticTasks(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, null)) {
-                query.must(filterProject(tokenizedFilter, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.ID, null)) {
-                query.must(createProcessIdFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PARENTPROCESSID, null)) {
-                query.must(createParentProcessIdFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROPERTY, null)) {
-                query.must(createProcessPropertyFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESS, null)) {
-                query.must(createProcessTitleFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, null)) {
-                query.must(createBatchIdFilter(tokenizedFilter, objectType, true));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKLOCKED, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKOPEN, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONE, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONETITLE, "-")) {
-                String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
-                query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, "-")) {
-                query.must(filterProject(tokenizedFilter, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, "-")) {
-                query.must(createBatchIdFilter(tokenizedFilter, objectType, false));
-            } else if (tokenizedFilter.startsWith("-")) {
-                query.must(createDefaultQuery(tokenizedFilter.substring(1), true, objectType));
-            } else {
-                /* standard-search parameter */
-                query.must(createDefaultQuery(tokenizedFilter, false, objectType));
+        for (String filter : splitFilters(filters)) {
+            BoolQueryBuilder bool = new BoolQueryBuilder();
+            for (String condition : splitConditions(filter)) {
+                boolean negated = condition.startsWith("-");
+                if (negated) {
+                    bool.should(new BoolQueryBuilder().mustNot(
+                        buildQueryFromCondition(condition.substring(1), objectType))
+                    );
+                } else {
+                    bool.should(buildQueryFromCondition(condition, objectType));
+                }
             }
+            query.must(bool);
         }
         return query;
+    }
+
+    /**
+     * Splits a filter into multiple alternative conditions.
+     * 
+     * @param filter the filter string (the part the is enclosed in double quotes)
+     * @return a list of conditions (that were optionally enclosed in parantheses)
+     */
+    private List<String> splitConditions(String filter) {
+        List<String> conditions = CONDITION_PATTERN.matcher(filter).results().flatMap(
+           mr -> IntStream.rangeClosed(1, mr.groupCount()).mapToObj(mr::group)
+        ).filter(Objects::nonNull).map(String::trim).collect(Collectors.toList());
+        return conditions;
+    }
+
+    /**
+     * Builds a ElasticSearch query from a single condition.
+     * 
+     * @param condition the condition (e.g. a single word, or a pair of "property:value")
+     * @param objectType the object type that is being filtered (either task or process)
+     * @return a elastic search query builder object representing the condition
+     */
+    private QueryBuilder buildQueryFromCondition(String condition, ObjectType objectType) throws DataException {
+        if (evaluateFilterString(condition, FilterString.TASK, null)) {
+            return createHistoricFilter(condition);
+        } else if (evaluateFilterString(condition, FilterString.TASKINWORK, null)) {
+            return createTaskFilters(condition, FilterString.TASKINWORK, TaskStatus.INWORK, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKLOCKED, null)) {
+            return createTaskFilters(condition, FilterString.TASKLOCKED, TaskStatus.LOCKED, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKOPEN, null)) {
+            return createTaskFilters(condition, FilterString.TASKOPEN, TaskStatus.OPEN, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKDONE, null)) {
+            return createTaskFilters(condition, FilterString.TASKDONE, TaskStatus.DONE, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKDONETITLE, null)) {
+            String taskTitle = getFilterValueFromFilterString(condition, FilterString.TASKDONETITLE);
+            return filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKDONEUSER, null)
+                && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
+            return filterTaskDoneUser(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKAUTOMATIC, null)) {
+            return filterAutomaticTasks(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PROJECT, null)) {
+            return filterProject(condition, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.ID, null)) {
+            return createProcessIdFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PARENTPROCESSID, null)) {
+            return createParentProcessIdFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PROPERTY, null)) {
+            return createProcessPropertyFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PROCESS, null)) {
+            return createProcessTitleFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.BATCH, null)) {
+            return createBatchIdFilter(condition, objectType, true);
+        } else {
+            /* standard-search parameter */
+            return createDefaultQuery(condition, false, objectType);
+        }
     }
 
     private String replaceLegacyFilters(String filter) {
@@ -369,7 +395,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            as String
      * @return list of single filters
      */
-    private List<String> prepareFilters(String filter) {
+    private List<String> splitFilters(String filter) {
         List<String> filters = new ArrayList<>();
         String delimiter = "\"";
         StringTokenizer tokenizer = new StringTokenizer(filter, delimiter, true);
@@ -914,7 +940,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private QueryBuilder createDefaultQuery(String filter, boolean negate, ObjectType objectType) throws DataException {
         QueryBuilder titleQuery = ServiceManager.getProcessService().getWildcardQueryTitle(filter);
-        return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
+        QueryBuilder query = getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
+        return negate ? new BoolQueryBuilder().mustNot(query) : query;
     }
 
     private QueryBuilder getQueryAccordingToObjectTypeAndSearchInObject(ObjectType objectType,
@@ -1003,7 +1030,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         HashMap<String, Object> filterMap = new HashMap<>();
         List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName)
                 .collect(Collectors.toList());
-        for (String filter : prepareFilters(parseFilterString(filters))) {
+        for (String filter : splitFilters(parseFilterString(filters))) {
             if (StringUtils.countMatches(filter, ":") == 1) {
                 String[] filterComponents = filter.split(":");
                 String parameterName = filterComponents[0].trim();
