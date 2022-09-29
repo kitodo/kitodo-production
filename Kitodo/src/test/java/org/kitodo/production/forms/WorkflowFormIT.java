@@ -21,19 +21,23 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.data.database.beans.DataEditorSetting;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.enums.TaskEditType;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
+import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.data.WorkflowService;
 
 public class WorkflowFormIT {
 
     private WorkflowForm currentWorkflowForm = new WorkflowForm();
+    private static final TaskService taskService = ServiceManager.getTaskService();
+    private static final DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
 
     /**
      * Setup Database and start elasticsearch.
@@ -74,22 +78,48 @@ public class WorkflowFormIT {
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         workflowService.save(workflow);
 
-        DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
+        //Instantiate DataEditor settings for a task of the second template which should not be deleted
+        Task templateTask = createAndSaveTemplateTask(TaskStatus.OPEN, 1,
+                ServiceManager.getTemplateService().getById(2));
+        createAndSaveDataEditorSetting(templateTask.getId());
 
         int numberOfTasksBeforeUpdate = firstTemplate.getTasks().size();
-        List<DataEditorSetting> dataEditorSettingListBeforeUpdate = dataEditorSettingService.getByTaskId(
+        List<DataEditorSetting> dataEditorSettingForFirstTaskBeforeUpdate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
-        assertEquals(dataEditorSettingListBeforeUpdate.size(), 1);
-        assertEquals(numberOfTasksBeforeUpdate, 5);
+        List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
+        assertEquals(5, numberOfTasksBeforeUpdate);
+        assertEquals(1, dataEditorSettingForFirstTaskBeforeUpdate.size());
+        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
 
         currentWorkflowForm.updateTemplateTasks();
 
         firstTemplate = ServiceManager.getTemplateService().getById(1);
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
-        assertEquals(numberOfTasksAfterUpdate, 1);
-        List<DataEditorSetting> dataEditorSettingListAfterUpdate = dataEditorSettingService.getByTaskId(
+        List<DataEditorSetting> dataEditorSettingForFirstTaskAfterUpdate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
-        assertEquals(dataEditorSettingListAfterUpdate.size(), 0);
+        List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
+        assertEquals(numberOfTasksAfterUpdate, 1);
+        assertEquals(0, dataEditorSettingForFirstTaskAfterUpdate.size());
+        assertEquals(1, completeEditorSettingsAfterUpdate.size());
+    }
+
+    private Task createAndSaveTemplateTask(TaskStatus taskStatus, int ordering, Template template) throws DataException {
+        Task task = new Task();
+        task.setProcessingStatus(taskStatus);
+        task.setEditType(TaskEditType.MANUAL_SINGLE);
+        task.setOrdering(ordering);
+        taskService.save(task);
+        return task;
+    }
+
+    private void createAndSaveDataEditorSetting(int templateTaskId) throws DataException, DAOException {
+        DataEditorSetting dataEditorSetting = new DataEditorSetting();
+        dataEditorSetting.setUserId(1);
+        dataEditorSetting.setTaskId(templateTaskId);
+        dataEditorSetting.setStructureWidth(0.2f);
+        dataEditorSetting.setMetadataWidth(0.4f);
+        dataEditorSetting.setGalleryWidth(0.4f);
+        dataEditorSettingService.saveToDatabase(dataEditorSetting);
     }
 
 }
