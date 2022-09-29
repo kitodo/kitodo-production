@@ -12,6 +12,8 @@
 package org.kitodo.production.helper;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.net.URI;
 
@@ -62,6 +64,61 @@ public class VariableReplacerTest {
         String expected = "-processpath " + projectId + " -hardcoded test";
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
+    
+    @Test
+    public void shouldReplaceTitleAndFilename() {
+    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+    	
+    	String testFilename = "src/testFile.txt";
+    	String replaced = variableReplacer.replaceWithFilenames("-title (processtitle) -filename (filename) -hardcoded test", testFilename);
+    	String expected = "-title Replacement -filename " + testFilename + " -hardcoded test";
+    
+    	assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
+    
+    @Test
+    public void shouldReplaceFilename() {
+    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+    	String testFilename = "src/testFile.txt";
+    	
+        String replaced = variableReplacer.replaceWithFilenames("-filename (filename) -hardcoded test", testFilename);
+        String expected = "-filename " + testFilename + " -hardcoded test";
+
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
+    
+    @Test
+    public void shouldReplaceFilenameWithoutExtension() {
+    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+    	String testFilename = "src/testFilename.txt";
+    	
+        String replaced = variableReplacer.replaceWithFilenames("-filename_without_extension (filename_without_extension) -hardcoded test", testFilename);
+        String expected = "-filename_without_extension testFilename -hardcoded test";
+
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
+    
+    @Test
+    public void shouldContainFile() {
+    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+    	String toBeMatched = "src/(filename_without_extension)/test.txt";
+    	
+    	assertTrue("String does not match as containing file variables!", variableReplacer.containsFiles(toBeMatched));
+    	 
+    }
+    
+    @Test
+    public void shouldNotContainFile() {
+    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+    	String toBeMatched = "src/(projectid)/test.txt";
+    	
+    	assertFalse("String should not match as containing file variables!", variableReplacer.containsFiles(toBeMatched));
+    	 
     }
 
     private Process prepareProcess() {
