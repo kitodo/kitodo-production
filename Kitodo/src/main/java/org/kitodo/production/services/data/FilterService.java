@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -64,7 +65,6 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
-    private static final Pattern CONDITION_PATTERN = Pattern.compile("\\(([^\\)]+)\\)|([^\\(\\)]+)");
 
     public static final String FILTER_STRING = "filterString";
 
@@ -150,17 +150,14 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * added if needed for the presence of filters applying to it. 
      * 
      * <p>Filters are enclosed in double quotes and separated via a space. 
-     * Each filter can be a disjunction of conditions separated by space and 
-     * optionally enclosed in parentheses. Conditions can be negated by adding the 
-     * prefix "-".</p>
+     * Each filter can be a disjunction of conditions separated by a "|". 
+     * Conditions can be negated by adding the prefix "-".</p>
      * 
      * <p>Some examples are: the default filter "word", which filters task or 
      * processes by their title; a filter "stepinwork:Scanning", which filters 
      * processes or tasks by the task state "Scanning" which are also currently in 
      * progress. The negation thereof would be "-stepinwork:Scanning". A disjunction 
-     * of conditions would be "stepinwork:Scanning stepinwork:QC". In case that 
-     * values contain a space, conditions can be enclosed in parentheses, meaning
-     * "(stepinwork:Scanning Step) stepinwork:QC".</p>
+     * of conditions would be "stepinwork:Scanning | stepinwork:QC".</p>
      *
      * @param filters
      *            as String
@@ -203,14 +200,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     /**
      * Splits a filter into multiple alternative conditions.
      * 
-     * @param filter the filter string (the part the is enclosed in double quotes)
-     * @return a list of conditions (that were optionally enclosed in parantheses)
+     * @param filter the filter string (that was enclosed in double quotes)
+     * @return a list of conditions after splitting the filter at the "|" character
      */
     private List<String> splitConditions(String filter) {
-        List<String> conditions = CONDITION_PATTERN.matcher(filter).results().flatMap(
-           mr -> IntStream.rangeClosed(1, mr.groupCount()).mapToObj(mr::group)
-        ).filter(Objects::nonNull).map(String::trim).collect(Collectors.toList());
-        return conditions;
+        return Arrays.stream(filter.split("\\|")).filter(Objects::nonNull)
+            .map(String::trim).filter(Predicate.not(String::isEmpty)).collect(Collectors.toList());
     }
 
     /**
