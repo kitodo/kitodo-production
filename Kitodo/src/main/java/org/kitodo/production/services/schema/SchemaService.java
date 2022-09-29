@@ -149,7 +149,7 @@ public class SchemaService {
                                 .setValue(new URI(variableReplacer.replaceWithFilenames(folder.getUrlStructure(), lastSegment)));
                         }
                         else {
-                        	mediaFileForMediaVariant
+                            mediaFileForMediaVariant
                                 .setValue(new URI(variableReplacer.replace(folder.getUrlStructure() + lastSegment)));
                         }
                     }
