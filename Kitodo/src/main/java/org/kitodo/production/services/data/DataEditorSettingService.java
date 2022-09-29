@@ -100,8 +100,6 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
         return getByQuery("FROM DataEditorSetting WHERE user_id = :userId AND task_id = :taskId ORDER BY id ASC", parameterMap);
     }
 
-
-
     /**
      * Load DataEditorSetting from database or return null if no entry matches the specified ids.
      * @param userId id of the user
