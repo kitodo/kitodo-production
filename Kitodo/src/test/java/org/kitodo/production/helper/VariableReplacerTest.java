@@ -12,8 +12,8 @@
 package org.kitodo.production.helper;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.net.URI;
 
@@ -71,9 +71,10 @@ public class VariableReplacerTest {
     	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
     	
     	String testFilename = "src/testFile.txt";
-    	String replaced = variableReplacer.replaceWithFilenames("-title (processtitle) -filename (filename) -hardcoded test", testFilename);
+    	String replaced = variableReplacer.replaceWithFilenames("-title (processtitle) -filename (filename)" 
+            + " -hardcoded test", testFilename);
     	String expected = "-title Replacement -filename " + testFilename + " -hardcoded test";
-    
+
     	assertEquals("String was replaced incorrectly!", expected, replaced);
     }
     
@@ -95,7 +96,8 @@ public class VariableReplacerTest {
 
     	String testFilename = "src/testFilename.txt";
     	
-        String replaced = variableReplacer.replaceWithFilenames("-filename_without_extension (filename_without_extension) -hardcoded test", testFilename);
+        String replaced = variableReplacer.replaceWithFilenames("-filename_without_extension (filename_without_extension)"
+            + " -hardcoded test", testFilename);
         String expected = "-filename_without_extension testFilename -hardcoded test";
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
