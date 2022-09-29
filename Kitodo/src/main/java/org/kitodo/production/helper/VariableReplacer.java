@@ -234,7 +234,7 @@ public class VariableReplacer {
             return determineReplacementForMetadata(variableFinder);
         }
         if (Objects.nonNull(variableFinder.group(6))) {
-        	return determineReplacementForFilePlaceholder(variableFinder, filename);
+            return determineReplacementForFilePlaceholder(variableFinder, filename);
         }
         return variableFinder.group();
     }
@@ -405,12 +405,12 @@ public class VariableReplacer {
      * @return true if string contains file variables.
      */
     public boolean containsFiles(String stringWithVariables) {
-    	if(Objects.isNull(stringWithVariables)) {
-    		return false;
+        if (Objects.isNull(stringWithVariables)) {
+            return false;
     	}
     	return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(filename_without_extension)");
     }
-    
+
     /**
      * Replaces any file variables with the filename passed as string.
      * Depending on the file variables found, the filename may be written with or without extension.
@@ -423,27 +423,27 @@ public class VariableReplacer {
      * @return string in which placeholders have been replaced.
      */
     public String replaceWithFilenames(String stringWithVariables, String filename) {
-    	if(Objects.isNull(stringWithVariables)) {
-    		return "";
+    	if (Objects.isNull(stringWithVariables)) {
+            return "";
     	}
-    	
-    	stringWithVariables = invokeLegacyVariableReplacer(stringWithVariables);
+        
+        stringWithVariables = invokeLegacyVariableReplacer(stringWithVariables);
     	
     	Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(stringWithVariables);
     	boolean stringChanged = false;
     	StringBuffer replacedStringBuffer = null;
-    	while(variableFinder.find()) {
-    		if(!stringChanged) {
-    			replacedStringBuffer = new StringBuffer();
-    			stringChanged = true;
-    		}
-    		variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder, filename));
-    	}
-    	if(stringChanged) {
-    		variableFinder.appendTail(replacedStringBuffer);
-    		return replacedStringBuffer.toString();
-    	}else {
-    		return stringWithVariables;
+        while (variableFinder.find()) {
+    	    if (!stringChanged) {
+                replacedStringBuffer = new StringBuffer();
+                stringChanged = true;
+            }
+            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder, filename));
+        }
+    	if (stringChanged) {
+            variableFinder.appendTail(replacedStringBuffer);
+            return replacedStringBuffer.toString();
+    	} else {
+            return stringWithVariables;
     	}
     }
     
@@ -461,13 +461,13 @@ public class VariableReplacer {
      *         data cannot be accessed, the empty string is returned.
      */
     private String determineReplacementForFilePlaceholder(Matcher variableFinder, String filename) {
-    	switch(variableFinder.group(6)) {
+        switch (variableFinder.group(6)) {
     	    case "filename":
-    		    return determineReplacementForFilename(variableFinder, filename);
+                return determineReplacementForFilename(variableFinder, filename);
     	    case "filename_without_extension":
-    	    	return determineReplacementForFilenameWithoutExtension(variableFinder, filename);
+                return determineReplacementForFilenameWithoutExtension(variableFinder, filename);
     	    default:
-    	    	logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
+                logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
     	}
     }
@@ -482,12 +482,12 @@ public class VariableReplacer {
      *            string containing the filename to replace placeholder with. 
      * @return the filename to replace the placeholder with. If data is invalid no replacement takes place.
      */
-    private String determineReplacementForFilename(Matcher variableFinder, String filename){
-    	if(Objects.isNull(filename)) {
-    		logger.warn("Cannot replace \"(filename)\": No filename has been given.");
-    		return variableFinder.group();
-    	}
-    	return variableFinder.group(1) + filename;
+    private String determineReplacementForFilename(Matcher variableFinder, String filename) {
+    	if (Objects.isNull(filename)) {
+            logger.warn("Cannot replace \"(filename)\": No filename has been given.");
+            return variableFinder.group();
+        }
+        return variableFinder.group(1) + filename;
     }
 
     /**
@@ -501,16 +501,16 @@ public class VariableReplacer {
      * @return the filename to replace the placeholder with. If data is invalid no replacement takes place.
      */
     private String determineReplacementForFilenameWithoutExtension(Matcher variableFinder, String filename) {
-    	if(Objects.isNull(filename)) {
-    		logger.warn("Cannot replace \"(file)\": No filename has been given.");
-    		return variableFinder.group();
+    	if (Objects.isNull(filename)) {
+            logger.warn("Cannot replace \"(file)\": No filename has been given.");
+            return variableFinder.group();
     	}
-    	if(filename.contains("/")) {
-         	filename = filename.substring(filename.lastIndexOf("/") + 1);    		
+    	if (filename.contains("/")) {
+            filename = filename.substring(filename.lastIndexOf("/") + 1);
     	}
-    	if(filename.contains(".")) {
-    		filename = filename.substring(0, filename.indexOf("."));
+    	if (filename.contains(".")) {
+            filename = filename.substring(0, filename.indexOf("."));
     	}
-    	return variableFinder.group(1) + filename;
-    }   
+        return variableFinder.group(1) + filename;
+    }
 }
