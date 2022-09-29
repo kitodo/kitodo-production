@@ -200,7 +200,7 @@ public class WorkflowForm extends BaseForm {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
             if (!templateTasks.isEmpty()) {
                 for (Task templateTask: templateTasks) {
-                    if (!dataEditorSettingService.getByTaskId(templateTask.getId()).isEmpty()){
+                    if (!dataEditorSettingService.getByTaskId(templateTask.getId()).isEmpty()) {
                         return true;
                     }
                 }

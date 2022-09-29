@@ -4,15 +4,15 @@
     <bpmn2:startEvent id="StartEvent_1">
       <bpmn2:outgoing>SequenceFlow_1x7qbp4</bpmn2:outgoing>
     </bpmn2:startEvent>
-    <bpmn2:task id="Task_0i1d0ke" name="step" template:permittedUserRole="1">
+    <bpmn2:task id="Task1" name="step" template:permittedUserRole="1">
       <bpmn2:incoming>SequenceFlow_1x7qbp4</bpmn2:incoming>
       <bpmn2:outgoing>Flow_1b1r83f</bpmn2:outgoing>
     </bpmn2:task>
-    <bpmn2:sequenceFlow id="SequenceFlow_1x7qbp4" sourceRef="StartEvent_1" targetRef="Task_0i1d0ke" />
+    <bpmn2:sequenceFlow id="SequenceFlow_1x7qbp4" sourceRef="StartEvent_1" targetRef="Task1" />
     <bpmn2:endEvent id="Event_12ij96v">
       <bpmn2:incoming>Flow_1b1r83f</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:sequenceFlow id="Flow_1b1r83f" sourceRef="Task_0i1d0ke" targetRef="Event_12ij96v" />
+    <bpmn2:sequenceFlow id="Flow_1b1r83f" sourceRef="Task1" targetRef="Event_12ij96v" />
   </bpmn2:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">

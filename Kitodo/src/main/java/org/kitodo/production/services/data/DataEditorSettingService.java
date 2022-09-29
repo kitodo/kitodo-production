@@ -80,7 +80,13 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
             dao.remove(dataEditorSetting.getId());
         }
     }
-    
+
+    /**
+     * Retrieve data editor settings by task id.
+     * @param taskId ID of the task
+     *
+     * @return List of DataEditorSetting objects
+     */
     public List<DataEditorSetting> getByTaskId(int taskId) {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("taskId", taskId);

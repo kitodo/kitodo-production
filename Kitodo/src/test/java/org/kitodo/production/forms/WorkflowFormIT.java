@@ -68,26 +68,28 @@ public class WorkflowFormIT {
      */
     @Test
     public void testUpdateWorkflow() throws DAOException, DataException, WorkflowException, IOException {
-        Workflow workflow = new Workflow("gateway-test1");
+        Workflow workflow = new Workflow("one_step_workflow");
         currentWorkflowForm.setWorkflow(workflow);
 
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
-        workflow.setTemplates(Arrays.asList(firstTemplate));
+        workflow.setTemplates(Arrays.asList(ServiceManager.getTemplateService().getById(1)));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         workflowService.save(workflow);
 
-        //int taskSize_one = firstTemplate.getTasks().size();
         DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
-        List<DataEditorSetting> dataEditorSettingList = dataEditorSettingService.getByTaskId(firstTemplate.getTasks().get(0).getId());
-        assertEquals(dataEditorSettingList.size(), 1);
+
+        int numberOfTasksBeforeUpdate = firstTemplate.getTasks().size();
+        List<DataEditorSetting> dataEditorSettingListBeforeUpdate = dataEditorSettingService.getByTaskId(firstTemplate.getTasks().get(0).getId());
+        assertEquals(dataEditorSettingListBeforeUpdate.size(), 1);
+        assertEquals(numberOfTasksBeforeUpdate, 5);
 
         currentWorkflowForm.updateTemplateTasks();
+
         firstTemplate = ServiceManager.getTemplateService().getById(1);
-        //int taskSize_two = firstTemplate.getTasks().size();
-        //assertEquals(firstTemplate.getTasks().size(), 0);
-        dataEditorSettingService = ServiceManager.getDataEditorSettingService();
-        dataEditorSettingList = dataEditorSettingService.getByTaskId(firstTemplate.getTasks().get(0).getId());
-        assertEquals(dataEditorSettingList.size(), 0);
+        int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
+        assertEquals(numberOfTasksAfterUpdate, 1);
+        List<DataEditorSetting> dataEditorSettingListAfterUpdate = dataEditorSettingService.getByTaskId(firstTemplate.getTasks().get(0).getId());
+        assertEquals(dataEditorSettingListAfterUpdate.size(), 0);
     }
 
 }
