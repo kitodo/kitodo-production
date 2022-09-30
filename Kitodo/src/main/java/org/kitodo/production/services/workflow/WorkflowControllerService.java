@@ -448,7 +448,6 @@ public class WorkflowControllerService {
     private void closeParent(Process process) throws DataException {
         if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
             process.getParent().setSortHelperStatus("100000000");
-            logger.info("calling save in closeParent for process id=" + process.getParent().getId());
             ServiceManager.getProcessService().save(process.getParent());
             closeParent(process.getParent());
         }
@@ -707,7 +706,6 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusDown(processForStatus);
-                logger.info("calling save in setTaskStatusDownForProcesses for process id=" + processForStatus.getId());
                 ServiceManager.getProcessService().save(processForStatus, true);
                 updateProcessSortHelperStatus(processForStatus);
             } catch (DataException e) {
