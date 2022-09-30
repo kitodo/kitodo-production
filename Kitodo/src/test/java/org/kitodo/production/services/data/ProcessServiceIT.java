@@ -26,7 +26,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.index.query.Operator;
@@ -609,11 +611,22 @@ public class ProcessServiceIT {
 
         allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
         Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 3, 1, 2, 6)));
+        Assert.assertEquals("Duplicate ids in index", allIDs.size(), new HashSet<Integer>(allIDs).size());
+        Integer maxId = allIDs.stream().mapToInt(Integer::intValue).max().getAsInt();
+        Integer minId = allIDs.stream().mapToInt(Integer::intValue).min().getAsInt();
+        Assert.assertTrue("Ids should all be smaller than 8", maxId < 8);
+        Assert.assertTrue("Ids should all be larger than 0", minId > 0);
+        
+        // This test is very strange. The method findAllIDs doesn't specify an order in which processes are supposed 
+        // to be returned. It could be any order ElasticSearch chooses. It's weird that this doesn't fail randomly.
+        // Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 3, 1, 2, 6)));
 
         allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
         Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 4)));
+
+        // This test is very strange. The method findAllIDs doesn't specify an order in which processes are supposed 
+        // to be returned. It could be any order ElasticSearch chooses. It's weird that this doesn't fail randomly.
+        // Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 4)));
 
     }
 
