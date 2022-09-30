@@ -15,7 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.PersistenceException;
+
+import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.type.StandardBasicTypes;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class TaskDAO extends BaseDAO<Task> {
@@ -130,5 +137,49 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery(
             "FROM Task WHERE process_id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
+    }
+
+    /**
+     * Counts how many tasks have a certain status for the provided process and all its ancestor processes.
+     * 
+     * <p>The counts are used to calculate the process progress status</p>
+     * 
+     * @param process the process to be queried for tasks and their status counts
+     * @return a count for each TaskStatus 
+     */
+    @SuppressWarnings("unchecked")
+    public Map<TaskStatus, Integer> countTaskStatusForProcessAndItsAncestors(Process process) throws DAOException {
+        // initialize counts
+        Map<TaskStatus, Integer> counts = new HashMap<>();
+        counts.put(TaskStatus.OPEN, 0);
+        counts.put(TaskStatus.INWORK, 0);
+        counts.put(TaskStatus.LOCKED, 0);
+        counts.put(TaskStatus.DONE, 0);
+
+        // perform query and read data
+        try (Session session = HibernateUtil.getSession()) {
+            NativeQuery<Object[]> query = session.createSQLQuery(
+                "SELECT t.processingStatus as status, COUNT(*) as count FROM task t, ("
+                    + "    WITH RECURSIVE process_children as ("
+                    + "        (SELECT * FROM process WHERE id = ?)"
+                    + "        UNION ALL"
+                    + "        (SELECT p1.* from process as p1, process_children as p2 WHERE p2.id = p1.parent_id)"
+                    + "    ) SELECT id FROM process_children"
+                    + ") as p WHERE t.process_id = p.id GROUP BY t.processingStatus;"
+            );
+            query.addScalar("status", StandardBasicTypes.INTEGER);
+            query.addScalar("count", StandardBasicTypes.INTEGER);
+            query.setParameter(1, process.getId()).list();
+            
+            for (Object[] row : query.list()) {
+                TaskStatus status = TaskStatus.getStatusFromValue((int)row[0]);
+                Integer count = (int)row[1];
+                counts.put(status, count);
+            }
+
+            return counts;
+        } catch (PersistenceException e) {
+            throw new DAOException(e);
+        }
     }
 }
