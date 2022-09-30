@@ -286,10 +286,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public void save(Process process, boolean updateRelatedObjectsInIndex) throws DataException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
         
+        // save parent processes if they are new and do not have an id yet
+        List<Process> parents = findParentProcesses(process);
+        for (Process parent: parents) {
+            if (Objects.isNull(parent.getId())) {
+                super.save(parent, updateRelatedObjectsInIndex);
+            }
+        }
+        
         super.save(process, updateRelatedObjectsInIndex);
 
-        // save parents of process in order to refresh ElasticSearch index for parents
-        for (Process parent : findParentProcesses(process)) {
+        // save parent processes in order to refresh ElasticSearch index
+        for (Process parent : parents) {
             super.save(parent, updateRelatedObjectsInIndex);
         }
     }
@@ -304,7 +312,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Find all parent processes for a process .
+     * Find all parent processes for a process ordered such that the root parent comes first.
      * 
      * @param process the process whose parents are to be found
      * @return the list of parent processes (direct parents and grand parents, and more)
@@ -312,10 +320,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public List<Process> findParentProcesses(Process process) {
         List<Process> parents = new ArrayList<Process>();
         Process current = process;
-        while(Objects.nonNull(current.getParent())) {
+        while (Objects.nonNull(current.getParent())) {
             current = current.getParent();
             parents.add(current);
         }
+        Collections.reverse(parents);
         return parents;
     }
 
@@ -976,7 +985,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
     }
-    
+
     private Double progressOfChildrenClosed(List<Process> children) {
         DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (Process child : children) {
@@ -984,7 +993,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         return statistics.getMean();
     }
-    
+
     private Double progressOfChildrenInProcessing(List<Process> children) {
         DescriptiveStatistics statistics = new DescriptiveStatistics();
         for (Process child : children) {
