@@ -21,12 +21,16 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.database.persistence.TaskDAO;
 
 /**
  * This class provides static methods that derive basic information from a process, 
@@ -36,6 +40,8 @@ import org.kitodo.data.database.enums.TaskStatus;
  * filtered or sorted by these derived attributes.</p>
  */
 public class ProcessConverter {
+
+    private static final Logger logger = LogManager.getLogger(ProcessConverter.class);
 
     /**
      * Returns tasks of a process that have the "in_work" status.
@@ -69,12 +75,28 @@ public class ProcessConverter {
         if (tasks.isEmpty()) {
             tasks = getCompletedTasks(process);
         }
-        tasks = tasks.stream().filter(t -> Objects.nonNull(t.getProcessingUser())).collect(Collectors.toList());
+        tasks = tasks.stream()
+            .filter(t -> Objects.nonNull(t.getProcessingUser()) && Objects.nonNull(t.getProcessingBegin()))
+            .collect(Collectors.toList());
         if (tasks.isEmpty()) {
             return null;
         } else {
             tasks.sort(Comparator.comparing(Task::getProcessingBegin));
             return tasks.get(0);
+        }
+    }
+
+    /**
+     * Find and adds all tasks of children processes to the list of tasks.
+     * 
+     * @param process the process
+     * @param tasks the task list to be populated with tasks
+     */
+    private static void findTasksOfChildProcessesRecursive(Process process, List<Task> tasks) {
+        tasks.addAll(process.getTasks());
+        List<Process> children = process.getChildren();
+        for (Process child : children) {
+            findTasksOfChildProcessesRecursive(child, tasks);
         }
     }
 
@@ -95,10 +117,8 @@ public class ProcessConverter {
         // if the process has children, also consider these tasks for progress calculation
         if (considerChildren) {
             List<Process> children = process.getChildren();
-            if (children.size() > 0) {
-                for (Process child : children) {
-                    tasks.addAll(child.getTasks());
-                }
+            for (Process child : children) {
+                findTasksOfChildProcessesRecursive(child, tasks);
             }
         }
         return tasks;
@@ -110,7 +130,7 @@ public class ProcessConverter {
      * @param tasks the list of tasks
      * @return a map providing the count for each task status (done, open, locked, inwork)
      */
-    private static Map<TaskStatus, Integer> countTasksStatusOfProcess(List<Task> tasks) {
+    private static Map<TaskStatus, Integer> countTasksStatusOfProcessViaBeans(List<Task> tasks) {
         Map<TaskStatus, Integer> results = new HashMap<>();
         int open = 0;
         int inProcessing = 0;
@@ -134,11 +154,21 @@ public class ProcessConverter {
         results.put(TaskStatus.OPEN, open);
         results.put(TaskStatus.LOCKED, locked);
 
-        if (open + inProcessing + closed + locked == 0) {
-            results.put(TaskStatus.LOCKED, 1);
-        }
-
         return results;
+    }
+
+    private static Map<TaskStatus, Integer> countTaskStatusOfProcess(Process process, boolean considerChildren) {
+        if (!considerChildren) {
+            // if children are of no concern, just use basic counting via beans
+            return countTasksStatusOfProcessViaBeans(getListOfTasksForProgressCalculation(process, considerChildren));
+        }
+        try {
+            // use custom SQL query to count task status including tasks of ancestor processes for performance
+            return new TaskDAO().countTaskStatusForProcessAndItsAncestors(process);
+        } catch (DAOException e) {
+            logger.warn("error counting task status via custom SQL query, continue with slow calculation", e);
+            return countTasksStatusOfProcessViaBeans(getListOfTasksForProgressCalculation(process, considerChildren));
+        }
     }
 
     /**
@@ -213,16 +243,20 @@ public class ProcessConverter {
      * @return a map providing the percentage of tasks having a certain status (done, open, locked, inwork)
      */
     public static Map<TaskStatus, Double> getTaskProgressPercentageOfProcess(Process process, boolean considerChildren) {
-        List<Task> tasks = getListOfTasksForProgressCalculation(process, considerChildren);
-        Map<TaskStatus, Integer> counts = countTasksStatusOfProcess(tasks);
-        Integer total = counts.values().stream().reduce(0, Integer::sum);
+        Map<TaskStatus, Integer> counts = countTaskStatusOfProcess(process, considerChildren);
+        Integer total = counts.values().stream().mapToInt(Integer::intValue).sum();
         
+        // report processes without any tasks as if they had a single locked task
+        if (total == 0) {
+            counts.put(TaskStatus.LOCKED, 1);
+            total = 1;
+        }
+
         Map<TaskStatus, Double> percentages = new HashMap<>();
         percentages.put(TaskStatus.DONE, 100.0 * (double)counts.get(TaskStatus.DONE) / (double) total);
         percentages.put(TaskStatus.INWORK, 100.0 * (double)counts.get(TaskStatus.INWORK) / (double) total);
         percentages.put(TaskStatus.OPEN, 100.0 * (double)counts.get(TaskStatus.OPEN) / (double) total);
         percentages.put(TaskStatus.LOCKED, 100.0 * (double)counts.get(TaskStatus.LOCKED) / (double) total);
-
         return percentages;
     }
 
@@ -233,18 +267,30 @@ public class ProcessConverter {
      * for each task status (DONE, INWORK, OPEN, LOCKED). For example, the status
      * "000000025075" means that 25% of tasks are open, and 75% of tasks are locked.</p>
      *
-     * @param process the process
-     * @param considerChildren whether to also count tasks of children processes
+     * @param percentages the task percentages as calculated with getTaskProgressPercentageOfProcess
      * @return string the string representing the combined progress of the process
      */
-    public static String getCombinedProgressAsString(Process process, boolean considerChildren) {
-        Map<TaskStatus, Double> percentages = getTaskProgressPercentageOfProcess(process, considerChildren);
-
+    public static String getCombinedProgressFromTaskPercentages(Map<TaskStatus, Double> percentages) {
         DecimalFormat decimalFormat = new DecimalFormat("#000");
         return decimalFormat.format(percentages.get(TaskStatus.DONE)) 
             + decimalFormat.format(percentages.get(TaskStatus.INWORK)) 
             + decimalFormat.format(percentages.get(TaskStatus.OPEN))
             + decimalFormat.format(percentages.get(TaskStatus.LOCKED));
+    }
+
+    /**
+     * Return a string representing the combined progress of a process. 
+     * 
+     * <p>See `ProcessConverter.getCombinedProgressFromTaskPercentages`</p>
+     *
+     * @param process the process
+     * @param considerChildren whether to also count tasks of children processes
+     * @return string the string representing the combined progress of the process
+     */
+    public static String getCombinedProgressAsString(Process process, boolean considerChildren) {
+        return getCombinedProgressFromTaskPercentages(
+            getTaskProgressPercentageOfProcess(process, considerChildren)
+        );
     }
 
 }

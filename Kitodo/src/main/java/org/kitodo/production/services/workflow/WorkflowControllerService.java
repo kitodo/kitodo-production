@@ -91,6 +91,7 @@ public class WorkflowControllerService {
                     task.setProcessingTime(new Date());
                     taskService.replaceProcessingUser(task, getCurrentUser());
                     ServiceManager.getTaskService().save(task);
+                    ServiceManager.getProcessService().save(task.getProcess());
                 }
             }
         }
