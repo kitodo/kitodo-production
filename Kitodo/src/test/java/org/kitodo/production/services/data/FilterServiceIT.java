@@ -493,20 +493,20 @@ public class FilterServiceIT {
         // check that a task condition can be combined with a process condition by disjunction
         // returns any tasks associated with process id=1 or "Next Open" tasks that are in state "open"
         QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Next Open | id:1\"", ObjectType.TASK, false, false);
-            assertEquals("Incorrect amount of tasks for disjunction query \"stepopen:Next Open | id:1\"!", 3,
-                taskService.findByQuery(secondQuery, true).size());
+        assertEquals("Incorrect amount of tasks for disjunction query \"stepopen:Next Open | id:1\"!", 3,
+            taskService.findByQuery(secondQuery, true).size());
 
         // check that default queries can be combined with task conditions by disjunction
         // returns any tasks related to process "First process" or "Second process" but not "Progress" tasks in state "inwork"
         QueryBuilder thirdQuery = filterService.queryBuilder("\"First | Second\" \"-stepinwork:Progress\"", ObjectType.TASK, false, false);
-            assertEquals("Incorrect amount of tasks for disjunction query \"First | Second\"!", 3,
-                taskService.findByQuery(thirdQuery, true).size());
+        assertEquals("Incorrect amount of tasks for disjunction query \"First | Second\"!", 3,
+            taskService.findByQuery(thirdQuery, true).size());
 
         // check that conditions can be optionally enclosed in parentheses, which masks the vertical line "|"
         // returns tasks whose process title contains the string "First |" (aka none) or tasks in state "inwork" with title "Progress"
         QueryBuilder fourthQuery = filterService.queryBuilder("\"(First |) | (stepinwork:Progress)\"", ObjectType.TASK, false, false);
-            assertEquals("Incorrect amount of tasks for disjunction query \"(First |) | (stepinwork:Progress)\"!", 1,
-                taskService.findByQuery(fourthQuery, true).size());
+        assertEquals("Incorrect amount of tasks for disjunction query \"(First |) | (stepinwork:Progress)\"!", 1,
+            taskService.findByQuery(fourthQuery, true).size());
     }
 
     @Test
