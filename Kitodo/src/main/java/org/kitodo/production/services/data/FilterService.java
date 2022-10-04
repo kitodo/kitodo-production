@@ -65,7 +65,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
-
+    
+    private static final Pattern CONDITION_PATTERN = Pattern.compile("\\(([^\\)]+)\\)|([^\\(\\)\\|]+)");
     public static final String FILTER_STRING = "filterString";
 
     /**
@@ -204,8 +205,12 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return a list of conditions after splitting the filter at the "|" character
      */
     private List<String> splitConditions(String filter) {
-        return Arrays.stream(filter.split("\\|")).filter(Objects::nonNull)
-            .map(String::trim).filter(Predicate.not(String::isEmpty)).collect(Collectors.toList());
+        return CONDITION_PATTERN.matcher(filter).results()
+            .flatMap(mr -> IntStream.rangeClosed(1, mr.groupCount()).mapToObj(mr::group))
+            .filter(Objects::nonNull)
+            .map(String::trim)
+            .filter(Predicate.not(String::isEmpty))
+            .collect(Collectors.toList());
     }
 
     /**
