@@ -78,7 +78,7 @@ public class ProcessType extends BaseType<Process> {
         );
         convertLastProcessingTask(jsonObject, process);
         convertProgressStatus(jsonObject, process);
-        
+
         return jsonObject;
     }
 
@@ -114,7 +114,7 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.PROGRESS_LOCKED.getKey(), taskProgress.get(TaskStatus.LOCKED));
         jsonObject.put(
             ProcessTypeField.PROGRESS_COMBINED.getKey(), 
-            ProcessConverter.getCombinedProgressAsString(process, true)
+            ProcessConverter.getCombinedProgressFromTaskPercentages(taskProgress)
         );
     }
 
