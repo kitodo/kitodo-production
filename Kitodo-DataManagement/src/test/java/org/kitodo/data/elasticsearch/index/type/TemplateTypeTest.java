@@ -189,7 +189,7 @@ public class TemplateTypeTest {
         Template template = prepareData().get(0);
         Map<String, Object> actual = templateType.createDocument(template);
 
-        assertEquals("Amount of keys is incorrect!", 11, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 12, actual.keySet().size());
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         Map<String, Object> project = projects.get(0);
