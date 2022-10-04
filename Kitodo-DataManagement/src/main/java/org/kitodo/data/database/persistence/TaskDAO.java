@@ -14,9 +14,11 @@ package org.kitodo.data.database.persistence;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.persistence.PersistenceException;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.StandardBasicTypes;
@@ -149,6 +151,13 @@ public class TaskDAO extends BaseDAO<Task> {
      */
     @SuppressWarnings("unchecked")
     public Map<TaskStatus, Integer> countTaskStatusForProcessAndItsAncestors(Process process) throws DAOException {
+        if (Objects.isNull(process)) {
+            throw new DAOException("can not count task status for process that is null");
+        }
+        if (Objects.isNull(process.getId())) {
+            throw new DAOException("can not count task status for process that has id of null");
+        }
+        
         // initialize counts
         Map<TaskStatus, Integer> counts = new HashMap<>();
         counts.put(TaskStatus.OPEN, 0);
@@ -158,27 +167,31 @@ public class TaskDAO extends BaseDAO<Task> {
 
         // perform query and read data
         try (Session session = HibernateUtil.getSession()) {
+            // do not use hibernate query language, which does not support recursive queries, use native SQL instead
+            // do not use query parameter with recursive query, which works with MySQL and MariaDB but not h2 database
             NativeQuery<Object[]> query = session.createSQLQuery(
                 "SELECT t.processingStatus as status, COUNT(*) as count FROM task t, ("
-                    + "    WITH RECURSIVE process_children as ("
-                    + "        (SELECT * FROM process WHERE id = ?)"
+                    + "    WITH RECURSIVE process_children(id) as ("
+                    + "        (SELECT id FROM process WHERE id = " + process.getId() + ")"
                     + "        UNION ALL"
-                    + "        (SELECT p1.* from process as p1, process_children as p2 WHERE p2.id = p1.parent_id)"
+                    + "        (SELECT p1.id from process as p1, process_children as p2 WHERE p2.id = p1.parent_id)"
                     + "    ) SELECT id FROM process_children"
                     + ") as p WHERE t.process_id = p.id GROUP BY t.processingStatus;"
             );
             query.addScalar("status", StandardBasicTypes.INTEGER);
             query.addScalar("count", StandardBasicTypes.INTEGER);
-            query.setParameter(1, process.getId()).list();
             
-            for (Object[] row : query.list()) {
+            List<Object[]> results = query.list();
+            for (Object[] row : results) {
                 TaskStatus status = TaskStatus.getStatusFromValue((int)row[0]);
                 Integer count = (int)row[1];
                 counts.put(status, count);
             }
 
             return counts;
-        } catch (PersistenceException e) {
+        } catch (HibernateException e) {
+            // catch any exceptions that might be thrown by internals of database connector
+            // due to recursive query, which might not be supported by some databases
             throw new DAOException(e);
         }
     }
