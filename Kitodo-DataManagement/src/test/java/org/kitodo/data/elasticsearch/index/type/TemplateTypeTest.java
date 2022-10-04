@@ -103,7 +103,7 @@ public class TemplateTypeTest {
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
         assertFalse("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
-        assertEquals("Key ruleset doesn't match to given value!", 1, TemplateTypeField.RULESET.getIntValue(actual));
+        assertEquals("Key ruleset doesn't match to given value!", 1, TemplateTypeField.RULESET_ID.getIntValue(actual));
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 1, projects.size());
@@ -143,7 +143,7 @@ public class TemplateTypeTest {
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key docket doesn't match to given value!", 1, TemplateTypeField.DOCKET.getIntValue(actual));
-        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
+        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET_ID.getIntValue(actual));
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 1, projects.size());
@@ -173,7 +173,7 @@ public class TemplateTypeTest {
             TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
         assertTrue("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
         assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
-        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET.getIntValue(actual));
+        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET_ID.getIntValue(actual));
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         assertEquals("Size projects doesn't match to given value!", 0, projects.size());

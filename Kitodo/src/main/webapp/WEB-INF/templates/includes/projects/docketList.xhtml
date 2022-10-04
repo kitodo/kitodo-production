@@ -43,6 +43,7 @@
         </p:column>
 
         <p:column headerText="#{msgs.file}"
+                  sortBy="#{item.file.keyword}"
                   rendered="#{ProjectForm.showColumn('docket.filename')}">
             <h:outputText value="#{item.file}"
                           title="#{item.file}"/>
