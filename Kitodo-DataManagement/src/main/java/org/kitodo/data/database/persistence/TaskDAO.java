@@ -17,6 +17,7 @@ import java.util.Map;
 
 import javax.persistence.PersistenceException;
 
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.StandardBasicTypes;
@@ -160,10 +161,10 @@ public class TaskDAO extends BaseDAO<Task> {
         try (Session session = HibernateUtil.getSession()) {
             NativeQuery<Object[]> query = session.createSQLQuery(
                 "SELECT t.processingStatus as status, COUNT(*) as count FROM task t, ("
-                    + "    WITH RECURSIVE process_children as ("
-                    + "        (SELECT * FROM process WHERE id = ?)"
+                    + "    WITH RECURSIVE process_children(id) as ("
+                    + "        (SELECT id FROM process WHERE id = ?)"
                     + "        UNION ALL"
-                    + "        (SELECT p1.* from process as p1, process_children as p2 WHERE p2.id = p1.parent_id)"
+                    + "        (SELECT p1.id from process as p1, process_children as p2 WHERE p2.id = p1.parent_id)"
                     + "    ) SELECT id FROM process_children"
                     + ") as p WHERE t.process_id = p.id GROUP BY t.processingStatus;"
             );
@@ -178,8 +179,8 @@ public class TaskDAO extends BaseDAO<Task> {
             }
 
             return counts;
-        } catch (Exception e) {
-            // catch any exceptions that might be thrown by interals of database connector
+        } catch (HibernateException e) {
+            // catch any exceptions that might be thrown by internals of database connector
             // due to recursive query, which might not be supported by some databases
             throw new DAOException(e);
         }
