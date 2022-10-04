@@ -19,6 +19,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
@@ -29,6 +30,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.InvalidPortException;
 import org.kitodo.exceptions.MandatoryParameterMissingException;
 import org.kitodo.exceptions.MappingFilesMissingException;
 import org.kitodo.exceptions.UndefinedMappingFileException;
@@ -57,9 +59,11 @@ public class CatalogConfigurationImporter {
      *                                       corresponding MappingFile instance can be found
      * @throws MappingFilesMissingException when XML catalog configuration does not contain mandatory 'mappingFiles'
      *                                       element.
+     * @throws InvalidPortException when XML catalog configuration contains an invalid port value.
      */
     private void convertOpacConfig(String opacTitle, List<String> currentConfigurations) throws DAOException,
-            UndefinedMappingFileException, MappingFilesMissingException, MandatoryParameterMissingException {
+            UndefinedMappingFileException, MappingFilesMissingException, MandatoryParameterMissingException,
+            InvalidPortException {
         HierarchicalConfiguration opacConfiguration = OPACConfig.getCatalog(opacTitle);
         String fileUploadTitle = opacTitle + FILE_UPLOAD_DEFAULT_POSTFIX;
         if (OPACConfig.getFileUploadConfig(opacTitle) && !currentConfigurations.contains(fileUploadTitle)) {
@@ -94,14 +98,11 @@ public class CatalogConfigurationImporter {
     }
 
     private void setUrl(ImportConfiguration importConfiguration, String opacTitle)
-            throws MandatoryParameterMissingException {
+            throws MandatoryParameterMissingException, InvalidPortException {
         importConfiguration.setScheme(OPACConfig.getScheme(opacTitle));
         importConfiguration.setHost(OPACConfig.getHost(opacTitle));
         importConfiguration.setPath(OPACConfig.getPath(opacTitle));
-        Integer port = OPACConfig.getPort(opacTitle);
-        if (Objects.nonNull(port)) {
-            importConfiguration.setPort(port);
-        }
+        importConfiguration.setPort(getPort(opacTitle));
     }
 
     private void setCredentials(ImportConfiguration importConfiguration, String opacTitle) {
@@ -234,6 +235,32 @@ public class CatalogConfigurationImporter {
     }
 
     /**
+     * Retrieve and return 'port' value of catalog with name 'catalogName' from 'kitodo_opac.xml' configuration file.
+     *
+     * @param catalogName name of catalog
+     * @return port value as integer
+     * @throws InvalidPortException if port value retrieved from 'kitodo_opac.xml' is not an integer between 0 and 65535
+     */
+    public static Integer getPort(String catalogName) throws InvalidPortException {
+        try {
+            String portString = OPACConfig.getPort(catalogName);
+            if (StringUtils.isNotBlank(portString)) {
+                try {
+                    int port = Integer.parseInt(portString);
+                    if (port < 0 || port > 65535) {
+                        throw new InvalidPortException(portString);
+                    }
+                } catch (NumberFormatException e) {
+                    throw new InvalidPortException(portString);
+                }
+            }
+        } catch (MandatoryParameterMissingException e) {
+            // ignore exception because "port" is not mandatory
+        }
+        return null;
+    }
+
+    /**
      * Retrieve MappingFile objects from database for all catalog configurations in given list 'catalogs'.
      * @param catalogs list of catalog names as Strings
      * @return map containing mapping file names as keys and
@@ -289,8 +316,8 @@ public class CatalogConfigurationImporter {
                 try {
                     convertOpacConfig(catalog, currentConfigurations);
                     conversions.put(catalog, null);
-                } catch (UndefinedMappingFileException | MappingFilesMissingException
-                         | MandatoryParameterMissingException e) {
+                } catch (UndefinedMappingFileException | MappingFilesMissingException |
+                         MandatoryParameterMissingException | InvalidPortException e) {
                     conversions.put(catalog, e.getMessage());
                 } catch (DAOException e) {
                     if (Objects.nonNull(e.getCause()) && Objects.nonNull(e.getCause().getCause())) {

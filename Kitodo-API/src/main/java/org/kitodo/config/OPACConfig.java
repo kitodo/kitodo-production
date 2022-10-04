@@ -21,6 +21,7 @@ import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -115,10 +116,12 @@ public class OPACConfig {
      */
     public static String getOPACDescription(String catalogName) {
         HierarchicalConfiguration catalogConfiguration = getCatalog(catalogName);
-        if (catalogConfiguration.containsKey(DESCRIPTION)) {
-            return catalogConfiguration.getString(DESCRIPTION);
-        } else {
+        List<ConfigurationNode> descriptionAttributes = catalogConfiguration.getRoot().getAttributes(DESCRIPTION);
+        if (descriptionAttributes.isEmpty()) {
             return NOT_AVAILABLE;
+        } else {
+            return descriptionAttributes.stream().map(cn -> cn.getValue().toString())
+                    .collect(Collectors.joining(System.lineSeparator()));
         }
     }
 
@@ -176,18 +179,8 @@ public class OPACConfig {
      * @param catalogName name of catalog configuration
      * @return port value as Integer
      */
-    public static Integer getPort(String catalogName) {
-        Integer port = null;
-        try {
-            String portString = getUrlConfigPart(catalogName, PORT);
-            if (StringUtils.isNotBlank(portString)) {
-                port = Integer.parseInt(portString);
-            }
-        } catch (MandatoryParameterMissingException e) {
-            // ignore exception because "port" is not mandatory
-            return null;
-        }
-        return port;
+    public static String getPort(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlConfigPart(catalogName, PORT);
     }
 
     /**

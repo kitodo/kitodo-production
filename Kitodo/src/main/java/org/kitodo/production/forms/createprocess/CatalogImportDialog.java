@@ -131,10 +131,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     }
 
     private boolean skipHitList(ImportConfiguration importConfiguration, String searchField) {
-        if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
-            return true;
-        }
-        if (searchField.equals(importConfiguration.getIdSearchField().getLabel())) {
+        if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())
+                || searchField.equals(importConfiguration.getIdSearchField().getLabel())) {
             return true;
         }
         return (Objects.isNull(importConfiguration.getMetadataRecordIdXPath())
