@@ -316,8 +316,8 @@ public class CatalogConfigurationImporter {
                 try {
                     convertOpacConfig(catalog, currentConfigurations);
                     conversions.put(catalog, null);
-                } catch (UndefinedMappingFileException | MappingFilesMissingException |
-                         MandatoryParameterMissingException | InvalidPortException e) {
+                } catch (UndefinedMappingFileException | MappingFilesMissingException
+                         | MandatoryParameterMissingException | InvalidPortException e) {
                     conversions.put(catalog, e.getMessage());
                 } catch (DAOException e) {
                     if (Objects.nonNull(e.getCause()) && Objects.nonNull(e.getCause().getCause())) {
