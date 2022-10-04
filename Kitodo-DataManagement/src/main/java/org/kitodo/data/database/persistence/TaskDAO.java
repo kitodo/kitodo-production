@@ -178,7 +178,9 @@ public class TaskDAO extends BaseDAO<Task> {
             }
 
             return counts;
-        } catch (PersistenceException e) {
+        } catch (Exception e) {
+            // catch any exceptions that might be thrown by interals of database connector
+            // due to recursive query, which might not be supported by some databases
             throw new DAOException(e);
         }
     }
