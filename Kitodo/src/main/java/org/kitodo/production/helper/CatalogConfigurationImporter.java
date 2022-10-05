@@ -250,6 +250,7 @@ public class CatalogConfigurationImporter {
                     if (port < 0 || port > 65535) {
                         throw new InvalidPortException(portString);
                     }
+                    return port;
                 } catch (NumberFormatException e) {
                     throw new InvalidPortException(portString);
                 }
