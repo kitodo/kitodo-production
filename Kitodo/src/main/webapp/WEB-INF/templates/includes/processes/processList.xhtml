@@ -35,7 +35,8 @@
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                     paginatorPosition="bottom">
+                     paginatorPosition="bottom"
+                     multiViewState="true">
 
 
             <p:ajax event="page"
