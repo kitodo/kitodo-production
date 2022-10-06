@@ -19,6 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <!--@elvariable id="item" type="org.kitodo.production.dto.TemplateDTO"-->
     <p:dataTable id="templateTable"
+                 widgetVar="templateTable"
                  styleClass="default-layout"
                  var="item"
                  value="#{TemplateForm.lazyDTOModel}"
@@ -189,5 +190,26 @@
         </p:rowExpansion>
 
     </p:dataTable>
+
+    <div id="dropDownMenus">
+        <h:form id="filterForm"
+                styleClass="filter-form"
+                style="display: inline-block;">
+            <p:selectCheckboxMenu id="templateFilters"
+                                  panelStyleClass="filter-panel"
+                                  value="#{TemplateForm.selectedTemplateFilters}"
+                                  styleClass="secondary"
+                                  label="#{msgs.filter}">
+                <f:selectItems value="#{TemplateForm.templateFilters}"
+                               var="templateFilter"
+                               itemLabel="#{msgs[templateFilter]}"/>
+                <p:ajax event="change"
+                        onstart="PF('templateTable').getPaginator().setPage(0);"
+                        listener="#{TemplateForm.templateFiltersChanged}"
+                        update="templateTable"/>
+            </p:selectCheckboxMenu>
+        </h:form>
+    </div>
+
     <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/selectProject.xhtml"/>
 </ui:composition>
