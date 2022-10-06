@@ -25,6 +25,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -35,11 +36,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
-    private static final String PROCESSES_TABLE_TITLE_COLUMN = PROCESSES_TABLE + ":titleColumn";
+    private static final String PROCESSES_TABLE_HEADER = PROCESSES_TABLE + "_head";
     private static final String PROCESS_TITLE = "Second process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
-    private static final String WAIT_FOR_TITLE_COLUMN_SORT = "Wait for title column sorting";
+    private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -50,8 +51,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement processesTable;
 
     @SuppressWarnings("unused")
-    @FindBy(id = PROCESSES_TABLE_TITLE_COLUMN)
-    private WebElement processesTableTitleColumn;
+    @FindBy(id = PROCESSES_TABLE_HEADER)
+    private WebElement processesTableHeader;
 
     @SuppressWarnings("unused")
     @FindBy(id = BATCH_FORM + ":selectBatches")
@@ -343,21 +344,24 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     /**
-     * Clicks the header of the title column of the processes table in order to 
-     * trigger sorting the processes list by title.
+     * Clicks a column in the header of the processes table in order to 
+     * trigger sorting the processes list by that column.
+     * 
+     * @param column the column index
      */
-    public void clickProcessesTitleColumnForSorting() {
+    public void clickProcessesTableHeaderForSorting(int column) {
+        WebElement columnHeader = processesTableHeader.findElement(By.cssSelector("tr th:nth-child(" + column + ")"));
         // remember aria-sort attribute of th-tag of title column
-        String previousAriaSort = processesTableTitleColumn.getAttribute("aria-sort");
+        String previousAriaSort = columnHeader.getAttribute("aria-sort");
 
         // click title th-tag to trigger sorting
-        processesTableTitleColumn.click();
+        columnHeader.click();
 
         // wait for the sorting to be applied (which requires ajax request to backend)
-        await(WAIT_FOR_TITLE_COLUMN_SORT)
-            .pollDelay(200, TimeUnit.MILLISECONDS)
+        await(WAIT_FOR_COLUMN_SORT)
+            .pollDelay(100, TimeUnit.MILLISECONDS)
             .atMost(10, TimeUnit.SECONDS)
             .ignoreExceptions()
-            .until(() -> !processesTableTitleColumn.getAttribute("aria-sort").equals(previousAriaSort));
+            .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
     }
 }
