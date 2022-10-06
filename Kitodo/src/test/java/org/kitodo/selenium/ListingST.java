@@ -253,7 +253,6 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Wrong number of templates after hiding first template", 1,
                 projectsPage.getTemplateTitles().size());
         projectsPage.goToTemplateTab();
-        Thread.sleep(500);
         projectsPage.toggleHiddenTemplates();
         assertEquals("Wrong number of templates after toggling hidden templates", 2,
                 projectsPage.getTemplateTitles().size());

@@ -15,9 +15,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
@@ -54,12 +56,25 @@ public class TemplateForm extends TemplateBaseForm {
     private static final String TITLE_USED = "templateTitleAlreadyInUse";
     private final String templateListPath = MessageFormat.format(REDIRECT_PATH, "projects");
     private final String templateEditPath = MessageFormat.format(REDIRECT_PATH, "templateEdit");
+    private List<String> templateFilters;
+    private List<String> selectedTemplateFilters;
+    private static final String DEACTIVATED_TEMPLATES_FILTER = "deactivatedTemplates";
 
     /**
      * Constructor.
      */
     public TemplateForm() {
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getTemplateService()));
+    }
+
+    /**
+     * Initialize list of template filters (currently only 'deactivated templates').
+     */
+    @PostConstruct
+    public void init() {
+        templateFilters = new LinkedList<>();
+        templateFilters.add(DEACTIVATED_TEMPLATES_FILTER);
+        selectedTemplateFilters = new LinkedList<>();
     }
 
     /**
@@ -429,5 +444,48 @@ public class TemplateForm extends TemplateBaseForm {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get templateFilters.
+     *
+     * @return value of templateFilters
+     */
+    public List<String> getTemplateFilters() {
+        return templateFilters;
+    }
+
+    /**
+     * Set templateFilters.
+     *
+     * @param templateFilters as java.util.List<java.lang.String>
+     */
+    public void setTemplateFilters(List<String> templateFilters) {
+        this.templateFilters = templateFilters;
+    }
+
+    /**
+     * Get selectedTemplateFilters.
+     *
+     * @return value of selectedTemplateFilters
+     */
+    public List<String> getSelectedTemplateFilters() {
+        return selectedTemplateFilters;
+    }
+
+    /**
+     * Set selectedTemplateFilters.
+     *
+     * @param selectedTemplateFilters as java.util.List<java.lang.String>
+     */
+    public void setSelectedTemplateFilters(List<String> selectedTemplateFilters) {
+        this.selectedTemplateFilters = selectedTemplateFilters;
+    }
+
+    /**
+     * Event listener for template filter changed event.
+     */
+    public void templateFiltersChanged() {
+        setShowInactiveTemplates(selectedTemplateFilters.contains(DEACTIVATED_TEMPLATES_FILTER));
     }
 }

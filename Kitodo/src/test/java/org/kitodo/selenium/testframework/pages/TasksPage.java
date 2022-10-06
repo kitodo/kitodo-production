@@ -54,7 +54,7 @@ public class TasksPage extends Page<TasksPage> {
     @FindBy(id = STATUS_FORM + ":taskStatus_panel")
     private WebElement taskStatusMenuPanel;
 
-    @FindBy(css = ".task-filter-panel + .task-filter-panel li:last-child .ui-chkbox")
+    @FindBy(css = ".filter-panel + .filter-panel li:last-child .ui-chkbox")
     private WebElement inWorkStatusCheckbox;
 
     public TasksPage() {
@@ -122,7 +122,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     /**
-     * Clicks the header of the the n-th column of the task table in order to 
+     * Clicks the header of the the n-th column of the task table in order to
      * trigger sorting tasks by that column.
      */
     public void clickTaskTableColumnHeaderForSorting(int column) {
@@ -143,7 +143,7 @@ public class TasksPage extends Page<TasksPage> {
 
     /**
      * Returns the task title of the first row in the task table.
-     * 
+     *
      * @return the task title
      */
     public String getFirstRowTaskTitle() {
@@ -179,5 +179,5 @@ public class TasksPage extends Page<TasksPage> {
 
         throw new NotFoundException("Row for task title " + searchedTaskTitle + " and process title "
                 + searchedProcessTitle + "was not found!");
-    }    
+    }
 }

@@ -281,9 +281,10 @@
 
     <div id="dropDownMenus">
         <h:form id="filterForm"
+                styleClass="filter-form"
                 style="display: inline-block;">
             <p:selectCheckboxMenu id="taskFilters"
-                                  panelStyleClass="task-filter-panel"
+                                  panelStyleClass="filter-panel"
                                   value="#{CurrentTaskForm.selectedTaskFilters}"
                                   styleClass="secondary"
                                   label="#{msgs.filter}">
@@ -299,7 +300,7 @@
         <h:form id="statusForm"
                 style="display: inline-block;">
             <p:selectCheckboxMenu id="taskStatus"
-                                  panelStyleClass="task-filter-panel"
+                                  panelStyleClass="filter-panel"
                                   value="#{CurrentTaskForm.selectedTaskStatus}"
                                   styleClass="secondary"
                                   label="#{msgs.processingStatus}">
