@@ -17,6 +17,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -35,6 +36,8 @@ public class ImportingST extends BaseTestSelenium {
     public static void setup() throws Exception {
         projectsPage = Pages.getProjectsPage();
         importPage = Pages.getProcessFromTemplatePage();
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
     }
 
     @Before

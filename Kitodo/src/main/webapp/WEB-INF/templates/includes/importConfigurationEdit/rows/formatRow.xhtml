@@ -36,6 +36,7 @@
                            value="#{msgs['tooltip.importConfig.returnFormatHelp']}"/>
             </div>
             <h:panelGroup layout="block"
+                          id="metadataRecordIdXPathWrapper"
                           rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
                 <p:outputLabel for="metadataRecordIdXPath"
                                value="#{msgs['importConfig.field.metadataRecordIDXPath']} *"/>

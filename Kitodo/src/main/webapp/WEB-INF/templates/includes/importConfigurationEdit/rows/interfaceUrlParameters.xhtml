@@ -64,7 +64,7 @@
         <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
             <div>
                 <p:outputLabel for="oaiMetadataPrefix"
-                               value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']}"/>
+                               value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']} *"/>
                 <p:inputText id="oaiMetadataPrefix"
                              required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}"
                              styleClass="input-with-button"

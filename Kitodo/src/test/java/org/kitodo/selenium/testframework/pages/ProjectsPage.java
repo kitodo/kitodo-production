@@ -12,12 +12,14 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertTrue;
 import static org.kitodo.selenium.testframework.Browser.getCellsOfRow;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,9 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private static final String WORKFLOW_TABLE = "workflowTable";
     private static final String DOCKET_TABLE = "docketTable";
     private static final String RULESET_TABLE = "rulesetTable";
+    private static final String IMPORT_CONFIGURATIONS_TABLE = "configurationTable";
+    private static final String MAPPING_FILE_TABLE = "mappingTable";
+    private static final String MAPPING_FILE_FORMAT_DIALOG = "mappingFileFormatsDialog";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROJECTS_TAB_VIEW)
@@ -64,6 +69,18 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement rulesetsTable;
 
     @SuppressWarnings("unused")
+    @FindBy(id = IMPORT_CONFIGURATIONS_TABLE + DATA)
+    private WebElement importConfigurationsTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = MAPPING_FILE_TABLE + DATA)
+    private WebElement mappingFilesTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = MAPPING_FILE_FORMAT_DIALOG)
+    private WebElement mappingFileFormatDialog;
+
+    @SuppressWarnings("unused")
     @FindBy(id = "projectForm:newElementButton_button")
     private WebElement newElementButton;
 
@@ -88,6 +105,34 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private WebElement newRulesetButton;
 
     @SuppressWarnings("unused")
+    @FindBy(id = "convertMenu:convertCatalogConfigurations")
+    private WebElement importOpacConfigsButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "importCatalogConfigurationsForm:catalogConfigurationSelection")
+    private WebElement catalogSelection;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "importCatalogConfigurationsForm:startCatalogConfigurationsImport")
+    private WebElement startOpacConfigurationImportButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "mappingFileFormatsForm:mappingFileTitle")
+    private WebElement mappingFileTitle;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "mappingFileFormatsForm:inputFormat")
+    private WebElement mappingFileInputFormatMenu;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "mappingFileFormatsForm:outputFormat")
+    private WebElement mappingFileOutputFormatMenu;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = "mappingFileFormatsForm:ok")
+    private WebElement mappingFileOkButton;
+
+    @SuppressWarnings("unused")
     @FindBy(xpath = "//a[@href='/kitodo/pages/projectEdit.jsf?referer=projects&id=1']")
     private WebElement editProjectLink;
 
@@ -106,6 +151,10 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @SuppressWarnings("unused")
     @FindBy(xpath = "//a[@href='/kitodo/pages/rulesetEdit.jsf?id=1']")
     private WebElement editRulesetLink;
+
+    @SuppressWarnings("unused")
+    @FindBy(xpath = "//a[@href='/kitodo/pages/importConfigurationEdit.jsf?id=1']")
+    private WebElement editImportConfigurationLink;
 
     @SuppressWarnings("unused")
     @FindBy(id = TEMPLATE_TABLE + ":0:templateActionForm:action22")
@@ -401,7 +450,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
      */
     public void deleteDocket() throws Exception {
         deleteElement("Docket", MockDatabase.getRemovableObjectIDs().get(ObjectType.DOCKET.name()),
-            TabIndex.DOCKETS.getIndex(), projectsTabView);
+                TabIndex.DOCKETS.getIndex(), projectsTabView);
     }
 
     /**
@@ -409,7 +458,7 @@ public class ProjectsPage extends Page<ProjectsPage> {
      */
     public void deleteRuleset() throws Exception {
         deleteElement("Ruleset", MockDatabase.getRemovableObjectIDs().get(ObjectType.RULESET.name()),
-            TabIndex.RULESETS.getIndex(), projectsTabView);
+                TabIndex.RULESETS.getIndex(), projectsTabView);
     }
 
     /**
@@ -431,11 +480,26 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
+     * Switch to import configurations tab.
+     */
+    public ProjectsPage goToImportConfigurationsTab() throws Exception {
+        switchToTabByIndex(TabIndex.IMPORT_CONFIGURATIONS.getIndex());
+        return this;
+    }
+
+    /**
+     * Switch to mapping files tab.
+     */
+    public ProjectsPage goToMappingFilesTab() throws Exception {
+        switchToTabByIndex(TabIndex.MAPPING_FILES.getIndex());
+        return this;
+    }
+
+    /**
      * Clicks on the tab indicated by given index (starting with 0 for the first
      * tab).
      *
-     * @param index
-     *            of tab to be clicked
+     * @param index of tab to be clicked
      */
     private void switchToTabByIndex(int index) throws Exception {
         switchToTabByIndex(index, projectsTabView);
@@ -444,5 +508,145 @@ public class ProjectsPage extends Page<ProjectsPage> {
     public String getWorkflowStatusForWorkflow() {
         List<String> tableDataByColumn = getTableDataByColumn(workflowsTable, 1);
         return tableDataByColumn.get(1);
+    }
+
+    /**
+     * Display the 'Import opac configuration' dialog.
+     */
+    public void openOpacConfigurationImportDialog() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        clickElement(importOpacConfigsButton);
+        await("Wait for 'Import catalog configurations' dialog to be displayed")
+                .atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(startOpacConfigurationImportButton
+                        .isDisplayed()));
+    }
+
+    /**
+     * Unselect catalogs with given indices.
+     * @param indices indices of catalogs to unselect
+     */
+    public void unselectCatalogs(List<Integer> indices) {
+        for (Integer index : indices) {
+            clickElement(catalogSelection.findElements(By.className("ui-chkbox")).get(index));
+        }
+    }
+
+    /**
+     * Start opac configuration import.
+     */
+    public void startOpacConfigurationImport() {
+        clickElement(startOpacConfigurationImportButton);
+    }
+
+    /**
+     * Get mapping file title.
+     * @return mapping file title
+     */
+    public String getMappingFileTitle() {
+        await("Wait for 'Mapping file title' field to be displayed")
+                .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(mappingFileTitle
+                        .isDisplayed()));
+        return mappingFileTitle.getAttribute("value");
+    }
+
+    /**
+     * Select "Pica" as input format on the "Select input and output formats for mapping file" dialog.
+     */
+    public void selectInputFormatPica() {
+        clickElement(mappingFileInputFormatMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElementById(mappingFileInputFormatMenu.getAttribute("id") + "_3"));
+    }
+
+    /**
+     * Select "Mods" as input format on the "Select input and output formats for mapping file" dialog.
+     */
+    public void selectInputFormatMods() {
+        clickElement(mappingFileInputFormatMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElementById(mappingFileInputFormatMenu.getAttribute("id") + "_1"));
+    }
+
+    /**
+     * Select "Kitodo" as output format on the "Select input and output formats for mapping file" dialog.
+     */
+    public void selectOutputFormatKitodo() {
+        clickElement(mappingFileOutputFormatMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElementById(mappingFileOutputFormatMenu.getAttribute("id") + "_5"));
+    }
+
+    /**
+     * Click the "Ok" button on the "Select input and output formats for mapping file" dialog.
+     */
+    public void clickMappingFileOkButton() {
+        clickElement(mappingFileOkButton);
+    }
+
+    /**
+     * Check and return whether all catalog configurations in the given list are successfully imported or not.
+     * @param catalogTitles list of catalog configuration titles
+     * @return whether all given catalog configurations were successfully imported or not
+     */
+    public boolean allCatalogsImportedSuccessfully(List<String> catalogTitles) {
+        for (String catalog : catalogTitles) {
+            WebElement catalogCell = Browser.getDriver().findElementById("importResultsForm:successfulImports")
+                    .findElement(By.xpath(".//span[@title='" + catalog + "']"));
+            if (Objects.isNull(catalogCell)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Check and return whether all catalog configurations in the given list failed to be imported or not.
+     * @param catalogTitles list of catalog configuration titles.
+     * @return whether all given catalog configurations failed to be imported or not
+     */
+    public boolean allCatalogsFailedToImport(List<String> catalogTitles) {
+        for (String catalog : catalogTitles) {
+            WebElement catalogCell = Browser.getDriver().findElementById("importResultsForm:failedImports")
+                    .findElement(By.xpath(".//span[@title='" + catalog + "']"));
+            if (Objects.isNull(catalogCell)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * Get catalog configuration import error messages.
+     * @return catalog configuration import error messages
+     */
+    public List<String> getCatalogConfigurationImportErrorsMessages() {
+        List<WebElement> errorMessages = Browser.getDriver().findElementById("importResultsForm:failedImports")
+                .findElements(By.xpath(".//td[@class='error-message-column']/span"));
+        return errorMessages.stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+
+    /**
+     * Close results dialog.
+     */
+    public void closeResultsDialog() {
+        WebElement closeButton = Browser.getDriver().findElementById("close");
+        await("Wait for 'Close' button to be displayed")
+                .atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(closeButton.isDisplayed()));
+        closeButton.click();
+    }
+
+    /**
+     * Retrieve and return number of ImportConfiguration entries in ImportConfiguration list, including table header.
+     * @return number of ImportConfiguration entries in ImportConfiguration list
+     */
+    public Long getNumberOfImportConfigurations() {
+        return (long) Browser.getRowsOfTable(Browser.getDriver().findElementById(IMPORT_CONFIGURATIONS_TABLE)).size();
+    }
+
+    /**
+     * Retrieve and return number of MappingFile entries in MappingFile list, including table header.
+     * @return number of MappingFile entries in MappingFile list
+     */
+    public Long getNumberOfMappingFiles() {
+        return (long) Browser.getRowsOfTable(Browser.getDriver().findElementById(MAPPING_FILE_TABLE)).size();
     }
 }

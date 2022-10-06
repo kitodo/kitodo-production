@@ -27,6 +27,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.LdapGroup;
@@ -66,6 +67,8 @@ public class AddingST extends BaseTestSelenium {
         usersPage = Pages.getUsersPage();
         userEditPage = Pages.getUserEditPage();
         roleEditPage = Pages.getRoleEditPage();
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
     }
 
     @Before

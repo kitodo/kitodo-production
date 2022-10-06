@@ -201,9 +201,12 @@ public class ImportService {
      */
     public List<String> getAvailableSearchFields(ImportConfiguration importConfiguration) {
         try {
-            // FTP server do not support query parameters but only use the filename for OPAC search!
             if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
+                // FTP server do not support query parameters but only use the filename for OPAC search!
                 return Collections.singletonList(Helper.getTranslation("filename"));
+            } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+                // OAI PMH interfaces do not support query parameters but only use the ID of the record to retrieve it!
+                return Collections.singletonList(Helper.getTranslation("recordId"));
             } else {
                 List<String> fields = new ArrayList<>();
                 List<SearchField> searchFields = importConfiguration.getSearchFields();
@@ -231,14 +234,15 @@ public class ImportService {
      * @param importConfiguration ImportConfiguration
      * @return label of default search field
      */
-    public String getDefaultSearchField(ImportConfiguration importConfiguration) {
+    public static String getDefaultSearchField(ImportConfiguration importConfiguration) {
         if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
             return Helper.getTranslation("filename");
+        } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+            return Helper.getTranslation("recordId");
         } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
-        } else {
-            return "";
         }
+        return "";
     }
 
     /**
@@ -539,9 +543,9 @@ public class ImportService {
         }
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
-        if (Objects.nonNull(parentID) && level == importDepth) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId,
-                    importConfiguration.getIdentifierMetadata());
+        String idMetadata = importConfiguration.getIdentifierMetadata();
+        if (Objects.nonNull(parentID) && level == importDepth && Objects.nonNull(idMetadata)) {
+            checkForParent(parentID, template.getRuleset().getId(), projectId, idMetadata);
         }
     }
 

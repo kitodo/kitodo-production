@@ -21,6 +21,7 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
@@ -100,7 +101,7 @@ public class LazyHitModel extends LazyDataModel<Object> {
     public void setImportConfiguration(ImportConfiguration importConfiguration) {
         this.importConfiguration = importConfiguration;
         if (Objects.nonNull(importConfiguration)) {
-            this.setSelectedField(ServiceManager.getImportService().getDefaultSearchField(importConfiguration));
+            this.setSelectedField(ImportService.getDefaultSearchField(importConfiguration));
             this.setImportDepth(ServiceManager.getImportService().getDefaultImportDepth(importConfiguration));
         }
     }
