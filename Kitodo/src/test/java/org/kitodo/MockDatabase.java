@@ -440,8 +440,10 @@ public class MockDatabase {
         listColumns.add(new ListColumn("task.state"));
 
         listColumns.add(new ListColumn("process.title"));
-        listColumns.add(new ListColumn("process.status"));
+        listColumns.add(new ListColumn("process.state"));
         listColumns.add(new ListColumn("process.project"));
+        listColumns.add(new ListColumn("process.duration"));
+        listColumns.add(new ListColumn("process.lastEditingUser"));
 
         listColumns.add(new ListColumn("user.username"));
         listColumns.add(new ListColumn("user.location"));
