@@ -73,7 +73,7 @@
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.2</spring.security.version>
+        <spring.security.version>5.7.3</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
