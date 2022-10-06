@@ -52,7 +52,7 @@ public class CatalogConfigurationImporter {
     /**
      * Convert catalog configuration with title 'opacTitle' to new 'ImportConfiguration' object. Also creates
      * corresponding SearchField objects and assigns MappingFile objects according to original XML configuration.
-     * @param opacTitle title of catalog configuration in XML file
+     * @param catalogName title of catalog configuration in XML file
      * @throws DAOException when available MappingFile objects could not be loaded from database or new
      *                      ImportConfiguration object could not be saved to database
      * @throws UndefinedMappingFileException when XML catalog configuration contains mapping file for which no
@@ -61,38 +61,38 @@ public class CatalogConfigurationImporter {
      *                                       element.
      * @throws InvalidPortException when XML catalog configuration contains an invalid port value.
      */
-    private void convertOpacConfig(String opacTitle, List<String> currentConfigurations) throws DAOException,
+    private void convertOpacConfig(String catalogName, List<String> currentConfigurations) throws DAOException,
             UndefinedMappingFileException, MappingFilesMissingException, MandatoryParameterMissingException,
             InvalidPortException {
-        HierarchicalConfiguration opacConfiguration = OPACConfig.getCatalog(opacTitle);
-        String fileUploadTitle = opacTitle + FILE_UPLOAD_DEFAULT_POSTFIX;
-        if (OPACConfig.getFileUploadConfig(opacTitle) && !currentConfigurations.contains(fileUploadTitle)) {
-            createFileUploadConfiguration(opacTitle, fileUploadTitle);
+        HierarchicalConfiguration opacConfiguration = OPACConfig.getCatalog(catalogName);
+        String fileUploadTitle = catalogName + FILE_UPLOAD_DEFAULT_POSTFIX;
+        if (OPACConfig.getFileUploadConfig(catalogName) && !currentConfigurations.contains(fileUploadTitle)) {
+            createFileUploadConfiguration(catalogName, fileUploadTitle);
         }
         ImportConfiguration importConfiguration = null;
         if (Objects.nonNull(opacConfiguration)) {
             importConfiguration = new ImportConfiguration();
-            importConfiguration.setTitle(opacTitle);
-            importConfiguration.setDescription(OPACConfig.getOPACDescription(opacTitle));
+            importConfiguration.setTitle(catalogName);
+            importConfiguration.setDescription(OPACConfig.getOPACDescription(catalogName));
             importConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.toString());
-            importConfiguration.setReturnFormat(OPACConfig.getReturnFormat(opacTitle).toUpperCase());
-            setMetadataFormat(importConfiguration, opacTitle);
-            setSearchInterfaceType(importConfiguration, opacTitle);
-            setUrl(importConfiguration, opacTitle);
-            setItemFields(importConfiguration, opacTitle);
-            importConfiguration.setDefaultImportDepth(OPACConfig.getDefaultImportDepth(opacTitle));
-            importConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(opacTitle));
-            setCredentials(importConfiguration, opacTitle);
-            importConfiguration.setIdPrefix(OPACConfig.getIdentifierPrefix(opacTitle));
-            importConfiguration.setParentElementTrimMode(OPACConfig.getParentIDTrimMode(opacTitle));
-            importConfiguration.setQueryDelimiter(OPACConfig.getQueryDelimiter(opacTitle));
-            importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(opacTitle));
+            importConfiguration.setReturnFormat(OPACConfig.getReturnFormat(catalogName).toUpperCase());
+            setMetadataFormat(importConfiguration, catalogName);
+            setSearchInterfaceType(importConfiguration, catalogName);
+            setUrl(importConfiguration, catalogName);
+            setItemFields(importConfiguration, catalogName);
+            importConfiguration.setDefaultImportDepth(OPACConfig.getDefaultImportDepth(catalogName));
+            importConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(catalogName));
+            setCredentials(importConfiguration, catalogName);
+            importConfiguration.setIdPrefix(OPACConfig.getIdentifierPrefix(catalogName));
+            importConfiguration.setParentElementTrimMode(OPACConfig.getParentIDTrimMode(catalogName));
+            importConfiguration.setQueryDelimiter(OPACConfig.getQueryDelimiter(catalogName));
+            importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(catalogName));
             if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())
                     || SearchInterfaceType.CUSTOM.name().equals(importConfiguration.getInterfaceType())) {
-                setSearchFields(importConfiguration, opacTitle);
+                setSearchFields(importConfiguration, catalogName);
             }
             importConfiguration.setMappingFiles(getMappingFiles(importConfiguration));
-            importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(opacTitle));
+            importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(catalogName));
         }
         ServiceManager.getImportConfigurationService().saveToDatabase(importConfiguration);
     }
