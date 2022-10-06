@@ -126,7 +126,7 @@ public class ProcessHelper {
             List<TempProcess> parentTempProcesses, String docType,
             RulesetManagementInterface rulesetManagementInterface, String acquisitionStage,
             List<Locale.LanguageRange> priorityList) throws ProcessGenerationException {
-        generateAtstslFields(tempProcess, processDetails, null, docType, rulesetManagementInterface, acquisitionStage,
+        generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType, rulesetManagementInterface, acquisitionStage,
                 priorityList, null, false);
     }
 
