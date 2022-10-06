@@ -86,7 +86,7 @@
 
             <p:column id="processingUserColumn"
                       headerText="#{msgs.lastEditingUser}"
-                      rendered="#{CurrentTaskForm.showColumn('task.lastProcessingUser')}">
+                      rendered="#{CurrentTaskForm.showColumn('task.lastEditingUser')}">
                 <h:outputText value="#{item.processingUser ne null ? item.processingUser.fullName : ''}"
                               title="#{item.processingUser ne null ? item.processingUser.fullName : ''}"/>
             </p:column>
