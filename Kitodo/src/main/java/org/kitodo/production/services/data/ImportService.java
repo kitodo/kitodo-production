@@ -988,7 +988,7 @@ public class ImportService {
                 logger.error("Child process {} is null => Skip!", childProcesses.indexOf(tempProcess) + 1);
                 continue;
             }
-            processTempProcess(tempProcess, managementInterface, acquisitionStage, priorityList);
+            processTempProcess(tempProcess, managementInterface, acquisitionStage, priorityList, null);
             Process childProcess = tempProcess.getProcess();
             ServiceManager.getProcessService().save(childProcess, true);
             ProcessService.setParentRelations(mainProcess, childProcess);
@@ -998,15 +998,22 @@ public class ImportService {
     /**
      * Add workpiece and template properties to given Process 'process'.
      *
-     * @param process Process to which properties are added
-     * @param template Template of process
-     * @param processDetails metadata of process
-     * @param docType String containing document type
-     * @param imageDescription String containing image description
+     * @param tempProcess
+     *         TempProcess that will be processed
+     * @param template
+     *         Template of process
+     * @param processDetails
+     *         metadata of process
+     * @param docType
+     *         String containing document type
+     * @param imageDescription
+     *         String containing image description
      */
-    public static void addProperties(Process process, Template template, List<ProcessDetail> processDetails,
-                                     String docType, String imageDescription) {
+    public static void addProperties(TempProcess tempProcess, Template template, List<ProcessDetail> processDetails,
+            String docType, String imageDescription) {
+        Process process = tempProcess.getProcess();
         addMetadataProperties(processDetails, process);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TSL/ATS", tempProcess.getAtstsl());
         ProcessGenerator.addPropertyForWorkpiece(process, "DocType", docType);
         ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderImagedescription", imageDescription);
         ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderDocumentname", process.getTitle());
@@ -1080,16 +1087,20 @@ public class ImportService {
      * @throws ProcessGenerationException thrown if process title could not be generated
      */
     public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface managementInterface,
-                                          String acquisitionStage, List<Locale.LanguageRange> priorityList)
+            String acquisitionStage, List<Locale.LanguageRange> priorityList, TempProcess parentTempProcess)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
 
         List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
-            acquisitionStage, priorityList);
+                acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
 
-        ProcessHelper.generateAtstslFields(tempProcess, processDetails, docType, managementInterface,
-            acquisitionStage, priorityList);
+        List<TempProcess> parentTempProcesses = new ArrayList<>();
+        if (Objects.nonNull(parentTempProcess)) {
+            parentTempProcesses.add(parentTempProcess);
+        }
+        ProcessHelper.generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType,
+                managementInterface, acquisitionStage, priorityList);
 
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
@@ -1097,8 +1108,8 @@ public class ImportService {
 
         Process process = tempProcess.getProcess();
         process.setSortHelperImages(tempProcess.getGuessedImages());
-        addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
-            tempProcess.getProcess().getTitle());
+        addProperties(tempProcess, tempProcess.getProcess().getTemplate(), processDetails, docType,
+                tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
     }
@@ -1119,19 +1130,20 @@ public class ImportService {
         Template template;
         try {
             template = ServiceManager.getTemplateService().getById(templateId);
-            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-            List<Locale.LanguageRange> priorityList = Locale.LanguageRange
-                    .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             String parentMetadataKey = "";
-            List<String> higherLevelIdentifiers = new ArrayList<>(getHigherLevelIdentifierMetadata(template.getRuleset()));
+            List<String> higherLevelIdentifiers = new ArrayList<>(
+                    getHigherLevelIdentifierMetadata(template.getRuleset()));
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
             final String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey);
+            setParentProcess(parentId, projectId, template, importConfiguration.getIdentifierMetadata());
             tempProcess = processList.get(0);
+            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
-                    "create", priorityList);
+                    "create", Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage),
+                    parentTempProcess);
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
@@ -1149,7 +1161,7 @@ public class ImportService {
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
-            linkToParent(parentId, projectId, template, tempProcess, importConfiguration.getIdentifierMetadata());
+            linkToParent(tempProcess);
             ServiceManager.getProcessService().save(tempProcess.getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
@@ -1161,31 +1173,34 @@ public class ImportService {
         return tempProcess.getProcess();
     }
 
-    private void linkToParent(String parentId, int projectId, Template template, TempProcess tempProcess,
-                              String idMetadata) throws DAOException, ProcessGenerationException, IOException {
+    private void linkToParent(TempProcess tempProcess) throws DAOException, ProcessGenerationException, IOException {
+        if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
+            URI parentProcessUri = ServiceManager.getProcessService()
+                    .getMetadataFileUri(parentTempProcess.getProcess());
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentProcessUri);
+            if (Objects.isNull(workpiece)) {
+                throw new ProcessGenerationException("Workpiece of parent process is null!");
+            }
+            MetadataEditor.addLink(workpiece.getLogicalStructure(), tempProcess.getProcess().getId());
+            try (OutputStream outputStream = ServiceManager.getFileService().write(parentProcessUri)) {
+                ServiceManager.getMetsService().save(workpiece, outputStream);
+            }
+            ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
+        }
+    }
+
+    private void setParentProcess(String parentId, int projectId, Template template, String idMetadata)
+            throws DAOException, IOException, ProcessGenerationException {
         if (StringUtils.isNotBlank(parentId)) {
             parentTempProcess = null;
             checkForParent(parentId, template.getRuleset().getId(), projectId, idMetadata);
-            if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
-                URI parentProcessUri = ServiceManager.getProcessService()
-                        .getMetadataFileUri(parentTempProcess.getProcess());
-                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentProcessUri);
-                if (Objects.isNull(workpiece)) {
-                    throw new ProcessGenerationException("Workpiece of parent process is null!");
-                }
-                MetadataEditor.addLink(workpiece.getLogicalStructure(), tempProcess.getProcess().getId());
-                try (OutputStream outputStream = ServiceManager.getFileService().write(parentProcessUri)) {
-                    ServiceManager.getMetsService().save(workpiece, outputStream);
-                }
-                ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
-            }
         }
     }
 
     private static Collection<String> getFunctionalMetadata(Ruleset ruleset, FunctionalMetadata metadata)
             throws IOException {
-        RulesetManagementInterface rulesetManagement
-                = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
         String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
         String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
         rulesetManagement.load(new File(rulesetPath));
