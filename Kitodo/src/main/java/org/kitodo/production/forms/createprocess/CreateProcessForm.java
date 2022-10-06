@@ -434,7 +434,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
-                processDataTab.prepare();
                 if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
                     setDefaultImportConfiguration(project.getDefaultImportConfiguration());
                 }
@@ -455,6 +454,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                         updateRulesetAndDocType(getMainProcess().getRuleset());
                     }
                 }
+                processDataTab.prepare();
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -592,7 +592,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 try {
                     tempProcess.getProcessMetadata().preserve();
-                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList);
+                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
                 } catch (RulesetNotFoundException e) {
