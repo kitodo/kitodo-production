@@ -37,6 +37,9 @@ public class ProcessesSortingST extends BaseTestSelenium {
 
     private static ProcessesPage processesPage;
 
+    /**
+     * Set up process sorting tests.
+     */
     @BeforeClass
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
@@ -106,6 +109,9 @@ public class ProcessesSortingST extends BaseTestSelenium {
         assertEquals("First process", processesPage.getProcessTitles().get(0));
     }
 
+    /**
+     * Check sorting processes by state works as expected.
+     */
     @Test
     public void sortByProcessState() throws Exception {
         processesPage.goTo();
@@ -123,6 +129,9 @@ public class ProcessesSortingST extends BaseTestSelenium {
         assertEquals("Second process", processesPage.getProcessTitles().get(0));
     }
 
+    /**
+     * Check sorting processes by duration works as expected.
+     */
     @Test
     public void sortByProcessDuration() throws Exception {
         processesPage.goTo();
@@ -138,14 +147,5 @@ public class ProcessesSortingST extends BaseTestSelenium {
 
         // check that first process is now first element in list of processes 
         assertEquals("First process", processesPage.getProcessTitles().get(0));
-    }
-
-    @Test
-    public void justWait() {
-        try {
-            Thread.sleep(999999999);
-        } catch (InterruptedException e) {
-            // ignore
-        }
     }
 }
