@@ -458,7 +458,7 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Set templateFilters.
      *
-     * @param templateFilters as java.util.List<java.lang.String>
+     * @param templateFilters as list of Strings
      */
     public void setTemplateFilters(List<String> templateFilters) {
         this.templateFilters = templateFilters;
@@ -476,7 +476,7 @@ public class TemplateForm extends TemplateBaseForm {
     /**
      * Set selectedTemplateFilters.
      *
-     * @param selectedTemplateFilters as java.util.List<java.lang.String>
+     * @param selectedTemplateFilters as list of Strings
      */
     public void setSelectedTemplateFilters(List<String> selectedTemplateFilters) {
         this.selectedTemplateFilters = selectedTemplateFilters;
