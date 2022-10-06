@@ -37,6 +37,7 @@ public class ConfigConversionST extends BaseTestSelenium {
     private static final String KALLIOPE = "Kalliope";
     private static final String GBV = "GBV";
     private static final String K10PLUS = "K10Plus";
+    private static final String EXPECTED_ERROR = "XML-Pflichtelement \"mappingFiles\" konnte nicht gefunden werden";
 
     @Before
     public void login() throws Exception {
@@ -73,10 +74,8 @@ public class ConfigConversionST extends BaseTestSelenium {
         assertTrue(importConfigurationsTab.allCatalogsImportedSuccessfully(Arrays.asList(GBV, KALLIOPE)));
         assertTrue(importConfigurationsTab.allCatalogsFailedToImport(Collections.singletonList(K10PLUS)));
         // assert error message of K10+ import!
-        // TODO: load message by key instead of using a static String here!
-        String expectedErrorMessage = "XML-Pflichtelement \"mappingFiles\" konnte nicht gefunden werden";
-        assertTrue("List of error messages should contain '" + expectedErrorMessage + "'",
-                importConfigurationsTab.getCatalogConfigurationImportErrorsMessages().contains(expectedErrorMessage));
+        assertTrue("List of error messages should contain '" + EXPECTED_ERROR + "'",
+                importConfigurationsTab.getCatalogConfigurationImportErrorsMessages().contains(EXPECTED_ERROR));
 
         importConfigurationsTab.closeResultsDialog();
 
