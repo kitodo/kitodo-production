@@ -66,7 +66,9 @@ public class ConfigConversionST extends BaseTestSelenium {
         importConfigurationsTab.clickMappingFileOkButton();
 
         await("Wait for 'Results' dialog to be displayed")
-                .atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(Browser.getDriver()
+                .atMost(5, TimeUnit.SECONDS)
+                .ignoreExceptions()
+                .untilAsserted(() -> assertTrue(Browser.getDriver()
                         .findElementById("importResultsForm:successfulImports").isDisplayed() && Browser.getDriver()
                         .findElementById("importResultsForm:failedImports").isDisplayed()));
 
