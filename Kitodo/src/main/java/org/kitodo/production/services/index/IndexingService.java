@@ -253,7 +253,8 @@ public class IndexingService {
                         searchService.removeLooseIndexData(searchService.findAllIDs(offset, indexLimit));
                         offset += indexLimit;
                     }
-                } catch (Exception e) {
+                } catch (RuntimeException e) {
+                    // this is an elastic search exception, but elastic search is not available here
                     logger.info("Cannot check documents beyond elastic search max_result_window, continuing ...");
                 }
             }
@@ -344,6 +345,9 @@ public class IndexingService {
      * @param pollingChannel the UI polling channel
      */
     private void waitWhileIndexing(ObjectType type, List<Future<?>> futures, PushContext pollingChannel) {
+        // send update that indexing has started (activating polling in user interface)
+        pollingChannel.send(INDEXING_STARTED_MESSAGE + type);
+
         while (true) {
             // check whether all jobs are done
             boolean done = true;
@@ -378,14 +382,11 @@ public class IndexingService {
                 break;
             }
 
-            // send update
-            pollingChannel.send(INDEXING_STARTED_MESSAGE + type);
-
             // wait a bit
             try {
                 Thread.sleep(PAUSE);
             } catch (InterruptedException e) {
-                // ignore
+                logger.trace("Index management sleep interrupted while waiting for worker threads to finish indexing");
             }
         }
     }

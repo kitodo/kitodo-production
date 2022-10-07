@@ -64,10 +64,8 @@ public class IndexManagmentThread extends Thread {
             try {
                 sleep(IndexingService.PAUSE);
             } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);
-                logger.error(e);
+                logger.trace("Index management sleep interrupted while waiting to finish indexing");
             }
-
         } finally {
             indexingService.resetCurrentIndexState();
             indexingService.setIndexingAll(false);

@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -32,8 +31,6 @@ public class IndexWorker implements Runnable {
     private final ObjectType objectType;
     private final SearchService searchService;
     private final IndexWorkerStatus indexWorkerStatus;
-
-    
 
     /**
      * Constructor initializing an IndexWorker object with the given SearchService
@@ -56,9 +53,10 @@ public class IndexWorker implements Runnable {
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         int timeBetweenAttempts = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_TIME_BETWEEN_ATTEMPTS);
         int maxBatch = indexWorkerStatus.getMaxBatch();
+        boolean failed = false;
 
-        Integer nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
-        while (nextBatch < maxBatch) {
+        int nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
+        while (!failed && nextBatch < maxBatch) {
             // nextBatch is a valid batch that needs to be processed
 
             int attempt = 1;
@@ -81,25 +79,23 @@ public class IndexWorker implements Runnable {
                     try {
                         Thread.sleep(timeBetweenAttempts);
                     } catch (InterruptedException e2) {
-                        // ignore
+                        logger.trace("Index worker sleep is interrupted while waiting for next indexing attempt");
                     }
                 }
             }
 
             if (attempt >= maxAttempts) {
                 logger.error("stop indexing after maximum amount of attempts");
-                throw new RuntimeException("stop indexing after maximum amount of attempts");
+                failed = true;
+            } else {
+                // find next batch that can be indexed
+                nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
             }
-
-            // find next batch that can be indexed
-            nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
         }
     }
-
 
     @SuppressWarnings("unchecked")
     private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException, IOException {
         this.searchService.addAllObjectsToIndex(objectsToIndex);
     }
-
 }
