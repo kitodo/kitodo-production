@@ -642,10 +642,50 @@ section#content-section {
     opacity: 1;
 }
 
-#editForm table.ui-selectmanycheckbox tbody {
+#editForm table.ui-selectmanycheckbox tbody,
+#importCatalogConfigurationsForm table.ui-selectmanycheckbox tbody {
     display: inline-block;
     overflow-y: scroll;
     width: 100%;
+}
+
+#catalogConfigurationImportResultDialog_content {
+    overflow-y: hidden;
+}
+
+#catalogConfigurationImportResultDialog_content h3 {
+    margin-bottom: 0;
+}
+
+#importCatalogConfigurationsForm tbody {
+    height: 200px;
+}
+
+#importResultsForm\:successfulImports,
+#importResultsForm\:failedImports {
+    border-radius: var(--default-border-radius);
+    margin: var(--default-full-size) 0;
+}
+
+#importResultsForm\:successfulImports {
+    border: 3px solid var(--green);
+}
+
+#importResultsForm\:failedImports {
+    border: 3px solid var(--orange);
+}
+
+#importResultsForm\:successfulImports th {
+    background-color: var(--light-green);
+}
+
+#importResultsForm\:failedImports th {
+    background-color: var(--light-orange);
+}
+
+.ui-dialog #importResultsForm .ui-datatable .ui-datatable-tablewrapper th,
+.ui-dialog #importResultsForm .ui-datatable .ui-datatable-tablewrapper td {
+    padding-left: var(--default-half-size);
 }
 
 #editForm\:templateTabView\:project tbody {
@@ -742,6 +782,10 @@ section#content-section {
 .input-with-button:not(.ui-spinner) > input,
 .ui-panelgrid-cell .ui-selectonemenu.input-with-button {
     width: calc(100% - 44px);
+}
+
+.input-with-button > input.ui-selectonemenu-label.ui-inputfield {
+    width: 100%;
 }
 
 .ui-panelgrid-cell .ui-selectonemenu.input-with-button {
@@ -3403,7 +3447,8 @@ footer {
     padding-right: var(--default-half-size);
 }
 
-.ui-panelgrid-cell > div {
+.ui-panelgrid-cell > div,
+#mappingFileFormatsForm .input {
     margin-bottom: 1.3em;
 }
 
