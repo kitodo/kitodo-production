@@ -1155,6 +1155,20 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
+     * Resets the process list multi view state such that the sort order and pagination is reset to their defaults.
+     */
+    public void resetProcessListMultiViewState() {
+        if (!Objects.isNull(FacesContext.getCurrentInstance())) {
+            // check whether there is a mulit view state registered (to avoid warning log message in case there is not)
+            Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
+            if (Objects.nonNull(mvs)) {
+                // clear multi view state only if there is a state available
+                PrimeFaces.current().multiViewState().clear(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID);
+            }
+        }
+    }
+
+    /**
      * Navigates to processes list and optionally resets table view state.
      * 
      * @param resetTableViewState whether to reset table view state
@@ -1162,9 +1176,7 @@ public class ProcessForm extends TemplateBaseForm {
     public String navigateToProcessesList(boolean resetTableViewState) {
         if (resetTableViewState) {
             setFirstRow(0);
-            if(!Objects.isNull(FacesContext.getCurrentInstance())) {
-                PrimeFaces.current().multiViewState().clear(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID);
-            }
+            resetProcessListMultiViewState();
         }
         return "/pages/processes?tabIndex=0&faces-redirect=true";
     }
