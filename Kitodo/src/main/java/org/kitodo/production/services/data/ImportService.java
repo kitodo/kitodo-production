@@ -498,7 +498,7 @@ public class ImportService {
             if (fromIndex < processes.size()) {
                 parents = processes.subList(fromIndex, processes.size());
             }
-            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE);
+            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE, false);
         }
 
         return processes;
@@ -612,10 +612,11 @@ public class ImportService {
      * @param projectId ID of project for which processes are created
      * @param templateId ID of template with which processes are created
      * @param rows number of child records to retrieve from catalog
+     * @param parentProcesses parent processes of the children
      * @return list of TempProcesses containing the retrieved child records.
      */
     public LinkedList<TempProcess> getChildProcesses(ImportConfiguration importConfiguration, String elementID,
-                                                     int projectId, int templateId, int rows)
+                                                     int projectId, int templateId, int rows, List<TempProcess> parentProcesses)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
             NoRecordFoundException, IOException, ProcessGenerationException, TransformerException,
             InvalidMetadataValueException, NoSuchMetadataFieldException {
@@ -628,9 +629,12 @@ public class ImportService {
             for (DataRecord childRecord : childRecords) {
                 DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
-                childProcesses.add(createTempProcessFromDocument(importConfiguration, childDocument, templateId,
-                        projectId));
+                TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, childDocument,
+                        templateId, projectId);
+                ProcessHelper.generateAtstslFields(tempProcess, parentProcesses, ACQUISITION_STAGE_CREATE, false);
+                childProcesses.add(tempProcess);
             }
+
             // TODO: sort child processes (by what? catalog ID? Signature?)
             return childProcesses;
         } else {
