@@ -22,6 +22,7 @@ import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.IndexWorkerStatus;
 
 public class IndexManagmentThread extends Thread {
 
@@ -54,7 +55,11 @@ public class IndexManagmentThread extends Thread {
             for (ObjectType currentType : ObjectType.getIndexableObjectTypes()) {
                 if (Objects.isNull(this.objectType) || currentType.equals(objectType)) {
                     try {
-                        indexingService.runIndexing(currentType, context, indexAllObjects);
+                        IndexWorkerStatus status = indexingService.runIndexing(currentType, context, indexAllObjects);
+                        if (Objects.nonNull(status) && (status.isCanceled() || status.hasFailed())) {
+                            // stop indexing due to failure or cancel
+                            break;
+                        }
                     } catch (DataException | CustomResponseException | DAOException | RuntimeException e) {
                         logger.error(e);
                         Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);

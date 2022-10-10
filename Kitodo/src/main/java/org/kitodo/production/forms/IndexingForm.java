@@ -368,4 +368,11 @@ public class IndexingForm {
             Helper.setErrorMessage(e.getMessage());
         }
     }
+
+    /**
+     * Cancel indexing upon user request.
+     */
+    public void cancelIndexing() {
+        ServiceManager.getIndexingService().cancelIndexing();
+    }
 }

@@ -53,10 +53,9 @@ public class IndexWorker implements Runnable {
         int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
         int timeBetweenAttempts = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_TIME_BETWEEN_ATTEMPTS);
         int maxBatch = indexWorkerStatus.getMaxBatch();
-        boolean failed = false;
 
         int nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
-        while (!failed && nextBatch < maxBatch) {
+        while (!indexWorkerStatus.hasFailed() && !indexWorkerStatus.isCanceled() && nextBatch < maxBatch) {
             // nextBatch is a valid batch that needs to be processed
 
             int attempt = 1;
@@ -86,7 +85,7 @@ public class IndexWorker implements Runnable {
 
             if (attempt >= maxAttempts) {
                 logger.error("stop indexing after maximum amount of attempts");
-                failed = true;
+                this.indexWorkerStatus.markAsFailed();
             } else {
                 // find next batch that can be indexed
                 nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
