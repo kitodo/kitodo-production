@@ -181,8 +181,6 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertWorkflows();
-        insertMappingFiles();
-        insertImportConfigurations();
         insertRemovableObjects();
     }
 
@@ -373,6 +371,20 @@ public class MockDatabase {
         authorities.add(new Authority("editRuleset" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("deleteRuleset" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("addRuleset" + CLIENT_ASSIGNABLE));
+
+        // ImportConfigurations
+        authorities.add(new Authority("addImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllImportConfigurations" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteImportConfiguration" + CLIENT_ASSIGNABLE));
+
+        // MappingFiles
+        authorities.add(new Authority("addMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllMappingFiles" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteMappingFile" + CLIENT_ASSIGNABLE));
 
         // Process
         authorities.add(new Authority("viewProcess" + CLIENT_ASSIGNABLE));
