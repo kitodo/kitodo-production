@@ -160,7 +160,7 @@
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
                                     </h:link>
-                                    <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes?keepPagination=true')}"
+                                    <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes')}"
                                                    styleClass="action"
                                                    title="#{msgs.metadataEdit}"
                                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">

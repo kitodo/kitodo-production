@@ -22,9 +22,6 @@
         <f:viewParam name="tabIndex"/>
         <!--@elvariable id="tabIndex" type="java.lang.Integer"-->
         <f:viewAction action="#{ProcessForm.setActiveTabIndexFromTemplate(tabIndex)}" />
-        <!--@elvariable id="keepPagination" type="java.lang.String"-->
-        <f:viewParam name="keepPagination"/>
-        <f:viewAction action="#{ProcessForm.resetPaginator(keepPagination)}"/>
         <!--@elvariable id="projecttitle" type="java.lang.String"-->
         <f:viewParam name="projecttitle"/>
         <o:viewAction action="#{ProcessForm.setFilter('project:' += projecttitle)}" if="#{not empty projecttitle}"/>
@@ -120,7 +117,7 @@
 
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
-        <p:menuitem value="#{msgs.processes}" icon="fa fa-clipboard"/>
+        <p:menuitem value="#{msgs.processes}" icon="fa fa-clipboard" action="#{ProcessForm.navigateToProcessesList(true)}" />
     </ui:define>
 
     <ui:define name="dialog">
