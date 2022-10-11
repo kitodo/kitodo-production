@@ -141,6 +141,8 @@
                                 <p:column>
                                     <h:outputText value="#{parent.getTitle()}"
                                                   title="#{parent.getTitle()}"/>
+                                    <p:commandLink value="#{msgs.show}"
+                                                   action="#{ProcessForm.changeFilter('id:'.concat(parent.getId()))}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <h:link outcome="processEdit"
