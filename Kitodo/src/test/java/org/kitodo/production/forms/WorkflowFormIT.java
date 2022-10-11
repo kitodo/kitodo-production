@@ -96,10 +96,11 @@ public class WorkflowFormIT {
         List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
                 .getByTaskId(secondTemplate.getTasks().get(0).getId());
         List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
+        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
         assertEquals(1, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
         assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
-        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
+
 
 
         //Do the actual update of the affected template tasks
