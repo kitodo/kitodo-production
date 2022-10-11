@@ -71,38 +71,53 @@ public class WorkflowFormIT {
      *
      */
     @Test
-    public void testUpdateWorkflow() throws DAOException, DataException, WorkflowException, IOException {
+    public void shouldUpdateWorkflowTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException, DataException,
+            WorkflowException, IOException {
+
+
+        //Get first template which already has template tasks assigned and assign
+        // it to the new workflow
+        Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Workflow workflow = new Workflow("one_step_workflow");
         currentWorkflowForm.setWorkflow(workflow);
-
-        Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         workflow.setTemplates(Arrays.asList(firstTemplate));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         workflowService.save(workflow);
 
-        //Instantiate DataEditor settings for a task of the second template which should not be deleted
+        //Get second template (without predefined tasks) and assign a task.
+        //Assign data editor settings to this task
+        Template secondTemplate = ServiceManager.getTemplateService().getById(2);
         Task templateTask = createAndSaveTemplateTask(TaskStatus.OPEN, 1,
-                ServiceManager.getTemplateService().getById(2));
+                secondTemplate);
         createAndSaveDataEditorSetting(templateTask.getId());
 
-        int numberOfTasksBeforeUpdate = firstTemplate.getTasks().size();
-        List<DataEditorSetting> dataEditorSettingForFirstTaskBeforeUpdate = dataEditorSettingService.getByTaskId(
+        int numberOfTasksForFirstTemplateBeforeUpdate = firstTemplate.getTasks().size();
+        List<DataEditorSetting> dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
+        List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService.
+                getByTaskId(secondTemplate.getTasks().get(0).getId());
         List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
-        assertEquals(5, numberOfTasksBeforeUpdate);
-        assertEquals(1, dataEditorSettingForFirstTaskBeforeUpdate.size());
+        assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
+        assertEquals(1, dataEditorSettingForTaskOfFirstTemplate.size());
+        assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
         assertEquals(4, completeEditorSettingsBeforeUpdate.size());
 
+        //Do the actual update of the affected template tasks
         currentWorkflowForm.updateTemplateTasks();
 
         firstTemplate = ServiceManager.getTemplateService().getById(1);
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
-        List<DataEditorSetting> dataEditorSettingForFirstTaskAfterUpdate = dataEditorSettingService.getByTaskId(
+        dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
+        dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService.
+                getByTaskId(secondTemplate.getTasks().get(0).getId());
         List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
         assertEquals(numberOfTasksAfterUpdate, 1);
-        assertEquals(0, dataEditorSettingForFirstTaskAfterUpdate.size());
-        assertEquals(1, completeEditorSettingsAfterUpdate.size());
+        assertEquals(0, dataEditorSettingForTaskOfFirstTemplate.size());
+        assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
+        assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.get(0).getStructureWidth(),0);
+        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getMetadataWidth(),0);
+        assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getGalleryWidth(),0);
     }
 
     private Task createAndSaveTemplateTask(TaskStatus taskStatus, int ordering, Template template) throws DataException {
@@ -110,6 +125,7 @@ public class WorkflowFormIT {
         task.setProcessingStatus(taskStatus);
         task.setEditType(TaskEditType.MANUAL_SINGLE);
         task.setOrdering(ordering);
+        task.setTemplate(template);
         taskService.save(task);
         return task;
     }
@@ -118,9 +134,9 @@ public class WorkflowFormIT {
         DataEditorSetting dataEditorSetting = new DataEditorSetting();
         dataEditorSetting.setUserId(1);
         dataEditorSetting.setTaskId(templateTaskId);
-        dataEditorSetting.setStructureWidth(0.2f);
-        dataEditorSetting.setMetadataWidth(0.4f);
-        dataEditorSetting.setGalleryWidth(0.4f);
+        dataEditorSetting.setStructureWidth(0.5f);
+        dataEditorSetting.setMetadataWidth(0.6f);
+        dataEditorSetting.setGalleryWidth(0.6f);
         dataEditorSettingService.saveToDatabase(dataEditorSetting);
     }
 
