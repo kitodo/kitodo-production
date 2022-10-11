@@ -71,7 +71,7 @@ public class WorkflowFormIT {
      *
      */
     @Test
-    public void shouldUpdateWorkflowTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException, DataException,
+    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException, DataException,
             WorkflowException, IOException {
 
 
@@ -94,13 +94,13 @@ public class WorkflowFormIT {
         int numberOfTasksForFirstTemplateBeforeUpdate = firstTemplate.getTasks().size();
         List<DataEditorSetting> dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
-        List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService.
-                getByTaskId(secondTemplate.getTasks().get(0).getId());
+        List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
+                .getByTaskId(secondTemplate.getTasks().get(0).getId());
         List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
         assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
+        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
         assertEquals(1, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
-        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
 
         //Do the actual update of the affected template tasks
         currentWorkflowForm.updateTemplateTasks();
@@ -109,10 +109,11 @@ public class WorkflowFormIT {
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
         dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
-        dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService.
-                getByTaskId(secondTemplate.getTasks().get(0).getId());
+        dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
+                .getByTaskId(secondTemplate.getTasks().get(0).getId());
         List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
         assertEquals(numberOfTasksAfterUpdate, 1);
+        assertEquals(1, completeEditorSettingsAfterUpdate.size());
         assertEquals(0, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
         assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.get(0).getStructureWidth(),0);
