@@ -91,32 +91,30 @@ public class WorkflowFormIT {
         createAndSaveDataEditorSetting(templateTask.getId());
 
         int numberOfTasksForFirstTemplateBeforeUpdate = firstTemplate.getTasks().size();
+        assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
         List<DataEditorSetting> dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
         List<DataEditorSetting> dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
                 .getByTaskId(secondTemplate.getTasks().get(0).getId());
-        List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
-        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
         assertEquals(1, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
-        assertEquals(5, numberOfTasksForFirstTemplateBeforeUpdate);
-
-
+        List<DataEditorSetting> completeEditorSettingsBeforeUpdate = dataEditorSettingService.getAll();
+        assertEquals(4, completeEditorSettingsBeforeUpdate.size());
 
         //Do the actual update of the affected template tasks
         currentWorkflowForm.updateTemplateTasks();
 
         firstTemplate = ServiceManager.getTemplateService().getById(1);
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
+        assertEquals(numberOfTasksAfterUpdate, 1);
         dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
                 firstTemplate.getTasks().get(0).getId());
         dataEditorSettingForTaskOfSecondTemplate = dataEditorSettingService
                 .getByTaskId(secondTemplate.getTasks().get(0).getId());
-        List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
-        assertEquals(numberOfTasksAfterUpdate, 1);
-        assertEquals(1, completeEditorSettingsAfterUpdate.size());
         assertEquals(0, dataEditorSettingForTaskOfFirstTemplate.size());
         assertEquals(1, dataEditorSettingForTaskOfSecondTemplate.size());
+        List<DataEditorSetting> completeEditorSettingsAfterUpdate = dataEditorSettingService.getAll();
+        assertEquals(1, completeEditorSettingsAfterUpdate.size());
         assertEquals(0.5f, dataEditorSettingForTaskOfSecondTemplate.get(0).getStructureWidth(),0);
         assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getMetadataWidth(),0);
         assertEquals(0.6f, dataEditorSettingForTaskOfSecondTemplate.get(0).getGalleryWidth(),0);
