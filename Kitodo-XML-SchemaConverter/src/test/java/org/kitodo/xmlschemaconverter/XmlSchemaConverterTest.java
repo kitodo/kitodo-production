@@ -172,12 +172,12 @@ public class XmlSchemaConverterTest {
     }
 
     private List<File> getXsltFiles(MetadataFormat metadataFormat) throws URISyntaxException, IOException {
-        List<MetadataFormatConversion> marcConversions = MetadataFormatConversion
+        List<MetadataFormatConversion> metadataConversions = MetadataFormatConversion
                 .getDefaultConfigurationFileName(metadataFormat);
         List<File> xsltFiles = new LinkedList<>();
-        if (Objects.nonNull(marcConversions)) {
+        if (Objects.nonNull(metadataConversions)) {
             URI xsltDir = Paths.get(KitodoConfig.getParameter("directory.xslt")).toUri();
-            for (MetadataFormatConversion conversion : marcConversions) {
+            for (MetadataFormatConversion conversion : metadataConversions) {
                 URI xsltFileUri = xsltDir.resolve(new URI(conversion.getFileName()));
                 File xsltFile = new File(xsltFileUri);
                 if (!xsltFile.exists() && Objects.nonNull(conversion.getSource())) {
