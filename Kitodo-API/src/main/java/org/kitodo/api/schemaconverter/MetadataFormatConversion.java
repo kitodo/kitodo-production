@@ -23,12 +23,12 @@ public enum MetadataFormatConversion {
     MARC_2_MODS("marc21slim2mods.xsl", "https://www.loc.gov/standards/mods/v3/MARC21slim2MODS3-4.xsl",
             MetadataFormat.MODS);
 
-    private final static Map<MetadataFormat, List<MetadataFormatConversion>> defaultConversions = new HashMap<>();
+    private static final Map<MetadataFormat, List<MetadataFormatConversion>> DEFAULT_CONVERSIONS = new HashMap<>();
 
     static {
-        defaultConversions.put(MetadataFormat.MODS, Collections.singletonList(MODS_2_KITODO));
-        defaultConversions.put(MetadataFormat.PICA, Collections.singletonList(PICA_2_KITODO));
-        defaultConversions.put(MetadataFormat.MARC, Arrays.asList(MARC_2_MODS, MODS_2_KITODO));
+        DEFAULT_CONVERSIONS.put(MetadataFormat.MODS, Collections.singletonList(MODS_2_KITODO));
+        DEFAULT_CONVERSIONS.put(MetadataFormat.PICA, Collections.singletonList(PICA_2_KITODO));
+        DEFAULT_CONVERSIONS.put(MetadataFormat.MARC, Arrays.asList(MARC_2_MODS, MODS_2_KITODO));
     }
 
     private final String fileName;
@@ -80,8 +80,8 @@ public enum MetadataFormatConversion {
      * @return filename of default conversion file or null if no default conversion file exists for given format
      */
     public static List<MetadataFormatConversion> getDefaultConfigurationFileName(MetadataFormat metadataFormat) {
-        if (defaultConversions.containsKey(metadataFormat)) {
-            return defaultConversions.get(metadataFormat);
+        if (DEFAULT_CONVERSIONS.containsKey(metadataFormat)) {
+            return DEFAULT_CONVERSIONS.get(metadataFormat);
         }
         return null;
     }
