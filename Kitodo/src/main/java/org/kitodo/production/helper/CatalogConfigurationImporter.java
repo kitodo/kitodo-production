@@ -224,20 +224,7 @@ public class CatalogConfigurationImporter {
         List<MappingFile> allMappingFiles = ServiceManager.getMappingFileService().getAll();
         if (OPACConfig.getCatalog(configuration.getTitle()).containsKey(MAPPING_FILES)) {
             for (String filename : OPACConfig.getXsltMappingFiles(configuration.getTitle())) {
-                MappingFile mappingFile = null;
-                // Find mapping file object by filename
-                for (MappingFile currentFile : allMappingFiles) {
-                    if (currentFile.getFile().equals(filename)) {
-                        mappingFile = currentFile;
-                        mappingFile.getImportConfigurations().add(configuration);
-                        break;
-                    }
-                }
-                if (Objects.isNull(mappingFile)) {
-                    // Happens when user skips conversion of a mapping file used in the current import configuration!
-                    throw new UndefinedMappingFileException(filename);
-                }
-                mappingFiles.add(mappingFile);
+                mappingFiles.add(getConfiguredMappingFile(allMappingFiles, filename, configuration));
             }
         } else {
             String formatName = OPACConfig.getMetadataFormat(configuration.getTitle());
@@ -270,6 +257,25 @@ public class CatalogConfigurationImporter {
             }
         }
         return mappingFiles;
+    }
+
+    private MappingFile getConfiguredMappingFile(List<MappingFile> allMappingFiles, String filename,
+                                                 ImportConfiguration configuration)
+            throws UndefinedMappingFileException {
+        MappingFile mappingFile = null;
+        // Find mapping file object by filename
+        for (MappingFile currentFile : allMappingFiles) {
+            if (currentFile.getFile().equals(filename)) {
+                mappingFile = currentFile;
+                mappingFile.getImportConfigurations().add(configuration);
+                break;
+            }
+        }
+        if (Objects.isNull(mappingFile)) {
+            // Happens when user skips conversion of a mapping file used in the current import configuration!
+            throw new UndefinedMappingFileException(filename);
+        }
+        return mappingFile;
     }
 
     private MappingFile getMappingFile(URI xsltDir, MetadataFormatConversion metadataFormatConversion,
@@ -373,9 +379,9 @@ public class CatalogConfigurationImporter {
                 try {
                     convertOpacConfig(catalog, currentConfigurations);
                     conversions.put(catalog, null);
-                } catch (UndefinedMappingFileException | MappingFilesMissingException |
-                         MandatoryParameterMissingException | InvalidPortException | URISyntaxException |
-                         IOException e) {
+                } catch (UndefinedMappingFileException | MappingFilesMissingException
+                         | MandatoryParameterMissingException | InvalidPortException | URISyntaxException
+                         | IOException e) {
                     conversions.put(catalog, e.getMessage());
                 } catch (DAOException e) {
                     if (Objects.nonNull(e.getCause()) && Objects.nonNull(e.getCause().getCause())) {
