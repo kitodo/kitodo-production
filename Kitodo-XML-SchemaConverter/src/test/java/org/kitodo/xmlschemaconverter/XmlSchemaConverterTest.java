@@ -17,15 +17,20 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URISyntaxException;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
@@ -33,6 +38,8 @@ import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.api.schemaconverter.MetadataFormatConversion;
+import org.kitodo.config.KitodoConfig;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -41,7 +48,7 @@ import org.xml.sax.SAXException;
 
 public class XmlSchemaConverterTest {
 
-    private static XMLSchemaConverter converter = new XMLSchemaConverter();
+    private static final XMLSchemaConverter converter = new XMLSchemaConverter();
     private static final String MODS_TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
     private static final String MARC_TEST_FILE_PATH = "src/test/resources/marcXmlTestRecord.xml";
 
@@ -54,7 +61,8 @@ public class XmlSchemaConverterTest {
     }
 
     @Test
-    public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException,
+            URISyntaxException {
         DataRecord testRecord = new DataRecord();
         testRecord.setMetadataFormat(MetadataFormat.MODS);
         testRecord.setFileFormat(FileFormat.XML);
@@ -63,7 +71,8 @@ public class XmlSchemaConverterTest {
 
         try (InputStream inputStream = Files.newInputStream(Paths.get(MODS_TEST_FILE_PATH))) {
             testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
-            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, Collections.emptyList());
+            List<File> xsltFiles = getXsltFiles(MetadataFormat.MODS);
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, xsltFiles);
         }
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
@@ -101,7 +110,8 @@ public class XmlSchemaConverterTest {
     }
 
     @Test
-    public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException, URISyntaxException {
+    public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException,
+            URISyntaxException {
         DataRecord testRecord = new DataRecord();
         testRecord.setMetadataFormat(MetadataFormat.MARC);
         testRecord.setFileFormat(FileFormat.XML);
@@ -110,7 +120,8 @@ public class XmlSchemaConverterTest {
 
         try (InputStream inputStream = Files.newInputStream(Paths.get(MARC_TEST_FILE_PATH))) {
             testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
-            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, Collections.emptyList());
+            List<File> xsltFiles = getXsltFiles(MetadataFormat.MARC);
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, xsltFiles);
         }
 
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
@@ -158,5 +169,23 @@ public class XmlSchemaConverterTest {
             DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
             return documentBuilderFactory.newDocumentBuilder().parse(inputStream);
         }
+    }
+
+    private List<File> getXsltFiles(MetadataFormat metadataFormat) throws URISyntaxException, IOException {
+        List<MetadataFormatConversion> marcConversions = MetadataFormatConversion
+                .getDefaultConfigurationFileName(metadataFormat);
+        List<File> xsltFiles = new LinkedList<>();
+        if (Objects.nonNull(marcConversions)) {
+            URI xsltDir = Paths.get(KitodoConfig.getParameter("directory.xslt")).toUri();
+            for (MetadataFormatConversion conversion : marcConversions) {
+                URI xsltFileUri = xsltDir.resolve(new URI(conversion.getFileName()));
+                File xsltFile = new File(xsltFileUri);
+                if (!xsltFile.exists() && Objects.nonNull(conversion.getSource())) {
+                    FileUtils.copyURLToFile(new URL(conversion.getSource()), xsltFile);
+                }
+                xsltFiles.add(xsltFile);
+            }
+        }
+        return xsltFiles;
     }
 }

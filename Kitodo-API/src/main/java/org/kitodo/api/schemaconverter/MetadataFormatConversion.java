@@ -11,22 +11,39 @@
 
 package org.kitodo.api.schemaconverter;
 
-public enum MetadataFormatConversion {
-    MODS_2_KITODO("mods2kitodo.xsl", null),
-    PICA_2_KITODO("pica2kitodo.xsl", null),
-    MARC_2_MODS("marc21slim2mods.xsl", "https://www.loc.gov/standards/mods/v3/MARC21slim2MODS3-4.xsl");
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    private String fileName;
-    private String source;
+public enum MetadataFormatConversion {
+    MODS_2_KITODO("mods2kitodo.xsl", null, MetadataFormat.KITODO),
+    PICA_2_KITODO("pica2kitodo.xsl", null, MetadataFormat.KITODO),
+    MARC_2_MODS("marc21slim2mods.xsl", "https://www.loc.gov/standards/mods/v3/MARC21slim2MODS3-4.xsl",
+            MetadataFormat.MODS);
+
+    private final static Map<MetadataFormat, List<MetadataFormatConversion>> defaultConversions = new HashMap<>();
+
+    static {
+        defaultConversions.put(MetadataFormat.MODS, Collections.singletonList(MODS_2_KITODO));
+        defaultConversions.put(MetadataFormat.PICA, Collections.singletonList(PICA_2_KITODO));
+        defaultConversions.put(MetadataFormat.MARC, Arrays.asList(MARC_2_MODS, MODS_2_KITODO));
+    }
+
+    private final String fileName;
+    private final String source;
+    private final MetadataFormat targetFormat;
 
     /**
      * Constructor setting filename and source URI for the XSL transformation file.
      * @param filename Filename including suffix without any path.
      * @param source Remote source where the file can be retrieved from if it is not yet available in Kitodo.
      */
-    MetadataFormatConversion(String filename, String source) {
+    MetadataFormatConversion(String filename, String source, MetadataFormat targetFormat) {
         this.fileName = filename;
         this.source = source;
+        this.targetFormat = targetFormat;
     }
 
     /**
@@ -46,4 +63,27 @@ public enum MetadataFormatConversion {
     public String getSource() {
         return source;
     }
+
+    /**
+     * Get targetFormat.
+     *
+     * @return value of targetFormat
+     */
+    public MetadataFormat getTargetFormat() {
+        return targetFormat;
+    }
+
+    /**
+     * Get filename of default metadata conversion file for given metadata format.
+     *
+     * @param metadataFormat metadata format for which filename of default conversion file is returned
+     * @return filename of default conversion file or null if no default conversion file exists for given format
+     */
+    public static List<MetadataFormatConversion> getDefaultConfigurationFileName(MetadataFormat metadataFormat) {
+        if (defaultConversions.containsKey(metadataFormat)) {
+            return defaultConversions.get(metadataFormat);
+        }
+        return null;
+    }
+
 }

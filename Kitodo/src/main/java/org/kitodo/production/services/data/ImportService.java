@@ -310,9 +310,7 @@ public class ImportService {
         KitodoServiceLoader<SchemaConverterInterface> loader =
                 new KitodoServiceLoader<>(SchemaConverterInterface.class);
         List<SchemaConverterInterface> converterModules = loader.loadModules().stream()
-                .filter(c -> c.supportsSourceMetadataFormat(record.getMetadataFormat())
-                        && c.supportsSourceFileFormat(record.getFileFormat())
-                        && c.supportsTargetMetadataFormat(MetadataFormat.KITODO)
+                .filter(c -> c.supportsSourceFileFormat(record.getFileFormat())
                         && c.supportsTargetFileFormat(FileFormat.XML))
                 .collect(Collectors.toList());
         if (converterModules.isEmpty()) {

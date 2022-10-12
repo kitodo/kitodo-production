@@ -11,6 +11,12 @@
 
 package org.kitodo.production.helper;
 
+import java.io.File;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -19,12 +25,15 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.api.schemaconverter.MetadataFormatConversion;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.MappingFile;
@@ -48,6 +57,7 @@ public class CatalogConfigurationImporter {
     private static final String SEARCH_FIELD = "searchField";
     private static final String LABEL = "[@label]";
     private static final String VALUE = "[@value]";
+    private static final String MAPPING_FILES = "mappingFiles";
 
     /**
      * Convert catalog configuration with title 'opacTitle' to new 'ImportConfiguration' object. Also creates
@@ -63,7 +73,7 @@ public class CatalogConfigurationImporter {
      */
     private void convertOpacConfig(String catalogName, List<String> currentConfigurations) throws DAOException,
             UndefinedMappingFileException, MappingFilesMissingException, MandatoryParameterMissingException,
-            InvalidPortException {
+            InvalidPortException, URISyntaxException, IOException {
         HierarchicalConfiguration opacConfiguration = OPACConfig.getCatalog(catalogName);
         String fileUploadTitle = catalogName + FILE_UPLOAD_DEFAULT_POSTFIX;
         if (OPACConfig.getFileUploadConfig(catalogName) && !currentConfigurations.contains(fileUploadTitle)) {
@@ -170,7 +180,8 @@ public class CatalogConfigurationImporter {
     }
 
     private void createFileUploadConfiguration(String catalogTitle, String fileUploadConfigurationTitle)
-            throws DAOException, UndefinedMappingFileException, MappingFilesMissingException {
+            throws DAOException, UndefinedMappingFileException, MappingFilesMissingException, URISyntaxException,
+            IOException {
         ImportConfiguration fileUploadConfiguration = new ImportConfiguration();
         fileUploadConfiguration.setConfigurationType(ImportConfigurationType.FILE_UPLOAD.name());
         fileUploadConfiguration.setTitle(catalogTitle);
@@ -208,10 +219,10 @@ public class CatalogConfigurationImporter {
     }
 
     private List<MappingFile> getMappingFiles(ImportConfiguration configuration) throws UndefinedMappingFileException,
-            DAOException, MappingFilesMissingException {
+            DAOException, MappingFilesMissingException, URISyntaxException, IOException {
         List<MappingFile> mappingFiles = new LinkedList<>();
         List<MappingFile> allMappingFiles = ServiceManager.getMappingFileService().getAll();
-        try {
+        if (OPACConfig.getCatalog(configuration.getTitle()).containsKey(MAPPING_FILES)) {
             for (String filename : OPACConfig.getXsltMappingFiles(configuration.getTitle())) {
                 MappingFile mappingFile = null;
                 // Find mapping file object by filename
@@ -228,10 +239,55 @@ public class CatalogConfigurationImporter {
                 }
                 mappingFiles.add(mappingFile);
             }
-        } catch (IllegalArgumentException e) {
-            throw new MappingFilesMissingException();
+        } else {
+            String formatName = OPACConfig.getMetadataFormat(configuration.getTitle());
+            MetadataFormat metadataFormat = MetadataFormat.getMetadataFormat(formatName);
+            List<MetadataFormatConversion> defaultConversions = MetadataFormatConversion
+                    .getDefaultConfigurationFileName(metadataFormat);
+
+            if (Objects.nonNull(defaultConversions)) {
+                // add default metadata files to ImportConfiguration
+                URI xsltDir = Paths.get(KitodoConfig.getParameter("directory.xslt")).toUri();
+                for (MetadataFormatConversion metadataFormatConversion : defaultConversions) {
+                    MappingFile mappingFile = null;
+                    // Check, if default conversion has already been converted to MappingFile object
+                    for (MappingFile currentFile : allMappingFiles) {
+                        if (currentFile.getFile().equals(metadataFormatConversion.getFileName())) {
+                            mappingFile = currentFile;
+                            mappingFile.getImportConfigurations().add(configuration);
+                            break;
+                        }
+                    }
+                    // Create new MappingFile object if current default conversion has not yet been converted
+                    if (Objects.isNull(mappingFile)) {
+                        mappingFile = getMappingFile(xsltDir, metadataFormatConversion, formatName);
+                        mappingFile.getImportConfigurations().add(configuration);
+                    }
+                    mappingFiles.add(mappingFile);
+                }
+            } else {
+                throw new MappingFilesMissingException(formatName);
+            }
         }
         return mappingFiles;
+    }
+
+    private MappingFile getMappingFile(URI xsltDir, MetadataFormatConversion metadataFormatConversion,
+                                             String formatName)
+            throws IOException, URISyntaxException, DAOException {
+        MappingFile mappingFile = new MappingFile();
+        URI xsltFile = xsltDir.resolve(new URI(metadataFormatConversion.getFileName()));
+        if (!new File(xsltFile).exists() && Objects.nonNull(metadataFormatConversion.getSource())) {
+            downloadXSLTFile(new URL(metadataFormatConversion.getSource()), xsltFile);
+        }
+        mappingFile.setFile(metadataFormatConversion.getFileName());
+        mappingFile.setTitle(metadataFormatConversion.getFileName());
+        mappingFile.setPrestructuredImport(false);
+        mappingFile.setInputMetadataFormat(formatName);
+        mappingFile.setOutputMetadataFormat(metadataFormatConversion.getTargetFormat().name());
+        mappingFile.setImportConfigurations(new LinkedList<>());
+        ServiceManager.getMappingFileService().saveToDatabase(mappingFile);
+        return mappingFile;
     }
 
     /**
@@ -317,8 +373,9 @@ public class CatalogConfigurationImporter {
                 try {
                     convertOpacConfig(catalog, currentConfigurations);
                     conversions.put(catalog, null);
-                } catch (UndefinedMappingFileException | MappingFilesMissingException
-                         | MandatoryParameterMissingException | InvalidPortException e) {
+                } catch (UndefinedMappingFileException | MappingFilesMissingException |
+                         MandatoryParameterMissingException | InvalidPortException | URISyntaxException |
+                         IOException e) {
                     conversions.put(catalog, e.getMessage());
                 } catch (DAOException e) {
                     if (Objects.nonNull(e.getCause()) && Objects.nonNull(e.getCause().getCause())) {
@@ -330,5 +387,17 @@ public class CatalogConfigurationImporter {
             }
         }
         return conversions;
+    }
+
+    /**
+     * Download XSLT file from given URL 'source' and save it to file located at given URI 'target'.
+     * @param source URL of XSLT file to download.
+     * @param target URI of location where downloaded files should be saved.
+     * @throws IOException when file cannot be saved to provided location
+     */
+    public static void downloadXSLTFile(URL source, URI target) throws IOException {
+        if (Objects.nonNull(source) && Objects.nonNull(target)) {
+            FileUtils.copyURLToFile(source, new File(target));
+        }
     }
 }

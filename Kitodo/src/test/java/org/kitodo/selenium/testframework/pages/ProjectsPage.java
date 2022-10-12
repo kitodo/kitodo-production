@@ -524,16 +524,6 @@ public class ProjectsPage extends Page<ProjectsPage> {
     }
 
     /**
-     * Unselect catalogs with given indices.
-     * @param indices indices of catalogs to unselect
-     */
-    public void unselectCatalogs(List<Integer> indices) {
-        for (Integer index : indices) {
-            clickElement(catalogSelection.findElements(By.className("ui-chkbox")).get(index));
-        }
-    }
-
-    /**
      * Start opac configuration import.
      */
     public void startOpacConfigurationImport() {
@@ -549,14 +539,6 @@ public class ProjectsPage extends Page<ProjectsPage> {
                 .atMost(10, TimeUnit.SECONDS).untilAsserted(() -> assertTrue(mappingFileTitle
                         .isDisplayed()));
         return mappingFileTitle.getAttribute("value");
-    }
-
-    /**
-     * Select "Pica" as input format on the "Select input and output formats for mapping file" dialog.
-     */
-    public void selectInputFormatPica() {
-        clickElement(mappingFileInputFormatMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElementById(mappingFileInputFormatMenu.getAttribute("id") + "_3"));
     }
 
     /**
@@ -590,22 +572,6 @@ public class ProjectsPage extends Page<ProjectsPage> {
     public boolean allCatalogsImportedSuccessfully(List<String> catalogTitles) {
         for (String catalog : catalogTitles) {
             WebElement catalogCell = Browser.getDriver().findElementById("importResultsForm:successfulImports")
-                    .findElement(By.xpath(".//span[@title='" + catalog + "']"));
-            if (Objects.isNull(catalogCell)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    /**
-     * Check and return whether all catalog configurations in the given list failed to be imported or not.
-     * @param catalogTitles list of catalog configuration titles.
-     * @return whether all given catalog configurations failed to be imported or not
-     */
-    public boolean allCatalogsFailedToImport(List<String> catalogTitles) {
-        for (String catalog : catalogTitles) {
-            WebElement catalogCell = Browser.getDriver().findElementById("importResultsForm:failedImports")
                     .findElement(By.xpath(".//span[@title='" + catalog + "']"));
             if (Objects.isNull(catalogCell)) {
                 return false;
