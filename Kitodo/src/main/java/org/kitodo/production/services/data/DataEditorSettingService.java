@@ -76,11 +76,11 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
      */
     public boolean areDataEditorSettingsDefinedForWorkflow(Workflow workflow) {
         String query =
-        "SELECT d FROM DataEditorSetting AS d"
-        + " INNER JOIN Task AS ta ON ta.id = d.taskId"
-        + " INNER JOIN Template AS te ON te.id = ta.template"
-        + " INNER JOIN Workflow AS w ON w.id = te.workflow"
-        + " where w.id = :workflowId";
+            "SELECT d FROM DataEditorSetting AS d"
+            + " INNER JOIN Task AS ta ON ta.id = d.taskId"
+            + " INNER JOIN Template AS te ON te.id = ta.template"
+            + " INNER JOIN Workflow AS w ON w.id = te.workflow"
+            + " where w.id = :workflowId";
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("workflowId", workflow.getId());
         List<DataEditorSetting> dataEditorSettings = getByQuery(query, parameters);
