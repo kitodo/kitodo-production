@@ -39,6 +39,7 @@ public enum MetadataFormatConversion {
      * Constructor setting filename and source URI for the XSL transformation file.
      * @param filename Filename including suffix without any path.
      * @param source Remote source where the file can be retrieved from if it is not yet available in Kitodo.
+     * @param targetFormat target MetadataFormat of this MetadataFormatConversion
      */
     MetadataFormatConversion(String filename, String source, MetadataFormat targetFormat) {
         this.fileName = filename;
