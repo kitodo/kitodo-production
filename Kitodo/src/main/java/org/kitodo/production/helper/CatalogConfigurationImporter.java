@@ -284,7 +284,7 @@ public class CatalogConfigurationImporter {
         MappingFile mappingFile = new MappingFile();
         URI xsltFile = xsltDir.resolve(new URI(metadataFormatConversion.getFileName()));
         if (!new File(xsltFile).exists() && Objects.nonNull(metadataFormatConversion.getSource())) {
-            downloadXSLTFile(new URL(metadataFormatConversion.getSource()), xsltFile);
+            downloadXSLTFile(metadataFormatConversion.getSource(), xsltFile);
         }
         mappingFile.setFile(metadataFormatConversion.getFileName());
         mappingFile.setTitle(metadataFormatConversion.getFileName());

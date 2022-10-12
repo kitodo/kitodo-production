@@ -11,6 +11,8 @@
 
 package org.kitodo.api.schemaconverter;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -32,7 +34,7 @@ public enum MetadataFormatConversion {
     }
 
     private final String fileName;
-    private final String source;
+    private URL source;
     private final MetadataFormat targetFormat;
 
     /**
@@ -43,7 +45,11 @@ public enum MetadataFormatConversion {
      */
     MetadataFormatConversion(String filename, String source, MetadataFormat targetFormat) {
         this.fileName = filename;
-        this.source = source;
+        try {
+            this.source = new URL(source);
+        } catch (MalformedURLException e) {
+            this.source = null;
+        }
         this.targetFormat = targetFormat;
     }
 
@@ -61,7 +67,7 @@ public enum MetadataFormatConversion {
      *
      * @return value of source
      */
-    public String getSource() {
+    public URL getSource() {
         return source;
     }
 

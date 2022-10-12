@@ -181,7 +181,7 @@ public class XmlSchemaConverterTest {
                 URI xsltFileUri = xsltDir.resolve(new URI(conversion.getFileName()));
                 File xsltFile = new File(xsltFileUri);
                 if (!xsltFile.exists() && Objects.nonNull(conversion.getSource())) {
-                    FileUtils.copyURLToFile(new URL(conversion.getSource()), xsltFile);
+                    FileUtils.copyURLToFile(conversion.getSource(), xsltFile);
                 }
                 xsltFiles.add(xsltFile);
             }
