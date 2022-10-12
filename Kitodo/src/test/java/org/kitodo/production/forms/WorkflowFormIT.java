@@ -80,8 +80,7 @@ public class WorkflowFormIT {
         Workflow workflow = new Workflow("one_step_workflow");
         currentWorkflowForm.setWorkflow(workflow);
         workflow.setTemplates(Arrays.asList(firstTemplate));
-        WorkflowService workflowService = ServiceManager.getWorkflowService();
-        workflowService.save(workflow);
+        ServiceManager.getWorkflowService().save(workflow);
         firstTemplate.setWorkflow(workflow);
         ServiceManager.getTemplateService().save(firstTemplate);
         assertEquals(true, dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
