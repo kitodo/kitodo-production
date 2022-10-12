@@ -82,6 +82,9 @@ public class WorkflowFormIT {
         workflow.setTemplates(Arrays.asList(firstTemplate));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         workflowService.save(workflow);
+        firstTemplate.setWorkflow(workflow);
+        ServiceManager.getTemplateService().save(firstTemplate);
+        assertEquals(true, dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
 
         //Get second template (without predefined tasks) and assign a task.
         //Assign data editor settings to this task
@@ -105,6 +108,7 @@ public class WorkflowFormIT {
         currentWorkflowForm.updateTemplateTasks();
 
         firstTemplate = ServiceManager.getTemplateService().getById(1);
+        assertEquals(false, dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
         int numberOfTasksAfterUpdate = firstTemplate.getTasks().size();
         assertEquals(numberOfTasksAfterUpdate, 1);
         dataEditorSettingForTaskOfFirstTemplate = dataEditorSettingService.getByTaskId(
