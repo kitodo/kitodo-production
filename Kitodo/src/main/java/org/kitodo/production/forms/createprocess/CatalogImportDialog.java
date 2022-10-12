@@ -203,7 +203,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
                     | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
                     | NoSuchMetadataFieldException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                throw new CatalogException(e.getLocalizedMessage());
             }
         }
     }

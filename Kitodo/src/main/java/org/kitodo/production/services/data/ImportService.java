@@ -646,7 +646,7 @@ public class ImportService {
     private Document importDocument(ImportConfiguration importConfiguration, String identifier,
                                     boolean extractExemplars, boolean isParentInRecord)
             throws NoRecordFoundException, UnsupportedFormatException, URISyntaxException, IOException,
-            XPathExpressionException, ParserConfigurationException, SAXException {
+            XPathExpressionException, ParserConfigurationException, SAXException, ProcessGenerationException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(
@@ -668,7 +668,7 @@ public class ImportService {
     public Document convertDataRecordToInternal(DataRecord dataRecord, ImportConfiguration importConfiguration,
                                                 boolean isParentInRecord)
             throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException,
-            SAXException, XPathExpressionException {
+            SAXException, XPathExpressionException, ProcessGenerationException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(importConfiguration, isParentInRecord);
@@ -709,6 +709,9 @@ public class ImportService {
             } else {
                 throw e;
             }
+        }
+        if (Objects.isNull(resultDocument)) {
+            throw new ProcessGenerationException(Helper.getTranslation("importError.emptyDocument"));
         }
         return resultDocument;
     }

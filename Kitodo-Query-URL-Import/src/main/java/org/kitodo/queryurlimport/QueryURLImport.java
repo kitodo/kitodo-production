@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -272,17 +273,25 @@ public class QueryURLImport implements ExternalDataImportInterface {
             logger.debug("Requesting: {}", fullUrl);
             HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-                if (Objects.isNull(response.getEntity())) {
-                    throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
+                HttpEntity httpEntity = response.getEntity();
+                if (Objects.isNull(httpEntity)) {
+                    throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
                 }
-                return createRecordFromXMLElement(dataImport, IOUtils.toString(response.getEntity().getContent(),
-                        Charset.defaultCharset()));
+                try (InputStream inputStream = httpEntity.getContent()) {
+                    String content = IOUtils.toString(inputStream, Charset.defaultCharset());
+                    if (Objects.nonNull(interfaceType.getNumberOfRecordsString())
+                            && XmlResponseHandler.extractNumberOfRecords(content, interfaceType) < 1) {
+                        throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
+                    }
+                    return createRecordFromXMLElement(dataImport, content);
+                }
             }
             throw new ConfigException("Search Query Request Failed");
         } catch (IOException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
     }
+
 
     private List<DataRecord> performQueryToMultipleRecords(DataImport dataImport, String queryURL)
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
