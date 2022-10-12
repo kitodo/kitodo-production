@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.DataEditorSetting;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DataEditorSettingDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
@@ -66,6 +67,24 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
     @Override
     public Long countResults(Map filters) throws DAOException {
         return countDatabaseRows();
+    }
+
+    /**
+     * Check if there are data editor settings for the tasks of the current workflow.
+     *
+     * @return true if one of the tasks has data editor settings defined
+     */
+    public boolean areDataEditorSettingsDefinedForWorkflow(Workflow workflow) {
+        String query =
+        "SELECT d FROM DataEditorSetting AS d"
+        + " INNER JOIN Task AS ta ON ta.id = d.taskId"
+        + " INNER JOIN Template AS te ON te.id = ta.template"
+        + " INNER JOIN Workflow AS w ON w.id = te.workflow"
+        + " where w.id = :workflowId";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("workflowId", workflow.getId());
+        List<DataEditorSetting> dataEditorSettings = getByQuery(query, parameters);
+        return !dataEditorSettings.isEmpty();
     }
 
     /**

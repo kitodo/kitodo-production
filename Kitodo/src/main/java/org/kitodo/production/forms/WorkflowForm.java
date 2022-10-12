@@ -64,6 +64,8 @@ public class WorkflowForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
+
+    private final transient DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
     private final transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
     private String xmlDiagram;
@@ -176,9 +178,8 @@ public class WorkflowForm extends BaseForm {
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
             if (!templateTasks.isEmpty()) {
-                DataEditorSettingService dataEditorSettingService =  ServiceManager.getDataEditorSettingService();
                 for (Task templateTask: templateTasks) {
-                    dataEditorSettingService.removeFromDatabaseByTaskId(templateTask.getId());
+                    this.dataEditorSettingService.removeFromDatabaseByTaskId(templateTask.getId());
                 }
                 workflowTemplate.getTasks().clear();
                 TemplateService templateService = ServiceManager.getTemplateService();
@@ -195,18 +196,7 @@ public class WorkflowForm extends BaseForm {
      * @return true if one of the tasks has data editor settings defined
      */
     public boolean hasWorkflowDataEditorSettingsDefined() {
-        DataEditorSettingService dataEditorSettingService =  ServiceManager.getDataEditorSettingService();
-        for (Template workflowTemplate : this.workflow.getTemplates()) {
-            List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
-            if (!templateTasks.isEmpty()) {
-                for (Task templateTask: templateTasks) {
-                    if (!dataEditorSettingService.getByTaskId(templateTask.getId()).isEmpty()) {
-                        return true;
-                    }
-                }
-            }
-        }
-        return false;
+        return this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(this.workflow);
     }
 
     /**
