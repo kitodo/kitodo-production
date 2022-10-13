@@ -55,9 +55,11 @@
                                         <p:ajax update="processTable" oncomplete="setScrollbarLayout()"/>
                                 </p:commandButton>
                             </h:form>
-                            <p:button id="allProcesses" value="#{msgs.allProcesses}"
-                                      outcome="processes?tabIndex=0"
-                                      icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+                            <h:form id="allProcessesDesktopForm">
+                                <p:commandButton id="allProcesses" value="#{msgs.allProcesses}"
+                                        action="#{ProcessForm.navigateToProcessesList(true)}"
+                                        icon="fa fa-search fa-lg" iconPos="right" styleClass="secondary"/>
+                            </h:form>
                         </div>
                     </div>
                     <div class="content-body">

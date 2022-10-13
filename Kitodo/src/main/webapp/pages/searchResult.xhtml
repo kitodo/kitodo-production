@@ -43,7 +43,8 @@
                                  rows="#{LoginForm.loggedUser.tableSize}"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                                 paginatorPosition="bottom">
+                                 paginatorPosition="bottom"
+                                 multiViewState="true">
                         <p:ajax event="rowToggle"
                                 oncomplete="registerRowToggleEvents();" />
 
