@@ -17,7 +17,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
@@ -37,7 +36,6 @@ public class ConfigConversionST extends BaseTestSelenium {
     private static final String KALLIOPE = "Kalliope";
     private static final String GBV = "GBV";
     private static final String K10PLUS = "K10Plus";
-    private static final String EXPECTED_ERROR = "XML-Pflichtelement \"mappingFiles\" konnte nicht gefunden werden";
 
     @Before
     public void login() throws Exception {
@@ -69,26 +67,20 @@ public class ConfigConversionST extends BaseTestSelenium {
                 .atMost(5, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(Browser.getDriver()
-                        .findElementById("importResultsForm:successfulImports").isDisplayed() && Browser.getDriver()
-                        .findElementById("importResultsForm:failedImports").isDisplayed()));
+                        .findElementById("importResultsForm:successfulImports").isDisplayed()));
 
-        // assert successful and failed opac config imports
-        assertTrue(importConfigurationsTab.allCatalogsImportedSuccessfully(Arrays.asList(GBV, KALLIOPE)));
-        assertTrue(importConfigurationsTab.allCatalogsFailedToImport(Collections.singletonList(K10PLUS)));
-        // assert error message of K10+ import!
-        assertTrue("List of error messages should contain '" + EXPECTED_ERROR + "'",
-                importConfigurationsTab.getCatalogConfigurationImportErrorsMessages().contains(EXPECTED_ERROR));
-
+        // assert successful opac config imports
+        assertTrue(importConfigurationsTab.allCatalogsImportedSuccessfully(Arrays.asList(GBV, KALLIOPE, K10PLUS)));
         importConfigurationsTab.closeResultsDialog();
 
         // assert number of ImportConfigurations and MappingFiles in database
-        assertEquals(Long.valueOf(2), ServiceManager.getImportConfigurationService().countDatabaseRows());
-        assertEquals(Long.valueOf(1), ServiceManager.getMappingFileService().countDatabaseRows());
+        assertEquals(Long.valueOf(3), ServiceManager.getImportConfigurationService().countDatabaseRows());
+        assertEquals(Long.valueOf(2), ServiceManager.getMappingFileService().countDatabaseRows());
 
         // assert that lists have been updated properly (counts include table header row, therefore each +1!)
-        assertEquals(Long.valueOf(3), importConfigurationsTab.getNumberOfImportConfigurations());
+        assertEquals(Long.valueOf(4), importConfigurationsTab.getNumberOfImportConfigurations());
         ProjectsPage mappingFilesTab = importConfigurationsTab.goToMappingFilesTab();
-        assertEquals(Long.valueOf(2), mappingFilesTab.getNumberOfMappingFiles());
+        assertEquals(Long.valueOf(3), mappingFilesTab.getNumberOfMappingFiles());
 
         checkGbvConfiguration();
         checkKalliopeConfiguration();
