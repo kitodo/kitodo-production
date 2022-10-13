@@ -179,8 +179,10 @@ public class WorkflowForm extends BaseForm {
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
             if (!templateTasks.isEmpty()) {
-                for (Task templateTask: templateTasks) {
-                    this.dataEditorSettingService.removeFromDatabaseByTaskId(templateTask.getId());
+                if (this.dataEditorSettingsDefined) {
+                    for (Task templateTask : templateTasks) {
+                        this.dataEditorSettingService.removeFromDatabaseByTaskId(templateTask.getId());
+                    }
                 }
                 workflowTemplate.getTasks().clear();
                 TemplateService templateService = ServiceManager.getTemplateService();

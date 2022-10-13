@@ -73,16 +73,14 @@ public class WorkflowFormIT {
     @Test
     public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException, DataException,
             WorkflowException, IOException {
-
-        //Get first template which already has template tasks assigned and assign
-        // it to the new workflow
+        //Get first template which already has template tasks assigned and assign it to the new workflow
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Workflow workflow = new Workflow("one_step_workflow");
-        currentWorkflowForm.setWorkflow(workflow);
         workflow.setTemplates(Arrays.asList(firstTemplate));
         ServiceManager.getWorkflowService().save(workflow);
         firstTemplate.setWorkflow(workflow);
         ServiceManager.getTemplateService().save(firstTemplate);
+        currentWorkflowForm.load(workflow.getId());
         assertEquals(true, dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow));
 
         //Get second template (without predefined tasks) and assign a task.
