@@ -68,6 +68,7 @@ public class WorkflowForm extends BaseForm {
     private final transient DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
     private final transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
+    private boolean dataEditorSettingsDefined = false;
     private String xmlDiagram;
     private WorkflowStatus workflowStatus;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
@@ -196,7 +197,7 @@ public class WorkflowForm extends BaseForm {
      * @return true if one of the tasks has data editor settings defined
      */
     public boolean hasWorkflowDataEditorSettingsDefined() {
-        return this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(this.workflow);
+        return this.dataEditorSettingsDefined;
     }
 
     /**
@@ -411,6 +412,7 @@ public class WorkflowForm extends BaseForm {
                 setWorkflow(workflow);
                 setWorkflowStatus(workflow.getStatus());
                 readXMLDiagram();
+                this.dataEditorSettingsDefined = this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow);
             }
             setSaveDisabled(false);
         } catch (DAOException e) {
