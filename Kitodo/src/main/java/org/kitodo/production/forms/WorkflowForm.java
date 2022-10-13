@@ -192,9 +192,8 @@ public class WorkflowForm extends BaseForm {
     }
 
     /**
-     * Check if there are data editor setting for the tasks of the current workflow.
-     *
-     * @return true if one of the tasks has data editor settings defined
+     * Check if the workflow has associated data editor settings.
+     * @return value of dataEditorSettingsDefined
      */
     public boolean hasWorkflowDataEditorSettingsDefined() {
         return this.dataEditorSettingsDefined;
