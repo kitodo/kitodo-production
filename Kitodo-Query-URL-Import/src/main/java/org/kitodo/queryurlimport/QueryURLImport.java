@@ -89,6 +89,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String FTP_PROTOCOL = "ftp";
     private static final String EQUALS_OPERAND = "=";
     private static final String AND = "&";
+    private static final String OAI_IDENTIFIER = "identifier";
     private final Charset encoding = StandardCharsets.UTF_8;
 
     private CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -160,7 +161,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 return performFtpRequest(dataImport, value, start, numberOfRecords);
             case HTTP_PROTOCOL:
             case HTTPS_PROTOCOL:
-                if (dataImport.getSearchFields().containsKey(key)) {
+                if (dataImport.getSearchFields().containsKey(key)
+                        || SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType())) {
                     return performHTTPRequest(dataImport, Collections.singletonMap(key, value),
                             start, numberOfRecords);
                 }
@@ -257,7 +259,9 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
         String idPrefix = dataImport.getIdPrefix();
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
-        String queryParameter = dataImport.getIdParameter() + EQUALS_OPERAND + prefix + identifier;
+        String idParameter = SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) ? OAI_IDENTIFIER
+                : dataImport.getIdParameter();
+        String queryParameter = idParameter + EQUALS_OPERAND + prefix + identifier;
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
             fullUrl += URLEncoder.encode(queryParameter, encoding);
         } else {
@@ -424,6 +428,15 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private LinkedHashMap<String, String> getSearchFieldMap(DataImport dataImport, Map<String, String> searchFields) {
         LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
         String idPrefix = dataImport.getIdPrefix();
+        if (SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) && searchFields.size() == 1) {
+            String value = new LinkedList<>(searchFields.values()).getFirst();
+            if (StringUtils.isBlank(idPrefix) || value.startsWith(idPrefix)) {
+                searchFieldMap.put(OAI_IDENTIFIER, value);
+            } else {
+                searchFieldMap.put(OAI_IDENTIFIER, idPrefix + value);
+            }
+            return searchFieldMap;
+        }
         String idParameter = dataImport.getIdParameter();
         for (Map.Entry<String, String> entry : searchFields.entrySet()) {
             String searchField = dataImport.getSearchFields().get(entry.getKey());

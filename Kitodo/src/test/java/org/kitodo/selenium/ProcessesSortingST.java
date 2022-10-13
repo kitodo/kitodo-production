@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 
@@ -103,10 +104,16 @@ public class ProcessesSortingST extends BaseTestSelenium {
         assertEquals("First process", processesPage.getProcessTitles().get(0));
 
         // reload page
-        processesPage.goTo();
+        Browser.getDriver().navigate().refresh();
 
         // check that first process is still first element in list of processes
         assertEquals("First process", processesPage.getProcessTitles().get(0));
+
+        // navigate to process list via main menu, which resets sort order
+        processesPage.goTo();
+
+        // check that default sort order is restored
+        assertEquals("Second process", processesPage.getProcessTitles().get(0));
     }
 
     /**

@@ -17,8 +17,8 @@ public enum SearchInterfaceType {
             ".//*[local-name()='diagnostic']/*[local-name()='message']/text()"),
     OAI("oai", "http://www.openarchives.org/OAI/2.0/", "record", null, null,
             null, null, null, ".//*[local-name()='error']/text()"),
-    FTP("ftp", null, null, null, null,null, null, null,
-            null);
+    FTP("ftp", null, null, null, null,null, null, null, null),
+    CUSTOM("custom", null, null, null, null, null, null, null, null);
 
     private final String typeString;
     private final String namespace;
