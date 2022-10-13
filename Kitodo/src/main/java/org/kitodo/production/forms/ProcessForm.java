@@ -1158,7 +1158,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Resets the process list multi view state such that the sort order and pagination is reset to their defaults.
      */
     public void resetProcessListMultiViewState() {
-        if (!Objects.isNull(FacesContext.getCurrentInstance())) {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
             // check whether there is a mulit view state registered (to avoid warning log message in case there is not)
             Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
             if (Objects.nonNull(mvs)) {
