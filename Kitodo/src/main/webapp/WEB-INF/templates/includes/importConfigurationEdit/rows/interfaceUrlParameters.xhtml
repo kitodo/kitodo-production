@@ -85,8 +85,7 @@
                                value="#{msgs['importConfig.searchFields.idPrefix']}"/>
                 <p:inputText id="oaiIdParameterPrefix"
                              styleClass="input-with-button"
-                             value="#{importConfigurationEditView.importConfiguration.idPrefix}"
-                             disabled="#{importConfigurationEditView.idSearchField eq null}">
+                             value="#{importConfigurationEditView.importConfiguration.idPrefix}">
                     <p:ajax event="change"
                             oncomplete="toggleSave();"/>
                 </p:inputText>
