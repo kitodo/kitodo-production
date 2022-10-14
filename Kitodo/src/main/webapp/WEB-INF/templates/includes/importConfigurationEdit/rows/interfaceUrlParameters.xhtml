@@ -79,6 +79,23 @@
                            value="#{msgs['tooltip.importConfig.oaiMetadataPrefixHelp']}"/>
             </div>
         </p:row>
+        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+            <div>
+                <p:outputLabel for="oaiIdParameterPrefix"
+                               value="#{msgs['importConfig.searchFields.idPrefix']}"/>
+                <p:inputText id="oaiIdParameterPrefix"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.idPrefix}"
+                             disabled="#{importConfigurationEditView.idSearchField eq null}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="oaiIdParameterPrefixHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="oaiIdParameterPrefixHelp"
+                           value="#{msgs['tooltip.importConfig.idParameterPrefixHelp']}"/>
+            </div>
+        </p:row>
 
     </f:view>
 
