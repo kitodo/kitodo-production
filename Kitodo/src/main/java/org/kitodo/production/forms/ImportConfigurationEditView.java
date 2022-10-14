@@ -34,6 +34,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.SearchField;
+import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
@@ -223,6 +224,43 @@ public class ImportConfigurationEditView extends BaseForm {
     public void removeSearchField(SearchField searchField) {
         searchField.setImportConfiguration(null);
         importConfiguration.getSearchFields().remove(searchField);
+    }
+
+    /**
+     * Add given UrlParameter to importConfiguration.
+     *
+     * @param urlParameter UrlParameter to add
+     */
+    public void addUrlParameter(UrlParameter urlParameter) {
+        if (importConfiguration.getUrlParameters().stream().map(UrlParameter::getParameterKey)
+                .collect(Collectors.toList()).contains(urlParameter.getParameterKey())) {
+            Helper.setErrorMessage("URL parameter keys must be unique ('" + urlParameter.getParameterKey()
+                    + "' already exists!");
+        } else {
+            urlParameter.setImportConfiguration(importConfiguration);
+            importConfiguration.getUrlParameters().add(urlParameter);
+        }
+    }
+
+    /**
+     * Replace UrlParameter with index 'urlParameterIndex' in ImportConfiguration's UrlParameter list with given
+     * UrlParameter 'urlParameter'.
+     * @param urlParameter new UrlParameter
+     * @param urlParameterIndex index in ImportConfigurations UrlParameter list
+     */
+    public void updateUrlParameter(UrlParameter urlParameter, int urlParameterIndex) {
+        importConfiguration.getUrlParameters().remove(urlParameterIndex);
+        importConfiguration.getUrlParameters().add(urlParameterIndex, urlParameter);
+    }
+
+    /**
+     * Remove give UrlParameter from importConfiguration.
+     *
+     * @param urlParameter UrlParameter to remove
+     */
+    public void removeUrlParameter(UrlParameter urlParameter) {
+        urlParameter.setImportConfiguration(null);
+        importConfiguration.getUrlParameters().remove(urlParameter);
     }
 
     /**

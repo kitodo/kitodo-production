@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.data.database.persistence.MappingFileDAO;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
+import org.kitodo.data.database.persistence.UrlParameterDAO;
 
 @Entity(name = "ImportConfiguration")
 @Table(name = "importconfiguration")
@@ -111,6 +112,9 @@ public class ImportConfiguration extends BaseBean {
 
     @OneToMany(mappedBy = "importConfiguration", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<SearchField> searchFields;
+
+    @OneToMany(mappedBy = "importConfiguration", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<UrlParameter> urlParameters;
 
     @OneToOne(cascade = CascadeType.PERSIST)
     @JoinColumn(name = "default_searchfield_id", referencedColumnName = "id")
@@ -620,6 +624,28 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setSearchFields(List<SearchField> searchFields) {
         this.searchFields = searchFields;
+    }
+
+    /**
+     * Get urlParameters.
+     *
+     * @return value of urlParameters
+     */
+    public List<UrlParameter> getUrlParameters() {
+        initialize(new UrlParameterDAO(), this.urlParameters);
+        if (Objects.isNull(this.urlParameters)) {
+            this.urlParameters = new ArrayList<>();
+        }
+        return urlParameters;
+    }
+
+    /**
+     * Set urlParameters.
+     *
+     * @param urlParameters as List of UrlParameter
+     */
+    public void setUrlParameters(List<UrlParameter> urlParameters) {
+        this.urlParameters = urlParameters;
     }
 
     /**

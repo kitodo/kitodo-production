@@ -103,6 +103,7 @@
             </p:row>
         </p:panelGrid>
 
+        <!-- SRU or OAI specific settings -->
         <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
                                  importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
             <h:panelGroup layout="block"
@@ -113,6 +114,7 @@
             </p:panelGrid>
         </ui:fragment>
 
+        <!-- FTP specific settings -->
         <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'FTP'}">
             <h:panelGroup layout="block"
                           styleClass="horizontal-separator"/>
@@ -120,6 +122,16 @@
                          layout="grid"
                          id="credentials">
                 <ui:include src="rows/loginDataRows.xhtml"/>
+            </p:panelGrid>
+        </ui:fragment>
+
+        <!-- CUSTOM interface settings -->
+        <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}">
+            <h:panelGroup layout="block"
+                          styleClass="horizontal-separator"/>
+            <p:panelGrid columns="2"
+                         layout="grid">
+                <ui:include src="rows/urlParameterRows.xhtml"/>
             </p:panelGrid>
         </ui:fragment>
 
@@ -162,6 +174,11 @@
                          layout="grid">
                 <ui:include src="rows/itemDataRows.xhtml"/>
             </p:panelGrid>
+
+        </ui:fragment>
+
+        <ui:fragment rendered="#{not empty importConfigurationEditView.importConfiguration.interfaceType
+                                 and importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}">
 
         </ui:fragment>
 
