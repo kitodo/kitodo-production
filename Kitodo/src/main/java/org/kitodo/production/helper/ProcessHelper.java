@@ -30,6 +30,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -99,7 +100,11 @@ public class ProcessHelper {
             RulesetManagementInterface managementInterface, String stage, List<Locale.LanguageRange> priorityList) {
         StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
                 stage, priorityList);
-        return new ProcessFieldedMetadata(structure, divisionView);
+        try {
+            return new ProcessFieldedMetadata(structure, divisionView);
+        } catch (NullPointerException e) {
+            throw new CatalogException(Helper.getTranslation("importError.checkMapping"));
+        }
     }
 
     /**
