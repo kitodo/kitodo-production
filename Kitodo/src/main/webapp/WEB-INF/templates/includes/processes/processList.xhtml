@@ -234,11 +234,13 @@
                              icon="fa fa-sort" iconPos="right" process="@this"/>
             <p:menu overlay="true" trigger="processesTabView:processesForm:actionsButton" my="left bottom" at="left top">
                     <p:menuitem id="processingStatusUpSelection"
+                                rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusUp}"
                                 action="#{ProcessForm.setTaskStatusUpForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
                                 icon="fa fa-arrow-circle-o-up"/>
                     <p:menuitem id="processingStatusDownSelection"
+                                rendered="#{SecurityAccessController.hasAuthorityToEditTask()}"
                                 value="#{msgs.processingStatusDown}"
                                 action="#{ProcessForm.setTaskStatusDownForSelection}"
                                 update="processesTabView:processesForm:processesTable,processCount"
@@ -249,11 +251,13 @@
                                 onclick="PF('executeScriptSelectedDialog').show();"
                                 icon="fa fa-cogs"/>
                     <p:menuitem id="downloadSelection"
+                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.linkHomeDirectory}"
                                 action="#{ProcessForm.downloadToHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
                                 icon="fa fa-download"/>
                     <p:menuitem id="uploadAll"
+                                rendered="#{SecurityAccessController.hasAuthorityToEditProcessImages()}"
                                 value="#{msgs.deleteLinkHomeDirectory}"
                                 action="#{ProcessForm.uploadFromHomeForSelection}"
                                 update="processesTabView:processesForm:processesTable"
@@ -262,6 +266,7 @@
                                    icon="ui-icon-alert"/>
                     </p:menuitem>
                     <p:menuitem id="exportDmsSelection"
+                                rendered="#{SecurityAccessController.hasAuthorityToExportProcess()}"
                                 value="#{msgs.exportDMS}"
                                 action="#{ProcessForm.exportDMSForSelection}"
                                 update="processesTabView:processesForm:processesTable"
