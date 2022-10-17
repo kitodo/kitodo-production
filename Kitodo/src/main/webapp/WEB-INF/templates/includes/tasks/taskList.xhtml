@@ -122,7 +122,7 @@
                               id="commentIcon"
                               styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                               rendered="#{item.correctionCommentStatus gt 0}"/>
-                <p:tooltip for="commentIcon" styleClass="comments">
+                <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
                         <ui:param name="comments" value="#{CurrentTaskForm.getComments(item)}"/>
                     </ui:include>

@@ -3619,12 +3619,8 @@ footer {
     max-width: none;
 }
 
-.ui-tooltip-right.comments .ui-tooltip-arrow {
-    border-right-color: var(--pure-white);
-}
-
-.ui-tooltip-left.comments .ui-tooltip-arrow {
-    border-left-color: var(--pure-white);
+.ui-tooltip.comments .ui-tooltip-arrow {
+    display: none;
 }
 
 .ui-tooltip.comments .ui-tooltip-text {

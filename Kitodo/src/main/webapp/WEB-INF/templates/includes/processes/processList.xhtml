@@ -109,14 +109,11 @@
                               id="commentIcon"
                               styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                               rendered="#{process.correctionCommentStatus gt 0}"/>
-                <p:tooltip for="commentIcon" styleClass="comments">
+                <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
                         <ui:param name="comments" value="#{ProcessForm.getComments(process)}"/>
                     </ui:include>
                 </p:tooltip>
-                              title="#{ProcessForm.getCorrectionMessages(process)}"
-                              styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                              rendered="#{process.correctionCommentStatus gt 0}"/>
             </p:column>
             <p:column headerText="#{msgs.project}"
                       sortBy="#{process.project.title.keyword}"
