@@ -13,6 +13,8 @@ package org.kitodo.selenium;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.List;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -28,7 +30,9 @@ import org.openqa.selenium.support.ui.Select;
 public class ImportingST extends BaseTestSelenium {
 
     private static final String PPN = "PPN";
+    private static final String GBV = "GBV";
     private static final String K10PLUS = "K10Plus";
+    private static final String KALLIOPE = "Kalliope";
     private static ProcessFromTemplatePage importPage;
     private static ProjectsPage projectsPage;
 
@@ -64,5 +68,14 @@ public class ImportingST extends BaseTestSelenium {
         Select searchFieldSelectMenu = new Select(importPage.getSearchFieldMenu());
         assertEquals("Wrong default search field selected", PPN,
                 searchFieldSelectMenu.getFirstSelectedOption().getAttribute("label"));
+    }
+
+    @Test
+    public void checkOrderOfImportConfigurations() throws Exception {
+        projectsPage.createNewProcess();
+        List<String> importConfigurationNames = importPage.getImportConfigurationsTitles();
+        assertEquals("Wrong first import configuration", GBV, importConfigurationNames.get(1));
+        assertEquals("Wrong first import configuration", K10PLUS, importConfigurationNames.get(2));
+        assertEquals("Wrong first import configuration", KALLIOPE, importConfigurationNames.get(3));
     }
 }

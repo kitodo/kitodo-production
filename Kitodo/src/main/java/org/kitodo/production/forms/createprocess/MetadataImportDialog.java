@@ -44,6 +44,7 @@ public abstract class MetadataImportDialog {
     static final String FORM_CLIENTID = "editForm";
     static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
+    List<ImportConfiguration> importConfigurations = null;
 
     /**
      * Standard constructor.
@@ -103,12 +104,15 @@ public abstract class MetadataImportDialog {
      * @return list of catalogs
      */
     public List<ImportConfiguration> getImportConfigurations() {
-        try {
-            return ServiceManager.getImportConfigurationService().getAll();
-        } catch (IllegalArgumentException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return new LinkedList<>();
+        if (Objects.isNull(importConfigurations)) {
+            try {
+                importConfigurations = ServiceManager.getImportConfigurationService().getAll();
+            } catch (IllegalArgumentException | DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                importConfigurations = new LinkedList<>();
+            }
         }
+        return importConfigurations;
     }
 
     /**

@@ -18,7 +18,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
@@ -29,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
-import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
@@ -161,9 +159,15 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
 
     @Override
     public List<ImportConfiguration> getImportConfigurations() {
-        return super.getImportConfigurations().stream()
-                .filter(importConfiguration -> ImportConfigurationType.OPAC_SEARCH.name()
-                        .equals(importConfiguration.getConfigurationType())).collect(Collectors.toList());
+        if (Objects.isNull(importConfigurations)) {
+            try {
+                importConfigurations = ServiceManager.getImportConfigurationService().getAllOpacSearchConfigurations();
+            } catch (IllegalArgumentException | DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                importConfigurations = new LinkedList<>();
+            }
+        }
+        return importConfigurations;
     }
 
     /**

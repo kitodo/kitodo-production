@@ -13,7 +13,9 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
@@ -127,6 +129,13 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_1")));
         Thread.sleep(Browser.getDelayAfterCatalogSelection());
+    }
+
+    public List<String> getImportConfigurationsTitles() {
+        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        WebElement selectMenuItems = Browser.getDriver().findElement(By.id("catalogSearchForm:catalogueSelectMenu_items"));
+        return selectMenuItems.findElements(By.className("ui-selectonemenu-list-item"))
+                .stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
     public String createProcess() throws Exception {
