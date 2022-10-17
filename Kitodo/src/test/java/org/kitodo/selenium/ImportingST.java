@@ -74,8 +74,8 @@ public class ImportingST extends BaseTestSelenium {
     public void checkOrderOfImportConfigurations() throws Exception {
         projectsPage.createNewProcess();
         List<String> importConfigurationNames = importPage.getImportConfigurationsTitles();
-        assertEquals("Wrong first import configuration", GBV, importConfigurationNames.get(1));
-        assertEquals("Wrong first import configuration", K10PLUS, importConfigurationNames.get(2));
-        assertEquals("Wrong first import configuration", KALLIOPE, importConfigurationNames.get(3));
+        assertEquals("Wrong first import configuration title", GBV, importConfigurationNames.get(1));
+        assertEquals("Wrong first import configuration title", K10PLUS, importConfigurationNames.get(2));
+        assertEquals("Wrong first import configuration title", KALLIOPE, importConfigurationNames.get(3));
     }
 }
