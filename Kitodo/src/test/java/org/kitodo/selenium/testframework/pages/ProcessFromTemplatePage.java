@@ -131,6 +131,10 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         Thread.sleep(Browser.getDelayAfterCatalogSelection());
     }
 
+    /**
+     * Get list of ImportConfiguration titles.
+     * @return list of ImportConfiguration titles
+     */
     public List<String> getImportConfigurationsTitles() {
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         WebElement selectMenuItems = Browser.getDriver().findElement(By.id("catalogSearchForm:catalogueSelectMenu_items"));
