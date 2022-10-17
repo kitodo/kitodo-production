@@ -13,6 +13,7 @@ package org.kitodo.production.forms;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -23,6 +24,7 @@ import javax.json.JsonException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.ElasticsearchStatusException;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -251,18 +253,18 @@ public class DesktopForm extends BaseForm {
     }
 
     /**
-     * Retrieve correction comments of given process and return them as a tooltip String.
+     * Retrieve comments of given process.
      *
      * @param processDTO
      *          process for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given process
+     * @return List containing comments for given process
      */
-    public String getCorrectionMessages(ProcessDTO processDTO) {
+    public List<Comment> getComments(ProcessDTO processDTO) {
         try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
+            return ServiceManager.getProcessService().getComments(processDTO);
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
-            return "";
+            return Collections.emptyList();
         }
     }
 

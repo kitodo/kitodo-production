@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -34,6 +35,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
@@ -1059,18 +1061,18 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Retrieve correction comments of given process and return them as a tooltip String.
+     * Retrieve comments of given process.
      *
      * @param processDTO
      *          process for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given process
+     * @return List containing comments for given process
      */
-    public String getCorrectionMessages(ProcessDTO processDTO) {
+    public List<Comment> getComments(ProcessDTO processDTO) {
         try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
+            return ServiceManager.getProcessService().getComments(processDTO);
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
-            return "";
+            return Collections.emptyList();
         }
     }
 
@@ -1082,7 +1084,7 @@ public class ProcessForm extends TemplateBaseForm {
         return this.processesPage;
     }
 
-    /** 
+    /**
      * Returns the provided date as string in the format of "yyyy-MM-dd HH:mm:ss".
      * @param date the date to be converted
      * @return the converted date as string
@@ -1130,7 +1132,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Navigates to processes list and optionally resets table view state.
-     * 
+     *
      * @param resetTableViewState whether to reset table view state
      */
     public String navigateToProcessesList(boolean resetTableViewState) {

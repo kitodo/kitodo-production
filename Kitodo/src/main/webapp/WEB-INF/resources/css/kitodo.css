@@ -3615,6 +3615,52 @@ footer {
     max-width: 280px;
 }
 
+.ui-tooltip.comments {
+    max-width: none;
+}
+
+.ui-tooltip-right.comments .ui-tooltip-arrow {
+    border-right-color: var(--pure-white);
+}
+
+.ui-tooltip-left.comments .ui-tooltip-arrow {
+    border-left-color: var(--pure-white);
+}
+
+.ui-tooltip.comments .ui-tooltip-text {
+    padding: var(--default-half-size);
+    background: var(--pure-white);
+}
+
+.ui-tooltip.comments .ui-dataview-header {
+    display: none;
+}
+
+.ui-tooltip.comments td {
+    vertical-align: top;
+}
+
+.ui-tooltip.comments .icon {
+    display: inline-block;
+    width: 1em;
+}
+
+.ui-tooltip.comments .icon .correction-marker {
+    font-size: inherit;
+}
+
+.ui-tooltip.comments .date {
+    color: var(--medium-gray);
+}
+
+.ui-tooltip.comments .name {
+    font-weight: bold;
+}
+
+.ui-tooltip.comments .message {
+    max-width: 300px;
+}
+
 /*----------------------------------------------------------------------
 min 700px
 ----------------------------------------------------------------------*/

@@ -39,9 +39,15 @@
                   width="85"
                   headerText="#{msgs.correction}">
             <h:outputText value="#{msgs.correctionK}"
-                          title="#{DesktopForm.getCorrectionMessages(process)}"
+                          id="commentIcon"
                           styleClass="correction-marker #{DesktopForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
                           rendered="#{DesktopForm.hasCorrectionTask(process.id) gt 0}"/>
+            <p:tooltip for="commentIcon" styleClass="comments">
+                <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
+                    <ui:param name="comments" value="#{DesktopForm.getComments(process)}"/>
+                </ui:include>
+            </p:tooltip>
+
         </p:column>
 
         <p:column headerText="#{msgs.project}">

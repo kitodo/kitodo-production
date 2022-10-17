@@ -119,9 +119,15 @@
                       sortBy="#{item.correctionCommentStatus}"
                       headerText="#{msgs.correction}">
                 <h:outputText value="#{msgs.correctionK}"
-                              title="#{CurrentTaskForm.getCorrectionMessages(item)}"
+                              id="commentIcon"
                               styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                               rendered="#{item.correctionCommentStatus gt 0}"/>
+                <p:tooltip for="commentIcon" styleClass="comments">
+                    <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
+                        <ui:param name="comments" value="#{CurrentTaskForm.getComments(item)}"/>
+                    </ui:include>
+                </p:tooltip>
+
             </p:column>
 
             <!-- columns for tasks that have been configured in kitodo config file! -->

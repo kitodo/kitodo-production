@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -794,18 +796,18 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve correction comments of process of given task and return them as a tooltip String.
+     * Retrieve comments of process of given task.
      *
      * @param taskDTO
      *          task for which comment tooltip is created and returned
-     * @return String containing correction comment messages for process of given task
+     * @return List containing comments for process of given task
      */
-    public String getCorrectionMessages(TaskDTO taskDTO) {
+    public List<Comment> getComments(TaskDTO taskDTO) {
         try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(taskDTO.getProcess());
+            return ServiceManager.getProcessService().getComments(taskDTO.getProcess());
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
-            return "";
+            return Collections.emptyList();
         }
     }
 
