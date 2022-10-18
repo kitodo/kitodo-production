@@ -352,7 +352,10 @@
                                 physicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
-                                galleryWrapperPanel"/>
+                                galleryWrapperPanel">
+                    <p:confirm message="#{msgs.confirmDeleteImage}"
+                               icon="ui-icon-altert"/>
+                </p:menuitem>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
                            widgetVar="stripeContextMenu"
