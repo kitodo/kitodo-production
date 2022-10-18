@@ -148,9 +148,11 @@
         <ui:fragment rendered="#{not empty importConfigurationEditView.importConfiguration.interfaceType
                                  and importConfigurationEditView.importConfiguration.interfaceType ne 'FTP'}">
             <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}"
                           styleClass="horizontal-separator"/>
 
             <p:panelGrid columns="2"
+                         rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}"
                          layout="grid">
                 <ui:include src="rows/hierarchyRows.xhtml"/>
             </p:panelGrid>
