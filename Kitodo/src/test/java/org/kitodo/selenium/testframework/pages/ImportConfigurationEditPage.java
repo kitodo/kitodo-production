@@ -136,6 +136,10 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
     }
 
     private void selectCustomInterfaceType() {
+        await().ignoreExceptions()
+                .pollDelay(300, TimeUnit.MILLISECONDS)
+                .atMost(4, TimeUnit.SECONDS)
+                .until(() -> interfaceTypeMenu.isEnabled());
         clickElement(interfaceTypeMenu.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(interfaceTypeMenu.getAttribute("id") + "_4")));
     }
