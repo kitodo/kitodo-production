@@ -1623,8 +1623,12 @@ Mass import
     padding-right: var(--default-half-size);
 }
 
-.correction-column {
+.comment-column {
     text-align: center;
+}
+
+.comment-column .fa-comment {
+    color: var(--medium-gray);
 }
 
 .correction-marker {

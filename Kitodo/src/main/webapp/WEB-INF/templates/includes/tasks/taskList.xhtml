@@ -113,15 +113,18 @@
                               title="#{item.processingEnd}"/>
             </p:column>
 
-            <p:column styleClass="correction-column genericSortIcon"
+            <p:column styleClass="comment-column genericSortIcon"
                       width="85"
-                      rendered="#{CurrentTaskForm.showColumn('task.correctionMessage')}"
+                      rendered="#{CurrentTaskForm.showColumn('task.comments')}"
                       sortBy="#{item.correctionCommentStatus}"
-                      headerText="#{msgs.correction}">
-                <h:outputText value="#{msgs.correctionK}"
-                              id="commentIcon"
-                              styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                              rendered="#{item.correctionCommentStatus gt 0}"/>
+                      headerText="#{msgs.comments}">
+                <h:panelGroup id="commentIcon">
+                    <h:panelGroup styleClass="fa fa-comment"
+                                  rendered="#{CurrentTaskForm.getComments(item).size() gt 0 and item.correctionCommentStatus eq 0}"/>
+                    <h:outputText value="#{msgs.correctionK}"
+                                  styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{item.correctionCommentStatus gt 0}"/>
+                </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
                         <ui:param name="comments" value="#{CurrentTaskForm.getComments(item)}"/>
