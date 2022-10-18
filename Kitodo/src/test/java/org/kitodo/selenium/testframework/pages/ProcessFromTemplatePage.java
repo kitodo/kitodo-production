@@ -26,7 +26,6 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
     private static final String OPAC_SEARCH_FORM = "catalogSearchForm";
-    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW)

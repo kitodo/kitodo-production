@@ -48,6 +48,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -89,6 +90,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private static final String FTP_PROTOCOL = "ftp";
     private static final String EQUALS_OPERAND = "=";
     private static final String AND = "&";
+    private static final String OAI_IDENTIFIER = "identifier";
     private final Charset encoding = StandardCharsets.UTF_8;
 
     private CloseableHttpClient httpClient = HttpClientBuilder.create().build();
@@ -160,7 +162,8 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 return performFtpRequest(dataImport, value, start, numberOfRecords);
             case HTTP_PROTOCOL:
             case HTTPS_PROTOCOL:
-                if (dataImport.getSearchFields().containsKey(key)) {
+                if (dataImport.getSearchFields().containsKey(key)
+                        || SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType())) {
                     return performHTTPRequest(dataImport, Collections.singletonMap(key, value),
                             start, numberOfRecords);
                 }
@@ -257,7 +260,9 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
         String idPrefix = dataImport.getIdPrefix();
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
-        String queryParameter = dataImport.getIdParameter() + EQUALS_OPERAND + prefix + identifier;
+        String idParameter = SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) ? OAI_IDENTIFIER
+                : dataImport.getIdParameter();
+        String queryParameter = idParameter + EQUALS_OPERAND + prefix + identifier;
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
             fullUrl += URLEncoder.encode(queryParameter, encoding);
         } else {
@@ -268,17 +273,25 @@ public class QueryURLImport implements ExternalDataImportInterface {
             logger.debug("Requesting: {}", fullUrl);
             HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-                if (Objects.isNull(response.getEntity())) {
-                    throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
+                HttpEntity httpEntity = response.getEntity();
+                if (Objects.isNull(httpEntity)) {
+                    throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
                 }
-                return createRecordFromXMLElement(dataImport, IOUtils.toString(response.getEntity().getContent(),
-                        Charset.defaultCharset()));
+                try (InputStream inputStream = httpEntity.getContent()) {
+                    String content = IOUtils.toString(inputStream, Charset.defaultCharset());
+                    if (Objects.nonNull(interfaceType.getNumberOfRecordsString())
+                            && XmlResponseHandler.extractNumberOfRecords(content, interfaceType) < 1) {
+                        throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
+                    }
+                    return createRecordFromXMLElement(dataImport, content);
+                }
             }
             throw new ConfigException("Search Query Request Failed");
         } catch (IOException e) {
             throw new ConfigException(e.getLocalizedMessage());
         }
     }
+
 
     private List<DataRecord> performQueryToMultipleRecords(DataImport dataImport, String queryURL)
             throws IOException, ParserConfigurationException, SAXException, TransformerException {
@@ -424,6 +437,15 @@ public class QueryURLImport implements ExternalDataImportInterface {
     private LinkedHashMap<String, String> getSearchFieldMap(DataImport dataImport, Map<String, String> searchFields) {
         LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
         String idPrefix = dataImport.getIdPrefix();
+        if (SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) && searchFields.size() == 1) {
+            String value = new LinkedList<>(searchFields.values()).getFirst();
+            if (StringUtils.isBlank(idPrefix) || value.startsWith(idPrefix)) {
+                searchFieldMap.put(OAI_IDENTIFIER, value);
+            } else {
+                searchFieldMap.put(OAI_IDENTIFIER, idPrefix + value);
+            }
+            return searchFieldMap;
+        }
         String idParameter = dataImport.getIdParameter();
         for (Map.Entry<String, String> entry : searchFields.entrySet()) {
             String searchField = dataImport.getSearchFields().get(entry.getKey());

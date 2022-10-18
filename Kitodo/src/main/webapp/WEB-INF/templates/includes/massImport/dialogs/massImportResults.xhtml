@@ -29,7 +29,7 @@
         <h:form id="importResultsForm">
             <p:accordionPanel id="importResults">
                 <p:tab id="successfulImports"
-                       title="#{msgs['massImport.successfulImports']}: #{MassImportForm.successfulImports.size()}">
+                       title="#{msgs['import.successfulImports']}: #{MassImportForm.successfulImports.size()}">
                     <p:dataTable value="#{MassImportForm.successfulImports}"
                                  var="id">
                         <p:column id="succesfulImportId">
@@ -39,7 +39,7 @@
                     </p:dataTable>
                 </p:tab>
                 <p:tab id="failedImports"
-                       title="#{msgs['massImport.failedImports']}: #{MassImportForm.failedImports.size()}">
+                       title="#{msgs['import.failedImports']}: #{MassImportForm.failedImports.size()}">
                     <p:dataTable value="#{MassImportForm.failedImports}"
                                  var="id">
                         <p:column id="failedImportId">
