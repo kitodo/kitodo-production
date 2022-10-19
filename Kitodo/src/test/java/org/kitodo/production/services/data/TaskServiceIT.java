@@ -259,7 +259,7 @@ public class TaskServiceIT {
     /**
      * Tests what task titles can be found in the elastic search index.
      * 
-     * <p>Due to the way all distict task title terms are extracted from the index,
+     * <p>Due to the way all distinct task title terms are extracted from the index,
      * this test will retrieve the raw tokens (including any modifications applied by 
      * ElasticSearch, e.g., a lower-case filter) and not the actual original task titles.
      * Accordingly, task titles are checked against their lower-case transformation.</p>
