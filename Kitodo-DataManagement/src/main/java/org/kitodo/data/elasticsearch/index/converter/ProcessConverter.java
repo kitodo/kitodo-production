@@ -111,8 +111,7 @@ public class ProcessConverter {
      */
     private static List<Task> getListOfTasksForProgressCalculation(Process process, boolean considerChildren) {
         // consider the tasks of the process for progress calculation
-        List<Task> tasks = new ArrayList<>();
-        tasks.addAll(process.getTasks());
+        List<Task> tasks = new ArrayList<>(process.getTasks());
 
         // if the process has children, also consider these tasks for progress calculation
         if (considerChildren) {
@@ -173,7 +172,7 @@ public class ProcessConverter {
 
     /**
      * Return the user name of the user that handled the last task of the given process (either the newest task 
-     * INWORK or the newest DONE task, if no task is INWORK). Return an empty String if no task is INWORK or DONE.
+     * INWORK or the newest DONE task, if no task is INWORK). Return null if no task is INWORK or DONE.
      *
      * @param process the process
      * @return name of processing user
@@ -218,7 +217,7 @@ public class ProcessConverter {
     }
 
     /**
-     * Return whether there is a correction comment and whether is has been corrected as status.
+     * Return whether there is a correction comment and whether it has been corrected as status.
      * 
      * @param process the process being checked for its correction comment status
      * @return an enum representing the status
@@ -244,7 +243,7 @@ public class ProcessConverter {
      */
     public static Map<TaskStatus, Double> getTaskProgressPercentageOfProcess(Process process, boolean considerChildren) {
         Map<TaskStatus, Integer> counts = countTaskStatusOfProcess(process, considerChildren);
-        Integer total = counts.values().stream().mapToInt(Integer::intValue).sum();
+        int total = counts.values().stream().mapToInt(Integer::intValue).sum();
         
         // report processes without any tasks as if they had a single locked task
         if (total == 0) {
