@@ -103,7 +103,7 @@ public class ProcessConverter {
     /**
      * Returns a list of tasks that are the basis of calculating the status of the process.
      * 
-     * <p>For process that have children, their repective tasks are also included.</p>
+     * <p>For processes that have children, their respective tasks are also included.</p>
      * 
      * @param process the process
      * @param considerChildren whether to include tasks of children processes
