@@ -180,8 +180,7 @@ public class TaskDAO extends BaseDAO<Task> {
             query.addScalar("status", StandardBasicTypes.INTEGER);
             query.addScalar("count", StandardBasicTypes.INTEGER);
             
-            List<Object[]> results = query.list();
-            for (Object[] row : results) {
+            for (Object[] row : query.list()) {
                 TaskStatus status = TaskStatus.getStatusFromValue((int)row[0]);
                 Integer count = (int)row[1];
                 counts.put(status, count);
