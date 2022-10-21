@@ -1109,17 +1109,28 @@ tr.ui-widget-content,
     display: inline-block;
 }
 
-.row-expansion-wrapper > table > tbody {
-    width: 70%;
-}
-
 .row-expansion-wrapper > table > tbody > tr {
     width: 100%;
 }
 
 .row-expansion-wrapper > table > tbody > tr > td {
     display: inline-block;
-    width: 40%;
+    width: 50%;
+}
+
+.row-expansion-wrapper > table table table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.row-expansion-wrapper > table table table tbody,
+.row-expansion-wrapper > table table table tr {
+    width: 100%;
+}
+
+.row-expansion-wrapper td.actionsColumn {
+    width: 60px;
+    float: none;
 }
 
 .row-expansion-wrapper {
