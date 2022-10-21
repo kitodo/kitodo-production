@@ -68,37 +68,39 @@ public class VariableReplacerTest {
 
     @Test
     public void shouldReplaceTitleAndFilename() {
-    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
- 
-    	String testFilename = "src/testFile.txt";
-    	String replaced = variableReplacer.replaceWithFilenames("-title (processtitle) -filename (filename)" 
-            + " -hardcoded test", testFilename);
-    	String expected = "-title Replacement -filename " + testFilename + " -hardcoded test";
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
-    	assertEquals("String was replaced incorrectly!", expected, replaced);
+        String testFilenameWithPath = "src/testFile.txt";
+        String testFilename = "testFile.txt";
+        String replaced = variableReplacer.replaceWithFilename(
+                "-title (processtitle) -filename (filename) -hardcoded test", testFilenameWithPath);
+        String expected = "-title Replacement -filename " + testFilename + " -hardcoded test";
+
+        assertEquals("String was replaced incorrectly!", expected, replaced);
     }
 
     @Test
     public void shouldReplaceFilename() {
-    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
-    	String testFilename = "src/testFile.txt";
+        String testFilenameWithPath = "src/testFile.txt";
+        String testFilename = "testFile.txt";
 
-        String replaced = variableReplacer.replaceWithFilenames("-filename (filename) -hardcoded test", testFilename);
+        String replaced = variableReplacer.replaceWithFilename("-filename (filename) -hardcoded test",
+                testFilenameWithPath);
         String expected = "-filename " + testFilename + " -hardcoded test";
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
 
     @Test
-    public void shouldReplaceFilenameWithoutExtension() {
-    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+    public void shouldReplaceBasename() {
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
-    	String testFilename = "src/testFilename.txt";
+        String testFilename = "src/testFilename.txt";
 
-        String replaced = variableReplacer.replaceWithFilenames("-filename_without_extension (filename_without_extension)"
-            + " -hardcoded test", testFilename);
-        String expected = "-filename_without_extension testFilename -hardcoded test";
+        String replaced = variableReplacer.replaceWithFilename("-basename (basename) -hardcoded test", testFilename);
+        String expected = "-basename testFilename -hardcoded test";
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
@@ -107,20 +109,19 @@ public class VariableReplacerTest {
     public void shouldContainFile() {
         VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
-    	String toBeMatched = "src/(filename_without_extension)/test.txt";
+        String toBeMatched = "src/(basename)/test.txt";
 
-    	assertTrue("String does not match as containing file variables!", variableReplacer.containsFiles(toBeMatched));
-
+        assertTrue("String does not match as containing file variables!", variableReplacer.containsFiles(toBeMatched));
     }
 
     @Test
     public void shouldNotContainFile() {
-    	VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
 
-    	String toBeMatched = "src/(projectid)/test.txt";
+        String toBeMatched = "src/(projectid)/test.txt";
 
-    	assertFalse("String should not match as containing file variables!", variableReplacer.containsFiles(toBeMatched));
-
+        assertFalse("String should not match as containing file variables!",
+                variableReplacer.containsFiles(toBeMatched));
     }
 
     private Process prepareProcess() {
