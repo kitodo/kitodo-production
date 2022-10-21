@@ -35,6 +35,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
+    private static final String FILTER_FORM = "filterMenu";
+    private static final String FILTER_INPUT = "filterMenu:filterfield";
     private static final String PROCESSES_TABLE_TITLE_COLUMN = PROCESSES_TABLE + ":titleColumn";
     private static final String PROCESS_TITLE = "Second process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
@@ -134,6 +136,14 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "renameBatchForm:save")
     private WebElement renameBatchSaveButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_FORM)
+    private WebElement filterForm;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_INPUT)
+    private WebElement filterInput;
 
     public ProcessesPage() {
         super("pages/processes.jsf");
@@ -343,6 +353,19 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     /**
+     * Submits a filter query by typing some text into the input field and submitting the filter form.
+     * 
+     * <p>This method doesn't block until the filter is sucessfully applied.</p>
+     *
+     * @param filterQuery the query
+     */
+    public void applyFilter(String filterQuery) {
+        filterInput.clear();
+        filterInput.sendKeys(filterQuery);
+        filterForm.submit();
+    }
+
+    /*
      * Clicks the header of the title column of the processes table in order to 
      * trigger sorting the processes list by title.
      */
