@@ -205,7 +205,7 @@ public class VariableReplacer {
         legacyVariablesMatcher.appendTail(replacedLegaycVariablesBuffer);
         return replacedLegaycVariablesBuffer.toString();
     }
-    
+
     /**
      * This method is called in the replacement loop to determine the
      * replacement value for a revealed variable.
