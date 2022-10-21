@@ -366,7 +366,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         filterForm.submit();
     }
 
-    /*
+    /**
      * Clicks a column in the header of the processes table in order to 
      * trigger sorting the processes list by that column.
      * 
