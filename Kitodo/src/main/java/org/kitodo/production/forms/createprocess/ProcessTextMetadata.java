@@ -18,8 +18,6 @@ import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
@@ -30,21 +28,21 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serializable {
-    private static final Logger logger = LogManager.getLogger(ProcessTextMetadata.class);
 
     private String value;
 
-    ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry value) {
+    public ProcessTextMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings,
+            MetadataEntry value) {
         super(container, settings, Objects.isNull(settings) ? value.getKey() : settings.getLabel());
         this.value = addLeadingZeros(Objects.isNull(value) ? settings.getDefaultValue() : value.getValue());
     }
 
-    ProcessTextMetadata(ProcessTextMetadata template) {
+    public ProcessTextMetadata(ProcessTextMetadata template) {
         super(template.container, template.settings, template.label);
         this.value = template.value;
     }
 
-    private final String addLeadingZeros(String value) {
+    private String addLeadingZeros(String value) {
         if (Objects.equals(super.settings.getInputType(), InputType.INTEGER)) {
             int valueLength = value.length();
             int minDigits = super.settings.getMinDigits();
@@ -85,8 +83,6 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
      * Returns the metadata from this row.
      * @param skipEmpty boolean
      * @return the metadata from this row
-     * @throws InvalidMetadataValueException
-     *             if the metadata form contains syntactically wrong input
      */
     public Collection<Metadata> getMetadata(boolean skipEmpty) {
         value = value.trim();

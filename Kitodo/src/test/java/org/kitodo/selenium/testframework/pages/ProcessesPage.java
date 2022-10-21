@@ -35,9 +35,13 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
+    private static final String FILTER_FORM = "filterMenu";
+    private static final String FILTER_INPUT = "filterMenu:filterfield";
+    private static final String PROCESSES_TABLE_TITLE_COLUMN = PROCESSES_TABLE + ":titleColumn";
     private static final String PROCESS_TITLE = "Second process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
+    private static final String WAIT_FOR_TITLE_COLUMN_SORT = "Wait for title column sorting";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -46,6 +50,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TABLE + DATA)
     private WebElement processesTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = PROCESSES_TABLE_TITLE_COLUMN)
+    private WebElement processesTableTitleColumn;
 
     @SuppressWarnings("unused")
     @FindBy(id = BATCH_FORM + ":selectBatches")
@@ -128,6 +136,14 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "renameBatchForm:save")
     private WebElement renameBatchSaveButton;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_FORM)
+    private WebElement filterForm;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_INPUT)
+    private WebElement filterInput;
 
     public ProcessesPage() {
         super("pages/processes.jsf");
@@ -334,5 +350,37 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void navigateToExtendedSearch() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(searchForProcessesButton, Pages.getExtendedSearchPage().getUrl());
+    }
+
+    /**
+     * Submits a filter query by typing some text into the input field and submitting the filter form.
+     * 
+     * <p>This method doesn't block until the filter is sucessfully applied.</p>
+     *
+     * @param filterQuery the query
+     */
+    public void applyFilter(String filterQuery) {
+        filterInput.clear();
+        filterInput.sendKeys(filterQuery);
+        filterForm.submit();
+    }
+
+    /*
+     * Clicks the header of the title column of the processes table in order to 
+     * trigger sorting the processes list by title.
+     */
+    public void clickProcessesTitleColumnForSorting() {
+        // remember aria-sort attribute of th-tag of title column
+        String previousAriaSort = processesTableTitleColumn.getAttribute("aria-sort");
+
+        // click title th-tag to trigger sorting
+        processesTableTitleColumn.click();
+
+        // wait for the sorting to be applied (which requires ajax request to backend)
+        await(WAIT_FOR_TITLE_COLUMN_SORT)
+            .pollDelay(200, TimeUnit.MILLISECONDS)
+            .atMost(10, TimeUnit.SECONDS)
+            .ignoreExceptions()
+            .until(() -> !processesTableTitleColumn.getAttribute("aria-sort").equals(previousAriaSort));
     }
 }

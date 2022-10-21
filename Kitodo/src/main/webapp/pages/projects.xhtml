@@ -32,6 +32,16 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.projects}</h3>
+        <h:panelGroup id="convertButtonWrapper">
+            <h:form id="convertMenu"
+                    rendered="#{ProjectForm.activeTabIndex eq 5}">
+                <p:commandButton value="#{msgs['importConfig.migration.importCatalogConfigurations']}"
+                                 id="convertCatalogConfigurations"
+                                 styleClass="secondary"
+                                 action="#{ImportConfigurationListView.startCatalogConfigurationImport()}"
+                                 immediate="true"/>
+            </h:form>
+        </h:panelGroup>
         <h:form id="configureColumnsForm" rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
             <p:selectCheckboxMenu styleClass="configure-columns-button secondary"
                                   scrollHeight="300"
@@ -76,7 +86,9 @@
     <ui:define name="pageTabView">
         <p:tabView activeIndex="#{ProjectForm.activeTabIndex}" prependId="false"
                    id="projectsTabView" widgetVar="projectsTabView" dynamic="true">
-            <p:ajax event="tabChange" listener="#{ProjectForm.onTabChange}"/>
+            <p:ajax event="tabChange"
+                    listener="#{ProjectForm.onTabChange}"
+                    update="convertButtonWrapper"/>
             <p:tab title="#{msgs.projects}" id="projectTab"
                    rendered="#{SecurityAccessController.hasAuthorityToViewProjectList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/projectList.xhtml"/>
@@ -112,6 +124,12 @@
     <ui:define name="breadcrumbs">
         <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
         <p:menuitem value="#{msgs.projects}" icon="fa fa-archive"/>
+    </ui:define>
+
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/projects/importCatalogConfigurationsPopup.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/projects/importCatalogConfigurationsResult.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/projects/selectMappingFileFormats.xhtml"/>
     </ui:define>
 
 </ui:composition>

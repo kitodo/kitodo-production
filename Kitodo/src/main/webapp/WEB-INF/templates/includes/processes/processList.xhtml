@@ -35,7 +35,8 @@
                      rows="#{LoginForm.loggedUser.tableSize}"
                      paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                      currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                     paginatorPosition="bottom">
+                     paginatorPosition="bottom"
+                     multiViewState="true">
 
 
             <p:ajax event="page"
@@ -139,8 +140,10 @@
                                          value="#{ProcessForm.getAllParentProcesses(process.id)}"
                                          rendered="#{process.getParentID() ne 0}">
                                 <p:column>
-                                    <h:outputText value="#{parent.getTitle()}"
+                                    <h:outputText value="#{parent.getTitle()} "
                                                   title="#{parent.getTitle()}"/>
+                                    <p:commandLink value="#{msgs.show}"
+                                                   action="#{ProcessForm.changeFilter('id:'.concat(parent.getId()))}"/>
                                 </p:column>
                                 <p:column styleClass="actionsColumn">
                                     <h:link outcome="processEdit"
@@ -159,7 +162,7 @@
                                         <f:param name="referer" value="processes"/>
                                         <f:param name="id" value="#{parent.id}"/>
                                     </h:link>
-                                    <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes?keepPagination=true')}"
+                                    <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes')}"
                                                    styleClass="action"
                                                    title="#{msgs.metadataEdit}"
                                                    rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">

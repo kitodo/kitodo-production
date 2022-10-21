@@ -56,6 +56,8 @@ public class CatalogImportIT {
         setupServer();
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }

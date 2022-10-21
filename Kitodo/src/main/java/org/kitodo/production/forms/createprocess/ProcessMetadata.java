@@ -64,7 +64,7 @@ public class ProcessMetadata {
     /**
      * Set processDetails.
      */
-    void setProcessDetails(ProcessFieldedMetadata processDetails) {
+    public void setProcessDetails(ProcessFieldedMetadata processDetails) {
         this.processDetails = processDetails;
     }
 

@@ -311,14 +311,16 @@ public class SearchForm {
         }
         if (StringUtils.isNotBlank(this.processPropertyValue)) {
             if (StringUtils.isNotBlank(this.processPropertyTitle)) {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":"
-                        + this.processPropertyValue + "\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROPERTY.getFilterEnglish() 
+                        + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
             } else {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + "*:" + this.processPropertyValue + "\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROPERTY.getFilterEnglish() 
+                        + "*:" + this.processPropertyValue + "\" ";
             }
         } else {
             if (StringUtils.isNotBlank(this.processPropertyTitle)) {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":*\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROPERTY.getFilterEnglish() 
+                        + this.processPropertyTitle + ":*\" ";
             }
         }
         return search;
