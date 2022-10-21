@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -70,7 +71,7 @@ public class VariableReplacer {
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
                 "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
-                + "(?:(filename|filename_without_extension))))\\)");
+                + "(?:(filename|basename))))\\)");
 
     /**
      * The map is filled with replacement instructions that are required for
@@ -144,6 +145,21 @@ public class VariableReplacer {
      * @return string with variables replaced
      */
     public String replace(String stringWithVariables) {
+        return replaceWithFilename(stringWithVariables,null);
+    }
+    
+    /**
+     * Replace variables withing a string. Like an ant, run through the variables
+     * and fetch them from the digital document. Filename variables are replaced using the filename parameter.
+     * 
+     * @param stringWithVariables
+     *             string with placeholders
+     * @param filename
+     *             filename for replacement
+     *
+     * @return string with replaced placeholders
+     */
+    public String replaceWithFilename(String stringWithVariables, String filename) {
         if (Objects.isNull(stringWithVariables)) {
             return "";
         }
@@ -158,7 +174,7 @@ public class VariableReplacer {
                 replacedStringBuffer = new StringBuffer();
                 stringChanged = true;
             }
-            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder));
+            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder, filename));
         }
         if (stringChanged) {
             variableFinder.appendTail(replacedStringBuffer);
@@ -189,42 +205,10 @@ public class VariableReplacer {
         legacyVariablesMatcher.appendTail(replacedLegaycVariablesBuffer);
         return replacedLegaycVariablesBuffer.toString();
     }
-
-    /**
-     * This method is called in the replacement loop to determine the
-     * replacement value for a revealed variable.
-     *
-     * @param variableFinder
-     *            the data structure of the matcher, from which the various
-     *            match groups of the regular expression are read
-     * @return the replacement value, if determinable. If the variable is
-     *         invalid, the string found is returned and no replacement takes
-     *         place. If the variable cannot be replaced because the requested
-     *         data cannot be accessed, the empty string is returned.
-     */
-    private String determineReplacement(Matcher variableFinder) {
-        if (Objects.nonNull(variableFinder.group(2))) {
-            return determineReplacementForInternalValue(variableFinder);
-        }
-        if (Objects.nonNull(variableFinder.group(3))) {
-            return determineReplacementForMetadata(variableFinder);
-        }
-        return variableFinder.group();
-    }
     
     /**
      * This method is called in the replacement loop to determine the
      * replacement value for a revealed variable.
-     *
-     * @param variableFinder
-     *            the data structure of the matcher, from which the various
-     *            match groups of the regular expression are read
-     * @param fileName
-     *            the name of the file to be inserted in case a filename-placeholder is read
-     * @return the replacement value, if determinable. If the variable is
-     *         invalid, the string found is returned and no replacement takes
-     *         place. If the variable cannot be replaced because the requested
-     *         data cannot be accessed, the empty string is returned.
      */
     private String determineReplacement(Matcher variableFinder, String filename) {
         if (Objects.nonNull(variableFinder.group(2))) {
@@ -233,7 +217,7 @@ public class VariableReplacer {
         if (Objects.nonNull(variableFinder.group(3))) {
             return determineReplacementForMetadata(variableFinder);
         }
-        if (Objects.nonNull(variableFinder.group(6))) {
+        if (Objects.nonNull(variableFinder.group(6)) && Objects.nonNull(filename)) {
             return determineReplacementForFilePlaceholder(variableFinder, filename);
         }
         return variableFinder.group();
@@ -401,116 +385,28 @@ public class VariableReplacer {
     * Checks whether a string contains file variables.
      * 
      * @param stringWithVariables
-     *             string to be checked for file variables.
-     * @return true if string contains file variables.
+     *             string to be checked for file variables
+     * @return true if string contains file variables
      */
     public boolean containsFiles(String stringWithVariables) {
         if (Objects.isNull(stringWithVariables)) {
             return false;
-    	}
-    	return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(filename_without_extension)");
-    }
-
-    /**
-     * Replaces any file variables with the filename passed as string.
-     * Depending on the file variables found, the filename may be written with or without extension.
-     * 
-     * @param stringWithVariables
-     *             string (perhaps) containing file and other placeholders.
-     * @param filename
-     *             string containing filename to replace placeholders.
-     *
-     * @return string in which placeholders have been replaced.
-     */
-    public String replaceWithFilenames(String stringWithVariables, String filename) {
-    	if (Objects.isNull(stringWithVariables)) {
-            return "";
         }
-
-        stringWithVariables = invokeLegacyVariableReplacer(stringWithVariables);
-
-    	Matcher variableFinder = VARIABLE_FINDER_REGEX.matcher(stringWithVariables);
-    	boolean stringChanged = false;
-    	StringBuffer replacedStringBuffer = null;
-        while (variableFinder.find()) {
-    	    if (!stringChanged) {
-                replacedStringBuffer = new StringBuffer();
-                stringChanged = true;
-            }
-            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder, filename));
-        }
-    	if (stringChanged) {
-            variableFinder.appendTail(replacedStringBuffer);
-            return replacedStringBuffer.toString();
-    	} else {
-            return stringWithVariables;
-    	}
+        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)");
     }
 
     /**
      * If a filename is to be determined, it is determined here.
-     * 
-     * @param variableFinder
-     *            the data structure of the matcher, from which the various
-     *            match groups of the regular expression are read.
-     * @param filename 
-     *            string containing the filename to replace placeholder with.
-     * @return the replacement value, if determinable. If the variable is
-     *         invalid, the string found is returned and no replacement takes
-     *         place. If the variable cannot be replaced because the requested
-     *         data cannot be accessed, the empty string is returned.
      */
     private String determineReplacementForFilePlaceholder(Matcher variableFinder, String filename) {
         switch (variableFinder.group(6)) {
-    	    case "filename":
-                return determineReplacementForFilename(variableFinder, filename);
-    	    case "filename_without_extension":
-                return determineReplacementForFilenameWithoutExtension(variableFinder, filename);
-    	    default:
+            case "filename":
+                return variableFinder.group(1) + FilenameUtils.getName(filename);
+            case "basename":
+                return variableFinder.group(1) + FilenameUtils.getBaseName(filename);
+            default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
-    	}
-    }
-
-    /**
-     * Determines replacement for full file name.
-     * 
-     * @param variableFinder
-     *            the data structure of the matcher, from which the various
-     *            match groups of the regular expression are read.
-     * @param filename 
-     *            string containing the filename to replace placeholder with. 
-     * @return the filename to replace the placeholder with. If data is invalid no replacement takes place.
-     */
-    private String determineReplacementForFilename(Matcher variableFinder, String filename) {
-    	if (Objects.isNull(filename)) {
-            logger.warn("Cannot replace \"(filename)\": No filename has been given.");
-            return variableFinder.group();
         }
-        return variableFinder.group(1) + filename;
-    }
-
-    /**
-     * Determines replacement for filename without extension.
-     * 
-     * @param variableFinder
-     *            the data structure of the matcher, from which the various
-     *            match groups of the regular expression are read.
-     * @param filename 
-     *            string containing the filename to replace placeholder with.
-     * @return the filename to replace the placeholder with. If data is invalid no replacement takes place.
-     */
-    private String determineReplacementForFilenameWithoutExtension(Matcher variableFinder, String filename) {
-    	if (Objects.isNull(filename)) {
-            logger.warn("Cannot replace \"(file)\": No filename has been given.");
-            return variableFinder.group();
-    	}
-    	if (filename.contains("/")) {
-            filename = filename.substring(filename.lastIndexOf("/") + 1);
-    	}
-    	if (filename.contains(".")) {
-            filename = filename.substring(0, filename.indexOf("."));
-    	}
-        return variableFinder.group(1) + filename;
     }
 }
