@@ -380,7 +380,7 @@ public class VariableReplacer {
         }
         return value;
     }
-    
+
     /**
     * Checks whether a string contains file variables.
      * 
