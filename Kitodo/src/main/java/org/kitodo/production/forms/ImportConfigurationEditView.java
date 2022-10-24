@@ -234,8 +234,8 @@ public class ImportConfigurationEditView extends BaseForm {
     public void addUrlParameter(UrlParameter urlParameter) {
         if (importConfiguration.getUrlParameters().stream().map(UrlParameter::getParameterKey)
                 .collect(Collectors.toList()).contains(urlParameter.getParameterKey())) {
-            Helper.setErrorMessage("URL parameter keys must be unique ('" + urlParameter.getParameterKey()
-                    + "' already exists!");
+            Helper.setErrorMessage("URL parameter keys must be unique (\"" + urlParameter.getParameterKey()
+                    + "\" already exists!)");
         } else {
             urlParameter.setImportConfiguration(importConfiguration);
             importConfiguration.getUrlParameters().add(urlParameter);

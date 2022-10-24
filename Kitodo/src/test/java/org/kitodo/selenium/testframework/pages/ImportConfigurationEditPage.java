@@ -45,7 +45,7 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
     @FindBy(id = INTERFACE_TYPE_MENU)
     private WebElement interfaceTypeMenu;
 
-    @FindBy(id = IMPORT_CONFIGURATION_TAB_VIEW + ":j_id_6v")
+    @FindBy(id = IMPORT_CONFIGURATION_TAB_VIEW + ":addUrlParameter")
     private WebElement addUrlParameterButton;
 
     @FindBy(id = "addUrlParameterForm:urlParameterKey")
