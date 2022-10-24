@@ -75,10 +75,14 @@
                     <p:row>
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title} *"/>
-                            <p:inputText id="title" styleClass="input-with-button input"
+                            <p:inputText id="title"
+                                         styleClass="input-with-button input"
                                          value="#{importConfigurationEditView.importConfiguration.title}"
-                                         placeholder="#{msgs.title}" disabled="#{isViewMode}"
-                                         required="#{not empty param['editForm:save']}"/>
+                                         placeholder="#{msgs.title}"
+                                         disabled="#{isViewMode}"
+                                         required="#{not empty param['editForm:save']}">
+                                <p:ajax event="change"/>
+                            </p:inputText>
                             <p:commandButton id="titleHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="titleHelp"
@@ -86,9 +90,13 @@
                         </div>
                         <div>
                             <p:outputLabel for="description" value="#{msgs['importConfig.field.description']}"/>
-                            <p:inputText id="description" styleClass="input-with-button"
+                            <p:inputText id="description"
+                                         styleClass="input-with-button"
                                          value="#{importConfigurationEditView.importConfiguration.description}"
-                                         placeholder="#{msgs['importConfig.field.description']}" disabled="#{isViewMode}"/>
+                                         placeholder="#{msgs['importConfig.field.description']}"
+                                         disabled="#{isViewMode}">
+                                <p:ajax event="change"/>
+                            </p:inputText>
                             <p:commandButton id="descriptionHelp" type="button"
                                              styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                             <p:tooltip for="descriptionHelp"

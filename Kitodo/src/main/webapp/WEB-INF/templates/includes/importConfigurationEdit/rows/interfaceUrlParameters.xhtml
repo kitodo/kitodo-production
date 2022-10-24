@@ -51,7 +51,10 @@
                              styleClass="input-with-button"
                              value="#{importConfigurationEditView.importConfiguration.sruRecordSchema}"
                              placeholder="#{msgs['importConfig.field.urlparameter.srurecordschema']}"
-                             disabled="#{isViewMode}"/>
+                             disabled="#{isViewMode}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="sruRecordSchemaHelpButton"
                                  type="button"
                                  styleClass="help-button"
@@ -70,7 +73,10 @@
                              styleClass="input-with-button"
                              value="#{importConfigurationEditView.importConfiguration.oaiMetadataPrefix}"
                              placeholder="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']}"
-                             disabled="#{isViewMode}"/>
+                             disabled="#{isViewMode}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="oaiMetadataPrefixHelpButton"
                                  type="button"
                                  styleClass="help-button"

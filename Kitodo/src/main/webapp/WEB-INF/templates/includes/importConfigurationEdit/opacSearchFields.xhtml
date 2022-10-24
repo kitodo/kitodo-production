@@ -44,7 +44,10 @@
                     <p:inputText id="queryDelimiter" styleClass="input-with-button input"
                                  value="#{importConfigurationEditView.importConfiguration.queryDelimiter}"
                                  placeholder="#{msgs['importConfig.field.queryDelimiter']}"
-                                 disabled="#{isViewMode}"/>
+                                 disabled="#{isViewMode}">
+                        <p:ajax event="change"
+                                oncomplete="toggleSave();"/>
+                    </p:inputText>
                     <p:commandButton id="queryDelimiterHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="queryDelimiterHelp"
@@ -80,20 +83,28 @@
                                      value="#{importConfigurationEditView.importConfiguration.host}"
                                      placeholder="#{msgs['importConfig.field.host']}"
                                      disabled="#{isViewMode}"
-                                     required="#{not empty param['editForm:save']}"/>
+                                     required="#{not empty param['editForm:save']}">
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave();"/>
+                        </p:inputText>
                         <p:inputText id="port"
                                      styleClass="input url-part"
                                      value="#{importConfigurationEditView.importConfiguration.port}"
                                      placeholder="#{msgs['importConfig.field.port']}"
                                      disabled="#{isViewMode}">
                             <p:keyFilter mask="int"/>
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave();"/>
                         </p:inputText>
                         <p:inputText id="path"
                                      styleClass="input url-part"
                                      value="#{importConfigurationEditView.importConfiguration.path}"
                                      placeholder="#{msgs['importConfig.field.path']}"
                                      validator="AbsolutePathValidator"
-                                     disabled="#{isViewMode}"/>
+                                     disabled="#{isViewMode}">
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave();"/>
+                        </p:inputText>
                     </p:panelGrid>
                     <p:commandButton id="urlHelp" type="button"
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
@@ -176,11 +187,6 @@
                          layout="grid">
                 <ui:include src="rows/itemDataRows.xhtml"/>
             </p:panelGrid>
-
-        </ui:fragment>
-
-        <ui:fragment rendered="#{not empty importConfigurationEditView.importConfiguration.interfaceType
-                                 and importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}">
 
         </ui:fragment>
 
