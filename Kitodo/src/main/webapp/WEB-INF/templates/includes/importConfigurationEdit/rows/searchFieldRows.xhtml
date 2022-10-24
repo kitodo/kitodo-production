@@ -71,15 +71,16 @@
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="searchFieldHelp"
                            value="#{msgs['tooltip.importConfig.searchFieldHelp']}"/>
-                <p:commandButton icon="fa fa-plus"
-                                 id="addSearchField"
-                                 title="#{(importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0) ? msgs['importConfig.custom.idSearchOnly'] : msgs['importConfig.addSearchField']}"
-                                 styleClass="secondary"
-                                 action="#{addSearchFieldDialogView.init()}"
-                                 disabled="#{importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0}"
-                                 process="@this"
-                                 update="addSearchFieldDialog"
-                                 oncomplete="PF('addSearchFieldDialog').show()"/>
+                <h:panelGroup id="addSearchField"
+                              title="#{(importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0) ? msgs['importConfig.custom.idSearchOnly'] : msgs['importConfig.addSearchField']}">
+                    <p:commandButton icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     action="#{addSearchFieldDialogView.init()}"
+                                     disabled="#{importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0}"
+                                     process="@this"
+                                     update="addSearchFieldDialog"
+                                     oncomplete="PF('addSearchFieldDialog').show()"/>
+                </h:panelGroup>
             </div>
         </p:row>
         <p:row>
