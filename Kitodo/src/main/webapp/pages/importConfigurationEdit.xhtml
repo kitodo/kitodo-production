@@ -34,6 +34,10 @@
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewImportConfiguration()}"/>
 
+    <ui:define name="messages">
+        <p:messages id="error-messages" showIcon="false" closable="true"/>
+    </ui:define>
+
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h3 id="headerText">
@@ -53,11 +57,13 @@
                          action="#{importConfigurationEditView.save}"
                          icon="fa fa-floppy-o fa-lg"
                          iconPos="right"
+                         update="editForm:error-messages"
                          rendered="#{isEditMode || isCreateMode}"
                          disabled="#{importConfigurationEditView.saveDisabled}"
                          onclick="setConfirmUnload(false);PF('save').disable();"/>
         <p:commandButton id="saveButtonToggler"
                          actionListener="#{importConfigurationEditView.setSaveDisabled(false)}"
+                         process="@this"
                          update="save"
                          style="display:none;"/>
     </ui:define>

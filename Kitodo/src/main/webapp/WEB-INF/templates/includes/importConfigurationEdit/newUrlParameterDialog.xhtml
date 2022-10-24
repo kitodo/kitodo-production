@@ -64,7 +64,8 @@
                           styleClass="dialogButtonWrapper">
                 <p:commandButton id="apply"
                                  action="#{importConfigurationEditView.addUrlParameter(addUrlParameterDialogView.urlParameter)}"
-                                 update="editForm:importConfigurationTabView:urlParameterTable"
+                                 update="editForm:importConfigurationTabView:urlParameterTable
+                                         editForm:error-messages"
                                  oncomplete="PF('addUrlParameterDialog').hide();toggleSave();"
                                  value="#{msgs.apply}"
                                  styleClass="primary right"/>
