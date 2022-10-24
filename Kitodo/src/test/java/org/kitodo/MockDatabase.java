@@ -1531,6 +1531,11 @@ public class MockDatabase {
         }
     }
 
+    /**
+     * Create an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type `CUSTOM` and
+     * add custom URL parameters.
+     * @throws DAOException when saving ImportConfiguration to database fails
+     */
     public static void insertImportconfigurationWithCustomUrlParameters() throws DAOException {
         // add CUSTOM import configuration with URL parameters
         ImportConfiguration customConfiguration = new ImportConfiguration();
@@ -1560,16 +1565,16 @@ public class MockDatabase {
         customConfiguration.setDefaultSearchField(customConfiguration.getSearchFields().get(0));
 
         // add URL parameters
-        List<UrlParameter> urlParameters = new LinkedList<>();
         UrlParameter firstParameter = new UrlParameter();
         firstParameter.setParameterKey("firstKey");
         firstParameter.setParameterValue("firstValue");
         firstParameter.setImportConfiguration(customConfiguration);
-        urlParameters.add(firstParameter);
         UrlParameter secondParameter = new UrlParameter();
         secondParameter.setParameterKey("secondKey");
         secondParameter.setParameterValue("secondValue");
         secondParameter.setImportConfiguration(customConfiguration);
+        List<UrlParameter> urlParameters = new LinkedList<>();
+        urlParameters.add(firstParameter);
         urlParameters.add(secondParameter);
         customConfiguration.setUrlParameters(urlParameters);
 
