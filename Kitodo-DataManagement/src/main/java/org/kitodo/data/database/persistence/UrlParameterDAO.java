@@ -52,7 +52,7 @@ public class UrlParameterDAO extends BaseDAO<UrlParameter> {
      */
     @Override
     public List<UrlParameter> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM urlparameter ORDER BY ID ASC", offset, size);
+        return retrieveObjects("FROM UrlParameter ORDER BY ID ASC", offset, size);
     }
 
     /**
