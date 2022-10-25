@@ -63,7 +63,6 @@ public class EncodingFilter implements Filter {
             request.setCharacterEncoding(encoding);
         }
 
-        response.setContentType("text/html; charset=" + encoding);
         response.setCharacterEncoding(encoding);
 
         chain.doFilter(request, response);

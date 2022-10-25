@@ -13,25 +13,24 @@ package org.kitodo.production.forms.createprocess;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.Collection;
-import java.util.List;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Optional;
 
 import org.junit.Test;
-import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
-import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.process.TitleGenerator;
+import org.kitodo.utils.ProcessTestUtils;
 import org.primefaces.model.DefaultTreeNode;
 
 public class ProcessDataTabTest {
 
+    /**
+     * Test the generation of atstsl fields.
+     *
+     * @throws Exception
+     *         the exceptions thrown in the test
+     */
     @Test
     public void testGenerationOfAtstslField() throws Exception {
         CreateProcessForm createProcessForm = new CreateProcessForm(Locale.LanguageRange.parse("en"));
@@ -45,9 +44,10 @@ public class ProcessDataTabTest {
 
         createProcessForm.setCurrentProcess(new TempProcess(new Process(), null));
 
-        DefaultTreeNode titleDocMainTreeNode = getTreeNode(TitleGenerator.TITLE_DOC_MAIN, TitleGenerator.TITLE_DOC_MAIN,
-            "TitleOfPa_1234567X");
-        DefaultTreeNode tslatsTreeNode = getTreeNode(TitleGenerator.TSL_ATS, TitleGenerator.TSL_ATS, "");
+        DefaultTreeNode titleDocMainTreeNode = ProcessTestUtils.getTreeNode(TitleGenerator.TITLE_DOC_MAIN,
+                TitleGenerator.TITLE_DOC_MAIN, "TitleOfPa_1234567X");
+        DefaultTreeNode tslatsTreeNode = ProcessTestUtils.getTreeNode(TitleGenerator.TSL_ATS, TitleGenerator.TSL_ATS,
+                "");
         ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata() {
             {
                 treeNode.getChildren().add(titleDocMainTreeNode);
@@ -58,10 +58,16 @@ public class ProcessDataTabTest {
 
         underTest.generateAtstslFields();
         assertEquals("TSL/ATS does not match expected value", "Titl",
-            createProcessForm.getCurrentProcess().getAtstsl());
+                createProcessForm.getCurrentProcess().getAtstsl());
 
     }
 
+    /**
+     * Test if childprocess title should prefixed by parent title.
+     *
+     * @throws Exception
+     *         the exceptions thrown in the test
+     */
     @Test
     public void shouldCreateChildProcessTitlePrefixedByParentItile() throws Exception {
         CreateProcessForm createProcessForm = new CreateProcessForm(Locale.LanguageRange.parse("en"));
@@ -78,7 +84,7 @@ public class ProcessDataTabTest {
         underTest.setDocType("Child");
 
         createProcessForm.setCurrentProcess(new TempProcess(new Process(), null));
-        DefaultTreeNode metadataTreeNode = getTreeNode("ChildCount", "ChildCount", "8888");
+        DefaultTreeNode metadataTreeNode = ProcessTestUtils.getTreeNode("ChildCount", "ChildCount", "8888");
         ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata() {
             {
                 treeNode.getChildren().add(metadataTreeNode);
@@ -89,83 +95,6 @@ public class ProcessDataTabTest {
         underTest.generateAtstslFields();
 
         assertEquals("Process title could not be build", "TitlOfPa_1234567X_8888",
-            createProcessForm.getCurrentProcess().getTiffHeaderDocumentName());
-    }
-
-    private static DefaultTreeNode getTreeNode(String metadataId, String metadataKey, String metadataValue) {
-        DefaultTreeNode metdataTreeNode = new DefaultTreeNode();
-        MetadataEntry metadataEntry = new MetadataEntry();
-        metadataEntry.setKey(metadataKey);
-        metadataEntry.setValue(metadataValue);
-        metdataTreeNode.setData(new ProcessTextMetadata(null, getSettingsObject(metadataId), metadataEntry));
-        return metdataTreeNode;
-    }
-
-    private static SimpleMetadataViewInterface getSettingsObject(String metadataId) {
-
-        SimpleMetadataViewInterface settings = new SimpleMetadataViewInterface() {
-
-            @Override
-            public Optional<Domain> getDomain() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public String getId() {
-                return metadataId;
-            }
-
-            @Override
-            public String getLabel() {
-                return "";
-            }
-
-            @Override
-            public int getMaxOccurs() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public int getMinOccurs() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public boolean isUndefined() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public Collection<String> getDefaultItems() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public InputType getInputType() {
-                return InputType.ONE_LINE_TEXT;
-            }
-
-            @Override
-            public int getMinDigits() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public Map<String, String> getSelectItems(List<Map<MetadataEntry, Boolean>> metadata) {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public boolean isEditable() {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-
-            @Override
-            public boolean isValid(String value, List<Map<MetadataEntry, Boolean>> metadata) {
-                throw new UnsupportedOperationException("Not implemented");
-            }
-        };
-
-        return settings;
+                createProcessForm.getCurrentProcess().getTiffHeaderDocumentName());
     }
 }

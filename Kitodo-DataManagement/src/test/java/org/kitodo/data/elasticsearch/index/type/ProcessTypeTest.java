@@ -284,7 +284,7 @@ public class ProcessTypeTest {
         Process process = prepareData().get(0);
         Map<String, Object> actual = processType.createDocument(process);
 
-        assertEquals("Amount of keys is incorrect!", 31, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 40, actual.keySet().size());
 
         List<Map<String, Object>> batches = ProcessTypeField.BATCHES.getJsonArray(actual);
         Map<String, Object> batch = batches.get(0);

@@ -488,7 +488,7 @@ public class OPACConfig {
         if (Objects.nonNull(catalog)) {
             return catalog;
         } else {
-            throw new ConfigException(catalogName);
+            throw new ConfigException("Unable to find configuration of catalog '" + catalogName + "'!");
         }
     }
 
