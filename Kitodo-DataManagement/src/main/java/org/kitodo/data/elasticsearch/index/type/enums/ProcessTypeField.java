@@ -45,7 +45,16 @@ public enum ProcessTypeField implements TypeInterface {
     NUMBER_OF_IMAGES("numberOfImages"),
     NUMBER_OF_STRUCTURES("numberOfStructures"),
     BASE_TYPE("baseType"),
-    IN_CHOICE_LIST_SHOWN("inChoiceListShown");
+    IN_CHOICE_LIST_SHOWN("inChoiceListShown"),
+    LAST_EDITING_USER("lastEditingUser"),
+    PROCESSING_BEGIN_LAST_TASK("processingBeginLastTask"),
+    PROCESSING_END_LAST_TASK("processingEndLastTask"),
+    CORRECTION_COMMENT_STATUS("correctionCommentStatus"),
+    PROGRESS_CLOSED("progressClosed"),
+    PROGRESS_IN_PROCESSING("progressInProcessing"),
+    PROGRESS_OPEN("progressOpen"),
+    PROGRESS_LOCKED("progressLocked"),
+    PROGRESS_COMBINED("progressCombined");
 
     private String name;
 

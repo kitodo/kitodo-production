@@ -29,6 +29,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 public class TopNavigationPage extends Page<TopNavigationPage> {
 
     private static final String ARGUMENTS_CLICK = "arguments[0].click()";
+    private static final String LINK_PROCESSES_ID = "linkProcessesNavigationForm:linkProcesses";
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")
@@ -51,7 +52,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
     private WebElement linkTasks;
 
     @SuppressWarnings("unused")
-    @FindBy(id = "linkProcesses")
+    @FindBy(id = LINK_PROCESSES_ID)
     private WebElement linkProcesses;
 
     @SuppressWarnings("unused")
@@ -162,7 +163,7 @@ public class TopNavigationPage extends Page<TopNavigationPage> {
      */
     void gotoProcesses() {
         RemoteWebDriver driver = Browser.getDriver();
-        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id("linkProcesses")));
+        ((JavascriptExecutor) driver).executeScript(ARGUMENTS_CLICK, driver.findElement(By.id(LINK_PROCESSES_ID)));
     }
 
     /**

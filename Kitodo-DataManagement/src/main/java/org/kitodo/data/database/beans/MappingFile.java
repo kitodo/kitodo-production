@@ -16,6 +16,7 @@ import java.util.List;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -38,7 +39,7 @@ public class MappingFile extends BaseBean {
     @Column(name = "prestructured_import")
     private Boolean prestructuredImport = false;
 
-    @ManyToMany(mappedBy = "mappingFiles", cascade = CascadeType.PERSIST)
+    @ManyToMany(mappedBy = "mappingFiles", cascade = CascadeType.PERSIST, fetch = FetchType.EAGER)
     private List<ImportConfiguration> importConfigurations;
 
     /**

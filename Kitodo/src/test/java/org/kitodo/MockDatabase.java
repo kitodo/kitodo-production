@@ -181,8 +181,6 @@ public class MockDatabase {
         insertUserFilters();
         insertTasks();
         insertWorkflows();
-        insertMappingFiles();
-        insertImportConfigurations();
         insertRemovableObjects();
     }
 
@@ -202,6 +200,7 @@ public class MockDatabase {
         insertTasks();
         insertDataForParallelTasks();
         insertDataForScriptParallelTasks();
+        insertDataEditorSettings();
     }
 
     public static void insertRolesFull() throws DAOException {
@@ -374,6 +373,20 @@ public class MockDatabase {
         authorities.add(new Authority("deleteRuleset" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("addRuleset" + CLIENT_ASSIGNABLE));
 
+        // ImportConfigurations
+        authorities.add(new Authority("addImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllImportConfigurations" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteImportConfiguration" + CLIENT_ASSIGNABLE));
+
+        // MappingFiles
+        authorities.add(new Authority("addMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllMappingFiles" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteMappingFile" + CLIENT_ASSIGNABLE));
+
         // Process
         authorities.add(new Authority("viewProcess" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllProcesses" + CLIENT_ASSIGNABLE));
@@ -440,8 +453,10 @@ public class MockDatabase {
         listColumns.add(new ListColumn("task.state"));
 
         listColumns.add(new ListColumn("process.title"));
-        listColumns.add(new ListColumn("process.status"));
+        listColumns.add(new ListColumn("process.state"));
         listColumns.add(new ListColumn("process.project"));
+        listColumns.add(new ListColumn("process.duration"));
+        listColumns.add(new ListColumn("process.lastEditingUser"));
 
         listColumns.add(new ListColumn("user.username"));
         listColumns.add(new ListColumn("user.location"));

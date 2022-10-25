@@ -41,6 +41,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -90,6 +91,7 @@ public class WorkflowControllerService {
                     task.setProcessingTime(new Date());
                     taskService.replaceProcessingUser(task, getCurrentUser());
                     ServiceManager.getTaskService().save(task);
+                    ServiceManager.getProcessService().save(task.getProcess());
                 }
             }
         }
@@ -662,7 +664,7 @@ public class WorkflowControllerService {
      */
     public static void updateProcessSortHelperStatus(Process process) {
         if (!process.getTasks().isEmpty()) {
-            String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
+            String value = ProcessConverter.getCombinedProgressAsString(process, false);
             process.setSortHelperStatus(value);
         }
     }

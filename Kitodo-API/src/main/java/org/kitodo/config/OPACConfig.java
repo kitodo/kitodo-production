@@ -14,21 +14,21 @@ package org.kitodo.config;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.ConversionException;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.config.enums.KitodoConfigFile;
 import org.kitodo.exceptions.ConfigException;
+import org.kitodo.exceptions.MandatoryParameterMissingException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 
 /**
@@ -39,13 +39,19 @@ import org.kitodo.exceptions.ParameterNotFoundException;
  * NOTE: the class is not removed because it will be used to create an "OPAC configuration importer"
  *       that converts existing "kitodo_opac.xml" files to the new format saved to the database.
  */
-@SuppressWarnings("unused")
 public class OPACConfig {
     private static final Logger logger = LogManager.getLogger(OPACConfig.class);
     private static XMLConfiguration config;
     private static final String TRUE = "true";
     private static final String DEFAULT = "[@default]";
     private static final int DEFAULT_IMPORT_DEPTH = 2;
+    private static final String DEFAULT_RETURN_FORMAT = "XML";
+    private static final String DESCRIPTION = "description";
+    private static final String NOT_AVAILABLE = "N/A";
+    private static final String HOST = "host";
+    private static final String SCHEME = "scheme";
+    private static final String PATH = "path";
+    private static final String PORT = "port";
 
     /**
      * Private constructor.
@@ -104,12 +110,77 @@ public class OPACConfig {
     }
 
     /**
+     * Retrieve the "description" of the catalog identified by its title.
+     * @param catalogName String identifying the catalog by title
+     * @return String description for catalog's "config"
+     */
+    public static String getOPACDescription(String catalogName) {
+        HierarchicalConfiguration catalogConfiguration = getCatalog(catalogName);
+        List<ConfigurationNode> descriptionAttributes = catalogConfiguration.getRoot().getAttributes(DESCRIPTION);
+        if (descriptionAttributes.isEmpty()) {
+            return NOT_AVAILABLE;
+        } else {
+            return descriptionAttributes.stream().map(cn -> cn.getValue().toString())
+                    .collect(Collectors.joining(System.lineSeparator()));
+        }
+    }
+
+    /**
      * Retrieve the "config" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by title
      * @return HierarchicalConfiguration for catalog's "config"
      */
-    public static HierarchicalConfiguration getOPACConfiguration(String catalogName) {
+    private static HierarchicalConfiguration getOPACConfiguration(String catalogName) {
         return getCatalog(catalogName).configurationAt("config");
+    }
+
+    private static String getUrlConfigPart(String catalogName, String parameter)
+            throws MandatoryParameterMissingException {
+        HierarchicalConfiguration config = getOPACConfiguration(catalogName);
+        if (Objects.nonNull(config)) {
+            for (HierarchicalConfiguration param : config.configurationsAt("param")) {
+                if (parameter.equals(param.getString("[@name]"))) {
+                    return param.getString("[@value]");
+                }
+            }
+        }
+        throw new MandatoryParameterMissingException(parameter);
+    }
+
+    /**
+     * Get host parameter of catalog configuration with name 'catalogName'.
+     * @param catalogName name of catalog configuration
+     * @return host value as String
+     */
+    public static String getHost(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlConfigPart(catalogName, HOST);
+    }
+
+    /**
+     * Get scheme parameter of catalog configuration with name 'catalogName'.
+     * @param catalogName name of catalog configuration
+     * @return scheme value as String
+     */
+    public static String getScheme(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlConfigPart(catalogName, SCHEME);
+    }
+
+    /**
+     * Get path parameter of catalog configuration with name 'catalogName'.
+     * @param catalogName name of catalog configuration
+     * @return path value as String
+     */
+    public static String getPath(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlConfigPart(catalogName, PATH);
+    }
+
+    /**
+     * Get port parameter of catalog configuration with name 'catalogName'.
+     * @param catalogName name of catalog configuration
+     * @return port value as Integer
+     */
+    public static String getPort(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlConfigPart(catalogName, PORT);
     }
 
     /**
@@ -160,6 +231,31 @@ public class OPACConfig {
      */
     public static HierarchicalConfiguration getUrlParameters(String catalogName) {
         return getCatalog(catalogName).configurationAt("urlParameters");
+    }
+
+    private static String getUrlParameter(String catalogName, String parameter)
+            throws MandatoryParameterMissingException {
+        HierarchicalConfiguration urlParameters = getCatalog(catalogName).configurationAt("urlParameters");
+        if (Objects.nonNull(urlParameters)) {
+            for (HierarchicalConfiguration param : urlParameters.configurationsAt("param")) {
+                if (parameter.equals(param.getString("[@name]"))) {
+                    return param.getString("[@value]");
+                }
+            }
+        }
+        throw new MandatoryParameterMissingException(parameter);
+    }
+
+    public static String getSruVersion(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlParameter(catalogName, "version");
+    }
+
+    public static String getSruRecordSchema(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlParameter(catalogName, "recordSchema");
+    }
+
+    public static String getOaiMetadataPrefix(String catalogName) throws MandatoryParameterMissingException {
+        return getUrlParameter(catalogName, "metadataPrefix");
     }
 
     /**
@@ -274,7 +370,7 @@ public class OPACConfig {
      * @return String XPath for owner information about an exemplar record
      */
     public static String getExemplarFieldOwnerXPath(String catalogName) {
-        return getCatalog(catalogName).getString("exemplarField[@ownerSubPath]");
+        return getCatalog(catalogName).getString("exemplarField[@ownerSubPath]", null);
     }
 
     /**
@@ -340,11 +436,25 @@ public class OPACConfig {
      * @return default import depth of catalog
      */
     public static int getDefaultImportDepth(String catalogName) {
-        try {
-            return getCatalog(catalogName).getInt("defaultImportDepth");
-        } catch (NoSuchElementException | ConversionException e) {
-            return DEFAULT_IMPORT_DEPTH;
-        }
+        return getCatalog(catalogName).getInt("defaultImportDepth", DEFAULT_IMPORT_DEPTH);
+    }
+
+    /**
+     * Return 'returnFormat' of catalog 'catalogName' if configured. Return DEFAULT_RETURN_FORMAT "XML" otherwise.
+     * @param catalogName name of catalog
+     * @return 'returnFormat' of catalog
+     */
+    public static String getReturnFormat(String catalogName) {
+        return getCatalog(catalogName).getString("returnFormat", DEFAULT_RETURN_FORMAT);
+    }
+
+    /**
+     * Return 'metadataFormat' of catalog 'catalogName.
+     * @param catalogName name of catalog
+     * @return 'metadataFormat' of catalog
+     */
+    public static String getMetadataFormat(String catalogName) {
+        return getCatalog(catalogName).getString("metadataFormat");
     }
 
     /**
@@ -365,7 +475,7 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by attribute "title"
      * @return HierarchicalConfiguration for single catalog
      */
-    private static HierarchicalConfiguration getCatalog(String catalogName) {
+    public static HierarchicalConfiguration getCatalog(String catalogName) {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
         HierarchicalConfiguration catalog = null;
@@ -378,7 +488,7 @@ public class OPACConfig {
         if (Objects.nonNull(catalog)) {
             return catalog;
         } else {
-            throw new ConfigException(catalogName);
+            throw new ConfigException("Unable to find configuration of catalog '" + catalogName + "'!");
         }
     }
 
@@ -386,13 +496,8 @@ public class OPACConfig {
         if (config != null) {
             return config;
         }
-        KitodoConfigFile kitodoConfigOpacFile = KitodoConfigFile.OPAC_CONFIGURATION;
-        if (!kitodoConfigOpacFile.exists()) {
-            String message = "File not found: " + kitodoConfigOpacFile.getAbsolutePath();
-            throw new ConfigException(message, new FileNotFoundException(message));
-        }
         try {
-            config = new XMLConfiguration(kitodoConfigOpacFile.getFile());
+            config = getKitodoOpacConfiguration();
         } catch (ConfigurationException e) {
             logger.error(e);
             config = new XMLConfiguration();
@@ -400,5 +505,19 @@ public class OPACConfig {
         config.setListDelimiter('&');
         config.setReloadingStrategy(new FileChangedReloadingStrategy());
         return config;
+    }
+
+    /**
+     * Retrieve and return the XML configuration of Kitodo OPACs from the 'kitodo_opac.xml' file.
+     * @return XMLConfiguration containing the catalog configurations of the 'kitodo_opac.xml' file
+     * @throws ConfigurationException if 'kitodo_opac.xml' file does not exist
+     */
+    public static XMLConfiguration getKitodoOpacConfiguration() throws ConfigurationException {
+        KitodoConfigFile kitodoConfigOpacFile = KitodoConfigFile.OPAC_CONFIGURATION;
+        if (!kitodoConfigOpacFile.exists()) {
+            String message = "File not found: " + kitodoConfigOpacFile.getAbsolutePath();
+            throw new ConfigException(message, new FileNotFoundException(message));
+        }
+        return new XMLConfiguration(kitodoConfigOpacFile.getFile());
     }
 }

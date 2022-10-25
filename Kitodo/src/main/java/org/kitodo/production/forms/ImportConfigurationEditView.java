@@ -52,6 +52,42 @@ public class ImportConfigurationEditView extends BaseForm {
     private static final List<String> SCHEMES = List.of("https", "http", "ftp");
     private static final List<String> PARENT_ELEMENT_TYPES = Collections.singletonList("reference");
     private static final List<String> PARENT_ELEMENT_TRIM_MODES = Collections.singletonList("parenthesis");
+    private static final List<String> DEFAULT_ID_XPATHS;
+    private static final List<String> DEFAULT_TITLE_XPATHS;
+
+    static {
+        DEFAULT_ID_XPATHS = List.of(
+                ".//*[local-name()='recordInfo']/*[local-name()='recordIdentifier']/text()",
+                ".//*[local-name()='datafield'][@tag='245']/*[local-name()='subfield'][@code='a']/text()",
+                ".//*[local-name()='datafield'][@tag='003@']/*[local-name()='subfield'][@code='0']/text()"
+        );
+    }
+
+    static {
+        DEFAULT_TITLE_XPATHS = List.of(
+                ".//*[local-name()='titleInfo']/*[local-name()='title']/text()",
+                ".//*[local-name()='controlfield'][@tag='001']/text()",
+                ".//*[local-name()='datafield'][@tag='021A']/*[local-name()='subfield'][@code='a']/text()"
+        );
+    }
+
+    /**
+     * Return list of default record ID XPaths.
+     *
+     * @return list of default record ID XPaths
+     */
+    public List<String> getRecordIdXPathDefault() {
+        return DEFAULT_ID_XPATHS;
+    }
+
+    /**
+     * Return list of default record title XPaths.
+     *
+     * @return list of default record title XPaths.
+     */
+    public List<String> getRecordTitleXPathDefault() {
+        return DEFAULT_TITLE_XPATHS;
+    }
 
     /**
      * Load import configuration by ID.
