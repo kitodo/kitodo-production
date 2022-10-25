@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -58,6 +59,7 @@ import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
@@ -85,6 +87,8 @@ public class ProcessForm extends TemplateBaseForm {
     private List<SelectItem> customColumns;
 
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
+    private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -971,7 +975,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setProcessEditReferer(String referer) {
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
-                this.processEditReferer = referer + "?keepPagination=true";
+                this.processEditReferer = referer;
             } else if ("searchResult".equals(referer)) {
                 this.processEditReferer = "searchResult.jsf";
             } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
@@ -1055,25 +1059,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Check and return whether the process with the ID 'processId' has any correction comments or not.
-     *
-     * @param processId
-     *          ID of process to check
-     * @return 0, if process has no correction comment
-     *         1, if process has correction comments that are all corrected
-     *         2, if process has at least one open correction comment
-     */
-    public int hasCorrectionTask(int processId) {
-        try {
-            return ProcessService.hasCorrectionComment(processId).getValue();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                processId}, logger, e);
-            return 0;
-        }
-    }
-
-    /**
      * Retrieve correction comments of given process and return them as a tooltip String.
      *
      * @param processDTO
@@ -1097,36 +1082,14 @@ public class ProcessForm extends TemplateBaseForm {
         return this.processesPage;
     }
 
-    /**
-     * Retrieve and return UserName of last user processing a task of the current process.
-     *
-     * @param processDTO Process for which the UserName is returned
-     * @return username
+    /** 
+     * Returns the provided date as string in the format of "yyyy-MM-dd HH:mm:ss".
+     * @param date the date to be converted
+     * @return the converted date as string
      */
-    public String getUserHandlingLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getUserHandlingLastTask(processDTO);
+    public String convertProcessingDate(Date date) {
+        return Helper.getDateAsFormattedString(date);
     }
-
-    /**
-     * Retrieve and return timestamp of last tasks processing begin.
-     *
-     * @param processDTO Process for which the timestamp is returned
-     * @return timestamp of last tasks processing begin
-     */
-    public String getProcessingBeginOfLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getLastProcessingStart(processDTO);
-    }
-
-    /**
-     * Retrieve and return timestamp of last tasks processing end.
-     *
-     * @param processDTO Process for which the timestamp is returned
-     * @return timestamp of last tasks processing end
-     */
-    public String getProcessingEndOfLastTask(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getLastProcessingEnd(processDTO);
-    }
-
 
     /**
      * Get all tasks of given process which should be visible to the user.
@@ -1149,6 +1112,33 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(e);
             return "";
         }
+    }
+
+    /**
+     * Resets the process list multi view state such that the sort order and pagination is reset to their defaults.
+     */
+    public void resetProcessListMultiViewState() {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+            // check whether there is a mulit view state registered (to avoid warning log message in case there is not)
+            Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
+            if (Objects.nonNull(mvs)) {
+                // clear multi view state only if there is a state available
+                PrimeFaces.current().multiViewState().clear(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID);
+            }
+        }
+    }
+
+    /**
+     * Navigates to processes list and optionally resets table view state.
+     * 
+     * @param resetTableViewState whether to reset table view state
+     */
+    public String navigateToProcessesList(boolean resetTableViewState) {
+        if (resetTableViewState) {
+            setFirstRow(0);
+            resetProcessListMultiViewState();
+        }
+        return "/pages/processes?tabIndex=0&faces-redirect=true";
     }
 
 }

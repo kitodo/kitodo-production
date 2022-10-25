@@ -1,0 +1,56 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="importCatalogConfigurationsDialog"
+              widgetVar="importCatalogConfigurationsDialog"
+              showHeader="false"
+              width="500px"
+              modal="true"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false"
+              dynamic="true">
+        <h3>#{importCatalogConfigurationsView.numberOfCatalogs} #{msgs['importConfig.migration.numberOfCatalogConfigurations']}</h3>
+        <h:form id="importCatalogConfigurationsForm">
+            <h:panelGroup layout="block"
+                          styleClass="select-note ui-messages-info">#{msgs['importConfig.migration.startImportDescription']}</h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="select-selector">
+                <p:selectManyCheckbox id="catalogConfigurationSelection"
+                                      layout="grid"
+                                      columns="1"
+                                      styleClass="input"
+                                      value="#{importCatalogConfigurationsView.selectedCatalogs}">
+                    <f:selectItems value="#{importCatalogConfigurationsView.catalogs}"/>
+                </p:selectManyCheckbox>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                    <p:commandButton id="startCatalogConfigurationsImport"
+                                     value="Start"
+                                     styleClass="primary right"
+                                     actionListener="#{importCatalogConfigurationsView.prepare()}"
+                                     action="#{importCatalogConfigurationsView.startImport()}"
+                                     onclick="PF('importCatalogConfigurationsDialog').hide()"/>
+                    <p:commandButton id="cancel"
+                                     value="#{msgs['cancel']}"
+                                     styleClass="secondary right"
+                                     onclick="PF('importCatalogConfigurationsDialog').hide()"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

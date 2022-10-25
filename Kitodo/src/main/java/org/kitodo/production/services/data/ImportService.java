@@ -201,9 +201,12 @@ public class ImportService {
      */
     public List<String> getAvailableSearchFields(ImportConfiguration importConfiguration) {
         try {
-            // FTP server do not support query parameters but only use the filename for OPAC search!
             if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
+                // FTP server do not support query parameters but only use the filename for OPAC search!
                 return Collections.singletonList(Helper.getTranslation("filename"));
+            } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+                // OAI PMH interfaces do not support query parameters but only use the ID of the record to retrieve it!
+                return Collections.singletonList(Helper.getTranslation("recordId"));
             } else {
                 List<String> fields = new ArrayList<>();
                 List<SearchField> searchFields = importConfiguration.getSearchFields();
@@ -231,14 +234,15 @@ public class ImportService {
      * @param importConfiguration ImportConfiguration
      * @return label of default search field
      */
-    public String getDefaultSearchField(ImportConfiguration importConfiguration) {
+    public static String getDefaultSearchField(ImportConfiguration importConfiguration) {
         if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
             return Helper.getTranslation("filename");
+        } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+            return Helper.getTranslation("recordId");
         } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
-        } else {
-            return "";
         }
+        return "";
     }
 
     /**
@@ -306,10 +310,8 @@ public class ImportService {
         KitodoServiceLoader<SchemaConverterInterface> loader =
                 new KitodoServiceLoader<>(SchemaConverterInterface.class);
         List<SchemaConverterInterface> converterModules = loader.loadModules().stream()
-                .filter(c -> c.supportsSourceMetadataFormat(record.getMetadataFormat())
-                        && c.supportsSourceFileFormat(record.getFileFormat())
-                        && c.supportsTargetMetadataFormat(MetadataFormat.KITODO)
-                        && c.supportsTargetFileFormat(FileFormat.XML))
+                .filter(converter -> converter.supportsSourceFileFormat(record.getFileFormat())
+                        && converter.supportsTargetFileFormat(FileFormat.XML))
                 .collect(Collectors.toList());
         if (converterModules.isEmpty()) {
             throw new UnsupportedFormatException("No SchemaConverter found that supports '"
@@ -494,7 +496,7 @@ public class ImportService {
             if (fromIndex < processes.size()) {
                 parents = processes.subList(fromIndex, processes.size());
             }
-            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE);
+            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE, false);
         }
 
         return processes;
@@ -539,9 +541,9 @@ public class ImportService {
         }
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
-        if (Objects.nonNull(parentID) && level == importDepth) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId,
-                    importConfiguration.getIdentifierMetadata());
+        String idMetadata = importConfiguration.getIdentifierMetadata();
+        if (Objects.nonNull(parentID) && level == importDepth && Objects.nonNull(idMetadata)) {
+            checkForParent(parentID, template.getRuleset().getId(), projectId, idMetadata);
         }
     }
 
@@ -608,10 +610,11 @@ public class ImportService {
      * @param projectId ID of project for which processes are created
      * @param templateId ID of template with which processes are created
      * @param rows number of child records to retrieve from catalog
+     * @param parentProcesses parent processes of the children
      * @return list of TempProcesses containing the retrieved child records.
      */
     public LinkedList<TempProcess> getChildProcesses(ImportConfiguration importConfiguration, String elementID,
-                                                     int projectId, int templateId, int rows)
+                                                     int projectId, int templateId, int rows, List<TempProcess> parentProcesses)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
             NoRecordFoundException, IOException, ProcessGenerationException, TransformerException,
             InvalidMetadataValueException, NoSuchMetadataFieldException {
@@ -624,9 +627,12 @@ public class ImportService {
             for (DataRecord childRecord : childRecords) {
                 DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
-                childProcesses.add(createTempProcessFromDocument(importConfiguration, childDocument, templateId,
-                        projectId));
+                TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, childDocument,
+                        templateId, projectId);
+                ProcessHelper.generateAtstslFields(tempProcess, parentProcesses, ACQUISITION_STAGE_CREATE, false);
+                childProcesses.add(tempProcess);
             }
+
             // TODO: sort child processes (by what? catalog ID? Signature?)
             return childProcesses;
         } else {
@@ -638,7 +644,7 @@ public class ImportService {
     private Document importDocument(ImportConfiguration importConfiguration, String identifier,
                                     boolean extractExemplars, boolean isParentInRecord)
             throws NoRecordFoundException, UnsupportedFormatException, URISyntaxException, IOException,
-            XPathExpressionException, ParserConfigurationException, SAXException {
+            XPathExpressionException, ParserConfigurationException, SAXException, ProcessGenerationException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
         DataRecord dataRecord = importModule.getFullRecordById(
@@ -660,7 +666,7 @@ public class ImportService {
     public Document convertDataRecordToInternal(DataRecord dataRecord, ImportConfiguration importConfiguration,
                                                 boolean isParentInRecord)
             throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException,
-            SAXException, XPathExpressionException {
+            SAXException, XPathExpressionException, ProcessGenerationException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
         List<File> mappingFiles = getMappingFiles(importConfiguration, isParentInRecord);
@@ -701,6 +707,9 @@ public class ImportService {
             } else {
                 throw e;
             }
+        }
+        if (Objects.isNull(resultDocument)) {
+            throw new ProcessGenerationException(Helper.getTranslation("importError.emptyDocument"));
         }
         return resultDocument;
     }

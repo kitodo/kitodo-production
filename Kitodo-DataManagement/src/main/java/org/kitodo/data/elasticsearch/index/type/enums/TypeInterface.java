@@ -61,6 +61,22 @@ interface TypeInterface {
     }
 
     /**
+     * Get double value from given json object.
+     * 
+     * @param jsonObject
+     *            returned from ElasticSearch index
+     * @return double value for given json
+     */
+    default double getDoubleValue(Map<String, Object> jsonObject) throws DataException {
+        try {
+            return (double) jsonObject.get(this.toString());
+        } catch (ClassCastException | NullPointerException e) {
+            throw new DataException("Not possible to retrieve double value for key " + this.toString()
+                    + ". Exception: " + e.getMessage());
+        }
+    }
+
+    /**
      * Get String value from given json object.
      * 
      * @param jsonObject

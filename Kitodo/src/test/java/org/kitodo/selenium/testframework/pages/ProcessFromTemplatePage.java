@@ -13,7 +13,9 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
@@ -26,7 +28,6 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
     private static final String OPAC_SEARCH_FORM = "catalogSearchForm";
-    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW)
@@ -128,6 +129,17 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_1")));
         Thread.sleep(Browser.getDelayAfterCatalogSelection());
+    }
+
+    /**
+     * Get list of ImportConfiguration titles.
+     * @return list of ImportConfiguration titles
+     */
+    public List<String> getImportConfigurationsTitles() {
+        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        WebElement selectMenuItems = Browser.getDriver().findElement(By.id("catalogSearchForm:catalogueSelectMenu_items"));
+        return selectMenuItems.findElements(By.className("ui-selectonemenu-list-item"))
+                .stream().map(WebElement::getText).collect(Collectors.toList());
     }
 
     public String createProcess() throws Exception {

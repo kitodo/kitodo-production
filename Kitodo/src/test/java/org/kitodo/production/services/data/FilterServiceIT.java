@@ -405,14 +405,17 @@ public class FilterServiceIT {
     public void shouldBuildQueryAndFindByTaskServiceByClosedTasks() throws Exception {
         TaskService taskService = ServiceManager.getTaskService();
 
+        // this query will never return anything, since tasks are always filtered for "open" or "inwork" only
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepdone:1\"", ObjectType.TASK, false, false);
         assertEquals("Incorrect amount of closed tasks with ordering 1!", 0,
             taskService.findByQuery(firstQuery, true).size());
 
+        // this query will never return anything, since tasks are always filtered for "open" or "inwork" only
         QueryBuilder secondQuery = filterService.queryBuilder("\"stepdone:Closed\"", ObjectType.TASK, false, false);
         assertEquals("Incorrect amount of closed tasks with title 'Closed'!", 0,
             taskService.findByQuery(secondQuery, true).size());
 
+        // this query will never exclude anything, because "done" tasks are never listed anyway
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepdone:Closed\"", ObjectType.TASK, false, false);
         assertEquals("Incorrect amount of not closed tasks with title different than 'Closed'!", 4,
             taskService.findByQuery(thirdQuery, true).size());
@@ -422,17 +425,24 @@ public class FilterServiceIT {
     public void shouldBuildQueryAndFindByTaskServiceByOpenTasks() throws Exception {
         TaskService taskService = ServiceManager.getTaskService();
 
+        QueryBuilder allTasksQuery = filterService.queryBuilder("\"\"", ObjectType.TASK, false, false);
+        int numberOfAllTasks = taskService.findByQuery(allTasksQuery, true).size();
+        assertEquals("Incorrect number of all tasks!", 4, numberOfAllTasks);
+
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:4\"", ObjectType.TASK, false, false);
         assertEquals("Incorrect amount of open tasks with ordering 4!", 1,
             taskService.findByQuery(firstQuery, true).size());
 
         QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.TASK, false, false);
-        assertEquals("Incorrect amount of open tasks with title 'Open'!", 1,
-            taskService.findByQuery(secondQuery, true).size());
+        int numberOfOpenTasks = taskService.findByQuery(secondQuery, true).size();
+        assertEquals("Incorrect amount of open tasks with title 'Open'!", 1, numberOfOpenTasks);
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepopen:Open\"", ObjectType.TASK, false, false);
-        assertEquals("Incorrect amount of not open tasks with title different than 'Open'!", 2,
-            taskService.findByQuery(thirdQuery, true).size());
+        int numberOfNotOpenTasks = taskService.findByQuery(thirdQuery, true).size();
+        assertEquals(
+            "Incorrect amount of not open tasks with title different than 'Open'!", 
+            numberOfAllTasks - numberOfOpenTasks, numberOfNotOpenTasks
+        );
     }
 
     @Test
@@ -443,12 +453,12 @@ public class FilterServiceIT {
         assertEquals("Incorrect amount of tasks in progress with ordering 3!", 1,
             taskService.findByQuery(firstQuery, true).size());
 
-        QueryBuilder secondQuery = filterService.queryBuilder("\"-stepinwork:1\"", ObjectType.TASK, false, false);
-        assertEquals("Incorrect amount of tasks not in progress with ordering different than 1!", 2,
+        QueryBuilder secondQuery = filterService.queryBuilder("\"-stepinwork:3\"", ObjectType.TASK, false, false);
+        assertEquals("Incorrect amount of tasks not in progress with ordering different than 3!", 3,
             taskService.findByQuery(secondQuery, true).size());
 
         QueryBuilder thirdQuery = filterService.queryBuilder("\"-stepinwork:2\"", ObjectType.TASK, false, false);
-        assertEquals("Incorrect amount of tasks not in progress with ordering different than 2!", 2,
+        assertEquals("Incorrect amount of tasks not in progress with ordering different than 2!", 3,
             taskService.findByQuery(thirdQuery, true).size());
     }
 
@@ -471,14 +481,43 @@ public class FilterServiceIT {
     }
 
     @Test
-    public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
+    public void shouldBuildQueryAndFindByTaskServiceWithDisjunctions() throws Exception {
         TaskService taskService = ServiceManager.getTaskService();
 
-        QueryBuilder firstQuery = filterService.queryBuilder("\"id:1\" \"-stepdone:3\"", ObjectType.TASK, false, false);
+        // check that two task conditions can be combined by disjunction
+        // returns "Progress" and "Open" tasks associated with any process that are either in state "inwork" or "open", respectively
+        QueryBuilder firstQuery = filterService.queryBuilder("\"stepinwork:Progress | stepopen:Open\"", ObjectType.TASK, false, false);
+        assertEquals("Incorrect amount of tasks for disjunction query \"stepinwork:Progress | stepopen:Open\"!", 2,
+            taskService.findByQuery(firstQuery, true).size());
+
+        // check that a task condition can be combined with a process condition by disjunction
+        // returns any tasks associated with process id=1 or "Next Open" tasks that are in state "open"
+        QueryBuilder secondQuery = filterService.queryBuilder("\"stepopen:Next Open | id:1\"", ObjectType.TASK, false, false);
+        assertEquals("Incorrect amount of tasks for disjunction query \"stepopen:Next Open | id:1\"!", 3,
+            taskService.findByQuery(secondQuery, true).size());
+
+        // check that default queries can be combined with task conditions by disjunction
+        // returns any tasks related to process "First process" or "Second process" but not "Progress" tasks in state "inwork"
+        QueryBuilder thirdQuery = filterService.queryBuilder("\"First | Second\" \"-stepinwork:Progress\"", ObjectType.TASK, false, false);
+        assertEquals("Incorrect amount of tasks for disjunction query \"First | Second\"!", 3,
+            taskService.findByQuery(thirdQuery, true).size());
+
+        // check that conditions can be optionally enclosed in parentheses, which masks the vertical line "|"
+        // returns tasks whose process title contains the string "First |" (aka none) or tasks in state "inwork" with title "Progress"
+        QueryBuilder fourthQuery = filterService.queryBuilder("\"(First |) | (stepinwork:Progress)\"", ObjectType.TASK, false, false);
+        assertEquals("Incorrect amount of tasks for disjunction query \"(First |) | (stepinwork:Progress)\"!", 1,
+            taskService.findByQuery(fourthQuery, true).size());
+    }
+
+    @Test
+    public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
+        TaskService taskService = ServiceManager.getTaskService();     
+
+        QueryBuilder firstQuery = filterService.queryBuilder("\"id:1\" \"-stepinwork:3\"", ObjectType.TASK, false, false);
         assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 1!", 1,
             taskService.findByQuery(firstQuery, true).size());
 
-        QueryBuilder secondQuery = filterService.queryBuilder("\"id:1\" \"-stepdone:4\"", ObjectType.TASK, false,
+        QueryBuilder secondQuery = filterService.queryBuilder("\"id:1\" \"-stepopen:4\"", ObjectType.TASK, false,
             false);
         assertEquals("Incorrect amount of not closed tasks with ordering 4 assigned to process with id 1!", 1,
             taskService.findByQuery(secondQuery, true).size());
