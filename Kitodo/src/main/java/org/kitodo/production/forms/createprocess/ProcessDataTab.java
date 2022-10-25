@@ -67,14 +67,14 @@ public class ProcessDataTab {
      * Update process metadata of currently selected process.
      */
     public void updateProcessMetadata() {
-        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess())
-                && Objects.nonNull(createProcessForm.getCurrentProcess().getWorkpiece())) {
+        if (Objects.nonNull(docType) && Objects.nonNull(createProcessForm.getCurrentProcess()) && Objects.nonNull(
+                createProcessForm.getCurrentProcess().getWorkpiece())) {
             createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure().setType(this.docType);
             if (this.docType.isEmpty()) {
                 createProcessForm.getProcessMetadata().setProcessDetails(ProcessFieldedMetadata.EMPTY);
             } else {
                 createProcessForm.getProcessMetadata().initializeProcessDetails(
-                    createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
+                        createProcessForm.getCurrentProcess().getWorkpiece().getLogicalStructure(), createProcessForm);
                 overwriteProcessMetadata();
             }
         }
@@ -159,26 +159,28 @@ public class ProcessDataTab {
      */
     public void generateAtstslFields() {
         List<ProcessDetail> processDetails = this.createProcessForm.getProcessMetadata().getProcessDetailsElements();
-        Process process = this.createProcessForm.getCurrentProcess().getProcess();
+        TempProcess currentProcess = createProcessForm.getCurrentProcess();
+        Process process = currentProcess.getProcess();
         try {
-            String processTitleOfDocTypeView = ProcessHelper.getProcessTitleOfDocTypeView(
-                createProcessForm.getRulesetManagement(), docType, createProcessForm.getAcquisitionStage(),
-                createProcessForm.getPriorityList());
+            String processTitleOfDocTypeView = ProcessHelper.getTitleDefinition(
+                    createProcessForm.getRulesetManagement(), docType, createProcessForm.getAcquisitionStage(),
+                    createProcessForm.getPriorityList());
             if (processTitleOfDocTypeView.isEmpty()) {
                 Helper.setErrorMessage("newProcess.titleGeneration.creationRuleNotFound",
-                    new Object[] {getDocTypeLabel(docType), process.getRuleset().getTitle() });
+                        new Object[] {getDocTypeLabel(docType), process.getRuleset().getTitle()});
             }
 
             LinkedList<TempProcess> parents = new LinkedList<>();
             int processesSize = createProcessForm.getProcesses().size();
-            if ( processesSize > 1 ) {
-                int indexCurrent = createProcessForm.getProcesses().indexOf(createProcessForm.getCurrentProcess());
+            if (processesSize > 1) {
+                int indexCurrent = createProcessForm.getProcesses().indexOf(currentProcess);
                 parents.addAll(createProcessForm.getProcesses().subList(indexCurrent + 1, processesSize));
             }
             
-            ProcessHelper.generateAtstslFields(createProcessForm.getCurrentProcess(), processDetails, parents, docType,
-                createProcessForm.getRulesetManagement(), createProcessForm.getAcquisitionStage(),
-                createProcessForm.getPriorityList(), createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess());
+            ProcessHelper.generateAtstslFields(currentProcess, processDetails, parents, docType,
+                    createProcessForm.getRulesetManagement(), createProcessForm.getAcquisitionStage(),
+                    createProcessForm.getPriorityList(),
+                    createProcessForm.getTitleRecordLinkTab().getTitleRecordProcess(), true);
 
             updateProcessMetadata();
         } catch (ProcessGenerationException e) {

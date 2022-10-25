@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -28,7 +27,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
-import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -43,6 +41,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
+import org.omnifaces.util.Ajax;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.w3c.dom.Document;
@@ -98,8 +97,10 @@ public class FileUploadDialog extends MetadataImportDialog {
                 extendsMetadataTableOfMetadataTab(processes);
             } else {
                 this.createProcessForm.setProcesses(processes);
-                this.createProcessForm.fillCreateProcessForm(processes.getFirst());
-                showRecord();
+                TempProcess currentTempProcess = processes.getFirst();
+                attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
+                createProcessForm.fillCreateProcessForm(currentTempProcess);
+                Ajax.update(FORM_CLIENTID);
             }
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
                 | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException
@@ -142,9 +143,15 @@ public class FileUploadDialog extends MetadataImportDialog {
 
     @Override
     public List<ImportConfiguration> getImportConfigurations() {
-        return super.getImportConfigurations().stream()
-                .filter(importConfiguration -> ImportConfigurationType.FILE_UPLOAD.name()
-                        .equals(importConfiguration.getConfigurationType())).collect(Collectors.toList());
+        if (Objects.isNull(importConfigurations)) {
+            try {
+                importConfigurations = ServiceManager.getImportConfigurationService().getAllFileUploadConfigurations();
+            } catch (IllegalArgumentException | DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                importConfigurations = new LinkedList<>();
+            }
+        }
+        return importConfigurations;
     }
 
     /**

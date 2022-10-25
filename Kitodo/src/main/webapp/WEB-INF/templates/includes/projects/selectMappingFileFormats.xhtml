@@ -1,0 +1,91 @@
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="mappingFileFormatsDialog"
+              widgetVar="mappingFileFormatsDialog"
+              showHeader="false"
+              width="480px"
+              modal="true"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false"
+              dynamic="true">
+        <h3>#{msgs['mappingFile.selectFormats']}: <br/><br/> #{importCatalogConfigurationsView.getCurrentMappingFile().file}</h3>
+        <h:form id="mappingFileFormatsForm">
+            <h:panelGroup layout="block"
+                          styleClass="select-selector">
+
+                <p:outputLabel for="mappingFileTitle"
+                               value="#{msgs['title']}"/>
+                <p:inputText id="mappingFileTitle"
+                             value="#{importCatalogConfigurationsView.currentMappingFile.title}"
+                             styleClass="input"
+                             required="#{true}"/>
+
+                <p:outputLabel for="inputFormat" value="#{msgs['mappingFile.inputFormat']}"/>
+                <p:selectOneMenu id="inputFormat"
+                                 styleClass="input"
+                                 value="#{importCatalogConfigurationsView.currentMappingFile.inputMetadataFormat}"
+                                 autoWidth="false">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="#{msgs.notSelected}"
+                                  noSelectionOption="#{true}"/>
+                    <f:selectItems value="#{importCatalogConfigurationsView.metadataFormats}"
+                                   var="format"
+                                   itemValue="#{format}"
+                                   itemLabel="#{format}"/>
+                    <p:ajax event="change"
+                            update="mappingFileFormatsForm:ok"/>
+                </p:selectOneMenu>
+                <p:outputLabel for="outputFormat" value="#{msgs['mappingFile.outputFormat']}"/>
+                <p:selectOneMenu id="outputFormat"
+                                 styleClass="input"
+                                 value="#{importCatalogConfigurationsView.currentMappingFile.outputMetadataFormat}"
+                                 autoWidth="false">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="#{msgs.notSelected}"
+                                  noSelectionOption="#{true}"/>
+                    <f:selectItems value="#{importCatalogConfigurationsView.metadataFormats}"
+                                   var="format"
+                                   itemValue="#{format}"
+                                   itemLabel="#{format}"/>
+                    <p:ajax event="change"
+                            update="mappingFileFormatsForm:ok"/>
+                </p:selectOneMenu>
+                <p:outputLabel for="prestructuredImport"
+                               value="#{msgs['importConfig.field.prestructuredImport']}"/>
+                <p:selectBooleanCheckbox id="prestructuredImport"
+                                         styleClass="input switch"
+                                         value="#{importCatalogConfigurationsView.currentMappingFile.prestructuredImport}"/>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="ok"
+                                 value="#{msgs.ok}"
+                                 disabled="#{importCatalogConfigurationsView.currentMappingFile.outputMetadataFormat eq null or importCatalogConfigurationsView.currentMappingFile.inputMetadataFormat eq null}"
+                                 action="#{importCatalogConfigurationsView.addMappingFile()}"
+                                 styleClass="primary right"
+                                 onclick="PF('mappingFileFormatsDialog').hide();"/>
+                <p:commandButton id="cancel"
+                                 value="#{msgs.cancel}"
+                                 immediate="true"
+                                 styleClass="secondary right"
+                                 onclick="PF('mappingFileFormatsDialog').hide();"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

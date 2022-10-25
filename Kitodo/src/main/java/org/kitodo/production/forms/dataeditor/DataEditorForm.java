@@ -235,7 +235,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public String open(String processID, String referringView) {
         try {
-            this.referringView = referringView + ("processes".equals(referringView) ? "?keepPagination=true" : "");
+            this.referringView = referringView;
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();

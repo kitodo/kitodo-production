@@ -64,7 +64,7 @@
         <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
             <div>
                 <p:outputLabel for="oaiMetadataPrefix"
-                               value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']}"/>
+                               value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']} *"/>
                 <p:inputText id="oaiMetadataPrefix"
                              required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}"
                              styleClass="input-with-button"
@@ -77,6 +77,22 @@
                                  icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="oaiMetadataPrefixHelpButton"
                            value="#{msgs['tooltip.importConfig.oaiMetadataPrefixHelp']}"/>
+            </div>
+        </p:row>
+        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+            <div>
+                <p:outputLabel for="oaiIdParameterPrefix"
+                               value="#{msgs['importConfig.searchFields.idPrefix']}"/>
+                <p:inputText id="oaiIdParameterPrefix"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.idPrefix}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="oaiIdParameterPrefixHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="oaiIdParameterPrefixHelp"
+                           value="#{msgs['tooltip.importConfig.idParameterPrefixHelp']}"/>
             </div>
         </p:row>
 

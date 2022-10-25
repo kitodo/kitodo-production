@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:template="http://www.kitodo.org/template" id="sample-diagram" targetNamespace="http://bpmn.io/schema/bpmn" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL BPMN20.xsd">
+  <bpmn2:process id="Process_1" isExecutable="false">
+    <bpmn2:startEvent id="StartEvent_1">
+      <bpmn2:outgoing>SequenceFlow_1x7qbp4</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:task id="Task1" name="step" template:permittedUserRole="1">
+      <bpmn2:incoming>SequenceFlow_1x7qbp4</bpmn2:incoming>
+      <bpmn2:outgoing>Flow_1b1r83f</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_1x7qbp4" sourceRef="StartEvent_1" targetRef="Task1" />
+    <bpmn2:endEvent id="Event_12ij96v">
+      <bpmn2:incoming>Flow_1b1r83f</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="Flow_1b1r83f" sourceRef="Task1" targetRef="Event_12ij96v" />
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1">
+    <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Process_1">
+      <bpmndi:BPMNEdge id="SequenceFlow_1x7qbp4_di" bpmnElement="SequenceFlow_1x7qbp4">
+        <di:waypoint x="448" y="258" />
+        <di:waypoint x="510" y="258" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="473" y="236" width="0" height="13" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1b1r83f_di" bpmnElement="Flow_1b1r83f">
+        <di:waypoint x="610" y="258" />
+        <di:waypoint x="652" y="258" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_2" bpmnElement="StartEvent_1">
+        <dc:Bounds x="412" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Event_12ij96v_di" bpmnElement="Event_12ij96v">
+        <dc:Bounds x="652" y="240" width="36" height="36" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_0i1d0ke_di" bpmnElement="Task_0i1d0ke">
+        <dc:Bounds x="510" y="218" width="100" height="80" />
+      </bpmndi:BPMNShape>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

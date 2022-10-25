@@ -35,6 +35,7 @@ public abstract class Page<T> {
 
     private static final Logger logger = LogManager.getLogger(Page.class);
     static final String DATA = "_data";
+    static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = "user-menu")

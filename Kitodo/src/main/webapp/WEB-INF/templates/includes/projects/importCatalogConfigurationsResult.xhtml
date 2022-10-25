@@ -1,0 +1,72 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog class="catalog-configuration-import-result-dialog"
+              id="catalogConfigurationImportResultDialog"
+              widgetVar="catalogConfigurationImportResultDialog"
+              showHeader="false"
+              modal="true"
+              width="800px"
+              height="600px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+
+        <h3>#{msgs['importConfig.migration.importCatalogConfigurationsResultHeader']}</h3>
+        <h:panelGroup layout="block"
+                      styleClass="dialogFieldWrapper">
+            <h:form id="importResultsForm">
+                <p:dataTable id="successfulImports"
+                             resizableColumns="true"
+                             value="#{importCatalogConfigurationsView.successfulImports}"
+                             var="configTitle">
+                    <p:column id="succesfulImportConfigTitle"
+                              headerText="#{msgs['import.successfulImports']}: #{importCatalogConfigurationsView.successfulImports.size()}">
+                        <h:outputText value="#{configTitle}"
+                                      title="#{configTitle}"/>
+                    </p:column>
+                </p:dataTable>
+                <p:dataTable id="failedImports"
+                             resizableColumns="true"
+                             value="#{importCatalogConfigurationsView.failedImports}"
+                             var="configTitle">
+                    <p:column id="failedImportConfigTitle"
+                              styleClass="title-column"
+                              headerText="#{msgs['import.failedImports']}: #{importCatalogConfigurationsView.failedImports.size()}"
+                              width="35%">
+                        <h:outputText value="#{configTitle}"
+                                      title="#{configTitle}"/>
+                    </p:column>
+                    <p:column id="errorMessage"
+                              styleClass="error-message-column"
+                              width="65%">
+                        <h:outputText value="#{importCatalogConfigurationsView.getErrorMessage(configTitle)}"
+                                      title="#{importCatalogConfigurationsView.getErrorMessage(configTitle)}"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </h:panelGroup>
+        <h:panelGroup layout="block"
+                      styleClass="dialogButtonWrapper">
+            <p:commandButton id="close"
+                             value="#{msgs.close}"
+                             styleClass="primary right"
+                             onclick="PF('catalogConfigurationImportResultDialog').hide();"/>
+        </h:panelGroup>
+    </p:dialog>
+</ui:composition>
