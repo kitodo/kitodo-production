@@ -59,6 +59,7 @@ import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.primefaces.PrimeFaces;
 import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
@@ -86,6 +87,8 @@ public class ProcessForm extends TemplateBaseForm {
     private List<SelectItem> customColumns;
 
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
+    private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
+    private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -972,7 +975,7 @@ public class ProcessForm extends TemplateBaseForm {
     public void setProcessEditReferer(String referer) {
         if (!referer.isEmpty()) {
             if ("processes".equals(referer)) {
-                this.processEditReferer = referer + "?keepPagination=true";
+                this.processEditReferer = referer;
             } else if ("searchResult".equals(referer)) {
                 this.processEditReferer = "searchResult.jsf";
             } else if (!referer.contains("taskEdit") || this.processEditReferer.isEmpty()) {
@@ -1109,6 +1112,33 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage(e);
             return "";
         }
+    }
+
+    /**
+     * Resets the process list multi view state such that the sort order and pagination is reset to their defaults.
+     */
+    public void resetProcessListMultiViewState() {
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+            // check whether there is a mulit view state registered (to avoid warning log message in case there is not)
+            Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
+            if (Objects.nonNull(mvs)) {
+                // clear multi view state only if there is a state available
+                PrimeFaces.current().multiViewState().clear(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID);
+            }
+        }
+    }
+
+    /**
+     * Navigates to processes list and optionally resets table view state.
+     * 
+     * @param resetTableViewState whether to reset table view state
+     */
+    public String navigateToProcessesList(boolean resetTableViewState) {
+        if (resetTableViewState) {
+            setFirstRow(0);
+            resetProcessListMultiViewState();
+        }
+        return "/pages/processes?tabIndex=0&faces-redirect=true";
     }
 
 }

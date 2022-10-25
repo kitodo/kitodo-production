@@ -36,14 +36,19 @@
                            value="#{msgs['tooltip.importConfig.returnFormatHelp']}"/>
             </div>
             <h:panelGroup layout="block"
+                          id="metadataRecordIdXPathWrapper"
                           rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
                 <p:outputLabel for="metadataRecordIdXPath"
                                value="#{msgs['importConfig.field.metadataRecordIDXPath']} *"/>
-                <p:inputText id="metadataRecordIdXPath"
-                             styleClass="input-with-button"
-                             validator="XPathValidator"
-                             required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
-                             value="#{importConfigurationEditView.importConfiguration.metadataRecordIdXPath}"/>
+                <p:selectOneMenu id="metadataRecordIdXPath"
+                                 styleClass="input-with-button"
+                                 autoWidth="false"
+                                 value="#{importConfigurationEditView.importConfiguration.metadataRecordIdXPath}"
+                                 validator="XPathValidator"
+                                 required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                                 editable="#{true}">
+                    <f:selectItems value="#{importConfigurationEditView.recordIdXPathDefault}"/>
+                </p:selectOneMenu>
                 <p:commandButton id="metadataRecordIdXPathHelp"
                                  type="button"
                                  styleClass="help-button"
@@ -97,11 +102,15 @@
                           rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
                 <p:outputLabel for="metadataRecordTitleXPath"
                                value="#{msgs['importConfig.field.metadataRecordTitleXPath']} *"/>
-                <p:inputText id="metadataRecordTitleXPath"
-                             styleClass="input-with-button"
-                             validator="XPathValidator"
-                             required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
-                             value="#{importConfigurationEditView.importConfiguration.metadataRecordTitleXPath}"/>
+                <p:selectOneMenu id="metadataRecordTitleXPath"
+                                 styleClass="input-with-button"
+                                 autoWidth="false"
+                                 value="#{importConfigurationEditView.importConfiguration.metadataRecordTitleXPath}"
+                                 validator="XPathValidator"
+                                 required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                                 editable="#{true}">
+                    <f:selectItems value="#{importConfigurationEditView.recordTitleXPathDefault}"/>
+                </p:selectOneMenu>
                 <p:commandButton id="metadataRecordTitleXPathHelp"
                                  type="button"
                                  styleClass="help-button"

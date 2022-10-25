@@ -32,24 +32,6 @@ public interface SchemaConverterInterface {
                        List<File> mappingFiles) throws IOException, URISyntaxException;
 
     /**
-     * Check and return whether the current SchemaConverter supports the given MetadataFormat as a target format or not.
-     *
-     * @param format target MetadataFormat
-     * @return true, if given MetadataFormat 'format' is supported as a target MetadataFormat by the SchemaConverter.
-     *         false otherwise
-     */
-    boolean supportsTargetMetadataFormat(MetadataFormat format);
-
-    /**
-     * Check and return whether the current SchemaConverter supports the given MetadataFormat as a source format or not.
-     *
-     * @param format source MetadataFormat
-     * @return true, if given MetadataFormat 'format' is supported as a source MetadataFormat by the SchemaConverter.
-     *         false otherwise
-     */
-    boolean supportsSourceMetadataFormat(MetadataFormat format);
-
-    /**
      * Check and return whether the current SchemaConverter supports the given FileFormat as a target format or not.
      *
      * @param format target FileFormat

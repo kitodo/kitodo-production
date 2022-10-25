@@ -144,8 +144,10 @@ public class SchemaService {
                         int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf('/');
                         String lastSegment = mediaFileForMediaVariant.getValue().toString()
                                 .substring(lastSeparator + 1);
-                        mediaFileForMediaVariant
-                                .setValue(new URI(variableReplacer.replace(folder.getUrlStructure() + lastSegment)));
+                        String mediaFile = variableReplacer.containsFiles(folder.getUrlStructure())
+                                ? variableReplacer.replaceWithFilename(folder.getUrlStructure(), lastSegment)
+                                : variableReplacer.replace(folder.getUrlStructure() + lastSegment);
+                        mediaFileForMediaVariant.setValue(new URI(mediaFile));
                     }
                 }
             }
