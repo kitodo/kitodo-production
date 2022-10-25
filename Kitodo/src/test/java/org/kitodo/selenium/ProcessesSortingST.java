@@ -19,6 +19,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
@@ -35,9 +38,18 @@ public class ProcessesSortingST extends BaseTestSelenium {
 
     private static ProcessesPage processesPage;
 
+    /**
+     * Set up process sorting tests.
+     */
     @BeforeClass
     public static void setup() throws Exception {
         processesPage = Pages.getProcessesPage();
+        
+        // set task "Progress" for process "First process" to done, such that
+        // sorting by process status makes sense (otherwise both processes have the same status)
+        Task task = ServiceManager.getTaskService().getById(8);
+        task.setProcessingStatus(TaskStatus.DONE);
+        ServiceManager.getTaskService().save(task, true);
     }
 
     @Before
@@ -62,13 +74,13 @@ public class ProcessesSortingST extends BaseTestSelenium {
         assertEquals("Second process", processesPage.getProcessTitles().get(0));
 
         // click on column header to trigger ascending order by process title
-        processesPage.clickProcessesTitleColumnForSorting();
+        processesPage.clickProcessesTableHeaderForSorting(4);
 
         // check that first process is now first element in list of processes
         assertEquals("First process", processesPage.getProcessTitles().get(0));
 
         // click again to trigger descending order for process title
-        processesPage.clickProcessesTitleColumnForSorting();
+        processesPage.clickProcessesTableHeaderForSorting(4);
 
         // check that second process is again first element in list of processes 
         assertEquals("Second process", processesPage.getProcessTitles().get(0));   
@@ -86,7 +98,7 @@ public class ProcessesSortingST extends BaseTestSelenium {
         assertEquals("Second process", processesPage.getProcessTitles().get(0));
 
         // click on column header to trigger ascending order by process title
-        processesPage.clickProcessesTitleColumnForSorting();
+        processesPage.clickProcessesTableHeaderForSorting(4);
 
         // check that first process is now first element in list of processes
         assertEquals("First process", processesPage.getProcessTitles().get(0));
@@ -102,5 +114,45 @@ public class ProcessesSortingST extends BaseTestSelenium {
 
         // check that default sort order is restored
         assertEquals("Second process", processesPage.getProcessTitles().get(0));
+    }
+
+    /**
+     * Check sorting processes by state works as expected.
+     */
+    @Test
+    public void sortByProcessState() throws Exception {
+        processesPage.goTo();
+
+        // click on column header of state column to trigger ascending order by process state
+        processesPage.clickProcessesTableHeaderForSorting(5);
+
+        // check that first process is first element in list of processes
+        assertEquals("First process", processesPage.getProcessTitles().get(0));
+
+        // click again to trigger descending order for process state
+        processesPage.clickProcessesTableHeaderForSorting(5);
+
+        // check that second process is now first element in list of processes 
+        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+    }
+
+    /**
+     * Check sorting processes by duration works as expected.
+     */
+    @Test
+    public void sortByProcessDuration() throws Exception {
+        processesPage.goTo();
+
+        // click on column header of duration column to trigger ascending order by process duration
+        processesPage.clickProcessesTableHeaderForSorting(8);
+
+        // check that second process is first element in list of processes
+        assertEquals("Second process", processesPage.getProcessTitles().get(0));
+
+        // click again to trigger descending order for process duration
+        processesPage.clickProcessesTableHeaderForSorting(8);
+
+        // check that first process is now first element in list of processes 
+        assertEquals("First process", processesPage.getProcessTitles().get(0));
     }
 }

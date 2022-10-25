@@ -264,6 +264,37 @@
         },
         "fielddata": true
       },
+      "lastEditingUser": {
+        "type": "keyword"
+      },
+      "processingBeginLastTask": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "ignore_malformed": true
+      },
+      "processingEndLastTask": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "ignore_malformed": true
+      },
+      "correctionCommentStatus": {
+        "type": "byte"
+      },
+      "progressClosed": {
+        "type": "double"
+      },
+      "progressInProcessing": {
+        "type": "double"
+      },
+      "progressOpen": {
+        "type": "double"
+      },
+      "progressLocked": {
+        "type": "double"
+      },
+      "progressCombined": {
+        "type": "keyword"
+      },
       "tasks": {
         "properties": {
           "id": {

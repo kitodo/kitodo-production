@@ -17,6 +17,11 @@ import java.security.SecureRandom;
 import java.text.DateFormat;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -394,6 +399,29 @@ public class Helper {
         } else {
             DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             return dateFormat.format(date);
+        }
+    }
+
+    /**
+     * Parse date string to date. 
+     * 
+     * <p>Reverse operation of `Helper.getDateAsFormattedString`.</p>
+     * 
+     * @param date the date as string formatted in "yyyy-MM-dd HH:mm:ss"
+     * @return the date or null if it can not be parsed
+     */
+    public static Date parseDateFromFormattedString(String date) {
+        if (Objects.isNull(date) || date.equals("")) {
+            return null;
+        }
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            LocalDateTime localDate = LocalDateTime.parse(date, formatter);
+            Instant instant = localDate.toInstant(ZoneOffset.UTC);
+            return Date.from(instant);
+        } catch (DateTimeParseException e) {
+            logger.info("invalid date format (yyyy-MM-dd HH:mm:ss) for date string: '" + date + "'");
+            return null;
         }
     }
 
