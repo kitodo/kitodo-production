@@ -407,7 +407,7 @@ public class Helper {
      * 
      * <p>Reverse operation of `Helper.getDateAsFormattedString`.</p>
      * 
-     * @param date the date a string formatted in "yyyy-MM-dd HH:mm:ss"
+     * @param date the date as string formatted in "yyyy-MM-dd HH:mm:ss"
      * @return the date or null if it can not be parsed
      */
     public static Date parseDateFromFormattedString(String date) {

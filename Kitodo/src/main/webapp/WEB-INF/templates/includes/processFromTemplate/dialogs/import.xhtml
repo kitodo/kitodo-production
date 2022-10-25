@@ -31,7 +31,7 @@
                 <p:row>
                     <div>
                         <p:outputLabel for="catalogueSelectMenu"
-                                       value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+                                       value="#{msgs['importConfig.configuration']}"/>
                         <p:selectOneMenu id="catalogueSelectMenu"
                                          autoWidth="false"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
@@ -79,10 +79,10 @@
                                    value="#{CreateProcessForm.catalogImportDialog.hitModel.importDepth}"
                                    min="1"
                                    max="5"/>
-                        <div>
-                            <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
-                            <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
-                        </div>
+                    </div>
+                    <div>
+                        <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
+                        <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.catalogImportDialog.additionalImport}" />
                     </div>
                 </p:row>
                 <p:row>

@@ -74,7 +74,7 @@ public class MappingFileService extends SearchDatabaseService<MappingFile, Mappi
      */
     @Override
     public Long countDatabaseRows() throws DAOException {
-        return null;
+        return countDatabaseRows("SELECT COUNT(*) FROM MappingFile");
     }
 
     /**

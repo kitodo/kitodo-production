@@ -18,14 +18,17 @@ import java.util.List;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.OPACConfig;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.PrimeFaces;
 
 @Named("ImportConfigurationListView")
 @ViewScoped
@@ -72,6 +75,18 @@ public class ImportConfigurationListView extends BaseForm {
             Helper.setErrorMessage(
                     Helper.getTranslation(ERROR_DELETING, ObjectType.IMPORT_CONFIGURATION.getTranslationSingular()),
                     e.getMessage());
+        }
+    }
+
+    /**
+     * Start import of catalog configurations from 'kitodo_opac.xml' file.
+     */
+    public void startCatalogConfigurationImport() {
+        try {
+            OPACConfig.getKitodoOpacConfiguration();
+            PrimeFaces.current().executeScript("PF('importCatalogConfigurationsDialog').show();");
+        } catch (ConfigurationException e) {
+            Helper.setErrorMessage(e.getMessage() + ": " + e.getCause().getMessage());
         }
     }
 }

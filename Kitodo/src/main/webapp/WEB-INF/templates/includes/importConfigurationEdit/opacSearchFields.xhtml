@@ -50,6 +50,18 @@
                     <p:tooltip for="queryDelimiterHelp"
                                value="#{msgs['tooltip.importConfig.queryDelimiterHelp']}"/>
                 </div>
+                <div>
+                    <p:outputLabel for="prestructuredImport" value="#{msgs['importConfig.field.prestructuredImport']}" />
+                    <p:selectBooleanCheckbox id="prestructuredImport" styleClass="switch input-with-button"
+                                             value="#{importConfigurationEditView.importConfiguration.prestructuredImport}"
+                                             disabled="#{isViewMode}">
+                        <p:ajax event="change" oncomplete="toggleSave()"/>
+                    </p:selectBooleanCheckbox>
+                    <p:commandButton id="prestructuredImportHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="prestructuredImportHelp"
+                               value="#{msgs['tooltip.importConfig.prestructuredImportHelp']}"/>
+                </div>
             </p:row>
             <p:row>
                 <div>
@@ -87,18 +99,6 @@
                                      styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                     <p:tooltip for="urlHelp"
                                value="#{msgs['tooltip.importConfig.urlHelp']}"/>
-                </div>
-                <div>
-                    <p:outputLabel for="prestructuredImport" value="#{msgs['importConfig.field.prestructuredImport']}" />
-                    <p:selectBooleanCheckbox id="prestructuredImport" styleClass="switch input-with-button"
-                                             value="#{importConfigurationEditView.importConfiguration.prestructuredImport}"
-                                             disabled="#{isViewMode}">
-                        <p:ajax event="change" oncomplete="toggleSave()"/>
-                    </p:selectBooleanCheckbox>
-                    <p:commandButton id="prestructuredImportHelp" type="button"
-                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                    <p:tooltip for="prestructuredImportHelp"
-                               value="#{msgs['tooltip.importConfig.prestructuredImportHelp']}"/>
                 </div>
             </p:row>
         </p:panelGrid>
@@ -144,9 +144,13 @@
             </p:panelGrid>
 
             <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                     importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}"
                           styleClass="horizontal-separator"/>
 
             <p:panelGrid columns="2"
+                         rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                     importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}"
                          layout="grid">
                 <ui:include src="rows/searchFieldRows.xhtml"/>
             </p:panelGrid>

@@ -38,9 +38,12 @@
 
                             <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
                                 <li class="nav-pic-text">
-                                    <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes?tabIndex=0">
-                                        <i class="fa fa-clipboard fa-lg"/>
-                                    </h:link>
+                                    <h:form id="linkProcessesNavigationForm">
+                                        <h:commandLink id="linkProcesses" action="#{ProcessForm.navigateToProcessesList(true)}">
+                                            <i class="fa fa-clipboard fa-lg"/>
+                                            <h:outputText value="#{msgs.processes}" />
+                                        </h:commandLink>
+                                    </h:form>
                                 </li>
                             </h:panelGroup>
 
