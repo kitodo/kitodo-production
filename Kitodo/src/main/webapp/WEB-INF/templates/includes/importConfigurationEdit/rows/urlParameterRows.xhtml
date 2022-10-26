@@ -1,0 +1,76 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+
+        <p:row>
+            <div>
+                <p:outputLabel for="urlParameterTable"
+                               value="#{msgs['importConfig.urlParameters']}"/>
+                <p:dataTable id="urlParameterTable"
+                             styleClass="input-with-button"
+                             style="display: inline-block;"
+                             value="#{importConfigurationEditView.importConfiguration.urlParameters}"
+                             var="parameter">
+                    <p:column id="parameterKey"
+                              headerText="#{msgs['importConfig.urlParameterKey']}">
+                        <h:outputText value="#{parameter.parameterKey}"
+                                      title="#{parameter.parameterKey}"/>
+                    </p:column>
+                    <p:column id="parameterValue"
+                              headerText="#{msgs['importConfig.urlParameterValue']}">
+                        <h:outputText value="#{parameter.parameterValue}"
+                                      title="#{parameter.parameterValue}"/>
+                    </p:column>
+                    <p:column id="actionColumn"
+                              styleClass="actionsColumn">
+                        <p:commandLink id="editUrlParameter"
+                                       styleClass="action"
+                                       update="editUrlParameterDialog"
+                                       oncomplete="PF('editUrlParameterDialog').show();">
+                            <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
+                            <f:setPropertyActionListener target="#{updateUrlParameterDialogView.urlParameter}"
+                                                         value="#{parameter}"/>
+                        </p:commandLink>
+                        <p:commandLink id="removeUrlParameter"
+                                       styleClass="action"
+                                       action="#{importConfigurationEditView.removeUrlParameter(parameter)}"
+                                       update="editForm:importConfigurationTabView:urlParameterTable"
+                                       oncomplete="toggleSave()">
+                                <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton id="urlParameterHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="urlParameterHelp"
+                           value="#{msgs['tooltip.importConfig.customUrlParameterHelp']}"/>
+                <p:commandButton icon="fa fa-plus"
+                                 id="addUrlParameter"
+                                 styleClass="secondary"
+                                 action="#{addUrlParameterDialogView.init()}"
+                                 process="@this"
+                                 update="addUrlParameterDialog"
+                                 oncomplete="PF('addUrlParameterDialog').show();"/>
+            </div>
+        </p:row>
+
+    </f:view>
+</ui:composition>

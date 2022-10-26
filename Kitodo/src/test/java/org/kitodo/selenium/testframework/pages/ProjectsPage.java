@@ -104,6 +104,9 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @FindBy(id = "projectForm:newRulesetButton")
     private WebElement newRulesetButton;
 
+    @FindBy(id = "projectForm:newOpacConfigurationButton")
+    private WebElement newImportConfigurationButton;
+
     @SuppressWarnings("unused")
     @FindBy(id = "convertMenu:convertCatalogConfigurations")
     private WebElement importOpacConfigsButton;
@@ -382,6 +385,18 @@ public class ProjectsPage extends Page<ProjectsPage> {
         newElementButton.click();
         clickButtonAndWaitForRedirect(newRulesetButton, Pages.getRulesetEditPage().getUrl());
         return Pages.getRulesetEditPage();
+    }
+
+    /**
+     * Go to edit page for creating a new import configuration.
+     * @throws Exception when redirection to import configuration edit page fails
+     */
+    public void createNewImportConfiguration() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        newElementButton.click();
+        clickButtonAndWaitForRedirect(newImportConfigurationButton, Pages.getImportConfigurationEditPage().getUrl());
     }
 
     /**

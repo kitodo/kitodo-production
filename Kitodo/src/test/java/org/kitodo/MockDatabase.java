@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -77,6 +78,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.LinkingMode;
@@ -116,6 +118,7 @@ public class MockDatabase {
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static Server tcpServer;
     private static HashMap<String, Integer> removableObjectIDs;
+    private static final int CUSTOM_CONFIGURATION_ID = 4;
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -1530,6 +1533,56 @@ public class MockDatabase {
         }
     }
 
+    /**
+     * Create an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type `CUSTOM` and
+     * add custom URL parameters.
+     * @throws DAOException when saving ImportConfiguration to database fails
+     */
+    public static void insertImportconfigurationWithCustomUrlParameters() throws DAOException {
+        // add CUSTOM import configuration with URL parameters
+        ImportConfiguration customConfiguration = new ImportConfiguration();
+        customConfiguration.setTitle("Custom");
+        customConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        customConfiguration.setInterfaceType(SearchInterfaceType.CUSTOM.name());
+
+        customConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
+                .getById(2)));
+
+        customConfiguration.setHost("localhost");
+        customConfiguration.setScheme("http");
+        customConfiguration.setPath("/custom");
+        customConfiguration.setPort(8888);
+        customConfiguration.setPrestructuredImport(false);
+        customConfiguration.setReturnFormat(FileFormat.XML.name());
+        customConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
+
+        SearchField idField = new SearchField();
+        idField.setValue("id");
+        idField.setLabel("Identifier");
+        idField.setDisplayed(true);
+        idField.setImportConfiguration(customConfiguration);
+
+        customConfiguration.setSearchFields(Collections.singletonList(idField));
+        customConfiguration.setIdSearchField(customConfiguration.getSearchFields().get(0));
+        customConfiguration.setDefaultSearchField(customConfiguration.getSearchFields().get(0));
+
+        // add URL parameters
+        UrlParameter firstParameter = new UrlParameter();
+        firstParameter.setParameterKey("firstKey");
+        firstParameter.setParameterValue("firstValue");
+        firstParameter.setImportConfiguration(customConfiguration);
+        UrlParameter secondParameter = new UrlParameter();
+        secondParameter.setParameterKey("secondKey");
+        secondParameter.setParameterValue("secondValue");
+        secondParameter.setImportConfiguration(customConfiguration);
+        List<UrlParameter> urlParameters = new LinkedList<>();
+        urlParameters.add(firstParameter);
+        urlParameters.add(secondParameter);
+        customConfiguration.setUrlParameters(urlParameters);
+
+        ServiceManager.getImportConfigurationService().saveToDatabase(customConfiguration);
+    }
+
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
         Client client = ServiceManager.getClientService().getById(1);
 
@@ -1799,5 +1852,14 @@ public class MockDatabase {
      */
     public static ImportConfiguration getK10PlusImportConfiguration() throws DAOException {
         return ServiceManager.getImportConfigurationService().getById(3);
+    }
+
+    /**
+     * Return Custom type ImportConfiguration.
+     * @return Custom type ImportConfiguration
+     * @throws DAOException thrown when Custom type ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getCustomTypeImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(CUSTOM_CONFIGURATION_ID);
     }
 }

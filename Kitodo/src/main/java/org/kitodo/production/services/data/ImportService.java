@@ -69,6 +69,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -1301,6 +1302,11 @@ public class ImportService {
                 throw new ConfigException("OAI metadata prefix is null!");
             }
             urlParameters.put(OAI_METADATA_PREFIX, importConfiguration.getOaiMetadataPrefix());
+        }
+        if (SearchInterfaceType.CUSTOM.name().equals(importConfiguration.getInterfaceType())) {
+            for (UrlParameter parameter : importConfiguration.getUrlParameters()) {
+                urlParameters.put(parameter.getParameterKey(), parameter.getParameterValue());
+            }
         }
         return urlParameters;
     }
