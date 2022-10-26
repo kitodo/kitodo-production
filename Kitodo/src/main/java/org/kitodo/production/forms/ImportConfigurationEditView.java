@@ -55,6 +55,7 @@ public class ImportConfigurationEditView extends BaseForm {
     private static final List<String> PARENT_ELEMENT_TRIM_MODES = Collections.singletonList("parenthesis");
     private static final List<String> DEFAULT_ID_XPATHS;
     private static final List<String> DEFAULT_TITLE_XPATHS;
+    private static final String URL_PARAMETER_UNIQUE = "importConfig.urlParameters.conditionUnique";
 
     static {
         DEFAULT_ID_XPATHS = List.of(
@@ -234,8 +235,7 @@ public class ImportConfigurationEditView extends BaseForm {
     public void addUrlParameter(UrlParameter urlParameter) {
         if (importConfiguration.getUrlParameters().stream().map(UrlParameter::getParameterKey)
                 .collect(Collectors.toList()).contains(urlParameter.getParameterKey())) {
-            Helper.setErrorMessage("URL parameter keys must be unique (\"" + urlParameter.getParameterKey()
-                    + "\" already exists!)");
+            Helper.setErrorMessage(URL_PARAMETER_UNIQUE, new Object[]{urlParameter.getParameterKey()});
         } else {
             urlParameter.setImportConfiguration(importConfiguration);
             importConfiguration.getUrlParameters().add(urlParameter);
