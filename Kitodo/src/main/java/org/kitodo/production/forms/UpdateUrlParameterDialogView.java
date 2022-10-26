@@ -46,6 +46,7 @@ public class UpdateUrlParameterDialogView implements Serializable {
      */
     public void setUrlParameter(UrlParameter urlParameter) {
         this.urlParameter = urlParameter;
+        urlParameterIndex = urlParameter.getImportConfiguration().getUrlParameters().indexOf(urlParameter);
     }
 
     /**

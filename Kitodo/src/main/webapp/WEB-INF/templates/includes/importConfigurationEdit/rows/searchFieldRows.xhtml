@@ -48,6 +48,7 @@
                     <p:column id="actionColumn" styleClass="actionsColumn">
                         <p:commandLink id="editSearchField"
                                        styleClass="action"
+                                       process="@this"
                                        update="editSearchFieldDialog"
                                        oncomplete="PF('editSearchFieldDialog').show();">
                             <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
