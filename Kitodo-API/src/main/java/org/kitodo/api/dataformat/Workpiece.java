@@ -195,6 +195,12 @@ public class Workpiece {
         return Collections.unmodifiableList(physicalDivisions);
     }
 
+  public int getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(List<String> types) {
+        return Math.toIntExact(physicalStructure.getChildren().stream()
+                .flatMap(Workpiece::treeStream)
+                .filter(physicalDivisionToCheck -> types.contains(physicalDivisionToCheck.getType())).count());
+    }
+
     /**
      * Returns all physical divisions of the physical division of the workpiece as a flat
      * list. The list isn’t backed by the physical divisions, which means that

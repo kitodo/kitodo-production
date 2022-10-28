@@ -191,6 +191,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private boolean folderConfigurationComplete = false;
 
+    private int numberOfScans = 0;
+
     /**
      * Public constructor.
      */
@@ -310,6 +312,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             workpiece.setId(process.getId().toString());
         }
         ServiceManager.getFileService().searchForMedia(process, workpiece);
+        setNumberOfScans(workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES));
     }
 
     private void init() {
@@ -946,6 +949,24 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void setDataEditorSetting(DataEditorSetting dataEditorSetting) {
         this.dataEditorSetting = dataEditorSetting;
+    }
+
+    /**
+     * Gets numberOfScans.
+     *
+     * @return value of numberOfScans
+     */
+    public int getNumberOfScans() {
+        return numberOfScans;
+    }
+
+    /**
+     * Sets numberOfScans.
+     *
+     * @param numberOfScans value of numberOfScans
+     */
+    public void setNumberOfScans(int numberOfScans) {
+        this.numberOfScans = numberOfScans;
     }
 
     /**
