@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
 import org.junit.After;
@@ -33,6 +34,13 @@ public class MetadataST extends BaseTestSelenium {
     public void hideStructureDataTest() throws Exception {
         Pages.getProcessesPage().goTo().editMetadata();
         assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
+    }
+
+    @Test
+    public void totalNumberOfScansTest() throws Exception {
+        Pages.getProcessesPage().goTo().editMetadata();
+        assertEquals("Total number of scans is not correct", "(Anzahl von Scans: 1)",
+                Pages.getMetadataEditorPage().getNumberOfScans());
     }
 
     @After

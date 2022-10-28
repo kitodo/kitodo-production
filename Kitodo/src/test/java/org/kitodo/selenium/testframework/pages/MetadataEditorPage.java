@@ -20,6 +20,10 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "structureTreeForm")
     private WebElement structureTreeForm;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "numberOfScans")
+    private WebElement numberOfScans;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -31,5 +35,14 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
 
     public boolean isStructureTreeFormVisible() {
         return structureTreeForm.isDisplayed();
+    }
+
+    /**
+     * Gets numberOfScans.
+     *
+     * @return value of numberOfScans
+     */
+    public String getNumberOfScans() {
+        return numberOfScans.getText();
     }
 }
