@@ -271,7 +271,7 @@ public class TaskTypeTest {
         Task task = prepareData().get(0);
         Map<String, Object> actual = taskType.createDocument(task);
 
-        assertEquals("Amount of keys is incorrect!", 25, actual.keySet().size());
+        assertEquals("Amount of keys is incorrect!", 30, actual.keySet().size());
 
         List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
         Map<String, Object> role = roles.get(0);

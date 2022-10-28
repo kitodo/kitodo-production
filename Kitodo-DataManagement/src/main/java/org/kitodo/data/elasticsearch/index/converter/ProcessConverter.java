@@ -223,6 +223,9 @@ public class ProcessConverter {
      * @return an enum representing the status
      */
     public static CorrectionComments getCorrectionCommentStatus(Process process) {
+        if (Objects.isNull(process)) {
+            return CorrectionComments.NO_CORRECTION_COMMENTS;
+        }
         List<Comment> correctionComments = process.getComments()
                 .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
         if (correctionComments.size() < 1) {

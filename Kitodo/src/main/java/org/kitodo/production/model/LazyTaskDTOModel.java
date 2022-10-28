@@ -32,6 +32,21 @@ import org.primefaces.model.SortOrder;
 
 public class LazyTaskDTOModel extends LazyDTOModel {
 
+    /**
+     * The elastic search field that is used to sort tasks by their processing status.
+     */
+    private static final String TASK_STATUS_FIELD = "processingStatus";
+
+    /**
+     * The elastic search field that is used to sort tasks by their correction comment status.
+     */
+    private static final String CORRECTION_COMMENT_STATUS_FIELD = "correctionCommentStatus";
+
+    /**
+     * The elastic search field that is used to sort tasks by the creation date of their process.
+     */
+    private static final String PROCESS_CREATION_DATE_FIELD = "process.creationDate";
+
     private boolean onlyOwnTasks = false;
     private boolean showAutomaticTasks = false;
     private boolean hideCorrectionTasks = false;
@@ -55,6 +70,11 @@ public class LazyTaskDTOModel extends LazyDTOModel {
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, FilterMeta> filters) {
+        // reverse sort order for some task list columns such that first click on column yields more useful ordering
+        if (sortField.equals(TASK_STATUS_FIELD) || sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) 
+                || sortField.equals(PROCESS_CREATION_DATE_FIELD)) {
+            sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        }
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
