@@ -36,6 +36,10 @@ public class MetadataST extends BaseTestSelenium {
         assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
     }
 
+
+    /**
+     * Tests total number of scans.
+     */
     @Test
     public void totalNumberOfScansTest() throws Exception {
         Pages.getProcessesPage().goTo().editMetadata();
