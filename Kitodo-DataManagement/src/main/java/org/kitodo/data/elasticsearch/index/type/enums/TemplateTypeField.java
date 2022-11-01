@@ -21,7 +21,8 @@ public enum TemplateTypeField implements TypeInterface {
     CLIENT_ID("client.id"),
     CLIENT_NAME("client.name"),
     DOCKET("docket"),
-    RULESET("ruleset"),
+    RULESET_ID("ruleset.id"),
+    RULESET_TITLE("ruleset.title"),
     WORKFLOW_TITLE("workflow.title"),
     PROJECTS("projects"),
     TASKS("tasks");
