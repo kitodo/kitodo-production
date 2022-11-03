@@ -11,7 +11,8 @@
 
 package org.kitodo.config;
 
-import java.util.Objects;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.configuration.AbstractConfiguration;
 import org.apache.commons.configuration.ConfigurationException;
@@ -26,7 +27,7 @@ import org.apache.logging.log4j.Logger;
 
 public abstract class Config {
     private static final Logger logger = LogManager.getLogger(Config.class);
-    private static volatile PropertiesConfiguration config;
+    private static final Map<String, PropertiesConfiguration> configMap = new ConcurrentHashMap<>();
 
     /**
      * Returns the configuration.
@@ -36,10 +37,10 @@ public abstract class Config {
      * @return the configuration
      */
     static PropertiesConfiguration getConfig(String configFile) {
-        if (Objects.isNull(config) || !configFile.equals(config.getFileName())) {
+        if (!configMap.containsKey(configFile)) {
             synchronized (Config.class) {
-                PropertiesConfiguration initialized = config;
-                if (Objects.isNull(initialized) || !configFile.equals(initialized.getFileName())) {
+                if (!configMap.containsKey(configFile)) {
+                    PropertiesConfiguration initialized;
                     AbstractConfiguration.setDefaultListDelimiter('&');
                     try {
                         initialized = new PropertiesConfiguration(configFile);
@@ -54,11 +55,11 @@ public abstract class Config {
                     initialized.setListDelimiter('&');
                     initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
                     initialized.setThrowExceptionOnMissing(true);
-                    config = initialized;
+                    configMap.put(configFile, initialized);
                 }
             }
         }
-        return config;
+        return configMap.get(configFile);
     }
 
     /**

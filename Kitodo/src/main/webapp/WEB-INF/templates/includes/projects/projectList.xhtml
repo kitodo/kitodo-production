@@ -51,6 +51,7 @@
         </p:column>
 
         <p:column headerText="#{msgs.metsRightsOwner}"
+                  sortBy="#{item.metsRightsOwner.keyword}"
                   rendered="#{ProjectForm.showColumn('project.metsRightsOwner')}">
             <h:outputText value="#{item.metsRightsOwner}"
                           title="#{item.metsRightsOwner}"/>

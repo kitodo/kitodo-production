@@ -3593,7 +3593,7 @@ footer {
     width: 75px;
 }
 
-#editForm\:importConfigurationTabView\:searchFieldTable .ui-datatable-tablewrapper {
+#editForm\:importConfigurationTabView .ui-datatable-tablewrapper {
     border: solid var(--default-border-width) var(--blue);
     border-radius: var(--default-border-radius);
 }

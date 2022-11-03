@@ -794,25 +794,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Check and return whether the process of the given task has any correction comments or not.
-     *
-     * @param task
-     *          TaskDTO to check
-     * @return 0, if process of given task has no correction comment
-     *         1, if process of given task has correction comments that are all corrected
-     *         2, if process of given task has at least one open correction comment
-     */
-    public int hasCorrectionComment(TaskDTO task) {
-        try {
-            return ProcessService.hasCorrectionComment(task.getProcess().getId()).getValue();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                    task.getProcess().getId() }, logger, e);
-            return 0;
-        }
-    }
-
-    /**
      * Retrieve correction comments of process of given task and return them as a tooltip String.
      *
      * @param taskDTO

@@ -22,7 +22,6 @@
                 <p:outputLabel for="searchFieldTable" value="#{msgs['importConfig.searchFields']}"/>
                 <p:dataTable id="searchFieldTable"
                              styleClass="input-with-button"
-                             style="display: inline-block;"
                              value="#{importConfigurationEditView.importConfiguration.searchFields}"
                              var="field">
                     <p:column id="fieldLabel"
@@ -49,6 +48,7 @@
                     <p:column id="actionColumn" styleClass="actionsColumn">
                         <p:commandLink id="editSearchField"
                                        styleClass="action"
+                                       process="@this"
                                        update="editSearchFieldDialog"
                                        oncomplete="PF('editSearchFieldDialog').show();">
                             <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
@@ -61,7 +61,8 @@
                                        update="editForm:importConfigurationTabView:searchFieldTable
                                                            editForm:importConfigurationTabView:defaultSearchField
                                                            editForm:importConfigurationTabView:idSearchField
-                                                           editForm:importConfigurationTabView:parentIdSearchField"
+                                                           editForm:importConfigurationTabView:parentIdSearchField
+                                                           editForm:importConfigurationTabView:addSearchField"
                                        oncomplete="toggleSave()">
                             <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
                         </p:commandLink>
@@ -71,12 +72,16 @@
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="searchFieldHelp"
                            value="#{msgs['tooltip.importConfig.searchFieldHelp']}"/>
-                <p:commandButton icon="fa fa-plus"
-                                 styleClass="secondary"
-                                 action="#{addSearchFieldDialogView.init()}"
-                                 process="@this"
-                                 update="addSearchFieldDialog"
-                                 oncomplete="PF('addSearchFieldDialog').show()"/>
+                <h:panelGroup id="addSearchField"
+                              title="#{(importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0) ? msgs['importConfig.custom.idSearchOnly'] : msgs['importConfig.addSearchField']}">
+                    <p:commandButton icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     action="#{addSearchFieldDialogView.init()}"
+                                     disabled="#{importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0}"
+                                     process="@this"
+                                     update="addSearchFieldDialog"
+                                     oncomplete="PF('addSearchFieldDialog').show()"/>
+                </h:panelGroup>
             </div>
         </p:row>
         <p:row>

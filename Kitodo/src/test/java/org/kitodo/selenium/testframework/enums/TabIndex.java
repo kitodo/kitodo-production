@@ -59,7 +59,12 @@ public enum TabIndex {
 
     // user configuration
     SETTINGS(0),
-    CHANGE_PASSWORD(1);
+    CHANGE_PASSWORD(1),
+
+    // import configuration edit page
+    IMPORT_CONFIGURATION_DETAILS(0),
+    IMPORT_CONFIGURATION_MAPPING_FILES(1);
+
 
     private final int index;
 

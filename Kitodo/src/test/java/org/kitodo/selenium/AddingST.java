@@ -30,12 +30,14 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.production.services.ServiceManager;
@@ -46,6 +48,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.generators.LdapGroupGenerator;
 import org.kitodo.selenium.testframework.generators.ProjectGenerator;
 import org.kitodo.selenium.testframework.generators.UserGenerator;
+import org.kitodo.selenium.testframework.pages.ImportConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.RoleEditPage;
@@ -59,6 +62,7 @@ public class AddingST extends BaseTestSelenium {
     private static UsersPage usersPage;
     private static RoleEditPage roleEditPage;
     private static UserEditPage userEditPage;
+    private static ImportConfigurationEditPage importConfigurationEditPage;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -67,6 +71,7 @@ public class AddingST extends BaseTestSelenium {
         usersPage = Pages.getUsersPage();
         userEditPage = Pages.getUserEditPage();
         roleEditPage = Pages.getRoleEditPage();
+        importConfigurationEditPage = Pages.getImportConfigurationEditPage();
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
     }
@@ -313,5 +318,17 @@ public class AddingST extends BaseTestSelenium {
                 .countAssignedClientAuthorities();
         assertEquals("Assigned client authorities of the new role were not saved!", availableClientAuthorities,
             assignedClientAuthorities);
+    }
+
+    @Test
+    public void addCustomImportconfigurationWithUrlParameters() throws Exception {
+        projectsPage.createNewImportConfiguration();
+        importConfigurationEditPage.insertImportConfigurationDataWithUrlParameters();
+        importConfigurationEditPage.save();
+        ImportConfiguration importConfiguration = ServiceManager.getImportConfigurationService().getById(4);
+        List<UrlParameter> urlParameters = importConfiguration.getUrlParameters();
+        assertEquals("Wrong number of custom URL parameters", 1, urlParameters.size());
+        assertEquals("Wrong URL parameter key", "testkey", urlParameters.get(0).getParameterKey());
+        assertEquals("Wrong URL parameter value", "testvalue", urlParameters.get(0).getParameterValue());
     }
 }

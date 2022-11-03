@@ -48,6 +48,8 @@
                                  required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
                                  editable="#{true}">
                     <f:selectItems value="#{importConfigurationEditView.recordIdXPathDefault}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
                 </p:selectOneMenu>
                 <p:commandButton id="metadataRecordIdXPathHelp"
                                  type="button"
@@ -110,6 +112,8 @@
                                  required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
                                  editable="#{true}">
                     <f:selectItems value="#{importConfigurationEditView.recordTitleXPathDefault}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
                 </p:selectOneMenu>
                 <p:commandButton id="metadataRecordTitleXPathHelp"
                                  type="button"

@@ -11,8 +11,6 @@
 
 package org.kitodo.data.database.beans;
 
-import java.util.Objects;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.ForeignKey;
@@ -130,17 +128,4 @@ public class SearchField extends BaseBean {
     public void setImportConfiguration(ImportConfiguration importConfiguration) {
         this.importConfiguration = importConfiguration;
     }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) {
-            return true;
-        }
-        if (object instanceof SearchField) {
-            SearchField searchField = (SearchField) object;
-            return Objects.equals(this.getId(), searchField.getId());
-        }
-        return false;
-    }
-
 }

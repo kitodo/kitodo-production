@@ -26,16 +26,17 @@
                  resizableColumns="true"
                  liveResize="true"
                  rows="#{LoginForm.loggedUser.tableSize}"
+                 sortBy="#{item.title}"
                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
                  paginatorPosition="bottom">
         <p:ajax event="page"
                 listener="#{AuthorityForm.onPageChange}"/>
-        <p:column headerText="#{msgs.authority}">
+        <p:column headerText="#{msgs.authority}" sortBy="#{item.title}">
             <h:outputText value="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"
                           title="#{HelperForm.getTranslated(item.titleWithoutSuffix)}"/>
         </p:column>
-        <p:column headerText="#{msgs.type}">
+        <p:column headerText="#{msgs.type}" sortBy="#{item.type}">
             <h:outputText value="#{HelperForm.getTranslated(item.type)}"
                           title="#{HelperForm.getTranslated(item.type)}"/>
         </p:column>

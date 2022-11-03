@@ -44,7 +44,10 @@
                              validator="XPathValidator"
                              value="#{importConfigurationEditView.importConfiguration.itemFieldOwnerSubPath}"
                              placeholder="#{msgs['importConfig.field.itemField.ownerSubpath']}"
-                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}"/>
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="itemFieldXPathOwnerSubPathHelpButton" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="itemFieldXPathOwnerSubPathHelpButton"
@@ -57,7 +60,10 @@
                              validator="XPathValidator"
                              value="#{importConfigurationEditView.importConfiguration.itemFieldSignatureSubPath}"
                              placeholder="#{msgs['importConfig.field.itemField.signatureSubpath']}"
-                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}"/>
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="itemFieldXPathSignatureSubPathHelpButton" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="itemFieldXPathSignatureSubPathHelpButton"
@@ -74,7 +80,10 @@
                              validator="XPathValidator"
                              value="#{importConfigurationEditView.importConfiguration.itemFieldOwnerMetadata}"
                              placeholder="#{msgs['importConfig.field.itemField.ownerSubpath']}"
-                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}"/>
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="itemFieldXPathOwnerMetadataHelpButton" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="itemFieldXPathOwnerMetadataHelpButton"
@@ -86,7 +95,10 @@
                              validator="XPathValidator"
                              value="#{importConfigurationEditView.importConfiguration.itemFieldSignatureMetadata}"
                              placeholder="#{msgs['importConfig.field.itemField.signatureMetadata']}"
-                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}"/>
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="itemFieldXPathSignatureMetadataHelpButton" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="itemFieldXPathSignatureMetadataHelpButton"
