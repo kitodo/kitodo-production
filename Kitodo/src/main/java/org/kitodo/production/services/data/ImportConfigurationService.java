@@ -69,8 +69,9 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
      * @return loaded data
      */
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public List<ImportConfiguration> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return dao.getByQuery("FROM ImportConfiguration"  + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
     /**

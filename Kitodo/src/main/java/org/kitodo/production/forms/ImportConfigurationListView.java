@@ -27,6 +27,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -36,6 +37,14 @@ public class ImportConfigurationListView extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(ImportConfigurationListView.class);
     private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
+
+    /**
+     * Empty default constructor that also sets the LazyDTOModel instance of this bean.
+     */
+    public ImportConfigurationListView() {
+        super();
+        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getImportConfigurationService()));
+    }
 
     /**
      * Get import configurations.
