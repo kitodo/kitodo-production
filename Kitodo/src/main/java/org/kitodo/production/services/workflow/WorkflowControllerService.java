@@ -433,7 +433,6 @@ public class WorkflowControllerService {
         Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!process.getSortHelperImages().equals(numberOfFiles)) {
             process.setSortHelperImages(numberOfFiles);
-            ServiceManager.getProcessService().save(process);
         }
 
         ServiceManager.getProcessService().save(process);

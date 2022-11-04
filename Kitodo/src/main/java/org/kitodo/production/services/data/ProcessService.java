@@ -272,25 +272,26 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public void save(Process process) throws DataException {
-        WorkflowControllerService.updateProcessSortHelperStatus(process);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent());
-        }
-        super.save(process);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent());
-        }
+        this.save(process, false);
     }
 
     @Override
     public void save(Process process, boolean updateRelatedObjectsInIndex) throws DataException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent(), updateRelatedObjectsInIndex);
+        
+        // save parent processes if they are new and do not have an id yet
+        List<Process> parents = findParentProcesses(process);
+        for (Process parent: parents) {
+            if (Objects.isNull(parent.getId())) {
+                super.save(parent, updateRelatedObjectsInIndex);
+            }
         }
+        
         super.save(process, updateRelatedObjectsInIndex);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent(), updateRelatedObjectsInIndex);
+
+        // save parent processes in order to refresh ElasticSearch index
+        for (Process parent : parents) {
+            super.save(parent, updateRelatedObjectsInIndex);
         }
     }
 
@@ -301,6 +302,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         enrichProcessData(process, false);
 
         super.saveToIndex(process, forceRefresh);
+    }
+
+    /**
+     * Find all parent processes for a process ordered such that the root parent comes first.
+     * 
+     * @param process the process whose parents are to be found
+     * @return the list of parent processes (direct parents and grand parents, and more)
+     */
+    public List<Process> findParentProcesses(Process process) {
+        List<Process> parents = new ArrayList<Process>();
+        Process current = process;
+        while (Objects.nonNull(current.getParent())) {
+            current = current.getParent();
+            parents.add(current);
+        }
+        Collections.reverse(parents);
+        return parents;
     }
 
     private int getNumberOfImagesForIndex(Workpiece workpiece) {
@@ -974,7 +992,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
     }
-    
 
     private List<BatchDTO> getBatchesForProcessDTO(Map<String, Object> jsonObject) throws DataException {
         List<Map<String, Object>> jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
