@@ -138,12 +138,12 @@
                                 <p:graphicImage alt="failed"
                                                 value="/pages/images/fail.svg"
                                                 style="max-height: 20px;"
-                                                rendered="#{indexingForm.allObjectsIndexingState == INDEXING_FAILED}"/>
+                                                rendered="#{indexingForm.allObjectsIndexingState == 'INDEXING_FAILED'}"/>
                                 <!--@elvariable id="INDEXING_SUCCESSFUL" type="org.kitodo.production.enums.IndexStates"-->
                                 <p:graphicImage alt="success"
                                                 value="/pages/images/success.svg"
                                                 style="max-height: 20px;"
-                                                rendered="#{indexingForm.allObjectsIndexingState == INDEXING_SUCCESSFUL and not indexingForm.indexingInProgress()}" />
+                                                rendered="#{indexingForm.allObjectsIndexingState == 'INDEXING_SUCCESSFUL' and not indexingForm.indexingInProgress()}" />
                             </td>
                         </tr>
                         </tbody>

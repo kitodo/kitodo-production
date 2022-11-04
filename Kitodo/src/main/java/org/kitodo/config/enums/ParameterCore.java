@@ -618,8 +618,11 @@ public enum ParameterCore implements ParameterInterface {
     /*
      * Elasticsearch properties
      */
-    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
     ELASTICSEARCH_INDEXLIMIT(new Parameter<>("elasticsearch.indexLimit", 5000)),
+    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
+    ELASTICSEARCH_ATTEMPTS(new Parameter<>("elasticsearch.attempts", 10)),
+    ELASTICSEARCH_TIME_BETWEEN_ATTEMPTS(new Parameter<>("elasticsearch.timeBetweenAttempts", 2000)),
+    ELASTICSEARCH_THREADS(new Parameter<>("elasticsearch.threads", 4)),
 
     /*
      * Security properties

@@ -17,11 +17,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ThreadFactory;
 
 import javax.faces.push.PushContext;
 import javax.json.Json;
@@ -43,6 +47,7 @@ import org.kitodo.production.enums.IndexStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.IndexWorker;
+import org.kitodo.production.helper.IndexWorkerStatus;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
 
@@ -54,7 +59,6 @@ public class IndexingService {
 
     private static final List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
     private final Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
-    private final Map<ObjectType, List<IndexWorker>> indexWorkers = new EnumMap<>(ObjectType.class);
     private final Map<ObjectType, IndexStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
     private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
 
@@ -72,13 +76,12 @@ public class IndexingService {
 
     static final int PAUSE = 1000;
 
+    private IndexWorkerStatus indexWorkerStatus = null;
+    private IndexManagmentThread indexAllThread = null;
     private boolean indexingAll = false;
 
-    private IndexWorker currentIndexWorker;
     private ObjectType currentIndexState = ObjectType.NONE;
     private IndexStates currentState = IndexStates.NO_STATE;
-
-    private Thread indexerThread = null;
 
     private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
@@ -111,7 +114,6 @@ public class IndexingService {
         }
         indexRestClient.setIndexBase(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         try {
-            prepareIndexWorker();
             countDatabaseObjects();
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -222,52 +224,43 @@ public class IndexingService {
         }
     }
 
-    private void prepareIndexWorker() throws DAOException {
-
-        int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
-        for (ObjectType objectType : ObjectType.values()) {
-            List<IndexWorker> indexWorkerList = new ArrayList<>();
-
-            int databaseObjectsSize = getNumberOfDatabaseObjects(objectType);
-            if (databaseObjectsSize > indexLimit) {
-                int start = 0;
-
-                while (start < databaseObjectsSize) {
-                    indexWorkerList.add(new IndexWorker(searchServices.get(objectType), start));
-                    start += indexLimit;
-                }
-            } else {
-                indexWorkerList.add(new IndexWorker(searchServices.get(objectType)));
-            }
-
-            indexWorkers.put(objectType, indexWorkerList);
-        }
-    }
-
     /**
-     * Index all objects of given type 'objectType'.
+     * Manage indexing for a given object type.
+     * 
+     * <p>This method is executed in the `IndexManagementThread`.</p>
      *
      * @param type
      *            type objects that get indexed
      */
-    public void startIndexing(ObjectType type, PushContext pushContext) throws DataException, CustomResponseException {
+    public IndexWorkerStatus runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) 
+            throws DataException, CustomResponseException, DAOException {
         SearchService searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
+
         if (countDatabaseObjects.get(type) > 0) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
-            Long amountInIndex = searchService.count();
-            long indexBatches = 0L;
+            if (indexAllObjects) {
+                // only check for loose index data when indexing full objects
+                Long amountInIndex = searchService.count();
+                long offset = 0L;
 
-            while (indexBatches < amountInIndex) {
-                searchService.removeLooseIndexData(searchService.findAllIDs(indexBatches, indexLimit));
-                indexBatches += indexLimit;
+                // remove documents in index that are no longer available in database
+                // by iterating over all indexed documents in elastic search
+                try {
+                    while (offset < amountInIndex) {
+                        // TODO: actually iterate over all elastic search documents
+                        searchService.removeLooseIndexData(searchService.findAllIDs(offset, indexLimit));
+                        offset += indexLimit;
+                    }
+                } catch (RuntimeException e) {
+                    // this is an elastic search exception, but elastic search is not available here
+                    logger.info("Cannot check documents beyond elastic search max_result_window, continuing ...");
+                }
             }
 
-            for (IndexWorker worker : indexWorkerList) {
-                currentIndexWorker = worker;
-                runIndexing(currentIndexWorker, type, pushContext);
-            }
+            return spawnIndexingThreads(type, pushContext, indexAllObjects);
         }
+
+        return null;
     }
 
     /**
@@ -286,50 +279,119 @@ public class IndexingService {
         return 0;
     }
 
-    /**
-     * Index all objects of given type 'objectType'.
-     *
-     * @param type
-     *            type objects that get indexed
-     */
-    public void startIndexingRemaining(ObjectType type, PushContext context) {
-        if (countDatabaseObjects.get(type) > 0) {
-            List<IndexWorker> indexWorkerList = indexWorkers.get(type);
-            for (IndexWorker worker : indexWorkerList) {
-                worker.setIndexAllObjects(false);
-                currentIndexWorker = worker;
-                runIndexing(currentIndexWorker, type, context);
+    private ExecutorService createDeamonizedExecutorService(int threads) {
+        return Executors.newFixedThreadPool(threads,
+            new ThreadFactory() {
+                public Thread newThread(Runnable r) {
+                    Thread t = Executors.defaultThreadFactory().newThread(r);
+                    t.setDaemon(true);
+                    return t;
+                }
             }
-        }
+        );
     }
 
-    private void runIndexing(IndexWorker worker, ObjectType type, PushContext pollingChannel) {
-        currentState = IndexStates.NO_STATE;
-        int attempts = 0;
-        while (attempts < ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT)) {
-            try {
-                if (Objects.equals(currentIndexState, ObjectType.NONE) || Objects.equals(currentIndexState, type)) {
-                    if (Objects.equals(currentIndexState, ObjectType.NONE)) {
-                        logger.debug("Starting indexing of type {}", type);
-                        currentIndexState = type;
-                        objectIndexingStates.put(type, IndexStates.INDEXING_STARTED);
-                        pollingChannel.send(INDEXING_STARTED_MESSAGE + currentIndexState);
-                    }
-                    indexerThread = new Thread(worker);
-                    indexerThread.setName("Indexing " + worker.getIndexedObjects() + " of type " + type);
-                    indexerThread.setDaemon(true);
-                    indexerThread.start();
-                    indexerThread.join();
-                    break;
-                } else {
-                    logger.debug("Cannot start '{}' indexing while a different indexing process running: '{}'", type,
-                            this.currentIndexState);
-                    Thread.sleep(PAUSE);
-                    attempts++;
+    /**
+     * Create multiple indexing worker threads and wait until they are finished.
+     * 
+     * <p>This method is executed in the `IndexAllThread`.</p>
+     * 
+     * @param type the object type to be indexed
+     * @param pollingChannel the UI polling channel for triggering updates
+     * @param indexAllObjects whehter all or only remaining objects are indexed
+     */
+    private IndexWorkerStatus spawnIndexingThreads(ObjectType type, PushContext pollingChannel, boolean indexAllObjects) 
+            throws DAOException {
+        // declare that indexing for type has started
+        currentIndexState = type;
+        currentState = IndexStates.INDEXING_STARTED;
+        objectIndexingStates.put(type, IndexStates.INDEXING_STARTED);
+
+        int threads = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_THREADS);
+        int totalNumberOfObjects = getNumberOfDatabaseObjects(type);
+        int batchSize = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_BATCH);
+        int maxBatch = (int)Math.ceil((double)(totalNumberOfObjects) / (double)(batchSize));
+
+        // create new thread-safe indexing status
+        indexWorkerStatus = new IndexWorkerStatus(maxBatch);
+
+        logger.info("start " + threads + " threads for indexing " + type.toString());
+        ExecutorService executor = null;
+        try {
+            executor = createDeamonizedExecutorService(threads);
+
+            List<Future<?>> futures = new LinkedList<Future<?>>();
+            for (int i = 0; i < threads; i++) {
+                Future<?> future = executor.submit(new IndexWorker(getService(type), type, indexWorkerStatus, indexAllObjects));
+                futures.add(future);
+            }
+
+            waitWhileIndexing(type, futures, pollingChannel);
+        } finally {
+            if (Objects.nonNull(executor)) {
+                executor.shutdown();
+            }
+        }
+
+        return indexWorkerStatus;
+    }
+
+    /**
+     * Wait and check whether index worker threads have finished or failed. 
+     * 
+     * <p>Also trigger UI updates every second.</p>
+     * 
+     * <p>This method is executed in the `IndexAllThread`.</p>
+     * 
+     * @param type the object type currently being indexed
+     * @param futures a list of futures allowing to check the status of the worker threads
+     * @param pollingChannel the UI polling channel
+     */
+    private void waitWhileIndexing(ObjectType type, List<Future<?>> futures, PushContext pollingChannel) {
+        // send update that indexing has started (activating polling in user interface)
+        pollingChannel.send(INDEXING_STARTED_MESSAGE + type);
+
+        while (true) {
+            // check whether all jobs are done
+            boolean done = true;
+            boolean failed = indexWorkerStatus.hasFailed() || indexWorkerStatus.isCanceled();
+            for (Future<?> future : futures) {
+                if (!future.isDone()) {
+                    done = false;
                 }
+                if (future.isCancelled()) {
+                    failed = true;
+                }
+            }
+
+            // check for failure first (in case all threads have already stopped gracefully and are done)
+            if (failed) {
+                logger.info("indexing of " + type.toString() + " failed, cleaning up");
+                currentIndexState = ObjectType.NONE;
+                currentState = IndexStates.INDEXING_FAILED;
+                objectIndexingStates.put(type, IndexStates.INDEXING_FAILED);
+
+                // make sure to stop any remaining other worker threads
+                for (Future<?> future : futures) {
+                    future.cancel(true);
+                }
+                break;
+            }
+
+            if (done) {
+                // indexing has completed
+                logger.info("indexing of " + type.toString() + " finished successfully");
+                currentIndexState = ObjectType.NONE;
+                currentState = IndexStates.INDEXING_SUCCESSFUL;
+                objectIndexingStates.put(type, IndexStates.INDEXING_SUCCESSFUL);
+                break;
+            }           
+
+            // wait a bit
+            try {
+                Thread.sleep(PAUSE);
             } catch (InterruptedException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-                Thread.currentThread().interrupt();
+                logger.trace("Index management sleep interrupted while waiting for worker threads to finish indexing");
             }
         }
     }
@@ -353,7 +415,6 @@ public class IndexingService {
             } else {
                 objectIndexingStates.put(currentType, IndexStates.INDEXING_SUCCESSFUL);
             }
-            indexerThread.interrupt();
             pollingChannel.send(INDEXING_FINISHED_MESSAGE + currentType + "!");
         }
         return progress;
@@ -530,26 +591,48 @@ public class IndexingService {
         }
     }
 
-    /**
-     * Start indexing of all database objects in separate thread.
-     */
-    public void startAllIndexing(PushContext context) {
-        IndexAllThread indexAllThread = new IndexAllThread(context, this);
-        indexAllThread.setName("IndexAllThread");
-        indexAllThread.start();
+    private void startIndexingThread(PushContext context, boolean indexAllObjects, ObjectType objectType) throws IllegalStateException {
+        if (Objects.isNull(indexAllThread) || !indexAllThread.isAlive()) {
+            indexAllThread = new IndexManagmentThread(context, this, objectType, indexAllObjects);
+            indexAllThread.setName("IndexManagementThread");
+            indexAllThread.start();
+        } else {
+            throw new IllegalStateException("indexing already in progress, can not start again");
+        }
     }
 
     /**
-     * Starts the process of indexing all objects to the ElasticSearch index.
+     * Start indexing of all objects of specific object type.
+     * 
+     * @param context the UI context
+     * @param objectType the object type to index
+     */
+    public void startIndexing(PushContext context, ObjectType objectType) {
+        startIndexingThread(context, true, objectType);
+    }
+
+    /**
+     * Start indexing of remaining objects of specific object type.
+     * 
+     * @param context the UI context
+     * @param objectType the object type to index
+     */
+    public void startIndexingRemaining(PushContext context, ObjectType objectType) {
+        startIndexingThread(context, false, objectType);
+    }
+
+    /**
+     * Start indexing of all database objects independent of object type.
+     */
+    public void startAllIndexing(PushContext context) {
+        startIndexingThread(context, true, null);
+    }
+
+    /**
+     * Starts indexing all remaining database objects independent of object type.
      */
     public void startAllIndexingRemaining(PushContext pushContext) {
-        for (Map.Entry<ObjectType, List<IndexWorker>> workerEntry : indexWorkers.entrySet()) {
-            List<IndexWorker> indexWorkerList = workerEntry.getValue();
-            for (IndexWorker worker : indexWorkerList) {
-                worker.setIndexAllObjects(false);
-            }
-        }
-        startAllIndexing(pushContext);
+        startIndexingThread(pushContext, false, null);
     }
 
     void setIndexingAll(boolean indexing) {
@@ -558,6 +641,15 @@ public class IndexingService {
 
     void resetCurrentIndexState() {
         currentIndexState = ObjectType.NONE;
+    }
+
+    /**
+     * Cancels indexing upon user request.
+     */
+    public void cancelIndexing() {
+        if (Objects.nonNull(indexWorkerStatus)) {
+            indexWorkerStatus.markAsCanceled();
+        }
     }
 
     /**
