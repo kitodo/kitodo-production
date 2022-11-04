@@ -1151,10 +1151,10 @@ public class ImportService {
             setParentProcess(parentId, projectId, template, importConfiguration.getIdentifierMetadata());
             tempProcess = processList.get(0);
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
+            tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
                     "create", Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage),
                     parentTempProcess);
-            tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
             if (StringUtils.isBlank(title)) {
