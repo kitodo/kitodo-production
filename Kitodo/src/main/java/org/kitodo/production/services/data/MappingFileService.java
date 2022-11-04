@@ -63,8 +63,9 @@ public class MappingFileService extends SearchDatabaseService<MappingFile, Mappi
      * @return loaded data
      */
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
-        return null;
+    @SuppressWarnings("unchecked")
+    public List<MappingFile> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+        return dao.getByQuery("FROM MappingFile"  + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
     /**
@@ -87,6 +88,6 @@ public class MappingFileService extends SearchDatabaseService<MappingFile, Mappi
      */
     @Override
     public Long countResults(Map filters) throws DAOException, DataException {
-        return null;
+        return countDatabaseRows();
     }
 }
