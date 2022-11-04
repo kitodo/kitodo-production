@@ -148,13 +148,7 @@
                         </tr>
                         </tbody>
                     </table>
-                    
-                    <ui:fragment rendered="#{indexingForm.indexingInProgress()}">
-                        <h:outputText value="Indexing started by '#{indexingForm.indexingStartedUser}' at #{indexingForm.indexingStartedTime} (" />
-                        <p:commandLink value="cancel" action="#{indexingForm.cancelIndexing}" />
-                        <h:outputText value=")" />
-                    </ui:fragment>
-                    
+                    <h:outputText value="Indexing started by '#{indexingForm.indexingStartedUser}' at #{indexingForm.indexingStartedTime}" rendered="#{not empty indexingForm.indexingStartedTime}"/>
                 </p:panel>
                 <p:commandButton class="refreshTable" update="indexingTable" style="visibility: hidden;"/>
                 <p:poll widgetVar="progressPoll" update="indexingTable" interval="1" autoStart="false"/>
