@@ -1,0 +1,82 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="addUrlParameterDialog"
+              width="640"
+              resizable="false"
+              modal="true"
+              dynamic="true"
+              widgetVar="addUrlParameterDialog">
+        <h:form id="addUrlParameterForm">
+            <h3>#{msgs['importConfig.addUrlParameter']}</h3>
+            <h:panelGroup layout="block"
+                          styleClass="not-scrollable dialogFieldWrapper">
+                <p:panelGrid columns="1"
+                             layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="urlParameterKey"
+                                           value="#{msgs['importConfig.urlParameterKey']}"/>
+                            <p:inputText id="urlParameterKey"
+                                         styleClass="input-with-button"
+                                         value="#{addUrlParameterDialogView.urlParameter.parameterKey}"/>
+                            <p:commandButton id="urlParameterKeyHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="urlParameterKeyHelp"
+                                       value="Key of parameter added to each query of this custom search interface"/>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="urlParameterValue"
+                                           value="#{msgs['importConfig.urlParameterValue']}"/>
+                            <p:inputText id="urlParameterValue"
+                                         styleClass="input-with-button"
+                                         value="#{addUrlParameterDialogView.urlParameter.parameterValue}"/>
+                            <p:commandButton id="urlParameterValueHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="urlParameterValueHelp"
+                                       value="Value of parameter added to each query of this custom search interface"/>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton id="apply"
+                                 action="#{importConfigurationEditView.addUrlParameter(addUrlParameterDialogView.urlParameter)}"
+                                 update="editForm:importConfigurationTabView:urlParameterTable
+                                         editForm:error-messages"
+                                 oncomplete="PF('addUrlParameterDialog').hide();toggleSave();"
+                                 value="#{msgs.apply}"
+                                 styleClass="primary right"/>
+                <p:commandButton id="cancel"
+                                 type="button"
+                                 onclick="PF('addUrlParameterDialog').hide();"
+                                 value="#{msgs.cancel}"
+                                 icon="fa fa-times fa-log"
+                                 iconPos="right"
+                                 styleClass="secondary right"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

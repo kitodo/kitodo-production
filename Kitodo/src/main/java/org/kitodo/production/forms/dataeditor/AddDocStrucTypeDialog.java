@@ -251,6 +251,12 @@ public class AddDocStrucTypeDialog {
      * @return the selected item of the docStructPositionSelection
      */
     public InsertionPosition getSelectedDocStructPosition() {
+        if (!docStructPositionSelectionItems.stream()
+                .map(SelectItem::getValue)
+                .collect(Collectors.toList())
+                .contains(selectedDocStructPosition)) {
+            setSelectedDocStructPosition(LAST_CHILD_OF_CURRENT_ELEMENT);
+        }
         return selectedDocStructPosition;
     }
 
@@ -578,7 +584,6 @@ public class AddDocStrucTypeDialog {
         elementsToAddSpinnerValue = 1;
         selectFirstPageOnAddNode = null;
         selectLastPageOnAddNode = null;
-        selectedDocStructPosition = LAST_CHILD_OF_CURRENT_ELEMENT;
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
             dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
             previouslySelectedLogicalNode = null;

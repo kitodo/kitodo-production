@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -28,12 +29,19 @@ public class TasksPage extends Page<TasksPage> {
 
     private static final String TASKS_TAB_VIEW = "tasksTabView";
     private static final String TASK_TABLE = TASKS_TAB_VIEW + ":tasksForm:taskTable";
+    private static final String TASK_TABLE_DATA = TASK_TABLE + "_data";
+    private static final String TASK_TABLE_HEADER = TASK_TABLE + "_head";
     private static final String STATUS_FORM = TASKS_TAB_VIEW + ":statusForm";
     private static final String WAIT_FOR_FILTER_FORM_MENU = "Wait for filter form menu to open";
+    private static final String WAIT_FOR_TASK_TABLE_COLUMN_SORT = "Wait for task table column sort";
 
     @SuppressWarnings("unused")
-    @FindBy(id = TASK_TABLE + DATA)
+    @FindBy(id = TASK_TABLE_DATA)
     private WebElement taskTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = TASK_TABLE_HEADER)
+    private WebElement taskTableHeader;
 
     private WebElement editTaskLink;
 
@@ -113,6 +121,39 @@ public class TasksPage extends Page<TasksPage> {
         editTaskLink.click();
     }
 
+    /**
+     * Clicks the header of the the n-th column of the task table in order to 
+     * trigger sorting tasks by that column.
+     */
+    public void clickTaskTableColumnHeaderForSorting(int column) {
+        WebElement columnHeader = taskTableHeader.findElement(By.cssSelector("tr th:nth-child(" + column + ")"));
+        // remember aria-sort attribute of th-tag of title column
+        String previousAriaSort = columnHeader.getAttribute("aria-sort");
+
+        // click title th-tag to trigger sorting
+        columnHeader.click();
+
+        // wait for the sorting to be applied (which requires ajax request to backend)
+        await(WAIT_FOR_TASK_TABLE_COLUMN_SORT)
+            .pollDelay(100, TimeUnit.MILLISECONDS)
+            .atMost(10, TimeUnit.SECONDS)
+            .ignoreExceptions()
+            .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
+    }
+
+    /**
+     * Returns the task title of the first row in the task table.
+     * 
+     * @return the task title
+     */
+    public String getFirstRowTaskTitle() {
+        List<String> taskTitles = getTableDataByColumn(taskTable, 1);
+        if (taskTitles.size() > 0) {
+            return taskTitles.get(0);
+        }
+        return "";
+    }
+
     private void setEditTaskLink(String taskTitle, String processTitle) {
         int index = getRowIndexForTask(taskTable, taskTitle, processTitle);
         editTaskLink = Browser.getDriver().findElementById(TASK_TABLE + ":" + index + ":editOwnTask");
@@ -138,5 +179,5 @@ public class TasksPage extends Page<TasksPage> {
 
         throw new NotFoundException("Row for task title " + searchedTaskTitle + " and process title "
                 + searchedProcessTitle + "was not found!");
-    }
+    }    
 }

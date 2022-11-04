@@ -29,6 +29,7 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
@@ -173,6 +174,8 @@ public abstract class BaseType<T extends BaseIndexedBean> implements TypeInterfa
             return preventNull(((Workflow) baseBean).getTitle());
         } else if (baseBean instanceof Client) {
             return preventNull(((Client) baseBean).getName());
+        } else if (baseBean instanceof Ruleset) {
+            return preventNull(((Ruleset) baseBean).getTitle());
         }
         return "";
     }

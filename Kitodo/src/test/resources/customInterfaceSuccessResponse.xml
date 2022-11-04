@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<zs:searchRetrieveResponse xmlns:zs="http://www.loc.gov/zing/srw/"><zs:version>1.1</zs:version><zs:numberOfRecords>1</zs:numberOfRecords><zs:records><zs:record><zs:recordSchema>picaxml</zs:recordSchema><zs:recordPacking>xml</zs:recordPacking><zs:recordData><record xmlns="info:srw/schema/5/picaXML-v1.0">
+    <datafield tag="001@">
+        <subfield code="0">2006,2403</subfield>
+    </datafield>
+    <datafield tag="001A">
+        <subfield code="0">DDSU:09-11-12</subfield>
+    </datafield>
+    <datafield tag="001B">
+        <subfield code="0">BSZ:13-06-19</subfield>
+        <subfield code="t">10:39:10.000</subfield>
+    </datafield>
+    <datafield tag="001D">
+        <subfield code="0">DDSU:10-11-14</subfield>
+    </datafield>
+    <datafield tag="001U">
+        <subfield code="0">utf8</subfield>
+    </datafield>
+    <datafield tag="001X">
+        <subfield code="0">0</subfield>
+    </datafield>
+    <datafield tag="002@">
+        <subfield code="0">Oav</subfield>
+    </datafield>
+    <datafield tag="002C">
+        <subfield code="a">Text</subfield>
+        <subfield code="b">txt</subfield>
+    </datafield>
+    <datafield tag="002D">
+        <subfield code="a">Computermedien</subfield>
+        <subfield code="b">c</subfield>
+    </datafield>
+    <datafield tag="002E">
+        <subfield code="a">Online-Ressource</subfield>
+        <subfield code="b">cr</subfield>
+    </datafield>
+    <datafield tag="003@">
+        <subfield code="0">12345</subfield>
+    </datafield>
+    <datafield tag="003S">
+        <subfield code="0">373484887</subfield>
+    </datafield>
+    <datafield tag="003T">
+        <subfield code="a">OCoLC</subfield>
+        <subfield code="0">820477732</subfield>
+    </datafield>
+    <datafield tag="004U">
+        <subfield code="0">urn:nbn:de:bsz:14-db-id3734848878</subfield>
+    </datafield>
+    <datafield tag="006M">
+        <subfield code="0">VD18 11358211</subfield>
+    </datafield>
+    <datafield tag="007G">
+        <subfield code="i">BSZ</subfield>
+        <subfield code="0">373484887</subfield>
+    </datafield>
+    <datafield tag="007S">
+        <subfield code="S">s</subfield>
+        <subfield code="0">NUC</subfield>
+    </datafield>
+    <datafield tag="007S">
+        <subfield code="S">s</subfield>
+        <subfield code="0">Cat.Gen.</subfield>
+    </datafield>
+    <datafield tag="008@">
+        <subfield code="b">RedVD18-DE-14</subfield>
+    </datafield>
+    <datafield tag="009@">
+        <subfield code="b">vd18</subfield>
+    </datafield>
+    <datafield tag="009@">
+        <subfield code="a">SWB</subfield>
+        <subfield code="b">ld</subfield>
+    </datafield>
+    <datafield tag="009A">
+        <subfield code="c">SLUB Dresden</subfield>
+        <subfield code="a">Lit.Graec.B.2615</subfield>
+    </datafield>
+    <datafield tag="010@">
+        <subfield code="a">lat</subfield>
+        <subfield code="a">gre</subfield>
+    </datafield>
+    <datafield tag="011@">
+        <subfield code="a">1713</subfield>
+    </datafield>
+    <datafield tag="011B">
+        <subfield code="a">2012</subfield>
+    </datafield>
+    <datafield tag="017C">
+        <subfield code="u">http://digital.slub-dresden.de/id373484887</subfield>
+        <subfield code="x">D</subfield>
+        <subfield code="3">Volltext</subfield>
+        <subfield code="4">LF</subfield>
+        <subfield code="5">34</subfield>
+    </datafield>
+    <datafield tag="021A">
+        <subfield code="a">Ki. tolianu dophistu</subfield>
+        <subfield code="h">Cum notis Johannis Schefferi, interpretatione Justi Vulteii, Variis item Lectionibus trium Msctorum Codicum e Regia Parisiensi Bibliotheca ... Annotationibusque Joachimi Kühnii</subfield>
+    </datafield>
+    <datafield tag="021G">
+        <subfield code="a">Cl. Aeliani ... Variae historiae libri XIV</subfield>
+    </datafield>
+    <datafield tag="025@">
+        <subfield code="a">Poikilē historia</subfield>
+    </datafield>
+    <datafield tag="028A">
+        <subfield code="9">079955614</subfield>
+        <subfield code="V">Tpv1</subfield>
+        <subfield code="7">gnd/119160285</subfield>
+        <subfield code="3">160031745</subfield>
+        <subfield code="w">piz</subfield>
+        <subfield code="A">Aelianus</subfield>
+        <subfield code="D">Claudius</subfield>
+        <subfield code="E">170</subfield>
+        <subfield code="M">240</subfield>
+    </datafield>
+    <datafield tag="028C">
+        <subfield code="9">077449827</subfield>
+        <subfield code="V">Tpv1</subfield>
+        <subfield code="7">gnd/115755470</subfield>
+        <subfield code="3">290058465</subfield>
+        <subfield code="w">piz</subfield>
+        <subfield code="A">Lederlin</subfield>
+        <subfield code="D">Jean Henri</subfield>
+        <subfield code="E">1672</subfield>
+        <subfield code="M">1737</subfield>
+        <subfield code="B">Hrsg.</subfield>
+    </datafield>
+    <datafield tag="028C">
+        <subfield code="9">367774283</subfield>
+        <subfield code="V">Tpv1</subfield>
+        <subfield code="7">gnd/124906761</subfield>
+        <subfield code="3">294562575</subfield>
+        <subfield code="w">piz</subfield>
+        <subfield code="A">Vultejus</subfield>
+        <subfield code="D">Justus</subfield>
+        <subfield code="E">1529</subfield>
+        <subfield code="M">1575</subfield>
+        <subfield code="B">Übers.</subfield>
+    </datafield>
+    <datafield tag="028C">
+        <subfield code="9">13970907X</subfield>
+        <subfield code="V">Tpv1</subfield>
+        <subfield code="7">gnd/100331181</subfield>
+        <subfield code="3">288647130</subfield>
+        <subfield code="w">piz</subfield>
+        <subfield code="A">Scheffer</subfield>
+        <subfield code="D">Johannes</subfield>
+        <subfield code="E">1621</subfield>
+        <subfield code="M">1679</subfield>
+        <subfield code="B">Komm.</subfield>
+    </datafield>
+    <datafield tag="028C">
+        <subfield code="9">1231853166</subfield>
+        <subfield code="V">Tnx</subfield>
+        <subfield code="3">161853161</subfield>
+        <subfield code="A">Kühn</subfield>
+        <subfield code="D">Joachim</subfield>
+        <subfield code="B">Komm.</subfield>
+    </datafield>
+    <datafield tag="032@">
+        <subfield code="a">Editio Postrema curante Joh. Henrico Lederlino</subfield>
+    </datafield>
+    <datafield tag="032C">
+        <subfield code="a">Online-Ausg.</subfield>
+    </datafield>
+    <datafield tag="033A">
+        <subfield code="p">Argentorati</subfield>
+        <subfield code="n">Dulssecker</subfield>
+    </datafield>
+    <datafield tag="033D">
+        <subfield code="9">106149253</subfield>
+        <subfield code="V">Tgv1</subfield>
+        <subfield code="7">gnd/4057878-1</subfield>
+        <subfield code="3">209123990</subfield>
+        <subfield code="w">gik</subfield>
+        <subfield code="p">Straßburg</subfield>
+        <subfield code="4">pup</subfield>
+    </datafield>
+    <datafield tag="033N">
+        <subfield code="p">Dresden</subfield>
+        <subfield code="n">SLUB</subfield>
+    </datafield>
+    <datafield tag="033Q">
+        <subfield code="a">Online-Ressource</subfield>
+    </datafield>
+    <datafield tag="034D">
+        <subfield code="a">[11] Bl., 825, [118] Bl.</subfield>
+    </datafield>
+    <datafield tag="034I">
+        <subfield code="a">8o</subfield>
+    </datafield>
+    <datafield tag="034M">
+        <subfield code="a">Frontisp.</subfield>
+    </datafield>
+    <datafield tag="036L">
+        <subfield code="a">Drucke des 18. Jahrhunderts</subfield>
+    </datafield>
+    <datafield tag="036L" occurrence="01">
+        <subfield code="a">VD18 digital</subfield>
+    </datafield>
+    <datafield tag="036M">
+        <subfield code="9">1382640374</subfield>
+        <subfield code="R">Odu</subfield>
+        <subfield code="5">312640374</subfield>
+        <subfield code="a">Drucke des 18. Jahrhunderts</subfield>
+        <subfield code="p">Dresden</subfield>
+        <subfield code="n">SLUB</subfield>
+        <subfield code="h">20XX</subfield>
+    </datafield>
+    <datafield tag="037A">
+        <subfield code="a">Text griech., in griech. Schr., u. lat., Anm. lat.</subfield>
+    </datafield>
+    <datafield tag="039D">
+        <subfield code="i">Druckausg.</subfield>
+        <subfield code="9">1087020662</subfield>
+        <subfield code="R">Aav</subfield>
+        <subfield code="5">017020662</subfield>
+        <subfield code="V">Tpv1</subfield>
+        <subfield code="7">gnd/119160285</subfield>
+        <subfield code="3">160031745</subfield>
+        <subfield code="w">piz</subfield>
+        <subfield code="A">Aelianus</subfield>
+        <subfield code="D">Claudius</subfield>
+        <subfield code="E">170</subfield>
+        <subfield code="M">240</subfield>
+        <subfield code="t">Poikilē historia</subfield>
+        <subfield code="g">Editio Postrema curante Joh. Henrico Lederlino</subfield>
+        <subfield code="d">Argentorati</subfield>
+        <subfield code="e">Dulssecker</subfield>
+        <subfield code="f">1713</subfield>
+        <subfield code="h">[11] Bl., 825, [118] Bl.</subfield>
+    </datafield>
+    <datafield tag="044S">
+        <subfield code="9">096630825</subfield>
+        <subfield code="V">Tsv</subfield>
+        <subfield code="a">Anthologie</subfield>
+    </datafield>
+    <datafield tag="044S">
+        <subfield code="9">096630760</subfield>
+        <subfield code="V">Tsv</subfield>
+        <subfield code="a">Altertumskunde</subfield>
+    </datafield>
+    <datafield tag="046H">
+        <subfield code="a">Vorlageform d. Erscheinungsvermerks: ARGENTORATI, Sumptibus JOH. REINHOLDI DULSSECKERI. ANNO M DCC XIII.</subfield>
+    </datafield>
+    <datafield tag="046X">
+        <subfield code="a">aa</subfield>
+        <subfield code="f">VD18</subfield>
+        <subfield code="5">DE-14</subfield>
+    </datafield>
+    <datafield tag="047A">
+        <subfield code="a">IMD-Felder und 1131 maschinell ergänzt (SWB)</subfield>
+    </datafield>
+    <datafield tag="101@">
+        <subfield code="a">2006</subfield>
+        <subfield code="c">PICA</subfield>
+    </datafield>
+    <datafield tag="201A" occurrence="01">
+        <subfield code="0">09-11-12</subfield>
+    </datafield>
+    <datafield tag="201B" occurrence="01">
+        <subfield code="0">09-11-12</subfield>
+        <subfield code="t">11:50:38.000</subfield>
+    </datafield>
+    <datafield tag="201D" occurrence="01">
+        <subfield code="0">DDSU:09-11-12</subfield>
+    </datafield>
+    <datafield tag="201U" occurrence="01">
+        <subfield code="0">utf8</subfield>
+    </datafield>
+    <datafield tag="203@" occurrence="01">
+        <subfield code="0">2728408912</subfield>
+    </datafield>
+    <datafield tag="203S" occurrence="01">
+        <subfield code="0">728408910</subfield>
+    </datafield>
+    <datafield tag="208@" occurrence="01">
+        <subfield code="a">09-11-12</subfield>
+        <subfield code="b">l01</subfield>
+    </datafield>
+    <datafield tag="209A" occurrence="01">
+        <subfield code="B">14</subfield>
+        <subfield code="x">00</subfield>
+    </datafield>
+    <datafield tag="209B" occurrence="01">
+        <subfield code="a">dmas</subfield>
+        <subfield code="a">zvdd</subfield>
+        <subfield code="x">12</subfield>
+    </datafield>
+</record></zs:recordData><zs:recordPosition>1</zs:recordPosition></zs:record></zs:records><zs:echoedSearchRetrieveRequest><zs:version>1.1</zs:version><zs:query>pica.ppn=12345</zs:query><zs:maximumRecords>1</zs:maximumRecords><zs:recordPacking>xml</zs:recordPacking><zs:recordSchema>picaxml</zs:recordSchema></zs:echoedSearchRetrieveRequest></zs:searchRetrieveResponse>

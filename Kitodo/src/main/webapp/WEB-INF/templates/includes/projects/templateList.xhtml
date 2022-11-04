@@ -53,6 +53,7 @@
         </p:column>
 
         <p:column headerText="#{msgs.ruleset}"
+                  sortBy="#{item.ruleset.title.keyword}"
                   rendered="#{ProjectForm.showColumn('template.ruleset')}">
             <h:outputText value="#{item.ruleset.title}"
                           title="#{item.ruleset.title}"/>

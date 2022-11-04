@@ -20,13 +20,17 @@
         <p:row>
             <div>
                 <p:outputLabel for="username" value="#{msgs['username']}"/>
-                <p:inputText id="username" styleClass="input-with-button input"
+                <p:inputText id="username"
+                             styleClass="input-with-button input"
                              value="#{importConfigurationEditView.importConfiguration.username}"
                              placeholder="#{msgs['username']}"
                              disabled="#{isViewMode or importConfigurationEditView.importConfiguration.anonymousAccess}"
                              required="#{not empty param['editForm:save']
                                                      and importConfigurationEditView.importConfiguration.interfaceType eq 'FTP'
-                                                     and not importConfigurationEditView.importConfiguration.anonymousAccess}"/>
+                                                     and not importConfigurationEditView.importConfiguration.anonymousAccess}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
                 <p:commandButton id="usernameHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="usernameHelp"
@@ -40,7 +44,10 @@
                             disabled="#{isViewMode or importConfigurationEditView.importConfiguration.anonymousAccess}"
                             required="#{not empty param['editForm:save']
                                                      and importConfigurationEditView.importConfiguration.interfaceType eq 'FTP'
-                                                     and not importConfigurationEditView.importConfiguration.anonymousAccess}"/>
+                                                     and not importConfigurationEditView.importConfiguration.anonymousAccess}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:password>
                 <p:commandButton id="passwordHelp" type="button"
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="passwordHelp"
