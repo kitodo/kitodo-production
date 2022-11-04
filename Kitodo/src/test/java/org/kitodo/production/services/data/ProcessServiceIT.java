@@ -619,17 +619,8 @@ public class ProcessServiceIT {
         Assert.assertTrue("Ids should all be smaller than 8", maxId < 8);
         Assert.assertTrue("Ids should all be larger than 0", minId > 0);
         
-        // This test is very strange. The method findAllIDs doesn't specify an order in which processes are supposed 
-        // to be returned. It could be any order ElasticSearch chooses. It's weird that this doesn't fail randomly.
-        // Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 3, 1, 2, 6)));
-
         allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
         Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
-
-        // This test is very strange. The method findAllIDs doesn't specify an order in which processes are supposed 
-        // to be returned. It could be any order ElasticSearch chooses. It's weird that this doesn't fail randomly.
-        // Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 4)));
-
     }
 
     @Test
