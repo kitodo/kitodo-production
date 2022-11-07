@@ -397,14 +397,7 @@ public class ExportXmlLog {
             URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
             Document metsDoc = new SAXBuilder()
                     .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
-            Document anchorDoc = null;
-            URI anchorFileName = URI.create(ServiceManager.getFileService().getMetadataFilePath(process).toString()
-                    .replace("meta.xml", "meta_anchor.xml"));
-            if (ServiceManager.getFileService().fileExist(anchorFileName)
-                    && ServiceManager.getFileService().canRead(anchorFileName)) {
-                anchorDoc = new SAXBuilder()
-                        .build(ServiceManager.getFileService().getFile(metadataFilePath).toString());
-            }
+
             HashMap<String, Namespace> namespaces = new HashMap<>();
 
             HashMap<String, String> names = getNamespacesFromConfig();
@@ -413,13 +406,8 @@ public class ExportXmlLog {
                 namespaces.put(key, Namespace.getNamespace(key, entry.getValue()));
             }
 
-            HashMap<String, String> fields = getMetsFieldsFromConfig(false);
+            HashMap<String, String> fields = getMetsFieldsFromConfig();
             prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
-
-            if (Objects.nonNull(anchorDoc)) {
-                fields = getMetsFieldsFromConfig(true);
-                prepareMetadataElements(metadataElements, fields, anchorDoc, namespaces, xmlns);
-            }
         } catch (IOException | JDOMException | JaxenException e) {
             logger.error(e.getMessage(), e);
         }
@@ -497,11 +485,8 @@ public class ExportXmlLog {
         return in;
     }
 
-    private HashMap<String, String> getMetsFieldsFromConfig(boolean useAnchor) {
+    private HashMap<String, String> getMetsFieldsFromConfig() {
         String xmlpath = "mets." + PROPERTY;
-        if (useAnchor) {
-            xmlpath = "anchor." + PROPERTY;
-        }
 
         HashMap<String, String> fields = new HashMap<>();
         try {
