@@ -486,32 +486,15 @@ public class ExportXmlLog {
     }
 
     private HashMap<String, String> getMetsFieldsFromConfig() {
-        String xmlpath = "mets." + PROPERTY;
-
-        HashMap<String, String> fields = new HashMap<>();
-        try {
-            File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
-            if (file.exists() && file.canRead()) {
-                XMLConfiguration config = new XMLConfiguration(file);
-                config.setListDelimiter('&');
-                config.setReloadingStrategy(new FileChangedReloadingStrategy());
-
-                int count = config.getMaxIndex(xmlpath);
-                for (int i = 0; i <= count; i++) {
-                    String name = config.getString(xmlpath + "(" + i + ")[@name]");
-                    String value = config.getString(xmlpath + "(" + i + ")[@value]");
-                    fields.put(name, value);
-                }
-            }
-        } catch (ConfigurationException | RuntimeException e) {
-            logger.debug(e.getMessage(), e);
-            fields = new HashMap<>();
-        }
-        return fields;
+        return getDataFromConfig("mets." + PROPERTY);
     }
 
     private HashMap<String, String> getNamespacesFromConfig() {
-        HashMap<String, String> nss = new HashMap<>();
+        return getDataFromConfig("namespace");
+    }
+
+    private static HashMap<String, String> getDataFromConfig(String simpleXmlPath) {
+        HashMap<String, String> dataFields = new HashMap<>();
         try {
             File file = new File(ConfigCore.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
@@ -519,19 +502,18 @@ public class ExportXmlLog {
                 config.setListDelimiter('&');
                 config.setReloadingStrategy(new FileChangedReloadingStrategy());
 
-                int count = config.getMaxIndex("namespace");
+                int count = config.getMaxIndex(simpleXmlPath);
                 for (int i = 0; i <= count; i++) {
-                    String name = config.getString("namespace(" + i + ")[@name]");
-                    String value = config.getString("namespace(" + i + ")[@value]");
-                    nss.put(name, value);
+                    String name = config.getString(simpleXmlPath + "(" + i + ")[@name]");
+                    String value = config.getString(simpleXmlPath + "(" + i + ")[@value]");
+                    dataFields.put(name, value);
                 }
             }
         } catch (ConfigurationException | RuntimeException e) {
             logger.debug(e.getMessage(), e);
-            nss = new HashMap<>();
+            dataFields = new HashMap<>();
         }
-        return nss;
-
+        return dataFields;
     }
 
     /**
