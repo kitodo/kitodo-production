@@ -53,6 +53,8 @@
                 </p:row>
             </p:panelGrid>
 
+            <p:focus for="catalogSearchForm:searchTerm"/>
+
             <p:panelGrid layout="grid" columns="2" cellpadding="10">
                 <p:row>
                     <div>
@@ -63,9 +65,6 @@
                                          disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration}"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          value="#{CreateProcessForm.catalogImportDialog.hitModel.selectedField}">
-                            <f:selectItem itemValue="#{null}"
-                                          itemLabel="-- #{msgs.selectSearchField} --"
-                                          noSelectionOption="true"/>
                             <f:selectItems value="#{CreateProcessForm.catalogImportDialog.searchFields}" var="field"/>
                             <p:ajax update="catalogSearchForm:catalogSearchButton"/>
                         </p:selectOneMenu>
