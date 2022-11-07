@@ -17,8 +17,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -38,7 +39,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
 import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -114,12 +114,10 @@ public class XMLEditor implements Serializable {
      *            name of the configuration to be loaded
      */
     public void loadXMLConfiguration(String configurationFile) {
-        try (StringWriter stringWriter = new StringWriter()) {
+        try {
             currentConfigurationFile = configurationFile;
             this.configurationFile = KitodoConfigFile.getByName(configurationFile);
-            XMLConfiguration currentConfiguration = new XMLConfiguration(this.configurationFile.getAbsolutePath());
-            currentConfiguration.save(stringWriter);
-            this.xmlConfigurationString = stringWriter.toString();
+            this.xmlConfigurationString = Files.lines(this.configurationFile.getFile().toPath()).collect(Collectors.joining("\n"));
         } catch (ConfigurationException e) {
             String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
             logger.error("{} {}", errorMessage, e.getMessage());
