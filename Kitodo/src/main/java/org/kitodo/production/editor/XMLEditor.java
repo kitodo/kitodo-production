@@ -20,6 +20,7 @@ import java.io.StringReader;
 import java.nio.file.Files;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -117,7 +118,9 @@ public class XMLEditor implements Serializable {
         try {
             currentConfigurationFile = configurationFile;
             this.configurationFile = KitodoConfigFile.getByName(configurationFile);
-            this.xmlConfigurationString = Files.lines(this.configurationFile.getFile().toPath()).collect(Collectors.joining("\n"));
+            try (Stream<String> lines = Files.lines(this.configurationFile.getFile().toPath())) {
+                this.xmlConfigurationString = lines.collect(Collectors.joining("\n"));
+            }
         } catch (ConfigurationException e) {
             String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
             logger.error("{} {}", errorMessage, e.getMessage());
