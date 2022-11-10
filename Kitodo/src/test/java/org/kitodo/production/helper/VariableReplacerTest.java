@@ -104,6 +104,19 @@ public class VariableReplacerTest {
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
+    
+    @Test
+    public void shouldReplaceRelativePath() {
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+        String testFilenameWithPath = "src/testFile.txt";
+
+        String replaced = variableReplacer.replaceWithFilename("-filename (relativepath) -hardcoded test",
+                testFilenameWithPath);
+        String expected = "-filename " + testFilenameWithPath + " -hardcoded test";
+
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
 
     @Test
     public void shouldContainFile() {
