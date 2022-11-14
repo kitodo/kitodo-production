@@ -13,6 +13,7 @@ package org.kitodo.selenium;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
 import org.junit.Before;
@@ -36,7 +37,6 @@ public class MetadataST extends BaseTestSelenium {
         assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
     }
 
-
     /**
      * Tests total number of scans.
      */
@@ -45,6 +45,19 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata();
         assertEquals("Total number of scans is not correct", "(Anzahl von Scans: 1)",
                 Pages.getMetadataEditorPage().getNumberOfScans());
+    }
+
+    /**
+     * Tests whether pagination panel is shown by default.
+     * @throws Exception when page navigation fails.
+     */
+    @Test
+    public void showPaginationByDefaultTest() throws Exception {
+        Pages.getProcessesPage().goTo().editMetadata();
+        assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
+        Pages.getUserEditPage().setPaginationToShowByDefault();
+        Pages.getProcessesPage().goTo().editMetadata();
+        assertTrue(Pages.getMetadataEditorPage().isPaginationPanelVisible());
     }
 
     @After

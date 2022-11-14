@@ -327,6 +327,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         structurePanel.getSelectedPhysicalNode().setSelected(true);
         metadataPanel.showLogical(getSelectedStructure());
         metadataPanel.showPhysical(getSelectedPhysicalDivision());
+        galleryPanel.setGalleryViewMode(GalleryViewMode.getByMessageKey(user.getDefaultGalleryViewMode()).name());
         galleryPanel.show();
         paginationPanel.show();
 
@@ -689,7 +690,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     /**
      * Checks and returns if consecutive physical divisions in one structure element are selected or not.
-     * 
+     *
      * <p>Note: This method is called potentially thousands of times when rendering large galleries.</p>
      */
     public boolean consecutivePagesSelected() {
@@ -699,17 +700,17 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         int maxOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).max().orElseThrow(NoSuchElementException::new);
         int minOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).min().orElseThrow(NoSuchElementException::new);
 
-        // Check whether the set of selected media all belong to the same logical division, otherwise the selection 
-        // is not consecutive. However, do not use stream().distinct(), which will do pairwise comparisons, which is 
-        // slow for large amounts of selected images. Instead, just check whether the first logical division matches 
+        // Check whether the set of selected media all belong to the same logical division, otherwise the selection
+        // is not consecutive. However, do not use stream().distinct(), which will do pairwise comparisons, which is
+        // slow for large amounts of selected images. Instead, just check whether the first logical division matches
         // all others in a simple loop.
-        Boolean theSameLogicalDivisions = true;
-        LogicalDivision firstSelectedMediaLogicalDivison = null;
+        boolean theSameLogicalDivisions = true;
+        LogicalDivision firstSelectedMediaLogicalDivision = null;
         for (Pair<PhysicalDivision, LogicalDivision> pair : selectedMedia) {
-            if (Objects.isNull(firstSelectedMediaLogicalDivison)) {
-                firstSelectedMediaLogicalDivison = pair.getRight();
+            if (Objects.isNull(firstSelectedMediaLogicalDivision)) {
+                firstSelectedMediaLogicalDivision = pair.getRight();
             } else {
-                if (!Objects.equals(firstSelectedMediaLogicalDivison, pair.getRight())) {
+                if (!Objects.equals(firstSelectedMediaLogicalDivision, pair.getRight())) {
                     theSameLogicalDivisions = false;
                     break;
                 }

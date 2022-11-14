@@ -88,11 +88,17 @@
                                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml"/>
                                 </h:form>
                             </div>
-                            <div id="verticalResizerFirstColumn"></div>
+
+                            <h:panelGroup id="verticalResizerFirstColumn"
+                                          layout="block"
+                                          styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'disabled'}"/>
+
                             <div class="columnHeadingWrapper">
-                                <button id="secondSectionFirstColumnToggler" onclick="toggleSecondSectionFirstColumn()">
-                                    <i class="fa fa-chevron-circle-up fa-lg"/>
-                                </button>
+                                <p:commandButton id="secondSectionFirstColumnToggler"
+                                                 type="button"
+                                                 styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'collapsed'}"
+                                                 icon="fa fa-chevron-circle-up fa-lg"
+                                                 onclick="toggleSecondSectionFirstColumn()"/>
                                 <h:outputText value="#{msgs.comments}"/>
                                 <h:panelGroup id="commentsNumberWrapper">
                                     <h:outputText
@@ -101,9 +107,12 @@
                                             rendered="#{commentsNumber gt 0}"/>
                                 </h:panelGroup>
                             </div>
-                            <div id="commentsPanel" data-min-height="100">
+                            <h:panelGroup layout="block"
+                                          styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'collapsed'}"
+                                          id="commentsPanel"
+                                          a:data-min-height="100">
                                 <ui:include src="/WEB-INF/templates/includes/comments/comments.xhtml"/>
-                            </div>
+                            </h:panelGroup>
                         </p:panel>
                     </h:panelGroup>
 
@@ -145,20 +154,24 @@
                             </div>
 
                             <!-- Vertical resizer -->
-                            <div id="verticalResizerSecondColumn"></div>
+                            <h:panelGroup id="verticalResizerSecondColumn"
+                                          layout="block"
+                                          styleClass="#{LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'disabled'}"/>
 
                             <div class="columnHeadingWrapper">
                                 <ui:fragment rendered="#{viewMetadata and viewPagination}">
-                                    <button id="secondSectionSecondColumnToggler" onclick="toggleSecondSectionSecondColumn()">
-                                        <i class="fa fa-chevron-circle-up fa-lg"/>
-                                    </button>
+                                    <p:commandButton id="secondSectionSecondColumnToggler"
+                                                     type="button"
+                                                     styleClass="#{LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'collapsed'}"
+                                                     icon="fa fa-chevron-circle-up fa-lg"
+                                                     onclick="toggleSecondSectionSecondColumn()"/>
                                 </ui:fragment>
                                 <h:outputText value="#{msgs.pagination}"/>
                             </div>
-                            <!-- 'collapsed' class is inverted by javascript function on page load -->
                             <h:panelGroup id="paginationPanel"
-                                          data-min-height="100"
-                                          layout="block" styleClass="#{not viewMetadata ? 'collapsed' : ''}">
+                                          a:data-min-height="100"
+                                          layout="block"
+                                          styleClass="#{viewMetadata and LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'collapsed'}">
                                 <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/pagination.xhtml"/>
                             </h:panelGroup>
                         </p:panel>
@@ -188,8 +201,8 @@
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.lastSelection ne null}"
-                                                  value="#{msgs.image} 
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}, 
+                                                  value="#{msgs.image}
+                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
                                                          #{msgs.page}
                                                          #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
                                     <h:outputText styleClass="columnHeading"
