@@ -48,8 +48,8 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
-     * Tests whether pagination panel is shown by default.
-     * @throws Exception when page navigation fails.
+     * Verifies that turning the "pagination panel switch" on in the user settings
+     * results in pagination panel being displayed by default in the metadata editor.
      */
     @Test
     public void showPaginationByDefaultTest() throws Exception {

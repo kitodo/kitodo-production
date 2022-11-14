@@ -138,12 +138,6 @@ public class UserEditPage extends EditPage<UserEditPage> {
         return this;
     }
 
-    public void addMetadataEditorSettings() throws Exception {
-        switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
-        clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_0")));
-    }
-
     public UsersPage save() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getUsersPage().getUrl());
         return Pages.getUsersPage();
@@ -196,6 +190,9 @@ public class UserEditPage extends EditPage<UserEditPage> {
         save();
     }
 
+    /**
+     * Set pagination panel to show by default in metadata editor.
+     */
     public void setPaginationToShowByDefault() throws Exception {
         openUserConfig();
         switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
