@@ -14,6 +14,6 @@
 --
 
 -- Add table "urlparameter"
-ALTER TABLE user ADD IF NOT EXISTS show_pagination_by_default TINYINT(1) DEFAULT 0;
-ALTER TABLE user ADD IF NOT EXISTS show_comments_by_default TINYINT(1) DEFAULT 0;
-ALTER TABLE user ADD IF NOT EXISTS default_gallery_view_mode varchar(255) NOT NULL DEFAULT 'dataEditor.galleryStructuredView    ';
+ALTER TABLE user ADD show_pagination_by_default TINYINT(1) DEFAULT 0;
+ALTER TABLE user ADD show_comments_by_default TINYINT(1) DEFAULT 0;
+ALTER TABLE user ADD default_gallery_view_mode varchar(255) NOT NULL DEFAULT 'dataEditor.galleryStructuredView';
