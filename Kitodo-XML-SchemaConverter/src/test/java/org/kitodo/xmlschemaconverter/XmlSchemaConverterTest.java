@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -34,6 +33,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
@@ -109,6 +109,7 @@ public class XmlSchemaConverterTest {
         Assert.assertEquals("PublicationYear after conversion is wrong!", "1999", year);
     }
 
+    @Ignore("Ignored because download of log.gov resources from Github are currently blocked (http status code 403)")
     @Test
     public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException,
             URISyntaxException {

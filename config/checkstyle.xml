@@ -32,6 +32,10 @@
         <property name="fileExtensions" value="java"/>
     </module>
 
+    <module name="SuppressionFilter">
+        <property name="file" value="./config/suppressions.xml"/>
+    </module>
+
     <module name="TreeWalker">
         <module name="OuterTypeFilename"/>
 
