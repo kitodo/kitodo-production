@@ -78,6 +78,23 @@ public class MetadataEditorIT {
         FileUtils.deleteQuietly(new File("src/test/resources/metadata/4/meta.xml.1"));
     }
 
+    @Test
+    public void shouldAddMultipleStructuresWithoutMetadata() throws Exception {
+        File metaXmlFile = new File("src/test/resources/metadata/2/meta.xml");
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
+
+        int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();
+        int addedDivisions = 2;
+        int newNrDivisions = oldNrLogicalDivisions + addedDivisions;
+
+        MetadataEditor.addMultipleStructures(addedDivisions, "section", workpiece, workpiece.getLogicalStructure(),
+            InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, "", "");        
+
+        List<LogicalDivision> logicalDivisions = workpiece.getAllLogicalDivisions();
+        assertTrue("Metadata should be empty",
+            logicalDivisions.get(newNrDivisions - 1).getMetadata().isEmpty());
+    }
+
     private boolean isInternalMetsLink(String lineOfMets, int recordNumber) {
         // Order of <mptr> attributes varies
         boolean isInternalMetsLink = lineOfMets.contains("mptr ") && lineOfMets.contains("LOCTYPE=\"OTHER\"")
