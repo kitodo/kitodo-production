@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -54,11 +55,13 @@ public class GalleryMediaContent {
     private final URI mediaViewUri;
     private final View view;
 
+    private final String mimeType;
+
     /**
      * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
      * tree. This id can be used in the user interface to identify which gallery thumbnail 
      * corresponds to which tree node in the logical structure tree.
-     * 
+     *
      * <p>It consists of a sequence of numbers separated by underscore, e.g. "0_1_4". Each number
      * describes the position of a child amongst its siblings at that level. For example, "0_1_4" 
      * references the node that is reached when moving from root node to leaf node using the first 
@@ -72,25 +75,23 @@ public class GalleryMediaContent {
      * Creates a new gallery media content.
      *
      * @param panel
-     *            gallery panel in which the medium is displayed. The panel
-     *            provides configuration information.
+     *         gallery panel in which the medium is displayed. The panel provides configuration information.
      * @param canonical
-     *            the canonical part of the file name, used as the identifier
-     *            for the media content
+     *         the canonical part of the file name, used as the identifier for the media content
      * @param previewUri
-     *            URI to content for media preview. Can be {@code null}, then a
-     *            placeholder is used.
+     *         URI to content for media preview. Can be {@code null}, then a placeholder is used.
      * @param mediaViewUri
-     *            URI to the content for the media view. Can be {@code null},
-     *            then no media view is offered.
+     *         URI to the content for the media view. Can be {@code null}, then no media view is offered.
      */
-    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri, String logicalTreeNodeId) {
+    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri,
+            String logicalTreeNodeId) {
         this.panel = panel;
         this.view = view;
         this.id = canonical;
         this.previewUri = previewUri;
         this.mediaViewUri = mediaViewUri;
         this.logicalTreeNodeId = logicalTreeNodeId;
+        this.mimeType = null;
     }
 
     /**
@@ -204,7 +205,9 @@ public class GalleryMediaContent {
          */
         try {
             InputStream previewData = ServiceManager.getFileService().read(uri);
-            return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType).build();
+            return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType)
+                    .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength(previewData.available())
+                    .build();
         } catch (IOException e) {
             logger.catching(e);
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
