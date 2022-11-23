@@ -116,18 +116,7 @@ public class XmlSchemaConverterTest {
     @Test
     public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException,
             URISyntaxException {
-        DataRecord testRecord = new DataRecord();
-        testRecord.setMetadataFormat(MetadataFormat.MARC);
-        testRecord.setFileFormat(FileFormat.XML);
-
-        DataRecord internalFormatRecord;
-
-        try (InputStream inputStream = Files.newInputStream(Paths.get(MARC_TEST_FILE_PATH))) {
-            testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
-            List<File> xsltFiles = getXsltFiles(MetadataFormat.MARC);
-            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, xsltFiles);
-        }
-
+        DataRecord internalFormatRecord = createInternalFormatRecord();
         Assert.assertNotNull("Conversion result is empty!", internalFormatRecord);
         Assert.assertEquals("Conversion result has wrong MetadataFormat!",
                 MetadataFormat.KITODO, internalFormatRecord.getMetadataFormat());
@@ -165,6 +154,22 @@ public class XmlSchemaConverterTest {
         Assert.assertEquals("Catalog ID after conversion is wrong!", "67890", catalogId);
         Assert.assertEquals("PlaceOfPublication after conversion is wrong!", "Test-Place", place);
         Assert.assertEquals("shelfmarksource after conversion is wrong!", "Test-Shelflocator", shelfmarksource);
+    }
+
+    private DataRecord createInternalFormatRecord() throws IOException, URISyntaxException {
+        DataRecord testRecord = new DataRecord();
+        testRecord.setMetadataFormat(MetadataFormat.MARC);
+        testRecord.setFileFormat(FileFormat.XML);
+
+        DataRecord internalFormatRecord;
+
+        try (InputStream inputStream = Files.newInputStream(Paths.get(MARC_TEST_FILE_PATH))) {
+            testRecord.setOriginalData(IOUtils.toString(inputStream, Charset.defaultCharset()));
+            List<File> xsltFiles = getXsltFiles(MetadataFormat.MARC);
+            internalFormatRecord = converter.convert(testRecord, MetadataFormat.KITODO, FileFormat.XML, xsltFiles);
+        }
+
+        return internalFormatRecord;
     }
 
     private Document parseInputStreamToDocument(String inputString) throws ParserConfigurationException,
