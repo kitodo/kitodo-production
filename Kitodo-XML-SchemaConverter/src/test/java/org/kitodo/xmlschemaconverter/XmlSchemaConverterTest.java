@@ -109,7 +109,10 @@ public class XmlSchemaConverterTest {
         Assert.assertEquals("PublicationYear after conversion is wrong!", "1999", year);
     }
 
-    @Ignore("Ignored because download of log.gov resources from Github are currently blocked (http status code 403)")
+    /**
+     * Test conversion if marc xml documents into internal format.
+     */
+    @Ignore("Downloads of log.gov resources from Github are currently blocked (http status code 403)")
     @Test
     public void shouldConvertMarcToInternalFormat() throws IOException, ParserConfigurationException, SAXException,
             URISyntaxException {
