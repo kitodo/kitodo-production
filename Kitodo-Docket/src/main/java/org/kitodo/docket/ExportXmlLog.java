@@ -25,8 +25,6 @@ import java.util.Objects;
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.jaxen.JaxenException;
-import org.jaxen.jdom.JDOMXPath;
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
@@ -328,7 +326,11 @@ public class ExportXmlLog {
     }
 
     private static HashMap<String, String> getNamespacesFromConfig() {
-        HashMap<String, String> nss = new HashMap<>();
+        return getXmlPathFromConfig("namespace");
+    }
+
+    private static HashMap<String, String> getXmlPathFromConfig(String xmlPath) {
+        HashMap<String, String> fields = new HashMap<>();
         try {
             File file = new File(KitodoConfig.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
             if (file.exists() && file.canRead()) {
@@ -336,18 +338,18 @@ public class ExportXmlLog {
                 config.setListDelimiter('&');
                 config.setReloadingStrategy(new FileChangedReloadingStrategy());
 
-                int count = config.getMaxIndex("namespace");
+                int count = config.getMaxIndex(xmlPath);
                 for (int i = 0; i <= count; i++) {
-                    String name = config.getString("namespace(" + i + ")[@name]");
-                    String value = config.getString("namespace(" + i + ")[@value]");
-                    nss.put(name, value);
+                    String name = config.getString(xmlPath + "(" + i + ")[@name]");
+                    String value = config.getString(xmlPath + "(" + i + ")[@value]");
+                    fields.put(name, value);
                 }
             }
         } catch (ConfigurationException | RuntimeException e) {
             logger.debug(e.getMessage(), e);
-            nss = new HashMap<>();
+            fields = new HashMap<>();
         }
-        return nss;
+        return fields;
     }
 
     private static void prepareMetadataElements(List<Element> metadataElements, boolean useAnchor, DocketData docketData,
@@ -378,25 +380,7 @@ public class ExportXmlLog {
             xmlpath = "anchor." + PROPERTY;
         }
 
-        HashMap<String, String> fields = new HashMap<>();
-        try {
-            File file = new File(KitodoConfig.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
-            if (file.exists() && file.canRead()) {
-                XMLConfiguration config = new XMLConfiguration(file);
-                config.setListDelimiter('&');
-                config.setReloadingStrategy(new FileChangedReloadingStrategy());
-
-                int count = config.getMaxIndex(xmlpath);
-                for (int i = 0; i <= count; i++) {
-                    String name = config.getString(xmlpath + "(" + i + ")[@name]");
-                    String value = config.getString(xmlpath + "(" + i + ")[@value]");
-                    fields.put(name, value);
-                }
-            }
-        } catch (ConfigurationException | RuntimeException e) {
-            logger.debug(e.getMessage(), e);
-            fields = new HashMap<>();
-        }
+        HashMap<String, String> fields = getXmlPathFromConfig(xmlpath);
         return fields;
     }
 
