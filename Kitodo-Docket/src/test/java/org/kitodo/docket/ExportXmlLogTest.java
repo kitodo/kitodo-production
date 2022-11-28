@@ -21,12 +21,20 @@ import org.kitodo.api.docket.DocketData;
 
 public class ExportXmlLogTest extends ExportXmlLog {
 
-    @Test
-    public void shouldExportXmlLogWithMetadata() throws IOException {
+    public ExportXmlLogTest() {
+        super(getDocketData());
+    }
+
+    static final DocketData getDocketData() {
         DocketData data = new DocketData();
         data.setMetadataFile("src/test/resources/meta.xml");
+        return data;
+    }
+
+    @Test
+    public void shouldExportXmlLogWithMetadata() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-        super.startExport(data, ((OutputStream) buffer));
+        super.startExport(((OutputStream) buffer));
         Assert.assertTrue("Output should not be empty", buffer.size() > 0);
     }
 }

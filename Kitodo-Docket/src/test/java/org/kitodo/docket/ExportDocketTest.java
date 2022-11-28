@@ -36,13 +36,13 @@ public class ExportDocketTest {
 
     @Test
     public void testStartExport() throws IOException {
-        ExportDocket exportDocket = new ExportDocket();
-        File file = new File("docket.pdf");
         File xslFile = new File("src/test/resources/docket.xsl");
+        ExportDocket exportDocket = new ExportDocket(xslFile);
+        File file = new File("docket.pdf");
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
             exportDocket.startExport(docketDataGenerator.createDocketData("processId", "signature", "doctype"),
-                    fileOutputStream, xslFile);
+                fileOutputStream);
         }
 
         assertTrue(file.exists());

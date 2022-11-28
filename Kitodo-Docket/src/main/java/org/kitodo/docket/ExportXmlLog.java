@@ -14,13 +14,18 @@ package org.kitodo.docket;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.UncheckedIOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.function.Consumer;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.configuration.XMLConfiguration;
@@ -50,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @author Steffen Hankiewicz
  *
  */
-public class ExportXmlLog {
+public class ExportXmlLog implements Consumer<OutputStream> {
     private static final Logger logger = LoggerFactory.getLogger(ExportXmlLog.class);
     private static final String LABEL = "label";
     private static final String NAMESPACE = "http://www.kitodo.org/logfile";
@@ -59,19 +64,53 @@ public class ExportXmlLog {
     private static final String PROPERTY_IDENTIFIER = "propertyIdentifier";
     private static final String VALUE = "value";
 
+    List<DocketData> docketData;
+
     /**
-     * This method exports the production metadata as xml to a given stream.
+     * Makes the class polymorphic.
      *
      * @param docketData
-     *            the docket data to export
+     *            docket data
+     */
+    ExportXmlLog(Iterable<DocketData> docketData) {
+        this.docketData = docketData instanceof List ? (List<DocketData>) docketData
+                : StreamSupport.stream(docketData.spliterator(), false).collect(Collectors.toList());
+    }
+
+    /**
+     * Makes the class polymorphic.
+     *
+     * @param docketData
+     *            docket data
+     */
+    ExportXmlLog(DocketData docketData) {
+        this.docketData = Arrays.asList(docketData);
+    }
+
+    @Override
+    public void accept(OutputStream outputStream) {
+        try {
+            if (docketData.size() == 1) {
+                startExport(outputStream);
+            } else {
+                startMultipleExport(outputStream);
+            }
+        } catch (IOException ioFailed) {
+            throw new UncheckedIOException(ioFailed);
+        }
+    }
+
+    /**
+     * This method exports the production metadata as XML to a given stream.
+     *
      * @param os
      *            the OutputStream to write the contents to
      * @throws IOException
      *             Throws IOException, when document creation fails.
      */
-    static void startExport(DocketData docketData, OutputStream os) throws IOException {
+    void startExport(OutputStream os) throws IOException {
         try {
-            Document doc = createDocument(docketData, true);
+            Document doc = createDocument(docketData.get(0), true);
 
             XMLOutputter outp = new XMLOutputter();
             outp.setFormat(Format.getPrettyFormat());
@@ -89,13 +128,11 @@ public class ExportXmlLog {
      * This method exports the production metadata for al list of processes as a
      * single file to a given stream.
      *
-     * @param docketDataList
-     *            a list of Docket data
      * @param outputStream
      *            The output stream, to write the docket to.
      */
 
-    static void startMultipleExport(Iterable<DocketData> docketDataList, OutputStream outputStream) {
+    void startMultipleExport(OutputStream outputStream) {
         Document answer = new Document();
         Element root = new Element("processes");
         answer.setRootElement(root);
@@ -107,7 +144,7 @@ public class ExportXmlLog {
         Attribute attSchema = new Attribute("schemaLocation", NAMESPACE + " XML-logfile.xsd",
                 xsi);
         root.setAttribute(attSchema);
-        for (DocketData docketData : docketDataList) {
+        for (DocketData docketData : this.docketData) {
             Document doc = createDocument(docketData, false);
             Element processRoot = doc.getRootElement();
             processRoot.detach();

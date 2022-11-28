@@ -27,7 +27,7 @@ public class Docket implements DocketInterface {
         File file = File.createTempFile("docket.pdf", ".tmp");
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            ExportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
+            new ExportDocket(new File(xslFileUri)).startExport(docketData, fileOutputStream);
         }
 
         return file;
@@ -38,7 +38,7 @@ public class Docket implements DocketInterface {
         File file = File.createTempFile("docket_multipage.pdf", ".tmp");
 
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            ExportDocket.startExport(docketData, fileOutputStream, new File(xslFileUri));
+            new ExportDocket(new File(xslFileUri)).startExport(docketData, fileOutputStream);
         }
 
         return file;
@@ -48,7 +48,7 @@ public class Docket implements DocketInterface {
     public void exportXmlLog(DocketData docketData, String destination) throws IOException {
         File file = new File(destination);
         try (FileOutputStream fileOutputStream = new FileOutputStream(file)) {
-            ExportXmlLog.startExport(docketData, fileOutputStream);
+            new ExportXmlLog(docketData).startExport(fileOutputStream);
         }
     }
 }
