@@ -13,6 +13,7 @@ package org.kitodo.docket;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UncheckedIOException;
 import java.util.ArrayList;
@@ -393,8 +394,10 @@ public class ExportXmlLog implements Consumer<OutputStream> {
             Namespace[] namespaces, Namespace xmlns)
             throws IOException, JDOMException {
         HashMap<String, String> fields = getMetsFieldsFromConfig(useAnchor);
-        Document metsDoc = new SAXBuilder().build(docketData.metadataFile());
-        prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
+        try (InputStream in = docketData.metadataFile().toURL().openStream()) {
+            Document metsDoc = new SAXBuilder().build(in);
+            prepareMetadataElements(metadataElements, fields, metsDoc, namespaces, xmlns);
+        }
     }
 
     private static void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,

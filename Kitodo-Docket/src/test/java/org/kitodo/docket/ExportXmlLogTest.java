@@ -14,6 +14,8 @@ package org.kitodo.docket;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -21,13 +23,13 @@ import org.kitodo.api.docket.DocketData;
 
 public class ExportXmlLogTest extends ExportXmlLog {
 
-    public ExportXmlLogTest() {
+    public ExportXmlLogTest() throws URISyntaxException {
         super(getDocketData());
     }
 
-    static final DocketData getDocketData() {
+    static final DocketData getDocketData() throws URISyntaxException {
         DocketData data = new DocketData();
-        data.setMetadataFile("src/test/resources/meta.xml");
+        data.setMetadataFile(new URI("src/test/resources/meta.xml"));
         return data;
     }
 

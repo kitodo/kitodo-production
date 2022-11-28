@@ -16,6 +16,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -35,7 +36,7 @@ public class ExportDocketTest {
     }
 
     @Test
-    public void testStartExport() throws IOException {
+    public void testStartExport() throws IOException, URISyntaxException {
         File xslFile = new File("src/test/resources/docket.xsl");
         ExportDocket exportDocket = new ExportDocket(xslFile);
         File file = new File("docket.pdf");

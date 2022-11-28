@@ -11,6 +11,7 @@
 
 package org.kitodo.api.docket;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -18,7 +19,7 @@ import java.util.Objects;
 public class DocketData {
 
     /** The metadata file. */
-    private String metadataFile;
+    private URI metadataFile;
 
     /** The docket data of the parent. */
     private DocketData parent;
@@ -55,7 +56,7 @@ public class DocketData {
      * 
      * @return The metadataFile.
      */
-    public String metadataFile() {
+    public URI metadataFile() {
         return metadataFile;
     }
 
@@ -65,7 +66,7 @@ public class DocketData {
      * @param metadataFile
      *            The metadata file.
      */
-    public void setMetadataFile(String metadataFile) {
+    public void setMetadataFile(URI metadataFile) {
         this.metadataFile = metadataFile;
     }
 

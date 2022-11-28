@@ -2021,7 +2021,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
         docketdata.setCreationDate(process.getCreationDate().toString());
         URI metadataFilePath = fileService.getMetadataFilePath(process);
-        docketdata.setMetadataFile(fileService.getFile(metadataFilePath).toString());
+        docketdata.setMetadataFile(fileService.getFile(metadataFilePath).toURI());
         if (Objects.nonNull(process.getParent())) {
             docketdata.setParent(getDocketData(process.getParent()));
         }
