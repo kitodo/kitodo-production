@@ -39,7 +39,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -121,12 +120,10 @@ public class XMLEditor implements Serializable {
             try (Stream<String> lines = Files.lines(this.configurationFile.getFile().toPath())) {
                 this.xmlConfigurationString = lines.collect(Collectors.joining("\n"));
             }
-        } catch (ConfigurationException e) {
+        } catch (IOException e) {
             String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
             logger.error("{} {}", errorMessage, e.getMessage());
             this.xmlConfigurationString = errorMessage;
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
     }
 
