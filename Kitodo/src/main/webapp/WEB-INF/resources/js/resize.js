@@ -452,6 +452,30 @@ function toggleFirstSectionSecondColumn() {
     }
 }
 
+function toggleSecondSection(firstSection, secondSection, firstSectionToggler, secondSectionHeight) {
+    if (secondSection.hasClass(COLLAPSED)) {
+        firstSection.height(firstSection.height() + secondSectionHeight);
+        firstSectionToggler.prop('disabled', true);
+    } else {
+        firstSection.height(firstSection.height() - secondSectionHeight);
+        firstSectionToggler.prop('disabled', false);
+    }
+}
+
+function toggleHeightOfSecondSectionFirstColumn() {
+    if (typeof secondSectionFirstColumnHeight === 'undefined') {
+        secondSectionFirstColumnHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(firstColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT;
+    }
+    toggleSecondSection(firstSectionFirstColumn, secondSectionFirstColumn, firstSectionFirstColumnToggler, secondSectionFirstColumnHeight);
+}
+
+function toggleHeightOfSecondSectionSecondColumn() {
+    if (typeof secondSectionSecondColumnHeight === 'undefined') {
+        secondSectionSecondColumnHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT;
+    }
+    toggleSecondSection(firstSectionSecondColumn, secondSectionSecondColumn, firstSectionSecondColumnToggler, secondSectionSecondColumnHeight);
+}
+
 function toggleSecondSectionFirstColumn() {
     if (!secondSectionFirstColumn.hasClass(COLLAPSED)) {
         secondSectionFirstColumnHeight = secondSectionFirstColumn.height();
@@ -469,30 +493,6 @@ function toggleSecondSectionSecondColumn() {
     secondSectionSecondColumnToggler.toggleClass(COLLAPSED);
     verticalResizerSecondColumn.toggleClass('disabled');
     toggleHeightOfSecondSectionSecondColumn();
-}
-
-function toggleHeightOfSecondSectionFirstColumn() {
-    if (typeof secondSectionFirstColumnHeight === 'undefined') {
-        secondSectionFirstColumnHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(firstColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT;
-    }
-    toggleSecondSection(firstSectionFirstColumn, secondSectionFirstColumn, firstSectionFirstColumnToggler, secondSectionFirstColumnHeight);
-}
-
-function toggleHeightOfSecondSectionSecondColumn() {
-    if (typeof secondSectionSecondColumnHeight === 'undefined') {
-        secondSectionSecondColumnHeight = wrapper.height() / 2 - HEADING_HEIGHT - (parseInt(secondColumn.css('padding-top')) / 2) - SEPARATOR_HEIGHT;
-    }
-    toggleSecondSection(firstSectionSecondColumn, secondSectionSecondColumn, firstSectionSecondColumnToggler, secondSectionSecondColumnHeight);
-}
-
-function toggleSecondSection(firstSection, secondSection, firstSectionToggler, secondSectionHeight) {
-    if (secondSection.hasClass(COLLAPSED)) {
-        firstSection.height(firstSection.height() + secondSectionHeight);
-        firstSectionToggler.prop('disabled', true);
-    } else {
-        firstSection.height(firstSection.height() - secondSectionHeight);
-        firstSectionToggler.prop('disabled', false);
-    }
 }
 
 function expandFirstColumn() {
