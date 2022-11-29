@@ -485,12 +485,12 @@ function toggleHeightOfSecondSectionSecondColumn() {
     toggleSecondSection(firstSectionSecondColumn, secondSectionSecondColumn, firstSectionSecondColumnToggler, secondSectionSecondColumnHeight);
 }
 
-function toggleSecondSection(firstSection, secondSection, firstSectionToggler, sectionSectionHeight) {
+function toggleSecondSection(firstSection, secondSection, firstSectionToggler, secondSectionHeight) {
     if (secondSection.hasClass(COLLAPSED)) {
-        firstSection.height(firstSection.height() + sectionSectionHeight);
+        firstSection.height(firstSection.height() + secondSectionHeight);
         firstSectionToggler.prop('disabled', true);
     } else {
-        firstSection.height(firstSection.height() - sectionSectionHeight);
+        firstSection.height(firstSection.height() - secondSectionHeight);
         firstSectionToggler.prop('disabled', false);
     }
 }
