@@ -1,0 +1,85 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <p:outputPanel styleClass="thumbnail-parent" a:data-mime-type="#{media.previewMimeType}">
+        <c:choose>
+            <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
+                <c:set var="thumbnailStyleClass"
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="thumbnailStyleClass"
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
+            </c:otherwise>
+        </c:choose>
+        <p:outputPanel
+                styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{thumbnailStyleClass}"/>
+        <p:outputPanel styleClass="thumbnail-container"
+                       a:data-order="#{media.order}"
+                       a:data-stripe="#{uiParamStripeIndex}"
+                       a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
+
+            <ui:fragment rendered="#{media.previewMimeType eq 'video/mp4'}">
+                <p:media styleClass="mediaListItem" cache="true"
+                         value="#{DataEditorForm.galleryPanel.previewData}" player="html-video"
+                         rendered="#{media.showingInPreview}">
+                    <f:param name="mediaId"
+                             value="#{media.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="controls" value="#{uiParamVideoControls}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:media>
+                <h:panelGroup class="thumbnail-overlay">
+                    #{msgs.video} #{media.shortId}
+                </h:panelGroup>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{media.previewMimeType ne 'video/mp4'}">
+                <h:outputText>
+                    <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                    <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
+                                    rendered="#{media.showingInPreview}"
+                                    a:loading="lazy">
+                        <f:param name="mediaId"
+                                 value="#{media.id}"/>
+                        <f:param name="process"
+                                 value="#{DataEditorForm.process.id}"/>
+                        <f:param name="sessionId"
+                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    </p:graphicImage>
+                </h:outputText>
+                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                              rendered="#{media.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
+                <h:panelGroup class="thumbnail-overlay">
+                    #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
+                </h:panelGroup>
+            </ui:fragment>
+
+
+        </p:outputPanel>
+    </p:outputPanel>
+
+</ui:composition>

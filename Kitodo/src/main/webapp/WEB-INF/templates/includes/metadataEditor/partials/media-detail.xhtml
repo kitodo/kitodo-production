@@ -1,0 +1,49 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <h:panelGroup id="mediaDetail">
+        <ui:param name="selectedGalleryMediaContent"
+                  value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
+
+        <ui:fragment rendered="#{selectedGalleryMediaContent.mediaViewMimeType eq 'video/mp4'}">
+            <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.mediaViewData}"
+                     player="html-video"
+                     width="90%" height="auto">
+                <f:param name="mediaId"
+                         value="#{selectedGalleryMediaContent.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                <f:param name="controls" value="#{videoControls}"/>
+                <f:param name="krsc" value="true"/>
+            </p:media>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{selectedGalleryMediaContent.mediaViewMimeType ne 'video/mp4'}">
+            <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem"
+                            value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"
+                            style="display: none;"/>
+            <div id="map" class="map" style="width: 100%; height: 100%;">
+                <i class="fa fa-spinner fa-spin"/>
+            </div>
+        </ui:fragment>
+    </h:panelGroup>
+
+</ui:composition>

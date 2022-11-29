@@ -100,10 +100,12 @@ public class GalleryPanel {
 
     private Subfolder previewFolder;
 
+    private Subfolder previewVideoFolder;
+
     private String cachingUUID = "";
 
-    private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator
-            .comparing(pair -> pair.getLeft().getPhysicalDivision().getOrder());
+    private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator.comparing(
+            pair -> pair.getLeft().getPhysicalDivision().getOrder());
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -158,32 +160,32 @@ public class GalleryPanel {
         return medias;
     }
 
-    String getMediaViewMimeType() {
-        return mediaViewVariant.getMimeType();
-    }
-
     /**
-     * Returns the media content of the preview media. This is the method that
-     * is called when the web browser wants to retrieve the media file itself.
+     * Returns the media content of the preview media. This is the method that is called when the web browser wants to
+     * retrieve the media file itself.
      *
      * @return a Primefaces object that handles the output of media data
      */
     public StreamedContent getPreviewData() {
+        return getData(true);
+    }
+
+    public StreamedContent getMediaViewData() {
+        return getData(false);
+    }
+
+    private StreamedContent getData(boolean isPreview) {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
             String id = context.getExternalContext().getRequestParameterMap().get("mediaId");
             GalleryMediaContent mediaContent = previewImageResolver.get(id);
             if (Objects.nonNull(mediaContent)) {
                 logger.trace("Serving image request {}", id);
-                return mediaContent.getPreviewData();
+                return (isPreview) ? mediaContent.getPreviewData() : mediaContent.getMediaViewData();
             }
             logger.debug("Cannot serve image request, mediaId = {}", id);
         }
         return DefaultStreamedContent.builder().build();
-    }
-
-    String getPreviewMimeType() {
-        return previewVariant.getMimeType();
     }
 
     List<LanguageRange> getPriorityList() {
@@ -374,12 +376,15 @@ public class GalleryPanel {
     void show() {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
 
         Folder previewSettings = project.getPreview();
         previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, physicalDivisions) : null;
         Folder mediaViewSettings = project.getMediaView();
-        mediaViewVariant = Objects.nonNull(mediaViewSettings) ? getMediaVariant(mediaViewSettings, physicalDivisions) : null;
+        mediaViewVariant = Objects.nonNull(mediaViewSettings)
+                ? getMediaVariant(mediaViewSettings, physicalDivisions)
+                : null;
 
         medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();
@@ -387,6 +392,9 @@ public class GalleryPanel {
         cachingUUID = UUID.randomUUID().toString();
 
         previewFolder = new Subfolder(process, project.getPreview());
+        previewVideoFolder = new Subfolder(process,
+                project.getFolders().stream().filter(folder -> folder.getMimeType().startsWith("video")).findFirst()
+                        .get());
         updateStripes();
 
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
@@ -499,28 +507,58 @@ public class GalleryPanel {
     private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer idx) {
         PhysicalDivision physicalDivision = view.getPhysicalDivision();
         URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
+        Subfolder currentPreviewFolder = previewFolder;
+        String previewMimeType = previewVariant.getMimeType();
+        if (Objects.isNull(previewUri)) {
+            Optional<MediaVariant> mediaVariantOptional = physicalDivision.getMediaFiles().keySet().stream()
+                    .filter(mediaVariant -> mediaVariant.getMimeType().startsWith("video")).findFirst();
+            if (mediaVariantOptional.isPresent()) {
+                MediaVariant mediaVariant = mediaVariantOptional.get();
+                previewMimeType = mediaVariantOptional.get().getMimeType();
+                previewUri = physicalDivision.getMediaFiles().get(mediaVariant);
+                currentPreviewFolder = previewVideoFolder;
+            }
+        }
         URI resourcePreviewUri = null;
         if (Objects.nonNull(previewUri)) {
-            resourcePreviewUri = previewUri.isAbsolute() ? previewUri
+            resourcePreviewUri = previewUri.isAbsolute()
+                    ? previewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
         }
+
         URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewVariant);
+        String mediaViewMimeType = mediaViewVariant.getMimeType();
+        if (Objects.isNull(mediaViewUri)) {
+            Optional<MediaVariant> mediaVariantOptional = physicalDivision.getMediaFiles().keySet().stream()
+                    .filter(mediaVariant -> mediaVariant.getMimeType().startsWith("video")).findFirst();
+            if (mediaVariantOptional.isPresent()) {
+                MediaVariant mediaVariant = mediaVariantOptional.get();
+                mediaViewMimeType = mediaVariant.getMimeType();
+                mediaViewUri = physicalDivision.getMediaFiles().get(mediaVariant);
+            }
+        }
         URI resourceMediaViewUri = null;
         if (Objects.nonNull(mediaViewUri)) {
-            resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
+            resourceMediaViewUri = mediaViewUri.isAbsolute()
+                    ? mediaViewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
+
         // prefer canonical of preview folder
-        String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
+        String canonical = Objects.nonNull(resourcePreviewUri)
+                ? currentPreviewFolder.getCanonical(resourcePreviewUri)
+                : null;
         if (Objects.isNull(canonical)) {
             // if preview media not available, load canonical id from other folders
             canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
         }
         String treeNodeId = "unknown";
         if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(idx)) {
-            treeNodeId = stripeTreeNodeId + "_" + String.valueOf(idx);
+            treeNodeId = stripeTreeNodeId + "_" + idx;
         }
-        return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri, treeNodeId);
+
+        return new GalleryMediaContent(view, canonical, previewMimeType, resourcePreviewUri, mediaViewMimeType,
+                resourceMediaViewUri, treeNodeId);
     }
 
     /**

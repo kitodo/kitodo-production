@@ -2845,11 +2845,17 @@ Column content
     overflow-x: hidden;
 }
 
-#imagePreviewForm\:olWrapper {
+#imagePreviewForm\:mediaDetailContainer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     height: 100%;
+    width: 100%;
+}
+
+#imagePreviewForm\:mediaDetail {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
 }
 
 #map {
@@ -3023,6 +3029,22 @@ Column content
     position: relative;
 }
 
+.thumbnail-parent[data-mime-type^="video"] {
+    width: 185px;
+    height: auto;
+}
+
+
+#imagePreviewForm\:thumbnailStripe .thumbnail-parent[data-mime-type^="video"] {
+    width: 90px;
+    height: auto;
+}
+
+.thumbnail-parent video {
+    width: 100%;
+    height: auto;
+}
+
 .thumbnail {
     height: 100%;
     position: absolute;
@@ -3039,15 +3061,24 @@ Column content
     width: 100%;
 }
 
+.thumbnail + .thumbnail-container video {
+    background: var(--carbon-blue);
+    border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+}
+
+.thumbnail.selected + .thumbnail-container video,
 .thumbnail.selected + .thumbnail-container img {
     border-color: var(--green);
     border-style: dashed;
 }
 
+
+.thumbnail.discontinuous.selected + .thumbnail-container video,
 .thumbnail.discontinuous.selected + .thumbnail-container img {
     border-color: grey;
 }
 
+.thumbnail.selected.last-selection + .thumbnail-container video,
 .thumbnail.selected.last-selection + .thumbnail-container img {
     border-style: solid;
 }

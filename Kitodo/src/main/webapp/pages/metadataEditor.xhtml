@@ -17,14 +17,16 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+>
 
     <f:metadata>
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
         <f:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
-        <f:viewAction action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
+        <f:viewAction
+                action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
     </f:metadata>
     <ui:define name="content">
 
@@ -187,14 +189,18 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null}"
-                                                  value="#{msgs.image} 
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}, 
-                                                         #{msgs.page}
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
+                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType eq 'video/mp4'}"
+                                                  value="#{msgs.video}
+                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                    <h:outputText styleClass="columnHeading"
+                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType ne 'video/mp4'}"
+                                                  value="#{msgs.image}
+                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
+                                                 #{msgs.page}
+                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.lastSelection eq null}"
-                                                  value="#{msgs.notSelected}" />
+                                                  value="#{msgs.notSelected}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
