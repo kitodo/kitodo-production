@@ -27,6 +27,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "paginationPanel")
     private WebElement paginationPanel;
 
+    @FindBy(css = "#portal-logo a")
+    private WebElement poralLogoLink;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }

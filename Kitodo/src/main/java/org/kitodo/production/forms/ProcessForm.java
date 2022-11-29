@@ -1103,7 +1103,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void resetProcessListMultiViewState() {
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            // check whether there is a mulit view state registered (to avoid warning log message in case there is not)
+            // check whether there is a multi view state registered (to avoid warning log message in case there is not)
             Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
             if (Objects.nonNull(mvs)) {
                 // clear multi view state only if there is a state available

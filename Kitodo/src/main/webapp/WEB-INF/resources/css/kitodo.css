@@ -2027,6 +2027,10 @@ Metadata Editor
     padding: 0;
 }
 
+#metadataEditorHeader .content-header button {
+    margin-left: 16px;
+}
+
 #messagesWrapper {
     display: block;
     overflow: hidden;
@@ -2130,6 +2134,12 @@ form#metadata div label,
 .comment-message {
     display: block;
     width: 100%;
+}
+
+.bold-centered {
+    display: block;
+    font-weight: bold;
+    text-align: center;
 }
 
 #newCommentDialog .ui-dialog-content {

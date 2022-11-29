@@ -16,11 +16,13 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
+import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 
 public class MetadataST extends BaseTestSelenium {
@@ -31,10 +33,31 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getLoginPage().goTo().performLogin(metadataUser);
     }
 
+    /**
+     * Tests whether structure tree is hidden when user lacks permission to see a process structure in metadata editor.
+     */
     @Test
     public void hideStructureDataTest() throws Exception {
         Pages.getProcessesPage().goTo().editMetadata();
-        assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
+        Assert.assertFalse(Pages.getMetadataEditorPage().isStructureTreeFormVisible());
+    }
+
+    /**
+     * Tests if process metadata lock is being removed when the user leaves the metadata editor
+     * without clicking the close button.
+     */
+    @Test
+    public void removeMetadataLockTest() throws Exception {
+        // Open process in metadata editor by default user to set metadata lock for this process and user
+        Pages.getProcessesPage().goTo().editMetadata();
+        // Leave metadata editor without explicitly clicking the 'close' button
+        Pages.getTopNavigation().logout();
+        // Try to open metadata editor with separate user to check whether metadata lock is still in place
+        Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("kowal"));
+        Pages.getProcessesPage().goTo().editMetadata();
+        Assert.assertEquals("Unable to open metadata editor that was not closed by 'close' button",
+                "http://localhost:8080/kitodo/pages/metadataEditor.jsf?referer=processes&id=2",
+                Browser.getCurrentUrl());
     }
 
     /**

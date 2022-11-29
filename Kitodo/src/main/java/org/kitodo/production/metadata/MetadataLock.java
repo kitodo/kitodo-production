@@ -28,7 +28,7 @@ import org.kitodo.production.forms.UserForm;
 @Named("MetadataLock")
 @ApplicationScoped
 public class MetadataLock implements Serializable {
-    private static ConcurrentHashMap<Integer, User> locks = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, User> locks = new ConcurrentHashMap<>();
 
     /**
      * Unlock metadata of a particular process again.

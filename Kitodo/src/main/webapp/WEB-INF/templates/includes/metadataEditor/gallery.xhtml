@@ -33,8 +33,14 @@
                         logicalTree
                         physicalTree
                         paginationForm:paginationWrapperPanel"/>
-
-            <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
+            <p:graphicImage id="mediaViewData"
+                            value="#{imageProvider.mediaView}"
+                            style="display: none;">
+                <f:param name="mediaId"
+                         value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+            </p:graphicImage>
 
             <p:remoteCommand name="sendGallerySelect"
                              action="#{DataEditorForm.galleryPanel.select}"
@@ -114,7 +120,7 @@
                                                     a:data-order="#{media.order}"
                                                     a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                                     a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
-                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                            <p:graphicImage value="#{imageProvider.previewData}"
                                                             rendered="#{media.showingInPreview}"
                                                             a:loading="lazy">
                                                 <f:param name="mediaId"
@@ -172,7 +178,7 @@
                                                            a:data-stripe="0"
                                                            a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                                                    <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                    <p:graphicImage value="#{imageProvider.previewData}"
                                                                     rendered="#{media.showingInPreview}"
                                                                     a:loading="lazy">
                                                         <f:param name="mediaId"
@@ -225,7 +231,7 @@
                                                            styleClass="thumbnail-container"
                                                            a:data-order="#{media.order}"
                                                            a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
-                                                <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
+                                                <h:outputText><p:graphicImage value="#{imageProvider.previewData}"
                                                                               rendered="#{media.showingInPreview}"
                                                                               a:loading="lazy">
                                                     <f:param name="mediaId"

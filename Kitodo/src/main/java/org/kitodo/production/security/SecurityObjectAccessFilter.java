@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
+import org.omnifaces.cdi.viewscope.ViewScopeManager;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.access.AccessDeniedHandlerImpl;
@@ -53,6 +54,8 @@ public class SecurityObjectAccessFilter extends GenericFilterBean {
             } catch (NumberFormatException e) {
                 if (httpServletRequest.getRequestURI().contains("pages/workflowEdit")
                         && securityAccessService.hasAuthorityToViewWorkflow()) {
+                    chain.doFilter(request, response);
+                } else if (ViewScopeManager.isUnloadRequest(httpServletRequest)) {
                     chain.doFilter(request, response);
                 } else {
                     denyAccess(httpServletRequest, httpServletResponse);

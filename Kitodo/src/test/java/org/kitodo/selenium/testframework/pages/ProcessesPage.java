@@ -330,7 +330,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private void setEditMetadataLink() {
         int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
-        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML");
+        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
     }
 
     private void setDownloadLogLink() {
@@ -355,7 +355,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     /**
      * Submits a filter query by typing some text into the input field and submitting the filter form.
-     * 
+     *
      * <p>This method doesn't block until the filter is sucessfully applied.</p>
      *
      * @param filterQuery the query
@@ -367,9 +367,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     /**
-     * Clicks a column in the header of the processes table in order to 
+     * Clicks a column in the header of the processes table in order to
      * trigger sorting the processes list by that column.
-     * 
+     *
      * @param column the column index
      */
     public void clickProcessesTableHeaderForSorting(int column) {
