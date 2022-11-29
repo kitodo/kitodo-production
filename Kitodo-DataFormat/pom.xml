@@ -17,7 +17,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.4.4-SNAPSHOT</version>
+        <version>3.5.0-beta-1</version>
     </parent>
 
     <name>Kitodo - Data Format</name>
@@ -69,27 +69,7 @@
                     </filesets>
                 </configuration>
             </plugin>
-            <plugin>
-                <!--Download xsd for mets-->
-                <groupId>com.googlecode.maven-download-plugin</groupId>
-                <artifactId>download-maven-plugin</artifactId>
-                <version>1.3.0</version>
-                <executions>
-                    <execution>
-                        <id>mets</id>
-                        <phase>generate-sources</phase>
-                        <goals>
-                            <goal>wget</goal>
-                        </goals>
-                        <configuration>
-                            <url>https://www.loc.gov/standards/mets/version111/mets.xsd</url>
-                            <outputFileName>mets.xsd</outputFileName>
-                            <outputDirectory>${project.build.directory}/downloaded-sources/xsd</outputDirectory>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <!--copy kitodo xsd to target folder-->
+            <!--copy XML schema definitions to target folder-->
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
                 <version>${maven-resources-plugin.version}</version>
