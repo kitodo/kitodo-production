@@ -25,6 +25,10 @@
             <p:tab title="#{msgs.userInstruction}">
                 <p:panel styleClass="text-align: justify;">
                     <h:outputText styleClass="text-align: justify;" value="#{msgs.userInstructionText}" escape="false"/>
+                    <h:outputLink value="https://github.com/kitodo/kitodo-production/wiki/Anwenderdokumentation-Kitodo.Production-3.X"
+                                  target="_blank">
+                        #{msgs.userDocumentationLink}.
+                    </h:outputLink>
                 </p:panel>
             </p:tab>
         </p:tabView>
