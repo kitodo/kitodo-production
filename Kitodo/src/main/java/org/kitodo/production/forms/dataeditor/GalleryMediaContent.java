@@ -33,6 +33,7 @@ import org.primefaces.model.StreamedContent;
  * A single media content in the media gallery.
  */
 public class GalleryMediaContent {
+
     private static final Logger logger = LogManager.getLogger(GalleryMediaContent.class);
 
     /**
@@ -54,6 +55,13 @@ public class GalleryMediaContent {
     private final String previewMimeType;
 
     private final String mediaViewMimeType;
+
+    private final TYPE type;
+
+    public enum TYPE {
+        DEFAULT,
+        VIDEO
+    }
 
     /**
      * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
@@ -79,8 +87,9 @@ public class GalleryMediaContent {
      * @param mediaViewUri
      *         URI to the content for the media view. Can be {@code null}, then no media view is offered.
      */
-    GalleryMediaContent(View view, String canonical, String previewMimeType, URI previewUri, String mediaViewMimeType,
-            URI mediaViewUri, String logicalTreeNodeId) {
+    GalleryMediaContent(TYPE type, View view, String canonical, String previewMimeType, URI previewUri,
+            String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId) {
+        this.type = type;
         this.view = view;
         this.id = canonical;
         this.previewMimeType = previewMimeType;
@@ -182,6 +191,10 @@ public class GalleryMediaContent {
      */
     public boolean isShowingInPreview() {
         return Objects.nonNull(previewUri);
+    }
+
+    public String getType() {
+        return type.name();
     }
 
     /**

@@ -73,7 +73,10 @@
                 <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
                               rendered="#{media.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
-                <h:panelGroup class="thumbnail-overlay">
+                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'VIDEO'}">
+                    #{msgs.video} #{media.shortId}
+                </h:panelGroup>
+                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'DEFAULT'}">
                     #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
                 </h:panelGroup>
             </ui:fragment>

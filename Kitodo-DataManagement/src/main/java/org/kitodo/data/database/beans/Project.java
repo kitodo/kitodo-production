@@ -122,6 +122,17 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @JoinColumn(name = "preview_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_folder_id"))
     private Folder preview;
 
+    @ManyToOne
+    @JoinColumn(name = "preview_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_video_folder_id"))
+    private Folder videoPreview;
+
+    /**
+     * Folder with video media to use for the viewer.
+     */
+    @ManyToOne
+    @JoinColumn(name = "mediaView_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_folder_id"))
+    private Folder videoMediaView;
+
     /**
      * Constructor.
      */
@@ -466,13 +477,32 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
+     * Returns the folder to use for video preview.
+     *
+     * @return video preview folder
+     */
+    public Folder getVideoPreview() {
+        return videoPreview;
+    }
+
+    /**
      * Sets the folder to use for preview.
      *
      * @param preview
-     *            preview folder
+     *         preview folder
      */
     public void setPreview(Folder preview) {
         this.preview = preview;
+    }
+
+    /**
+     * Sets the folder to use for video preview.
+     *
+     * @param videoPreview
+     *         video preview folder
+     */
+    public void setVideoPreview(Folder videoPreview) {
+        this.videoPreview = videoPreview;
     }
 
     /**
@@ -515,5 +545,13 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @Override
     public int hashCode() {
         return this.title == null ? 0 : this.title.hashCode();
+    }
+
+    public Folder getVideoMediaView() {
+        return videoMediaView;
+    }
+
+    public void setVideoMediaView(Folder videoMediaView) {
+        this.videoMediaView = videoMediaView;
     }
 }

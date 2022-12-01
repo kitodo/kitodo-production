@@ -527,19 +527,22 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * The need to commit deleted folders only after the save action requires a
-     * filter, so that those folders marked for delete are not shown anymore.
+     * The need to commit deleted folders only after the save action requires a filter, so that those folders marked for
+     * delete are not shown anymore.
      *
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream()
-                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
+        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+                .collect(Collectors.toList());
+    }
+
+    public boolean hasVideoFolder() {
+        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith("video"));
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream()
-                .collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
     }
 
     /**
@@ -629,10 +632,30 @@ public class ProjectForm extends BaseForm {
      * Sets the folder to use for the media view.
      *
      * @param mediaView
-     *            media view folder
+     *         media view folder
      */
     public void setMediaView(String mediaView) {
         project.setMediaView(getFolderMap().get(mediaView));
+    }
+
+    /**
+     * Returns the folder to use for the video media view.
+     *
+     * @return video media view folder
+     */
+    public String getVideoMediaView() {
+        Folder videoMediaView = project.getVideoMediaView();
+        return Objects.isNull(videoMediaView) ? null : videoMediaView.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     *
+     * @param videoMediaView
+     *         video media view folder
+     */
+    public void setVideoMediaView(String videoMediaView) {
+        project.setVideoMediaView(getFolderMap().get(videoMediaView));
     }
 
     /**
@@ -649,17 +672,37 @@ public class ProjectForm extends BaseForm {
      * Sets the folder to use for preview.
      *
      * @param preview
-     *            preview folder
+     *         preview folder
      */
     public void setPreview(String preview) {
         project.setPreview(getFolderMap().get(preview));
     }
 
     /**
+     * Returns the folder to use for video preview.
+     *
+     * @return video preview folder
+     */
+    public String getVideoPreview() {
+        Folder videoPreview = project.getVideoPreview();
+        return Objects.isNull(videoPreview) ? null : videoPreview.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for video preview.
+     *
+     * @param videoPreview
+     *         video preview folder
+     */
+    public void setVideoPreview(String videoPreview) {
+        project.setVideoPreview(getFolderMap().get(videoPreview));
+    }
+
+    /**
      * Method being used as viewAction for project edit form.
      *
      * @param id
-     *            ID of the ruleset to load
+     *         ID of the ruleset to load
      */
     public void loadProject(int id) {
         SecurityAccessController securityAccessController = new SecurityAccessController();
