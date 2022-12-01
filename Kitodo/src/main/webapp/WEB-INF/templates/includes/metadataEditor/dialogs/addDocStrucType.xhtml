@@ -201,14 +201,20 @@
                                                  class="input"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}"
                                                  style="width: 180px;">
+                                    <f:selectItem itemValue=""
+                                        itemLabel="#{msgs.notSelected}"
+                                        itemDisabled="false"/>
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.addableMetadata}" />
+                                    <p:ajax event="change" update="addMetadata"/>
                                 </p:selectOneMenu>
-
-                                <p:outputLabel value="#{msgs.value}:"
-                                               for="inputMetaDataValue"/>
-                                <p:inputText id="inputMetaDataValue"
-                                             class="input"
-                                             value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValue}"/>
+                                <h:panelGroup id="inputMetadataValueGroup" rendered="#{not empty DataEditorForm.addDocStrucTypeDialog.selectedMetadata}">
+                                    <p:outputLabel value="#{msgs.value}:"
+                                                   for="inputMetaDataValue"/>
+                                    <p:inputText 
+                                                 id="inputMetaDataValue"
+                                                 class="input"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValue}"/>
+                                </h:panelGroup>
                             </p:row>
                         </p:panelGrid>
                     </h:panelGroup>
