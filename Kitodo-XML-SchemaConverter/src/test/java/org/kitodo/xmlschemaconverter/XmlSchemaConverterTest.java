@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,7 +31,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -51,14 +49,6 @@ public class XmlSchemaConverterTest {
     private static final XMLSchemaConverter converter = new XMLSchemaConverter();
     private static final String MODS_TEST_FILE_PATH = "src/test/resources/modsXmlTestRecord.xml";
     private static final String MARC_TEST_FILE_PATH = "src/test/resources/marcXmlTestRecord.xml";
-
-    @AfterClass
-    public static void tearDown() {
-        File xslt = new File ("src/main/resources/xslt/marc21slim2mods.xsl");
-        if (xslt.exists()) {
-            xslt.delete();
-        }
-    }
 
     @Test
     public void shouldConvertModsToInternalFormat() throws IOException, ParserConfigurationException, SAXException,

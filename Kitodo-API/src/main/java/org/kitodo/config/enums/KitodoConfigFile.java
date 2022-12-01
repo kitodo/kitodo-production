@@ -12,8 +12,8 @@
 package org.kitodo.config.enums;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.kitodo.config.KitodoConfig;
 
 /**
@@ -86,13 +86,13 @@ public enum KitodoConfigFile {
      *            of configuration file
      * @return File
      */
-    public static KitodoConfigFile getByName(String name) throws ConfigurationException {
+    public static KitodoConfigFile getByName(String name) throws FileNotFoundException {
         for (KitodoConfigFile file : KitodoConfigFile.values()) {
             if (file.getName().equals(name)) {
                 return file;
             }
         }
-        throw new ConfigurationException("Configuration file '" + name + "' doesn't exists!");
+        throw new FileNotFoundException("Configuration file '" + name + "' doesn't exists!");
     }
 
     /**
