@@ -169,12 +169,18 @@ public class GalleryPanel {
      * Returns the media content of the preview media. This is the method that is called when the web browser wants to
      * retrieve the media file itself.
      *
-     * @return a Primefaces object that handles the output of media data
+     * @return a Primefaces object that handles the output of preview data
      */
     public StreamedContent getPreviewData() {
         return getData(true);
     }
 
+    /**
+     * Returns the media content of the media view. This is the method that is called when the web browser wants to
+     * retrieve the media file itself.
+     *
+     * @return a Primefaces object that handles the output of media view data
+     */
     public StreamedContent getMediaViewData() {
         return getData(false);
     }

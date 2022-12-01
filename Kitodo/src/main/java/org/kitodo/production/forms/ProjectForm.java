@@ -537,6 +537,11 @@ public class ProjectForm extends BaseForm {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks if folder list contains video folder.
+     *
+     * @return true if folder list contains video folder
+     */
     public boolean hasVideoFolder() {
         return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith("video"));
     }

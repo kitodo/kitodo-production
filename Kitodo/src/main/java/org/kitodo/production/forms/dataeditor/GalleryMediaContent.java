@@ -58,6 +58,12 @@ public class GalleryMediaContent {
 
     private final TYPE type;
 
+    /**
+     * Type of the current object.
+     *
+     * <p>Mime types are used for streaming, but they are not the representative type of the object. Therefore, we need
+     * this fixed type for distinction.</p>
+     */
     public enum TYPE {
         DEFAULT,
         VIDEO
@@ -121,10 +127,20 @@ public class GalleryMediaContent {
         }
     }
 
+    /**
+     * Get the mime type of the selected media view of the project.
+     *
+     * @return the mime type of media view
+     */
     public String getMediaViewMimeType() {
         return mediaViewMimeType;
     }
 
+    /**
+     * Get the mime type of the selected preview of the project.
+     *
+     * @return the mime type of preview
+     */
     public String getPreviewMimeType() {
         return previewMimeType;
     }
@@ -193,6 +209,11 @@ public class GalleryMediaContent {
         return Objects.nonNull(previewUri);
     }
 
+    /**
+     * Returns the type of gallery media content object.
+     *
+     * @return the type of gallery media content object.
+     */
     public String getType() {
         return type.name();
     }

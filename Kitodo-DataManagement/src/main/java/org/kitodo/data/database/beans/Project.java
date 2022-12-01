@@ -122,12 +122,15 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @JoinColumn(name = "preview_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_folder_id"))
     private Folder preview;
 
+    /**
+     * Folder with media to use for the video preview.
+     */
     @ManyToOne
     @JoinColumn(name = "preview_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_video_folder_id"))
     private Folder videoPreview;
 
     /**
-     * Folder with video media to use for the viewer.
+     * Folder with media to use for the video viewer.
      */
     @ManyToOne
     @JoinColumn(name = "mediaView_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_folder_id"))
@@ -547,10 +550,21 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.title == null ? 0 : this.title.hashCode();
     }
 
+    /**
+     * Returns the folder to use for the video media view.
+     *
+     * @return the video media view folder
+     */
     public Folder getVideoMediaView() {
         return videoMediaView;
     }
 
+    /**
+     * Sets the folder to use for the video media view.
+     *
+     * @param videoMediaView
+     *         video media view folder
+     */
     public void setVideoMediaView(Folder videoMediaView) {
         this.videoMediaView = videoMediaView;
     }
