@@ -315,7 +315,11 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     public void resetSearchResultTableViewState() {
         if (!Objects.isNull(FacesContext.getCurrentInstance())) {
-            PrimeFaces.current().multiViewState().clear(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID);
+            // clear multi view state only if there is a state available
+            Object mvs = PrimeFaces.current().multiViewState().get(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID, false, null);
+            if (Objects.nonNull(mvs)) {
+                PrimeFaces.current().multiViewState().clear(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID);
+            }
         }
     }
 
