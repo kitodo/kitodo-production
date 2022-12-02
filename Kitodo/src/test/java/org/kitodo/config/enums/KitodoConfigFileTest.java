@@ -12,8 +12,8 @@
 package org.kitodo.config.enums;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -63,14 +63,14 @@ public class KitodoConfigFileTest {
     }
 
     @Test
-    public void shouldGetByFileNameTest() throws ConfigurationException {
+    public void shouldGetByFileNameTest() throws FileNotFoundException {
         assertEquals("Config projects file doesn't exists for given!", KitodoConfigFile.PROJECT_CONFIGURATION,
             KitodoConfigFile.getByName("kitodo_projects.xml"));
     }
 
     @Test
-    public void shouldNotGetByFileNameTest() throws ConfigurationException {
-        exception.expect(ConfigurationException.class);
+    public void shouldNotGetByFileNameTest() throws FileNotFoundException {
+        exception.expect(FileNotFoundException.class);
         exception.expectMessage("Configuration file 'kitodo_nonexistent.xml' doesn't exists!");
         KitodoConfigFile.getByName("kitodo_nonexistent.xml");
     }
