@@ -36,6 +36,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.JDOMException;
 import org.jdom2.Namespace;
+import org.jdom2.filter.Filter;
 import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.output.Format;
@@ -404,12 +405,17 @@ public class ExportXmlLog implements Consumer<OutputStream> {
             Namespace[] namespaces, Namespace xmlns) {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
-            List<Element> metsValues = getMetsValues(entry.getValue(), document, namespaces);
-            for (Element element : metsValues) {
-                Element ele = new Element(PROPERTY, xmlns);
-                ele.setAttribute("name", key);
-                ele.addContent(element.getTextTrim());
-                metadataElements.add(ele);
+            List<Object> metsValues = getMetsValues(entry.getValue(), document, namespaces);
+            for (Object object : metsValues) {
+                boolean isElement = Filters.element().matches(object);
+                if (isElement || Filters.attribute().matches(object)) {
+                    Element ele = new Element(PROPERTY, xmlns);
+                    ele.setAttribute("name", key);
+                    ele.addContent(isElement
+                            ? ((Element) object).getTextTrim()
+                            : ((Attribute) object).getValue());
+                    metadataElements.add(ele);
+                }
             }
         }
     }
@@ -435,9 +441,9 @@ public class ExportXmlLog implements Consumer<OutputStream> {
      *            HashMap
      * @return list of elements
      */
-    private static List<Element> getMetsValues(String expr, Document document, Namespace[] namespaces) {
-        XPathExpression<Element> xpath = XPathFactory.instance().compile(expr.trim().replace("\n", ""),
-            Filters.element(), Collections.emptyMap(), namespaces);
+    private static List<Object> getMetsValues(String expr, Document document, Namespace[] namespaces) {
+        XPathExpression<Object> xpath = XPathFactory.instance().compile(expr.trim().replace("\n", ""),
+            Filters.fpassthrough(), Collections.emptyMap(), namespaces);
         return xpath.evaluate(document);
     }
 
