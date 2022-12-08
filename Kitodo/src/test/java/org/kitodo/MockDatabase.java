@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -57,6 +58,7 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -121,6 +123,7 @@ public class MockDatabase {
     private static final int CUSTOM_CONFIGURATION_ID = 4;
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
+    public static final String META_XML = "/meta.xml";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -635,6 +638,54 @@ public class MockDatabase {
         }
     }
 
+    /**
+     * Insert process of type 'MultiVolumeWork' used to test creation of subordinate process of type 'Volume'.
+     * @throws DAOException when retrieving project or ruleset from database fails
+     * @throws DataException when saving new process object fails
+     */
+    public static int insertMultiVolumeWork() throws DAOException, DataException {
+        Process multiVolumeWork = new Process();
+        multiVolumeWork.setBaseType("MultiVolumeWork");
+        multiVolumeWork.setTitle("Multi volume work test process");
+        Project project = ServiceManager.getProjectService().getById(1);
+        multiVolumeWork.setProject(project);
+        multiVolumeWork.setTemplate(project.getTemplates().get(0));
+        multiVolumeWork.setRuleset(ServiceManager.getRulesetService().getById(1));
+        ServiceManager.getProcessService().save(multiVolumeWork);
+        return multiVolumeWork.getId();
+    }
+
+    /**
+     * Create template process of type 'Volume' and corresponding template process import configuration.
+     * @throws DAOException when loading required objects from database fails
+     * @throws DataException when saving process or import configuration fails
+     */
+    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException, DataException {
+
+        // create template process
+        Project firstProject = ServiceManager.getProjectService().getById(1);
+        Process templateProcess = new Process();
+        templateProcess.setBaseType("Volume");
+        templateProcess.setTitle("Test volume");
+        templateProcess.setProject(firstProject);
+        templateProcess.setTemplate(firstProject.getTemplates().get(0));
+        templateProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
+        templateProcess.setInChoiceListShown(true);
+        ServiceManager.getProcessService().save(templateProcess);
+
+        // create import configuration for template process
+        Process newProcess = ServiceManager.getProcessService().getById(12);
+        ImportConfiguration templateProcessConfiguration = new ImportConfiguration();
+        templateProcessConfiguration.setConfigurationType(ImportConfigurationType.PROCESS_TEMPLATE.name());
+        templateProcessConfiguration.setDefaultTemplateProcess(newProcess);
+        ServiceManager.getImportConfigurationService().saveToDatabase(templateProcessConfiguration);
+        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().countDatabaseRows());
+        ImportConfiguration savedConfig = ServiceManager.getImportConfigurationService().getById(numberOfConfigs);
+        firstProject.setDefaultChildProcessImportConfiguration(savedConfig);
+        ServiceManager.getProjectService().save(firstProject);
+        ServiceManager.getImportService().setUsingTemplates(true);
+    }
+
     public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
         Process fourthProcess = new Process();
         fourthProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -679,16 +730,7 @@ public class MockDatabase {
         fivthRuleset.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getRulesetService().save(fivthRuleset);
 
-        /*
-         * The folders up to and including number 9 in the metadata folder are
-         * already in use, so here we insert placeholder processes so that the
-         * newspaper’s overall process gets the number 10.
-         */
-        for (int processNumber = 4; processNumber <= 9; processNumber++) {
-            Process nthProcess = new Process();
-            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
-            ServiceManager.getProcessService().save(nthProcess);
-        }
+        insertPlaceholderProcesses(4, 9);
 
         Process tenthProcess = new Process();
         tenthProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -2030,5 +2072,25 @@ public class MockDatabase {
         process.setTemplate(template);
         ServiceManager.getProcessService().save(process);
         return process;
+    }
+
+    /**
+     * Copy test metadata xml file with provided 'filename' to process directory of process with provided ID
+     * 'processId'. Creates directory if it does not exist.
+     * @param processId process ID
+     * @param filename filename of metadata file
+     * @throws IOException when subdirectory cannot be created or metadata file cannot be copied
+     */
+    public static void copyTestMetadataFile(int processId, String filename) throws IOException {
+        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
+                .toUri();
+        URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
+                + META_XML).toUri();
+        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
+        if (!ServiceManager.getFileService().isDirectory(processDir)) {
+            ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
+                    String.valueOf(processId));
+        }
+        ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
     }
 }

@@ -18,6 +18,8 @@ import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.io.File;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.config.KitodoConfig;
@@ -47,6 +49,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
+    private static final String MULTI_VOLUME_WORK_PROCESS_TITLE = "Multi volume work test process";
 
     private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
 
@@ -522,6 +525,26 @@ public class ProcessesPage extends Page<ProcessesPage> {
             nextPage.click();
             await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
                     .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+        }
+    }
+
+    /**
+     * Clicks 'create child process' link in actions column and waits for redirect to 'create new process' page.
+     * @throws InstantiationException when retrieving process from template page fails
+     * @throws IllegalAccessException when retrieving process from template page fails
+     */
+    public void createChildProcess() throws InstantiationException, IllegalAccessException {
+        List<WebElement> processTitleCells = processesTable.findElements(By.cssSelector("tr td:nth-child(4)"));
+        Optional<WebElement> mvwTitleCell = processTitleCells.stream().filter(row -> row.getText()
+                .equals(MULTI_VOLUME_WORK_PROCESS_TITLE)).findFirst();
+        if (mvwTitleCell.isPresent()) {
+            int rowIndex = processTitleCells.indexOf(mvwTitleCell.get());
+            WebElement createLink = processesTable.findElement(By.id(PROCESSES_TABLE + ":" + rowIndex
+                    + ":createChildren"));
+            clickButtonAndWaitForRedirect(createLink, Pages.getProcessFromTemplatePage().getUrl());
+        } else {
+            throw new NoSuchElementException("Unable to find table row for process with title '"
+                    + MULTI_VOLUME_WORK_PROCESS_TITLE + "'");
         }
     }
 }

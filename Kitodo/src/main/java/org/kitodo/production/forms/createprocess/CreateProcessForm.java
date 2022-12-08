@@ -93,7 +93,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private int progress;
     private TempProcess currentProcess;
     private Boolean rulesetConfigurationForOpacImportComplete = null;
-
+    private String defaultConfigurationType;
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
 
     public CreateProcessForm() {
@@ -427,6 +427,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 updateRulesetAndDocType(getMainProcess().getRuleset());
                 if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
                     setDefaultImportConfiguration(project.getDefaultImportConfiguration());
+                } else {
+                    defaultConfigurationType = null;
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
@@ -441,6 +443,11 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
+                    if (Objects.nonNull(project.getDefaultChildProcessImportConfiguration())) {
+                        setDefaultImportConfiguration(project.getDefaultChildProcessImportConfiguration());
+                    } else {
+                        defaultConfigurationType = null;
+                    }
                     if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
                         updateRulesetAndDocType(getMainProcess().getRuleset());
                     }
@@ -454,19 +461,17 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     }
 
     private void showDefaultImportConfigurationDialog() {
-        if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
-            String configType = project.getDefaultImportConfiguration().getConfigurationType();
-            if (ImportConfigurationType.OPAC_SEARCH.name().equals(configType)) {
-                checkRulesetConfiguration();
-            } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(configType)) {
-                PrimeFaces.current().executeScript("fileUploadDialog");
-            } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(configType)) {
-                PrimeFaces.current().executeScript("searchEditDialog");
-            }
+        if (ImportConfigurationType.OPAC_SEARCH.name().equals(defaultConfigurationType)) {
+            checkRulesetConfiguration();
+        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(defaultConfigurationType)) {
+            PrimeFaces.current().executeScript("PF('fileUploadDialog').show()");
+        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(defaultConfigurationType)) {
+            PrimeFaces.current().executeScript("PF('searchEditDialog').show()");
         }
     }
 
     private void setDefaultImportConfiguration(ImportConfiguration importConfiguration) {
+        defaultConfigurationType = importConfiguration.getConfigurationType();
         if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
             catalogImportDialog.getHitModel().setImportConfiguration(importConfiguration);
             PrimeFaces.current().ajax().update("catalogSearchDialog");
@@ -808,5 +813,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         } else {
             PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
         }
+    }
+
+    /**
+     * Get defaultConfigurationType.
+     *
+     * @return value of defaultConfigurationType
+     */
+    public String getDefaultConfigurationType() {
+        return defaultConfigurationType;
     }
 }

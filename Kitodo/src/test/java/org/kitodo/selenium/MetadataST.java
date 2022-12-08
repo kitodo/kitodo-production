@@ -62,7 +62,6 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_PARENT_PROCESS_METADATA_FILE = "testParentProcessMeta.xml";
     private static final String FIRST_CHILD_ID = "FIRST_CHILD_ID";
     private static final String SECOND_CHILD_ID = "SECOND_CHILD_ID";
-    private static final String META_XML = "/meta.xml";
     private static List<Integer> processHierarchyTestProcessIds = new LinkedList<>();
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
@@ -76,7 +75,7 @@ public class MetadataST extends BaseTestSelenium {
     private static void prepareMetadataLockProcess() throws DAOException, DataException, IOException {
         insertDummyProcesses();
         insertTestProcessForMetadataLockTest();
-        copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
+        MockDatabase.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
     }
 
     private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DataException {
@@ -300,7 +299,7 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void copyTestFilesForMediaReferences() throws IOException {
         // copy test meta xml
-        copyTestMetadataFile(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
+        MockDatabase.copyTestMetadataFile(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(mediaReferencesProcessId))
                 .toUri();
         // copy test images
@@ -318,26 +317,13 @@ public class MetadataST extends BaseTestSelenium {
         }
     }
 
-    private static void copyTestMetadataFile(int processId, String filename) throws IOException {
-        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
-                .toUri();
-        URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
-                + META_XML).toUri();
-        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
-        if (!ServiceManager.getFileService().isDirectory(processDir)) {
-            ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
-                    String.valueOf(processId));
-        }
-        ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
-    }
-
     private static void copyTestParentProcessMetadataFile() throws IOException {
-        copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
+        MockDatabase.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
     }
 
     private static void updateChildProcessIdsInParentProcessMetadataFile() throws IOException, DAOException {
         Process parentProcess = ServiceManager.getProcessService().getById(parentProcessId);
-        Path metaXml = Paths.get(ConfigCore.getKitodoDataDirectory(), parentProcessId + META_XML);
+        Path metaXml = Paths.get(ConfigCore.getKitodoDataDirectory(), parentProcessId + MockDatabase.META_XML);
         String xmlContent = Files.readString(metaXml);
         String firstChildId = String.valueOf(parentProcess.getChildren().get(0).getId());
         String secondChildId = String.valueOf(parentProcess.getChildren().get(1).getId());

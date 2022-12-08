@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2687,8 +2688,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get template processes.
-     * @return template processes
+     * Get template processes sorted by title.
+     * @return template processes sorted by title
      */
     public List<Process> getTemplateProcesses() throws DataException, DAOException {
         List<Process> templateProcesses = new ArrayList<>();
@@ -2698,6 +2699,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         for (ProcessDTO processDTO : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
             templateProcesses.add(getById(processDTO.getId()));
         }
+        templateProcesses.sort(Comparator.comparing(Process::getTitle));
         return templateProcesses;
     }
 

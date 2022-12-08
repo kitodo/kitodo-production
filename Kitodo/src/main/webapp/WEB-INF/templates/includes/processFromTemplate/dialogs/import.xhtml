@@ -23,6 +23,7 @@
               width="640"
               modal="true"
               appendTo="@(body)"
+              visible="#{CreateProcessForm.defaultConfigurationType eq 'OPAC_SEARCH'}"
               resizable="false">
         <h3>#{msgs['newProcess.catalogueSearch.heading']}</h3>
         <h:form id="catalogSearchForm">

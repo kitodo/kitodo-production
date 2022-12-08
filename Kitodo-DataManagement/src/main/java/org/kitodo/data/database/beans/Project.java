@@ -94,6 +94,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
             foreignKey = @ForeignKey(name = "FK_project_default_importconfiguration_id"))
     private ImportConfiguration defaultImportConfiguration;
 
+    @ManyToOne
+    @JoinColumn(name = "default_child_process_importconfiguration_id",
+            foreignKey = @ForeignKey(name = "FK_project_default_child_process_importconfiguration_id"))
+    private ImportConfiguration defaultChildProcessImportConfiguration;
+
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Folder> folders;
 
@@ -596,6 +601,24 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public void setDefaultImportConfiguration(ImportConfiguration defaultImportConfiguration) {
         this.defaultImportConfiguration = defaultImportConfiguration;
+    }
+
+    /**
+     * Get defaultChildProcessImportConfiguration.
+     *
+     * @return value of defaultChildProcessImportConfiguration
+     */
+    public ImportConfiguration getDefaultChildProcessImportConfiguration() {
+        return defaultChildProcessImportConfiguration;
+    }
+
+    /**
+     * Set defaultChildProcessImportConfiguration.
+     *
+     * @param defaultChildProcessImportConfiguration as org.kitodo.data.database.beans.ImportConfiguration
+     */
+    public void setDefaultChildProcessImportConfiguration(ImportConfiguration defaultChildProcessImportConfiguration) {
+        this.defaultChildProcessImportConfiguration = defaultChildProcessImportConfiguration;
     }
 
     @Override
