@@ -352,7 +352,7 @@ public class ExportDms extends ExportMets {
      *              the workflow stask associated with the export
      */
     public void setWorkflowTask(Task workFlowTask) {
-       this.workFlowTask = workFlowTask;
+        this.workFlowTask = workFlowTask;
     }
 
 

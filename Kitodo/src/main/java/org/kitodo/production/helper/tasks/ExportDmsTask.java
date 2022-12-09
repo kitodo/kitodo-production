@@ -69,8 +69,8 @@ public class ExportDmsTask extends EmptyTask {
     public void run() {
         try {
             boolean exportSuccessful = exportDms.startExport(process, this);
-            setProgress(100);
             if (Objects.nonNull(exportDms.getWorkflowTask()) && exportSuccessful) {
+                setProgress(100);
                 new WorkflowControllerService().close(exportDms.getWorkflowTask());
             }
         } catch (RuntimeException | DataException | IOException | DAOException e) {
