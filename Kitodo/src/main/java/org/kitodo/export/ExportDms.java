@@ -263,8 +263,7 @@ public class ExportDms extends ExportMets {
         }
 
         // export the file to the import folder
-        asyncExportWithImport(process, gdzfile, destination);
-        return true;
+        return asyncExportWithImport(process, gdzfile, destination);
     }
 
     private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
@@ -312,18 +311,20 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
+    private boolean asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
             throws IOException, DAOException {
 
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
-        writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
+        boolean metsFileWrittenSuccesful = writeMetsFile(process, fileService.createResource(userHome,
+                File.separator + atsPpnBand + ".xml"), gdzfile);
 
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
         }
+        return metsFileWrittenSuccesful;
     }
 
     /**
