@@ -63,11 +63,17 @@ public class ExportDms extends ExportMets {
 
     private boolean exportWithImages = true;
 
+    private Task workFlowTask;
+
     public ExportDms() {
     }
 
     public ExportDms(boolean exportImages) {
         this.exportWithImages = exportImages;
+    }
+
+    public ExportDms(Task workFlowTask) {
+        this.workFlowTask = workFlowTask;
     }
 
     /**
@@ -130,7 +136,7 @@ public class ExportDms extends ExportMets {
             TaskManager.addTask(new ExportDmsTask(this, process));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
-            return true;
+            return false;
         } else {
             return startExport(process, (ExportDmsTask) null);
         }
@@ -328,6 +334,26 @@ public class ExportDms extends ExportMets {
     public EmptyTask getExportDmsTask() {
         return exportDmsTask;
     }
+
+    /**
+     * Get workflowTask.
+     *
+     * @return value of workFlowTask
+     */
+    public Task getWorkflowTask() {
+        return workFlowTask;
+    }
+
+    /**
+     * Set workflowTask.
+     *
+     * @param workFlowTask
+     *              the workflow stask associated with the export
+     */
+    public void setWorkflowTask(Task workFlowTask) {
+       this.workFlowTask = workFlowTask;
+    }
+
 
     /**
      * Setter method to pass in a task thread to whom progress and error messages

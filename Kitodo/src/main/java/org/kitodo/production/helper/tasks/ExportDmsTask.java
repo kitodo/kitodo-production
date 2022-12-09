@@ -11,8 +11,14 @@
 
 package org.kitodo.production.helper.tasks;
 
+import java.io.IOException;
+import java.util.Objects;
+
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 /**
  * The class ExportDmsTask accepts an {@link org.kitodo.export.ExportDms} for a
@@ -62,9 +68,12 @@ public class ExportDmsTask extends EmptyTask {
     @Override
     public void run() {
         try {
-            exportDms.startExport(process, this);
+            boolean exportSuccessful = exportDms.startExport(process, this);
             setProgress(100);
-        } catch (RuntimeException e) {
+            if (Objects.nonNull(exportDms.getWorkflowTask()) && exportSuccessful) {
+                new WorkflowControllerService().close(exportDms.getWorkflowTask());
+            }
+        } catch (RuntimeException | DataException | IOException | DAOException e) {
             setException(e);
         }
     }

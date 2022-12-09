@@ -613,7 +613,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException, IOException, DAOException {
-        new ExportDms().startExport(task);
+        new ExportDms(task).startExport(task);
     }
 
     /**
