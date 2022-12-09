@@ -162,7 +162,6 @@ public class DesktopForm extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-            Helper.setMessage(EXPORT_FINISHED);
         } catch (DAOException | DataException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
