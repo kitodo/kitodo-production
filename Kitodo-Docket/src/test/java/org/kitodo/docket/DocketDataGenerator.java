@@ -21,6 +21,9 @@ import org.kitodo.api.docket.Property;
 
 public class DocketDataGenerator {
 
+    /**
+     * Creates data for JUnit test.
+     */
     public DocketData createDocketData(String processID, String signatur, String docType) throws URISyntaxException {
         DocketData docketdata = new DocketData();
         docketdata.setCreationDate("01.01.2100");
@@ -63,6 +66,9 @@ public class DocketDataGenerator {
         return docketdata;
     }
 
+    /**
+     * Creates data for JUnit test.
+     */
     public List<DocketData> createDocketData(List<String> processIds) throws URISyntaxException {
         List<DocketData> docketData = new ArrayList<>();
         for (String processId : processIds) {

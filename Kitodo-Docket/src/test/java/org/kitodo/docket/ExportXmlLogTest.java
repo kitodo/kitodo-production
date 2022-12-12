@@ -33,6 +33,9 @@ public class ExportXmlLogTest extends ExportXmlLog {
         return data;
     }
 
+    /**
+     * Tests if ExportXmlLog works.
+     */
     @Test
     public void shouldExportXmlLogWithMetadata() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
