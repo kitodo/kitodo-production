@@ -7,15 +7,7 @@
         <mets:mdWrap>
             <mets:xmlData>
                 <kitodo:kitodo>
-                    <kitodo:metadata name="Description1">Lorem ipmsum dolor sit amet</kitodo:metadata>
-                    <kitodo:metadata name="CRNumber">22B</kitodo:metadata>
-                    <kitodo:metadata name="CaseNumber">4711</kitodo:metadata>
-                    <kitodo:metadata name="DurationFrom">2009-11-14</kitodo:metadata>
-                    <kitodo:metadata name="DurationTo">2011-05-15</kitodo:metadata>
-                    <kitodo:metadataGroup name="Address">
-                        <kitodo:metadata name="StreetName">Lions street</kitodo:metadata>
-                        <kitodo:metadata name="HouseNumber">22</kitodo:metadata>
-                    </kitodo:metadataGroup>
+                    <kitodo:metadata name="ValueMetadata">findMeInOutput</kitodo:metadata>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>

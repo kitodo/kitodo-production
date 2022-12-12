@@ -14,8 +14,8 @@ package org.kitodo.docket;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.file.Paths;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class ExportXmlLogTest extends ExportXmlLog {
 
     static final DocketData getDocketData() throws URISyntaxException {
         DocketData data = new DocketData();
-        data.setMetadataFile(new URI("src/test/resources/meta.xml"));
+        data.setMetadataFile(Paths.get("src/test/resources/meta.xml").toAbsolutePath().toUri());
         return data;
     }
 
@@ -37,6 +37,7 @@ public class ExportXmlLogTest extends ExportXmlLog {
     public void shouldExportXmlLogWithMetadata() throws IOException {
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
         super.startExport(((OutputStream) buffer));
-        Assert.assertTrue("Output should not be empty", buffer.size() > 0);
+        Assert.assertTrue("Output should contain test string",
+            new String(buffer.toByteArray()).contains("findMeInOutput"));
     }
 }
