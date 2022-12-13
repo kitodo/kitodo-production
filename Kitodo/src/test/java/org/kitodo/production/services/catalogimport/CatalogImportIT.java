@@ -35,8 +35,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 
 public class CatalogImportIT {
 
@@ -75,6 +78,14 @@ public class CatalogImportIT {
                 MockDatabase.getKalliopeImportConfiguration(), PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH,
                 Collections.singleton("CatalogIDPredecessorPeriodical"));
         Assert.assertEquals(IMPORT_DEPTH, processes.size());
+    }
+
+    @Test
+    public void shouldSkipHitlistForFtpImportConfiguration() throws DAOException {
+        MockDatabase.insertFtpImportConfiguration();
+        ImportConfiguration ftpConfiguration = ServiceManager.getImportConfigurationService().getById(4);
+        Assert.assertTrue("'Skip hitlist' should return 'true' for FTP configurations",
+                ImportService.skipHitlist(ftpConfiguration, null));
     }
 
     private static void setupServer() throws IOException {

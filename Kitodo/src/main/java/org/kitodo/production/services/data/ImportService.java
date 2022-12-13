@@ -247,6 +247,25 @@ public class ImportService {
     }
 
     /**
+     * Check and return whether to skip hit list for given ImportConfiguration and search field or not.
+     * Hit list is skipped either if SearchInterfaceType of given ImportConfiguration does not support
+     * hit lists (e.g. OAI and FTP interfaces) or if the provides search field equals the ID search field
+     * of the given ImportConfiguration.
+     * @param configuration ImportConfiguration to check
+     * @param field value of SearchField to check
+     * @return whether to skip hit list or not
+     */
+    public static boolean skipHitlist(ImportConfiguration configuration, String field) {
+        if (SearchInterfaceType.OAI.name().equals(configuration.getInterfaceType())
+                || SearchInterfaceType.FTP.name().equals(configuration.getInterfaceType())
+                || field.equals(configuration.getIdSearchField().getLabel())) {
+            return true;
+        }
+        return (Objects.isNull(configuration.getMetadataRecordIdXPath())
+                || Objects.isNull(configuration.getMetadataRecordTitleXPath()));
+    }
+
+    /**
      * Get default import depth for given import configuration.
      *
      * @param importConfiguration ImportConfiguration
