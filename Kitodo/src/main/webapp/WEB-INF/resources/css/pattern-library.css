@@ -358,6 +358,20 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     vertical-align: bottom;
 }
 
+.ui-splitbutton > .ui-button,
+.ui-splitbutton > .ui-button .ui-icon {
+    padding-right: var(--default-half-size);
+}
+
+.ui-splitbutton .ui-splitbutton-menubutton .ui-icon {
+    text-indent: 0;
+}
+
+.ui-splitbutton .ui-splitbutton-menubutton .ui-icon-triangle-1-s::after {
+    content: "\f078";
+    font-family: FontAwesome;
+}
+
 .ui-row-toggler.ui-icon,
 .ui-sortable-column-icon.ui-icon {
     background: none;

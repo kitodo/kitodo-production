@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
@@ -44,9 +45,10 @@ public class CountableMetadata {
     private Block block;
 
     /**
-     * Date and issue this counter appears the first time.
+     * Date and issue this counter appears the first time,
+     * boolean to check if this metadata counter is only associated to issue or not
      */
-    private Pair<LocalDate, Issue> create;
+    private Triple<LocalDate, Issue, Boolean> create;
 
     /**
      * Date and issue this counter does no longer appear on. May be null, indicating that no end issue has been set.
@@ -77,10 +79,23 @@ public class CountableMetadata {
      *
      * @param block
      *            Block this metadata counter is defined in
-     * @param create
+     * @param create as a Pair
      *            first issue to be counted
      */
     public CountableMetadata(Block block, Pair<LocalDate, Issue> create) {
+        this.block = block;
+        this.create = Triple.of(create.getLeft(), create.getRight(), false);
+    }
+
+    /**
+     * Creates a new countable metadata.
+     *
+     * @param block
+     *            Block this metadata counter is defined in
+     * @param create as a Triple
+     *            first issue to be counted
+     */
+    public CountableMetadata(Block block, Triple<LocalDate, Issue, Boolean> create) {
         this.block = block;
         this.create = create;
     }
@@ -94,7 +109,7 @@ public class CountableMetadata {
      * @return the edit mode for that issue
      */
     public MetadataEditMode getEditMode(Pair<LocalDate, Issue> selectedIssue) {
-        int creation = new IssueComparator(block).compare(selectedIssue, create);
+        int creation = new IssueComparator(block).compare(selectedIssue, Pair.of(this.create.getLeft(), this.create.getMiddle()));
         if (creation < 0) {
             return MetadataEditMode.HIDDEN;
         }
@@ -116,11 +131,11 @@ public class CountableMetadata {
     }
 
     /**
-     * Get create.
+     * Gets create.
      *
-     * @return value of create as Pair of LocalDate and Issue
+     * @return value of create
      */
-    public Pair<LocalDate, Issue> getCreate() {
+    public Triple<LocalDate, Issue, Boolean> getCreate() {
         return create;
     }
 
@@ -130,7 +145,7 @@ public class CountableMetadata {
      * @return value of create as java.lang.String
      */
     public String getCreateAsString() {
-        return CalendarService.dateIssueToString(create);
+        return CalendarService.dateIssueToString(Pair.of(this.create.getLeft(), this.create.getMiddle()));
     }
 
     /**
@@ -182,13 +197,13 @@ public class CountableMetadata {
      * @return the counter value for that issue
      */
     public String getValue(Pair<LocalDate, Issue> selectedIssue, MonthDay yearStart) {
-        assert new IssueComparator(block).compare(selectedIssue, create) >= 0;
+        assert new IssueComparator(block).compare(selectedIssue, Pair.of(this.create.getLeft(), this.create.getMiddle())) >= 0;
         Paginator values = new Paginator(startValue);
         int breakMark = 0;
         for (LocalDate i = create.getLeft(); i.compareTo(selectedIssue.getLeft()) <= 0; i = i.plusDays(1)) {
             boolean first = i.equals(create.getLeft());
             for (IndividualIssue issue : block.getIndividualIssues(i)) {
-                if (first && block.getIssueIndex(issue.getIssue()) < block.getIssueIndex(create.getRight())) {
+                if (first && block.getIssueIndex(issue.getIssue()) < block.getIssueIndex(create.getMiddle())) {
                     continue;
                 } else if (first) {
                     if (stepSize != null) {
@@ -225,11 +240,17 @@ public class CountableMetadata {
      * @return true, if the given metadataType and time point of creation match
      */
     public boolean matches(String metadataType, Pair<LocalDate, Issue> issue, Boolean create) {
-        return (metadataType == null || metadataType.equals(this.metadataType))
-                && (null == create && new IssueComparator(block).compare(this.create, issue) <= 0
-                        && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
-                        || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
-                                && (issue == null && this.delete == null || issue.equals(this.delete)));
+        if (metadataType == null || metadataType.equals(this.metadataType)) {
+            if (this.create.getRight() && Objects.nonNull(issue) && Objects.equals(this.create.getMiddle(), issue.getRight())) {
+                return false;
+            } else return (null == create
+                    && new IssueComparator(block).compare(Pair.of(this.create.getLeft(), this.create.getMiddle()), issue) <= 0
+                    && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
+                    || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
+                    && (issue == null && this.delete == null || issue.equals(this.delete)));
+
+        }
+        return false;
     }
 
     /**
@@ -310,7 +331,7 @@ public class CountableMetadata {
         stringBuilder.append(" from ");
         stringBuilder.append(DateTimeFormatter.ISO_DATE.format(create.getLeft()));
         stringBuilder.append(", ");
-        stringBuilder.append(create.getRight().getHeading());
+        stringBuilder.append(create.getMiddle().getHeading());
         if (delete == null) {
             stringBuilder.append(" infinitely");
         } else {

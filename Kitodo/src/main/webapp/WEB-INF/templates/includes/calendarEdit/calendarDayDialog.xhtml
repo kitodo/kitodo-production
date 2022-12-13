@@ -26,7 +26,7 @@
         <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
         <h:panelGrid columns="2" id="calendarDayDialogHeader">
             <p:row>
-                <h3>
+                <h3 style="padding: 5px; margin-bottom:unset;">
                     #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
                     #{date.toString()}
                     (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
@@ -48,185 +48,188 @@
         <h:form id="calendarDayForm">
             <h:panelGroup layout="block"
                           styleClass="not-scrollable dialogFieldWrapper">
-                <p:panelGrid columns="1" layout="grid">
-                    <p:repeat
-                            value="#{CalendarForm.calendarSheet.get(date.dayOfMonth - 1).get(date.monthValue - 1).issues}"
-                            var="issue">
-                        <h:panelGroup layout="block"
-                                      styleClass="issue-wrapper">
-                            <div class="appearance-wrapper">
-                                <h:outputText style="font-weight: bold"
-                                        value="#{issue.heading} #{msgs['calendar.sheet.issue.'.concat(issue.isMatch(date) ? 'selected' : 'notSelected')]}"/>
-                                <p:commandButton action="#{CalendarForm.changeMatch(issue, date)}"
-                                                 value="#{issue.isMatch(date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"
-                                                 icon="#{issue.isMatch(date) ? 'fa fa-trash' : 'fa fa-plus'}"
-                                                 iconPos="right"
-                                                 styleClass="secondary"
-                                                 update="editForm:calendarTabView:calendarDetailsLayout calendarDayDialogHeader calendarDayForm"/>
-                                <!-- Add metadata-->
-                                <p:commandButton id="addMetadata"
-                                                 action="#{CalendarForm.addMetadata(issue)}"
-                                                 value="#{msgs['calendar.metadata.issue.add']}"
-                                                 title="#{msgs['calendar.metadata.issue.add.tooltip']}"
-                                                 icon="fa fa-plus"
-                                                 iconPos="right"
-                                                 rendered="#{issue.isMatch(date)}"
-                                                 styleClass="secondary right"
-                                                 style="padding: 5px"
-                                                 oncomplete="PF('calendarDayDialog').initPosition();"
-                                                 update="calendarDayForm"/>
-                            </div>
+                <p:accordionPanel multiple="true"
+                                  widgetVar="issuesAccordion"
+                                  value="#{CalendarForm.calendarSheet.get(date.dayOfMonth - 1).get(date.monthValue - 1).issues}"
+                                  var="issue"
+                                  activeIndex="0,1,2,3,4,5">
+                    <p:tab>
+                        <f:facet name="title">
+                            <h:outputText
+                                    value="#{issue.heading} #{msgs['calendar.sheet.issue.'.concat(issue.isMatch(date) ? 'selected' : 'notSelected')]}"/>
+                            <p:commandLink action="#{CalendarForm.changeMatch(issue, date)}" styleClass="right action"
+                                           title="#{issue.isMatch(date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"
+                                           update="editForm:calendarTabView:calendarDetailsLayout calendarDayDialogHeader calendarDayForm">
+                                <h:outputText><i class="#{issue.isMatch(date) ? 'fa fa-trash' : 'fa fa-plus'}"/></h:outputText>
+                            </p:commandLink>
+                        </f:facet>
+                        <p:fragment rendered="#{issue.isMatch(date)}">
+                            <p:splitButton id="addMetadata"
+                                           action="#{CalendarForm.addMetadata(issue, false)}"
+                                           value="#{msgs['calendar.metadata.issue.add']}"
+                                           title="#{msgs['calendar.metadata.issue.add.tooltip']}"
+                                           icon="fa fa-plus"
+                                           iconPos="right"
+                                           rendered="#{issue.isMatch(date)}"
+                                           styleClass="secondary right"
+                                           oncomplete="PF('calendarDayDialog').initPosition();"
+                                           update="calendarDayForm">
+                                <p:menuitem action="#{CalendarForm.addMetadata(issue, true)}"
+                                            value="#{msgs['calendar.metadata.issue.addToThisIssue']}"
+                                            icon="fa fa-plus"
+                                            iconPos="right"
+                                            rendered="#{issue.isMatch(date)}"
+                                            oncomplete="PF('calendarDayDialog').initPosition();"
+                                            update="calendarDayForm"/>
+                            </p:splitButton>
                             <!-- Metadata -->
-                            <p:fragment rendered="#{issue.isMatch(date)}">
-
-                                <p:dataView styleClass="metadata-list"
-                                            rendered="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue).size() ne 0}"
-                                            value="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue)}"
-                                            var="metadata">
-                                    <p:dataViewListItem>
-                                        <h:outputText styleClass="metadata-first-appearance"
-                                                      value="#{msgs['calendar.block.firstAppearance']} #{metadata.getCreateAsString()}"/>
-                                        <h:outputText styleClass="metadata-last-appearance"
-                                                      value="#{msgs['calendar.block.lastAppearance']} #{metadata.getDelete()}"/>
-                                        <!-- metadata type -->
+                            <p:dataView styleClass="metadata-list"
+                                        rendered="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue).size() ne 0}"
+                                        value="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue)}"
+                                        var="metadata">
+                                <p:dataViewListItem>
+                                    <h:outputText styleClass="metadata-first-appearance"
+                                                  value="#{msgs['calendar.block.firstAppearance']} #{metadata.getCreateAsString()}"/>
+                                    <h:outputText styleClass="metadata-last-appearance"
+                                                  value="#{msgs['calendar.block.lastAppearance']} #{metadata.getDelete()}"/>
+                                    <!-- metadata type -->
+                                    <div>
+                                        <p:outputLabel value="#{msgs.type}"
+                                                       for="metadataType"
+                                                       styleClass="input"/>
+                                        <p:selectOneMenu id="metadataType"
+                                                         converter="#{processDetailConverter}"
+                                                         value="#{metadata.metadataDetail}"
+                                                         title="#{msgs.type}">
+                                            <f:selectItems value="#{CalendarForm.allMetadataTypes}"
+                                                           var="metadataType"
+                                                           itemValue="#{metadataType}"
+                                                           itemLabel="#{metadataType.label}"/>
+                                            <f:attribute name="allMetadataTypes"
+                                                         value="#{CalendarForm.allMetadataTypes}"/>
+                                            <p:ajax event="change" update="calendarDayForm"/>
+                                        </p:selectOneMenu>
+                                    </div>
+                                    <h:panelGroup layout="block"
+                                                  rendered="#{metadata.metadataDetail.input eq 'inputText' or metadata.metadataDetail.input  eq 'inputTextarea'}">
+                                        <!-- start value -->
                                         <div>
-                                            <p:outputLabel value="#{msgs.type}"
-                                                           for="metadataType"
+                                            <p:outputLabel value="#{msgs['calendar.metadata.startValue']}"
                                                            styleClass="input"/>
-                                            <p:selectOneMenu id="metadataType"
-                                                             converter="#{processDetailConverter}"
-                                                             value="#{metadata.metadataDetail}"
-                                                             title="#{msgs.type}">
-                                                <f:selectItems value="#{CalendarForm.allMetadataTypes}"
-                                                               var="metadataType"
-                                                               itemValue="#{metadataType}"
-                                                               itemLabel="#{metadataType.label}"/>
-                                                <f:attribute name="allMetadataTypes"
-                                                             value="#{CalendarForm.allMetadataTypes}"/>
-                                                <p:ajax event="change" update="calendarDayForm"/>
+
+                                            <p:inputText styleClass="input"
+                                                         style="width: 60%;"
+                                                         value="#{metadata.startValue}"
+                                                         rendered="#{metadata.metadataDetail.input eq 'inputText'}"
+                                                         title="#{msgs['calendar.metadata.startValue']}">
+                                                <p:ajax event="blur" update="calendarDayForm"/>
+                                            </p:inputText>
+                                            <p:inputTextarea value="#{metadata.startValue}"
+                                                             rendered="#{metadata.metadataDetail.input eq 'inputTextarea'}"
+                                                             styleClass="input"
+                                                             style="width: 60%;"
+                                                             title="#{msgs['calendar.metadata.startValue']}">
+                                                <p:ajax event="blur" update="calendarDayForm"/>
+                                            </p:inputTextarea>
+
+                                            <!-- current value -->
+                                            <p:outputLabel value="#{msgs['calendar.metadata.currentValue']}:"
+                                                           styleClass="metadata-value-label"/>
+                                            <h:outputText styleClass="metadata-value"
+                                                          value="#{CalendarForm.getTextMetadataValue(metadata, date, issue)}"/>
+                                        </div>
+                                        <!-- step size -->
+                                        <div>
+                                            <p:outputLabel value="#{msgs['calendar.metadata.stepSize']}"
+                                                           styleClass="input"/>
+                                            <p:selectOneMenu value="#{metadata.stepSize}"
+                                                             title="#{msgs['calendar.metadata.stepSize']}">
+                                                <f:selectItem itemValue="#{null}"
+                                                              itemLabel="#{msgs['calendar.metadata.stepSize.static']}"/>
+                                                <f:selectItems value="#{CalendarForm.granularities}"
+                                                               var="item"
+                                                               itemLabel="#{msgs['calendar.metadata.stepSize.'.concat(item.toString().toLowerCase())]}"/>
+                                                <p:ajax/>
                                             </p:selectOneMenu>
                                         </div>
-                                        <h:panelGroup layout="block"
-                                                      rendered="#{metadata.metadataDetail.input eq 'inputText' or metadata.metadataDetail.input  eq 'inputTextarea'}">
-                                            <!-- start value -->
-                                            <div>
-                                                <p:outputLabel value="#{msgs['calendar.metadata.startValue']}"
-                                                               styleClass="input"/>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'spinner'}"
+                                                  title="#{metadata.metadataDetail.value}">
+                                        <p:spinner id="spinner"
+                                                   value="#{metadata.metadataDetail.value}">
+                                            <p:ajax event="blur" update="calendarDayForm"/>
+                                        </p:spinner>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'calendar'}">
+                                        <p:calendar id="calendar"
+                                                    value="#{metadata.metadataDetail.date}"
+                                                    pattern="yyyy-MM-dd"
+                                                    styleClass="input-with-button"
+                                                    showOn="button">
+                                            <p:ajax event="dateSelect" update="calendarDayForm"/>
+                                        </p:calendar>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'manyMenu'}">
+                                        <p:selectManyMenu id="selectManyMenu"
+                                                          value="#{metadata.metadataDetail.selectedItems}"
+                                                          showCheckbox="true">
+                                            <f:selectItems value="#{metadata.metadataDetail.items}"/>
+                                            <p:ajax event="change" update="calendarDayForm"/>
+                                        </p:selectManyMenu>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneMenu'}"
+                                                  title="#{metadata.metadataDetail.selectedItem}">
+                                        <p:selectOneMenu id="selectOneMenu"
+                                                         value="#{metadata.metadataDetail.selectedItem}"
+                                                         autoWidth="false">
+                                            <f:selectItem itemValue="#{null}"
+                                                          itemLabel="#{msgs.notSelected}"
+                                                          noSelectionOption="true"/>
+                                            <f:selectItems value="#{metadata.metadataDetail.items}"/>
+                                            <p:ajax event="change" update="calendarDayForm"/>
+                                        </p:selectOneMenu>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneRadio'}">
+                                        <p:selectOneRadio id="selectOneRadio"
+                                                          value="#{metadata.metadataDetail.selectedItem}"
+                                                          layout="grid"
+                                                          columns="1">
+                                            <f:selectItems value="#{metadata.metadataDetail.items}"/>
+                                            <p:ajax update="calendarDayForm"/>
+                                        </p:selectOneRadio>
+                                    </h:panelGroup>
+                                    <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'toggleSwitch'}"
+                                                  title="#{metadata.metadataDetail.active.toString()}">
+                                        <p:selectBooleanCheckbox id="selectBooleanCheckbox"
+                                                                 value="#{metadata.metadataDetail.active}">
+                                            <p:ajax event="change" update="calendarDayForm"/>
+                                        </p:selectBooleanCheckbox>
+                                    </h:panelGroup>
 
-                                                <p:inputText styleClass="input"
-                                                             style="width: 60%;"
-                                                             value="#{metadata.startValue}"
-                                                             rendered="#{metadata.metadataDetail.input eq 'inputText'}"
-                                                             title="#{msgs['calendar.metadata.startValue']}">
-                                                    <p:ajax event="blur" update="calendarDayForm"/>
-                                                </p:inputText>
-                                                <p:inputTextarea value="#{metadata.startValue}"
-                                                                 rendered="#{metadata.metadataDetail.input eq 'inputTextarea'}"
-                                                                 styleClass="input"
-                                                                 style="width: 60%;"
-                                                                 title="#{msgs['calendar.metadata.startValue']}">
-                                                    <p:ajax event="blur" update="calendarDayForm"/>
-                                                </p:inputTextarea>
+                                    <!-- last issue -->
+                                    <p:commandButton id="metadataLastIssue"
+                                                     action="#{CalendarForm.setLastIssue(metadata, date, issue)}"
+                                                     value="#{msgs['calendar.metadata.setLastIssue']}"
+                                                     title="#{msgs['calendar.metadata.setLastIssue']}"
+                                                     icon="fa fa-step-forward"
+                                                     iconPos="right"
+                                                     styleClass="secondary"
+                                                     update="calendarDayForm"/>
+                                    <!-- delete metadata -->
+                                    <p:commandButton id="removeMetadata"
+                                                     action="#{CalendarForm.selectedBlock.deleteMetadata(metadata)}"
+                                                     value="#{msgs.delete}"
+                                                     title="#{msgs.delete}"
+                                                     icon="fa fa-trash-o"
+                                                     iconPos="right"
+                                                     styleClass="secondary"
+                                                     update="calendarDayForm"/>
 
-                                                <!-- current value -->
-                                                <p:outputLabel value="#{msgs['calendar.metadata.currentValue']}:"
-                                                               styleClass="metadata-value-label"/>
-                                                <h:outputText styleClass="metadata-value"
-                                                              value="#{CalendarForm.getTextMetadataValue(metadata, date, issue)}"/>
-                                            </div>
-                                            <!-- step size -->
-                                            <div>
-                                                <p:outputLabel value="#{msgs['calendar.metadata.stepSize']}"
-                                                               styleClass="input"/>
-                                                <p:selectOneMenu value="#{metadata.stepSize}"
-                                                                 title="#{msgs['calendar.metadata.stepSize']}">
-                                                    <f:selectItem itemValue="#{null}"
-                                                                  itemLabel="#{msgs['calendar.metadata.stepSize.static']}"/>
-                                                    <f:selectItems value="#{CalendarForm.granularities}"
-                                                                   var="item"
-                                                                   itemLabel="#{msgs['calendar.metadata.stepSize.'.concat(item.toString().toLowerCase())]}"/>
-                                                    <p:ajax />
-                                                </p:selectOneMenu>
-                                            </div>
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'spinner'}"
-                                                      title="#{metadata.metadataDetail.value}">
-                                            <p:spinner id="spinner"
-                                                       value="#{metadata.metadataDetail.value}">
-                                                <p:ajax event="blur" update="calendarDayForm"/>
-                                            </p:spinner>
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'calendar'}">
-                                            <p:calendar id="calendar"
-                                                        value="#{metadata.metadataDetail.date}"
-                                                        pattern="yyyy-MM-dd"
-                                                        styleClass="input-with-button"
-                                                        showOn="button">
-                                                <p:ajax event="dateSelect" update="calendarDayForm"/>
-                                            </p:calendar>
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'manyMenu'}">
-                                            <p:selectManyMenu id="selectManyMenu"
-                                                              value="#{metadata.metadataDetail.selectedItems}"
-                                                              showCheckbox="true">
-                                                <f:selectItems value="#{metadata.metadataDetail.items}"/>
-                                                <p:ajax event="change" update="calendarDayForm"/>
-                                            </p:selectManyMenu>
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneMenu'}"
-                                                      title="#{metadata.metadataDetail.selectedItem}">
-                                            <p:selectOneMenu id="selectOneMenu"
-                                                             value="#{metadata.metadataDetail.selectedItem}"
-                                                             autoWidth="false">
-                                                <f:selectItem itemValue="#{null}"
-                                                              itemLabel="#{msgs.notSelected}"
-                                                              noSelectionOption="true"/>
-                                                <f:selectItems value="#{metadata.metadataDetail.items}"/>
-                                                <p:ajax event="change" update="calendarDayForm"/>
-                                            </p:selectOneMenu>
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'oneRadio'}">
-                                            <p:selectOneRadio id="selectOneRadio"
-                                                              value="#{metadata.metadataDetail.selectedItem}"
-                                                              layout="grid"
-                                                              columns="1">
-                                                <f:selectItems value="#{metadata.metadataDetail.items}"/>
-                                                <p:ajax update="calendarDayForm"/>
-                                            </p:selectOneRadio>
-                                        </h:panelGroup>
-                                        <h:panelGroup rendered="#{metadata.metadataDetail.input eq 'toggleSwitch'}"
-                                                      title="#{metadata.metadataDetail.active.toString()}">
-                                            <p:selectBooleanCheckbox id="selectBooleanCheckbox"
-                                                                     value="#{metadata.metadataDetail.active}">
-                                                <p:ajax event="change" update="calendarDayForm"/>
-                                            </p:selectBooleanCheckbox>
-                                        </h:panelGroup>
-
-                                        <!-- last issue -->
-                                        <p:commandButton id="metadataLastIssue"
-                                                         action="#{CalendarForm.setLastIssue(metadata, date, issue)}"
-                                                         value="#{msgs['calendar.metadata.setLastIssue']}"
-                                                         title="#{msgs['calendar.metadata.setLastIssue']}"
-                                                         icon="fa fa-step-forward"
-                                                         iconPos="right"
-                                                         styleClass="secondary"
-                                                         update="calendarDayForm"/>
-                                        <!-- delete metadata -->
-                                        <p:commandButton id="removeMetadata"
-                                                         action="#{CalendarForm.selectedBlock.deleteMetadata(metadata)}"
-                                                         value="#{msgs.delete}"
-                                                         title="#{msgs.delete}"
-                                                         icon="fa fa-trash-o"
-                                                         iconPos="right"
-                                                         styleClass="secondary"
-                                                         update="calendarDayForm"/>
-
-                                    </p:dataViewListItem>
-                                </p:dataView>
-                            </p:fragment>
-                        </h:panelGroup>
-                    </p:repeat>
-                </p:panelGrid>
+                                </p:dataViewListItem>
+                            </p:dataView>
+                        </p:fragment>
+                    </p:tab>
+                </p:accordionPanel>
             </h:panelGroup>
         </h:form>
         <p:panelGrid>

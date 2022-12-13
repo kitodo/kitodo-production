@@ -1906,8 +1906,8 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog {
-    width: 80% !important;
-    height: 80% !important;
+    width: 90% !important;
+    height: 90% !important;
     overflow-y: hidden ;
 }
 
@@ -1943,17 +1943,11 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialogHeader {
+    border-bottom: solid 2px var(--cloudy-gray);
     width: 100%;
     padding-left: var(--default-double-size);
     padding-right: var(--default-double-size);
-    padding-bottom: var(--default-full-size);
-}
-
-#calendarDayDialog .issue-wrapper:not(:last-child) {
-    border-bottom: solid var(--default-border-width) var(--cloudy-gray);
-}
-
-#calendarDayDialog .appearance-wrapper {
+    padding-bottom: var(--default-half-size);
     margin-bottom: var(--default-full-size);
 }
 

@@ -40,6 +40,7 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -740,7 +741,7 @@ public class CalendarForm implements Serializable {
     /**
      * Add new metadata for the selected Block and with the selected date and Issue.
      */
-    public void addMetadata(Issue issue) {
+    public void addMetadata(Issue issue, boolean onlyThisIssue) {
         IndividualIssue selectedIssue = null;
         for (IndividualIssue individualIssue : getIndividualIssues(selectedBlock)) {
             if (Objects.nonNull(issue)
@@ -751,7 +752,8 @@ public class CalendarForm implements Serializable {
             }
         }
         if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
-            CountableMetadata metadata = new CountableMetadata(selectedBlock, Pair.of(selectedIssue.getDate(), selectedIssue.getIssue()));
+            CountableMetadata metadata = new CountableMetadata(selectedBlock,
+                    Triple.of(selectedIssue.getDate(), selectedIssue.getIssue(), onlyThisIssue));
             if (!getAllMetadataTypes().isEmpty()) {
                 metadata.setMetadataDetail(getAllMetadataTypes().get(0));
             }
@@ -949,7 +951,7 @@ public class CalendarForm implements Serializable {
      */
     public void addMetadataToAllMatchIssues() {
         if (getFirstMatchIssue() != null) {
-            addMetadata(getFirstMatchIssue());
+            addMetadata(getFirstMatchIssue(), false);
         }
     }
 }
