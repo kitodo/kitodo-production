@@ -242,6 +242,8 @@ public class ImportService {
             return Helper.getTranslation("recordId");
         } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
+        } else if (!importConfiguration.getSearchFields().isEmpty()) {
+            return importConfiguration.getSearchFields().get(0).getLabel();
         }
         return "";
     }

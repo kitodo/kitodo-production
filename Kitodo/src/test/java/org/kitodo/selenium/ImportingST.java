@@ -11,9 +11,13 @@
 
 package org.kitodo.selenium;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -68,6 +72,24 @@ public class ImportingST extends BaseTestSelenium {
         Select searchFieldSelectMenu = new Select(importPage.getSearchFieldMenu());
         assertEquals("Wrong default search field selected", PPN,
                 searchFieldSelectMenu.getFirstSelectedOption().getAttribute("label"));
+    }
+
+    /**
+     * Checks whether 'Search' button is properly deactivated until import configuration, search field
+     * and search term have been selected/entered.
+     * @throws Exception when navigating to 'Create new process' page fails.
+     */
+    @Test
+    public void checkSearchButtonActivatedText() throws Exception {
+        projectsPage.createNewProcess();
+        assertFalse("'Search' button should be deactivated until import configuration, search field and " +
+                "search term have been selected", importPage.getSearchButton().isEnabled());
+        importPage.enterTestSearchValue();
+        await("Wait for 'Search' button to be enabled").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> importPage.getSearchButton().isEnabled());
+        assertTrue("'Search' button should be activated when import configuration, search field and " +
+                "search term have been selected", importPage.getSearchButton().isEnabled());
     }
 
     @Test

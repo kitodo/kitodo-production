@@ -66,7 +66,8 @@
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          value="#{CreateProcessForm.catalogImportDialog.hitModel.selectedField}">
                             <f:selectItems value="#{CreateProcessForm.catalogImportDialog.searchFields}" var="field"/>
-                            <p:ajax update="catalogSearchForm:catalogSearchButton"/>
+                            <p:ajax update="catalogSearchForm:searchTerm
+                                            catalogSearchForm:catalogSearchButton"/>
                         </p:selectOneMenu>
                     </div>
                     <div>
@@ -94,7 +95,10 @@
                                      value="#{CreateProcessForm.catalogImportDialog.hitModel.searchTerm}"
                                      class="input"
                                      placeholder="#{msgs['newProcess.catalogueSearch.searchTerm']}"
-                                     required="#{not empty param['catalogSearchForm:performCatalogSearch']}"/>
+                                     required="#{not empty param['catalogSearchForm:performCatalogSearch']}">
+                            <p:ajax event="keyup"
+                                    update="catalogSearchForm:catalogSearchButton"/>
+                        </p:inputText>
                     </div>
                     <div>
                         <p:outputLabel id="importChildrenLabel"
@@ -111,7 +115,7 @@
             <h:panelGroup layout="block"
                           id="catalogSearchButton">
                 <p:commandButton id="performCatalogSearch"
-                                 disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or empty CreateProcessForm.catalogImportDialog.hitModel.selectedField}"
+                                 disabled="#{empty CreateProcessForm.catalogImportDialog.hitModel.importConfiguration or empty CreateProcessForm.catalogImportDialog.hitModel.selectedField or empty CreateProcessForm.catalogImportDialog.hitModel.searchTerm}"
                                  action="#{CreateProcessForm.catalogImportDialog.search}"
                                  value="#{msgs.searchOPAC}"
                                  title="#{msgs.searchOPAC}"
