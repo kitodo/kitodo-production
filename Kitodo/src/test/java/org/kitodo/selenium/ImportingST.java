@@ -82,14 +82,14 @@ public class ImportingST extends BaseTestSelenium {
     @Test
     public void checkSearchButtonActivatedText() throws Exception {
         projectsPage.createNewProcess();
-        assertFalse("'Search' button should be deactivated until import configuration, search field and " +
-                "search term have been selected", importPage.getSearchButton().isEnabled());
+        assertFalse("'Search' button should be deactivated until import configuration, search field and "
+                + "search term have been selected", importPage.getSearchButton().isEnabled());
         importPage.enterTestSearchValue();
         await("Wait for 'Search' button to be enabled").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> importPage.getSearchButton().isEnabled());
-        assertTrue("'Search' button should be activated when import configuration, search field and " +
-                "search term have been selected", importPage.getSearchButton().isEnabled());
+        assertTrue("'Search' button should be activated when import configuration, search field and "
+                + "search term have been selected", importPage.getSearchButton().isEnabled());
     }
 
     @Test
