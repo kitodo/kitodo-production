@@ -1723,3 +1723,7 @@ Popup dialogs
 .pagination-select-items .ui-chkbox {
     height: 0;
 }
+
+.bold {
+    font-weight: bold;
+}

@@ -198,6 +198,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     @Inject
     private ImageProvider imageProvider;
+    private boolean mediaUpdated = false;
 
     /**
      * Public constructor.
@@ -230,6 +231,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } catch (IOException e) {
                 Helper.setErrorMessage("noProcessSelected");
             }
+        } else {
+            if (mediaUpdated) {
+                PrimeFaces.current().executeScript("PF('updateMediaReferencesDialog').show();");
+            }
         }
     }
 
@@ -258,7 +263,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
-            openMetsFile();
+            mediaUpdated = openMetsFile();
             if (!workpiece.getId().equals(process.getId().toString())) {
                 errorMessage = Helper.getTranslation("metadataConfusion", String.valueOf(process.getId()),
                         workpiece.getId());
@@ -310,7 +315,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private void openMetsFile() throws IOException, InvalidImagesException {
+    private boolean openMetsFile() throws IOException, InvalidImagesException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
@@ -318,8 +323,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
         }
-        ServiceManager.getFileService().searchForMedia(process, workpiece);
         setNumberOfScans(workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES));
+        return ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
     private void init() {
@@ -383,6 +388,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
         process = null;
         user = null;
+        mediaUpdated = false;
     }
 
     private void deleteUnsavedDeletedMedia() {
@@ -1070,5 +1076,23 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public ImageProvider getImageProvider() {
         return imageProvider;
+    }
+
+    /**
+     * Get mediaUpdated.
+     *
+     * @return value of mediaUpdated
+     */
+    public boolean isMediaUpdated() {
+        return mediaUpdated;
+    }
+
+    /**
+     * Set mediaUpdated.
+     *
+     * @param mediaUpdated as boolean
+     */
+    public void setMediaUpdated(boolean mediaUpdated) {
+        this.mediaUpdated = mediaUpdated;
     }
 }

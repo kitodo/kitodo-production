@@ -73,11 +73,14 @@ public class PaginationPanel {
      * This method is invoked if the create pagination button is clicked.
      */
     public void createPagination() {
+        boolean mediaReferencesChanged = false;
         try {
-            ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
+           mediaReferencesChanged = ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(),
+                    dataEditor.getWorkpiece());
         } catch (InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
+        dataEditor.setMediaUpdated(mediaReferencesChanged);
         Paginator paginator = new Paginator(metsEditorDefaultPagination());
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         for (int i = 1; i < physicalDivisions.size(); i++) {
@@ -88,6 +91,7 @@ public class PaginationPanel {
         dataEditor.refreshStructurePanel();
         dataEditor.getGalleryPanel().show();
         show();
+        PrimeFaces.current().executeScript("PF('updateMediaReferencesDialog').show();");
     }
 
     private static String metsEditorDefaultPagination() {

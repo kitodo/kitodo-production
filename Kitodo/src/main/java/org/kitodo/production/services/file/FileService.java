@@ -22,6 +22,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -32,6 +33,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +61,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
@@ -1077,7 +1080,7 @@ public class FileService {
      * @param workpiece
      *            Workpiece to which the media are to be added
      */
-    public void searchForMedia(Process process, Workpiece workpiece) throws InvalidImagesException {
+    public boolean searchForMedia(Process process, Workpiece workpiece) throws InvalidImagesException {
         final long begin = System.nanoTime();
         List<Folder> folders = process.getProject().getFolders();
         int mapCapacity = (int) Math.ceil(folders.size() / 0.75);
@@ -1085,18 +1088,22 @@ public class FileService {
         for (Folder folder : folders) {
             subfolders.put(folder.getFileGroup(), new Subfolder(process, folder));
         }
-        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(metadataImageComparator);
+        Map<String, Map<Subfolder, URI>> currentMedia = new TreeMap<>(metadataImageComparator);
         for (Subfolder subfolder : subfolders.values()) {
             for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
-                mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
-                mediaToAdd.get(element.getKey()).put(subfolder, element.getValue());
+                currentMedia.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
+                currentMedia.get(element.getKey()).put(subfolder, element.getValue());
             }
         }
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
             process.getProcessBaseUri());
-        addNewURIsToExistingPhysicalDivisions(mediaToAdd,
+        addNewURIsToExistingPhysicalDivisions(currentMedia,
             workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
-        mediaToAdd.keySet().removeAll(canonicals);
+        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(currentMedia);
+        List<String> mediaToRemove = new LinkedList<>(canonicals);
+        mediaToRemove.removeAll(mediaToAdd.keySet());
+        canonicals.forEach(mediaToAdd.keySet()::remove);
+        removeMissingMediaFromWorkpiece(mediaToRemove, workpiece, subfolders.values());
         addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
         renumberPhysicalDivisions(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
@@ -1109,6 +1116,7 @@ public class FileService {
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+        return !(mediaToAdd.isEmpty() && mediaToRemove.isEmpty());
     }
 
     private void automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(Workpiece workpiece,
@@ -1181,6 +1189,49 @@ public class FileService {
                 }
             }
         }
+    }
+
+    private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece, Collection<Subfolder> subfolders) {
+        List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        for (String removal : mediaToRemove.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
+            for (PhysicalDivision page : pages) {
+                if (removal.equals(getCanonical(subfolders, page))) {
+                    workpiece.getPhysicalStructure().getChildren().remove(page);
+                    for (LogicalDivision structuralElement : page.getLogicalDivisions()) {
+                        structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(page));
+                    }
+                    page.getLogicalDivisions().clear();
+                    LinkedList<PhysicalDivision> ancestors = MetadataEditor
+                            .getAncestorsOfPhysicalDivision(page, workpiece.getPhysicalStructure());
+                    if (ancestors.isEmpty()) {
+                        Helper.setErrorMessage("Root element missing!");
+                        return;
+                    }
+                    PhysicalDivision parent = ancestors.getLast();
+                    parent.getChildren().remove(page);
+                }
+            }
+        }
+        int i = 1;
+        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+            physicalDivision.setOrder(i);
+            i++;
+        }
+    }
+
+    private String getCanonical(Collection<Subfolder> folders, PhysicalDivision division) {
+        Map<MediaVariant, URI> mediaFiles = division.getMediaFiles();
+        for (Subfolder folder : folders) {
+            for (URI mediaUri : mediaFiles.values()) {
+                if (mediaUri.getPath().startsWith(folder.getFolder().getRelativePath())) {
+                    String canonical = folder.getCanonical(mediaUri);
+                    if (Objects.nonNull(canonical)) {
+                        return canonical;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     /**
