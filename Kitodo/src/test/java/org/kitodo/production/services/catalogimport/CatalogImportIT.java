@@ -35,11 +35,8 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.data.database.beans.ImportConfiguration;
-import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 
 public class CatalogImportIT {
 
