@@ -1534,18 +1534,6 @@ public class MockDatabase {
     }
 
     /**
-     * Create an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type 'FTP'.
-     * @throws DAOException when saving ImportConfiguration to database fails
-     */
-    public static void insertFtpImportConfiguration() throws DAOException {
-        ImportConfiguration genericFtpConfiguration = new ImportConfiguration();
-        genericFtpConfiguration.setTitle("FTP example configuration");
-        genericFtpConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
-        genericFtpConfiguration.setInterfaceType(SearchInterfaceType.FTP.name());
-        ServiceManager.getImportConfigurationService().saveToDatabase(genericFtpConfiguration);
-    }
-
-    /**
      * Create an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type `CUSTOM` and
      * add custom URL parameters.
      * @throws DAOException when saving ImportConfiguration to database fails

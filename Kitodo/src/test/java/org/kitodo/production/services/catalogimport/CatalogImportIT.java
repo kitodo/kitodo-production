@@ -80,14 +80,6 @@ public class CatalogImportIT {
         Assert.assertEquals(IMPORT_DEPTH, processes.size());
     }
 
-    @Test
-    public void shouldSkipHitlistForFtpImportConfiguration() throws DAOException {
-        MockDatabase.insertFtpImportConfiguration();
-        ImportConfiguration ftpConfiguration = ServiceManager.getImportConfigurationService().getById(4);
-        Assert.assertTrue("'Skip hitlist' should return 'true' for FTP configurations",
-                ImportService.skipHitlist(ftpConfiguration, null));
-    }
-
     private static void setupServer() throws IOException {
         server = new StubServer(PORT).run();
         addRestEndPointForImport("ead.id=" + CHILD_RECORD_ID, CHILD_RECORD_PATH, 1);
