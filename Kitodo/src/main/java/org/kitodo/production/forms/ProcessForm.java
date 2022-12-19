@@ -1061,22 +1061,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Retrieve comments of given process.
-     *
-     * @param processDTO
-     *          process for which comment tooltip is created and returned
-     * @return List containing comments for given process
-     */
-    public List<Comment> getComments(ProcessDTO processDTO) {
-        try {
-            return ServiceManager.getProcessService().getComments(processDTO);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Return path to processes page.
      * @return path to processes page
      */

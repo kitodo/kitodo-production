@@ -796,22 +796,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve comments of process of given task.
-     *
-     * @param taskDTO
-     *          task for which comment tooltip is created and returned
-     * @return List containing comments for process of given task
-     */
-    public List<Comment> getComments(TaskDTO taskDTO) {
-        try {
-            return ServiceManager.getProcessService().getComments(taskDTO.getProcess());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return Collections.emptyList();
-        }
-    }
-
-    /**
      * Download to home for single process. First check if this volume is currently
      * being edited by another user and placed in his home directory, otherwise
      * download.

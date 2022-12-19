@@ -918,6 +918,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
             processDTO.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
             processDTO.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+            processDTO.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
             convertLastProcessingDates(jsonObject, processDTO);
             convertTaskProgress(jsonObject, processDTO);
 

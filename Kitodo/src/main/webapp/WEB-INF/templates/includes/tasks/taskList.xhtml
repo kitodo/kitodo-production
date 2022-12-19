@@ -120,14 +120,14 @@
                       headerText="#{msgs.comments}">
                 <h:panelGroup id="commentIcon">
                     <h:panelGroup styleClass="fa fa-comment"
-                                  rendered="#{CurrentTaskForm.getComments(item).size() gt 0 and item.correctionCommentStatus eq 0}"/>
+                                  rendered="#{item.getProcess().hasComments() and item.correctionCommentStatus eq 0}"/>
                     <h:outputText value="#{msgs.correctionK}"
                                   styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
                                   rendered="#{item.correctionCommentStatus gt 0}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
-                        <ui:param name="comments" value="#{CurrentTaskForm.getComments(item)}"/>
+                        <ui:param name="comments" value="#{commentTooltipView.getComments(item)}"/>
                     </ui:include>
                 </p:tooltip>
 
