@@ -78,8 +78,7 @@ public class PhysicalStructMapType extends StructMapType {
     private String getPhysicalDivTypeByFileType(FileType file) {
         if (file.getMIMETYPE().contains("image")) {
             return PhysicalDivision.TYPE_PAGE;
-        }
-        if (file.getMIMETYPE().contains("audio")) {
+        } else if (file.getMIMETYPE().contains("video") || file.getMIMETYPE().contains("audio")) {
             return PhysicalDivision.TYPE_TRACK;
         }
         return PhysicalDivision.TYPE_OTHER;
