@@ -67,14 +67,6 @@ public class View {
             return false;
         }
         View view = (View) o;
-        return Objects.equals(physicalDivision, view.physicalDivision);
-    }
-
-    @Override
-    public int hashCode() {
-        final int prime = 31;
-        int hashCode = 1;
-        hashCode = prime * hashCode + ((physicalDivision == null) ? 0 : physicalDivision.hashCode());
-        return hashCode;
+        return Objects.equals(physicalDivision.getDivId(), view.physicalDivision.getDivId());
     }
 }

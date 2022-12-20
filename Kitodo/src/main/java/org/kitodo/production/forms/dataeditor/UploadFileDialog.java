@@ -215,7 +215,7 @@ public class UploadFileDialog {
         if (mimeType.contains("image")) {
             return PhysicalDivision.TYPE_PAGE;
         }
-        if (mimeType.contains("audio")) {
+        if (mimeType.contains("video") || mimeType.contains("audio")) {
             return PhysicalDivision.TYPE_TRACK;
         }
         return PhysicalDivision.TYPE_OTHER;

@@ -11,6 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 
 /**
@@ -25,7 +26,7 @@ public class AreaXmlElementAccess {
     /**
      * The data object of this area XML element access.
      */
-    private final View view = new View();
+    private View view = new View();
 
     /**
      * Creates a new view. This constructor can be called via the service loader
@@ -42,7 +43,13 @@ public class AreaXmlElementAccess {
      *            physical division in view
      */
     AreaXmlElementAccess(FileXmlElementAccess fileXmlElementAccess) {
-        view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
+        if (PhysicalDivision.TYPE_TRACK.equals(
+                fileXmlElementAccess.getPhysicalDivision().getType()) && !fileXmlElementAccess.getPhysicalDivision()
+                .getMediaViews().isEmpty()) {
+            view = fileXmlElementAccess.getPhysicalDivision().getMediaViews().get(0);
+        } else {
+            view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
+        }
     }
 
     View getView() {
