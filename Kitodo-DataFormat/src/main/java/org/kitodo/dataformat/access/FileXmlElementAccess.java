@@ -22,9 +22,11 @@ import java.util.Optional;
 
 import org.kitodo.api.MdSec;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.MediaView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
+import org.kitodo.dataformat.metskitodo.AreaType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
 import org.kitodo.dataformat.metskitodo.FileType;
@@ -66,13 +68,16 @@ public class FileXmlElementAccess {
         Map<MediaVariant, URI> mediaFiles = new HashMap<>();
         for (Fptr fptr : div.getFptr()) {
             Object fileId = fptr.getFILEID();
+            if (Objects.nonNull(fptr.getArea())) {
+                physicalDivision.addMediaView(new MediaView(fptr.getArea().getBEGIN()));
+                fileId = fptr.getArea().getFILEID();
+            }
             if (fileId instanceof FileType) {
                 FileType file = (FileType) fileId;
                 String fileUse = fileUseByFileCache.getOrDefault(file, null);
                 if (Objects.isNull(fileUse)) {
                     throw new IllegalArgumentException(
-                        "Corrupt file: file use for <mets:fptr> with id " + file.getID() + " not found in <mets:fileGrp>"
-                    );
+                            "Corrupt file: file use for <mets:fptr> with id " + file.getID() + " not found in <mets:fileGrp>");
                 }
                 MediaVariant mediaVariant = useXmlAttributeAccess.get(fileUse);
                 FLocatXmlElementAccess fLocatXmlElementAccess = new FLocatXmlElementAccess(file);
@@ -110,6 +115,7 @@ public class FileXmlElementAccess {
             this.physicalDivision.setOrder(physicalDivision.getOrder());
             this.physicalDivision.setOrderlabel(physicalDivision.getOrderlabel());
             this.physicalDivision.setType(physicalDivision.getType());
+            this.physicalDivision.getMediaViews().addAll(physicalDivision.getMediaViews());
         }
     }
 
@@ -144,14 +150,27 @@ public class FileXmlElementAccess {
         div.setTYPE(physicalDivision.getType());
         for (Entry<MediaVariant, URI> use : physicalDivision.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();
-            fptr.setFILEID(mediaFilesToIDFiles.get(use.getValue()));
+            Object fileId = mediaFilesToIDFiles.get(use.getValue());
+            if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && !physicalDivision.getMediaViews()
+                    .isEmpty()) {
+                MediaView mediaView = physicalDivision.getMediaViews().get(0);
+                AreaType areaType = new AreaType();
+                areaType.setFILEID(fileId);
+                areaType.setBEGIN(mediaView.getBegin());
+                areaType.setBETYPE("TIME");
+                areaType.setEXTENT("00:00:00.00");
+                areaType.setEXTTYPE("TIME");
+                fptr.setArea(areaType);
+            } else {
+                fptr.setFILEID(fileId);
+            }
             div.getFptr().add(fptr);
         }
         Optional<MdSecType> optionalDmdSec = DivXmlElementAccess.createMdSec(physicalDivision.getMetadata(), MdSec.DMD_SEC);
         String metsReferrerId = KitodoUUID.randomUUID();
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
-            String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
+            String name = metsReferrerId + ':' + MdSec.DMD_SEC;
             dmdSec.setID(KitodoUUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)));
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);

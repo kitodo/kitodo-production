@@ -12,6 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -46,10 +47,12 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
     public static final String TYPE_OTHER = "other";
 
     /**
-     * Each physical division can be available in different variants, for each of which
-     * a media file is available. This is in this map.
+     * Each physical division can be available in different variants, for each of which a media file is available. This
+     * is in this map.
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
+
+    private List<MediaView> mediaViews = new ArrayList<>();
 
     /**
      * Saves the METS identifier for the division.
@@ -113,6 +116,15 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         return logicalDivisions;
     }
 
+    public void addMediaView(MediaView mediaView) {
+        mediaView.setPhysicalDivision(this);
+        mediaViews.add(mediaView);
+    }
+
+    public List<MediaView> getMediaViews() {
+        return mediaViews;
+    }
+
     @Override
     public String toString() {
         String fileName = "No file (";
@@ -139,7 +151,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
             return false;
         }
         PhysicalDivision physicalDivision = (PhysicalDivision) o;
-        return Objects.equals(mediaFiles, physicalDivision.mediaFiles);
+        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaViews,
+                physicalDivision.mediaViews);
     }
 
     @Override
@@ -147,6 +160,7 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
+        result = prime * result + ((mediaViews == null) ? 0 : mediaViews.hashCode());
         return result;
     }
 }

@@ -24,22 +24,56 @@
 
         <ui:fragment
                 rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
-            <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.mediaViewData}"
-                     player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
-                     width="90%" height="auto">
-                <f:param name="mediaId"
-                         value="#{selectedGalleryMediaContent.id}"/>
-                <f:param name="process"
-                         value="#{DataEditorForm.process.id}"/>
-                <f:param name="sessionId"
-                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
-                <f:param name="krsc" value="true"/>
-            </p:media>
+
+            <p:outputPanel id="mediaDetailMediaContainer">
+                <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.mediaViewData}"
+                         player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
+                         width="90%" height="auto">
+                    <f:param name="mediaId"
+                             value="#{selectedGalleryMediaContent.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
+                    <f:param name="krsc" value="true"/>
+                </p:media>
+            </p:outputPanel>
+
+            <p:outputPanel id="mediaViewsListContainer">
+                <p:dataList
+                        styleClass="mediaViewsList"
+                        value="#{DataEditorForm.galleryPanel.getMediaViewDivisions(DataEditorForm.galleryPanel.lastSelection.key)}"
+                        var="mediaViewDivision"
+                        type="ordered">
+
+
+                    <h:panelGroup styleClass="mediaViewData" layout="block">
+                        #{mediaViewDivision.key.label}
+                        #{mediaViewDivision.value.begin}
+                    </h:panelGroup>
+
+                    <h:panelGroup styleClass="mediaViewActions" layout="block">
+                        <p:commandButton styleClass="editMediaView secondary"
+                                         icon="fa fa-pencil-square-o"
+                                         oncomplete="PF('mediaViewDialog').show();"/>
+                        <p:commandButton styleClass="deleteMediaView secondary"
+                                         action="#{DataEditorForm.galleryPanel.deleteMediaViewDivision(mediaViewDivision.key)}"
+                                         icon="fa fa-trash"/>
+                    </h:panelGroup>
+
+                </p:dataList>
+                <h:panelGroup id="addMediaViewContainer">
+                    <p:commandButton id="addMediaView"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     oncomplete="PF('mediaViewDialog').show();">
+                    </p:commandButton>
+                </h:panelGroup>
+            </p:outputPanel>
         </ui:fragment>
 
-        <ui:fragment
-                rendered="#{not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') and not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
+        <ui:fragment rendered="#{selectedGalleryMediaContent.mediaViewMimeType ne 'video/mp4'}">
             <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem"
                             value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"
                             style="display: none;"/>

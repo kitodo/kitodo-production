@@ -2855,7 +2855,61 @@ Column content
     display: flex;
     width: 100%;
     align-items: center;
+    justify-content: left;
+}
+
+#imagePreviewForm\:mediaDetailMediaContainer {
+    width: 100%;
+    display: flex;
     justify-content: center;
+}
+
+#imagePreviewForm\:mediaViewsListContainer {
+    height: 100%;
+    overflow-y: scroll;
+    background: var(--trans-blue);
+    flex: 0 0 30%;
+    min-width: 130px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList ol {
+    list-style-type: none;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li {
+    padding: 16px;
+    border-top: 1px solid var(--cloudy-gray);
+    display: flex;
+    flex-direction: row;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewData {
+    margin-right: 8px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions {
+    margin-left: auto;
+    flex: 0 0 85px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions button {
+    margin-left: 8px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions button:first-child {
+    margin-left: 0px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li:first-child {
+    border: none;
+}
+
+#imagePreviewForm\:addMediaView {
+    border-radius: var(--default-border-radius);
+    box-shadow: var(--second-level-shadow);
+    margin-left: 10px;
+    bottom: 22px;
+    position: absolute;
 }
 
 #map {
@@ -2950,6 +3004,7 @@ Column content
     width: 100px;
     flex-shrink: 0;
     flex-grow: 0;
+    flex: 0 0 104px;
 }
 
 #thumbnailStripeScrollableContent {

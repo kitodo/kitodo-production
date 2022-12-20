@@ -279,6 +279,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
         LinkedList<Pair<String, String>> smLinkData = new LinkedList<>();
         StructMapType logical = new StructMapType();
         logical.setTYPE("LOGICAL");
+
         logical.setDiv(new DivXmlElementAccess(workpiece.getLogicalStructure()).toDiv(physicalDivisionIDs, smLinkData, mets));
         mets.getStructMap().add(logical);
 
