@@ -21,7 +21,8 @@
               resizable="false"
               showHeader="false"
               dynamic="true"
-              modal="true">
+              modal="true"
+              onShow="metadataEditor.gallery.mediaViews.setBeginIfEmpty();">
         <h:form id="mediaViewForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
@@ -29,14 +30,25 @@
                     <h:panelGroup layout="block"
                                   styleClass="dialogFieldWrapper">
                         <div>
+                            <p:outputLabel for="titleInput" value="#{msgs.title}"/>
+                            <p:inputText id="titleInput" class="input"
+                                         value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.title}"
+                                         placeholder="#{msgs.title}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="beginInput" value="Begin"/>
+                            <p:inputText id="beginInput" class="input"
+                                         value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.begin}"
+                                         placeholder="Begin"/>
                         </div>
                     </h:panelGroup>
 
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="apply"
-                                         action="#{DataEditorForm.galleryPanel.addMediaView}"
+                                         action="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.save}"
                                          oncomplete="PF('mediaViewDialog').hide();"
+                                         update="imagePreviewForm:mediaViewsListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
