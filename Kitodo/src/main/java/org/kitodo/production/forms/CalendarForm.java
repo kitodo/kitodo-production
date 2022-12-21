@@ -117,7 +117,6 @@ public class CalendarForm implements Serializable {
     private UploadedFile uploadedFile;
     private LocalDate selectedDate;
     private Block selectedBlock = null;
-    private List<ProcessDetail> metadataTypes = null;
 
     /**
      * The field course holds the course of appearance currently under edit by
@@ -131,7 +130,7 @@ public class CalendarForm implements Serializable {
      * done once on form creation.
      */
     private final LocalDate today = LocalDate.now();
-    private Integer parentId;
+    private static Integer parentId;
 
     /**
      * Empty constructor. Creates a new form without yet any data.
@@ -177,6 +176,15 @@ public class CalendarForm implements Serializable {
         if (Objects.nonNull(parentId)) {
             this.parentId = parentId;
         }
+    }
+
+    /**
+     * Gets parentId.
+     *
+     * @return value of parentId
+     */
+    public static Integer getParentId() {
+        return parentId;
     }
 
     /**
@@ -754,8 +762,8 @@ public class CalendarForm implements Serializable {
         if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
             CountableMetadata metadata = new CountableMetadata(selectedBlock,
                     Triple.of(selectedIssue.getDate(), selectedIssue.getIssue(), onlyThisIssue));
-            if (!getAllMetadataTypes().isEmpty()) {
-                metadata.setMetadataDetail(getAllMetadataTypes().get(0));
+            if (!metadata.getAllMetadataTypes().isEmpty()) {
+                metadata.setMetadataDetail(metadata.getAllMetadataTypes().get(0));
             }
             selectedBlock.addMetadata(metadata);
         } else {
@@ -824,23 +832,6 @@ public class CalendarForm implements Serializable {
     }
 
     /**
-     * Returns the list of selectable metadata types.
-     *
-     * @return the map of metadata types
-     */
-    public List<ProcessDetail> getAllMetadataTypes() {
-        if (Objects.isNull(metadataTypes)) {
-            try {
-                Process process = ServiceManager.getProcessService().getById(parentId);
-                metadataTypes = CalendarService.getAddableMetadataTable(process);
-            } catch (DAOException | DataException | IOException e) {
-                Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
-            }
-        }
-        return metadataTypes;
-    }
-
-    /**
      * Get list of metadata for given block on a specific date and issue.
      *
      * @param block the block to get the metadata from
@@ -889,21 +880,6 @@ public class CalendarForm implements Serializable {
      */
     public List<Pair<ProcessDetail, LocalDate>> getMetadataSummary(Block block) {
         return CalendarService.getMetadataSummary(block);
-    }
-
-    /**
-     * Translates the given metadata key to the users locale.
-     *
-     * @param key the metadata type to be translated
-     * @return the translated metadata type as java.lang.String
-     */
-    public String getMetadataTranslation(String key) {
-        try {
-            return CalendarService.getMetadataTranslation(getAllMetadataTypes(), key);
-        } catch (IllegalArgumentException e) {
-            Helper.setErrorMessage(e);
-            return key;
-        }
     }
 
     /**

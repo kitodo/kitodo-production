@@ -11,9 +11,12 @@
 
 package org.kitodo.production.model.bibliography.course.metadata;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -21,14 +24,20 @@ import org.apache.commons.lang3.tuple.Triple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.production.forms.CalendarForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.model.bibliography.course.IndividualIssue;
 import org.kitodo.production.model.bibliography.course.Issue;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.calendar.CalendarService;
 
 /**
@@ -73,6 +82,8 @@ public class CountableMetadata {
     private Granularity stepSize;
 
     private ProcessDetail metadataDetail;
+
+    private List<ProcessDetail> allMetadataTypes = null;
 
     /**
      * Creates a new countable metadata.
@@ -241,14 +252,13 @@ public class CountableMetadata {
      */
     public boolean matches(String metadataType, Pair<LocalDate, Issue> issue, Boolean create) {
         if (metadataType == null || metadataType.equals(this.metadataType)) {
-            if (this.create.getRight() && Objects.nonNull(issue) && Objects.equals(this.create.getMiddle(), issue.getRight())) {
-                return false;
+            if (this.create.getRight()) {
+                return  Objects.nonNull(issue) && Objects.equals(this.create.getMiddle(), issue.getRight());
             } else return (null == create
                     && new IssueComparator(block).compare(Pair.of(this.create.getLeft(), this.create.getMiddle()), issue) <= 0
                     && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
                     || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
                     && (issue == null && this.delete == null || issue.equals(this.delete)));
-
         }
         return false;
     }
@@ -290,7 +300,7 @@ public class CountableMetadata {
      *            the start value to set
      */
     public void setStartValue(String startValue) {
-        ((ProcessTextMetadata)metadataDetail).setValue(startValue);
+        ((ProcessTextMetadata) metadataDetail).setValue(startValue);
         this.startValue = startValue;
     }
 
@@ -311,6 +321,33 @@ public class CountableMetadata {
     public void setMetadataDetail(ProcessDetail metadataDetail) {
         this.metadataDetail = metadataDetail;
         this.metadataType = this.metadataDetail.getMetadataID();
+    }
+
+    /**
+     * Returns the list of selectable metadata types.
+     *
+     * @return the map of metadata types
+     */
+    public List<ProcessDetail> getAllMetadataTypes() {
+        if (Objects.isNull(allMetadataTypes)) {
+            try {
+                Process process = ServiceManager.getProcessService().getById(CalendarForm.getParentId());
+                allMetadataTypes = new ArrayList<>(CalendarService.getAddableMetadataTable(process));
+
+            } catch (DAOException | DataException | IOException e) {
+                Helper.setErrorMessage("Unable to load metadata types: " + e.getMessage());
+            }
+        }
+        if (Objects.nonNull(metadataDetail)) {
+            for (int i = 0; i < allMetadataTypes.size(); i++) {
+                if (allMetadataTypes.get(i).getMetadataID().equals(metadataDetail.getMetadataID())) {
+                    allMetadataTypes.set(i, metadataDetail);
+                    break;
+                }
+            }
+        }
+
+        return allMetadataTypes;
     }
 
     /**

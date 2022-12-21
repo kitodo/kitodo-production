@@ -11,6 +11,8 @@
 
 package org.kitodo.production.model.bibliography.course;
 
+import org.kitodo.api.dataformat.mets.KitodoUUID;
+
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -40,6 +42,8 @@ public class Issue {
 
     private static final int APPEARED = 1;
     private static final int NOT_APPEARED = 0;
+
+    private String id;
 
     /**
      * Course of appearance this issue is in.
@@ -91,6 +95,7 @@ public class Issue {
         this.additions = new HashSet<>();
         this.daysOfWeek = new HashSet<>();
         this.exclusions = new HashSet<>();
+        this.id = KitodoUUID.randomUUID();
     }
 
     /**
@@ -107,6 +112,16 @@ public class Issue {
         this.additions = new HashSet<>();
         this.daysOfWeek = new HashSet<>();
         this.exclusions = new HashSet<>();
+        this.id = KitodoUUID.randomUUID();
+    }
+
+    /**
+     * Gets issue id.
+     *
+     * @return value of id
+     */
+    public String getId() {
+        return id;
     }
 
     /**
@@ -550,6 +565,7 @@ public class Issue {
     public int hashCode() {
         final int prime = 31;
         int hashCode = 1;
+        hashCode = prime * hashCode + id.hashCode();
         hashCode = prime * hashCode + ((additions == null) ? 0 : additions.hashCode());
         hashCode = prime * hashCode + ((daysOfWeek == null) ? 0 : daysOfWeek.hashCode());
         hashCode = prime * hashCode + ((exclusions == null) ? 0 : exclusions.hashCode());
@@ -570,43 +586,11 @@ public class Issue {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (obj instanceof Issue) {
-            Issue other = (Issue) obj;
-
-            if (Objects.isNull(additions)) {
-                if (Objects.nonNull(other.additions)) {
-                    return false;
-                }
-            } else if (!additions.equals(other.additions)) {
-                return false;
-            }
-
-            if (Objects.isNull(daysOfWeek)) {
-                if (Objects.nonNull(other.daysOfWeek)) {
-                    return false;
-                }
-            } else if (!daysOfWeek.equals(other.daysOfWeek)) {
-                return false;
-            }
-
-            if (Objects.isNull(exclusions)) {
-                if (Objects.nonNull(other.exclusions)) {
-                    return false;
-                }
-            } else if (!exclusions.equals(other.exclusions)) {
-                return false;
-            }
-
-            if (Objects.isNull(heading)) {
-                return Objects.isNull(other.heading);
-            } else {
-                return heading.equals(other.heading);
-            }
-        }
-        return false;
+        if (this == obj) return true;
+        if (!(obj instanceof Issue)) return false;
+        Issue other = (Issue) obj;
+        return id.equals(other.id) && course.equals(other.course) &&
+                Objects.equals(additions, other.additions) && Objects.equals(daysOfWeek, other.daysOfWeek) &&
+                Objects.equals(exclusions, other.exclusions) && Objects.equals(heading, other.heading);
     }
 }
