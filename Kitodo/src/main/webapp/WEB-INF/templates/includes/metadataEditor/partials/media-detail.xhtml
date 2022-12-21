@@ -42,10 +42,9 @@
             <p:outputPanel id="mediaViewsListContainer">
                 <p:dataList
                         styleClass="mediaViewsList"
-                        value="#{DataEditorForm.galleryPanel.getMediaViewDivisions(DataEditorForm.galleryPanel.lastSelection.key)}"
+                        value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewDivisions}"
                         var="mediaViewDivision"
                         type="ordered">
-
 
                     <h:panelGroup styleClass="mediaViewData" layout="block">
                         #{mediaViewDivision.key.label}
@@ -54,10 +53,13 @@
 
                     <h:panelGroup styleClass="mediaViewActions" layout="block">
                         <p:commandButton styleClass="editMediaView secondary"
+                                         action="#{DataEditorForm.galleryPanel.mediaViewsPanel.editMediaViewDivision(mediaViewDivision)}"
+                                         update="mediaViewDialog"
                                          icon="fa fa-pencil-square-o"
                                          oncomplete="PF('mediaViewDialog').show();"/>
                         <p:commandButton styleClass="deleteMediaView secondary"
-                                         action="#{DataEditorForm.galleryPanel.deleteMediaViewDivision(mediaViewDivision.key)}"
+                                         action="#{DataEditorForm.galleryPanel.mediaViewsPanel.deleteMediaViewDivision(mediaViewDivision)}"
+                                         update="imagePreviewForm:mediaViewsListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                          icon="fa fa-trash"/>
                     </h:panelGroup>
 
@@ -65,6 +67,8 @@
                 <h:panelGroup id="addMediaViewContainer">
                     <p:commandButton id="addMediaView"
                                      icon="fa fa-plus"
+                                     action="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.clean}"
+                                     update="mediaViewDialog"
                                      styleClass="secondary"
                                      oncomplete="PF('mediaViewDialog').show();">
                     </p:commandButton>

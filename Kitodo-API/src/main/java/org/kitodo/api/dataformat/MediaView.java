@@ -27,6 +27,10 @@ public class MediaView extends View {
         this.begin = begin;
     }
 
+    public void setBegin(String begin) {
+        this.begin = begin;
+    }
+
     public String getBegin() {
         return begin;
     }

@@ -61,6 +61,16 @@ metadataEditor.gallery = {
         this.pages.handleDragStart(event);
     },
 
+    mediaViews: {
+        setBeginIfEmpty() {
+            let begin = document.getElementById("mediaViewForm:beginInput");
+            if(!begin.value) {
+                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video').currentTime * 1000
+                begin.value = mediaViewFormatTime(currentMilliseconds)
+            }
+        }
+    },
+
     /**
      * Event handlers and methods related to individual pages or thumbnails.
      */
@@ -1021,6 +1031,19 @@ function deactivateButtons() {
     PF('save').disable();
     PF('validate').disable();
     PF('close').disable();
+}
+
+function mediaViewFormatTime( ms ) {
+    let seconds = ms / 1000;
+    let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
+    seconds = seconds % 3600; // seconds remaining after extracting hours
+    let minutes = parseInt( seconds / 60 ); // 60 seconds in 1 minute
+    seconds = seconds % 60;
+    return addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":" + addLeadingZeros(seconds, 2)
+};
+
+function addLeadingZeros(num, totalLength) {
+  return String(num).padStart(totalLength, '0');
 }
 
 $(function () {
