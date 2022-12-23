@@ -15,7 +15,8 @@
         xmlns="http://www.w3.org/1999/xhtml"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
     <p:dialog id="mediaViewDialog"
               widgetVar="mediaViewDialog"
               resizable="false"
@@ -27,21 +28,26 @@
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
                     <h3>Track hinzufügen</h3>
-                    <h:panelGroup layout="block"
-                                  styleClass="dialogFieldWrapper">
-                        <div>
+                    <p:outputPanel styleClass="dialogFieldWrapper">
+                        <p:outputPanel
+                                styleClass="#{(DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewTypes.size() gt 1)?'':'hidden'}">
+                            <p:selectOneMenu value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.type}">
+                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewTypes}"/>
+                            </p:selectOneMenu>
+                        </p:outputPanel>
+                        <p:outputPanel>
                             <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                             <p:inputText id="titleInput" class="input"
                                          value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.title}"
                                          placeholder="#{msgs.title}"/>
-                        </div>
-                        <div>
+                        </p:outputPanel>
+                        <p:outputPanel>
                             <p:outputLabel for="beginInput" value="Begin"/>
                             <p:inputText id="beginInput" class="input"
                                          value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewForm.begin}"
                                          placeholder="Begin"/>
-                        </div>
-                    </h:panelGroup>
+                        </p:outputPanel>
+                    </p:outputPanel>
 
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
