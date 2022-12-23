@@ -1039,7 +1039,15 @@ function mediaViewFormatTime( ms ) {
     seconds = seconds % 3600; // seconds remaining after extracting hours
     let minutes = parseInt( seconds / 60 ); // 60 seconds in 1 minute
     seconds = seconds % 60;
-    return addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":" + addLeadingZeros(seconds, 2)
+    let formattedTime = addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":";
+    seconds = seconds.toString();
+    if(seconds.includes(".")) {
+        let secondsSplitted = seconds.split(".");
+        formattedTime += addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1];
+    } else {
+        formattedTime += addLeadingZeros(seconds, 2);
+    }
+    return formattedTime;
 };
 
 function addLeadingZeros(num, totalLength) {

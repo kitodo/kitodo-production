@@ -40,7 +40,8 @@
                 </p:media>
             </p:outputPanel>
 
-            <p:outputPanel id="mediaViewsListContainer">
+            <p:outputPanel id="mediaViewsListContainer"
+                           rendered="#{DataEditorForm.galleryPanel.mediaViewsPanel.enabled}">
                 <p:dataList
                         styleClass="mediaViewsList"
                         value="#{DataEditorForm.galleryPanel.mediaViewsPanel.mediaViewDivisions}"

@@ -1,11 +1,13 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaView;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -13,12 +15,12 @@ import org.kitodo.api.dataformat.View;
 
 public class MediaViewsPanel implements Serializable {
 
-    private final MediaViewForm mediaViewForm;
+    private MediaViewForm mediaViewForm;
     private DataEditorForm dataEditor;
 
     MediaViewsPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
-        this.mediaViewForm = new MediaViewForm(dataEditor);
+        mediaViewForm = new MediaViewForm(dataEditor);
     }
 
     public Map<LogicalDivision, MediaView> getMediaViewDivisions() {
@@ -58,6 +60,14 @@ public class MediaViewsPanel implements Serializable {
             }
             getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
         }
+    }
+
+    public boolean isEnabled() {
+        return getMediaViewTypes().size() > 0;
+    }
+
+    public Collection<String> getMediaViewTypes() {
+        return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_VIEW);
     }
 
     public MediaViewForm getMediaViewForm() {

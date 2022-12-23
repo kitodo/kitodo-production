@@ -14,13 +14,15 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 
 public class MediaViewForm implements Serializable {
-
+    
     private final DataEditorForm dataEditor;
 
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
     private Map.Entry<LogicalDivision, MediaView> mediaViewDivision;
     private String title;
     private String begin;
+
+    private String type;
 
     public String getTitle() {
         return title;
@@ -60,7 +62,7 @@ public class MediaViewForm implements Serializable {
             if (Objects.nonNull(mediaSelection)) {
                 MediaView mediaView = new MediaView(getBegin());
                 LogicalDivision logicalDivision = new LogicalDivision();
-                logicalDivision.setType("Track");
+                logicalDivision.setType(getType());
                 logicalDivision.setLabel(getTitle());
                 PhysicalDivision physicalDivision = new PhysicalDivision();
                 physicalDivision.getMediaFiles().putAll(mediaSelection.getKey().getMediaFiles());
@@ -93,5 +95,13 @@ public class MediaViewForm implements Serializable {
 
     public void setMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
         this.mediaViewDivision = mediaViewDivision;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 }
