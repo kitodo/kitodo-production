@@ -55,21 +55,6 @@
                 <p:tooltip for="parentElementTrimModeHelp"
                            value="#{msgs['tooltip.importConfig.parentElementTrimModeHelp']}"/>
             </div>
-            <div>
-                <p:outputLabel for="defaultImportDepth" value="#{msgs['importConfig.field.defaultImportDepth']} *"/>
-                <p:spinner id="defaultImportDepth"
-                           styleClass="input-with-button"
-                           immediate="true"
-                           min="1"
-                           max="5"
-                           required="#{not empty param['editForm:save']}"
-                           onchange="toggleSave();"
-                           value="#{importConfigurationEditView.importConfiguration.defaultImportDepth}"/>
-                <p:commandButton id="defaultImportDepthHelpButton" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="defaultImportDepthHelpButton"
-                           value="#{msgs['tooltip.importConfig.defaultImportDepthHelp']}"/>
-            </div>
         </p:row>
 
     </f:view>
