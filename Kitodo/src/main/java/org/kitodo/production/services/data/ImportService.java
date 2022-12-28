@@ -531,10 +531,8 @@ public class ImportService {
         int level = 1;
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
-            HashMap<String, String> parentIDMetadata = new HashMap<>();
-            parentIDMetadata.put(importConfiguration.getIdentifierMetadata(), parentID);
             try {
-                Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
+                Process parentProcess = loadParentProcess(template.getRuleset(), projectId, parentID);
                 if (Objects.isNull(parentProcess)) {
                     if (Objects.nonNull(importConfiguration.getParentMappingFile())) {
                         parentID = importProcessAndReturnParentID(recordId, processes, importConfiguration, projectId,
@@ -561,24 +559,21 @@ public class ImportService {
         }
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
-        String idMetadata = importConfiguration.getIdentifierMetadata();
-        if (Objects.nonNull(parentID) && level == importDepth && Objects.nonNull(idMetadata)) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId, idMetadata);
+        if (Objects.nonNull(parentID) && level == importDepth) {
+            checkForParent(parentID, template.getRuleset(), projectId);
         }
     }
 
     /**
      * Check if there already is a parent process in Database.
      */
-    public void checkForParent(String parentID, int rulesetID, int projectID, String identifierMetadata)
+    public void checkForParent(String parentID, Ruleset ruleset, int projectID)
             throws DAOException, IOException, ProcessGenerationException {
         if (Objects.isNull(parentID)) {
             this.parentTempProcess = null;
             return;
         }
-        HashMap<String, String> parentIDMetadata = new HashMap<>();
-        parentIDMetadata.put(identifierMetadata, parentID);
-        Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
+        Process parentProcess = loadParentProcess(ruleset, projectID, parentID);;
         if (Objects.nonNull(parentProcess)) {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
@@ -933,24 +928,31 @@ public class ImportService {
         return parentTempProcess;
     }
 
-    private Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
-            throws ProcessGenerationException, DAOException {
+    private Process loadParentProcess(Ruleset ruleset, int projectId, String parentId)
+            throws ProcessGenerationException, DAOException, IOException {
+
         Process parentProcess = null;
-        try {
-            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
-                    throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                            + process.getId() + " is null!");
-                }
-                if (process.getProject().getId() == projectId
-                        && process.getRuleset().getId().equals(rulesetId)) {
-                    parentProcess = process;
-                    break;
+        for (String identifierMetadata : getFunctionalMetadata(ruleset, FunctionalMetadata.RECORD_IDENTIFIER)) {
+            if (Objects.isNull(parentProcess)) {
+                HashMap<String, String> parentIDMetadata = new HashMap<>();
+                parentIDMetadata.put(identifierMetadata, parentId);
+                try {
+                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
+                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                                    + process.getId() + " is null!");
+                        }
+                        if (process.getProject().getId() == projectId
+                                && process.getRuleset().getId().equals(ruleset.getId())) {
+                            parentProcess = process;
+                            break;
+                        }
+                    }
+                } catch (DataException e) {
+                    logger.error(e.getLocalizedMessage());
                 }
             }
-        } catch (DataException e) {
-            logger.error(e.getLocalizedMessage());
         }
         return parentProcess;
     }
@@ -1167,7 +1169,7 @@ public class ImportService {
             }
             final String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey);
-            setParentProcess(parentId, projectId, template, importConfiguration.getIdentifierMetadata());
+            setParentProcess(parentId, projectId, template);
             tempProcess = processList.get(0);
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
@@ -1218,11 +1220,11 @@ public class ImportService {
         }
     }
 
-    private void setParentProcess(String parentId, int projectId, Template template, String idMetadata)
+    private void setParentProcess(String parentId, int projectId, Template template)
             throws DAOException, IOException, ProcessGenerationException {
         if (StringUtils.isNotBlank(parentId)) {
             parentTempProcess = null;
-            checkForParent(parentId, template.getRuleset().getId(), projectId, idMetadata);
+            checkForParent(parentId, template.getRuleset(), projectId);
         }
     }
 

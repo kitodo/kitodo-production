@@ -92,7 +92,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private String referringView = "";
     private int progress;
     private TempProcess currentProcess;
-    private String identifierMetadata;
 
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
 
@@ -310,15 +309,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public void setProject(Project project) {
         this.project = project;
-    }
-
-    /**
-     * Set identifierMetadata.
-     *
-     * @param identifierMetadata as java.lang.String
-     */
-    public void setIdentifierMetadata(String identifierMetadata) {
-        this.identifierMetadata = identifierMetadata;
     }
 
     /**
@@ -745,8 +735,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return ID metadata
      */
     public String getCatalogId(TempProcess tempProcess) {
-        if (Objects.nonNull(tempProcess) && Objects.nonNull(identifierMetadata)) {
-            return tempProcess.getCatalogId(identifierMetadata);
+        if (Objects.nonNull(tempProcess)) {
+            return tempProcess.getCatalogId(rulesetManagement.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER));
         }
         return " - ";
     }
