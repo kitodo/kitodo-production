@@ -87,6 +87,7 @@ public class CatalogConfigurationImporter {
             importConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.toString());
             importConfiguration.setReturnFormat(OPACConfig.getReturnFormat(catalogName).toUpperCase());
             setMetadataFormat(importConfiguration, catalogName);
+            setParentMappingFile(importConfiguration);
             setSearchInterfaceType(importConfiguration, catalogName);
             setUrl(importConfiguration, catalogName);
             setItemFields(importConfiguration, catalogName);
@@ -188,21 +189,21 @@ public class CatalogConfigurationImporter {
         fileUploadConfiguration.setDescription(OPACConfig.getOPACDescription(catalogTitle));
         fileUploadConfiguration.setReturnFormat(OPACConfig.getReturnFormat(catalogTitle).toUpperCase());
         setMetadataFormat(fileUploadConfiguration, catalogTitle);
-        MappingFile parentMappingFile = null;
-        for (MappingFile mappingFile : ServiceManager.getMappingFileService().getAll()) {
-            if (mappingFile.getFile().equals(OPACConfig.getXsltMappingFileForParentInRecord(catalogTitle))) {
-                parentMappingFile = mappingFile;
-                break;
-            }
-        }
-        if (Objects.nonNull(parentMappingFile)) {
-            fileUploadConfiguration.setParentMappingFile(parentMappingFile);
-        }
+        setParentMappingFile(fileUploadConfiguration);
         fileUploadConfiguration.setMappingFiles(getMappingFiles(fileUploadConfiguration));
         fileUploadConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(catalogTitle));
         // update title to include "File upload" postfix! (original title is required until here to load mapping files!)
         fileUploadConfiguration.setTitle(fileUploadConfigurationTitle);
         ServiceManager.getImportConfigurationService().saveToDatabase(fileUploadConfiguration);
+    }
+
+    private void setParentMappingFile(ImportConfiguration config) throws DAOException {
+        for (MappingFile mappingFile : ServiceManager.getMappingFileService().getAll()) {
+            if (mappingFile.getFile().equals(OPACConfig.getXsltMappingFileForParentInRecord(config.getTitle()))) {
+                config.setParentMappingFile(mappingFile);
+                break;
+            }
+        }
     }
 
     private List<SearchField> getSearchFields(ImportConfiguration configuration) {
@@ -222,11 +223,14 @@ public class CatalogConfigurationImporter {
             DAOException, MappingFilesMissingException, URISyntaxException, IOException {
         List<MappingFile> mappingFiles = new LinkedList<>();
         List<MappingFile> allMappingFiles = ServiceManager.getMappingFileService().getAll();
-        if (OPACConfig.getCatalog(configuration.getTitle()).containsKey(MAPPING_FILES)) {
+        try {
+            OPACConfig.getCatalog(configuration.getTitle()).configurationAt(MAPPING_FILES);
             for (String filename : OPACConfig.getXsltMappingFiles(configuration.getTitle())) {
                 mappingFiles.add(getConfiguredMappingFile(allMappingFiles, filename, configuration));
             }
-        } else {
+        } catch (IllegalArgumentException e) {
+            logger.debug("No 'mappingFiles' element found in catalog configuration '" + configuration.getTitle()
+                    + "', trying to determine default mapping files.");
             String formatName = OPACConfig.getMetadataFormat(configuration.getTitle());
             MetadataFormat metadataFormat = MetadataFormat.getMetadataFormat(formatName);
             List<MetadataFormatConversion> defaultConversions = MetadataFormatConversion
