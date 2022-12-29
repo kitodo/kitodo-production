@@ -24,21 +24,21 @@
                 <p:panelGrid columns="1" layout="grid">
                     <p:row>
                         <div>
-                            <p:commandButton id="createPaginationButton"
-                                             action="#{DataEditorForm.paginationPanel.createPagination()}"
+                            <p:commandButton id="updateMediaReferencesButton"
+                                             action="#{DataEditorForm.paginationPanel.updateMediaReferences()}"
+                                             process="@this"
                                              value="#{msgs.updateFileReferences}"
                                              rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                              icon="fa fa-magic fa-lg"
                                              iconPos="right"
                                              styleClass="secondary"
-                                             style="margin: 0;"
                                              update="paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
                                              immediate="true"/>
                         </div>
                         <div>
                             <p:selectManyMenu id="paginationSelection"
                                               value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
-                                              required="true"
+                                              required="#{not empty param['paginationForm:apply']}"
                                               requiredMessage="#{msgs.paginationNoPagesSelected}"
                                               disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                               filter="true"

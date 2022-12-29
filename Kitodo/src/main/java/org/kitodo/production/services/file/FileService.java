@@ -1104,7 +1104,9 @@ public class FileService {
         mediaToRemove.removeAll(mediaToAdd.keySet());
         canonicals.forEach(mediaToAdd.keySet()::remove);
         removeMissingMediaFromWorkpiece(mediaToRemove, workpiece, subfolders.values());
-        addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
+        List<PhysicalDivision> children = workpiece.getPhysicalStructure().getChildren();
+        boolean orderedChildren = (!children.isEmpty() && children.get(0).getOrder() > 0);
+        addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece, orderedChildren);
         renumberPhysicalDivisions(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginatePhysicalDivisions(workpiece);
@@ -1116,7 +1118,7 @@ public class FileService {
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
-        return !(mediaToAdd.isEmpty() && mediaToRemove.isEmpty());
+        return orderedChildren && !(mediaToAdd.isEmpty() && mediaToRemove.isEmpty());
     }
 
     private void automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(Workpiece workpiece,
@@ -1191,7 +1193,8 @@ public class FileService {
         }
     }
 
-    private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece, Collection<Subfolder> subfolders) {
+    private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece,
+                                                 Collection<Subfolder> subfolders) {
         List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         for (String removal : mediaToRemove.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
             for (PhysicalDivision page : pages) {
@@ -1203,19 +1206,19 @@ public class FileService {
                     page.getLogicalDivisions().clear();
                     LinkedList<PhysicalDivision> ancestors = MetadataEditor
                             .getAncestorsOfPhysicalDivision(page, workpiece.getPhysicalStructure());
-                    if (ancestors.isEmpty()) {
-                        Helper.setErrorMessage("Root element missing!");
-                        return;
+                    if (!ancestors.isEmpty()) {
+                        PhysicalDivision parent = ancestors.getLast();
+                        parent.getChildren().remove(page);
                     }
-                    PhysicalDivision parent = ancestors.getLast();
-                    parent.getChildren().remove(page);
                 }
             }
         }
-        int i = 1;
-        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
-            physicalDivision.setOrder(i);
-            i++;
+        if (!mediaToRemove.isEmpty()) {
+            int i = 1;
+            for (PhysicalDivision division : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+                division.setOrder(i);
+                i++;
+            }
         }
     }
 
@@ -1239,34 +1242,43 @@ public class FileService {
      * the canonical part of the file name.
      */
     private void addNewMediaToWorkpiece(List<String> canonicals, Map<String, Map<Subfolder, URI>> mediaToAdd,
-            Workpiece workpiece) {
+            Workpiece workpiece, boolean orderedChildren) {
 
         LogicalDivision actualLogicalRoot = workpiece.getLogicalStructure();
         while (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() == 1) {
             actualLogicalRoot = actualLogicalRoot.getChildren().get(0);
         }
-        // If the newspaper has multiple issues in the process, then everything
-        // stays as it was
+        // If the newspaper has multiple issues in the process, then everything stays as it was
         if (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() != 1) {
             actualLogicalRoot = workpiece.getLogicalStructure();
         }
 
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
-            int insertionPoint = 0;
-            for (String canonical : canonicals) {
-                if (metadataImageComparator.compare(entry.getKey(), canonical) > 0) {
-                    insertionPoint++;
-                } else {
-                    break;
-                }
-            }
             PhysicalDivision physicalDivision = createPhysicalDivision(entry.getValue());
-            workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
             View view = new View();
             view.setPhysicalDivision(physicalDivision);
-            actualLogicalRoot.getViews().add(view);
-            view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
-            canonicals.add(insertionPoint, entry.getKey());
+            // do not use canonical filename parts if existing physical structures already have "order" values > 0!
+            if (orderedChildren) {
+                physicalDivision.setOrder(workpiece.getPhysicalStructure().getChildren().size());
+                workpiece.getPhysicalStructure().getChildren().add(physicalDivision);
+                actualLogicalRoot.getViews().add(view);
+                view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
+                canonicals.add(entry.getKey());
+            } else {
+                // only use canonical filename parts if no ordered physical structures exist in the workpiece, yet
+                int insertionPoint = 0;
+                for (String canonical : canonicals) {
+                    if (metadataImageComparator.compare(entry.getKey(), canonical) > 0) {
+                        insertionPoint++;
+                    } else {
+                        break;
+                    }
+                }
+                workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
+                actualLogicalRoot.getViews().add(insertionPoint, view);
+                view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
+                canonicals.add(insertionPoint, entry.getKey());
+            }
         }
     }
 

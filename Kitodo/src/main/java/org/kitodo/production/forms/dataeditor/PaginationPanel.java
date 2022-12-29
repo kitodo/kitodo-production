@@ -70,9 +70,9 @@ public class PaginationPanel {
     }
 
     /**
-     * This method is invoked if the create pagination button is clicked.
+     * Checks and updates media references in workpiece depending on changes in file system.
      */
-    public void createPagination() {
+    public void updateMediaReferences() {
         boolean mediaReferencesChanged = false;
         try {
            mediaReferencesChanged = ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(),
@@ -86,12 +86,15 @@ public class PaginationPanel {
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
             physicalDivision.setOrder(i);
-            physicalDivision.setOrderlabel(paginator.next());
+            if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
+                physicalDivision.setOrderlabel(paginator.next());
+            }
         }
         dataEditor.refreshStructurePanel();
         dataEditor.getGalleryPanel().show();
         show();
-        PrimeFaces.current().executeScript("PF('updateMediaReferencesDialog').show();");
+        PrimeFaces.current().ajax().update("fileReferencesUpdatedDialog");
+        PrimeFaces.current().executeScript("PF('fileReferencesUpdatedDialog').show();");
     }
 
     private static String metsEditorDefaultPagination() {
@@ -119,27 +122,29 @@ public class PaginationPanel {
     /**
      * Sets the selected items of the paginationSelection select menu.
      *
-     * @param paginationSelectionSelectedItems
+     * @param selectedItems
      *            selected items to set
      */
-    public void setPaginationSelectionSelectedItems(List<Integer> paginationSelectionSelectedItems) {
+    public void setPaginationSelectionSelectedItems(List<Integer> selectedItems) {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
-        int lastItemIndex = paginationSelectionSelectedItems.get(paginationSelectionSelectedItems.size() - 1);
-        if (this.paginationSelectionSelectedItems.isEmpty()
-                || !Objects.equals(this.paginationSelectionSelectedItems.get(
-                        this.paginationSelectionSelectedItems.size() - 1 ), lastItemIndex)) {
-            dataEditor.getStructurePanel().updateNodeSelection(
-                    dataEditor.getGalleryPanel().getGalleryMediaContent(physicalDivisions.get(lastItemIndex)),
-                    physicalDivisions.get(lastItemIndex).getLogicalDivisions().get(0));
-            updateMetadataPanel();
+        if (!selectedItems.isEmpty()) {
+            int lastItemIndex = selectedItems.get(selectedItems.size() - 1);
+            if (this.paginationSelectionSelectedItems.isEmpty()
+                    || !Objects.equals(this.paginationSelectionSelectedItems.get(
+                    this.paginationSelectionSelectedItems.size() - 1), lastItemIndex)) {
+                dataEditor.getStructurePanel().updateNodeSelection(
+                        dataEditor.getGalleryPanel().getGalleryMediaContent(physicalDivisions.get(lastItemIndex)),
+                        physicalDivisions.get(lastItemIndex).getLogicalDivisions().get(0));
+                updateMetadataPanel();
+            }
         }
         dataEditor.getSelectedMedia().clear();
-        for (int i : paginationSelectionSelectedItems) {
+        for (int i : selectedItems) {
             for (LogicalDivision logicalDivision : physicalDivisions.get(i).getLogicalDivisions()) {
                 dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivisions.get(i), logicalDivision));
             }
         }
-        this.paginationSelectionSelectedItems = paginationSelectionSelectedItems;
+        this.paginationSelectionSelectedItems = selectedItems;
     }
 
     /**

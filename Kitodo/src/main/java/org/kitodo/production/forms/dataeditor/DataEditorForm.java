@@ -233,7 +233,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
         } else {
             if (mediaUpdated) {
-                PrimeFaces.current().executeScript("PF('updateMediaReferencesDialog').show();");
+                PrimeFaces.current().executeScript("PF('fileReferencesUpdatedDialog').show();");
             }
         }
     }
