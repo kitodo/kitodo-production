@@ -1344,14 +1344,14 @@ public class ImportService {
     public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagementInterface) {
         User user = ServiceManager.getUserService().getCurrentUser();
         String metadataLanguage = user.getMetadataLanguage();
-        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ?
-                Locale.ENGLISH.getCountry() : metadataLanguage);
+        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
+                ? Locale.ENGLISH.getCountry() : metadataLanguage);
         Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
         Collection<String> recordIdentifierMetadata = rulesetManagementInterface
                 .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
         for (Map.Entry<String, String> division : structuralElements.entrySet()) {
-            StructuralElementViewInterface viewInterface = rulesetManagementInterface.
-                    getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
+            StructuralElementViewInterface viewInterface = rulesetManagementInterface
+                    .getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
             List<String> allowedMetadataKeys = viewInterface.getAllowedMetadata().stream()
                     .map(MetadataViewInterface::getId).collect(Collectors.toList());
             allowedMetadataKeys.retainAll(recordIdentifierMetadata);
