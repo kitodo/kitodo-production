@@ -24,28 +24,29 @@
               modal="true">
         <!--@elvariable id="date" type="java.time.LocalDate"-->
         <ui:param name="date" value="#{CalendarForm.selectedDate}"/>
-        <h:panelGrid columns="2" id="calendarDayDialogHeader">
-            <p:row>
-                <h3 style="padding: 5px; margin-bottom:unset;">
-                    #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
-                    #{date.toString()}
-                    (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
-                </h3>
-            </p:row>
-            <p:row>
-                <p:commandButton id="addMetadataGlobal"
-                                 action="#{CalendarForm.addMetadataToAllMatchIssues()}"
-                                 rendered="#{CalendarForm.getFirstMatchIssue() ne null}"
-                                 value="#{msgs['calendar.metadata.global.add']}"
-                                 title="#{msgs['calendar.metadata.global.add.tooltip']}"
-                                 icon="fa fa-plus"
-                                 iconPos="right"
-                                 styleClass="callto right"
-                                 style="padding: 5px"
-                                 update="calendarDayForm"/>
-            </p:row>
-        </h:panelGrid>
         <h:form id="calendarDayForm">
+            <h:panelGrid columns="2" id="calendarDayDialogHeader">
+                <p:row>
+                    <h3 style="padding: 5px; margin-bottom:unset;">
+                        #{msgs['calendar.day.'.concat(date.dayOfWeek.value)]}
+                        #{date.toString()}
+                        (#{msgs['calendar.block']} #{CalendarForm.course.indexOf(CalendarForm.getSelectedBlock())+1})
+                    </h3>
+                </p:row>
+                <p:row>
+                    <p:commandButton id="addMetadataGlobal"
+                                     action="#{CalendarForm.addMetadataToAllMatchIssues()}"
+                                     rendered="#{CalendarForm.getFirstMatchIssue() ne null}"
+                                     value="#{msgs['calendar.metadata.global.add']}"
+                                     title="#{msgs['calendar.metadata.global.add.tooltip']}"
+                                     icon="fa fa-plus"
+                                     iconPos="right"
+                                     styleClass="callto right"
+                                     style="padding: 5px"
+                                     update="calendarDayForm"/>
+                </p:row>
+            </h:panelGrid>
+
             <h:panelGroup layout="block"
                           styleClass="not-scrollable dialogFieldWrapper">
                 <p:accordionPanel multiple="true"
@@ -59,7 +60,7 @@
                                     value="#{issue.heading} #{msgs['calendar.sheet.issue.'.concat(issue.isMatch(date) ? 'selected' : 'notSelected')]}"/>
                             <p:commandLink action="#{CalendarForm.changeMatch(issue, date)}" styleClass="right action"
                                            title="#{issue.isMatch(date) ? msgs['calendar.issue.delete'] : msgs['calendar.issue.add']}"
-                                           update="editForm:calendarTabView:calendarDetailsLayout calendarDayDialogHeader calendarDayForm">
+                                           update="editForm:calendarTabView:calendarDetailsLayout calendarDayForm">
                                 <h:outputText><i class="#{issue.isMatch(date) ? 'fa fa-trash' : 'fa fa-plus'}"/></h:outputText>
                             </p:commandLink>
                         </f:facet>
@@ -231,18 +232,19 @@
                     </p:tab>
                 </p:accordionPanel>
             </h:panelGroup>
+            
+            <p:panelGrid>
+                <h:panelGroup layout="block"
+                              styleClass="dialogButtonWrapper">
+                    <p:commandButton id="close"
+                                     update="editForm:calendarTabView:calendarDetailsLayout"
+                                     oncomplete="PF('calendarDayDialog').hide()"
+                                     value="#{msgs.close}"
+                                     icon="fa fa-times"
+                                     iconPos="right"
+                                     styleClass="primary right"/>
+                </h:panelGroup>
+            </p:panelGrid>
         </h:form>
-        <p:panelGrid>
-            <h:panelGroup layout="block"
-                          styleClass="dialogButtonWrapper">
-                <p:commandButton id="close"
-                                 update="editForm:calendarTabView:calendarDetailsLayout"
-                                 oncomplete="PF('calendarDayDialog').hide()"
-                                 value="#{msgs.close}"
-                                 icon="fa fa-times"
-                                 iconPos="right"
-                                 styleClass="primary right"/>
-            </h:panelGroup>
-        </p:panelGrid>
     </p:dialog>
 </ui:composition>

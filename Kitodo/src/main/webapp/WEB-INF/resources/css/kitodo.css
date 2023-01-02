@@ -1924,7 +1924,7 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog form {
-    height: calc(100% - 100px);
+    height: calc(100% - 60px);
     overflow-y: auto;
 }
 
@@ -1942,7 +1942,7 @@ h3#headerText.calendar-heading {
     overflow-y: hidden;
 }
 
-#calendarDayDialogHeader {
+#calendarDayForm\:calendarDayDialogHeader {
     border-bottom: solid 2px var(--cloudy-gray);
     width: 100%;
     padding-left: var(--default-double-size);
