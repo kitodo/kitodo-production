@@ -47,7 +47,9 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.DataImport;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
@@ -70,6 +72,7 @@ import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -573,7 +576,7 @@ public class ImportService {
             this.parentTempProcess = null;
             return;
         }
-        Process parentProcess = loadParentProcess(ruleset, projectID, parentID);;
+        Process parentProcess = loadParentProcess(ruleset, projectID, parentID);
         if (Objects.nonNull(parentProcess)) {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
@@ -1330,5 +1333,32 @@ public class ImportService {
             }
         }
         return urlParameters;
+    }
+
+    /**
+     * Check and return whether the functional metadata 'recordIdentifier' is configured for all top level doc struct
+     * types in the given RulesetManagementInterface or not.
+     * @param rulesetManagementInterface RulesetManagementInterface to use
+     * @return whether 'recordIdentifier' is seht for all doc struct types
+     */
+    public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagementInterface) {
+        User user = ServiceManager.getUserService().getCurrentUser();
+        String metadataLanguage = user.getMetadataLanguage();
+        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty() ?
+                Locale.ENGLISH.getCountry() : metadataLanguage);
+        Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
+        Collection<String> recordIdentifierMetadata = rulesetManagementInterface
+                .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
+        for (Map.Entry<String, String> division : structuralElements.entrySet()) {
+            StructuralElementViewInterface viewInterface = rulesetManagementInterface.
+                    getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
+            List<String> allowedMetadataKeys = viewInterface.getAllowedMetadata().stream()
+                    .map(MetadataViewInterface::getId).collect(Collectors.toList());
+            allowedMetadataKeys.retainAll(recordIdentifierMetadata);
+            if (allowedMetadataKeys.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
