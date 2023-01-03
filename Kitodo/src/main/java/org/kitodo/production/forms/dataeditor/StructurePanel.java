@@ -1363,16 +1363,17 @@ public class StructurePanel implements Serializable {
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
         LinkedList<LogicalDivision> dragParents;
-        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())) {
+        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())
+                || Objects.nonNull(dragStructure.getLink())) {
             dragParents = MetadataEditor.getAncestorsOfLogicalDivision(dragStructure,
                     dataEditor.getWorkpiece().getLogicalStructure());
             if (!dragParents.isEmpty()) {
                 LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    if (!this.logicalStructureTreeContainsMedia()) {
-                        preserveLogical();
-                    } else {
+                    if (logicalStructureTreeContainsMedia()) {
                         preserveLogicalAndPhysical();
+                    } else {
+                        preserveLogical();
                     }
                     this.dataEditor.getGalleryPanel().updateStripes();
                     this.dataEditor.getPaginationPanel().show();

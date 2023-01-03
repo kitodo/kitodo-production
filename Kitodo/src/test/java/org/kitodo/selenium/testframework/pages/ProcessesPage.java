@@ -26,6 +26,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -39,7 +40,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String PROCESSES_TABLE_HEADER = PROCESSES_TABLE + "_head";
     private static final String FILTER_FORM = "filterMenu";
     private static final String FILTER_INPUT = "filterMenu:filterfield";
-    private static final String PROCESS_TITLE = "Second process";
+    private static final String SECOND_PROCESS_TITLE = "Second process";
+    private static final String THIRD_PROCESS_TITLE = "Parent process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
@@ -271,7 +273,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
+                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + SECOND_PROCESS_TITLE + ".pdf")));
     }
 
     public void downloadDocket() {
@@ -280,7 +282,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isFileDownloaded.test(
-                    new File(Browser.DOWNLOAD_DIR + Helper.getNormalizedTitle(PROCESS_TITLE) + ".pdf")));
+                    new File(Browser.DOWNLOAD_DIR + Helper.getNormalizedTitle(SECOND_PROCESS_TITLE) + ".pdf")));
     }
 
     public void downloadLog() {
@@ -290,7 +292,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
         await("Wait for log file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .until(() -> isFileDownloaded.test(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS)
-                        + "kowal/" + Helper.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
+                        + "kowal/" + Helper.getNormalizedTitle(SECOND_PROCESS_TITLE) + "_log.xml")));
     }
 
     /**
@@ -299,7 +301,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
      * @throws InstantiationException when retrieving metadata editor page fails
      */
     public void editMetadata() throws IllegalAccessException, InstantiationException {
-        setEditMetadataLink(PROCESS_TITLE);
+        setEditMetadataLink(SECOND_PROCESS_TITLE);
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
     }
 
@@ -312,6 +314,24 @@ public class ProcessesPage extends Page<ProcessesPage> {
     public void editMetadata(String processTitle) throws InstantiationException, IllegalAccessException {
         setEditMetadataLink(processTitle);
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+    }
+
+    public void editSecondProcessMetadata() throws IllegalAccessException, InstantiationException {
+        try {
+            setEditMetadataLink(SECOND_PROCESS_TITLE);
+            clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+        } catch (StaleElementReferenceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void editThirdProcessMetadata() throws InstantiationException, IllegalAccessException {
+        try {
+            setEditMetadataLink(THIRD_PROCESS_TITLE);
+            clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+        } catch (StaleElementReferenceException e) {
+            e.printStackTrace();
+        }
     }
 
     public void downloadSearchResultAsExcel() {
@@ -340,7 +360,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     private void setDownloadDocketLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
+        int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
         downloadDocketLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":downloadDocket");
     }
 
@@ -353,8 +373,19 @@ public class ProcessesPage extends Page<ProcessesPage> {
         editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
     }
 
+    /*
+    private void setEditMetadataLink(String processTitle) throws StaleElementReferenceException {
+        await("Wait for processes table to become visible").pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> processesTable.isDisplayed());
+        int index = getRowIndex(processesTable, processTitle, 3);
+        await("Wait for 'edit metadata' link to become enabled").pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
+                .ignoreExceptions().until(() -> Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML").isEnabled());
+        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML");
+    }
+     */
+
     private void setDownloadLogLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
+        int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
         downloadLogLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":exportLogXml");
     }
 

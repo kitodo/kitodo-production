@@ -177,8 +177,10 @@ public class DataEditorService {
             Collection<String> additionalFields = isLogicalStructure ? dataEditor.getMetadataPanel()
                     .getLogicalMetadataTable().getAdditionallySelectedFields() : dataEditor.getMetadataPanel()
                     .getPhysicalMetadataTable().getAdditionallySelectedFields();
-            addableMetadata = getAddableMetadataForStructureElement(structureView, existingMetadata,
-                    additionalFields, dataEditor.getProcess().getRuleset());
+            if (Objects.nonNull(structureView)) {
+                addableMetadata = getAddableMetadataForStructureElement(structureView, existingMetadata,
+                        additionalFields, dataEditor.getProcess().getRuleset());
+            }
         } catch (InvalidMetadataValueException e) {
             Helper.setErrorMessage(e);
         }
@@ -245,22 +247,46 @@ public class DataEditorService {
                     .getStructuralElementView(
                             selectedStructure.get().getType(),
                             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        } else {
-            TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
-            if (Objects.nonNull(selectedLogicalNode)
-                    && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-                if (structureTreeNode.getDataObject() instanceof View) {
-                    View view = (View) structureTreeNode.getDataObject();
-                    if (Objects.nonNull(view.getPhysicalDivision())) {
-                        return dataEditor.getRulesetManagement().getStructuralElementView(
-                            view.getPhysicalDivision().getType(),
-                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                    }
-                }
-            }
         }
-        throw new IllegalStateException();
+
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+
+        if (Objects.isNull(selectedLogicalNode)) {
+            throw new IllegalStateException("No logical node selected!");
+        }
+
+        if (!(selectedLogicalNode.getData() instanceof StructureTreeNode)) {
+            String nodeClass = "unknown";
+            if (Objects.nonNull(selectedLogicalNode.getData())) {
+                nodeClass = selectedLogicalNode.getData().getClass().getName();
+            }
+            throw new IllegalStateException("Selected logical node data has wrong type '" + nodeClass
+                    + "'! ('StructureTreeNode' expected)");
+        }
+        StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+
+        Object dataObject = structureTreeNode.getDataObject();
+
+        // data object is null for structures inside parent processes
+        if (Objects.isNull(dataObject)) {
+            return null;
+        }
+
+        if (dataObject instanceof View) {
+            View view = (View) dataObject;
+            if (Objects.isNull(view.getPhysicalDivision())) {
+                throw new IllegalStateException("View has no physical division assigned!");
+            }
+            return dataEditor.getRulesetManagement().getStructuralElementView(
+                view.getPhysicalDivision().getType(),
+                    dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        }
+
+        // data object is a sibling process
+        if (dataObject instanceof Process) {
+            return null;
+        }
+        throw new IllegalStateException("Data object has unknown type '" + dataObject.getClass().getName() + "'!");
     }
 
     /**
