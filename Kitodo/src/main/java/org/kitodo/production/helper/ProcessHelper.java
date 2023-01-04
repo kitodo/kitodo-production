@@ -262,8 +262,6 @@ public class ProcessHelper {
                     continue;
                 }
                 Element element = (Element) node;
-
-
                 Metadata metadata;
                 switch (element.getLocalName()) {
                     case "metadata":
