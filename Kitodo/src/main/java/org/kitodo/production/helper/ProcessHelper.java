@@ -284,7 +284,7 @@ public class ProcessHelper {
                     default:
                         continue;
                 }
-                metadata.setKey(element.getAttribute("name"));
+                metadata.setKey(elementName);
                 metadata.setDomain(domain);
                 allMetadata.add(metadata);
             }
