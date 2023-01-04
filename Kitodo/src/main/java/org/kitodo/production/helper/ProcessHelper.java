@@ -262,11 +262,7 @@ public class ProcessHelper {
                     continue;
                 }
                 Element element = (Element) node;
-                String elementName = element.getAttribute("name");
-                if ("CONTENTIDS".equals(elementName) || "LABEL".equals(elementName) || "ORDERLABEL".equals(
-                        elementName)) {
-                    continue;
-                }
+
 
                 Metadata metadata;
                 switch (element.getLocalName()) {
@@ -284,8 +280,7 @@ public class ProcessHelper {
                     default:
                         continue;
                 }
-                metadata.setKey(elementName);
-                metadata.setDomain(domain);
+                metadata.setKey(element.getAttribute("name"));
                 allMetadata.add(metadata);
             }
         }
