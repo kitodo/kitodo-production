@@ -279,6 +279,7 @@ public class ProcessHelper {
                         continue;
                 }
                 metadata.setKey(element.getAttribute("name"));
+                metadata.setDomain(domain);
                 allMetadata.add(metadata);
             }
         }
