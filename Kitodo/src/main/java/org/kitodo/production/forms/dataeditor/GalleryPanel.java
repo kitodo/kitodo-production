@@ -46,6 +46,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
@@ -519,7 +520,7 @@ public class GalleryPanel {
         }
     }
 
-    private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer idx) {
+    private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer index) {
         PhysicalDivision physicalDivision = view.getPhysicalDivision();
 
         boolean isVideo = physicalDivision.getMediaFiles().keySet().stream()
@@ -566,13 +567,12 @@ public class GalleryPanel {
             canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
         }
         String treeNodeId = "unknown";
-        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(idx)) {
-            treeNodeId = stripeTreeNodeId + "_" + idx;
+        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(index)) {
+            treeNodeId = stripeTreeNodeId + "_" + index;
         }
 
-        return new GalleryMediaContent((isVideo) ? GalleryMediaContent.TYPE.VIDEO : GalleryMediaContent.TYPE.DEFAULT,
-                view, canonical, previewMimeType, resourcePreviewUri, mediaViewMimeType, resourceMediaViewUri,
-                treeNodeId);
+        return new GalleryMediaContent((isVideo) ? MediaContentType.VIDEO : MediaContentType.DEFAULT, view, canonical,
+                previewMimeType, resourcePreviewUri, mediaViewMimeType, resourceMediaViewUri, treeNodeId);
     }
 
     /**

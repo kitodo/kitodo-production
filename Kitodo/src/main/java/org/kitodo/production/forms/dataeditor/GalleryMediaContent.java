@@ -25,6 +25,7 @@ import javax.faces.event.PhaseId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -56,7 +57,7 @@ public class GalleryMediaContent {
 
     private final String mediaViewMimeType;
 
-    private final TYPE type;
+    private final MediaContentType type;
 
     /**
      * Type of the current object.
@@ -64,10 +65,6 @@ public class GalleryMediaContent {
      * <p>Mime types are used for streaming, but they are not the representative type of the object. Therefore, we need
      * this fixed type for distinction.</p>
      */
-    public enum TYPE {
-        DEFAULT,
-        VIDEO
-    }
 
     /**
      * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
@@ -93,7 +90,7 @@ public class GalleryMediaContent {
      * @param mediaViewUri
      *         URI to the content for the media view. Can be {@code null}, then no media view is offered.
      */
-    GalleryMediaContent(TYPE type, View view, String canonical, String previewMimeType, URI previewUri,
+    GalleryMediaContent(MediaContentType type, View view, String canonical, String previewMimeType, URI previewUri,
             String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId) {
         this.type = type;
         this.view = view;
