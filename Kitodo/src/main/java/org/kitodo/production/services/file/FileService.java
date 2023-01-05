@@ -86,6 +86,13 @@ public class FileService {
     private final FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(
             FileManagementInterface.class).loadModule();
 
+    private static final String ARABIC = "arabic";
+    private static final String ROMAN = "roman";
+    private static final String ARABIC_DEFAULT_VALUE = "1";
+    private static final String ROMAN_DEFAULT_VALUE = "I";
+    private static final String UNCOUNTED_DEFAULT_VALUE = " - ";
+
+
     /**
      * Adds a slash to a URI to mark it as a directory, if it does not already
      * end with one.
@@ -1329,36 +1336,38 @@ public class FileService {
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
-            case "arabic":
-                value = "1";
+            case ARABIC:
+                value = ARABIC_DEFAULT_VALUE;
                 break;
-            case "roman":
-                value = "I";
+            case ROMAN:
+                value = ROMAN_DEFAULT_VALUE;
                 break;
             default:
-                value = " - ";
+                value = UNCOUNTED_DEFAULT_VALUE;
                 break;
         }
-        for (int i = physicalDivisions.size() - 1; i >= 0; i--) {
-            PhysicalDivision physicalDivision = physicalDivisions.get(i);
-            String orderlabel = physicalDivision.getOrderlabel();
-            if (Objects.nonNull(orderlabel) && !physicalDivision.getMediaFiles().isEmpty()) {
-                first = i + 1;
-                value = orderlabel;
-                physicalDivisions.get(i).setType(PhysicalDivision.TYPE_PAGE);
-                break;
+        if (!UNCOUNTED_DEFAULT_VALUE.equals(value)) {
+            for (int i = physicalDivisions.size() - 1; i >= 0; i--) {
+                PhysicalDivision physicalDivision = physicalDivisions.get(i);
+                String orderlabel = physicalDivision.getOrderlabel();
+                if (Objects.nonNull(orderlabel) && !physicalDivision.getMediaFiles().isEmpty()) {
+                    first = i + 1;
+                    value = orderlabel;
+                    physicalDivisions.get(i).setType(PhysicalDivision.TYPE_PAGE);
+                    break;
+                }
             }
         }
         Paginator paginator = new Paginator(value);
         if (first > 0) {
             paginator.next();
-            for (int i = first; i < physicalDivisions.size(); i++) {
-                physicalDivisions.get(i).setOrderlabel(paginator.next());
-            }
+        }
+        for (int i = first; i < physicalDivisions.size(); i++) {
+            physicalDivisions.get(i).setOrderlabel(paginator.next());
         }
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             if (Objects.isNull(physicalDivision.getOrderlabel())) {
-                physicalDivision.setOrderlabel(" - ");
+                physicalDivision.setOrderlabel(UNCOUNTED_DEFAULT_VALUE);
             }
         }
     }

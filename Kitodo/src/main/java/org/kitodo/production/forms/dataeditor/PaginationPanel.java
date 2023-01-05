@@ -81,33 +81,16 @@ public class PaginationPanel {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
-        Paginator paginator = new Paginator(metsEditorDefaultPagination());
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
             physicalDivision.setOrder(i);
-            if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
-                physicalDivision.setOrderlabel(paginator.next());
-            }
         }
         dataEditor.refreshStructurePanel();
         dataEditor.getGalleryPanel().show();
         show();
         PrimeFaces.current().ajax().update("fileReferencesUpdatedDialog");
         PrimeFaces.current().executeScript("PF('fileReferencesUpdatedDialog').show();");
-    }
-
-    private static String metsEditorDefaultPagination() {
-        switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
-            case "arabic":
-                return "1";
-            case "roman":
-                return "I";
-            case "uncounted":
-                return " - ";
-            default:
-                return "";
-        }
     }
 
     /**
