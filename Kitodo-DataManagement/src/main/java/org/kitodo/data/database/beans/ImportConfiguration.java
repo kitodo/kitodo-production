@@ -155,9 +155,6 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "oai_metadata_prefix")
     private String oaiMetadataPrefix;
 
-    @Column(name = "identifier_metadata")
-    private String identifierMetadata;
-
     @Column(name = "metadata_record_id_xpath")
     private String metadataRecordIdXPath;
 
@@ -812,24 +809,6 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setOaiMetadataPrefix(String oaiMetadataPrefix) {
         this.oaiMetadataPrefix = oaiMetadataPrefix;
-    }
-
-    /**
-     * Get identifierMetadata.
-     *
-     * @return value of identifierMetadata
-     */
-    public String getIdentifierMetadata() {
-        return identifierMetadata;
-    }
-
-    /**
-     * Set identifierMetadata.
-     *
-     * @param identifierMetadata as java.lang.String
-     */
-    public void setIdentifierMetadata(String identifierMetadata) {
-        this.identifierMetadata = identifierMetadata;
     }
 
     /**

@@ -91,7 +91,6 @@ public class CatalogConfigurationImporter {
             setUrl(importConfiguration, catalogName);
             setItemFields(importConfiguration, catalogName);
             importConfiguration.setDefaultImportDepth(OPACConfig.getDefaultImportDepth(catalogName));
-            importConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(catalogName));
             setCredentials(importConfiguration, catalogName);
             importConfiguration.setIdPrefix(OPACConfig.getIdentifierPrefix(catalogName));
             importConfiguration.setParentElementTrimMode(OPACConfig.getParentIDTrimMode(catalogName));
@@ -199,7 +198,6 @@ public class CatalogConfigurationImporter {
             fileUploadConfiguration.setParentMappingFile(parentMappingFile);
         }
         fileUploadConfiguration.setMappingFiles(getMappingFiles(fileUploadConfiguration));
-        fileUploadConfiguration.setIdentifierMetadata(OPACConfig.getIdentifierMetadata(catalogTitle));
         // update title to include "File upload" postfix! (original title is required until here to load mapping files!)
         fileUploadConfiguration.setTitle(fileUploadConfigurationTitle);
         ServiceManager.getImportConfigurationService().saveToDatabase(fileUploadConfiguration);

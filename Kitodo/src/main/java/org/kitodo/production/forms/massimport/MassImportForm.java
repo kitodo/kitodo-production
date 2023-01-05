@@ -26,6 +26,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -60,6 +61,7 @@ public class MassImportForm extends BaseForm {
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
     private HashMap<String, String> importSuccessMap = new HashMap<>();
     private Integer progress = 0;
+    private Boolean rulesetConfigurationForOpacImportComplete = null;
 
     /**
      * Prepare mass import.
@@ -73,9 +75,21 @@ public class MassImportForm extends BaseForm {
         try {
             Template template = ServiceManager.getTemplateService().getById(templateId);
             templateTitle = template.getTitle();
-            addMetadataDialog.setRulesetManagement(ServiceManager.getRulesetService().openRuleset(template.getRuleset()));
+            RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(template.getRuleset());
+            addMetadataDialog.setRulesetManagement(ruleset);
+            checkRecordIdentifierConfigured(ruleset);
         } catch (DAOException | IOException e) {
             Helper.setErrorMessage(e);
+        }
+    }
+
+    private void checkRecordIdentifierConfigured(RulesetManagementInterface ruleset) {
+        if (Objects.isNull(rulesetConfigurationForOpacImportComplete)) {
+            rulesetConfigurationForOpacImportComplete = ServiceManager.getImportService()
+                    .isRecordIdentifierMetadataConfigured(ruleset);
+        }
+        if (!rulesetConfigurationForOpacImportComplete) {
+            PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
         }
     }
 
@@ -419,5 +433,14 @@ public class MassImportForm extends BaseForm {
      */
     public int getNumberOfProcessesRecords() {
         return importSuccessMap.size();
+    }
+
+    /**
+     * Get rulesetConfigurationForOpacImportComplete.
+     *
+     * @return value of rulesetConfigurationForOpacImportComplete
+     */
+    public Boolean getRulesetConfigurationForOpacImportComplete() {
+        return rulesetConfigurationForOpacImportComplete;
     }
 }

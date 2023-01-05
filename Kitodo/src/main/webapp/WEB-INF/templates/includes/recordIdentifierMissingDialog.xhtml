@@ -1,0 +1,47 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+   <p:dialog id="recordIdentifierMissingDialog"
+             widgetVar="recordIdentifierMissingDialog"
+             showHeader="false"
+             modal="true"
+             width="500px"
+             appendTo="@(body)"
+             resizable="false"
+             closable="false">
+      <h:panelGroup id="warningMessageWrapper">
+            <h3>#{err['createProcessForm.createNewProcess.recordIdentifierMissing']}</h3>
+            <div class="select-note ui-messages-error">
+                <h:outputText value="#{err['createProcessForm.createNewProcess.recordIdentifierMissingDescription']}"/>
+            </div>
+      </h:panelGroup>
+
+      <p:panelGrid>
+         <h:panelGroup layout="block"
+                       styleClass="dialogButtonWrapper right">
+            <p:commandButton value="#{msgs.close}"
+                             type="button"
+                             widgetVar="closeButton"
+                             onclick="PF('recordIdentifierMissingDialog').hide();"
+                             icon="fa fa-times fa-lg"
+                             iconPos="right"
+                             styleClass="secondary right"/>
+         </h:panelGroup>
+      </p:panelGrid>
+   </p:dialog>
+</ui:composition>
