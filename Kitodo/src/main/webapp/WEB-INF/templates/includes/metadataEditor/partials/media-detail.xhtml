@@ -14,6 +14,7 @@
 <ui:composition
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
@@ -21,9 +22,10 @@
         <ui:param name="selectedGalleryMediaContent"
                   value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
 
-        <ui:fragment rendered="#{selectedGalleryMediaContent.mediaViewMimeType eq 'video/mp4'}">
+        <ui:fragment
+                rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
             <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.mediaViewData}"
-                     player="html-video"
+                     player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                      width="90%" height="auto">
                 <f:param name="mediaId"
                          value="#{selectedGalleryMediaContent.id}"/>
@@ -31,12 +33,13 @@
                          value="#{DataEditorForm.process.id}"/>
                 <f:param name="sessionId"
                          value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                <f:param name="controls" value="#{videoControls}"/>
+                <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
                 <f:param name="krsc" value="true"/>
             </p:media>
         </ui:fragment>
 
-        <ui:fragment rendered="#{selectedGalleryMediaContent.mediaViewMimeType ne 'video/mp4'}">
+        <ui:fragment
+                rendered="#{not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') and not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
             <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem"
                             value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"
                             style="display: none;"/>

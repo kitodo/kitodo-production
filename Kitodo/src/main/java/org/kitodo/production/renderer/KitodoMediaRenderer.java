@@ -29,6 +29,8 @@ public class KitodoMediaRenderer extends MediaRenderer {
 
     private static final String PLAYER_HTML_VIDEO = "html-video";
 
+    private static final String PLAYER_HTML_AUDIO = "html-audio";
+
     @Override
     public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
         Media media = (Media) component;
@@ -45,6 +47,9 @@ public class KitodoMediaRenderer extends MediaRenderer {
             if (PLAYER_HTML_VIDEO.equals(media.getPlayer())) {
                 buildVideoTag(context, media, writer, src);
                 return;
+            } else if (PLAYER_HTML_AUDIO.equals(media.getPlayer())) {
+                buildAudioTag(context, media, writer, src);
+                return;
             }
         }
 
@@ -54,22 +59,43 @@ public class KitodoMediaRenderer extends MediaRenderer {
     private void buildVideoTag(FacesContext context, Media media, ResponseWriter writer, String src)
             throws IOException {
         writer.startElement("video", media);
+        Optional<UIComponent> controlsParameter = media.getChildren().stream()
+                .filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
+        if (!controlsParameter.isPresent() || !Boolean.FALSE.toString()
+                .equals(((UIParameter) controlsParameter.get()).getValue())) {
+            writer.writeAttribute("controls", "", null);
+        }
+        buildMediaSource(context, media, writer, src);
+        writer.write("Your browser does not support the video tag.");
+        writer.endElement("video");
+    }
+
+    private void buildAudioTag(FacesContext context, Media media, ResponseWriter writer, String src)
+            throws IOException {
+        writer.startElement("audio", media);
+        writer.writeAttribute("controls", "", null);
+        buildMediaSource(context, media, writer, src);
+        writer.write("Your browser does not support the audio tag.");
+        writer.endElement("audio");
+    }
+
+    private void buildMediaSource(FacesContext context, Media media, ResponseWriter writer, String src)
+            throws IOException {
         if (media.getStyleClass() != null) {
             writer.writeAttribute("class", media.getStyleClass(), null);
-        }
-
-        Optional<UIComponent> uiParameter = media.getChildren().stream()
-                .filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
-        if (uiParameter.isPresent() && !Boolean.FALSE.toString().equals(((UIParameter) uiParameter.get()).getValue())) {
-            writer.writeAttribute("controls", "", null);
         }
 
         renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
         writer.startElement("source", media);
         writer.writeAttribute("src", src, null);
-        writer.writeAttribute("type", "video/mp4", null);
+
+        Optional<UIComponent> typeParameter = media.getChildren().stream()
+                .filter(param -> "type".equals(((UIParameter) param).getName())).findFirst();
+        if (typeParameter.isPresent()) {
+            writer.writeAttribute("type", ((UIParameter) typeParameter.get()).getValue(), null);
+        }
+
         writer.endElement("source");
-        writer.endElement("video");
     }
 
     private void buildObjectTag(FacesContext context, Media media, ResponseWriter writer, String src, boolean isIE,

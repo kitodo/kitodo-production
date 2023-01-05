@@ -123,7 +123,6 @@
                                             src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
                                         <ui:param name="uiParamStripeIndex"
                                                   value="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"/>
-                                        <ui:param name="uiParamVideoControls" value="false"/>
                                     </ui:include>
                                 </p:panel>
                                 <!-- add one last drop area after the last page in a stripe -->
@@ -161,7 +160,6 @@
                                         <ui:include
                                                 src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
                                             <ui:param name="uiParamStripeIndex" value="0"/>
-                                            <ui:param name="uiParamVideoControls" value="false"/>
                                         </ui:include>
                                     </p:panel>
                                     <!-- add one last drop area after the last page in a stripe -->
@@ -185,9 +183,7 @@
                      a:ondragstart="metadataEditor.gallery.handleDragStart(event)">
                     <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                var="media">
-                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
-                            <ui:param name="uiParamVideoControls" value="false"/>
-                        </ui:include>
+                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
                     </ui:repeat>
                 </div>
             </ui:fragment>
@@ -209,9 +205,7 @@
                                 <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                            var="media">
                                     <ui:include
-                                            src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
-                                        <ui:param name="uiParamVideoControls" value="false"/>
-                                    </ui:include>
+                                            src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
                                 </ui:repeat>
                             </h:panelGroup>
                         </div>

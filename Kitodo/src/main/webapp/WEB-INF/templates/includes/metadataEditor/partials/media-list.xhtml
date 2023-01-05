@@ -14,6 +14,7 @@
 <ui:composition
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui"
@@ -37,9 +38,11 @@
                        a:data-stripe="#{uiParamStripeIndex}"
                        a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
 
-            <ui:fragment rendered="#{media.previewMimeType eq 'video/mp4'}">
+            <ui:fragment
+                    rendered="#{fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio')}">
                 <p:media styleClass="mediaListItem" cache="true"
-                         value="#{DataEditorForm.galleryPanel.previewData}" player="html-video"
+                         value="#{DataEditorForm.galleryPanel.previewData}"
+                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                          rendered="#{media.showingInPreview}">
                     <f:param name="mediaId"
                              value="#{media.id}"/>
@@ -47,16 +50,23 @@
                              value="#{DataEditorForm.process.id}"/>
                     <f:param name="sessionId"
                              value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                    <f:param name="controls" value="#{uiParamVideoControls}"/>
+                    <c:if test="${fn:startsWith(media.previewMimeType, 'video')}">
+                        <f:param name="controls" value="false"/>
+                    </c:if>
+                    <f:param name="type" value="#{media.previewMimeType}"/>
                     <f:param name="krsc"
                              value="true"/>
                 </p:media>
-                <h:panelGroup class="thumbnail-overlay">
+                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'VIDEO'}">
                     #{msgs.video} #{media.shortId}
+                </h:panelGroup>
+                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'AUDIO'}">
+                    #{msgs.audio} #{media.shortId}
                 </h:panelGroup>
             </ui:fragment>
 
-            <ui:fragment rendered="#{media.previewMimeType ne 'video/mp4'}">
+            <ui:fragment
+                    rendered="#{not fn:startsWith(media.previewMimeType, 'video') and not fn:startsWith(media.previewMimeType, 'audio')}">
                 <h:outputText>
                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                     <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
@@ -75,6 +85,9 @@
                               styleClass="assigned-several-times"/>
                 <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'VIDEO'}">
                     #{msgs.video} #{media.shortId}
+                </h:panelGroup>
+                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'AUDIO'}">
+                    #{msgs.audio} #{media.shortId}
                 </h:panelGroup>
                 <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'DEFAULT'}">
                     #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}

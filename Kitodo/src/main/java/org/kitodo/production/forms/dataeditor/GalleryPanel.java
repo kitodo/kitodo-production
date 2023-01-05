@@ -525,6 +525,8 @@ public class GalleryPanel {
 
         boolean isVideo = physicalDivision.getMediaFiles().keySet().stream()
                 .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("video"));
+        boolean isAudio = physicalDivision.getMediaFiles().keySet().stream()
+                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("audio"));
 
         URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
         Subfolder currentPreviewFolder = previewFolder;
@@ -571,8 +573,15 @@ public class GalleryPanel {
             treeNodeId = stripeTreeNodeId + "_" + index;
         }
 
-        return new GalleryMediaContent((isVideo) ? MediaContentType.VIDEO : MediaContentType.DEFAULT, view, canonical,
-                previewMimeType, resourcePreviewUri, mediaViewMimeType, resourceMediaViewUri, treeNodeId);
+        MediaContentType mediaContentType = MediaContentType.DEFAULT;
+        if (isVideo) {
+            mediaContentType = MediaContentType.VIDEO;
+        } else if (isAudio) {
+            mediaContentType = MediaContentType.AUDIO;
+        }
+
+        return new GalleryMediaContent(mediaContentType, view, canonical, previewMimeType, resourcePreviewUri,
+                mediaViewMimeType, resourceMediaViewUri, treeNodeId);
     }
 
     /**

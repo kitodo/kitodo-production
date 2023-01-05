@@ -13,5 +13,7 @@ package org.kitodo.production.enums;
 
 public enum MediaContentType {
     DEFAULT,
+
+    AUDIO,
     VIDEO
 }
