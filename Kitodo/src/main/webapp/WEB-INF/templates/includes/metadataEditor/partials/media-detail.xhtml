@@ -78,7 +78,8 @@
             </p:outputPanel>
         </ui:fragment>
 
-        <ui:fragment rendered="#{selectedGalleryMediaContent.mediaViewMimeType ne 'video/mp4'}">
+        <ui:fragment
+                rendered="#{not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') and not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
             <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem"
                             value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"
                             style="display: none;"/>

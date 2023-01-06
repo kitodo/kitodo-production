@@ -65,7 +65,7 @@ metadataEditor.gallery = {
         setBeginIfEmpty() {
             let begin = document.getElementById("mediaViewForm:beginInput");
             if(!begin.value) {
-                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video').currentTime * 1000
+                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000
                 begin.value = mediaViewFormatTime(currentMilliseconds)
             }
         }
