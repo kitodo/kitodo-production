@@ -30,6 +30,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(css = "#portal-logo a")
     private WebElement poralLogoLink;
 
+    @FindBy(id = "fileReferencesUpdatedDialog")
+    private WebElement fileReferencesUpdatedDialog;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -65,5 +68,13 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void clickPortalLogo() {
         poralLogoLink.click();
+    }
+
+    /**
+     * Check and return whether information dialog about updated media references is displayed or not.
+     * @return whether information dialog about updated media references is displayed or not
+     */
+    public boolean isFileReferencesUpdatedDialogVisible() {
+        return fileReferencesUpdatedDialog.isDisplayed();
     }
 }
