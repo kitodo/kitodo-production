@@ -229,7 +229,7 @@ public class CatalogConfigurationImporter {
                 mappingFiles.add(getConfiguredMappingFile(allMappingFiles, filename, configuration));
             }
         } catch (IllegalArgumentException e) {
-            logger.debug("No 'mappingFiles' element found in catalog configuration '" + configuration.getTitle()
+            logger.info("No 'mappingFiles' element found in catalog configuration '" + configuration.getTitle()
                     + "', trying to determine default mapping files.");
             String formatName = OPACConfig.getMetadataFormat(configuration.getTitle());
             MetadataFormat metadataFormat = MetadataFormat.getMetadataFormat(formatName);
