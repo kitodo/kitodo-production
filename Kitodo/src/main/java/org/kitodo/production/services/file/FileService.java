@@ -1361,9 +1361,9 @@ public class FileService {
         Paginator paginator = new Paginator(value);
         if (first > 0) {
             paginator.next();
-        }
-        for (int i = first; i < physicalDivisions.size(); i++) {
-            physicalDivisions.get(i).setOrderlabel(paginator.next());
+            for (int i = first; i < physicalDivisions.size(); i++) {
+                physicalDivisions.get(i).setOrderlabel(paginator.next());
+            }
         }
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             if (Objects.isNull(physicalDivision.getOrderlabel())) {
