@@ -36,8 +36,8 @@
         <h3 id="headerText">
             <h:outputText value="#{msgs.createNewProcess} (#{msgs.template}: '#{CreateProcessForm.template.title}')"
                           styleClass="shortable"/>
-        </h3>       
-        
+        </h3>
+
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
@@ -54,7 +54,7 @@
             <p:menuitem id="opacSearch"
                         process="@this"
                         value="#{msgs['newProcess.catalogueSearch.heading']}"
-                        oncomplete="PF('catalogSearchDialog').show();"
+                        action="#{CreateProcessForm.checkRulesetConfiguration()}"
                         disabled="#{empty CreateProcessForm.catalogImportDialog.importConfigurations}"
                         icon="fa fa-book"
                         iconPos="right"
@@ -112,6 +112,7 @@
     </ui:define>
 
     <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/recordIdentifierMissingDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/import.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/fileUpload.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/hitlistDialog.xhtml"/>

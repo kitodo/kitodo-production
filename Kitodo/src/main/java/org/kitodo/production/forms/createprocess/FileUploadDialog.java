@@ -66,7 +66,6 @@ public class FileUploadDialog extends MetadataImportDialog {
     public void handleFileUpload(FileUploadEvent event) {
         UploadedFile uploadedFile = event.getFile();
         ImportService importService = ServiceManager.getImportService();
-        createProcessForm.setIdentifierMetadata(importConfiguration.getIdentifierMetadata());
         try {
             Document internalDocument = importService.convertDataRecordToInternal(
                 createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
@@ -83,8 +82,8 @@ public class FileUploadDialog extends MetadataImportDialog {
             if (!higherLevelIdentifier.isEmpty()) {
                 String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0]
                                 .toString(), importConfiguration.getParentElementTrimMode());
-                importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset().getId(),
-                    createProcessForm.getProject().getId(), importConfiguration.getIdentifierMetadata());
+                importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset(),
+                    createProcessForm.getProject().getId());
                 if (Objects.isNull(importService.getParentTempProcess())) {
                     TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
                     if (Objects.nonNull(parentTempProcess)) {

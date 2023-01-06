@@ -241,17 +241,19 @@ public class TempProcess {
     /**
      * Get catalog ID of this temp process.
      *
-     * @param identifierMetadata metadata key of identifier metadata
+     * @param identifierMetadataKeys Collection of metadata keys of identifier metadata
      * @return catalog ID
      */
-    public String getCatalogId(String identifierMetadata) {
-        if (catalogId.isEmpty() && Objects.nonNull(metadataNodes) && metadataNodes.getLength() > 0) {
-            for (int i = 0; i < metadataNodes.getLength(); i++) {
-                Node item = metadataNodes.item(i);
-                Node name = item.getAttributes().getNamedItem("name");
-                if (Objects.nonNull(name) && name.getTextContent().equals(identifierMetadata)) {
-                    catalogId = item.getTextContent();
-                    break;
+    public String getCatalogId(Collection<String> identifierMetadataKeys) {
+        for (String identifierMetadata : identifierMetadataKeys) {
+            if (catalogId.isEmpty() && Objects.nonNull(metadataNodes) && metadataNodes.getLength() > 0) {
+                for (int i = 0; i < metadataNodes.getLength(); i++) {
+                    Node item = metadataNodes.item(i);
+                    Node name = item.getAttributes().getNamedItem("name");
+                    if (Objects.nonNull(name) && name.getTextContent().equals(identifierMetadata)) {
+                        catalogId = item.getTextContent();
+                        break;
+                    }
                 }
             }
         }

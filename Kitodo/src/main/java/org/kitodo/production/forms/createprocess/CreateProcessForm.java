@@ -92,7 +92,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private String referringView = "";
     private int progress;
     private TempProcess currentProcess;
-    private String identifierMetadata;
+    private Boolean rulesetConfigurationForOpacImportComplete = null;
 
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
 
@@ -313,15 +313,6 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     }
 
     /**
-     * Set identifierMetadata.
-     *
-     * @param identifierMetadata as java.lang.String
-     */
-    public void setIdentifierMetadata(String identifierMetadata) {
-        this.identifierMetadata = identifierMetadata;
-    }
-
-    /**
      * Create the process and save the metadata.
      */
     public String createNewProcess() {
@@ -455,9 +446,23 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     }
                 }
                 processDataTab.prepare();
+                showDefaultImportConfigurationDialog();
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private void showDefaultImportConfigurationDialog() {
+        if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
+            String configType = project.getDefaultImportConfiguration().getConfigurationType();
+            if (ImportConfigurationType.OPAC_SEARCH.name().equals(configType)) {
+                checkRulesetConfiguration();
+            } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(configType)) {
+                PrimeFaces.current().executeScript("fileUploadDialog");
+            } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(configType)) {
+                PrimeFaces.current().executeScript("searchEditDialog");
+            }
         }
     }
 
@@ -745,8 +750,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return ID metadata
      */
     public String getCatalogId(TempProcess tempProcess) {
-        if (Objects.nonNull(tempProcess) && Objects.nonNull(identifierMetadata)) {
-            return tempProcess.getCatalogId(identifierMetadata);
+        if (Objects.nonNull(tempProcess)) {
+            return tempProcess.getCatalogId(rulesetManagement.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER));
         }
         return " - ";
     }
@@ -785,5 +790,23 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public void setCurrentProcess(TempProcess currentProcess) {
         this.currentProcess = currentProcess;
+    }
+
+    /**
+     * Check whether ruleset configuration is complete for OPAC import, e.g. if functional metadata of type
+     * 'recordIdentifier' has been configured for all document types in this ruleset.
+     * If configuration is complete, the import dialog is shown. Otherwise, a warning dialog is shown to inform the user
+     * about missing ruleset configurations.
+     */
+    public void checkRulesetConfiguration() {
+        if (Objects.isNull(rulesetConfigurationForOpacImportComplete)) {
+            rulesetConfigurationForOpacImportComplete = ServiceManager.getImportService()
+                    .isRecordIdentifierMetadataConfigured(rulesetManagement);
+        }
+        if (rulesetConfigurationForOpacImportComplete) {
+            PrimeFaces.current().executeScript("PF('catalogSearchDialog').show();");
+        } else {
+            PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
+        }
     }
 }
