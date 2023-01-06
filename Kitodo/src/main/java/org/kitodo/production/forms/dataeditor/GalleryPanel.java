@@ -525,8 +525,6 @@ public class GalleryPanel {
 
         boolean isVideo = physicalDivision.getMediaFiles().keySet().stream()
                 .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("video"));
-        boolean isAudio = physicalDivision.getMediaFiles().keySet().stream()
-                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("audio"));
 
         URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
         Subfolder currentPreviewFolder = previewFolder;
@@ -547,27 +545,36 @@ public class GalleryPanel {
 
         URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewVariant);
         String mediaViewMimeType = mediaViewVariant.getMimeType();
+        URI resourceMediaViewUri = null;
 
         if (isVideo) {
             mediaViewMimeType = videoMediaViewVariant.getMimeType();
             mediaViewUri = physicalDivision.getMediaFiles().get(videoMediaViewVariant);
         }
 
-        URI resourceMediaViewUri = null;
         if (Objects.nonNull(mediaViewUri)) {
             resourceMediaViewUri = mediaViewUri.isAbsolute()
                     ? mediaViewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
 
+        boolean isAudio = physicalDivision.getMediaFiles().keySet().stream()
+                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("audio"));
+
+        return buildGalleryMediaContent(view, stripeTreeNodeId, index, isVideo, isAudio, previewMimeType,
+                resourcePreviewUri, mediaViewMimeType, resourceMediaViewUri, currentPreviewFolder);
+    }
+
+    private GalleryMediaContent buildGalleryMediaContent(View view, String stripeTreeNodeId, Integer index,
+            boolean isVideo, boolean isAudio, String previewMimeType, URI resourcePreviewUri, String mediaViewMimeType,
+            URI resourceMediaViewUri, Subfolder previewFolder) {
         // prefer canonical of preview folder
-        String canonical = Objects.nonNull(resourcePreviewUri)
-                ? currentPreviewFolder.getCanonical(resourcePreviewUri)
-                : null;
+        String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
         if (Objects.isNull(canonical)) {
             // if preview media not available, load canonical id from other folders
             canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
         }
+
         String treeNodeId = "unknown";
         if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(index)) {
             treeNodeId = stripeTreeNodeId + "_" + index;

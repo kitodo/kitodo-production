@@ -3035,6 +3035,7 @@ Column content
 }
 
 
+#imagePreviewForm\:thumbnailStripe .thumbnail-parent[data-mime-type^="audio"],
 #imagePreviewForm\:thumbnailStripe .thumbnail-parent[data-mime-type^="video"] {
     width: 90px;
     height: auto;
