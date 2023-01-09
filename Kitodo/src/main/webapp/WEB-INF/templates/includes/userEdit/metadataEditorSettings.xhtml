@@ -45,7 +45,7 @@
                                   onchange="toggleSave()">
                     <f:selectItems value="#{UserForm.galleryViewModes}"
                                    var="viewMode"
-                                   itemLabel="#{msgs[viewMode]}"/>
+                                   itemLabel="#{UserForm.getGalleryViewModeTranslation(viewMode)}"/>
                 </p:selectOneRadio>
             </div>
             <div>

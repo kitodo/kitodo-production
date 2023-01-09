@@ -15,6 +15,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.kitodo.production.helper.Helper;
+
 /**
  * The possibilities of the gallery view.
  */
@@ -42,22 +44,22 @@ public enum GalleryViewMode {
     }
 
     /**
-     * Get messageKey.
+     * Get translation of this gallery view mode.
      *
-     * @return value of messageKey
+     * @return translation of this gallery view mode
      */
-    public String getMessageKey() {
-        return messageKey;
+    public String getTranslation() {
+        return Helper.getTranslation(messageKey);
     }
 
     /**
-     * Return GalleryViewMode by message key.
-     * @param messageKey message key of requested GalleryViewMode.
+     * Return GalleryViewMode by name.
+     * @param name enum name of requested GalleryViewMode.
      * @return GalleryViewMode
      */
-    public static GalleryViewMode getByMessageKey(String messageKey) {
+    public static GalleryViewMode getByName(String name) {
         for (GalleryViewMode viewMode : values()) {
-            if (viewMode.getMessageKey().equals(messageKey)) {
+            if (viewMode.name().equals(name)) {
                 return viewMode;
             }
         }
@@ -65,11 +67,11 @@ public enum GalleryViewMode {
     }
 
     /**
-     * Get list of GalleryViewMode messages keys.
+     * Get list of GalleryViewModes as Strings.
      *
      * @return list of Strings
      */
-    public static List<String> getGalleryModeMessageKeys() {
-        return Arrays.stream(values()).map(GalleryViewMode::getMessageKey).collect(Collectors.toList());
+    public static List<String> getGalleryViewModes() {
+        return Arrays.stream(values()).map(GalleryViewMode::name).collect(Collectors.toList());
     }
 }

@@ -753,6 +753,15 @@ public class UserForm extends BaseForm {
      * @return list of Strings
      */
     public List<String> getGalleryViewModes() {
-        return GalleryViewMode.getGalleryModeMessageKeys();
+        return GalleryViewMode.getGalleryViewModes();
+    }
+
+    /**
+     * Get translation of GalleryViewMode with given enum value 'galleryViewMode'.
+     * @param galleryViewModeValue enum value of GalleryViewMode
+     * @return translation of GalleryViewMode
+     */
+    public String getGalleryViewModeTranslation(String galleryViewModeValue) {
+        return GalleryViewMode.getByName(galleryViewModeValue).getTranslation();
     }
 }

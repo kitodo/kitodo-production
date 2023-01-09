@@ -327,7 +327,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         structurePanel.getSelectedPhysicalNode().setSelected(true);
         metadataPanel.showLogical(getSelectedStructure());
         metadataPanel.showPhysical(getSelectedPhysicalDivision());
-        galleryPanel.setGalleryViewMode(GalleryViewMode.getByMessageKey(user.getDefaultGalleryViewMode()).name());
+        galleryPanel.setGalleryViewMode(GalleryViewMode.getByName(user.getDefaultGalleryViewMode()).name());
         galleryPanel.show();
         paginationPanel.show();
 
