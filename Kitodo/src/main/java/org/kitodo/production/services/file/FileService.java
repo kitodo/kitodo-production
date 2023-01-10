@@ -33,9 +33,9 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
@@ -1203,19 +1203,21 @@ public class FileService {
     private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece,
                                                  Collection<Subfolder> subfolders) {
         List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
-        for (String removal : mediaToRemove.stream().filter(Objects::nonNull).collect(Collectors.toList())) {
-            for (PhysicalDivision page : pages) {
-                if (removal.equals(getCanonical(subfolders, page))) {
-                    workpiece.getPhysicalStructure().getChildren().remove(page);
-                    for (LogicalDivision structuralElement : page.getLogicalDivisions()) {
-                        structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(page));
-                    }
-                    page.getLogicalDivisions().clear();
-                    LinkedList<PhysicalDivision> ancestors = MetadataEditor
-                            .getAncestorsOfPhysicalDivision(page, workpiece.getPhysicalStructure());
-                    if (!ancestors.isEmpty()) {
-                        PhysicalDivision parent = ancestors.getLast();
-                        parent.getChildren().remove(page);
+        for (String removal : mediaToRemove) {
+            if (StringUtils.isNotBlank(removal)) {
+                for (PhysicalDivision page : pages) {
+                    if (removal.equals(getCanonical(subfolders, page))) {
+                        workpiece.getPhysicalStructure().getChildren().remove(page);
+                        for (LogicalDivision structuralElement : page.getLogicalDivisions()) {
+                            structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(page));
+                        }
+                        page.getLogicalDivisions().clear();
+                        LinkedList<PhysicalDivision> ancestors = MetadataEditor
+                                .getAncestorsOfPhysicalDivision(page, workpiece.getPhysicalStructure());
+                        if (!ancestors.isEmpty()) {
+                            PhysicalDivision parent = ancestors.getLast();
+                            parent.getChildren().remove(page);
+                        }
                     }
                 }
             }
@@ -1241,7 +1243,7 @@ public class FileService {
                 }
             }
         }
-        return null;
+        return "";
     }
 
     /**
