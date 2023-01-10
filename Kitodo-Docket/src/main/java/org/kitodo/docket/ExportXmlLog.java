@@ -177,7 +177,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
      *            the docketData to export
      * @return a new xml document
      */
-    private static Document createDocument(DocketData docketData, boolean addNamespace) {
+    private Document createDocument(DocketData docketData, boolean addNamespace) {
 
         Element processElm = new Element("process");
         final Document doc = new Document(processElm);
@@ -209,7 +209,8 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         return doc;
     }
 
-    private static void processDigitalDocumentInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
+    private void processDigitalDocumentInformation(DocketData docketData, Namespace xmlns,
+            ArrayList<Element> processElements) {
         ArrayList<Element> docElements = new ArrayList<>();
         Element dd = new Element("digitalDocument", xmlns);
 
@@ -227,7 +228,8 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         processElements.add(digdoc);
     }
 
-    private static void processTemplateInformation(DocketData docketData, Namespace xmlns, ArrayList<Element> processElements) {
+    private void processTemplateInformation(DocketData docketData, Namespace xmlns,
+            ArrayList<Element> processElements) {
         ArrayList<Element> templateElements = new ArrayList<>();
         Element template = new Element("original", xmlns);
 
@@ -247,7 +249,8 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         processElements.add(templates);
     }
 
-    private static void processTemplateProperties(DocketData docketData, Namespace xmlns, ArrayList<Element> templateProperties) {
+    private void processTemplateProperties(DocketData docketData, Namespace xmlns,
+            ArrayList<Element> templateProperties) {
         for (Property prop : docketData.getTemplateProperties()) {
             Element property = new Element(PROPERTY, xmlns);
             property.setAttribute(PROPERTY_IDENTIFIER, prop.getTitle());
@@ -277,7 +280,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         }
     }
 
-    private static ArrayList<Element> processProcessInformation(DocketData docketData, Namespace xmlns) {
+    private ArrayList<Element> processProcessInformation(DocketData docketData, Namespace xmlns) {
         ArrayList<Element> processElements = new ArrayList<>();
         Element processTitle = new Element("title", xmlns);
         processTitle.setText(docketData.getProcessName());
@@ -310,7 +313,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         return processElements;
     }
 
-    private static void processNamespaceDeclaration(boolean addNamespace, Element processElm) {
+    private void processNamespaceDeclaration(boolean addNamespace, Element processElm) {
         if (addNamespace) {
 
             Namespace xsi = Namespace.getNamespace("xsi", "http://www.w3.org/2001/XMLSchema-instance");
@@ -321,7 +324,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         }
     }
 
-    private static List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
+    private List<Element> prepareProperties(List<Property> properties, Namespace xmlns) {
         ArrayList<Element> preparedProperties = new ArrayList<>();
         for (Property property : properties) {
             Element propertyElement = new Element(PROPERTY, xmlns);
@@ -341,7 +344,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         return preparedProperties;
     }
 
-    private static List<Element> createMetadataElements(Namespace xmlns, DocketData docketData) {
+    private List<Element> createMetadataElements(Namespace xmlns, DocketData docketData) {
         List<Element> metadataElements = new ArrayList<>();
         try {
             HashMap<String, String> names = getNamespacesFromConfig();
@@ -363,11 +366,11 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         return metadataElements;
     }
 
-    private static HashMap<String, String> getNamespacesFromConfig() {
+    private HashMap<String, String> getNamespacesFromConfig() {
         return getXmlPathFromConfig("namespace");
     }
 
-    private static HashMap<String, String> getXmlPathFromConfig(String xmlPath) {
+    private HashMap<String, String> getXmlPathFromConfig(String xmlPath) {
         HashMap<String, String> fields = new HashMap<>();
         try {
             File file = new File(KitodoConfig.getKitodoConfigDirectory() + "kitodo_exportXml.xml");
@@ -390,7 +393,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         return fields;
     }
 
-    private static void prepareMetadataElements(List<Element> metadataElements, boolean useAnchor, DocketData docketData,
+    private void prepareMetadataElements(List<Element> metadataElements, boolean useAnchor, DocketData docketData,
             Namespace[] namespaces, Namespace xmlns)
             throws IOException, JDOMException {
         HashMap<String, String> fields = getMetsFieldsFromConfig(useAnchor);
@@ -400,7 +403,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         }
     }
 
-    private static void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,
+    private void prepareMetadataElements(List<Element> metadataElements, Map<String, String> fields, Document document,
             Namespace[] namespaces, Namespace xmlns) {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
@@ -419,7 +422,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         }
     }
 
-    private static HashMap<String, String> getMetsFieldsFromConfig(boolean useAnchor) {
+    private HashMap<String, String> getMetsFieldsFromConfig(boolean useAnchor) {
         String xmlpath = "mets." + PROPERTY;
         if (useAnchor) {
             xmlpath = "anchor." + PROPERTY;
@@ -440,13 +443,13 @@ public class ExportXmlLog implements Consumer<OutputStream> {
      *            HashMap
      * @return list of elements
      */
-    private static List<Object> getMetsValues(String expr, Document document, Namespace[] namespaces) {
+    private List<Object> getMetsValues(String expr, Document document, Namespace[] namespaces) {
         XPathExpression<Object> xpath = XPathFactory.instance().compile(expr.trim().replace("\n", ""),
             Filters.fpassthrough(), Collections.emptyMap(), namespaces);
         return xpath.evaluate(document);
     }
 
-    private static String replacer(String in) {
+    private String replacer(String in) {
         in = in.replace("°", "?");
         in = in.replace("^", "?");
         in = in.replace("|", "?");
