@@ -30,9 +30,10 @@
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
-        <kitodo.version>3.5.0-beta-1</kitodo.version>
-        <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <main.basedir>${project.basedir}</main.basedir>
+        <kitodo.version>3.5.0-beta-1</kitodo.version>
+        <kitodo.modules>${main.basedir}/Kitodo/modules/</kitodo.modules>
+        <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <phase.prop>none</phase.prop>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
@@ -72,6 +73,7 @@
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
         <mockito.version>2.0.2-beta</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
+        <properties-maven-plugin.phase>initialize</properties-maven-plugin.phase>
         <selenium.version>3.141.59</selenium.version>
         <spring.security.version>5.7.5</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
@@ -843,7 +845,7 @@ from system library in Java 11+ -->
                                         <Implementation-Build-Date>${maven.build.timestamp}</Implementation-Build-Date>
                                     </manifestEntries>
                                 </archive>
-                                <outputDirectory>${main.basedir}/Kitodo/modules/</outputDirectory>
+                                <outputDirectory>${kitodo.modules}</outputDirectory>
                             </configuration>
                         </execution>
                     </executions>
@@ -941,7 +943,7 @@ from system library in Java 11+ -->
                         <version>${properties-maven-plugin.version}</version>
                         <executions>
                             <execution>
-                                <phase>initialize</phase>
+                                <phase>${properties-maven-plugin.phase}</phase>
                                 <goals>
                                     <goal>read-project-properties</goal>
                                 </goals>
@@ -967,7 +969,7 @@ from system library in Java 11+ -->
                                     <outputDirectory>${directory.modules}</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${main.basedir}/Kitodo/modules/</directory>
+                                            <directory>${kitodo.modules}</directory>
                                             <include>*.jar</include>
                                             <filtering>false</filtering>
                                         </resource>
