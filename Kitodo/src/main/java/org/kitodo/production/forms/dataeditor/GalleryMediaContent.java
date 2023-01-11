@@ -237,8 +237,7 @@ public class GalleryMediaContent {
          * we are NOT ALLOWED TO close the InputStream at this point. Faces does
          * that after transferring the data.
          */
-        try {
-            InputStream viewData = ServiceManager.getFileService().read(uri);
+        try (InputStream viewData = ServiceManager.getFileService().read(uri)) {
             return DefaultStreamedContent.builder().stream(() -> viewData).contentType(mimeType)
                     .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength(viewData.available())
                     .build();
