@@ -33,6 +33,15 @@ import org.primefaces.application.resource.BaseDynamicContentHandler;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.util.Constants;
 
+/**
+ * This handler allows to stream files e.g. video and audio partially to the browser. Only parts of the file are
+ * requested by the browser are returned. This means, for example, that a video does not have to be loaded completely,
+ * but byte parts are returned as a response of a so-called HTTP range requests.
+ *
+ * <p>For example, in HTML video component you can jump back and forth in the player without the file being completely
+ * loaded or the player is jumping back to the beginning. At the current requested position we preload the file with a
+ * small buffer size.</p>
+ */
 public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
 
     private static final int DEFAULT_BUFFER_SIZE = 20480; // ..bytes = 20KB.
@@ -174,7 +183,7 @@ public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
                 sos.println("Content-Type: " + streamedContent.getContentType());
                 sos.println("Content-Range: bytes " + r.start + "-" + r.end + "/" + r.total);
 
-                // Copy single part range of multi part range.
+                // Copy single part range of multipart range.
                 Range.copy(inputStream, outputStream, length, r.start, r.length);
             }
 
