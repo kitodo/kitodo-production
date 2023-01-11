@@ -20,7 +20,7 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:outputPanel styleClass="thumbnail-parent" a:data-mime-type="#{media.previewMimeType}">
+    <p:outputPanel styleClass="thumbnail-parent #{fn:startsWith(media.previewMimeType, 'video') ? 'media-type-video' : ''}#{fn:startsWith(media.previewMimeType, 'audio') ? 'media-type-audio' : ''}" >
         <c:choose>
             <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
                 <c:set var="thumbnailStyleClass"

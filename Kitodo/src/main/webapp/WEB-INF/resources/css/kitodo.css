@@ -3029,14 +3029,14 @@ Column content
     position: relative;
 }
 
-.thumbnail-parent[data-mime-type^="video"] {
+.thumbnail-parent.media-type-video {
     width: 185px;
     height: auto;
 }
 
 
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent[data-mime-type^="audio"],
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent[data-mime-type^="video"] {
+#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-audio,
+#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-video {
     width: 90px;
     height: auto;
 }
