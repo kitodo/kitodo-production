@@ -12,15 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.StringTokenizer;
+import java.util.*;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -48,12 +40,10 @@ import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BaseDTO;
-import org.kitodo.production.dto.FilterDTO;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.production.dto.*;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
 import org.primefaces.model.SortOrder;
@@ -1073,4 +1063,70 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         }
         return sqlUserFilter.toString();
     }
+
+    /**
+     * Initialise list of process property titles.
+     *
+     * @return List of String objects containing the process property labels.
+     */
+    public List<String> initProcessPropertyTitles() {
+        return ServiceManager.getPropertyService().findDistinctTitles();
+    }
+
+    /**
+     * Initialise list of projects.
+     *
+     * @return List of String objects containing the project
+     */
+    public List<String> initProjects() {
+        List<ProjectDTO> projectsSortedByTitle = Collections.emptyList();
+        try {
+            projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorInitializingProjects", logger, e);
+        }
+
+        return projectsSortedByTitle.stream().map(ProjectDTO::getTitle).sorted().collect(Collectors.toList());
+    }
+
+    /**
+     * Initialise list of step statuses.
+     *
+     * @return List of TaskStatus objects
+     */
+    public List<TaskStatus> initStepStatus() {
+        return List.of(TaskStatus.values());
+    }
+
+    /**
+     * Initialise list of task titles.
+     *
+     * @return List of String objects containing the titles of all workflow steps
+     */
+    public List<String> initStepTitles() {
+        List<String> taskTitles = new ArrayList<>();
+        try {
+            taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return taskTitles;
+    }
+
+
+    /**
+     * Initialise list of users.
+     *
+     * @return List of User objects
+     */
+    public List<User> initUserList() {
+        try {
+            return ServiceManager.getUserService().getAllActiveUsersSortedByNameAndSurname();
+        } catch (RuntimeException e) {
+            logger.warn("RuntimeException caught. List of users could be empty!");
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
+        }
+        return new ArrayList<>();
+    }
+
 }

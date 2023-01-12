@@ -828,69 +828,171 @@ label.ui-outputlabel[for] {
     display: block;
 }
 
-#filterMenu {
+#filterMenuWrapper {
+    min-width: 430px;
+    width: 35%;
+}
+
+#filterMenuWrapper > .ui-inputgroup {
+    position: relative; /* TODO kann das weg? */
+}
+
+#filterInputForm {
     display: inline;
     float: right;
+    width: 100%;
 }
 
-#filterMenu > div > .ui-inputfield {
-    width: 250px;
+#filterMenuWrapper .input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+#filterInputForm\:filterfield {
     border-radius: var(--default-border-radius) 0 0 var(--default-border-radius);
+    width: 100%;
 }
 
-#filterMenu > div > .ui-button:nth-child(2) {
-    border-radius: 0 var(--default-border-radius) var(--default-border-radius) 0;
-    margin-left: 3px;
-}
-
-#filterMenu .ui-overlaypanel {
-    border-radius: var(--default-border-radius);
-}
-
-#filterMenu .ui-overlaypanel > div {
+#filterOptionsFormWrapper,
+#savedFilters\:savedFiltersOverlay > div {
     padding: 0;
-    width: 250px;
+    width: 100%;
     background: var(--light-gray);
     border-radius: var(--default-border-radius);
 }
 
-#filterMenu .ui-overlaypanel .ui-button {
+#filterOptionsFormWrapper {
+    box-shadow: var(--second-level-shadow);
+    display: none;
+    position: absolute;
+    top: 100%;
+    z-index: 1;
+}
+
+#filterOptionsFormWrapper li {
+    border-top: solid 1px var(--cloudy-gray);
+    list-style: none;
+}
+
+#filterOptionsFormWrapper li:hover {
+    background: var(--trans-blue);
+}
+
+#filterOptionsForm\:suggestions  {
+    border-bottom: solid var(--contrast-border-width) var(--medium-gray);
+    margin-bottom: var(--default-full-size);
+}
+
+#filterOptionsForm\:suggestions .selected {
+    background: var(--cloudy-gray);
+}
+
+#filterOptionsFormWrapper .ui-chkbox,
+#filterOptionsForm\:suggestions li {
+    line-height: var(--input-height);
+    padding: 0 var(--default-double-size);
+}
+
+#parsedFiltersForm\:parsedFilters {
+    position: absolute;
+    z-index: 1; /* TODO remove when not needed */
+    max-width: calc(100% - 200px);
+}
+
+#parsedFiltersForm\:parsedFilters .ui-widget-content {
+    background: none;
+}
+#parsedFiltersForm\:parsedFilters .ui-datalist-data {
+    padding: var(--group-margin);
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-empty-message {
+    display: none;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item {
+    list-style: none;
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    padding: 3px;
+    border-radius: var(--default-border-radius);
+    margin-right: var(--group-margin);
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
+    background: var(--blue);
+    color: var(--pure-white);
+}
+
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .not-modifier,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .category,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .value,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
+    display: inline-block;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .category {
+    font-weight: bold;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .value {
+    padding-left: var(--group-margin);
+}
+
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
+    height: auto;
+    width: auto;
+}
+
+#savedFilters\:savedFiltersOverlay {
+    width: 430px;
+    border-radius: var(--default-border-radius);
+}
+
+#savedFilters\:savedFiltersOverlay .ui-overlaypanel-content {
+    padding: 0;
+}
+
+#savedFilters\:savedFiltersOverlay ul {
+    list-style: none;
+}
+
+#savedFilters\:savedFiltersTrigger {
+    border-radius: 0 var(--default-border-radius) var(--default-border-radius) 0;
+}
+
+#savedFilters\:savedFiltersOverlay .ui-button {
     width: 100%;
     text-align: left;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-#filterMenu .ui-overlaypanel li {
-    list-style: none;
-    border-top: solid 1px var(--cloudy-gray);
-}
-
-#filterMenu .ui-overlaypanel li:hover {
-    background: var(--trans-blue);
-}
-
-#filterMenu .ui-overlaypanel li a {
+#savedFilters\:savedFiltersOverlay li a {
     display: inline-block;
     padding: 10px;
     text-decoration: none;
     color: var(--blue);
 }
 
-#filterMenu .ui-overlaypanel li > a:first-child {
+#savedFilters\:savedFiltersOverlay li > a:first-child {
     overflow-x: hidden;
     text-overflow: ellipsis;
     width: 75%;
 }
 
-#filterMenu .ui-overlaypanel li:first-child a {
+#savedFilters\:savedFiltersOverlay li:first-child a {
     width: 100%;
     box-sizing: border-box;
     border-top-left-radius: var(--default-border-radius);
     border-top-right-radius: var(--default-border-radius);
 }
 
-#filterMenu .ui-overlaypanel li .filter-delete {
+#savedFilters\:savedFiltersOverlay li .filter-delete {
     float: right;
     vertical-align: middle;
 }

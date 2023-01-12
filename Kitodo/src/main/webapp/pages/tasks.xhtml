@@ -30,44 +30,9 @@
     <ui:define name="contentHeader">
         <h3>#{msgs.tasks}</h3>
 
-        <h:form id="filterMenu">
-            <div class="ui-inputgroup">
-                <p:inputText forceId="true"
-                             id="filterfield"
-                             value="#{CurrentTaskForm.filter}"
-                             placeholder="#{msgs.filter}">
-                    <p:ajax event="change"
-                            onstart="PF('taskTable').getPaginator().setPage(0);"
-                            update="tasksTabView:tasksForm:taskTable"/>
-                </p:inputText>
-                <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
-                <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
-                    <ul>
-                        <li>
-                            <p:commandButton id="addFilter"
-                                             action="#{CurrentTaskForm.addFilterToUser}"
-                                             icon="fa fa-floppy-o fa-lg"
-                                             value="#{msgs.addFilter}" update="@form"/>
-                        </li>
-                        <ui:repeat value="#{CurrentTaskForm.userFilters}" var="filter">
-                            <li>
-                                <p:commandLink value="#{filter}"
-                                               action="#{CurrentTaskForm.changeFilter(filter)}"
-                                               title="#{filter}"/>
-                                <p:commandLink title="#{msgs.removeFilter}"
-                                               action="#{ProcessForm.removeFilterFromUser(filter)}"
-                                               styleClass="filter-delete plain"
-                                               update="@form">
-                                    <i class="fa fa-trash-o fa-lg"/>
-                                </p:commandLink>
-                            </li>
-                        </ui:repeat>
-                    </ul>
-                </p:overlayPanel>
-            </div>
-        </h:form>
+        <!-- Filters -->
+        <ui:include src="/WEB-INF/templates/includes/tasks/filterMenu.xhtml"/>
 
-        <!-- filters -->
         <p:button id="search" value="#{msgs.extendedSearch}"
                   icon="fa fa-search" iconPos="right"
                   outcome="extendedSearch"/>

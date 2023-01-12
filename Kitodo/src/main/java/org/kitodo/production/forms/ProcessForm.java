@@ -19,6 +19,7 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -51,6 +52,8 @@ import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.filters.FilterMenu;
+import org.kitodo.production.filters.ParsedFilter;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
@@ -80,6 +83,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> templates;
     private List<Property> workpieces;
     private Property property;
+    private final FilterMenu filterMenu = new FilterMenu(this);
     private final transient FileService fileService = ServiceManager.getFileService();
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
@@ -1004,6 +1008,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return reloadpath of th page.
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return filterList();
     }
@@ -1167,5 +1172,14 @@ public class ProcessForm extends TemplateBaseForm {
         } else {
             return ((ProcessDTO) process).getId();
         }
+    }
+
+    /**
+     * Get filterMenu.
+     *
+     * @return value of filterMenu
+     */
+    public FilterMenu getFilterMenu() {
+        return filterMenu;
     }
 }

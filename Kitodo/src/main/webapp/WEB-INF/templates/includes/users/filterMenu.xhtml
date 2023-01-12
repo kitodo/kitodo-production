@@ -1,0 +1,56 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+    <h:form id="filterMenu">
+        <h:panelGroup layout="block"
+                      styleClass="ui-inputgroup">
+            <p:inputText id="filterfield"
+                         value="#{UserForm.filter}"
+                         placeholder="#{msgs.filter}">
+                <p:ajax event="change"
+                        onstart="PF('usersTable').getPaginator().setPage(0);"
+                        update="usersTabView:usersTable sticky-notifications"/>
+            </p:inputText>
+            <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
+            <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
+                <ul>
+                    <li>
+                        <p:commandButton id="addFilter"
+                                         action="#{UserForm.addFilterToUser}"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         value="#{msgs.addFilter}" update="@form"/>
+                    </li>
+                    <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
+                        <li>
+                            <p:commandLink value="#{filter}"
+                                           action="#{UserForm.changeFilter(filter)}"
+                                           title="#{filter}"/>
+                            <p:commandLink title="#{msgs.removeFilter}"
+                                           action="#{UserForm.removeFilterFromUser(filter)}"
+                                           styleClass="filter-delete plain"
+                                           update="@form">
+                                <i class="fa fa-trash-o fa-lg"/>
+                            </p:commandLink>
+                        </li>
+                    </ui:repeat>
+                </ul>
+            </p:overlayPanel>
+        </h:panelGroup>
+    </h:form>
+
+</ui:composition>

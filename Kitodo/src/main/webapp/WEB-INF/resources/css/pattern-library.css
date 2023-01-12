@@ -166,6 +166,10 @@ label.ui-state-error {
     padding: 0;
 }
 
+.hidden {
+    display: none;
+}
+
 /* Buttons */
 .ui-button,
 .ui-widget-content .ui-button {
