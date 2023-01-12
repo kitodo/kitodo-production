@@ -21,7 +21,6 @@ import javax.faces.context.ResponseWriter;
 
 import org.primefaces.component.media.Media;
 import org.primefaces.component.media.MediaRenderer;
-import org.primefaces.component.media.player.MediaPlayer;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.util.HTML;
 
@@ -61,7 +60,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
         writer.startElement("video", media);
         Optional<UIComponent> controlsParameter = media.getChildren().stream()
                 .filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
-        if (!controlsParameter.isPresent() || !Boolean.FALSE.toString()
+        if (controlsParameter.isEmpty() || !Boolean.FALSE.toString()
                 .equals(((UIParameter) controlsParameter.get()).getValue())) {
             writer.writeAttribute("controls", "", null);
         }
@@ -96,39 +95,6 @@ public class KitodoMediaRenderer extends MediaRenderer {
         }
 
         writer.endElement("source");
-    }
-
-    private void buildObjectTag(FacesContext context, Media media, ResponseWriter writer, String src, boolean isIE,
-            MediaPlayer player, String sourceParam) throws IOException {
-        writer.startElement("object", media);
-        writer.writeAttribute("type", player.getType(), null);
-        writer.writeAttribute("data", src, null);
-
-        if (isIE) {
-            encodeIEConfig(writer, player);
-        }
-
-        if (media.getStyleClass() != null) {
-            writer.writeAttribute("class", media.getStyleClass(), null);
-        }
-
-        renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
-
-        if (sourceParam != null) {
-            encodeParam(writer, player.getSourceParam(), src, false);
-        }
-
-        for (UIComponent child : media.getChildren()) {
-            if (child instanceof UIParameter) {
-                UIParameter param = (UIParameter) child;
-
-                encodeParam(writer, param.getName(), param.getValue(), false);
-            }
-        }
-
-        renderChildren(context, media);
-
-        writer.endElement("object");
     }
 
 }

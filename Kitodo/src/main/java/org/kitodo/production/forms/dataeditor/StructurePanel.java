@@ -678,8 +678,7 @@ public class StructurePanel implements Serializable {
     /**
      * Finds canonical id for view by checking all folders.
      *
-     * @param view
-     *         the view
+     * @param view the view
      * @return string representing media canonical id
      */
     public String findCanonicalIdForView(View view) {
@@ -689,12 +688,10 @@ public class StructurePanel implements Serializable {
         if (mediaFileIterator.hasNext()) {
             Entry<MediaVariant, URI> mediaFileEntry = mediaFileIterator.next();
             Subfolder subfolder = this.subfoldersCache.computeIfAbsent(mediaFileEntry.getKey().getUse(),
-                    use -> new Subfolder(dataEditor.getProcess(),
-                            dataEditor.getProcess().getProject().getFolders().parallelStream()
-                                    .filter(folder -> folder.getFileGroup().equals(use)).findAny().orElseThrow(
-                                            () -> new IllegalStateException(
-                                                    "Missing folder with file group \"" + use + "\" in project \"" + dataEditor.getProcess()
-                                                            .getProject().getTitle()))));
+                    use -> new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
+                            .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny()
+                            .orElseThrow(() ->  new IllegalStateException("Missing folder with file group \"" + use
+                                    + "\" in project \"" + dataEditor.getProcess().getProject().getTitle()))));
             canonical = subfolder.getCanonical(mediaFileEntry.getValue());
         }
         return canonical;

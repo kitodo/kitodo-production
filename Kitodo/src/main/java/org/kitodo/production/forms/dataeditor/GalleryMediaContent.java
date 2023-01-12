@@ -57,14 +57,13 @@ public class GalleryMediaContent {
 
     private final String mediaViewMimeType;
 
-    private final MediaContentType type;
-
     /**
      * Type of the current object.
      *
      * <p>Mime types are used for streaming, but they are not the representative type of the object. Therefore, we need
      * this fixed type for distinction.</p>
      */
+    private final MediaContentType type;
 
     /**
      * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
@@ -220,6 +219,8 @@ public class GalleryMediaContent {
      *
      * @param uri
      *         internal URI of the media file to be transferred
+     * @param mimeType
+     *         the Internet MIME type of the media file
      * @return a Primefaces object that handles the output of media data
      */
     private StreamedContent sendData(URI uri, String mimeType) {
@@ -236,8 +237,7 @@ public class GalleryMediaContent {
          * we are NOT ALLOWED TO close the InputStream at this point. Faces does
          * that after transferring the data.
          */
-        try {
-            InputStream viewData = ServiceManager.getFileService().read(uri);
+        try (InputStream viewData = ServiceManager.getFileService().read(uri)) {
             return DefaultStreamedContent.builder().stream(() -> viewData).contentType(mimeType)
                     .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength(viewData.available())
                     .build();

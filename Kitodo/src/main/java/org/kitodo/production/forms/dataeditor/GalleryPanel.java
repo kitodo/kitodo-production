@@ -91,7 +91,6 @@ public class GalleryPanel {
 
     private static final Pattern DROP_UNSTRUCTURED_MEDIA_LAST_AREA = Pattern.compile(
             "imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageLastDropArea");
-    public static final String MIMETYPE_VIDEO_PREFIX = "video";
 
     private final DataEditorForm dataEditor;
     private final MediaViewsPanel mediaViewsPanel;
