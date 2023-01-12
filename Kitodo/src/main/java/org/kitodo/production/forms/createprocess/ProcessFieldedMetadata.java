@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -53,11 +54,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     private static final Logger logger = LogManager.getLogger(ProcessFieldedMetadata.class);
 
     /**
-     * An empty metadata group for the empty metadata panel showing. The empty
-     * metadata panel can be displayed if the element selected in the structure
-     * window isn’t a structure (has no metadata).
+     * An empty metadata group for the empty metadata panel showing. The empty metadata panel can be displayed if the
+     * element selected in the structure window isn’t a structure (has no metadata).
      */
     public static final ProcessFieldedMetadata EMPTY = new ProcessFieldedMetadata();
+    public static final String METADATA_KEY_LABEL = "LABEL";
+    public static final String METADATA_KEY_ORDERLABEL = "ORDERLABEL";
 
     /**
      * Fields the user has selected to show in addition, with no data yet.
@@ -131,8 +133,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
         Collection<Metadata> metadataToAdd = new ArrayList<>();
         potentialMetadataItems.forEach( potentialMetadataItem -> {
-            if ( metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey())) ) {
-                metadataToAdd.add(potentialMetadataItem);
+            if (metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
+                if (!(METADATA_KEY_LABEL.equals(potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(
+                        division.getLabel()) || METADATA_KEY_ORDERLABEL.equals(
+                        potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(division.getOrderlabel()))) {
+                    metadataToAdd.add(potentialMetadataItem);
+                }
+
             }
         });
         metadata.addAll(metadataToAdd);
@@ -296,13 +303,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
             if (Objects.nonNull(division.getLabel())) {
                 MetadataEntry label = new MetadataEntry();
-                label.setKey("LABEL");
+                label.setKey(METADATA_KEY_LABEL);
                 label.setValue(division.getLabel());
                 displayMetadata.add(label);
             }
             if (Objects.nonNull(division.getOrderlabel())) {
                 MetadataEntry label = new MetadataEntry();
-                label.setKey("ORDERLABEL");
+                label.setKey(METADATA_KEY_ORDERLABEL);
                 label.setValue(division.getOrderlabel());
                 displayMetadata.add(label);
             }
