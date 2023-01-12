@@ -65,26 +65,32 @@
                             </p:commandLink>
                         </f:facet>
                         <p:fragment rendered="#{issue.isMatch(date)}">
-                            <p:splitButton id="addMetadata"
-                                           action="#{CalendarForm.addMetadata(issue, false)}"
-                                           value="#{msgs['calendar.metadata.issue.add']}"
-                                           title="#{msgs['calendar.metadata.issue.add.tooltip']}"
-                                           icon="fa fa-plus"
-                                           iconPos="right"
-                                           rendered="#{issue.isMatch(date)}"
-                                           styleClass="secondary right"
-                                           oncomplete="PF('calendarDayDialog').initPosition();"
-                                           update="calendarDayForm">
-                                <p:menuitem action="#{CalendarForm.addMetadata(issue, true)}"
-                                            value="#{msgs['calendar.metadata.issue.addToThisIssue']}"
-                                            icon="fa fa-plus"
-                                            iconPos="right"
-                                            rendered="#{issue.isMatch(date)}"
-                                            oncomplete="PF('calendarDayDialog').initPosition();"
-                                            update="calendarDayForm"/>
-                            </p:splitButton>
+                            <p:toolbar id="addMetadataActions">
+                                <f:facet name="right">
+                                    <p:commandButton id="addMetadata"
+                                                     action="#{CalendarForm.addMetadata(issue, false)}"
+                                                     value="#{msgs['calendar.metadata.issue.add']}"
+                                                     title="#{msgs['calendar.metadata.issue.add.tooltip']}"
+                                                     icon="fa fa-plus"
+                                                     iconPos="right"
+                                                     rendered="#{issue.isMatch(date)}"
+                                                     styleClass="secondary"
+                                                     oncomplete="PF('calendarDayDialog').initPosition();"
+                                                     update="calendarDayForm"/>
+                                    <p:commandButton id="addMetadataToThisIssue"
+                                                     action="#{CalendarForm.addMetadata(issue, true)}"
+                                                     value="#{msgs['calendar.metadata.issue.addToThisIssue']}"
+                                                     icon="fa fa-plus"
+                                                     iconPos="right"
+                                                     styleClass="secondary"
+                                                     rendered="#{issue.isMatch(date)}"
+                                                     oncomplete="PF('calendarDayDialog').initPosition();"
+                                                     update="calendarDayForm"/>
+                                </f:facet>
+                            </p:toolbar>
                             <!-- Metadata -->
-                            <p:dataView styleClass="metadata-list"
+                            <p:dataView id="metadataDataView"
+                                        styleClass="metadata-list"
                                         rendered="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue).size() ne 0}"
                                         value="#{CalendarForm.getMetadata(CalendarForm.selectedBlock, date, issue)}"
                                         var="metadata">
