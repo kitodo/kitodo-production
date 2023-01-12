@@ -1943,21 +1943,24 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayForm\:calendarDayDialogHeader {
-    border-bottom: solid 2px var(--cloudy-gray);
-    width: 100%;
+    border-bottom: solid var(--contrast-border-width) var(--cloudy-gray);
+    margin-bottom: var(--default-full-size);
+    padding-bottom: var(--default-half-size);
     padding-left: var(--default-double-size);
     padding-right: var(--default-double-size);
-    padding-bottom: var(--default-half-size);
-    margin-bottom: var(--default-full-size);
+    width: 100%;
 }
 
 #calendarDayForm .ui-toolbar.ui-widget-header {
-    background: var(--trans-blue);
-    margin-bottom: 10px;
+    background: transparent;
+    border-bottom: solid var(--default-border-width) var(--cloudy-gray);
+    border-radius: 0;
+    margin-bottom: var(--default-full-size);
+    padding: 0 0 var(--default-half-size) 0;
 }
 
 #calendarDayForm .ui-toolbar.ui-widget-header button.secondary {
-    margin : 5px;
+    margin : 0 0 0 var(--group-margin);
 }
 
 #calendarDayDialog .ui-dataview-header {
