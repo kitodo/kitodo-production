@@ -132,6 +132,8 @@ public class CalendarForm implements Serializable {
     private final LocalDate today = LocalDate.now();
     private static Integer parentId;
 
+    private String activeIndexes = "0";
+
     /**
      * Empty constructor. Creates a new form without yet any data.
      *
@@ -145,6 +147,24 @@ public class CalendarForm implements Serializable {
         issueColours = ConfigCore.getParameterOrDefaultValue(ParameterCore.ISSUE_COLOURS).split(";");
         course = new Course();
 
+    }
+
+    /**
+     * Gets activeIndexes.
+     *
+     * @return value of activeIndexes
+     */
+    public String getActiveIndexes() {
+        return activeIndexes;
+    }
+
+    /**
+     * Sets activeIndexes.
+     *
+     * @param activeIndexes value of activeIndexes
+     */
+    public void setActiveIndexes(String activeIndexes) {
+        this.activeIndexes = activeIndexes;
     }
 
     /**

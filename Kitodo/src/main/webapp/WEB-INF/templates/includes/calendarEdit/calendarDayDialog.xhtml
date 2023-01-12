@@ -49,11 +49,14 @@
 
             <h:panelGroup layout="block"
                           styleClass="not-scrollable dialogFieldWrapper">
-                <p:accordionPanel multiple="true"
+                <p:accordionPanel id="issuesAccordion"
                                   widgetVar="issuesAccordion"
                                   value="#{CalendarForm.calendarSheet.get(date.dayOfMonth - 1).get(date.monthValue - 1).issues}"
                                   var="issue"
-                                  activeIndex="0,1,2,3,4,5">
+                                  activeIndex="#{CalendarForm.activeIndexes}"
+                                  multiple="true">
+                    <p:ajax event="tabChange"/>
+                    <p:ajax event="tabClose"/>
                     <p:tab>
                         <f:facet name="title">
                             <h:outputText
@@ -75,7 +78,6 @@
                                                      iconPos="right"
                                                      rendered="#{issue.isMatch(date)}"
                                                      styleClass="secondary"
-                                                     oncomplete="PF('calendarDayDialog').initPosition();"
                                                      update="calendarDayForm"/>
                                     <p:commandButton id="addMetadataToThisIssue"
                                                      action="#{CalendarForm.addMetadata(issue, true)}"
@@ -84,7 +86,6 @@
                                                      iconPos="right"
                                                      styleClass="secondary"
                                                      rendered="#{issue.isMatch(date)}"
-                                                     oncomplete="PF('calendarDayDialog').initPosition();"
                                                      update="calendarDayForm"/>
                                 </f:facet>
                             </p:toolbar>
@@ -238,7 +239,7 @@
                     </p:tab>
                 </p:accordionPanel>
             </h:panelGroup>
-            
+
             <p:panelGrid>
                 <h:panelGroup layout="block"
                               styleClass="dialogButtonWrapper">
