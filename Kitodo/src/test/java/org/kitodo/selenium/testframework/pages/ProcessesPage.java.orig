@@ -468,13 +468,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
             .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
     }
 
-    public void goToCalendar() throws Exception {
-        if (isNotAt()) {
-            goTo();
-        }
-        openCalendarLink.click();
-    }
-
+<<<<<<< HEAD
     /**
      * Select all rows on a page in processesTable.
      */
@@ -508,5 +502,12 @@ public class ProcessesPage extends Page<ProcessesPage> {
             await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
                     .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
         }
+=======
+    public void goToCalendar() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        openCalendarLink.click();
+>>>>>>> a898fb92d (Add selenium test for calendar)
     }
 }
