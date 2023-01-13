@@ -258,13 +258,13 @@ body.first-visit #portal-header {
     vertical-align: middle;
 }
 
-#header-nav > ul > li > a {
+#header-nav > ul > li > form > a {
     color: inherit;
     text-decoration: none !important;
     padding-bottom: 15px;
 }
 
-#header-nav > ul > li > a > i {
+#header-nav > ul > li > form > a > i {
     color: inherit;
 }
 
@@ -312,7 +312,7 @@ body.first-visit #portal-header {
     color: inherit;
 }
 
-#header-nav #dashboard-menu + .ui-overlaypanel ul li:hover a {
+#dashboard-menu-overlay ul li:hover a {
     background-color: var(--carbon-blue) !important;
     color: #fff;
     border-color: var(--carbon-blue) !important;
@@ -420,18 +420,18 @@ body.first-visit #portal-header {
     color: var(--orange);
 }
 
-#dashboard-menu + .ui-overlaypanel ul {
+#dashboard-menu-overlay ul {
     background: var(--light-gray);
     box-sizing: border-box;
     padding: calc(32px - 8px);
 }
 
-#dashboard-menu + .ui-overlaypanel ul #dashboard-menu-header h3 {
+#dashboard-menu-overlay ul #dashboard-menu-header h3 {
     padding: 0 8px 8px 8px;
 }
 
-#dashboard-menu + .ui-overlaypanel ul .nav-pic-text,
-#dashboard-menu + .ui-overlaypanel ul .nav-pic-text:last-child {
+#dashboard-menu-overlay ul .nav-pic-text,
+#dashboard-menu-overlay ul .nav-pic-text:last-child {
     display: inline-block;
     width: calc(32.6% - 16px);
     margin: 8px;
@@ -439,13 +439,13 @@ body.first-visit #portal-header {
     box-sizing: border-box;
 }
 
-#dashboard-menu + .ui-overlaypanel ul .nav-pic-text a {
+#dashboard-menu-overlay ul .nav-pic-text a {
     border: none;
     padding: 16px;
     text-align: center;
 }
 
-#dashboard-menu + .ui-overlaypanel ul .nav-pic-text a i {
+#dashboard-menu-overlay ul .nav-pic-text a i {
     display: block;
     color: var(--blue);
     font-size: 22px;
