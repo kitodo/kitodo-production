@@ -125,6 +125,10 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         saveButton.click();
     }
 
+    /**
+     * Change order of child processes in metadata editor by moving the second child process before
+     * the first child process via drag and drop.
+     */
     public void changeOrderOfLinkedChildProcesses() {
         secondChildProcess.click();
         WebDriver webDriver = Browser.getDriver();

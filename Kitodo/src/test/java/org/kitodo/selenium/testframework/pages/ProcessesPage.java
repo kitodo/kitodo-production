@@ -316,6 +316,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
     }
 
+    /**
+     * Open second process in metadata editor.
+     * @throws IllegalAccessException when navigating to metadata editor page fails
+     * @throws InstantiationException when navigating to metadata editor page fails
+     */
     public void editSecondProcessMetadata() throws IllegalAccessException, InstantiationException {
         try {
             setEditMetadataLink(SECOND_PROCESS_TITLE);
@@ -325,6 +330,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
         }
     }
 
+    /**
+     * Open third process in metadata editor.
+     * @throws IllegalAccessException when navigating to metadata editor page fails
+     * @throws InstantiationException when navigating to metadata editor page fails
+     */
     public void editThirdProcessMetadata() throws InstantiationException, IllegalAccessException {
         try {
             setEditMetadataLink(THIRD_PROCESS_TITLE);
@@ -379,7 +389,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .ignoreExceptions().until(() -> processesTable.isDisplayed());
         int index = getRowIndex(processesTable, processTitle, 3);
         await("Wait for 'edit metadata' link to become enabled").pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML").isEnabled());
+                .ignoreExceptions().until(() -> Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML")
+                        .isEnabled());
         editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML");
     }
      */
