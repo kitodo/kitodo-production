@@ -893,6 +893,19 @@ label.ui-outputlabel[for] {
     padding: 0 var(--default-double-size);
 }
 
+#filterOptionsForm\:taskFilters,
+#filterOptionsForm\:taskStatus {
+    border: none;
+    padding: 0;
+    width: 100%;
+}
+
+#filterOptionsForm\:taskFilters td,
+#filterOptionsForm\:taskStatus td {
+    color: var(--carbon-blue);
+    padding-bottom: var(--default-half-size);
+}
+
 #parsedFiltersForm\:parsedFilters {
     position: absolute;
     z-index: 1; /* TODO remove when not needed */

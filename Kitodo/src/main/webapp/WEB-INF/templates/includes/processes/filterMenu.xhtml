@@ -62,7 +62,6 @@
                     <!-- Suggestions -->
                     <p:dataList id="suggestions" value="#{ProcessForm.filterMenu.suggestions}" var="menuItem" itemStyleClass="suggestion">
                         <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}" a:data-input="#{menuItem.getInput()}">#{menuItem.getSuggestion()}</p:outputPanel>
-                        <!-- TODO load translations of menuItem.getSuggestion() and use getEnglish() for data-suggestion -->
                     </p:dataList>
                     <!-- Options at the end of overlay panel -->
                     <p:selectBooleanCheckbox id="showClosedProcesses"

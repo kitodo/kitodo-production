@@ -31,6 +31,8 @@ import java.util.stream.Collectors;
 
 public class FilterMenu {
 
+    private static final int MAX_SUGGESTIONS = 15;
+
     private ProcessForm processForm = null;
     private CurrentTaskForm taskForm = null;
     private List<Suggestion> suggestions;
@@ -146,6 +148,7 @@ public class FilterMenu {
     private List<Suggestion> createStringSuggestionsMatchingInput(String input, List<String> suggestions, FilterPart filterPart) {
         return suggestions.stream()
                 .filter(suggestion -> suggestion.startsWith(input))
+                .limit(MAX_SUGGESTIONS)
                 .map(suggestion -> new Suggestion(input, suggestion, filterPart))
                 .collect(Collectors.toList());
     }
@@ -153,6 +156,7 @@ public class FilterMenu {
     private List<Suggestion> createUserSuggestionsMatchingInput(String input, List<User> suggestions, FilterPart filterPart) {
         return suggestions.stream()
                 .filter(user -> user.getLogin().startsWith(input) || user.getFullName().startsWith(input))
+                .limit(MAX_SUGGESTIONS)
                 .map(user -> new Suggestion(input, user.getLogin(), filterPart))
                 .collect(Collectors.toList());
     }
@@ -273,6 +277,8 @@ public class FilterMenu {
         }
         if (Objects.nonNull(processForm)) {
             processForm.setFilter(newFilter.toString());
+        } else if (Objects.nonNull(taskForm)) {
+            taskForm.setFilter(newFilter.toString());
         } else {
             // TODO handle users
         }

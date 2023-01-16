@@ -31,7 +31,9 @@
         <h3>#{msgs.tasks}</h3>
 
         <!-- Filters -->
-        <ui:include src="/WEB-INF/templates/includes/tasks/filterMenu.xhtml"/>
+        <h:panelGroup id="filterMenuWrapper">
+            <ui:include src="/WEB-INF/templates/includes/tasks/filterMenu.xhtml"/>
+        </h:panelGroup>
 
         <p:button id="search" value="#{msgs.extendedSearch}"
                   icon="fa fa-search" iconPos="right"
