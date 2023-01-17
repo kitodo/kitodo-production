@@ -56,6 +56,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -75,6 +76,7 @@ public class UserForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private final transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private final transient UserService userService = ServiceManager.getUserService();
+    private final transient FilterMenu filterMenu = new FilterMenu(this);
     private static final List<String> AVAILABLE_SHORTCUTS = Arrays.asList(
             "detailView",
             "help",
@@ -721,6 +723,7 @@ public class UserForm extends BaseForm {
      * @return reload path of the page.
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return usersPage;
     }
@@ -763,5 +766,14 @@ public class UserForm extends BaseForm {
      */
     public String getGalleryViewModeTranslation(String galleryViewModeValue) {
         return GalleryViewMode.getByName(galleryViewModeValue).getTranslation();
+    }
+
+    /**
+     * Get filterMenu.
+     *
+     * @return value of filterMenu
+     */
+    public FilterMenu getFilterMenu() {
+        return filterMenu;
     }
 }

@@ -16,6 +16,7 @@ import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.forms.CurrentTaskForm;
 import org.kitodo.production.forms.ProcessForm;
+import org.kitodo.production.forms.UserForm;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
 
@@ -35,10 +36,16 @@ public class FilterMenu {
 
     private ProcessForm processForm = null;
     private CurrentTaskForm taskForm = null;
+    private UserForm userForm = null;
     private List<Suggestion> suggestions;
-    private List<ParsedFilter> parsedFilters;
+    private final List<ParsedFilter> parsedFilters;
     private String filterInEditMode;
 
+    /**
+     * Constructor of filter menu for processes.
+     *
+     * @param processForm instance of ProcessForm
+     */
     public FilterMenu(ProcessForm processForm) {
         this.processForm = processForm;
         suggestions = createSuggestionsForProcessAndTaskCategory("");
@@ -46,7 +53,9 @@ public class FilterMenu {
     }
 
     /**
-     * Default constructor.
+     * Constructor of filter menu for tasks.
+     *
+     * @param taskForm instance of CurrentTaskForm
      */
     public FilterMenu(CurrentTaskForm taskForm) {
         this.taskForm = taskForm;
@@ -54,6 +63,22 @@ public class FilterMenu {
         parsedFilters = new ArrayList<>();
     }
 
+    /**
+     * Constructor of filter menu for users.
+     *
+     * @param userForm instance of UserForm
+     */
+    public FilterMenu(UserForm userForm) {
+        this.userForm = userForm;
+        suggestions = createSuggestionsForUserCategory("");
+        parsedFilters = new ArrayList<>();
+    }
+
+    /**
+     * Get list of suggestions.
+     *
+     * @return List of suggestion objects
+     */
     public List<Suggestion> getSuggestions() {
         return suggestions;
     }
@@ -79,26 +104,36 @@ public class FilterMenu {
         int lastColonIndex = strippedInput.lastIndexOf(":");
         if (lastColonIndex == -1) {
             // category should be suggested
-           suggestions = createSuggestionsForProcessAndTaskCategory(input);
-
+            if (Objects.nonNull(processForm) || Objects.nonNull(taskForm)) {
+                suggestions = createSuggestionsForProcessAndTaskCategory(input);
+            } else if (Objects.nonNull(userForm)) {
+                suggestions = createSuggestionsForUserCategory(input);
+            }
         } else {
             // at least one colon in the input string
             String lastPart = input.substring(lastColonIndex + 1);
             Pattern patternNextCategory = Pattern.compile("(?<= \\| )\\w?$");
             Matcher matcherNextCategory = patternNextCategory.matcher(lastPart);
-            if (matcherNextCategory.find()) {
-                // strings ends with " | "
-                // category should be suggested
-                suggestions = createSuggestionsForProcessAndTaskCategory(matcherNextCategory.group());
-            } else {
-                // value should be suggested
-                Pattern patternPreviousCategory = Pattern.compile("\\w+:(?!.*:)");
-                Matcher matcherPreviousCategory = patternPreviousCategory.matcher(input);
-                String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
-                suggestions = createSuggestionsForProcessValue(normalizeFilterCategory(category), lastPart); // TODO only for processes? also tasks?
+            if (Objects.nonNull(processForm) || Objects.nonNull(taskForm)) {
+                if (matcherNextCategory.find()) {
+                    // strings ends with " | "
+                    // process/task category should be suggested
+                    suggestions = createSuggestionsForProcessAndTaskCategory(matcherNextCategory.group());
+                } else {
+                    // process/task value should be suggested
+                    Pattern patternPreviousCategory = Pattern.compile("\\w+:(?!.*:)");
+                    Matcher matcherPreviousCategory = patternPreviousCategory.matcher(input);
+                    String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
+                    suggestions = createSuggestionsForProcessAndTaskValue(checkProcessFilterCategory(category), lastPart);
+                }
+            } else if (Objects.nonNull(userForm)) {
+                if (matcherNextCategory.find()) {
+                    // strings ends with " | "
+                    // user category should be suggested
+                    suggestions = createSuggestionsForUserCategory(matcherNextCategory.group());
+                }
             }
         }
-
     }
     
     private List<Suggestion> createSuggestionsForProcessAndTaskCategory(String input) {
@@ -112,7 +147,7 @@ public class FilterMenu {
         return suggestions;
     }
 
-    private List<Suggestion> createSuggestionsForProcessValue(FilterString category, String input) {
+    private List<Suggestion> createSuggestionsForProcessAndTaskValue(FilterString category, String input) {
         List<Suggestion> suggestions = new ArrayList<>();
         if (Objects.isNull(category)) {
             return suggestions;
@@ -145,6 +180,13 @@ public class FilterMenu {
         return suggestions;
     }
 
+    private List<Suggestion> createSuggestionsForUserCategory(String input) {
+        List<String> searchableColumns = Arrays.asList("id:","name:", "surname:", "login:", "ldapLogin:", "active:",
+            "deleted:", "location:", "metadataLanguage:", "withMassDownload:", "configProductionDateShow:", "tableSize:",
+            "language:");
+        return createStringSuggestionsMatchingInput(input, searchableColumns, FilterPart.CATEGORY);
+    }
+
     private List<Suggestion> createStringSuggestionsMatchingInput(String input, List<String> suggestions, FilterPart filterPart) {
         return suggestions.stream()
                 .filter(suggestion -> suggestion.startsWith(input))
@@ -161,22 +203,13 @@ public class FilterMenu {
                 .collect(Collectors.toList());
     }
 
-    private List<Suggestion> createSuggestionsForTaskValue(String input) {
-        // TODO load available values from somewhere else – Forms?
-        return new ArrayList<>();
-    }
-
-    private List<Suggestion> createSuggestionsForUserCategory(String input) {
-        // TODO load available values from somewhere else – Forms?
-        return new ArrayList<>();
-    }
-
-    private List<Suggestion> createSuggestionsForUserValue(String input) {
-        // TODO load available values from somewhere else – Forms?
-        return new ArrayList<>();
-    }
-
-    private FilterString normalizeFilterCategory(String category) {
+    /**
+     * Check if the category passed as String matches a FilterString.
+     *
+     * @param category as String
+     * @return FilterString matching the given String
+     */
+    private FilterString checkProcessFilterCategory(String category) {
         return Arrays.stream(FilterString.values())
                 .filter(f -> f.getFilterGerman().equals(category.toLowerCase()) || f.getFilterEnglish().equals(category.toLowerCase()))
                 .findFirst().orElse(null);
@@ -239,6 +272,9 @@ public class FilterMenu {
         }
     }
 
+    /**
+     * Submit the entered filters and apply them.
+     */
     public void submitFilters() {
         if (filterInEditMode.length() > 0) {
             addParsedFilter(filterInEditMode);
@@ -267,6 +303,9 @@ public class FilterMenu {
         removeFilter(new ParsedFilter(params.get("plainFilter")));
     }
 
+    /**
+     * Build plain filter string from parsed filters and set filter in form class.
+     */
     public void updateFilters() {
         StringBuilder newFilter = new StringBuilder();
         for (ParsedFilter parsedFilter : parsedFilters) {
@@ -279,8 +318,8 @@ public class FilterMenu {
             processForm.setFilter(newFilter.toString());
         } else if (Objects.nonNull(taskForm)) {
             taskForm.setFilter(newFilter.toString());
-        } else {
-            // TODO handle users
+        } else if (Objects.nonNull(userForm)) {
+            userForm.setFilter(newFilter.toString());
         }
     }
 }

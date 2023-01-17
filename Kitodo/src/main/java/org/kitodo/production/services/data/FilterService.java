@@ -1128,5 +1128,4 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         }
         return new ArrayList<>();
     }
-
 }

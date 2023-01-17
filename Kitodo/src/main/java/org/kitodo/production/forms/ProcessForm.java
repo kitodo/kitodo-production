@@ -19,7 +19,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -53,7 +52,6 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
-import org.kitodo.production.filters.ParsedFilter;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
