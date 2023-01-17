@@ -14,45 +14,96 @@ package org.kitodo.production.renderer;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.io.Writer;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.context.ResponseWriterWrapper;
 
+import org.junit.Before;
 import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.platform.commons.support.ReflectionSupport;
+import org.mockito.Mock;
+import org.mockito.Spy;
 import org.primefaces.component.media.Media;
+import test.BaseMockitoTest;
 
-public class KitodoMediaRendererIT {
+public class KitodoMediaRendererIT extends BaseMockitoTest {
 
-    @Test
-    public void contentShouldBeValid() throws Exception {
-        FacesContext facesContext = mock(FacesContext.class);
-        StringBufferResponseWriter stringBufferResponseWriter = new StringBufferResponseWriter();
+    @Mock
+    private static FacesContext facesContext;
+
+    @Mock
+    private static Media media;
+
+    @Spy
+    private KitodoMediaRenderer kitodoMediaRenderer;
+
+    private StringBufferResponseWriter stringBufferResponseWriter;
+
+    @Before
+    public void init() throws NoSuchMethodException {
+        stringBufferResponseWriter = new StringBufferResponseWriter();
         when(facesContext.getResponseWriter()).thenReturn(stringBufferResponseWriter);
-        KitodoMediaRenderer kitodoMediaRenderer = spy(new KitodoMediaRenderer());
-        Media media = mock(Media.class);
 
         // call protected method without using powermock as dependency
         ReflectionSupport.invokeMethod(kitodoMediaRenderer.getClass().getSuperclass()
                         .getDeclaredMethod("getMediaSrc", FacesContext.class, Media.class),
                 doReturn("http://www.example.com").when(kitodoMediaRenderer), facesContext, media);
+    }
 
+    @AfterEach
+    void teardown() {
+        stringBufferResponseWriter.reset();
+    }
+
+    @Test
+    public void videoTagTest() throws Exception {
+        when(media.getStyleClass()).thenReturn("video-style-class");
         when(media.getPlayer()).thenReturn("html-video");
         kitodoMediaRenderer.encodeEnd(facesContext, media);
-        assertEquals("<video controls=\"\"><source src=\"http://www.example.com\"></source></video>",
+        assertEquals(
+                "<video controls=\"\" class=\"video-style-class\"><source src=\"http://www.example.com\"></source></video>",
                 stringBufferResponseWriter.getResponse());
+    }
 
-        stringBufferResponseWriter.reset();
+    @Test
+    public void audioTagTest() throws Exception {
+        when(media.getStyleClass()).thenReturn("audio-style-class");
         when(media.getPlayer()).thenReturn("html-audio");
         kitodoMediaRenderer.encodeEnd(facesContext, media);
-        assertEquals("<audio controls=\"\"><source src=\"http://www.example.com\"></source></audio>",
+        assertEquals(
+                "<audio controls=\"\" class=\"audio-style-class\"><source src=\"http://www.example.com\"></source></audio>",
+                stringBufferResponseWriter.getResponse());
+    }
+
+    @Test
+    public void tagParameterTest() throws IOException {
+        when(media.getPlayer()).thenReturn("html-video");
+        List<UIComponent> uiComponents = new ArrayList<>();
+        UIParameter controlsParameter = mock(UIParameter.class);
+        when(controlsParameter.getName()).thenReturn("controls");
+        when(controlsParameter.getValue()).thenReturn(String.valueOf(Boolean.FALSE));
+        uiComponents.add(controlsParameter);
+
+        UIParameter typeParameter = mock(UIParameter.class);
+        when(typeParameter.getName()).thenReturn("type");
+        when(typeParameter.getValue()).thenReturn("video/mp4");
+        uiComponents.add(typeParameter);
+
+        when(media.getChildren()).thenReturn(uiComponents);
+        when(media.getPlayer()).thenReturn("html-video");
+
+        kitodoMediaRenderer.encodeEnd(facesContext, media);
+        assertEquals("<video><source src=\"http://www.example.com\" type=\"video/mp4\"></source></video>",
                 stringBufferResponseWriter.getResponse());
     }
 
