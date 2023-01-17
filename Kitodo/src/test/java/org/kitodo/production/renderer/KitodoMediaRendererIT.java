@@ -34,12 +34,9 @@ import org.junit.platform.commons.support.ReflectionSupport;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.primefaces.component.media.Media;
-import test.BaseMockitoTest;
+import test.BasePrimefaceTest;
 
-public class KitodoMediaRendererIT extends BaseMockitoTest {
-
-    @Mock
-    private static FacesContext facesContext;
+public class KitodoMediaRendererIT extends BasePrimefaceTest {
 
     @Mock
     private static Media media;

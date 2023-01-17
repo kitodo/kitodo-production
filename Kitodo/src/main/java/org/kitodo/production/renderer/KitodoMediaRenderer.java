@@ -21,6 +21,7 @@ import javax.faces.context.ResponseWriter;
 
 import org.primefaces.component.media.Media;
 import org.primefaces.component.media.MediaRenderer;
+import org.primefaces.util.HTML;
 
 public class KitodoMediaRenderer extends MediaRenderer {
 
@@ -54,7 +55,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
             throws IOException {
         writer.startElement("video", media);
         Optional<UIComponent> controlsParameter = media.getChildren().stream()
-                .filter(param -> "controls".equals(((UIParameter) param).getName())).findFirst();
+                .filter(param -> "controls".equals(((UIParameter) param).getName())).findAny();
         if (controlsParameter.isEmpty() || !Boolean.FALSE.toString()
                 .equals(((UIParameter) controlsParameter.get()).getValue())) {
             writer.writeAttribute("controls", "", null);
@@ -77,7 +78,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
             writer.writeAttribute("class", media.getStyleClass(), null);
         }
 
-        //renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
+        renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
         writer.startElement("source", media);
         writer.writeAttribute("src", src, null);
 

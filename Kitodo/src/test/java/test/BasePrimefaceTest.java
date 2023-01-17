@@ -16,7 +16,7 @@ import org.primefaces.config.PrimeEnvironment;
 import org.primefaces.context.PrimeApplicationContext;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class BaseMockitoTest {
+public abstract class BasePrimefaceTest {
 
     @Mock
     protected FacesContext facesContext;
