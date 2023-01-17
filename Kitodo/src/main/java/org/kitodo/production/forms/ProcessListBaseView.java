@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,6 +43,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
 
@@ -62,12 +65,52 @@ public class ProcessListBaseView extends BaseForm {
 
     private final HashMap<Integer, Boolean> exportable = new HashMap<>();
 
+    boolean allSelected = false;
+    HashSet<Integer> excludedProcessIds = new HashSet<>();
+
     /**
      * Constructor.
      */
     public ProcessListBaseView() {
         super();
         super.setLazyDTOModel(new LazyProcessDTOModel(ServiceManager.getProcessService()));
+    }
+
+    /**
+     * Gets excludedProcessIds.
+     *
+     * @return value of excludedProcessIds
+     */
+    public HashSet<Integer> getExcludedProcessIds() {
+        return excludedProcessIds;
+    }
+
+    /**
+     * Sets excludedProcessIds.
+     *
+     * @param excludedProcessIds value of excludedProcessIds
+     */
+    public void setExcludedProcessIds(HashSet<Integer> excludedProcessIds) {
+        this.excludedProcessIds = excludedProcessIds;
+    }
+
+    /**
+     * Gets allSelected.
+     *
+     * @return value of allSelected
+     */
+    public boolean isAllSelected() {
+        return allSelected;
+    }
+
+    /**
+     * Sets allSelected.
+     *
+     * @param allSelected value of allSelected
+     */
+    public void setAllSelected(boolean allSelected) {
+        this.allSelected = allSelected;
+        excludedProcessIds.clear();
     }
 
     /**
@@ -80,6 +123,16 @@ public class ProcessListBaseView extends BaseForm {
     public List<Process> getSelectedProcesses() {
         List<Process> selectedProcesses = new ArrayList<>();
         if (selectedProcessesOrProcessDTOs.size() > 0) {
+            ProcessService processService = ServiceManager.getProcessService();
+            if (allSelected) {
+                try {
+                    this.selectedProcessesOrProcessDTOs = processService.findByQuery(processService.getQueryForFilter(
+                                    this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter())
+                            .mustNot(processService.createSetQueryForIds(new ArrayList<>(excludedProcessIds))), false);
+                } catch (DataException e) {
+                    logger.error(e.getMessage());
+                }
+            }
             if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
                 // list contains ProcessDTO instances
                 try {
@@ -87,11 +140,11 @@ public class ProcessListBaseView extends BaseForm {
                             .convertDtosToBeans((List<ProcessDTO>) selectedProcessesOrProcessDTOs);
                 } catch (DAOException e) {
                     Helper.setErrorMessage(ERROR_LOADING_MANY,
-                        new Object[] {ObjectType.PROCESS.getTranslationPlural() }, logger, e);
+                            new Object[]{ObjectType.PROCESS.getTranslationPlural()}, logger, e);
                 }
             } else if (selectedProcessesOrProcessDTOs.get(0) instanceof Process) {
                 // list contains Process instances
-                selectedProcesses = (List<Process>) selectedProcessesOrProcessDTOs;    
+                selectedProcesses = (List<Process>) selectedProcessesOrProcessDTOs;
             }
         }
         return selectedProcesses;
@@ -556,4 +609,17 @@ public class ProcessListBaseView extends BaseForm {
         this.selectedProcessesOrProcessDTOs = selectedProcessesOrProcessDTOs;
     }
 
+    /**
+     * Update selection and first row to show in datatable on PageEvent.
+     * @param pageEvent PageEvent triggered by data tables paginator
+     */
+    public void onPageChange(PageEvent pageEvent) {
+        this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
+        if (allSelected) {
+            PrimeFaces.current()
+                    .executeScript("PF('processesTable').selectAllRows();");
+            excludedProcessIds.forEach(processId -> PrimeFaces.current()
+                    .executeScript("PF('processesTable').unselectRow($('tr[data-rk=\"" + processId + "\"]'), true);"));
+        }
+    }
 }
