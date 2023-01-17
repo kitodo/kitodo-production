@@ -122,6 +122,14 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     /**
+     * Get 'Search' button.
+     * @return 'Search' button as WebElement.
+     */
+    public WebElement getSearchButton() {
+        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":performCatalogSearch");
+    }
+
+    /**
      * Select GBV catalog.
      * @throws InterruptedException when thread is interrupted
      */
@@ -268,6 +276,13 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         String generatedTitle = processTitleInput.getAttribute("value");
         save();
         return generatedTitle;
+    }
+
+    /**
+     * Enter test value into search term field.
+     */
+    public void enterTestSearchValue() {
+        searchTermInput.sendKeys("12345");
     }
 
     public ProcessesPage save() throws IllegalAccessException, InstantiationException {
