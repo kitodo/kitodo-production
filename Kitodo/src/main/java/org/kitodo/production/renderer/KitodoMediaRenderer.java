@@ -21,8 +21,6 @@ import javax.faces.context.ResponseWriter;
 
 import org.primefaces.component.media.Media;
 import org.primefaces.component.media.MediaRenderer;
-import org.primefaces.model.StreamedContent;
-import org.primefaces.util.HTML;
 
 public class KitodoMediaRenderer extends MediaRenderer {
 
@@ -41,15 +39,12 @@ public class KitodoMediaRenderer extends MediaRenderer {
             throw new IOException(ex);
         }
 
-        Object value = media.getValue();
-        if (value instanceof StreamedContent) {
-            if (PLAYER_HTML_VIDEO.equals(media.getPlayer())) {
-                buildVideoTag(context, media, writer, src);
-                return;
-            } else if (PLAYER_HTML_AUDIO.equals(media.getPlayer())) {
-                buildAudioTag(context, media, writer, src);
-                return;
-            }
+        if (PLAYER_HTML_VIDEO.equals(media.getPlayer())) {
+            buildVideoTag(context, media, writer, src);
+            return;
+        } else if (PLAYER_HTML_AUDIO.equals(media.getPlayer())) {
+            buildAudioTag(context, media, writer, src);
+            return;
         }
 
         super.encodeEnd(context, component);
@@ -65,7 +60,6 @@ public class KitodoMediaRenderer extends MediaRenderer {
             writer.writeAttribute("controls", "", null);
         }
         buildMediaSource(context, media, writer, src);
-        writer.write("Your browser does not support the video tag.");
         writer.endElement("video");
     }
 
@@ -74,7 +68,6 @@ public class KitodoMediaRenderer extends MediaRenderer {
         writer.startElement("audio", media);
         writer.writeAttribute("controls", "", null);
         buildMediaSource(context, media, writer, src);
-        writer.write("Your browser does not support the audio tag.");
         writer.endElement("audio");
     }
 
@@ -84,7 +77,7 @@ public class KitodoMediaRenderer extends MediaRenderer {
             writer.writeAttribute("class", media.getStyleClass(), null);
         }
 
-        renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
+        //renderPassThruAttributes(context, media, HTML.MEDIA_ATTRS);
         writer.startElement("source", media);
         writer.writeAttribute("src", src, null);
 
