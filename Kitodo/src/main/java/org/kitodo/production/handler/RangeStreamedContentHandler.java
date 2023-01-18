@@ -44,7 +44,7 @@ import org.primefaces.util.Constants;
  */
 public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
 
-    private static final int DEFAULT_BUFFER_SIZE = 20480; // ..bytes = 20KB.
+    public static final int DEFAULT_BUFFER_SIZE = 20480; // ..bytes = 20KB.
 
     private static final String MULTIPART_BOUNDARY = "MULTIPART_BYTERANGES";
 
@@ -82,7 +82,6 @@ public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
                         process(streamedContent, externalContext);
                     }
                 }
-
                 externalContext.responseFlushBuffer();
                 context.responseComplete();
             } catch (Exception e) {

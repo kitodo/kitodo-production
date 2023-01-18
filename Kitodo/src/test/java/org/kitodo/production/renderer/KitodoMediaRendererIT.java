@@ -19,7 +19,9 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
@@ -34,12 +36,20 @@ import org.junit.platform.commons.support.ReflectionSupport;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.primefaces.component.media.Media;
+import org.primefaces.config.PrimeEnvironment;
+import org.primefaces.context.PrimeApplicationContext;
 import test.BasePrimefaceTest;
 
 public class KitodoMediaRendererIT extends BasePrimefaceTest {
 
     @Mock
     private static Media media;
+
+    @Mock
+    protected PrimeApplicationContext primeApplicationContext;
+
+    @Mock
+    protected PrimeEnvironment primeEnvironment;
 
     @Spy
     private KitodoMediaRenderer kitodoMediaRenderer;
@@ -48,6 +58,12 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
 
     @Before
     public void init() throws NoSuchMethodException {
+        when(primeApplicationContext.getEnvironment()).thenReturn(primeEnvironment);
+
+        Map<String, Object> applicationMap = new HashMap<>();
+        applicationMap.put(PrimeApplicationContext.INSTANCE_KEY,primeApplicationContext);
+        when(externalContext.getApplicationMap()).thenReturn(applicationMap);
+
         stringBufferResponseWriter = new StringBufferResponseWriter();
         when(facesContext.getResponseWriter()).thenReturn(stringBufferResponseWriter);
 
