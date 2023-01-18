@@ -138,7 +138,7 @@ public class LazyProcessDTOModel extends LazyDTOModel {
     @Override
     public Object getRowData() {
         List<Object> data = getWrappedData();
-        if (isRowAvailable()){
+        if (isRowAvailable()) {
             return data.get(getRowIndex());
         } else {
             return null;
