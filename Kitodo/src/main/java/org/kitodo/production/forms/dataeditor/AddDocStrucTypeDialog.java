@@ -694,25 +694,11 @@ public class AddDocStrucTypeDialog {
      * Adds the link when the user clicks OK.
      */
     public void addProcessLink() {
-        if (processNumber.trim().isEmpty()) {
-            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
-            return;
-        } else {
-            try {
-                selectedProcess = ServiceManager.getProcessService().getById(Integer.valueOf(processNumber.trim()));
-            } catch (DAOException e) {
-                logger.catching(Level.TRACE, e);
-                alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.empty"));
-            }
-        }
         dataEditor.getCurrentChildren().add(selectedProcess);
         MetadataEditor.addLink(dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new),
             selectedProcess.getId());
         dataEditor.getStructurePanel().show(true);
         dataEditor.getPaginationPanel().show();
-        if (processNumber.trim().equals(Integer.toString(selectedProcess.getId()))) {
-            alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.hint"));
-        }
         processNumber = "";
         processes = Collections.emptyList();
     }
