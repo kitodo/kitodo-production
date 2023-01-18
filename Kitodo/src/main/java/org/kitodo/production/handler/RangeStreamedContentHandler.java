@@ -158,7 +158,7 @@ public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
         } else if (ranges.size() == 1) {
             // Return single part of file.
             Range r = ranges.get(0);
-            LOGGER.info("Return 1 part of file : from (" + r.start + ") to (" + r.end + ")");
+            LOGGER.info("Returning part of file : from (" + r.start + ") to (" + r.end + ")");
             response.setContentType(streamedContent.getContentType());
             response.setHeader("Content-Range", "bytes " + r.start + "-" + r.end + "/" + r.total);
             response.setHeader("Content-Length", String.valueOf(r.length));
@@ -171,24 +171,24 @@ public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
             response.setStatus(HttpServletResponse.SC_PARTIAL_CONTENT); // 206.
 
             // Cast back to ServletOutputStream to get the easy println methods.
-            ServletOutputStream sos = (ServletOutputStream) outputStream;
+            ServletOutputStream servletOutputStream = (ServletOutputStream) outputStream;
 
             // Copy multi part range.
             for (Range r : ranges) {
                 LOGGER.info("Return multi part of file : from (" + r.start + ") to (" + r.end + ")");
                 // Add multipart boundary and header fields for every range.
-                sos.println();
-                sos.println("--" + MULTIPART_BOUNDARY);
-                sos.println("Content-Type: " + streamedContent.getContentType());
-                sos.println("Content-Range: bytes " + r.start + "-" + r.end + "/" + r.total);
+                servletOutputStream.println();
+                servletOutputStream.println("--" + MULTIPART_BOUNDARY);
+                servletOutputStream.println("Content-Type: " + streamedContent.getContentType());
+                servletOutputStream.println("Content-Range: bytes " + r.start + "-" + r.end + "/" + r.total);
 
                 // Copy single part range of multipart range.
                 Range.copy(inputStream, outputStream, length, r.start, r.length);
             }
 
             // End with multipart boundary.
-            sos.println();
-            sos.println("--" + MULTIPART_BOUNDARY + "--");
+            servletOutputStream.println();
+            servletOutputStream.println("--" + MULTIPART_BOUNDARY + "--");
         }
     }
 
