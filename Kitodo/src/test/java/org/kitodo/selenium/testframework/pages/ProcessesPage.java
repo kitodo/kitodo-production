@@ -27,6 +27,7 @@ import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -39,8 +40,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
     private static final String PROCESSES_TABLE_HEADER = PROCESSES_TABLE + "_head";
-    private static final String FILTER_FORM = "filterMenu";
-    private static final String FILTER_INPUT = "filterMenu:filterfield";
+    private static final String FILTER_INPUT = "filterInputForm:filterfield";
     private static final String SECOND_PROCESS_TITLE = "Second process";
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
@@ -145,10 +145,6 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = "renameBatchForm:save")
     private WebElement renameBatchSaveButton;
-
-    @SuppressWarnings("unused")
-    @FindBy(id = FILTER_FORM)
-    private WebElement filterForm;
 
     @SuppressWarnings("unused")
     @FindBy(id = FILTER_INPUT)
@@ -443,7 +439,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     public void applyFilter(String filterQuery) {
         filterInput.clear();
         filterInput.sendKeys(filterQuery);
-        filterForm.submit();
+        filterInput.sendKeys(Keys.RETURN);
     }
 
     /**

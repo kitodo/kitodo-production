@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+import static org.kitodo.selenium.testframework.Browser.scrollWebElementIntoView;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -47,14 +48,14 @@ public class TasksPage extends Page<TasksPage> {
 
     private WebElement takeTaskLink;
 
-    @FindBy(id = STATUS_FORM + ":taskStatus")
-    private WebElement statusButton;
+    @FindBy(id = "filterInputForm:filterfield")
+    private WebElement filterField;
 
     @SuppressWarnings("unused")
-    @FindBy(id = STATUS_FORM + ":taskStatus_panel")
-    private WebElement taskStatusMenuPanel;
+    @FindBy(id = "filterOptionsFormWrapper")
+    private WebElement filterOptionsMenu;
 
-    @FindBy(css = ".task-filter-panel + .task-filter-panel li:last-child .ui-chkbox")
+    @FindBy(css = "#filterOptionsForm\\:taskStatus tr:last-child .ui-chkbox-box")
     private WebElement inWorkStatusCheckbox;
 
     public TasksPage() {
@@ -87,15 +88,16 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     public void applyFilterShowOnlyOpenTasks() {
-        statusButton.click();
+        filterField.click();
         await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS)
-                .until(() -> taskStatusMenuPanel.isDisplayed());
+                .until(() -> filterOptionsMenu.isDisplayed());
+        scrollWebElementIntoView(inWorkStatusCheckbox);
         inWorkStatusCheckbox.click();
 
         await("Wait for task list to be restricted to open tasks").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> statusButton.isEnabled());
+                .until(() -> taskTable.isDisplayed());
     }
 
     public int countListedTasks() throws Exception {
