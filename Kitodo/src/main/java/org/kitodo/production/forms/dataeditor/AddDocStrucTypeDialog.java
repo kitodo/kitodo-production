@@ -79,7 +79,7 @@ public class AddDocStrucTypeDialog {
     private List<SelectItem> selectPageOnAddNodeItems;
     private List<View> preselectedViews;
     private String processNumber = "";
-    private Process selectedProcess;
+    private Process selectedProcess = null;
     private List<Process> processes = Collections.emptyList();
     private boolean linkSubDialogVisible = false;
     private static final String PREVIEW_MODE = "preview";
@@ -699,7 +699,7 @@ public class AddDocStrucTypeDialog {
             selectedProcess.getId());
         dataEditor.getStructurePanel().show(true);
         dataEditor.getPaginationPanel().show();
-        processNumber = "";
+        selectedProcess = null;
         processes = Collections.emptyList();
     }
 
