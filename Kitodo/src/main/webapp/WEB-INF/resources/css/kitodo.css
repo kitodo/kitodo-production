@@ -864,6 +864,8 @@ label.ui-outputlabel[for] {
 #filterOptionsFormWrapper {
     box-shadow: var(--second-level-shadow);
     display: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
     position: absolute;
     top: 100%;
     z-index: 1;
@@ -890,7 +892,7 @@ label.ui-outputlabel[for] {
 #filterOptionsFormWrapper .ui-chkbox,
 #filterOptionsForm\:suggestions li {
     line-height: var(--input-height);
-    padding: 0 var(--default-double-size);
+    padding: 0 var(--default-half-size) 0 var(--default-double-size);
 }
 
 #filterOptionsForm\:taskFilters,

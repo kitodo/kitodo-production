@@ -11,6 +11,7 @@
 /* globals removeFilter, updateSuggestions */
 
 /* Define identifiers used to select elements */
+const LIST_WRAPPER = "#listWrapper";
 const FILTER_INPUT_FORM = "#filterInputForm";
 const FILTER_INPUT = "#filterInputForm\\:filterfield";
 const FILTER_INPUT_AND_OPTIONS_FORMS = "#filterInputForm, #filterOptionsForm";
@@ -143,6 +144,13 @@ function handleKeydown(event) {
     }
 }
 
+function openFilterOptionsMenu() {
+    let distanceWrapperToMenuTop = $(FILTER_INPUT).offset().top - $(LIST_WRAPPER).offset().top + $(FILTER_INPUT).height();
+    let maxMenuHeight = $(LIST_WRAPPER).height() - distanceWrapperToMenuTop - 20;
+    $(FILTER_OPTIONS_FORM_WRAPPER).css("max-height", maxMenuHeight + "px");
+    $(FILTER_OPTIONS_FORM_WRAPPER).show();
+}
+
 /**
  * Close the filter options overlay and remove the click event listener.
  */
@@ -158,7 +166,7 @@ $(document).ready(function() {
             return handleKeydown(e);
         });
         // Open filter options/suggestions menu when input gets focus
-        $(FILTER_OPTIONS_FORM_WRAPPER).show();
+        openFilterOptionsMenu();
 
         // Listen for clicks and close menu when user clicks outside input or filter options/suggestions menu
         $(document).on("click.filter", function (e) {
