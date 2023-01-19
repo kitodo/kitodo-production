@@ -197,6 +197,7 @@
                                 <p:outputLabel value="#{msgs.metadata}:"
                                                for="selectAddableMetadataTypes" />
                                 <p:selectOneMenu id="selectAddableMetadataTypes"
+                                                 disabled="#{empty DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                                  class="input"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}"
                                                  style="width: 180px;">
