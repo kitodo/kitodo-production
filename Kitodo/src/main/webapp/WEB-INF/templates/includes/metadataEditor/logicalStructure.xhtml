@@ -168,7 +168,7 @@
                         update = "uploadFileDialog"
                         disabled="#{readOnly}"
                         process="@this"/>
-            <p:menuitem value="#{msgs.removeElement}"
+            <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNode.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
