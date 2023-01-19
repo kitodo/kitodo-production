@@ -72,9 +72,6 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
     @FindBy(id = ID_SEARCH_FIELD_MENU)
     private WebElement searchFieldMenu;
 
-    @FindBy(id = IMPORT_CONFIGURATION_TAB_VIEW + ":catalogIdMetadata")
-    private WebElement catalogIdMetadataInput;
-
     @FindBy(id = MAPPING_FILES)
     private WebElement mappingFiles;
 
@@ -121,7 +118,6 @@ public class ImportConfigurationEditPage extends EditPage<ImportConfigurationEdi
         searchFieldValue.sendKeys("testsearchfieldvalue");
         applyAddingSearchFieldButton.click();
         selectIdSearchField();
-        catalogIdMetadataInput.sendKeys("CatalogIdDigital");
         switchToTabByIndex(TabIndex.IMPORT_CONFIGURATION_MAPPING_FILES.getIndex());
         assignMappingFile();
     }

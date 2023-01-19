@@ -1484,7 +1484,6 @@ public class MockDatabase {
         kalliopeConfiguration.setPrestructuredImport(false);
         kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
         kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
-        kalliopeConfiguration.setIdentifierMetadata("CatalogIDDigital");
         kalliopeConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
                 .getById(1)));
 

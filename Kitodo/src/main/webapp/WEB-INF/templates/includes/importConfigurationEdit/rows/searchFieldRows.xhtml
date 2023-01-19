@@ -156,21 +156,6 @@
                 <p:tooltip for="parentIdSearchFieldHelp"
                            value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
             </div>
-            <div>
-                <p:outputLabel for="catalogIdMetadata"
-                               value="#{msgs['importConfig.catalogIdMetadata']}"/>
-                <p:inputText id="catalogIdMetadata"
-                             styleClass="input-with-button"
-                             required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.configurationType ne 'PROCESS_TEMPLATE'}"
-                             value="#{importConfigurationEditView.importConfiguration.identifierMetadata}">
-                    <p:ajax event="change"
-                            oncomplete="toggleSave();"/>
-                </p:inputText>
-                <p:commandButton id="catalogIdMetadataHelp" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="catalogIdMetadataHelp"
-                           value="#{msgs['tooltip.importConfig.catalogIdMetadataHelp']}"/>
-            </div>
         </p:row>
     </f:view>
 </ui:composition>

@@ -406,6 +406,7 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
+        docStructAddTypeSelectionSelectedItem = "";
         elementsToAddSpinnerValue = 1;
         checkSelectedLogicalNode();
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();

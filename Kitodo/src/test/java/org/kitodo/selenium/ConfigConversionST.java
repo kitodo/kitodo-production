@@ -128,5 +128,8 @@ public class ConfigConversionST extends BaseTestSelenium {
         // mapping files
         assertEquals(1, kalliopeConfiguration.getMappingFiles().size());
         assertEquals(MODS_2_KITODO, kalliopeConfiguration.getMappingFiles().get(0).getFile());
+
+        // parent mapping file
+        assertEquals(MODS_2_KITODO, kalliopeConfiguration.getParentMappingFile().getFile());
     }
 }
