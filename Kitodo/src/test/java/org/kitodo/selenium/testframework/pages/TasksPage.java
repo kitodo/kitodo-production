@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -32,7 +33,7 @@ public class TasksPage extends Page<TasksPage> {
     private static final String TASK_TABLE = TASKS_TAB_VIEW + ":tasksForm:taskTable";
     private static final String TASK_TABLE_DATA = TASK_TABLE + "_data";
     private static final String TASK_TABLE_HEADER = TASK_TABLE + "_head";
-    private static final String STATUS_FORM = TASKS_TAB_VIEW + ":statusForm";
+    private static final String SUGGESTION_ITEMS = "#filterOptionsForm\\:suggestions .suggestion";
     private static final String WAIT_FOR_FILTER_FORM_MENU = "Wait for filter form menu to open";
     private static final String WAIT_FOR_TASK_TABLE_COLUMN_SORT = "Wait for task table column sort";
 
@@ -98,6 +99,36 @@ public class TasksPage extends Page<TasksPage> {
         await("Wait for task list to be restricted to open tasks").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> taskTable.isDisplayed());
+    }
+
+    public void typeCharactersIntoFilter(String character) {
+        filterField.click();
+        filterField.sendKeys(character);
+        await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(4, TimeUnit.SECONDS)
+                .atMost(8, TimeUnit.SECONDS)
+                .until(() -> filterOptionsMenu.isDisplayed());
+    }
+
+    public void submitFilter() {
+        filterField.sendKeys(Keys.RETURN);
+        await("Wait for task list to be filtered").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS)
+                .until(() -> taskTable.isDisplayed());
+    }
+
+    public List<WebElement> getSuggestions() {
+        return Browser.getDriver().findElements(By.cssSelector(SUGGESTION_ITEMS));
+    }
+
+    public void selectSuggestion(int suggestionIndex) {
+        for (int i = 0; i <= suggestionIndex; i++) {
+            filterField.sendKeys(Keys.ARROW_DOWN);
+        }
+        filterField.sendKeys(Keys.RETURN);
+    }
+
+    public String getFilterInputValue() {
+        return filterField.getAttribute("value");
     }
 
     public int countListedTasks() throws Exception {
