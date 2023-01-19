@@ -527,14 +527,14 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
-     * The need to commit deleted folders only after the save action requires a filter, so that those folders marked for
-     * delete are not shown anymore.
+     * The need to commit deleted folders only after the save action requires a
+     * filter, so that those folders marked for delete are not shown anymore.
      *
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
-                .collect(Collectors.toList());
+        return getFolderList().stream()
+                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
     }
 
     /**
@@ -637,7 +637,7 @@ public class ProjectForm extends BaseForm {
      * Sets the folder to use for the media view.
      *
      * @param mediaView
-     *         media view folder
+     *            media view folder
      */
     public void setMediaView(String mediaView) {
         project.setMediaView(getFolderMap().get(mediaView));
