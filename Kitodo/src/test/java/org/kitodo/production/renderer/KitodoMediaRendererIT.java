@@ -31,7 +31,6 @@ import javax.faces.context.ResponseWriterWrapper;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.platform.commons.support.ReflectionSupport;
 import org.kitodo.BasePrimefaceTest;
 import org.mockito.Mock;
@@ -56,8 +55,13 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
 
     private StringBufferResponseWriter stringBufferResponseWriter;
 
+    /**
+     * Init before every test.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Before
-    public void init() throws NoSuchMethodException {
+    public void init() throws Exception {
         when(primeApplicationContext.getEnvironment()).thenReturn(primeEnvironment);
 
         Map<String, Object> applicationMap = new HashMap<>();
@@ -73,11 +77,11 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
                 doReturn("http://www.example.com").when(kitodoMediaRenderer), facesContext, media);
     }
 
-    @AfterEach
-    void teardown() {
-        stringBufferResponseWriter.reset();
-    }
-
+    /**
+     * Test building of HTML video tag.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Test
     public void videoTagTest() throws Exception {
         when(media.getStyleClass()).thenReturn("video-style-class");
@@ -88,6 +92,11 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
                 stringBufferResponseWriter.getResponse());
     }
 
+    /**
+     * Test building of HTML audio tag.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Test
     public void audioTagTest() throws Exception {
         when(media.getStyleClass()).thenReturn("audio-style-class");
@@ -98,8 +107,13 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
                 stringBufferResponseWriter.getResponse());
     }
 
+    /**
+     * Test all tag parameters.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Test
-    public void tagParameterTest() throws IOException {
+    public void tagParameterTest() throws Exception {
         when(media.getPlayer()).thenReturn("html-video");
         List<UIComponent> uiComponents = new ArrayList<>();
         UIParameter controlsParameter = mock(UIParameter.class);
@@ -120,8 +134,8 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
                 stringBufferResponseWriter.getResponse());
     }
 
-    public class StringBufferResponseWriter extends ResponseWriterWrapper {
-        private StringBuffer response = new StringBuffer();
+    static class StringBufferResponseWriter extends ResponseWriterWrapper {
+        private final StringBuffer response = new StringBuffer();
 
         @Override
         public String getContentType() {
@@ -215,11 +229,6 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
         public String getResponse() {
             return response.toString();
         }
-
-        public void reset() {
-            this.response.delete(0, response.length());
-        }
-
     }
 
 }

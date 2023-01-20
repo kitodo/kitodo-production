@@ -10,7 +10,6 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
-@SuppressWarnings("checkstyle:WhitespaceAround")
 @RunWith(MockitoJUnitRunner.class)
 public abstract class BasePrimefaceTest extends BaseMockitoTest {
 

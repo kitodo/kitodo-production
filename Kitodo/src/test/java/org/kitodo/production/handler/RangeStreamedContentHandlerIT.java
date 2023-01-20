@@ -19,7 +19,6 @@ import org.apache.commons.io.IOUtils;
 import org.jboss.weld.el.WeldExpressionFactory;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.AfterEach;
 import org.kitodo.BasePrimefaceTest;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -54,6 +53,11 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
     @Mock
     private ValueExpression valueExpression;
 
+    /**
+     * Init before every test.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Before
     public void init() throws Exception {
         when(externalContext.getRequest()).thenReturn(httpServletRequest);
@@ -90,11 +94,11 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         when(externalContext.getResponseOutputStream()).thenReturn(byteArrayOutputStream);
     }
 
-    @AfterEach
-    void teardown() {
-        byteArrayOutputStream.reset();
-    }
-
+    /**
+     * Test requesting full content.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Test
     public void fullContent() throws Exception {
         int start = 0;
@@ -115,6 +119,11 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         verify(httpServletResponse).setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
     }
 
+    /**
+     * Test using request header with wrong range.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Test
     public void wrongRange() throws Exception {
         when(httpServletRequest.getHeader("Range")).thenReturn("");
@@ -133,6 +142,11 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         verify(httpServletResponse).sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
     }
 
+    /**
+     * Test requesting partial content.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @Test
     public void partialContent() throws Exception {
         int start = 5;
@@ -152,7 +166,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         verify(httpServletResponse).setHeader("Content-Length","18");
         verify(httpServletResponse).setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
 
-        assertEquals(data.substring(start,end+1), byteArrayOutputStream.toString(StandardCharsets.UTF_8));
+        assertEquals(data.substring(start,end + 1), byteArrayOutputStream.toString(StandardCharsets.UTF_8));
     }
 
 }
