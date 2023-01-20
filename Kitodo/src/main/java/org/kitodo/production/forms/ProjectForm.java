@@ -59,7 +59,9 @@ import org.kitodo.production.services.data.ProjectService;
 @Named("ProjectForm")
 @SessionScoped
 public class ProjectForm extends BaseForm {
+    public static final String MIMETYPE_PREFIX_AUDIO = "audio";
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
+    public static final String MIMETYPE_PREFIX_VIDEO = "video";
     private Project project;
     private List<Template> deletedTemplates = new ArrayList<>();
     private boolean locked = true;
@@ -533,8 +535,17 @@ public class ProjectForm extends BaseForm {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream()
-                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
+        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks if folder list contains audio folder.
+     *
+     * @return true if folder list contains audio folder
+     */
+    public boolean hasAudioFolder() {
+        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith(MIMETYPE_PREFIX_AUDIO));
     }
 
     /**
@@ -543,7 +554,7 @@ public class ProjectForm extends BaseForm {
      * @return true if folder list contains video folder
      */
     public boolean hasVideoFolder() {
-        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith("video"));
+        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith(MIMETYPE_PREFIX_VIDEO));
     }
 
     private Map<String, Folder> getFolderMap() {
@@ -637,10 +648,30 @@ public class ProjectForm extends BaseForm {
      * Sets the folder to use for the media view.
      *
      * @param mediaView
-     *            media view folder
+     *         media view folder
      */
     public void setMediaView(String mediaView) {
         project.setMediaView(getFolderMap().get(mediaView));
+    }
+
+    /**
+     * Returns the folder to use for the audio media view.
+     *
+     * @return audio media view folder
+     */
+    public String getAudioMediaView() {
+        Folder audioMediaView = project.getAudioMediaView();
+        return Objects.isNull(audioMediaView) ? null : audioMediaView.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     *
+     * @param audioMediaView
+     *         audio media view folder
+     */
+    public void setAudioMediaView(String audioMediaView) {
+        project.setAudioMediaView(getFolderMap().get(audioMediaView));
     }
 
     /**
@@ -681,6 +712,26 @@ public class ProjectForm extends BaseForm {
      */
     public void setPreview(String preview) {
         project.setPreview(getFolderMap().get(preview));
+    }
+
+    /**
+     * Returns the folder to use for audio preview.
+     *
+     * @return audio preview folder
+     */
+    public String getAudioPreview() {
+        Folder audioPreview = project.getAudioPreview();
+        return Objects.isNull(audioPreview) ? null : audioPreview.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for audio preview.
+     *
+     * @param audioPreview
+     *         audio preview folder
+     */
+    public void setAudioPreview(String audioPreview) {
+        project.setAudioPreview(getFolderMap().get(audioPreview));
     }
 
     /**

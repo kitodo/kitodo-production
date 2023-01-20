@@ -92,20 +92,13 @@ public class GalleryPanel {
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
 
-    private MediaVariant mediaViewVariant;
-
-    private MediaVariant videoMediaViewVariant;
-
     private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
-    private MediaVariant previewVariant;
 
-    private MediaVariant videoPreviewVariant;
+    private Map<MediaContentType, Map<GalleryViewMode, MediaVariant>> mediaContentTypeVariants = new HashMap<>();
+
+    private Map<MediaContentType, Subfolder> mediaContentTypeListFolder = new HashMap<>();
 
     private List<GalleryStripe> stripes;
-
-    private Subfolder previewFolder;
-
-    private Subfolder previewVideoFolder;
 
     private String cachingUUID = "";
 
@@ -390,26 +383,20 @@ public class GalleryPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
                 .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
 
-        Folder previewSettings = project.getPreview();
-        previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, physicalDivisions) : null;
-        Folder videoPreviewSettings = project.getVideoPreview();
-        videoPreviewVariant = Objects.nonNull(videoPreviewSettings) ? getMediaVariant(videoPreviewSettings,
-                physicalDivisions) : null;
-        Folder mediaViewSettings = project.getMediaView();
-        mediaViewVariant = Objects.nonNull(mediaViewSettings)
-                ? getMediaVariant(mediaViewSettings, physicalDivisions)
-                : null;
-        Folder videoMediaViewSettings = project.getVideoMediaView();
-        videoMediaViewVariant = Objects.nonNull(videoMediaViewSettings) ? getMediaVariant(videoMediaViewSettings,
-                physicalDivisions) : null;
+        mediaContentTypeVariants.clear();
+        mediaContentTypeListFolder.clear();
+
+        initMediaContentType(physicalDivisions, project.getPreview(), project.getMediaView(), MediaContentType.IMAGE);
+        initMediaContentType(physicalDivisions, project.getAudioPreview(), project.getAudioMediaView(),
+                MediaContentType.AUDIO);
+        initMediaContentType(physicalDivisions, project.getVideoPreview(), project.getVideoMediaView(),
+                MediaContentType.VIDEO);
 
         medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();
         previewImageResolver = new HashMap<>();
         cachingUUID = UUID.randomUUID().toString();
 
-        previewFolder = new Subfolder(process, project.getPreview());
-        previewVideoFolder = new Subfolder(process, project.getVideoPreview());
         updateStripes();
 
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
@@ -418,11 +405,26 @@ public class GalleryPanel {
         }
     }
 
-    /** 
+    private void initMediaContentType(List<PhysicalDivision> physicalDivisions, Folder previewSettings,
+            Folder mediaViewSettings, MediaContentType mediaContentType) {
+        Map<GalleryViewMode, MediaVariant> galleryViewModeMediaVariant = new HashMap<>();
+        if (Objects.nonNull(previewSettings)) {
+            galleryViewModeMediaVariant.put(GalleryViewMode.LIST, getMediaVariant(previewSettings, physicalDivisions));
+            mediaContentTypeListFolder.put(mediaContentType, new Subfolder(dataEditor.getProcess(), mediaViewSettings));
+        }
+        if (Objects.nonNull(mediaViewSettings)) {
+            galleryViewModeMediaVariant.put(GalleryViewMode.PREVIEW,
+                    getMediaVariant(mediaViewSettings, physicalDivisions));
+        }
+        mediaContentTypeVariants.put(mediaContentType, galleryViewModeMediaVariant);
+    }
+
+    /**
      * Recreate media list from workpiece, which provides medias in correct order after drag and drop.
      */
     private void updateMedia() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         medias = new ArrayList<>(physicalDivisions.size());
         previewImageResolver = new HashMap<>();
         for (PhysicalDivision physicalDivision : physicalDivisions) {
@@ -522,53 +524,47 @@ public class GalleryPanel {
     private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer index) {
         PhysicalDivision physicalDivision = view.getPhysicalDivision();
 
-        boolean isVideo = physicalDivision.getMediaFiles().keySet().stream()
-                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("video"));
-
-        URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
-        Subfolder currentPreviewFolder = previewFolder;
-        String previewMimeType = previewVariant.getMimeType();
-
-        if (isVideo) {
-            previewMimeType = videoPreviewVariant.getMimeType();
-            previewUri = physicalDivision.getMediaFiles().get(videoPreviewVariant);
-            currentPreviewFolder = previewVideoFolder;
+        MediaContentType mediaContentType = MediaContentType.IMAGE;
+        if (physicalDivision.getMediaFiles().keySet().stream()
+                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("video"))) {
+            mediaContentType = MediaContentType.VIDEO;
+        } else if (physicalDivision.getMediaFiles().keySet().stream()
+                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("audio"))) {
+            mediaContentType = MediaContentType.AUDIO;
         }
 
-        URI resourcePreviewUri = null;
+        return buildGalleryMediaContent(view, stripeTreeNodeId, index, mediaContentType, physicalDivision);
+    }
+
+    private GalleryMediaContent buildGalleryMediaContent(View view, String stripeTreeNodeId, Integer index,
+            MediaContentType mediaContentType, PhysicalDivision physicalDivision) {
+
+        MediaVariant previewMediaVariant = mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.LIST);
+        URI previewUri = physicalDivision.getMediaFiles()
+                .get(mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.LIST));
+
+        URI resourceListUri = null;
         if (Objects.nonNull(previewUri)) {
-            resourcePreviewUri = previewUri.isAbsolute()
+            resourceListUri = previewUri.isAbsolute()
                     ? previewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
         }
 
-        URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewVariant);
-        String mediaViewMimeType = mediaViewVariant.getMimeType();
+        MediaVariant mediaViewMediaVariant = mediaContentTypeVariants.get(mediaContentType)
+                .get(GalleryViewMode.PREVIEW);
+        URI mediaViewUri = physicalDivision.getMediaFiles()
+                .get(mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.PREVIEW));
         URI resourceMediaViewUri = null;
-
-        if (isVideo) {
-            mediaViewMimeType = videoMediaViewVariant.getMimeType();
-            mediaViewUri = physicalDivision.getMediaFiles().get(videoMediaViewVariant);
-        }
-
         if (Objects.nonNull(mediaViewUri)) {
             resourceMediaViewUri = mediaViewUri.isAbsolute()
                     ? mediaViewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
 
-        boolean isAudio = physicalDivision.getMediaFiles().keySet().stream()
-                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("audio"));
-
-        return buildGalleryMediaContent(view, stripeTreeNodeId, index, isVideo, isAudio, previewMimeType,
-                resourcePreviewUri, mediaViewMimeType, resourceMediaViewUri, currentPreviewFolder);
-    }
-
-    private GalleryMediaContent buildGalleryMediaContent(View view, String stripeTreeNodeId, Integer index,
-            boolean isVideo, boolean isAudio, String previewMimeType, URI resourcePreviewUri, String mediaViewMimeType,
-            URI resourceMediaViewUri, Subfolder previewFolder) {
         // prefer canonical of preview folder
-        String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
+        String canonical = Objects.nonNull(resourceListUri) && mediaContentTypeListFolder.containsKey(mediaContentType)
+                ? mediaContentTypeListFolder.get(mediaContentType).getCanonical(resourceListUri)
+                : null;
         if (Objects.isNull(canonical)) {
             // if preview media not available, load canonical id from other folders
             canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
@@ -579,15 +575,11 @@ public class GalleryPanel {
             treeNodeId = stripeTreeNodeId + "_" + index;
         }
 
-        MediaContentType mediaContentType = MediaContentType.DEFAULT;
-        if (isVideo) {
-            mediaContentType = MediaContentType.VIDEO;
-        } else if (isAudio) {
-            mediaContentType = MediaContentType.AUDIO;
-        }
-
-        return new GalleryMediaContent(mediaContentType, view, canonical, previewMimeType, resourcePreviewUri,
-                mediaViewMimeType, resourceMediaViewUri, treeNodeId);
+        return new GalleryMediaContent(mediaContentType, view, canonical,
+                Objects.nonNull(previewMediaVariant) ? previewMediaVariant.getMimeType() : null,
+                resourceListUri,
+                Objects.nonNull(mediaViewMediaVariant) ? mediaViewMediaVariant.getMimeType() : null,
+                resourceMediaViewUri, treeNodeId);
     }
 
     /**

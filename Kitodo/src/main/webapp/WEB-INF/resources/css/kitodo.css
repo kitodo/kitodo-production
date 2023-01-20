@@ -2858,6 +2858,19 @@ Column content
     justify-content: center;
 }
 
+#imagePreviewForm .mediaListIconItem {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#imagePreviewForm .mediaListIconItem > i {
+    font-size: 70px;
+    color: white;
+}
+
 #map {
     flex-grow: 1;
     flex-shrink: 1;
@@ -3062,23 +3075,30 @@ Column content
     width: 100%;
 }
 
+.thumbnail + .thumbnail-container .mediaListIconItem,
+.thumbnail + .thumbnail-container audio,
 .thumbnail + .thumbnail-container video {
     background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
 }
 
+.thumbnail.selected + .thumbnail-container .mediaListIconItem,
+.thumbnail.selected + .thumbnail-container audio,
 .thumbnail.selected + .thumbnail-container video,
 .thumbnail.selected + .thumbnail-container img {
     border-color: var(--green);
     border-style: dashed;
 }
 
-
+.thumbnail.discontinuous.selected + .thumbnail-container .mediaListIconItem,
+.thumbnail.discontinuous.selected + .thumbnail-container audio,
 .thumbnail.discontinuous.selected + .thumbnail-container video,
 .thumbnail.discontinuous.selected + .thumbnail-container img {
     border-color: grey;
 }
 
+.thumbnail.selected.last-selection + .thumbnail-container .mediaListIconItem,
+.thumbnail.selected.last-selection + .thumbnail-container audio,
 .thumbnail.selected.last-selection + .thumbnail-container video,
 .thumbnail.selected.last-selection + .thumbnail-container img {
     border-style: solid;
@@ -3121,6 +3141,7 @@ Column content
     height: 100%;
     width: 100%;
     opacity: 0;
+    word-break: break-word;
     transition: .2s ease;
     background-color: var(--light-blue);
     color: var(--pure-white);

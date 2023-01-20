@@ -185,6 +185,29 @@
         <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 
+    <!-- folder for audio preview -->
+    <p:outputLabel for="audioPreview" value="#{msgs['folderUse.audioPreview']}" styleClass="la-folder-use"
+                   rendered="#{ProjectForm.hasAudioFolder()}"/>
+    <p:selectOneMenu id="audioPreview" value="#{ProjectForm.audioPreview}" styleClass="so-folder-use"
+                     disabled="#{ProjectForm.locked}" rendered="#{ProjectForm.hasAudioFolder()}">
+        <f:selectItem itemLabel="#{msgs['folderUse.audioPreview.disabled']}" itemValue="#{null}"
+                      noSelectionOption="true"/>
+        <f:selectItems value="#{ProjectForm.selectableFolders}"/>
+        <p:ajax event="change" oncomplete="toggleSave()"/>
+    </p:selectOneMenu>
+
+    <!-- folder for audio media view -->
+    <p:outputLabel for="audioMediaView" value="#{msgs['folderUse.audioMediaView']}" styleClass="la-folder-use"
+                   rendered="#{ProjectForm.hasAudioFolder()}"/>
+    <p:selectOneMenu id="audioMediaView" value="#{ProjectForm.audioMediaView}" styleClass="so-folder-use"
+                     disabled="#{ProjectForm.locked}" rendered="#{ProjectForm.hasAudioFolder()}">
+        <f:selectItem itemLabel="#{msgs['folderUse.audioMediaView.disabled']}" itemValue="#{null}"
+                      noSelectionOption="true"/>
+        <f:selectItems value="#{ProjectForm.selectableFolders}"/>
+        <p:ajax event="change" oncomplete="toggleSave()"/>
+    </p:selectOneMenu>
+
+
     <!-- folder for video preview -->
     <p:outputLabel for="videoPreview" value="#{msgs['folderUse.videoPreview']}" styleClass="la-folder-use"
                    rendered="#{ProjectForm.hasVideoFolder()}"/>

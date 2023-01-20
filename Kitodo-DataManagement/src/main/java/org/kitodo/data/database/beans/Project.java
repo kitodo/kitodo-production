@@ -126,6 +126,21 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * Folder with media to use for the video preview.
      */
     @ManyToOne
+    @JoinColumn(name = "preview_audio_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_audio_folder_id"))
+    private Folder audioPreview;
+
+    /**
+     * Folder with media to use for the video viewer.
+     */
+    @ManyToOne
+    @JoinColumn(name = "mediaView_audio_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_audio_folder_id"))
+    private Folder audioMediaView;
+
+
+    /**
+     * Folder with media to use for the video preview.
+     */
+    @ManyToOne
     @JoinColumn(name = "preview_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_video_folder_id"))
     private Folder videoPreview;
 
@@ -133,7 +148,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * Folder with media to use for the video viewer.
      */
     @ManyToOne
-    @JoinColumn(name = "mediaView_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_folder_id"))
+    @JoinColumn(name = "mediaView_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_video_folder_id"))
     private Folder videoMediaView;
 
     /**
@@ -480,15 +495,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Returns the folder to use for video preview.
-     *
-     * @return video preview folder
-     */
-    public Folder getVideoPreview() {
-        return videoPreview;
-    }
-
-    /**
      * Sets the folder to use for preview.
      *
      * @param preview
@@ -499,6 +505,53 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
+     * Returns the folder to use for audio preview.
+     *
+     * @return audio preview folder
+     */
+    public Folder getAudioPreview() {
+        return audioPreview;
+    }
+
+    /**
+     * Sets the folder to use for audio preview.
+     *
+     * @param audioPreview
+     *         audio preview folder
+     */
+    public void setAudioPreview(Folder audioPreview) {
+        this.audioPreview = audioPreview;
+    }
+
+    /**
+     * Returns the folder to use for the audio media view.
+     *
+     * @return the audio media view folder
+     */
+    public Folder getAudioMediaView() {
+        return audioMediaView;
+    }
+
+    /**
+     * Sets the folder to use for the audio media view.
+     *
+     * @param audioMediaView
+     *         audio media view folder
+     */
+    public void setAudioMediaView(Folder audioMediaView) {
+        this.audioMediaView = audioMediaView;
+    }
+
+    /**
+     * Returns the folder to use for video preview.
+     *
+     * @return video preview folder
+     */
+    public Folder getVideoPreview() {
+        return videoPreview;
+    }
+
+    /**
      * Sets the folder to use for video preview.
      *
      * @param videoPreview
@@ -506,6 +559,25 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public void setVideoPreview(Folder videoPreview) {
         this.videoPreview = videoPreview;
+    }
+
+    /**
+     * Returns the folder to use for the video media view.
+     *
+     * @return the video media view folder
+     */
+    public Folder getVideoMediaView() {
+        return videoMediaView;
+    }
+
+    /**
+     * Sets the folder to use for the video media view.
+     *
+     * @param videoMediaView
+     *         video media view folder
+     */
+    public void setVideoMediaView(Folder videoMediaView) {
+        this.videoMediaView = videoMediaView;
     }
 
     /**
@@ -550,22 +622,4 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.title == null ? 0 : this.title.hashCode();
     }
 
-    /**
-     * Returns the folder to use for the video media view.
-     *
-     * @return the video media view folder
-     */
-    public Folder getVideoMediaView() {
-        return videoMediaView;
-    }
-
-    /**
-     * Sets the folder to use for the video media view.
-     *
-     * @param videoMediaView
-     *         video media view folder
-     */
-    public void setVideoMediaView(Folder videoMediaView) {
-        this.videoMediaView = videoMediaView;
-    }
 }

@@ -23,7 +23,7 @@
                   value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
 
         <ui:fragment
-                rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
+                rendered="#{selectedGalleryMediaContent.showingInMediaView and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
             <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.mediaViewData}"
                      player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                      width="90%" height="auto">
@@ -39,7 +39,7 @@
         </ui:fragment>
 
         <ui:fragment
-                rendered="#{not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') and not fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}">
+                rendered="#{selectedGalleryMediaContent.showingInMediaView and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'image')}">
             <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem"
                             value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"
                             style="display: none;"/>
@@ -47,6 +47,21 @@
                 <i class="fa fa-spinner fa-spin"/>
             </div>
         </ui:fragment>
+
+        <ui:fragment rendered="#{not selectedGalleryMediaContent.showingInMediaView}">
+            <p:outputPanel styleClass="mediaListIconItem">
+                <h:panelGroup rendered="#{selectedGalleryMediaContent.type eq 'VIDEO'}">
+                    <i class="fa fa-file-video-o"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{selectedGalleryMediaContent.type eq 'AUDIO'}">
+                    <i class="fa fa-file-audio-o"/>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{selectedGalleryMediaContent.type eq 'IMAGE'}">
+                    <i class="fa fa-file-image-o"/>
+                </h:panelGroup>
+            </p:outputPanel>
+        </ui:fragment>
+
     </h:panelGroup>
 
 </ui:composition>
