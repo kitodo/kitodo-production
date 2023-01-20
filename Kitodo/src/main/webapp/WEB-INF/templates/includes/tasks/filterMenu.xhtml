@@ -24,6 +24,11 @@
     <p:remoteCommand name="updateSuggestions"
                      action="#{CurrentTaskForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>
+    <p:remoteCommand name="submitFilters"
+                     action="#{CurrentTaskForm.filterMenu.submitFilters}"
+                     onstart="PF('taskTable').getPaginator().setPage(0);"
+                     oncomplete="setFilterInputPadding();"
+                     update="tasksTabView:tasksForm:taskTable filterInputForm:filterfield parsedFiltersForm:parsedFilters filterOptionsForm:suggestions"/>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">
@@ -32,11 +37,6 @@
                              value="#{CurrentTaskForm.filterMenu.filterInEditMode}"
                              autocomplete="off"
                              placeholder="#{msgs.filter}">
-                    <p:ajax event="change"
-                            listener="#{CurrentTaskForm.filterMenu.submitFilters()}"
-                            onstart="PF('taskTable').getPaginator().setPage(0);"
-                            oncomplete="setFilterInputPadding();"
-                            update="tasksTabView:tasksForm:taskTable parsedFiltersForm:parsedFilters filterOptionsForm:suggestions @this"/>
                     <p:ajax event="keydown"
                             delay="1000"
                             listener="#{CurrentTaskForm.filterMenu.updateSuggestions(CurrentTaskForm.filterMenu.filterInEditMode)}"

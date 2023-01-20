@@ -23,6 +23,11 @@
     <p:remoteCommand name="updateSuggestions"
                      action="#{ProcessForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>
+    <p:remoteCommand name="submitFilters"
+                     action="#{ProcessForm.filterMenu.submitFilters}"
+                     onstart="PF('processesTable').getPaginator().setPage(0);"
+                     oncomplete="setFilterInputPadding();"
+                     update="processesTabView:processesForm:processesTable processCount filterInputForm:filterfield parsedFiltersForm:parsedFilters filterOptionsForm:suggestions"/>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">
@@ -31,11 +36,6 @@
                              value="#{ProcessForm.filterMenu.filterInEditMode}"
                              autocomplete="off"
                              placeholder="#{msgs.filter}">
-                    <p:ajax event="change"
-                            listener="#{ProcessForm.filterMenu.submitFilters()}"
-                            onstart="PF('processesTable').getPaginator().setPage(0);"
-                            oncomplete="setFilterInputPadding();"
-                            update="processesTabView:processesForm:processesTable processCount parsedFiltersForm:parsedFilters filterOptionsForm:suggestions @this"/>
                     <p:ajax event="keydown"
                             delay="1000"
                             listener="#{ProcessForm.filterMenu.updateSuggestions(ProcessForm.filterMenu.filterInEditMode)}"

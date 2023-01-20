@@ -276,6 +276,8 @@ public class FilterMenu {
      * Submit the entered filters and apply them.
      */
     public void submitFilters() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        filterInEditMode = params.get("input");
         if (filterInEditMode.length() > 0) {
             addParsedFilter(filterInEditMode);
             filterInEditMode = "";

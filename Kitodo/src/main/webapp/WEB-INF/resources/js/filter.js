@@ -8,13 +8,13 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals removeFilter, updateSuggestions */
+/* globals removeFilter, updateSuggestions, submitFilters */
 
 /* Define identifiers used to select elements */
 const LIST_WRAPPER = "#listWrapper";
 const FILTER_INPUT_FORM = "#filterInputForm";
 const FILTER_INPUT = "#filterInputForm\\:filterfield";
-const FILTER_INPUT_AND_OPTIONS_FORMS = "#filterInputForm, #filterOptionsForm";
+const FILTER_INPUT_PARSED_FILTERS_AND_OPTIONS_FORMS = "#filterInputForm, #parsedFiltersForm, #filterOptionsForm";
 const FILTER_OPTIONS_FORM_WRAPPER = "#filterOptionsFormWrapper";
 const SUGGESTIONS_ITEMS = "#filterOptionsForm\\:suggestions .suggestion";
 const SELECTED_SUGGESTION_ITEM = "#filterOptionsForm\\:suggestions .suggestion.selected";
@@ -42,14 +42,13 @@ function replaceInput(relevantInputValue, suggestion) {
 }
 
 /**
- * Use the currently selected entry in the list.
+ * Use the currently selected entry in the list or the one clicked by mouse.
  */
-function selectConfirm() {
-    let selection = $(SELECTED_SUGGESTION_ITEM);
+function selectConfirm(selection = $(SELECTED_SUGGESTION_ITEM)) {
     let relevantInput = selection.children().attr('data-input');
     let suggestion = selection.children().attr('data-suggestion');
     replaceInput(relevantInput, suggestion);
-    selection.removeClass('selected');
+    $(SELECTED_SUGGESTION_ITEM).removeClass('selected');
     updateSuggestions([{name: "input", value: $(FILTER_INPUT).val()}]);
 }
 
@@ -92,7 +91,7 @@ function selectPrevious() {
 function submitInput() {
     // remove event listener because JSF will update the field and register a new event handler
     $(FILTER_INPUT_FORM).off("keydown.filter");
-    // trigger change event to update the input field
+    submitFilters([{name: "input", value: $(FILTER_INPUT).val()}]);
     $(FILTER_INPUT).trigger("change");
 }
 
@@ -125,7 +124,7 @@ function handleKeydown(event) {
             event.preventDefault();
             break;
         case "Backspace":
-            if ($(FILTER_INPUT).val() ==='') {
+            if ($(FILTER_INPUT).val() === '') {
                 removeFilter([{name: "plainFilter", value: $(PARSED_FILTERS).find('.ui-datalist-item .plainFilter').last().text()}]);
             }
             break;
@@ -155,25 +154,44 @@ function openFilterOptionsMenu() {
  * Close the filter options overlay and remove the click event listener.
  */
 function closeFilterOptionsMenu() {
-    $(document).off("click.filter");
     $(FILTER_OPTIONS_FORM_WRAPPER).hide();
 }
 
-$(document).ready(function() {
-    $(FILTER_INPUT_FORM).on("focusin.filter", FILTER_INPUT, function (e) { // FIXME called two times
+$(document).ready(function () {
+    $(FILTER_INPUT_FORM).on("focusin.filter", FILTER_INPUT, function (e) {
         // Add event listener for "keydown" when filter gets focus
         $(FILTER_INPUT_FORM).on("keydown.filter", [FILTER_INPUT], function (e) {
             return handleKeydown(e);
         });
         // Open filter options/suggestions menu when input gets focus
         openFilterOptionsMenu();
+    });
 
-        // Listen for clicks and close menu when user clicks outside input or filter options/suggestions menu
-        $(document).on("click.filter", function (e) {
-            if ($(e.target).parents(FILTER_INPUT_AND_OPTIONS_FORMS).length === 0) {
+    $(document).on("click.filter", function (e) {
+        let target = $(e.target);
+        if ($(FILTER_OPTIONS_FORM_WRAPPER).is(':visible')) {
+            if (target.parents(FILTER_INPUT_PARSED_FILTERS_AND_OPTIONS_FORMS).length === 0) {
+                // User clicked outside input or filter options/suggestions menu. Menu should be closed and filter should be submitted.
                 closeFilterOptionsMenu();
+                submitInput();
+                return;
+            } else if (target.hasClass("suggestion") || target.parents(".suggestion").length) {
+                // User clicked on suggestion. Suggestion should be selected and copied to input.
+                let selection = target.hasClass("suggestion") ? target : target.parents(".suggestion").first();
+                selectConfirm(selection);
+                $(FILTER_INPUT).focus();
+                return;
             }
-        });
+        }
+
+        if (!target.hasClass("ui-button") && target.parents(".ui-button").length === 0 && target.parents(PARSED_FILTERS).length) {
+            // User clicked on parsed filter. Filter should be moved to filter input.
+            let filter = target.siblings(".plainFilter").length ? target.siblings(".plainFilter").first().text()
+                : target.find(".plainFilter").first().text();
+            $(FILTER_INPUT).val(filter);
+            removeFilter([{name: "plainFilter", value: filter}]);
+            $(FILTER_INPUT).focus();
+        }
     });
 
     // Remove event listener for "keydown" when filter loses focus

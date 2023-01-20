@@ -23,6 +23,11 @@
     <p:remoteCommand name="updateSuggestions"
                      action="#{UserForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>
+    <p:remoteCommand name="submitFilters"
+                     action="#{UserForm.filterMenu.submitFilters}"
+                     onstart="PF('usersTable').getPaginator().setPage(0);"
+                     oncomplete="setFilterInputPadding();"
+                     update="usersTabView:usersTable filterInputForm:filterfield parsedFiltersForm:parsedFilters filterOptionsForm:suggestions"/>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">
@@ -31,11 +36,6 @@
                              value="#{UserForm.filterMenu.filterInEditMode}"
                              autocomplete="off"
                              placeholder="#{msgs.filter}">
-                    <p:ajax event="change"
-                            listener="#{UserForm.filterMenu.submitFilters()}"
-                            onstart="PF('usersTable').getPaginator().setPage(0);"
-                            oncomplete="setFilterInputPadding();"
-                            update="usersTabView:usersTable parsedFiltersForm:parsedFilters filterOptionsForm:suggestions @this"/>
                     <p:ajax event="keydown"
                             delay="1000"
                             listener="#{UserForm.filterMenu.updateSuggestions(UserForm.filterMenu.filterInEditMode)}"
