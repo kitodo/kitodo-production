@@ -541,7 +541,7 @@ public class GalleryPanel {
 
         MediaVariant previewMediaVariant = mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.LIST);
         URI previewUri = physicalDivision.getMediaFiles()
-                .get(mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.LIST));
+                .get(previewMediaVariant);
 
         URI resourceListUri = null;
         if (Objects.nonNull(previewUri)) {
@@ -553,7 +553,7 @@ public class GalleryPanel {
         MediaVariant mediaViewMediaVariant = mediaContentTypeVariants.get(mediaContentType)
                 .get(GalleryViewMode.PREVIEW);
         URI mediaViewUri = physicalDivision.getMediaFiles()
-                .get(mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.PREVIEW));
+                .get(mediaViewMediaVariant);
         URI resourceMediaViewUri = null;
         if (Objects.nonNull(mediaViewUri)) {
             resourceMediaViewUri = mediaViewUri.isAbsolute()
