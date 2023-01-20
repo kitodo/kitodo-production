@@ -33,12 +33,12 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.platform.commons.support.ReflectionSupport;
+import org.kitodo.BasePrimefaceTest;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.primefaces.component.media.Media;
 import org.primefaces.config.PrimeEnvironment;
 import org.primefaces.context.PrimeApplicationContext;
-import test.BasePrimefaceTest;
 
 public class KitodoMediaRendererIT extends BasePrimefaceTest {
 

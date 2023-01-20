@@ -20,19 +20,19 @@ import org.jboss.weld.el.WeldExpressionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterEach;
+import org.kitodo.BasePrimefaceTest;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.omnifaces.application.OmniApplication;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.util.Constants;
-import test.BasePrimefaceTest;
 
 public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
 
     public static final String FILENAME = "test.mp4";
     public static final String MIMETYPE = "video/mp4";
-    private String data = "some test data for my input stream";
+    private final String data = "some test data for my input stream";
 
     @Mock
     protected HttpServletRequest httpServletRequest;
@@ -100,12 +100,12 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         int start = 0;
         int end = 100;
 
-        when(httpServletRequest.getHeader("Range")).thenReturn("bytes="+start+"-"+end);
+        when(httpServletRequest.getHeader("Range")).thenReturn("bytes=" + start + "-" + end);
         rangeStreamedContentHandler.handle(facesContext);
 
-        assertEquals(data,new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(data, byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
-        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\""+FILENAME+"\"");
+        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag",FILENAME);
         verify(httpServletResponse).setHeader("Accept-Ranges","bytes");
         verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
@@ -121,9 +121,9 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
 
         rangeStreamedContentHandler.handle(facesContext);
 
-        assertEquals(data,new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(data, byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
-        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\""+FILENAME+"\"");
+        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag",FILENAME);
         verify(httpServletResponse).setHeader("Accept-Ranges","bytes");
         verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
@@ -138,21 +138,21 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         int start = 5;
         int end = 22;
 
-        when(httpServletRequest.getHeader("Range")).thenReturn("bytes="+start+"-"+end);
+        when(httpServletRequest.getHeader("Range")).thenReturn("bytes=" + start + "-" + end);
         when(httpServletRequest.getHeader("If-Range")).thenReturn(FILENAME);
 
         rangeStreamedContentHandler.handle(facesContext);
 
-        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\""+FILENAME+"\"");
+        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag",FILENAME);
         verify(httpServletResponse).setHeader("Accept-Ranges","bytes");
         verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
-        verify(httpServletResponse).setHeader("Content-Range","bytes "+start+"-"+end+"/34");
+        verify(httpServletResponse).setHeader("Content-Range","bytes " + start + "-" + end + "/34");
         verify(httpServletResponse).setHeader("Content-Length","18");
         verify(httpServletResponse).setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
 
-        assertEquals(data.substring(start,end+1),new String(byteArrayOutputStream.toByteArray(), StandardCharsets.UTF_8));
+        assertEquals(data.substring(start,end+1), byteArrayOutputStream.toString(StandardCharsets.UTF_8));
     }
 
 }

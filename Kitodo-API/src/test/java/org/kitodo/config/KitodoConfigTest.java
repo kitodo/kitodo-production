@@ -29,6 +29,7 @@ import org.kitodo.config.enums.ParameterAPI;
 public class KitodoConfigTest {
 
     private static ParameterAPI NONE;
+
     @BeforeClass
     public static void init() {
         NONE = mock(ParameterAPI.class);

@@ -21,6 +21,7 @@ import java.util.List;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.BaseMockitoTest;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.converter.ProcessConverter;
 import org.kitodo.production.services.data.ProcessService;

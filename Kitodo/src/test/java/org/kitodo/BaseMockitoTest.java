@@ -1,4 +1,4 @@
-package test;
+package org.kitodo;
 
 import org.junit.runner.RunWith;
 import org.mockito.junit.MockitoJUnitRunner;

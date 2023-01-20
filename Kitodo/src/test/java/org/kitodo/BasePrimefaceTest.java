@@ -1,4 +1,4 @@
-package test;
+package org.kitodo;
 
 import static org.mockito.Mockito.when;
 
@@ -10,8 +10,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
+@SuppressWarnings("checkstyle:WhitespaceAround")
 @RunWith(MockitoJUnitRunner.class)
-public abstract class BasePrimefaceTest extends BaseMockitoTest{
+public abstract class BasePrimefaceTest extends BaseMockitoTest {
 
     @Mock
     protected FacesContext facesContext;
