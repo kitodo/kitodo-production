@@ -30,6 +30,11 @@ public class KitodoConfigTest {
 
     private static ParameterAPI NONE;
 
+    /**
+     * Init once before tests.
+     *
+     * @throws Exception the exceptions thrown by method
+     */
     @BeforeClass
     public static void init() {
         NONE = mock(ParameterAPI.class);
