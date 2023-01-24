@@ -33,8 +33,6 @@ public class WebDriverProvider {
     private static final Logger logger = LogManager.getLogger(WebDriverProvider.class);
 
     // https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
-    // Please don't rely on the LATEST_RELEASE file without a version suffix.
-    // It exists for backward compatibility only, and will be removed in the near future.
     private static final String CHROME_DRIVER_LATEST_RELEASE_URL = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE";
 
     private static UnArchiver zipUnArchiver = new ZipUnArchiver();
