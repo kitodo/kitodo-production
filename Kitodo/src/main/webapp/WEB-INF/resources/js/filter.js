@@ -88,6 +88,9 @@ function selectPrevious() {
     }
 }
 
+/**
+ * Submit the value of the filter input.
+ */
 function submitInput() {
     // remove event listener because JSF will update the field and register a new event handler
     $(FILTER_INPUT_FORM).off("keydown.filter");
@@ -143,6 +146,9 @@ function handleKeydown(event) {
     }
 }
 
+/**
+ * Calculate the maximum height and display the filter options overlay.
+ */
 function openFilterOptionsMenu() {
     let distanceWrapperToMenuTop = $(FILTER_INPUT).offset().top - $(LIST_WRAPPER).offset().top + $(FILTER_INPUT).height();
     let maxMenuHeight = $(LIST_WRAPPER).height() - distanceWrapperToMenuTop - 20;
@@ -151,7 +157,7 @@ function openFilterOptionsMenu() {
 }
 
 /**
- * Close the filter options overlay and remove the click event listener.
+ * Close the filter options overlay.
  */
 function closeFilterOptionsMenu() {
     $(FILTER_OPTIONS_FORM_WRAPPER).hide();

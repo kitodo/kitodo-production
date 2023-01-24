@@ -27,7 +27,10 @@
                      action="#{UserForm.filterMenu.submitFilters}"
                      onstart="PF('usersTable').getPaginator().setPage(0);"
                      oncomplete="setFilterInputPadding();"
-                     update="usersTabView:usersTable filterInputForm:filterfield parsedFiltersForm:parsedFilters filterOptionsForm:suggestions"/>
+                     update="usersTabView:usersTable
+                             filterInputForm:filterfield
+                             parsedFiltersForm:parsedFilters
+                             filterOptionsForm:suggestions"/>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">
@@ -59,8 +62,12 @@
             <h:form id="filterOptionsForm">
                 <div id="filterOptionsFormWrapper">
                     <!-- Suggestions -->
-                    <p:dataList id="suggestions" value="#{UserForm.filterMenu.suggestions}" var="menuItem" itemStyleClass="suggestion">
-                        <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}" a:data-input="#{menuItem.getInput()}">#{menuItem.getSuggestion()}</p:outputPanel>
+                    <p:dataList id="suggestions"
+                                value="#{UserForm.filterMenu.suggestions}"
+                                var="menuItem"
+                                itemStyleClass="suggestion">
+                        <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}"
+                                       a:data-input="#{menuItem.getInput()}">#{menuItem.getSuggestion()}</p:outputPanel>
                     </p:dataList>
                 </div>
             </h:form>

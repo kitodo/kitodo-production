@@ -28,7 +28,10 @@
                      action="#{CurrentTaskForm.filterMenu.submitFilters}"
                      onstart="PF('taskTable').getPaginator().setPage(0);"
                      oncomplete="setFilterInputPadding();"
-                     update="tasksTabView:tasksForm:taskTable filterInputForm:filterfield parsedFiltersForm:parsedFilters filterOptionsForm:suggestions"/>
+                     update="tasksTabView:tasksForm:taskTable
+                             filterInputForm:filterfield
+                             parsedFiltersForm:parsedFilters
+                             filterOptionsForm:suggestions"/>
     <div class="ui-inputgroup">
         <div class="input-wrapper">
             <h:form id="filterInputForm">
@@ -45,7 +48,10 @@
                 </p:inputText>
             </h:form>
             <h:form id="parsedFiltersForm">
-                <p:dataList id="parsedFilters" value="#{CurrentTaskForm.filterMenu.parsedFilters}" var="parsedFilter" emptyMessage="">
+                <p:dataList id="parsedFilters"
+                            value="#{CurrentTaskForm.filterMenu.parsedFilters}"
+                            var="parsedFilter"
+                            emptyMessage="">
                     <p:outputPanel styleClass="plainFilter hidden">#{parsedFilter.getPlainFilter()}</p:outputPanel>
                     <p:outputPanel styleClass="not-modifier" rendered="#{parsedFilter.isNot()}">-</p:outputPanel>
                     <p:outputPanel styleClass="category">#{parsedFilter.category}</p:outputPanel>
@@ -60,7 +66,10 @@
             <h:form id="filterOptionsForm">
                 <div id="filterOptionsFormWrapper">
                     <!-- Suggestions -->
-                    <p:dataList id="suggestions" value="#{CurrentTaskForm.filterMenu.suggestions}" var="menuItem" itemStyleClass="suggestion">
+                    <p:dataList id="suggestions"
+                                value="#{CurrentTaskForm.filterMenu.suggestions}"
+                                var="menuItem"
+                                itemStyleClass="suggestion">
                         <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}"
                                        a:data-input="#{menuItem.getInput()}">#{menuItem.getSuggestion()}</p:outputPanel>
                     </p:dataList>
