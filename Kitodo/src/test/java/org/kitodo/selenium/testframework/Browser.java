@@ -219,6 +219,13 @@ public class Browser {
         return table.findElements(By.tagName("tr"));
     }
 
+    public static long getSelectedRowsOfTable(WebElement table) {
+        return getRowsOfTable(table)
+                .stream()
+                .filter(element -> element.getAttribute("aria-selected").equals("true"))
+                .count();
+    }
+
     public static List<WebElement> getCellsOfRow(WebElement row) {
         return row.findElements(By.tagName("td"));
     }
@@ -234,7 +241,7 @@ public class Browser {
 
     public static String getCellDataByRow(WebElement row, int columnIndex) {
         List<WebElement> cells = getCellsOfRow(row);
-        if(cells.size()<=columnIndex){
+        if (cells.size() <= columnIndex) {
             return "";
         }
         return cells.get(columnIndex).getText();

@@ -122,17 +122,17 @@ public class ProcessListBaseView extends BaseForm {
     @SuppressWarnings("unchecked")
     public List<Process> getSelectedProcesses() {
         List<Process> selectedProcesses = new ArrayList<>();
-        if (selectedProcessesOrProcessDTOs.size() > 0) {
-            ProcessService processService = ServiceManager.getProcessService();
-            if (allSelected) {
-                try {
-                    this.selectedProcessesOrProcessDTOs = processService.findByQuery(processService.getQueryForFilter(
-                                    this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter())
-                            .mustNot(processService.createSetQueryForIds(new ArrayList<>(excludedProcessIds))), false);
-                } catch (DataException e) {
-                    logger.error(e.getMessage());
-                }
+        ProcessService processService = ServiceManager.getProcessService();
+        if (allSelected) {
+            try {
+                this.selectedProcessesOrProcessDTOs = processService.findByQuery(processService.getQueryForFilter(
+                                this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter())
+                        .mustNot(processService.createSetQueryForIds(new ArrayList<>(excludedProcessIds))), false);
+            } catch (DataException e) {
+                logger.error(e.getMessage());
             }
+        }
+        if (selectedProcessesOrProcessDTOs.size() > 0) {
             if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
                 // list contains ProcessDTO instances
                 try {
