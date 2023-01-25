@@ -1227,8 +1227,8 @@ public class ImportService {
 
     private void setParentProcess(String parentId, int projectId, Template template)
             throws DAOException, IOException, ProcessGenerationException {
+        parentTempProcess = null;
         if (StringUtils.isNotBlank(parentId)) {
-            parentTempProcess = null;
             checkForParent(parentId, template.getRuleset(), projectId);
         }
     }
