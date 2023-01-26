@@ -248,7 +248,10 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private DataRecord performQueryToRecord(DataImport dataImport, String queryURL, String identifier)
             throws NoRecordFoundException {
-        String fullUrl = queryURL + AND;
+        String fullUrl = queryURL;
+        if (!dataImport.getUrlParameters().isEmpty()) {
+            fullUrl = fullUrl + AND;
+        }
         SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
         if (Objects.nonNull(interfaceType)) {
             if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
