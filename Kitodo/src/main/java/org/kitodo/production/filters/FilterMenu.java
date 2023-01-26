@@ -157,7 +157,6 @@ public class FilterMenu {
             if (Objects.nonNull(processForm)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
-                    // process category should be suggested
                     suggestions = createSuggestionsForProcessCategory(matcherNextCategory.group());
                 } else {
                     // process value should be suggested
@@ -169,7 +168,6 @@ public class FilterMenu {
             } else if (Objects.nonNull(taskForm)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
-                    // process/task category should be suggested
                     suggestions = createSuggestionsForTaskCategory(matcherNextCategory.group());
                 } else {
                     // process/task value should be suggested
@@ -181,7 +179,6 @@ public class FilterMenu {
             } else if (Objects.nonNull(userForm)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
-                    // user category should be suggested
                     suggestions = createSuggestionsForUserCategory(matcherNextCategory.group());
                 }
             }
