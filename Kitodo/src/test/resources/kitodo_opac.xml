@@ -85,6 +85,7 @@
         <mappingFiles>
             <file>mods2kitodo.xsl</file>
         </mappingFiles>
+        <parentMappingFile>mods2kitodo.xsl</parentMappingFile>
         <config>
             <param name="host" value="localhost" />
             <param name="scheme" value="http" />

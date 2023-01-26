@@ -86,6 +86,7 @@ import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -763,8 +764,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             Collection<String> allowedStructuralElementTypes) throws DataException {
 
         BoolQueryBuilder query = new BoolQueryBuilder()
-                .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
-                .should(new MatchQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*"))
+                .must(new BoolQueryBuilder()
+                        .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true))
+                        .should(new WildcardQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*")))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
         List<ProcessDTO> linkableProcesses = new LinkedList<>();
 
