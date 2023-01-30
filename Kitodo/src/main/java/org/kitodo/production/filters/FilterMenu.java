@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 
-import org.kitodo.data.database.beans.User;
 import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.forms.CurrentTaskForm;
@@ -31,10 +30,50 @@ import org.kitodo.production.forms.UserForm;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
 
-
 public class FilterMenu {
 
     private static final int MAX_SUGGESTIONS = 15;
+    private static final List<FilterString> processCategories = Arrays.asList(
+            FilterString.TASK,
+            FilterString.TASKINWORK,
+            FilterString.TASKLOCKED,
+            FilterString.TASKOPEN,
+            FilterString.TASKDONE,
+            FilterString.TASKDONETITLE,
+            FilterString.PROJECT,
+            FilterString.ID,
+            FilterString.PARENTPROCESSID,
+            FilterString.PROCESS,
+            FilterString.BATCH,
+            FilterString.TASKAUTOMATIC,
+            FilterString.PROPERTY
+    );
+    private static final List<FilterString> taskCategories = Arrays.asList(
+            FilterString.TASK,
+            FilterString.TASKINWORK,
+            FilterString.TASKOPEN,
+            FilterString.PROJECT,
+            FilterString.ID,
+            FilterString.PROCESS,
+            FilterString.BATCH,
+            FilterString.TASKAUTOMATIC,
+            FilterString.PROPERTY
+    );
+    private static final List<String> userCategories = Arrays.asList(
+            "id:",
+            "name:",
+            "surname:",
+            "login:",
+            "ldapLogin:",
+            "active:",
+            "deleted:",
+            "location:",
+            "metadataLanguage:",
+            "withMassDownload:",
+            "configProductionDateShow:",
+            "tableSize:",
+            "language:"
+    );
 
     private ProcessForm processForm = null;
     private CurrentTaskForm taskForm = null;
@@ -50,7 +89,7 @@ public class FilterMenu {
      */
     public FilterMenu(ProcessForm processForm) {
         this.processForm = processForm;
-        suggestions = createSuggestionsForProcessAndTaskCategory("");
+        suggestions = createSuggestionsForProcessCategory("");
         parsedFilters = new ArrayList<>();
     }
 
@@ -61,7 +100,7 @@ public class FilterMenu {
      */
     public FilterMenu(CurrentTaskForm taskForm) {
         this.taskForm = taskForm;
-        suggestions = createSuggestionsForProcessAndTaskCategory("");
+        suggestions = createSuggestionsForTaskCategory("");
         parsedFilters = new ArrayList<>();
     }
 
@@ -106,8 +145,10 @@ public class FilterMenu {
         int lastColonIndex = strippedInput.lastIndexOf(":");
         if (lastColonIndex == -1) {
             // category should be suggested
-            if (Objects.nonNull(processForm) || Objects.nonNull(taskForm)) {
-                suggestions = createSuggestionsForProcessAndTaskCategory(input);
+            if (Objects.nonNull(processForm)) {
+                suggestions = createSuggestionsForProcessCategory(input);
+            } else if (Objects.nonNull(taskForm)) {
+                suggestions = createSuggestionsForTaskCategory(input);
             } else if (Objects.nonNull(userForm)) {
                 suggestions = createSuggestionsForUserCategory(input);
             }
@@ -116,17 +157,29 @@ public class FilterMenu {
             String lastPart = input.substring(lastColonIndex + 1);
             Pattern patternNextCategory = Pattern.compile("(?<= \\| )\\w?$");
             Matcher matcherNextCategory = patternNextCategory.matcher(lastPart);
-            if (Objects.nonNull(processForm) || Objects.nonNull(taskForm)) {
+            if (Objects.nonNull(processForm)) {
+                if (matcherNextCategory.find()) {
+                    // strings ends with " | "
+                    // process category should be suggested
+                    suggestions = createSuggestionsForProcessCategory(matcherNextCategory.group());
+                } else {
+                    // process value should be suggested
+                    Pattern patternPreviousCategory = Pattern.compile("\\w+:(?!.*:)");
+                    Matcher matcherPreviousCategory = patternPreviousCategory.matcher(input);
+                    String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
+                    suggestions = createSuggestionsForProcessValue(checkFilterCategory(category, processCategories), lastPart);
+                }
+            } else if (Objects.nonNull(taskForm)) {
                 if (matcherNextCategory.find()) {
                     // strings ends with " | "
                     // process/task category should be suggested
-                    suggestions = createSuggestionsForProcessAndTaskCategory(matcherNextCategory.group());
+                    suggestions = createSuggestionsForTaskCategory(matcherNextCategory.group());
                 } else {
                     // process/task value should be suggested
                     Pattern patternPreviousCategory = Pattern.compile("\\w+:(?!.*:)");
                     Matcher matcherPreviousCategory = patternPreviousCategory.matcher(input);
                     String category = matcherPreviousCategory.find() ? matcherPreviousCategory.group() : "";
-                    suggestions = createSuggestionsForProcessAndTaskValue(checkProcessFilterCategory(category), lastPart);
+                    suggestions = createSuggestionsForTaskValue(checkFilterCategory(category, taskCategories), lastPart);
                 }
             } else if (Objects.nonNull(userForm)) {
                 if (matcherNextCategory.find()) {
@@ -137,19 +190,24 @@ public class FilterMenu {
             }
         }
     }
-    
-    private List<Suggestion> createSuggestionsForProcessAndTaskCategory(String input) {
-        List<Suggestion> suggestions = new ArrayList<>();
-        for (FilterString filterString : FilterString.values()) {
-            if (filterString.getFilterEnglish().startsWith(input.toLowerCase())
-                    || filterString.getFilterGerman().startsWith(input.toLowerCase())) {
-                suggestions.add(new Suggestion(input, filterString.getFilterEnglish(), FilterPart.CATEGORY));
-            }
-        }
-        return suggestions;
+
+    private List<Suggestion> filterSuggestionsForCategory(String input, List<FilterString> suggestions) {
+        return suggestions.stream()
+                .filter(filterString -> filterString.getFilterEnglish().startsWith(input.toLowerCase())
+                        || filterString.getFilterGerman().startsWith(input.toLowerCase()))
+                .map(filterString -> new Suggestion(input, filterString.getFilterEnglish(), FilterPart.CATEGORY))
+                .collect(Collectors.toList());
     }
 
-    private List<Suggestion> createSuggestionsForProcessAndTaskValue(FilterString category, String input) {
+    private List<Suggestion> createSuggestionsForProcessCategory(String input) {
+        return filterSuggestionsForCategory(input, processCategories);
+    }
+
+    private List<Suggestion> createSuggestionsForTaskCategory(String input) {
+        return filterSuggestionsForCategory(input, taskCategories);
+    }
+
+    private List<Suggestion> createSuggestionsForProcessValue(FilterString category, String input) {
         List<Suggestion> suggestions = new ArrayList<>();
         if (Objects.isNull(category)) {
             return suggestions;
@@ -171,14 +229,32 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input,
                     filterService.initProcessPropertyTitles(), FilterPart.VALUE));
                 break;
-            case TASKDONEUSER:
-                suggestions.addAll(createUserSuggestionsMatchingInput(input, filterService.initUserList(), FilterPart.VALUE));
+            default:
+                // Do nothing
                 break;
-            case BATCH:
-            case TASKAUTOMATIC:
-            case PROCESS:
-            case ID:
-            case PARENTPROCESSID:
+        }
+        return suggestions;
+    }
+
+    private List<Suggestion> createSuggestionsForTaskValue(FilterString category, String input) {
+        List<Suggestion> suggestions = new ArrayList<>();
+        if (Objects.isNull(category)) {
+            return suggestions;
+        }
+        FilterService filterService = ServiceManager.getFilterService();
+        switch (category) {
+            case TASK:
+            case TASKINWORK:
+            case TASKOPEN:
+                suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initStepTitles(), FilterPart.VALUE));
+                break;
+            case PROJECT:
+                suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
+                break;
+            case PROPERTY:
+                suggestions.addAll(createStringSuggestionsMatchingInput(input,
+                    filterService.initProcessPropertyTitles(), FilterPart.VALUE));
+                break;
             default:
                 // Do nothing
                 break;
@@ -187,10 +263,7 @@ public class FilterMenu {
     }
 
     private List<Suggestion> createSuggestionsForUserCategory(String input) {
-        List<String> searchableColumns = Arrays.asList("id:","name:", "surname:", "login:", "ldapLogin:", "active:",
-            "deleted:", "location:", "metadataLanguage:", "withMassDownload:", "configProductionDateShow:", "tableSize:",
-            "language:");
-        return createStringSuggestionsMatchingInput(input, searchableColumns, FilterPart.CATEGORY);
+        return createStringSuggestionsMatchingInput(input, userCategories, FilterPart.CATEGORY);
     }
 
     private List<Suggestion> createStringSuggestionsMatchingInput(String input, List<String> suggestions, FilterPart filterPart) {
@@ -201,23 +274,16 @@ public class FilterMenu {
                 .collect(Collectors.toList());
     }
 
-    private List<Suggestion> createUserSuggestionsMatchingInput(String input, List<User> suggestions, FilterPart filterPart) {
-        return suggestions.stream()
-                .filter(user -> user.getLogin().startsWith(input) || user.getFullName().startsWith(input))
-                .limit(MAX_SUGGESTIONS)
-                .map(user -> new Suggestion(input, user.getLogin(), filterPart))
-                .collect(Collectors.toList());
-    }
-
     /**
      * Check if the category passed as String matches a FilterString.
      *
-     * @param category as String
+     * @param categoryInput as String
      * @return FilterString matching the given String
      */
-    private FilterString checkProcessFilterCategory(String category) {
-        return Arrays.stream(FilterString.values())
-                .filter(f -> f.getFilterGerman().equals(category.toLowerCase()) || f.getFilterEnglish().equals(category.toLowerCase()))
+    private FilterString checkFilterCategory(String categoryInput, List<FilterString> categories) {
+        return categories.stream()
+                .filter(f -> f.getFilterGerman().equals(categoryInput.toLowerCase())
+                        || f.getFilterEnglish().equals(categoryInput.toLowerCase()))
                 .findFirst().orElse(null);
     }
 
