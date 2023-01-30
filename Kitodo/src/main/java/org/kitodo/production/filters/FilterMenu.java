@@ -11,6 +11,17 @@
 
 package org.kitodo.production.filters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import javax.faces.context.FacesContext;
+
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.enums.FilterPart;
 import org.kitodo.production.enums.FilterString;
@@ -20,15 +31,6 @@ import org.kitodo.production.forms.UserForm;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
 
-import javax.faces.context.FacesContext;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class FilterMenu {
 
@@ -166,15 +168,19 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
                 break;
             case PROPERTY:
-                suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProcessPropertyTitles(), FilterPart.VALUE));
+                suggestions.addAll(createStringSuggestionsMatchingInput(input,
+                    filterService.initProcessPropertyTitles(), FilterPart.VALUE));
                 break;
             case TASKDONEUSER:
                 suggestions.addAll(createUserSuggestionsMatchingInput(input, filterService.initUserList(), FilterPart.VALUE));
+                break;
             case BATCH:
             case TASKAUTOMATIC:
             case PROCESS:
             case ID:
             case PARENTPROCESSID:
+            default:
+                // Do nothing
                 break;
         }
         return suggestions;

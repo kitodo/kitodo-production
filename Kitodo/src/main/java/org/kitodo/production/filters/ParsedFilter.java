@@ -11,10 +11,10 @@
 
 package org.kitodo.production.filters;
 
-import org.kitodo.production.enums.FilterString;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.kitodo.production.enums.FilterString;
 
 public class ParsedFilter {
 
