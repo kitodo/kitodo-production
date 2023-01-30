@@ -29,6 +29,7 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
@@ -293,6 +294,15 @@ public class CurrentTaskForm extends BaseForm {
             return this.stayOnCurrentPage;
         }
         return tasksPage;
+    }
+
+
+    public void reportProblem(Comment comment) {
+        try {
+            workflowControllerService.reportProblem(comment);
+        } catch (DataException e) {
+            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
+        }
     }
 
     /**

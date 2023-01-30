@@ -17,6 +17,7 @@ import java.util.Objects;
 
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.CommentDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
@@ -69,6 +70,10 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
 
     public List<Comment> getAllCommentsByProcess(Process process) {
         return dao.getAllByProcess(process);
+    }
+
+    public List<Comment> getAllCommentsByCurrentTask(Task task) {
+        return dao.getAllByCurrentTask(task);
     }
 
     /**
