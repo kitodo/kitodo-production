@@ -25,19 +25,32 @@ public class ImportServiceTest {
      */
     @Test
     public void shouldSkipHitListForOaiImportConfiguration() {
-        ImportConfiguration ftpConfiguration = createOaiImportConfiguration();
+        ImportConfiguration oaiConfiguration = createImportConfiguration(SearchInterfaceType.OAI);
         Assert.assertTrue("'Skip hit list' should return 'true' for OAI configurations",
+                ImportService.skipHitlist(oaiConfiguration, null));
+    }
+
+    /**
+     * Test whether hit list is not skipped for FTP type import configurations.
+     */
+    @Test
+    public void shouldNotSkipHitListForFtpImportConfiguration() {
+        ImportConfiguration ftpConfiguration = createImportConfiguration(SearchInterfaceType.FTP);
+        Assert.assertFalse("'Skip hit list' should return 'false' for FTP configurations",
                 ImportService.skipHitlist(ftpConfiguration, null));
     }
 
     /**
      * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type 'OAI'.
+     *
+     * @param interfaceType as SearchInterfaceType
      */
-    private ImportConfiguration createOaiImportConfiguration() {
+    private ImportConfiguration createImportConfiguration(SearchInterfaceType interfaceType) {
+        String interfaceTypeName = interfaceType.name();
         ImportConfiguration genericFtpConfiguration = new ImportConfiguration();
-        genericFtpConfiguration.setTitle("OAI example configuration");
+        genericFtpConfiguration.setTitle(interfaceTypeName + " example configuration");
         genericFtpConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
-        genericFtpConfiguration.setInterfaceType(SearchInterfaceType.OAI.name());
+        genericFtpConfiguration.setInterfaceType(interfaceTypeName);
         return genericFtpConfiguration;
     }
 }
