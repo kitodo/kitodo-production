@@ -219,6 +219,11 @@ public class Browser {
         return table.findElements(By.tagName("tr"));
     }
 
+    /**
+     * Gets number of selected rows in a given table.
+     * @param table as a WebElement
+     * @return number of selected rows
+     */
     public static long getSelectedRowsOfTable(WebElement table) {
         return getRowsOfTable(table)
                 .stream()

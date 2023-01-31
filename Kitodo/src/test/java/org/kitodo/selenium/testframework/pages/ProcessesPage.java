@@ -207,6 +207,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
         return batchSelect.getOptions().size();
     }
 
+    /**
+     * Gets number of selected rows in processesTable.
+     * @return number of selected rows
+     * @throws Exception exception
+     */
     public long countListedSelectedProcesses() throws Exception {
         if (!isAt()) {
             goTo();
@@ -460,6 +465,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
             .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
     }
 
+    /**
+     * Select all rows on a page in processesTable.
+     */
     public void selectAllRowsOnPage() {
         selectAllCheckBox.click();
         await(WAIT_FOR_SELECTION_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
@@ -469,6 +477,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
     }
 
+    /**
+     * Select all rows on all pages in processesTable.
+     */
     public void selectAllRows() {
         selectAllCheckBox.click();
         await(WAIT_FOR_SELECTION_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
@@ -478,6 +489,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
     }
 
+    /**
+     * Go to next page in processesTable.
+     */
     public void goToNextPage() {
         if (nextPage.isEnabled()) {
             nextPage.click();
