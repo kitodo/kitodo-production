@@ -21,23 +21,23 @@ import org.kitodo.production.services.data.ImportService;
 public class ImportServiceTest {
 
     /**
-     * Test whether hit list is properly skipped for FTP type import configurations.
+     * Test whether hit list is properly skipped for OAI type import configurations.
      */
     @Test
-    public void shouldSkipHitListForFtpImportConfiguration() {
-        ImportConfiguration ftpConfiguration = createFtpImportConfiguration();
-        Assert.assertTrue("'Skip hit list' should return 'true' for FTP configurations",
+    public void shouldSkipHitListForOaiImportConfiguration() {
+        ImportConfiguration ftpConfiguration = createOaiImportConfiguration();
+        Assert.assertTrue("'Skip hit list' should return 'true' for OAI configurations",
                 ImportService.skipHitlist(ftpConfiguration, null));
     }
 
     /**
-     * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type 'FTP'.
+     * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type 'OAI'.
      */
-    private ImportConfiguration createFtpImportConfiguration() {
+    private ImportConfiguration createOaiImportConfiguration() {
         ImportConfiguration genericFtpConfiguration = new ImportConfiguration();
-        genericFtpConfiguration.setTitle("FTP example configuration");
+        genericFtpConfiguration.setTitle("OAI example configuration");
         genericFtpConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
-        genericFtpConfiguration.setInterfaceType(SearchInterfaceType.FTP.name());
+        genericFtpConfiguration.setInterfaceType(SearchInterfaceType.OAI.name());
         return genericFtpConfiguration;
     }
 }
