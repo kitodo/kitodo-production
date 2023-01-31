@@ -41,16 +41,17 @@ public class ImportServiceTest {
     }
 
     /**
-     * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type 'OAI'.
+     * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and given search interface type.
      *
      * @param interfaceType as SearchInterfaceType
+     * @return ImportConfiguration of given SearchInterfaceType
      */
     private ImportConfiguration createImportConfiguration(SearchInterfaceType interfaceType) {
         String interfaceTypeName = interfaceType.name();
-        ImportConfiguration genericFtpConfiguration = new ImportConfiguration();
-        genericFtpConfiguration.setTitle(interfaceTypeName + " example configuration");
-        genericFtpConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
-        genericFtpConfiguration.setInterfaceType(interfaceTypeName);
-        return genericFtpConfiguration;
+        ImportConfiguration genericConfiguration = new ImportConfiguration();
+        genericConfiguration.setTitle(interfaceTypeName + " example configuration");
+        genericConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        genericConfiguration.setInterfaceType(interfaceTypeName);
+        return genericConfiguration;
     }
 }
