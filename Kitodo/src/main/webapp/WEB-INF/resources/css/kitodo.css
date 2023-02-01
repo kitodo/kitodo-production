@@ -3047,6 +3047,10 @@ Column content
     height: auto;
 }
 
+.thumbnail-parent.media-type-audio {
+    width: 120px;
+    height: auto;
+}
 
 #imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-audio,
 #imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-video {
@@ -3054,6 +3058,7 @@ Column content
     height: auto;
 }
 
+.thumbnail-parent audio,
 .thumbnail-parent video {
     width: 100%;
     height: auto;
@@ -3103,6 +3108,8 @@ Column content
 .thumbnail.selected.last-selection + .thumbnail-container img {
     border-style: solid;
 }
+
+
 
 .thumbnail-container {
     display: inline-block;

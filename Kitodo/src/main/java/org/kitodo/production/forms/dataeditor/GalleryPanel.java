@@ -96,7 +96,7 @@ public class GalleryPanel {
 
     private Map<MediaContentType, Map<GalleryViewMode, MediaVariant>> mediaContentTypeVariants = new HashMap<>();
 
-    private Map<MediaContentType, Subfolder> mediaContentTypeListFolder = new HashMap<>();
+    private Map<MediaContentType, Subfolder> mediaContentTypePreviewFolder = new HashMap<>();
 
     private List<GalleryStripe> stripes;
 
@@ -384,7 +384,7 @@ public class GalleryPanel {
                 .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
 
         mediaContentTypeVariants.clear();
-        mediaContentTypeListFolder.clear();
+        mediaContentTypePreviewFolder.clear();
 
         initMediaContentType(physicalDivisions, project.getPreview(), project.getMediaView(), MediaContentType.IMAGE);
         initMediaContentType(physicalDivisions, project.getAudioPreview(), project.getAudioMediaView(),
@@ -410,7 +410,8 @@ public class GalleryPanel {
         Map<GalleryViewMode, MediaVariant> galleryViewModeMediaVariant = new HashMap<>();
         if (Objects.nonNull(previewSettings)) {
             galleryViewModeMediaVariant.put(GalleryViewMode.LIST, getMediaVariant(previewSettings, physicalDivisions));
-            mediaContentTypeListFolder.put(mediaContentType, new Subfolder(dataEditor.getProcess(), mediaViewSettings));
+            mediaContentTypePreviewFolder.put(mediaContentType,
+                    new Subfolder(dataEditor.getProcess(), previewSettings));
         }
         if (Objects.nonNull(mediaViewSettings)) {
             galleryViewModeMediaVariant.put(GalleryViewMode.PREVIEW,
@@ -550,10 +551,10 @@ public class GalleryPanel {
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
         }
 
+        // prefer canonical of preview folder
         MediaVariant mediaViewMediaVariant = mediaContentTypeVariants.get(mediaContentType)
                 .get(GalleryViewMode.PREVIEW);
-        URI mediaViewUri = physicalDivision.getMediaFiles()
-                .get(mediaViewMediaVariant);
+        URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewMediaVariant);
         URI resourceMediaViewUri = null;
         if (Objects.nonNull(mediaViewUri)) {
             resourceMediaViewUri = mediaViewUri.isAbsolute()
@@ -562,8 +563,9 @@ public class GalleryPanel {
         }
 
         // prefer canonical of preview folder
-        String canonical = Objects.nonNull(resourceListUri) && mediaContentTypeListFolder.containsKey(mediaContentType)
-                ? mediaContentTypeListFolder.get(mediaContentType).getCanonical(resourceListUri)
+        String canonical = Objects.nonNull(resourceListUri) && mediaContentTypePreviewFolder.containsKey(
+                mediaContentType) && Objects.nonNull(mediaContentTypePreviewFolder.get(mediaContentType))
+                ? mediaContentTypePreviewFolder.get(mediaContentType).getCanonical(resourceListUri)
                 : null;
         if (Objects.isNull(canonical)) {
             // if preview media not available, load canonical id from other folders

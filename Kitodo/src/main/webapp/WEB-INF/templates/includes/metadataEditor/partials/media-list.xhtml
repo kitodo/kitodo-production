@@ -50,9 +50,8 @@
                              value="#{DataEditorForm.process.id}"/>
                     <f:param name="sessionId"
                              value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                    <c:if test="${fn:startsWith(media.previewMimeType, 'video')}">
-                        <f:param name="controls" value="false"/>
-                    </c:if>
+                    <f:param name="controls"
+                             value="#{fn:startsWith(media.previewMimeType, 'video') ? 'false' : 'true'}"/>
                     <f:param name="type" value="#{media.previewMimeType}"/>
                     <f:param name="krsc"
                              value="true"/>
