@@ -267,7 +267,7 @@ public class RangeStreamedContentHandler extends BaseDynamicContentHandler {
             this.total = total;
         }
 
-        public static long sublong(String value, int beginIndex, int endIndex) {
+        private static long sublong(String value, int beginIndex, int endIndex) {
             String substring = value.substring(beginIndex, endIndex);
             return (substring.length() > 0) ? Long.parseLong(substring) : -1;
         }

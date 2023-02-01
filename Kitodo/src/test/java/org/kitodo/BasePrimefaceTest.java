@@ -22,7 +22,7 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
-public abstract class BasePrimefaceTest extends BaseMockitoTest {
+public abstract class BasePrimefaceTest {
 
     @Mock
     protected FacesContext facesContext;
