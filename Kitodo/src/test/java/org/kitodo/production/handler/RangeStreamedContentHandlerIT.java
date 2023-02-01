@@ -120,13 +120,13 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
 
         assertEquals(data, byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
-        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\"" + FILENAME + "\"");
-        verify(httpServletResponse).setHeader("ETag",FILENAME);
-        verify(httpServletResponse).setHeader("Accept-Ranges","bytes");
+        verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
+        verify(httpServletResponse).setHeader("ETag", FILENAME);
+        verify(httpServletResponse).setHeader("Accept-Ranges", "bytes");
         verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
-        verify(httpServletResponse).setHeader("Content-Range","bytes 0-33/34");
-        verify(httpServletResponse).setHeader("Content-Length","34");
+        verify(httpServletResponse).setHeader("Content-Range", "bytes 0-33/34");
+        verify(httpServletResponse).setHeader("Content-Length", "34");
         verify(httpServletResponse).setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
     }
 
@@ -143,13 +143,13 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
 
         assertEquals(data, byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
-        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\"" + FILENAME + "\"");
-        verify(httpServletResponse).setHeader("ETag",FILENAME);
-        verify(httpServletResponse).setHeader("Accept-Ranges","bytes");
+        verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
+        verify(httpServletResponse).setHeader("ETag", FILENAME);
+        verify(httpServletResponse).setHeader("Accept-Ranges", "bytes");
         verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
-        verify(httpServletResponse).setHeader("Content-Range","bytes */34");
-        verify(httpServletResponse).setHeader("Content-Length","34");
+        verify(httpServletResponse).setHeader("Content-Range", "bytes */34");
+        verify(httpServletResponse).setHeader("Content-Length", "34");
         verify(httpServletResponse).sendError(HttpServletResponse.SC_REQUESTED_RANGE_NOT_SATISFIABLE);
     }
 
@@ -168,13 +168,13 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
 
         rangeStreamedContentHandler.handle(facesContext);
 
-        verify(httpServletResponse).setHeader("Content-Disposition","inline;filename=\"" + FILENAME + "\"");
-        verify(httpServletResponse).setHeader("ETag",FILENAME);
-        verify(httpServletResponse).setHeader("Accept-Ranges","bytes");
+        verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
+        verify(httpServletResponse).setHeader("ETag", FILENAME);
+        verify(httpServletResponse).setHeader("Accept-Ranges", "bytes");
         verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
-        verify(httpServletResponse).setHeader("Content-Range","bytes " + start + "-" + end + "/34");
-        verify(httpServletResponse).setHeader("Content-Length","18");
+        verify(httpServletResponse).setHeader("Content-Range", "bytes " + start + "-" + end + "/34");
+        verify(httpServletResponse).setHeader("Content-Length", "18");
         verify(httpServletResponse).setStatus(HttpServletResponse.SC_PARTIAL_CONTENT);
 
         assertEquals(data.substring(start,end + 1), byteArrayOutputStream.toString(StandardCharsets.UTF_8));
