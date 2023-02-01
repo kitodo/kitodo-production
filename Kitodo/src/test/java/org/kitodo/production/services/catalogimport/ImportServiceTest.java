@@ -21,23 +21,37 @@ import org.kitodo.production.services.data.ImportService;
 public class ImportServiceTest {
 
     /**
-     * Test whether hit list is properly skipped for FTP type import configurations.
+     * Test whether hit list is properly skipped for OAI type import configurations.
      */
     @Test
-    public void shouldSkipHitListForFtpImportConfiguration() {
-        ImportConfiguration ftpConfiguration = createFtpImportConfiguration();
-        Assert.assertTrue("'Skip hit list' should return 'true' for FTP configurations",
+    public void shouldSkipHitListForOaiImportConfiguration() {
+        ImportConfiguration oaiConfiguration = createImportConfiguration(SearchInterfaceType.OAI);
+        Assert.assertTrue("'Skip hit list' should return 'true' for OAI configurations",
+                ImportService.skipHitlist(oaiConfiguration, null));
+    }
+
+    /**
+     * Test whether hit list is not skipped for FTP type import configurations.
+     */
+    @Test
+    public void shouldNotSkipHitListForFtpImportConfiguration() {
+        ImportConfiguration ftpConfiguration = createImportConfiguration(SearchInterfaceType.FTP);
+        Assert.assertFalse("'Skip hit list' should return 'false' for FTP configurations",
                 ImportService.skipHitlist(ftpConfiguration, null));
     }
 
     /**
-     * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type 'FTP'.
+     * Create and return an ImportConfiguration with configuration type `OPAC_SEARCH` and given search interface type.
+     *
+     * @param interfaceType as SearchInterfaceType
+     * @return ImportConfiguration of given SearchInterfaceType
      */
-    private ImportConfiguration createFtpImportConfiguration() {
-        ImportConfiguration genericFtpConfiguration = new ImportConfiguration();
-        genericFtpConfiguration.setTitle("FTP example configuration");
-        genericFtpConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
-        genericFtpConfiguration.setInterfaceType(SearchInterfaceType.FTP.name());
-        return genericFtpConfiguration;
+    private ImportConfiguration createImportConfiguration(SearchInterfaceType interfaceType) {
+        String interfaceTypeName = interfaceType.name();
+        ImportConfiguration genericConfiguration = new ImportConfiguration();
+        genericConfiguration.setTitle(interfaceTypeName + " example configuration");
+        genericConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        genericConfiguration.setInterfaceType(interfaceTypeName);
+        return genericConfiguration;
     }
 }
