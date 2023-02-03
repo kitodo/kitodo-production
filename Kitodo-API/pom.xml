@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.5.0-beta-1</version>
+        <version>3.5.0</version>
     </parent>
 
     <name>Kitodo - API</name>
