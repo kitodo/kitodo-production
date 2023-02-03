@@ -11,13 +11,13 @@
 
 package org.kitodo.production.model.bibliography.course;
 
-import org.kitodo.api.dataformat.mets.KitodoUUID;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
+
+import org.kitodo.api.dataformat.mets.KitodoUUID;
 
 
 /**
@@ -586,11 +586,15 @@ public class Issue {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (!(obj instanceof Issue)) return false;
+        if (this == obj) {
+            return true;
+        }
+        if (!(obj instanceof Issue)) {
+            return false;
+        }
         Issue other = (Issue) obj;
-        return id.equals(other.id) && course.equals(other.course) &&
-                Objects.equals(additions, other.additions) && Objects.equals(daysOfWeek, other.daysOfWeek) &&
-                Objects.equals(exclusions, other.exclusions) && Objects.equals(heading, other.heading);
+        return id.equals(other.id) && course.equals(other.course)
+                && Objects.equals(additions, other.additions) && Objects.equals(daysOfWeek, other.daysOfWeek)
+                && Objects.equals(exclusions, other.exclusions) && Objects.equals(heading, other.heading);
     }
 }

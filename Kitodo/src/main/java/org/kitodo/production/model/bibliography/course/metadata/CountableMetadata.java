@@ -55,7 +55,7 @@ public class CountableMetadata {
 
     /**
      * Date and issue this counter appears the first time,
-     * boolean to check if this metadata counter is only associated to issue or not
+     * boolean to check if this metadata counter is only associated to issue or not.
      */
     private Triple<LocalDate, Issue, Boolean> create;
 
@@ -254,11 +254,13 @@ public class CountableMetadata {
         if (metadataType == null || metadataType.equals(this.metadataType)) {
             if (this.create.getRight()) {
                 return  Objects.nonNull(issue) && Objects.equals(this.create.getMiddle(), issue.getRight());
-            } else return (null == create
-                    && new IssueComparator(block).compare(Pair.of(this.create.getLeft(), this.create.getMiddle()), issue) <= 0
-                    && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
-                    || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
-                    && (issue == null && this.delete == null || issue.equals(this.delete)));
+            } else {
+                return (null == create
+                        && new IssueComparator(block).compare(Pair.of(this.create.getLeft(), this.create.getMiddle()), issue) <= 0
+                        && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
+                        || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
+                        && (issue == null && this.delete == null || issue.equals(this.delete)));
+            }
         }
         return false;
     }
