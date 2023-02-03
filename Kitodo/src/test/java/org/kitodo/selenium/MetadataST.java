@@ -154,6 +154,25 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verifies that clicking the "collapse all" and "expand all" buttons in the structure panel of the metadata editor
+     * does indeed collapse and expand all tree nodes correctly.
+     * @throws Exception when page navigation fails
+     */
+    @Test
+    public void toggleAllStructureNodesTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata();
+        Assert.assertEquals("Number of visible nodes is wrong initially", 2,
+                Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
+        Pages.getMetadataEditorPage().collapseAll();
+        Assert.assertEquals("Number of visible nodes after collapsing all is wrong", 1,
+                Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
+        Pages.getMetadataEditorPage().expandAll();
+        Assert.assertEquals("Number of visible nodes after expanding all is wrong", 2,
+                Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
+    }
+
+    /**
      * Tests total number of scans.
      */
     @Test
