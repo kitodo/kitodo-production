@@ -834,7 +834,7 @@ label.ui-outputlabel[for] {
 }
 
 #filterMenuWrapper > .ui-inputgroup {
-    position: relative; /* TODO kann das weg? */
+    position: relative;
 }
 
 #filterInputForm {
@@ -910,7 +910,6 @@ label.ui-outputlabel[for] {
 
 #parsedFiltersForm\:parsedFilters {
     position: absolute;
-    z-index: 1; /* TODO remove when not needed */
     max-width: calc(100% - 200px);
 }
 

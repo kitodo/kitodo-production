@@ -11,6 +11,7 @@
 
 package org.kitodo.production.filters;
 
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -75,18 +76,9 @@ public class ParsedFilter {
         return matcher.find();
     }
 
-    /**
-     * Get or modifier.
-     *
-     * @return value of or
-     */
-    public boolean isOr() {
-        return false; // TODO implement
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) {
+        if (Objects.isNull(o) || !Objects.equals(getClass(), o.getClass())) {
             return false;
         }
         return plainFilter.equals(((ParsedFilter) o).getPlainFilter());

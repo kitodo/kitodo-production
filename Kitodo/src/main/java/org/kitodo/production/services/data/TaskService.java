@@ -294,7 +294,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      * @return a list of titles
      */
     public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
-        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows()); // TODO nur template tasks?
+        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
     }
 
     @Override

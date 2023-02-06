@@ -39,13 +39,11 @@ public class FilterMenu {
             FilterString.TASKLOCKED,
             FilterString.TASKOPEN,
             FilterString.TASKDONE,
-            FilterString.TASKDONETITLE,
             FilterString.PROJECT,
             FilterString.ID,
             FilterString.PARENTPROCESSID,
             FilterString.PROCESS,
             FilterString.BATCH,
-            FilterString.TASKAUTOMATIC,
             FilterString.PROPERTY
     );
     private static final List<FilterString> taskCategories = Arrays.asList(
@@ -56,7 +54,6 @@ public class FilterMenu {
             FilterString.ID,
             FilterString.PROCESS,
             FilterString.BATCH,
-            FilterString.TASKAUTOMATIC,
             FilterString.PROPERTY
     );
     private static final List<String> userCategories = Arrays.asList(
