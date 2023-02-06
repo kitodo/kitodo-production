@@ -29,6 +29,10 @@
                           title="#{DataEditorForm.processTitle}"/>
             <h:outputText styleClass="set-apart"
                           value="(#{msgs.id}: #{DataEditorForm.process.id})"/>
+            <h:outputText id="numberOfScans"
+                          styleClass="set-apart"
+                          value="(#{msgs['dataEditor.numberOfScans']}: #{DataEditorForm.numberOfScans})"/>
+
         </h3>
         <h:form id="metadataEditorLayoutForm">
             <p:commandButton onclick="saveLayout()"
