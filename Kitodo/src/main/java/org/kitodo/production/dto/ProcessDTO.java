@@ -48,6 +48,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Date processingBeginLastTask;
     private Date processingEndLastTask;
     private Integer correctionCommentStatus;
+    private boolean hasComments;
 
     /**
      * Get project.
@@ -559,5 +560,23 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setCorrectionCommentStatus(Integer status) {
         this.correctionCommentStatus = status;
+    }
+
+    /**
+     * Get hasComments. Value is true when the process has any comments.
+     *
+     * @return value of hasComments
+     */
+    public boolean hasComments() {
+        return hasComments;
+    }
+
+    /**
+     * Set hasComments. Value should be set to true when the process has any comments.
+     *
+     * @param hasComments as boolean
+     */
+    public void setHasComments(boolean hasComments) {
+        this.hasComments = hasComments;
     }
 }

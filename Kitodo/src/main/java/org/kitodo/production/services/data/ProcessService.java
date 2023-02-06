@@ -919,6 +919,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
             processDTO.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
             processDTO.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+            processDTO.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
             convertLastProcessingDates(jsonObject, processDTO);
             convertTaskProgress(jsonObject, processDTO);
 
@@ -2458,27 +2459,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Create and return String used as tooltip for a given process. Tooltip contains authors, timestamps and messages
-     * of correction comments associated with tasks of the given process.
+     * Retrieve comments for the given process.
      *
      * @param processDTO
      *          process for which the tooltip is created
-     * @return tooltip containing correction messages
+     * @return List containing comments of given process
      *
      * @throws DAOException thrown when process cannot be loaded from database
      */
-    public String createCorrectionMessagesTooltip(ProcessDTO processDTO) throws DAOException {
+    public List<Comment> getComments(ProcessDTO processDTO) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
-                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        return createCommentTooltip(correctionComments);
-    }
-
-    private String createCommentTooltip(List<Comment> comments) {
-        return comments.stream()
-                .map(c -> " - [" + c.getCreationDate() + "] " + c.getAuthor().getFullName() + ": " + c.getMessage()
-                        + " (" + Helper.getTranslation("fixed") + ": " + c.isCorrected() + ")")
-                .collect(Collectors.joining(NEW_LINE_ENTITY));
+        return ServiceManager.getCommentService().getAllCommentsByProcess(process);
     }
 
     /**

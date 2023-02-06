@@ -100,15 +100,23 @@
                               title="#{ProcessForm.convertProcessingDate(process.processingEndLastTask)}"/>
             </p:column>
 
-            <p:column styleClass="correction-column genericSortIcon"
+            <p:column styleClass="comment-column genericSortIcon"
                       width="85"
                       sortBy="#{process.correctionCommentStatus}"
-                      rendered="#{ProcessForm.showColumn('process.correctionMessage')}"
-                      headerText="#{msgs.correction}">
-                <h:outputText value="#{msgs.correctionK}"
-                              title="#{ProcessForm.getCorrectionMessages(process)}"
-                              styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                              rendered="#{process.correctionCommentStatus gt 0}"/>
+                      rendered="#{ProcessForm.showColumn('process.comments')}"
+                      headerText="#{msgs.comments}">
+                <h:panelGroup id="commentIcon">
+                    <h:panelGroup styleClass="fa fa-comment"
+                                  rendered="#{process.hasComments() and process.correctionCommentStatus eq 0}"/>
+                    <h:outputText value="#{msgs.correctionK}"
+                                  styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{process.correctionCommentStatus gt 0}"/>
+                </h:panelGroup>
+                <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true" rendered="#{process.hasComments()}">
+                    <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
+                        <ui:param name="comments" value="#{commentTooltipView.getComments(process)}"/>
+                    </ui:include>
+                </p:tooltip>
             </p:column>
             <p:column headerText="#{msgs.project}"
                       sortBy="#{process.project.title.keyword}"
