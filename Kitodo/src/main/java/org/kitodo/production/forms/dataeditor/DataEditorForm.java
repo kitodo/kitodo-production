@@ -34,6 +34,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -246,13 +247,16 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @param referringView
      *            JSF page the user came from
      */
-    public void open(String processID, String referringView) {
+    public void open(String processID, String referringView, String taskId) {
         try {
             this.referringView = referringView;
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
             this.checkProjectFolderConfiguration();
+            if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
+                this.templateTaskId = Integer.parseInt(taskId);
+            }
             this.loadDataEditorSettings();
             errorMessage = "";
 
@@ -954,15 +958,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Set templateTaskId.
-     *
-     * @param templateTaskId as int
-     */
-    public void setTemplateTaskId(int templateTaskId) {
-        this.templateTaskId = templateTaskId;
-    }
-
-    /**
      * Get dataEditorSetting.
      *
      * @return value of dataEditorSetting
@@ -1005,6 +1000,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             }

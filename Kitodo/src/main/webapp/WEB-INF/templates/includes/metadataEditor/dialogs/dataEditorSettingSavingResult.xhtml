@@ -1,0 +1,51 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+   <p:dialog id="dataEditorSavingResultDialog"
+             widgetVar="dataEditorSavingResultDialog"
+             width="480px"
+             resizable="false"
+             showHeader="false"
+             dynamic="true"
+             modal="true">
+      <h:form id="dataEditorSavingResultForm">
+         <p:panelGrid columns="1" layout="grid">
+            <p:row>
+               <h3>#{msgs['dataEditor.layoutSavedSuccessfullyTitle']}</h3>
+               <h:panelGroup layout="block"
+                             styleClass="not-scrollable dialogFieldWrapper">
+                  <div>
+                     <h:outputText value="#{msgs['dataEditor.layoutSavedSuccessfullyText']}"/>
+                  </div>
+               </h:panelGroup>
+
+               <h:panelGroup layout="block"
+                             styleClass="dialogButtonWrapper">
+                  <p:commandButton id="reload"
+                                   onclick="PF('dataEditorSavingResultDialog').hide();"
+                                   type="button"
+                                   value="#{msgs.ok}"
+                                   icon="fa fa-check"
+                                   iconPos="right"
+                                   styleClass="primary right"/>
+               </h:panelGroup>
+            </p:row>
+         </p:panelGrid>
+      </h:form>
+   </p:dialog>
+</ui:composition>
