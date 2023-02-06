@@ -11,6 +11,8 @@
 
 package org.kitodo.docket;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,9 +21,13 @@ import org.kitodo.api.docket.Property;
 
 public class DocketDataGenerator {
 
-    public DocketData createDocketData(String processID, String signatur, String docType) {
+    /**
+     * Creates data for JUnit test.
+     */
+    public DocketData createDocketData(String processID, String signatur, String docType) throws URISyntaxException {
         DocketData docketdata = new DocketData();
         docketdata.setCreationDate("01.01.2100");
+        docketdata.setMetadataFile(new URI("src/test/resources/metadata/" + processID + "/meta.xml"));
         docketdata.setProcessId(processID);
         docketdata.setProcessName("ProcessTitle");
         docketdata.setProjectName("projectTitle");
@@ -60,7 +66,10 @@ public class DocketDataGenerator {
         return docketdata;
     }
 
-    public List<DocketData> createDocketData(List<String> processIds) {
+    /**
+     * Creates data for JUnit test.
+     */
+    public List<DocketData> createDocketData(List<String> processIds) throws URISyntaxException {
         List<DocketData> docketData = new ArrayList<>();
         for (String processId : processIds) {
             docketData.add(createDocketData(processId, "AZ-234", "manuscript"));

@@ -38,6 +38,18 @@ import org.kitodo.api.docket.DocketData;
  */
 public class ExportDocket {
 
+    File xsltFile;
+
+    /**
+     * Makes the class polymorphic.
+     * 
+     * @param xsltFile
+     *            XSLT file
+     */
+    ExportDocket(File xsltFile) {
+        this.xsltFile = xsltFile;
+    }
+
     /**
      * This method exports the production metadata as run note to a given
      * stream. the docket.xsl has to be in the config-folder.
@@ -47,12 +59,11 @@ public class ExportDocket {
      * @throws IOException
      *             Throws IOException, when pdfGeneration fails
      */
-    void startExport(DocketData docketData, OutputStream outputStream, File xsltFile) throws IOException {
-        ExportXmlLog exl = new ExportXmlLog();
+    void startExport(DocketData docketData, OutputStream outputStream) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        exl.startExport(docketData, out);
+        new ExportXmlLog(docketData).accept(out);
 
-        byte[] pdfBytes = generatePdfBytes(out, xsltFile);
+        byte[] pdfBytes = generatePdfBytes(out);
 
         outputStream.write(pdfBytes);
         outputStream.flush();
@@ -68,17 +79,16 @@ public class ExportDocket {
      * @throws IOException
      *             Throws IOException, when pdfGeneration fails.
      */
-    void startExport(Iterable<DocketData> docketDataList, OutputStream os, File xsltFile) throws IOException {
-        ExportXmlLog exl = new ExportXmlLog();
+    void startExport(Iterable<DocketData> docketDataList, OutputStream os) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        exl.startMultipleExport(docketDataList, out);
+        new ExportXmlLog(docketDataList).accept(out);
 
-        byte[] pdfBytes = generatePdfBytes(out, xsltFile);
+        byte[] pdfBytes = generatePdfBytes(out);
 
         os.write(pdfBytes);
     }
 
-    private byte[] generatePdfBytes(ByteArrayOutputStream out, File xsltFile) throws IOException {
+    private byte[] generatePdfBytes(ByteArrayOutputStream out) throws IOException {
         // generate pdf file
         StreamSource source = new StreamSource(new ByteArrayInputStream(out.toByteArray()));
         StreamSource transformSource = new StreamSource(xsltFile);

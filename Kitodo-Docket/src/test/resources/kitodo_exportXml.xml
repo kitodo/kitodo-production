@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xml-config>
+  <namespace name="kitodo" value="http://meta.kitodo.org/v1/" />
+  <mets>
+    <property name="valueMD" value="//kitodo:kitodo/kitodo:metadata[@name='ValueMetadata']" />
+  </mets>
+</xml-config>
