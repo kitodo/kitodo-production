@@ -18,14 +18,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.rules.TestRule;
-import org.kitodo.config.ConfigCore;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.selenium.testframework.helper.TestWatcherImpl;
 
 public class BaseTestSelenium {
 
@@ -77,11 +74,4 @@ public class BaseTestSelenium {
         MockDatabase.stopDatabaseServer();
         MockDatabase.cleanDatabase();
     }
-
-    /**
-     * Watcher for WebDriverExceptions on travis which takes screenshot and sends
-     * email
-     */
-    @Rule
-    public TestRule seleniumExceptionWatcher = new TestWatcherImpl();
 }
