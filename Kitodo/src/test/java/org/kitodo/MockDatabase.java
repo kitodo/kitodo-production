@@ -990,6 +990,7 @@ public class MockDatabase {
         sixthFolder.setProject(project);
         project.getFolders().add(sixthFolder);
 
+        project.setMediaView(secondFolder);
         ServiceManager.getProjectService().save(project);
     }
 
