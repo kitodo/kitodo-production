@@ -24,6 +24,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "numberOfScans")
     private WebElement numberOfScans;
 
+    @FindBy(id = "paginationPanel")
+    private WebElement paginationPanel;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -44,5 +47,13 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public String getNumberOfScans() {
         return numberOfScans.getText();
+    }
+
+    /**
+     * Return whether pagination panel is displayed or not.
+     * @return whether pagination panel is displayed or not
+     */
+    public boolean isPaginationPanelVisible() {
+        return paginationPanel.isDisplayed();
     }
 }

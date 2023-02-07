@@ -26,14 +26,14 @@
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
 
-            <p:remoteCommand 
-                name="triggerOnPageDrop" 
-                actionListener="#{DataEditorForm.galleryPanel.onPageDrop}" 
+            <p:remoteCommand
+                name="triggerOnPageDrop"
+                actionListener="#{DataEditorForm.galleryPanel.onPageDrop}"
                 update="@(.pageList)
                         logicalTree
                         physicalTree
                         paginationForm:paginationWrapperPanel"/>
-            
+
             <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
 
             <p:remoteCommand name="sendGallerySelect"
@@ -61,17 +61,6 @@
                                      title="#{msgs['dataEditor.galleryStructuredView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
-                    </p:commandButton>
-                </p:column>
-                <p:column>
-                    <p:commandButton id="gridViewButton"
-                                     update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-th-large"
-                                     oncomplete="metadataEditor.shortcuts.updateViews()"
-                                     title="#{msgs['dataEditor.galleryUnstructuredView']}"
-                                     rendered="false"
-                                     styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
-                        <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
                 </p:column>
                 <p:column>
@@ -210,37 +199,6 @@
                     </p:outputPanel>
 
                 </p:fieldset>
-            </ui:fragment>
-
-            <!-- Pages in UNstructured view -->
-            <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' and not empty DataEditorForm.galleryPanel.medias}">
-                <div class="thumbnail-wrapper"
-                     a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
-                     a:onmouseup="metadataEditor.gallery.handleMouseUp(event)"
-                     a:ondragstart="metadataEditor.gallery.handleDragStart(event)">
-                    <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
-                               var="media">
-                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
-                            <p:panel a:data-order="#{media.order}">
-                                <h:panelGroup layout="block" styleClass="thumbnail-container">
-                                        <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        rendered="#{media.showingInPreview}"
-                                                        a:loading="lazy">
-                                            <f:param name="id"
-                                                     value="#{media.id}"/>
-                                            <f:param name="process"
-                                                     value="#{DataEditorForm.process.id}"/>
-                                            <f:param name="sessionId"
-                                                     value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                        </p:graphicImage>
-                                    <p:outputPanel class="thumbnail-overlay">
-                                        #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                    </p:outputPanel>
-                                </h:panelGroup>
-                            </p:panel>
-                        </p:outputPanel>
-                    </ui:repeat>
-                </div>
             </ui:fragment>
 
             <!-- View current page with OpenLayers -->

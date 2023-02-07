@@ -21,9 +21,10 @@ public enum TabIndex {
 
     // user edit page
     USER_DETAILS(0),
-    USER_ROLES(1),
-    USER_PROJECT_LIST(2),
-    USER_CLIENT_LIST(3),
+    USER_METADATA_EDITOR_SETTINGS(1),
+    USER_ROLES(2),
+    USER_PROJECT_LIST(3),
+    USER_CLIENT_LIST(4),
 
     // role edit page
     ROLE_DETAILS(0),

@@ -102,6 +102,15 @@ public class User extends BaseBean {
     @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Filter> filters;
 
+    @Column(name = "default_gallery_view_mode")
+    private String defaultGalleryViewMode;
+
+    @Column(name = "show_comments_by_default")
+    private boolean showCommentsByDefault;
+
+    @Column(name = "show_pagination_by_default")
+    private boolean showPaginationByDefault;
+
     /**
      * Constructor for User Entity.
      */
@@ -135,6 +144,9 @@ public class User extends BaseBean {
         this.surname = user.surname;
         this.withMassDownload = user.withMassDownload;
         this.shortcuts = user.shortcuts;
+        this.showCommentsByDefault = user.showCommentsByDefault;
+        this.showPaginationByDefault = user.showPaginationByDefault;
+        this.defaultGalleryViewMode = user.defaultGalleryViewMode;
 
         if (user.roles != null) {
             this.roles = user.roles;
@@ -428,6 +440,60 @@ public class User extends BaseBean {
     }
 
     /**
+     * Get defaultGalleryViewMode.
+     *
+     * @return value of defaultGalleryViewMode
+     */
+    public String getDefaultGalleryViewMode() {
+        return defaultGalleryViewMode;
+    }
+
+    /**
+     * Set defaultGalleryViewMode.
+     *
+     * @param defaultGalleryViewMode as java.lang.String
+     */
+    public void setDefaultGalleryViewMode(String defaultGalleryViewMode) {
+        this.defaultGalleryViewMode = defaultGalleryViewMode;
+    }
+
+    /**
+     * Get showCommentsByDefault.
+     *
+     * @return value of showCommentsByDefault
+     */
+    public boolean isShowCommentsByDefault() {
+        return showCommentsByDefault;
+    }
+
+    /**
+     * Set showCommentsByDefault.
+     *
+     * @param showCommentsByDefault as boolean
+     */
+    public void setShowCommentsByDefault(boolean showCommentsByDefault) {
+        this.showCommentsByDefault = showCommentsByDefault;
+    }
+
+    /**
+     * Get showPaginationByDefault.
+     *
+     * @return value of showPaginationByDefault
+     */
+    public boolean isShowPaginationByDefault() {
+        return showPaginationByDefault;
+    }
+
+    /**
+     * Set showPaginationByDefault.
+     *
+     * @param showPaginationByDefault as boolean
+     */
+    public void setShowPaginationByDefault(boolean showPaginationByDefault) {
+        this.showPaginationByDefault = showPaginationByDefault;
+    }
+
+    /**
      * Removes a user from the environment. Since the
      * user ID may still be referenced somewhere, the user is not hard deleted from
      * the database, instead the account is set inactive and invisible.
@@ -438,7 +504,6 @@ public class User extends BaseBean {
      * in the UserForm.save() function. In addition, all personally identifiable
      * information is removed from the database as well.
      */
-
     public void selfDestruct() {
         this.deleted = true;
         this.login = null;
