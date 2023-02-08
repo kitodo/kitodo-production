@@ -33,6 +33,12 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "fileReferencesUpdatedDialog")
     private WebElement fileReferencesUpdatedDialog;
 
+    @FindBy(id = "ok")
+    private WebElement okButton;
+
+    @FindBy(id = "close")
+    private WebElement closeButton;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -76,5 +82,19 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public boolean isFileReferencesUpdatedDialogVisible() {
         return fileReferencesUpdatedDialog.isDisplayed();
+    }
+
+    /**
+     * Acknowledge file reference changes by clicking "OK" button on corresponding popup dialog.
+     */
+    public void acknowledgeFileReferenceChanges() {
+        okButton.click();
+    }
+
+    /**
+     * Close Metadata editor to release metadata lock.
+     */
+    public void closeEditor() {
+        closeButton.click();
     }
 }

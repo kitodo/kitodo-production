@@ -97,6 +97,8 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void totalNumberOfScansTest() throws Exception {
+        User metadataUser = ServiceManager.getUserService().getByLogin("kowal");
+        Pages.getLoginPage().goTo().performLogin(metadataUser);
         Pages.getProcessesPage().goTo().editMetadata();
         assertEquals("Total number of scans is not correct", "(Anzahl von Scans: 1)",
                 Pages.getMetadataEditorPage().getNumberOfScans());
@@ -108,6 +110,8 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void showPaginationByDefaultTest() throws Exception {
+        User metadataUser = ServiceManager.getUserService().getByLogin("kowal");
+        Pages.getLoginPage().goTo().performLogin(metadataUser);
         Pages.getProcessesPage().goTo().editMetadata();
         assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
         Pages.getUserEditPage().setPaginationToShowByDefault();
@@ -126,10 +130,12 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_REFERENCES_TEST_PROCESS_TITLE);
         assertTrue("Media references updated dialog not visible", Pages.getMetadataEditorPage()
                 .isFileReferencesUpdatedDialogVisible());
+        Pages.getMetadataEditorPage().acknowledgeFileReferenceChanges();
     }
 
     @After
-    public void logout() throws Exception {
+    public void closeEditorAndLogout() throws Exception {
+        Pages.getMetadataEditorPage().closeEditor();
         Pages.getTopNavigation().logout();
     }
 
