@@ -153,6 +153,7 @@ public class MetadataST extends BaseTestSelenium {
                 Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
         Assert.assertTrue("Wrong resulting order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
+        Pages.getMetadataEditorPage().closeEditor();
         cleanup();
     }
 
@@ -165,6 +166,7 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata();
         assertEquals("Total number of scans is not correct", "(Anzahl von Scans: 1)",
                 Pages.getMetadataEditorPage().getNumberOfScans());
+        Pages.getMetadataEditorPage().closeEditor();
     }
 
     /**
@@ -180,6 +182,7 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getUserEditPage().setPaginationToShowByDefault();
         Pages.getProcessesPage().goTo().editMetadata();
         assertTrue(Pages.getMetadataEditorPage().isPaginationPanelVisible());
+        Pages.getMetadataEditorPage().closeEditor();
     }
 
     /**
