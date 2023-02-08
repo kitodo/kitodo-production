@@ -53,9 +53,8 @@
                 <h:outputText rendered="#{process.getParentID() ne 0 and process.hasChildren()}"><i class="fa fa-exchange fa-rotate-90" title="#{msgs.hierarchicalBoth}"/></h:outputText>
             </p:column>
             <p:column id="idColumn"
-                      width="50"
+                      width="70"
                       styleClass="numeric"
-                      resizable="false"
                       headerText="#{msgs.id}"
                       sortBy="#{process.id}">
                 <h:outputText value="#{process.id}"
