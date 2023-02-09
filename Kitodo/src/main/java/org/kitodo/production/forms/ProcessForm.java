@@ -1059,22 +1059,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Retrieve correction comments of given process and return them as a tooltip String.
-     *
-     * @param processDTO
-     *          process for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given process
-     */
-    public String getCorrectionMessages(ProcessDTO processDTO) {
-        try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
-    }
-
-    /**
      * Return path to processes page.
      * @return path to processes page
      */
@@ -1082,7 +1066,7 @@ public class ProcessForm extends TemplateBaseForm {
         return this.processesPage;
     }
 
-    /** 
+    /**
      * Returns the provided date as string in the format of "yyyy-MM-dd HH:mm:ss".
      * @param date the date to be converted
      * @return the converted date as string
@@ -1130,7 +1114,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Navigates to processes list and optionally resets table view state.
-     * 
+     *
      * @param resetTableViewState whether to reset table view state
      */
     public String navigateToProcessesList(boolean resetTableViewState) {

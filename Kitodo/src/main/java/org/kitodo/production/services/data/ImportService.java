@@ -47,7 +47,9 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.DataImport;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
@@ -70,6 +72,7 @@ import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -242,8 +245,31 @@ public class ImportService {
             return Helper.getTranslation("recordId");
         } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
+        } else if (!importConfiguration.getSearchFields().isEmpty()) {
+            return importConfiguration.getSearchFields().get(0).getLabel();
         }
         return "";
+    }
+
+    /**
+     * Check and return whether to skip hit list for given ImportConfiguration and search field or not.
+     * Hit list is skipped either if SearchInterfaceType of given ImportConfiguration does not support
+     * hit lists (e.g. OAI interfaces in their current implementation) or if the provided search field
+     * equals the ID search field of the given ImportConfiguration.
+     * @param configuration ImportConfiguration to check
+     * @param field value of SearchField to check
+     * @return whether to skip hit list or not
+     */
+    public static boolean skipHitlist(ImportConfiguration configuration, String field) {
+        if (SearchInterfaceType.FTP.name().equals(configuration.getInterfaceType())) {
+            return false;
+        }
+        else if (SearchInterfaceType.OAI.name().equals(configuration.getInterfaceType())
+                || field.equals(configuration.getIdSearchField().getLabel())) {
+            return true;
+        }
+        return (Objects.isNull(configuration.getMetadataRecordIdXPath())
+                || Objects.isNull(configuration.getMetadataRecordTitleXPath()));
     }
 
     /**
@@ -512,10 +538,8 @@ public class ImportService {
         int level = 1;
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
-            HashMap<String, String> parentIDMetadata = new HashMap<>();
-            parentIDMetadata.put(importConfiguration.getIdentifierMetadata(), parentID);
             try {
-                Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
+                Process parentProcess = loadParentProcess(template.getRuleset(), projectId, parentID);
                 if (Objects.isNull(parentProcess)) {
                     if (Objects.nonNull(importConfiguration.getParentMappingFile())) {
                         parentID = importProcessAndReturnParentID(recordId, processes, importConfiguration, projectId,
@@ -542,24 +566,21 @@ public class ImportService {
         }
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
-        String idMetadata = importConfiguration.getIdentifierMetadata();
-        if (Objects.nonNull(parentID) && level == importDepth && Objects.nonNull(idMetadata)) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId, idMetadata);
+        if (Objects.nonNull(parentID) && level == importDepth) {
+            checkForParent(parentID, template.getRuleset(), projectId);
         }
     }
 
     /**
      * Check if there already is a parent process in Database.
      */
-    public void checkForParent(String parentID, int rulesetID, int projectID, String identifierMetadata)
+    public void checkForParent(String parentID, Ruleset ruleset, int projectID)
             throws DAOException, IOException, ProcessGenerationException {
         if (Objects.isNull(parentID)) {
             this.parentTempProcess = null;
             return;
         }
-        HashMap<String, String> parentIDMetadata = new HashMap<>();
-        parentIDMetadata.put(identifierMetadata, parentID);
-        Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
+        Process parentProcess = loadParentProcess(ruleset, projectID, parentID);
         if (Objects.nonNull(parentProcess)) {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
@@ -914,24 +935,31 @@ public class ImportService {
         return parentTempProcess;
     }
 
-    private Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
-            throws ProcessGenerationException, DAOException {
+    private Process loadParentProcess(Ruleset ruleset, int projectId, String parentId)
+            throws ProcessGenerationException, DAOException, IOException {
+
         Process parentProcess = null;
-        try {
-            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
-                    throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                            + process.getId() + " is null!");
-                }
-                if (process.getProject().getId() == projectId
-                        && process.getRuleset().getId().equals(rulesetId)) {
-                    parentProcess = process;
-                    break;
+        for (String identifierMetadata : getFunctionalMetadata(ruleset, FunctionalMetadata.RECORD_IDENTIFIER)) {
+            if (Objects.isNull(parentProcess)) {
+                HashMap<String, String> parentIDMetadata = new HashMap<>();
+                parentIDMetadata.put(identifierMetadata, parentId);
+                try {
+                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
+                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                                    + process.getId() + " is null!");
+                        }
+                        if (process.getProject().getId() == projectId
+                                && process.getRuleset().getId().equals(ruleset.getId())) {
+                            parentProcess = process;
+                            break;
+                        }
+                    }
+                } catch (DataException e) {
+                    logger.error(e.getLocalizedMessage());
                 }
             }
-        } catch (DataException e) {
-            logger.error(e.getLocalizedMessage());
         }
         return parentProcess;
     }
@@ -1148,7 +1176,7 @@ public class ImportService {
             }
             final String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
                     templateId, false, parentMetadataKey);
-            setParentProcess(parentId, projectId, template, importConfiguration.getIdentifierMetadata());
+            setParentProcess(parentId, projectId, template);
             tempProcess = processList.get(0);
             String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
@@ -1199,11 +1227,11 @@ public class ImportService {
         }
     }
 
-    private void setParentProcess(String parentId, int projectId, Template template, String idMetadata)
+    private void setParentProcess(String parentId, int projectId, Template template)
             throws DAOException, IOException, ProcessGenerationException {
+        parentTempProcess = null;
         if (StringUtils.isNotBlank(parentId)) {
-            parentTempProcess = null;
-            checkForParent(parentId, template.getRuleset().getId(), projectId, idMetadata);
+            checkForParent(parentId, template.getRuleset(), projectId);
         }
     }
 
@@ -1309,5 +1337,32 @@ public class ImportService {
             }
         }
         return urlParameters;
+    }
+
+    /**
+     * Check and return whether the functional metadata 'recordIdentifier' is configured for all top level doc struct
+     * types in the given RulesetManagementInterface or not.
+     * @param rulesetManagementInterface RulesetManagementInterface to use
+     * @return whether 'recordIdentifier' is seht for all doc struct types
+     */
+    public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagementInterface) {
+        User user = ServiceManager.getUserService().getCurrentUser();
+        String metadataLanguage = user.getMetadataLanguage();
+        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
+                ? Locale.ENGLISH.getCountry() : metadataLanguage);
+        Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
+        Collection<String> recordIdentifierMetadata = rulesetManagementInterface
+                .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
+        for (Map.Entry<String, String> division : structuralElements.entrySet()) {
+            StructuralElementViewInterface viewInterface = rulesetManagementInterface
+                    .getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
+            List<String> allowedMetadataKeys = viewInterface.getAllowedMetadata().stream()
+                    .map(MetadataViewInterface::getId).collect(Collectors.toList());
+            allowedMetadataKeys.retainAll(recordIdentifierMetadata);
+            if (allowedMetadataKeys.isEmpty()) {
+                return false;
+            }
+        }
+        return true;
     }
 }

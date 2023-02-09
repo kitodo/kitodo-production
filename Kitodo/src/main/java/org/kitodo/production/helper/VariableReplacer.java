@@ -71,7 +71,7 @@ public class VariableReplacer {
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
                 "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
-                + "(?:(filename|basename))))\\)");
+                + "(?:(filename|basename|relativepath))))\\)");
 
     /**
      * The map is filled with replacement instructions that are required for
@@ -392,7 +392,8 @@ public class VariableReplacer {
         if (Objects.isNull(stringWithVariables)) {
             return false;
         }
-        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)");
+        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)")
+                | stringWithVariables.contains("(relativepath)");
     }
 
     /**
@@ -404,6 +405,8 @@ public class VariableReplacer {
                 return variableFinder.group(1) + FilenameUtils.getName(filename);
             case "basename":
                 return variableFinder.group(1) + FilenameUtils.getBaseName(filename);
+            case "relativepath":
+                return variableFinder.group(1) + filename;
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();

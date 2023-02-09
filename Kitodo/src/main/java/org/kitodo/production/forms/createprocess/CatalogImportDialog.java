@@ -28,7 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
-import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -105,7 +104,6 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      */
     public void search() {
         try {
-            createProcessForm.setIdentifierMetadata(hitModel.getImportConfiguration().getIdentifierMetadata());
             if (skipHitList(hitModel.getImportConfiguration(), hitModel.getSelectedField())) {
                 getRecordById(hitModel.getSearchTerm());
             } else {
@@ -129,12 +127,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     }
 
     private boolean skipHitList(ImportConfiguration importConfiguration, String searchField) {
-        if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())
-                || searchField.equals(importConfiguration.getIdSearchField().getLabel())) {
-            return true;
-        }
-        return (Objects.isNull(importConfiguration.getMetadataRecordIdXPath())
-                || Objects.isNull(importConfiguration.getMetadataRecordTitleXPath()));
+        return ImportService.skipHitlist(importConfiguration, searchField);
     }
 
     /**

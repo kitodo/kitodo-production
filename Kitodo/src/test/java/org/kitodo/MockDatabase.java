@@ -964,6 +964,14 @@ public class MockDatabase {
         fifthFolder.setCreateFolder(true);
         fifthFolder.setLinkingMode(LinkingMode.ALL);
 
+        Folder sixthFolder = new Folder();
+        sixthFolder.setFileGroup("LOCAL");
+        sixthFolder.setMimeType("image/tiff");
+        sixthFolder.setPath("images/(processtitle)_media");
+        sixthFolder.setCopyFolder(false);
+        sixthFolder.setCreateFolder(true);
+        sixthFolder.setLinkingMode(LinkingMode.NO);
+
         firstFolder.setProject(project);
         project.getFolders().add(firstFolder);
 
@@ -979,6 +987,10 @@ public class MockDatabase {
         fifthFolder.setProject(project);
         project.getFolders().add(fifthFolder);
 
+        sixthFolder.setProject(project);
+        project.getFolders().add(sixthFolder);
+
+        project.setMediaView(secondFolder);
         ServiceManager.getProjectService().save(project);
     }
 
@@ -1484,7 +1496,6 @@ public class MockDatabase {
         kalliopeConfiguration.setPrestructuredImport(false);
         kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
         kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
-        kalliopeConfiguration.setIdentifierMetadata("CatalogIDDigital");
         kalliopeConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
                 .getById(1)));
 

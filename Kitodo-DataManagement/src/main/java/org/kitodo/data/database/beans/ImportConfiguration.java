@@ -62,9 +62,6 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "default_import_depth")
     private Integer defaultImportDepth;
 
-    @Column(name = "parent_element_type")
-    private String parentElementType;
-
     @Column(name = "parent_element_trim_mode")
     private String parentElementTrimMode;
 
@@ -154,9 +151,6 @@ public class ImportConfiguration extends BaseBean {
 
     @Column(name = "oai_metadata_prefix")
     private String oaiMetadataPrefix;
-
-    @Column(name = "identifier_metadata")
-    private String identifierMetadata;
 
     @Column(name = "metadata_record_id_xpath")
     private String metadataRecordIdXPath;
@@ -314,24 +308,6 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setDefaultImportDepth(Integer defaultImportDepth) {
         this.defaultImportDepth = defaultImportDepth;
-    }
-
-    /**
-     * Get parentElementType.
-     *
-     * @return value of parentElementType
-     */
-    public String getParentElementType() {
-        return parentElementType;
-    }
-
-    /**
-     * Set parentElementType.
-     *
-     * @param parentElementType as java.lang.String
-     */
-    public void setParentElementType(String parentElementType) {
-        this.parentElementType = parentElementType;
     }
 
     /**
@@ -812,24 +788,6 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setOaiMetadataPrefix(String oaiMetadataPrefix) {
         this.oaiMetadataPrefix = oaiMetadataPrefix;
-    }
-
-    /**
-     * Get identifierMetadata.
-     *
-     * @return value of identifierMetadata
-     */
-    public String getIdentifierMetadata() {
-        return identifierMetadata;
-    }
-
-    /**
-     * Set identifierMetadata.
-     *
-     * @param identifierMetadata as java.lang.String
-     */
-    public void setIdentifierMetadata(String identifierMetadata) {
-        this.identifierMetadata = identifierMetadata;
     }
 
     /**

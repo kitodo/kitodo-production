@@ -1,0 +1,41 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:h="http://java.sun.com/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core">
+    <!--@elvariable id="comments" type="List<Comment>"-->
+    <p:dataView var="comment" value="#{comments}" listIcon="false">
+        <p:dataViewListItem>
+            <h:panelGrid columns="4" columnClasses="icon,date,name,message">
+                <h:panelGroup>
+                    <h:outputText value="#{msgs.correctionK}"
+                                  id="commentIcon"
+                                  styleClass="correction-marker #{comment.isCorrected() ? 'corrected' : ''}"
+                                  rendered="#{comment.getType() eq 'ERROR'}"/>
+                </h:panelGroup>
+
+                <h:outputText value="#{comment.getCreationDate()}">
+                    <f:convertDateTime pattern="dd.MM.yyyy HH:mm"/>
+                </h:outputText>
+
+                <h:outputText value="#{comment.getAuthor().getFullName()}:"/>
+
+                <h:outputText value="#{comment.getMessage()}"/>
+            </h:panelGrid>
+        </p:dataViewListItem>
+    </p:dataView>
+</ui:composition>

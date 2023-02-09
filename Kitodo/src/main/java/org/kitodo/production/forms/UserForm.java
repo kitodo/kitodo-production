@@ -56,6 +56,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
@@ -744,5 +745,23 @@ public class UserForm extends BaseForm {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get gallery view modes.
+     *
+     * @return list of Strings
+     */
+    public List<String> getGalleryViewModes() {
+        return GalleryViewMode.getGalleryViewModes();
+    }
+
+    /**
+     * Get translation of GalleryViewMode with given enum value 'galleryViewMode'.
+     * @param galleryViewModeValue enum value of GalleryViewMode
+     * @return translation of GalleryViewMode
+     */
+    public String getGalleryViewModeTranslation(String galleryViewModeValue) {
+        return GalleryViewMode.getByName(galleryViewModeValue).getTranslation();
     }
 }

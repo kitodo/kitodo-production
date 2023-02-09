@@ -19,26 +19,6 @@
         <!--@elvariable id="isViewMode" type="boolean"-->
         <p:row>
             <div>
-                <p:outputLabel for="parentElementType" value="#{msgs['importConfig.field.parentElementType']}"/>
-                <p:selectOneMenu id="parentElementType"
-                                 styleClass="input-with-button"
-                                 disabled="#{isViewMode}"
-                                 value="#{importConfigurationEditView.importConfiguration.parentElementType}">
-                    <f:selectItem itemValue="#{null}"
-                                  itemLabel="-- #{msgs['importConfig.selectParentElementType']} --"
-                                  noSelectionOption="true"/>
-                    <f:selectItems value="#{importConfigurationEditView.parentElementTypes}"/>
-                    <p:ajax event="change"
-                            oncomplete="toggleSave()"/>
-                </p:selectOneMenu>
-                <p:commandButton id="parentElementTypeHelp" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="parentElementTypeHelp"
-                           value="#{msgs['tooltip.importConfig.parentElementTypeHelp']}"/>
-            </div>
-        </p:row>
-        <p:row>
-            <div>
                 <p:outputLabel for="parentElementTrimMode" value="#{msgs['importConfig.field.parentElementTrimMode']}" />
                 <p:selectOneMenu id="parentElementTrimMode"
                                  styleClass="input-with-button"
@@ -54,21 +34,6 @@
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="parentElementTrimModeHelp"
                            value="#{msgs['tooltip.importConfig.parentElementTrimModeHelp']}"/>
-            </div>
-            <div>
-                <p:outputLabel for="defaultImportDepth" value="#{msgs['importConfig.field.defaultImportDepth']} *"/>
-                <p:spinner id="defaultImportDepth"
-                           styleClass="input-with-button"
-                           immediate="true"
-                           min="1"
-                           max="5"
-                           required="#{not empty param['editForm:save']}"
-                           onchange="toggleSave();"
-                           value="#{importConfigurationEditView.importConfiguration.defaultImportDepth}"/>
-                <p:commandButton id="defaultImportDepthHelpButton" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
-                <p:tooltip for="defaultImportDepthHelpButton"
-                           value="#{msgs['tooltip.importConfig.defaultImportDepthHelp']}"/>
             </div>
         </p:row>
 
