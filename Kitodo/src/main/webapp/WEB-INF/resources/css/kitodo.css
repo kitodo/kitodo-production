@@ -1623,8 +1623,12 @@ Mass import
     padding-right: var(--default-half-size);
 }
 
-.correction-column {
+.comment-column {
     text-align: center;
+}
+
+.comment-column .fa-comment {
+    color: var(--medium-gray);
 }
 
 .correction-marker {
@@ -3274,6 +3278,14 @@ Role authority picklist
 }
 
 /*----------------------------------------------------------------------
+User edit form
+----------------------------------------------------------------------*/
+
+#editForm\:userTabView\:defaultGalleryView {
+    width: 100%;
+}
+
+/*----------------------------------------------------------------------
 System page
 ----------------------------------------------------------------------*/
 
@@ -3613,6 +3625,48 @@ footer {
 
 .ui-tooltip {
     max-width: 280px;
+}
+
+.ui-tooltip.comments {
+    max-width: none;
+}
+
+.ui-tooltip.comments .ui-tooltip-arrow {
+    display: none;
+}
+
+.ui-tooltip.comments .ui-tooltip-text {
+    padding: var(--default-half-size);
+    background: var(--pure-white);
+}
+
+.ui-tooltip.comments .ui-dataview-header {
+    display: none;
+}
+
+.ui-tooltip.comments td {
+    vertical-align: top;
+}
+
+.ui-tooltip.comments .icon {
+    display: inline-block;
+    width: 1em;
+}
+
+.ui-tooltip.comments .icon .correction-marker {
+    font-size: inherit;
+}
+
+.ui-tooltip.comments .date {
+    color: var(--medium-gray);
+}
+
+.ui-tooltip.comments .name {
+    font-weight: bold;
+}
+
+.ui-tooltip.comments .message {
+    max-width: 300px;
 }
 
 /*----------------------------------------------------------------------

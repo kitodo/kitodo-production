@@ -794,22 +794,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Retrieve correction comments of process of given task and return them as a tooltip String.
-     *
-     * @param taskDTO
-     *          task for which comment tooltip is created and returned
-     * @return String containing correction comment messages for process of given task
-     */
-    public String getCorrectionMessages(TaskDTO taskDTO) {
-        try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(taskDTO.getProcess());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
-    }
-
-    /**
      * Download to home for single process. First check if this volume is currently
      * being edited by another user and placed in his home directory, otherwise
      * download.

@@ -213,7 +213,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private DataRecord performFTPQueryToRecord(DataImport dataImport, String identifier) {
+    private DataRecord performFTPQueryToRecord(DataImport dataImport, String filename) {
         if (StringUtils.isBlank(dataImport.getHost()) || StringUtils.isBlank(dataImport.getPath())) {
             throw new CatalogException("Missing host or path configuration for FTP import in OPAC configuration "
                     + "for import configuration '" + dataImport.getTitle() + "'");
@@ -224,12 +224,16 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
         try {
             ftpLogin(dataImport);
-            InputStream inputStream = ftpClient.retrieveFileStream(dataImport.getPath() + "/" + identifier);
+            String filepath = dataImport.getPath() + "/" + filename;
+            InputStream inputStream = ftpClient.retrieveFileStream(filepath);
+            if (Objects.isNull(inputStream)) {
+                throw new CatalogException("Unable to load file '" + filepath + "' from configured FTP source!");
+            }
             String stringContent = IOUtils.toString(inputStream, Charset.defaultCharset());
             inputStream.close();
             DataRecord dataRecord = createRecordFromXMLElement(dataImport, stringContent);
             if (!ftpClient.completePendingCommand()) {
-                throw new CatalogException("Unable to import '" + identifier + "'!");
+                throw new CatalogException("Unable to import '" + filename + "'!");
             }
             ftpLogout();
             return dataRecord;
@@ -248,7 +252,10 @@ public class QueryURLImport implements ExternalDataImportInterface {
 
     private DataRecord performQueryToRecord(DataImport dataImport, String queryURL, String identifier)
             throws NoRecordFoundException {
-        String fullUrl = queryURL + AND;
+        String fullUrl = queryURL;
+        if (!dataImport.getUrlParameters().isEmpty()) {
+            fullUrl = fullUrl + AND;
+        }
         SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
         if (Objects.nonNull(interfaceType)) {
             if (Objects.nonNull(interfaceType.getMaxRecordsString())) {

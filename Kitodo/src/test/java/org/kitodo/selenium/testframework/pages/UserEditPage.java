@@ -116,6 +116,9 @@ public class UserEditPage extends EditPage<UserEditPage> {
     @FindBy(partialLinkText = "Benutzerdaten & Einstellungen")
     private WebElement userConfigButton;
 
+    @FindBy(id = "editForm:userTabView:showPaginationPanelByDefault")
+    private WebElement showPaginationByDefaultSwitch;
+
     public UserEditPage() {
         super("pages/userEdit.jsf");
     }
@@ -132,8 +135,6 @@ public class UserEditPage extends EditPage<UserEditPage> {
         lastNameInput.sendKeys(user.getSurname());
         loginInput.sendKeys(user.getLogin());
         locationInput.sendKeys(user.getLocation());
-        clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_0")));
         return this;
     }
 
@@ -181,10 +182,22 @@ public class UserEditPage extends EditPage<UserEditPage> {
         openUserConfig();
         tableSizeInput.clear();
         tableSizeInput.sendKeys("50");
-        clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_1")));
         clickElement(languageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
         clickElement(Browser.getDriver().findElement(By.id(languageSelect.getAttribute("id") + "_1")));
+        switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
+        clickElement(metadataLanguageSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        clickElement(Browser.getDriver().findElement(By.id(metadataLanguageSelect.getAttribute("id") + "_1")));
+        save();
+    }
+
+    /**
+     * Set pagination panel to show by default in metadata editor.
+     */
+    public void setPaginationToShowByDefault() throws Exception {
+        openUserConfig();
+        switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
+        WebElement switchCheckBox = showPaginationByDefaultSwitch.findElement(By.className("ui-chkbox-box"));
+        switchCheckBox.click();
         save();
     }
 

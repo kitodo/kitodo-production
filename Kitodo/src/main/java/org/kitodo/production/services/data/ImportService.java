@@ -254,15 +254,17 @@ public class ImportService {
     /**
      * Check and return whether to skip hit list for given ImportConfiguration and search field or not.
      * Hit list is skipped either if SearchInterfaceType of given ImportConfiguration does not support
-     * hit lists (e.g. OAI and FTP interfaces) or if the provides search field equals the ID search field
-     * of the given ImportConfiguration.
+     * hit lists (e.g. OAI interfaces in their current implementation) or if the provided search field
+     * equals the ID search field of the given ImportConfiguration.
      * @param configuration ImportConfiguration to check
      * @param field value of SearchField to check
      * @return whether to skip hit list or not
      */
     public static boolean skipHitlist(ImportConfiguration configuration, String field) {
-        if (SearchInterfaceType.OAI.name().equals(configuration.getInterfaceType())
-                || SearchInterfaceType.FTP.name().equals(configuration.getInterfaceType())
+        if (SearchInterfaceType.FTP.name().equals(configuration.getInterfaceType())) {
+            return false;
+        }
+        else if (SearchInterfaceType.OAI.name().equals(configuration.getInterfaceType())
                 || field.equals(configuration.getIdSearchField().getLabel())) {
             return true;
         }
@@ -1227,8 +1229,8 @@ public class ImportService {
 
     private void setParentProcess(String parentId, int projectId, Template template)
             throws DAOException, IOException, ProcessGenerationException {
+        parentTempProcess = null;
         if (StringUtils.isNotBlank(parentId)) {
-            parentTempProcess = null;
             checkForParent(parentId, template.getRuleset(), projectId);
         }
     }

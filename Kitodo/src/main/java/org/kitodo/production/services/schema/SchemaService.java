@@ -20,6 +20,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
@@ -141,12 +142,11 @@ public class SchemaService {
             for (Entry<MediaVariant, URI> mediaFileForMediaVariant : physicalDivision.getMediaFiles().entrySet()) {
                 for (Folder folder : folders) {
                     if (folder.getFileGroup().equals(mediaFileForMediaVariant.getKey().getUse())) {
-                        int lastSeparator = mediaFileForMediaVariant.getValue().toString().lastIndexOf('/');
-                        String lastSegment = mediaFileForMediaVariant.getValue().toString()
-                                .substring(lastSeparator + 1);
+                        String mediaFileWithPath = mediaFileForMediaVariant.getValue().toString(); 
+                        String mediaFilename = FilenameUtils.getName(mediaFileWithPath);
                         String mediaFile = variableReplacer.containsFiles(folder.getUrlStructure())
-                                ? variableReplacer.replaceWithFilename(folder.getUrlStructure(), lastSegment)
-                                : variableReplacer.replace(folder.getUrlStructure() + lastSegment);
+                                ? variableReplacer.replaceWithFilename(folder.getUrlStructure(), mediaFileWithPath)
+                                : variableReplacer.replace(folder.getUrlStructure() + mediaFilename);
                         mediaFileForMediaVariant.setValue(new URI(mediaFile));
                     }
                 }

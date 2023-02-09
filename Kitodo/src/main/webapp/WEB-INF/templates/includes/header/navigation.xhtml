@@ -127,7 +127,8 @@
                                     </p:outputPanel>
                                 </div>
                                 <li>
-                                    <h:link value="#{msgs.userData}" outcome="userEdit">
+                                    <h:link id="userSettings"
+                                            value="#{msgs.userData}" outcome="userEdit">
                                         <f:param name="id" value="#{LoginForm.loggedUser.id}"/>
                                     </h:link>
                                 </li>

@@ -1,0 +1,82 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <p:panelGrid id="metadataEditorSettings"
+                 columns="2"
+                 layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="metaDataLanguage"
+                               value="#{msgs.metadataLanguage}"/>
+                <p:selectOneMenu id="metaDataLanguage"
+                                 value="#{UserForm.userObject.metadataLanguage}"
+                                 disabled="#{isViewMode}"
+                                 required="#{empty param['editForm:saveButtonToggler']}">
+                    <f:selectItems value="#{UserForm.metadataLanguages.entrySet().toArray()}"
+                                   var="language"
+                                   itemLabel="#{language.key}"
+                                   itemValue="#{language.value}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
+                <p:outputLabel for="defaultGalleryView"
+                               value="#{msgs['userEdit.metadataEditorSettings.defaultGalleryView']}"/>
+                <p:selectOneRadio id="defaultGalleryView"
+                                  styleClass="ui-corner-all"
+                                  value="#{UserForm.userObject.defaultGalleryViewMode}"
+                                  onchange="toggleSave()">
+                    <f:selectItems value="#{UserForm.galleryViewModes}"
+                                   var="viewMode"
+                                   itemLabel="#{UserForm.getGalleryViewModeTranslation(viewMode)}"/>
+                </p:selectOneRadio>
+            </div>
+            <div>
+                <p:commandButton onclick="PF('changeShortcutsDialog').show()"
+                                 id="showShortcutsDialogButton"
+                                 value="#{msgs['shortcuts.change']}"
+                                 icon="fa fa-pencil fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary">
+                </p:commandButton>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="showCommentsByDefault"
+                               value="#{msgs['userEdit.metadataEditorSettings.showCommentsByDefault']}"/>
+                <p:selectBooleanCheckbox id="showCommentsByDefault"
+                                         styleClass="switch input"
+                                         disabled="#{isViewMode}"
+                                         value="#{UserForm.userObject.showCommentsByDefault}"
+                                         onchange="toggleSave()"/>
+            </div>
+            <div>
+                <p:outputLabel for="showPaginationPanelByDefault"
+                               value="#{msgs['userEdit.metadataEditorSettings.showPaginationByDefault']}"/>
+                <p:selectBooleanCheckbox id="showPaginationPanelByDefault"
+                                         styleClass="switch input"
+                                         disabled="#{isViewMode}"
+                                         value="#{UserForm.userObject.showPaginationByDefault}"
+                                         onchange="toggleSave()"/>
+            </div>
+        </p:row>
+    </p:panelGrid>
+</ui:composition>
