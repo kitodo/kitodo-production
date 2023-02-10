@@ -1295,7 +1295,7 @@ public class FileService {
         }
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             if (Objects.isNull(physicalDivision.getOrderlabel())) {
-                physicalDivision.setOrderlabel(" - ");
+                physicalDivision.setOrderlabel("-");
             }
         }
     }

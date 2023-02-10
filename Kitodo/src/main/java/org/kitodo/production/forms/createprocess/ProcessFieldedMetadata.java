@@ -610,9 +610,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             throw new IllegalStateException("never happening exception");
         }
         if (skipEmpty) {
-            result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
+            result.setGroup(metadata instanceof List ? metadata : new HashSet<>(metadata));
         } else {
-            result.setGroup(new ArrayList<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
+            result.setGroup(new HashSet<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
         }
         return Collections.singletonList(result);
     }
