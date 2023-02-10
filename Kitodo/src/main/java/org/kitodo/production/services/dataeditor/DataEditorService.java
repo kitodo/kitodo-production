@@ -110,7 +110,7 @@ public class DataEditorService {
             metadata = metadata.stream()
                     .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataKey))
                     .filter(MetadataGroup.class::isInstance).map(MetadataGroup.class::cast)
-                    .flatMap(metadataGroup -> metadataGroup.getGroup().stream())
+                    .flatMap(metadataGroup -> metadataGroup.getMetadata().stream())
                     .collect(Collectors.toList());
         }
         Optional<String> metadataTitle = metadata.stream()
