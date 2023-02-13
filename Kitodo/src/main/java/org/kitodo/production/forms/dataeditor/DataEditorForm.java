@@ -165,6 +165,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private Workpiece workpiece;
 
     /**
+     * Original state of workpiece. Used to check whether any unsaved changes exist when leaving the editor.
+     */
+    private Workpiece workpieceOriginalState;
+
+    /**
      * This List of Pairs stores all selected physical elements and the logical elements in which the physical element was selected.
      * It is necessary to store the logical elements as well, because a physical element can be assigned to multiple logical elements.
      */
@@ -308,6 +313,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private void openMetsFile() throws IOException, InvalidImagesException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
+        workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         if (Objects.isNull(workpiece.getId())) {
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
@@ -364,6 +370,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
+        workpieceOriginalState = null;
         mainFileUri = null;
         ruleset = null;
         currentChildren.clear();
@@ -903,6 +910,16 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public boolean canBeDeleted(ProcessDetail processDetail) {
         return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
                 || (!processDetail.isRequired() && !this.ruleset.isAlwaysShowingForKey(processDetail.getMetadataID()));
+    }
+
+    /**
+     * Check for changes in workpiece.
+     */
+    public void checkForChanges() {
+        if (Objects.nonNull(PrimeFaces.current())) {
+            boolean unsavedChanges = !this.workpiece.equals(workpieceOriginalState);
+            PrimeFaces.current().executeScript("setUnsavedChanges(" + unsavedChanges + ");");
+        }
     }
 
     /**

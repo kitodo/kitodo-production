@@ -51,8 +51,9 @@ public class MetadataST extends BaseTestSelenium {
         // Open process in metadata editor by default user to set metadata lock for this process and user
         Pages.getProcessesPage().goTo().editMetadata();
         // Leave metadata editor without explicitly clicking the 'close' button
-        Pages.getTopNavigation().logout();
+        Pages.getMetadataEditorPage().clickPortalLogo();
         // Try to open metadata editor with separate user to check whether metadata lock is still in place
+        Pages.getTopNavigation().logout();
         Pages.getLoginPage().goTo().performLogin(ServiceManager.getUserService().getByLogin("kowal"));
         Pages.getProcessesPage().goTo().editMetadata();
         Assert.assertEquals("Unable to open metadata editor that was not closed by 'close' button",

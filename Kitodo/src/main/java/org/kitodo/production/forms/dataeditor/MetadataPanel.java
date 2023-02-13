@@ -191,10 +191,12 @@ public class MetadataPanel implements Serializable {
 
     void preserveLogical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         logicalMetadataTable.preserve();
+        dataEditorForm.checkForChanges();
     }
 
     void preservePhysical() throws InvalidMetadataValueException, NoSuchMetadataFieldException {
         physicalMetadataTable.preserve();
+        dataEditorForm.checkForChanges();
     }
 
     /**

@@ -363,7 +363,6 @@ public class GalleryPanel {
 
         medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();
-        //dataEditor.getImageProvider().setPreviewImageResolver(new HashMap<>());
         dataEditor.getImageProvider().resetPreviewImageResolverForProcess(process.getId());
         cachingUUID = UUID.randomUUID().toString();
 

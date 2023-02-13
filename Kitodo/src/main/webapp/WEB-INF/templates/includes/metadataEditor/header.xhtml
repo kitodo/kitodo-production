@@ -52,7 +52,7 @@
             <p:commandButton id="close"
                              widgetVar="close"
                              value="#{msgs.exit}"
-                             onclick="deactivateButtons();"
+                             onclick="deactivateButtons();setUnsavedChanges(false);"
                              action="#{DataEditorForm.closeAndReturn}"
                              icon="fa fa-times fa-lg"
                              iconPos="right"
@@ -85,7 +85,7 @@
                              icon="fa fa-floppy-o fa-lg"
                              iconPos="right"
                              rendered="#{mayWrite}"
-                             onclick="deactivateButtons();PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                             onclick="deactivateButtons();setUnsavedChanges(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                              update="notifications"/>
         </h:form>
     </p:panel>

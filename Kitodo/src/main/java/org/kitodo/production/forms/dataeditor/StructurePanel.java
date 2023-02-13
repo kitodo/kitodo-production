@@ -375,6 +375,7 @@ public class StructurePanel implements Serializable {
     private void preserveLogical() {
         if (!this.logicalTree.getChildren().isEmpty()) {
             preserveLogicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
+            dataEditor.checkForChanges();
         }
     }
 
@@ -405,6 +406,7 @@ public class StructurePanel implements Serializable {
     private void preservePhysical() {
         if (!physicalTree.getChildren().isEmpty()) {
             preservePhysicalRecursive(physicalTree.getChildren().get(0));
+            dataEditor.checkForChanges();
         }
     }
 
@@ -478,6 +480,7 @@ public class StructurePanel implements Serializable {
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
+        dataEditor.checkForChanges();
     }
 
     private void restoreSelection(String rowKey, TreeNode parentNode) {
