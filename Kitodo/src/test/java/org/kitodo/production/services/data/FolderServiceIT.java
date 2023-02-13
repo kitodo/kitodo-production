@@ -56,13 +56,13 @@ public class FolderServiceIT {
         FolderService folderService = new FolderService();
 
         List<Folder> folders = folderService.getAll();
-        assertEquals("Folder was not found in database!", 5, folders.size());
+        assertEquals("Folder was not found in database!", 6, folders.size());
         for (Folder folder : folders) {
             assertNotEquals("No project assigned", null, folder.getProject());
         }
 
         Project project = ServiceManager.getProjectService().getById(1);
-        assertEquals("No project assigned", 5, project.getFolders().size());
+        assertEquals("No project assigned", 6, project.getFolders().size());
         for (Folder folder : project.getFolders()) {
             assertNotEquals("No project assigned", null, folder.getProject());
             assertEquals("No project assigned", project.getTitle(), folder.getProject().getTitle());

@@ -196,6 +196,18 @@ public class Workpiece {
     }
 
     /**
+     * Returns total number of all physical divisions children of the physical division of the workpiece with types
+     * from the given types list.
+     * @param types list of physical division types as a List of String
+     * @return the total number of physical divisions with given types.
+     */
+    public int getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(List<String> types) {
+        return Math.toIntExact(physicalStructure.getChildren().stream()
+                .flatMap(Workpiece::treeStream)
+                .filter(physicalDivisionToCheck -> types.contains(physicalDivisionToCheck.getType())).count());
+    }
+
+    /**
      * Returns all physical divisions of the physical division of the workpiece as a flat
      * list. The list isn’t backed by the physical divisions, which means that
      * insertions and deletions in the list would not change the physical divisions.

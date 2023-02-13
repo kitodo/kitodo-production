@@ -195,7 +195,7 @@ public class MetadataEditor {
 
         for (int i = 0; i < number; i++) {
             LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position, Collections.emptyList());
-            if (Objects.isNull(newStructure)) {
+            if (Objects.isNull(newStructure) || metadataKey.isEmpty()) {
                 continue;
             }
             MetadataEntry metadataEntry = new MetadataEntry();

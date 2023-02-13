@@ -406,6 +406,7 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
+        docStructAddTypeSelectionSelectedItem = "";
         elementsToAddSpinnerValue = 1;
         checkSelectedLogicalNode();
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
@@ -529,7 +530,7 @@ public class AddDocStrucTypeDialog {
      * @param metadataNodes list of TreeNodes containing the metadata that is already assigned to the structure element
      */
     public void prepareAddableMetadataForStructure(boolean currentElement, List<TreeNode> metadataNodes) {
-        DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, currentElement,
+        addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, currentElement,
                 metadataNodes, docStructAddTypeSelectionSelectedItem, true);
         setSelectedMetadata("");
     }

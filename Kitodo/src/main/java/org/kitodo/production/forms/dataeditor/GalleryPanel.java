@@ -130,6 +130,11 @@ public class GalleryPanel {
     public Pair<PhysicalDivision, LogicalDivision> getLastSelection() {
         if (dataEditor.getSelectedMedia().size() > 0) {
             return dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
+        } else if (dataEditor.getSelectedStructure().isPresent()
+                && !dataEditor.getSelectedStructure().get().getViews().isEmpty()) {
+            return new ImmutablePair<>(
+                    dataEditor.getSelectedStructure().get().getViews().getFirst().getPhysicalDivision(),
+                    dataEditor.getSelectedStructure().get());
         } else {
             return null;
         }

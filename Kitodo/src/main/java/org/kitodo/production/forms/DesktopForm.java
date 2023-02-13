@@ -251,22 +251,6 @@ public class DesktopForm extends BaseForm {
     }
 
     /**
-     * Retrieve correction comments of given process and return them as a tooltip String.
-     *
-     * @param processDTO
-     *          process for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given process
-     */
-    public String getCorrectionMessages(ProcessDTO processDTO) {
-        try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
-    }
-
-    /**
      * Check and return whether the process with the ID 'pid' has any correction comments or not.
      *
      * @param pid
