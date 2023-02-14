@@ -482,6 +482,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 } else {
                     PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                             + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
+                    workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
+                    PrimeFaces.current().executeScript("setUnsavedChanges(false);");
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
