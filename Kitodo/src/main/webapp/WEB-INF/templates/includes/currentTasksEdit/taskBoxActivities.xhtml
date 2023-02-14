@@ -82,15 +82,16 @@
                     </h:commandLink>
 
                     <!-- Metadaten-button -->
-                    <h:commandLink id="readXML"
-                                   action="#{DataEditorForm.open(task.process.id, 'currentTasksEdit.jsf?id='.concat(task.id))}"
-                                   rendered="#{task.typeMetadata and process.blockedUser == null}"
-                                   onclick="$('#loadingScreen').show()"
-                                   title="#{msgs.metadataEdit}">
-                        <f:actionListener binding="#{CommentForm.setProcessById(task.process.id)}"/>
-                        <f:setPropertyActionListener target="#{DataEditorForm.templateTaskId}" value="#{CurrentTaskForm.getCorrespondingTemplateTaskId(task)}"/>
+                    <h:link id="editMetadata"
+                            onclick="$('#loadingScreen').show()"
+                            rendered="#{task.typeMetadata and process.blockedUser == null}"
+                            title="#{msgs.metadataEdit}"
+                            outcome="metadataEditor">
                         <h:outputText><i class="fa fa-list-alt"/> #{msgs.metadataEdit}</h:outputText>
-                    </h:commandLink>
+                        <f:param name="id" value="#{task.process.id}"/>
+                        <f:param name="referer" value="currentTasksEdit.jsf?id=#{task.id}"/>
+                        <f:param name="templateTaskId" value="#{CurrentTaskForm.getCorrespondingTemplateTaskId(task)}"/>
+                    </h:link>
 
                     <!-- Re-generate all images action link -->
                     <p:commandLink id="generateAllImages"

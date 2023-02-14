@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 /* globals sendGallerySelect, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF,
-   scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata, setConfirmUnload,
+   scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata,
    activateButtons, PF */
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
@@ -1003,10 +1003,6 @@ metadataEditor.shortcuts = {
 
 function expandMetadata(panelClass) {
     $("." + panelClass + "[aria-expanded='false']").click();
-}
-
-function setConfirmUnload(on) {
-    window.onbeforeunload = (on) ? function() { return true; } : void 0;
 }
 
 function activateButtons() {

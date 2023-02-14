@@ -70,14 +70,18 @@
                 </h:link>
 
                 <!-- open metadata editor -->
-                <h:commandLink id="readXML"
-                               action="#{DataEditorForm.open(process.id, 'desktop')}"
-                               styleClass="action"
-                               title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
-                    <f:actionListener binding="#{CommentForm.setProcessById(process.id)}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
-                </h:commandLink>
+                <h:panelGroup styleClass="action"
+                              title="#{MetadataLock.isLocked(process.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(process.id).fullName) : msgs['metadataEdit']}">
+                    <h:link id="editMetadata"
+                            outcome="metadataEditor"
+                            disabled="#{MetadataLock.isLocked(process.id)}"
+                            styleClass="#{MetadataLock.isLocked(process.id) ? 'ui-state-disabled' : ''}"
+                            rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                        <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                        <f:param name="id" value="#{process.id}"/>
+                        <f:param name="referer" value="desktop"/>
+                    </h:link>
+                </h:panelGroup>
 
                 <p:commandLink id="download"
                                action="#{DesktopForm.downloadToHome(process.id)}"

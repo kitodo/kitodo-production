@@ -17,19 +17,29 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:o="http://omnifaces.org/ui">
 
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
+        <f:viewParam name="id"/>
+        <!--@elvariable id="referer" type="java.lang.String"-->
+        <f:viewParam name="referer"/>
+        <f:viewAction action="#{DataEditorForm.open(id, referer)}"/>
+        <f:viewAction action="#{CommentForm.setProcessById(id)}"/>
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
-        <f:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}"/>
+        <o:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}" if="#{not empty templateTaskId}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
         <f:viewAction action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
     </f:metadata>
     <ui:define name="content">
 
-        <p:remoteCommand name="preserveMetadata"
-                         actionListener="#{DataEditorForm.preserveMetadataPanel()}"/>
+        <h:form id="preserveMetadataForm">
+            <p:remoteCommand id="preserveMetadataCommand"
+                             name="preserveMetadata"
+                             actionListener="#{DataEditorForm.preserveMetadataPanel()}"/>
+        </h:form>
 
         <!--@elvariable id="viewStructure" type="boolean"-->
         <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData()}"/>
@@ -88,11 +98,9 @@
                                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml"/>
                                 </h:form>
                             </div>
-
                             <h:panelGroup id="verticalResizerFirstColumn"
                                           layout="block"
                                           styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'disabled'}"/>
-
                             <div class="columnHeadingWrapper">
                                 <p:commandButton id="secondSectionFirstColumnToggler"
                                                  type="button"
@@ -157,7 +165,6 @@
                             <h:panelGroup id="verticalResizerSecondColumn"
                                           layout="block"
                                           styleClass="#{LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'disabled'}"/>
-
                             <div class="columnHeadingWrapper">
                                 <ui:fragment rendered="#{viewMetadata and viewPagination}">
                                     <p:commandButton id="secondSectionSecondColumnToggler"
@@ -236,6 +243,7 @@
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/corruptDataWarning.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/comments/newCommentDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/uploadFile.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataLocked.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
@@ -250,6 +258,7 @@
         <h:outputScript name="js/resize.js" target="body"/>
         <h:outputScript name="js/scroll.js" target="body"/>
         <h:outputScript name="js/metadata_editor.js" target="body"/>
+        <h:outputScript name="js/metadata_editor_unsaved_changes.js" target="head"/>
         <h:outputScript name="js/metadataeditor_jquery-ui_fix.js" />
         <h:outputScript name="js/pf_contextMenu_custom.js" target="body"/>
         <h:outputScript>
