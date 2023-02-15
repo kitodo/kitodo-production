@@ -369,7 +369,6 @@ public class ProcessListBaseView extends BaseForm {
             try {
 
                 export.startExport(processToExport);
-                Helper.setMessage(EXPORT_FINISHED);
             } catch (DataException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
@@ -441,7 +440,6 @@ public class ProcessListBaseView extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-            Helper.setMessage(EXPORT_FINISHED);
         } catch (DAOException | DataException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
@@ -455,7 +453,6 @@ public class ProcessListBaseView extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(ServiceManager.getProcessService().getById(id));
-            Helper.setMessage(EXPORT_FINISHED);
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
