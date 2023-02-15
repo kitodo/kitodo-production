@@ -40,9 +40,16 @@
 
         <ui:fragment
                 rendered="#{selectedGalleryMediaContent.showingInMediaView and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'image')}">
-            <p:graphicImage id="mediaPreviewGraphicImage" styleClass="mediaPreviewItem"
-                            value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}"
-                            style="display: none;"/>
+            <p:graphicImage id="mediaPreviewGraphicImage"
+                            value="#{imageProvider.mediaView}"
+                            styleClass="mediaPreviewItem"
+                            style="display: none;">
+                <f:param name="mediaId"
+                         value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+            </p:graphicImage>
+
             <div id="map" class="map" style="width: 100%; height: 100%;">
                 <i class="fa fa-spinner fa-spin"/>
             </div>

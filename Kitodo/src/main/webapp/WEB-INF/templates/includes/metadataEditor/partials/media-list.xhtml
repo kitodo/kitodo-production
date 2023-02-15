@@ -62,7 +62,7 @@
             <ui:fragment rendered="#{media.showingInPreview and fn:startsWith(media.previewMimeType, 'image')}">
                 <h:outputText>
                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                    <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
+                    <p:graphicImage styleClass="mediaListItem" value="#{imageProvider.previewData}"
                                     a:loading="lazy">
                         <f:param name="mediaId"
                                  value="#{media.id}"/>
