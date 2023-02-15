@@ -598,7 +598,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.omnifaces</groupId>
                 <artifactId>omnifaces</artifactId>
-                <version>2.7.18</version>
+                <version>3.13.3</version>
             </dependency>
             <dependency>
                 <groupId>org.openpreservation.jhove</groupId>

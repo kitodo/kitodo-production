@@ -37,12 +37,10 @@
             <p:remoteCommand name="sendGallerySelect"
                              action="#{DataEditorForm.galleryPanel.select}"
                              update="galleryHeadingWrapper
-                                     imagePreviewForm:mediaDetailContainer
+                                     imagePreviewForm:mediaViewData
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
-                                     metadataAccordion:logicalMetadataWrapperPanel"
-                             oncomplete="metadataEditor.shortcuts.updateViews()"
-            />
+                                     metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -66,7 +64,7 @@
                 <p:column>
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-file"
+                                     icon="fa fa-image"
                                      oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView()"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
@@ -167,14 +165,15 @@
             <!-- View current page with OpenLayers -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' and not empty DataEditorForm.galleryPanel.medias}">
                 <!-- OpenLayers Kitodo custom controls -->
-                <h:panelGroup id="mediaDetailContainer"
+                <h:panelGroup id="olWrapper"
                               layout="block"
                               a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
                               a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
-                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail.xhtml"/>
+                    <div id="map" class="map">
+                        <i class="fa fa-spinner fa-spin"/>
+                    </div>
                     <h:panelGroup layout="block" id="thumbnailStripe">
-                        <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up"
-                                         styleClass="scroll-button scroll-up"/>
+                        <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
                             <h:panelGroup id="thumbnailWrapper"
                                           layout="block">

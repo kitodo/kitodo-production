@@ -124,14 +124,14 @@ public class StructurePanel implements Serializable {
     private String titleMetadata = "type";
 
     /**
-     * Determines whether the logical tree is built as a combination of physical media nodes and 
+     * Determines whether the logical tree is built as a combination of physical media nodes and
      * logical structure nodes (default) or whether it only contains structure nodes.
      */
     private boolean hideMediaInLogicalTree = false;
 
-    /** 
-     * Determines whether a page range is show together with the label of a logical structure node. 
-     * The page consists of the label of the first and last media of the logical division, 
+    /**
+     * Determines whether a page range is show together with the label of a logical structure node.
+     * The page consists of the label of the first and last media of the logical division,
      * e.g. "4 : iv - 6 : vi".
      */
     private boolean showPageRangeInLogicalTree = false;
@@ -375,7 +375,7 @@ public class StructurePanel implements Serializable {
     private void preserveLogical() {
         if (!this.logicalTree.getChildren().isEmpty()) {
             preserveLogicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
-            this.dataEditor.checkForChanges();
+            dataEditor.checkForChanges();
         }
     }
 
@@ -406,7 +406,7 @@ public class StructurePanel implements Serializable {
     private void preservePhysical() {
         if (!physicalTree.getChildren().isEmpty()) {
             preservePhysicalRecursive(physicalTree.getChildren().get(0));
-            this.dataEditor.checkForChanges();
+            dataEditor.checkForChanges();
         }
     }
 
@@ -480,7 +480,7 @@ public class StructurePanel implements Serializable {
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
-        this.dataEditor.checkForChanges();
+        dataEditor.checkForChanges();
     }
 
     private void restoreSelection(String rowKey, TreeNode parentNode) {
@@ -513,7 +513,7 @@ public class StructurePanel implements Serializable {
     /**
      * Constructs a page range string by combining the labels of the first and last view
      * of the provided logical division.
-     * 
+     *
      * @param structure the logical divsion
      * @return the page range string
      */
@@ -529,7 +529,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Build a StructureTreeNode for a logical division, which is then visualized in the logical structure tree.
-     * 
+     *
      * @param structure the logical division
      * @return the StructureTreeNode instance
      */
@@ -565,8 +565,8 @@ public class StructurePanel implements Serializable {
 
     /**
      * Recursively build the logical structure tree.
-     * 
-     * @param structure the current logical structure 
+     *
+     * @param structure the current logical structure
      * @param result the current corresponding primefaces tree node
      * @return a collection of views that contains all views of the full sub-tree
      */
@@ -592,7 +592,7 @@ public class StructurePanel implements Serializable {
             List<Pair<View, LogicalDivision>> merged = mergeLogicalStructureViewsAndChildren(structure);
             for (Pair<View, LogicalDivision> pair : merged) {
                 if (Objects.nonNull(pair.getRight())) {
-                    // add child an their views
+                    // add child and their views
                     viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent));
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
@@ -604,21 +604,21 @@ public class StructurePanel implements Serializable {
         return viewsShowingOnAChild;
     }
 
-    /** 
+    /**
      * Returns a list containing both views and children of a LogicalDivision ordered by their ORDER attribute.
      * This ordering reflects how tree nodes are visualized in the logical structure tree.
-     * 
+     *
      * <p>Unfortunately, the mets ORDER attribute of logical divisions and physical divisions is maintained and stored
      * separately, which means the order does not reflect a consistent tree traversal strategy, e.g. depth-first search.
-     * Instead, the ORDER-attribute is partially updated upon various drag-&-drop operations, which can lead to 
+     * Instead, the ORDER-attribute is partially updated upon various drag-&-drop operations, which can lead to
      * arbitrary ORDER-values, e.g. a view can have the same ORDER-value as a child.</p>
-     * 
+     *
      * @param structure the logical division
      * @return a sorted list of Views and LogicalDivisions, each pair only containing one or the other
      */
     public static List<Pair<View, LogicalDivision>> mergeLogicalStructureViewsAndChildren(LogicalDivision structure) {
-        List<Pair<View, LogicalDivision>> merged = new ArrayList<Pair<View, LogicalDivision>>();
-        
+        List<Pair<View, LogicalDivision>> merged = new ArrayList<>();
+
         Iterator<View> viewIterator = structure.getViews().iterator();
         Iterator<LogicalDivision> childIterator = structure.getChildren().iterator();
         View nextView = null;
@@ -636,24 +636,20 @@ public class StructurePanel implements Serializable {
             }
 
             // decide on whether to add child or view first
-            Boolean addChildNext = false;
+            boolean addChildNext;
             if (Objects.nonNull(nextChild) && Objects.nonNull(nextView)) {
                 // compare order attribute between child and view to figure out which one is added first in tree
-                if (nextChild.getOrder() <= nextView.getPhysicalDivision().getOrder()) {
-                    addChildNext = true;
-                } else {
-                    addChildNext = false;
-                }
+                addChildNext = nextChild.getOrder() <= nextView.getPhysicalDivision().getOrder();
             } else {
                 addChildNext = Objects.nonNull(nextChild);
             }
 
             // add child or view to the merged result list
             if (addChildNext) {
-                merged.add(new ImmutablePair<View, LogicalDivision>(null, nextChild));
+                merged.add(new ImmutablePair<>(null, nextChild));
                 nextChild = null;
             } else {
-                merged.add(new ImmutablePair<View, LogicalDivision>(nextView, null));
+                merged.add(new ImmutablePair<>(nextView, null));
                 nextView = null;
             }
         }
@@ -810,12 +806,12 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Builds the parent link tree in a temporary primefaces tree in order to determine how many 
-     * nodes are added to the tree. The number of nodes influences the order of nodes in the logical 
-     * structure tree and is needed to determine the correct tree node id, see 
+     * Builds the parent link tree in a temporary primefaces tree in order to determine how many
+     * nodes are added to the tree. The number of nodes influences the order of nodes in the logical
+     * structure tree and is needed to determine the correct tree node id, see
      * `GalleryPanel.addStripesRecursive`.
-     * 
-     * @return the number of root nodes (first level children) that are 
+     *
+     * @return the number of root nodes (first level children) that are
      *         added as a result of calling `addParentLinksRecursive`.
      */
     public Integer getNumberOfParentLinkRootNodesAdded() {
@@ -1769,8 +1765,8 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media). 
-     * 
+     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media).
+     *
      * @return true if logical structure tree contains media
      */
     public boolean logicalStructureTreeContainsMedia() {
@@ -1779,7 +1775,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Return true if the users selected the option to hide media in the logical structure tree.
-     * 
+     *
      * @return true if the user want to hide media in the logical structure tree
      */
     public boolean isHideMediaInLogicalTree() {
@@ -1788,7 +1784,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Sets whether media should be shown in the logical structure tree.
-     * 
+     *
      * @param hideMediaInLogicalTree boolean
      */
     public void setHideMediaInLogicalTree(boolean hideMediaInLogicalTree) {
@@ -1806,7 +1802,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Returns whether the user selected to show the page range for each logical structure node.
-     * 
+     *
      * @return value of showPageRangeInLogicalTree
      */
     public boolean isShowPageRangeInLogicalTree() {

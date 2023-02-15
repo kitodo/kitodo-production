@@ -27,6 +27,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "paginationPanel")
     private WebElement paginationPanel;
 
+    @FindBy(css = "#portal-logo a")
+    private WebElement poralLogoLink;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -55,5 +58,12 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public boolean isPaginationPanelVisible() {
         return paginationPanel.isDisplayed();
+    }
+
+    /**
+     * Click Kitodo portal logo to return to desktop page.
+     */
+    public void clickPortalLogo() {
+        poralLogoLink.click();
     }
 }
