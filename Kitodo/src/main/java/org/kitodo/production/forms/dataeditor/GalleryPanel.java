@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -28,6 +29,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
+import javax.faces.event.PhaseId;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -50,6 +52,8 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.DefaultStreamedContent;
+import org.primefaces.model.StreamedContent;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
