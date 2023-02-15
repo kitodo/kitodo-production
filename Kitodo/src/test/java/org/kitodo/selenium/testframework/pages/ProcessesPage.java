@@ -389,9 +389,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .ignoreExceptions().until(() -> processesTable.isDisplayed());
         int index = getRowIndex(processesTable, processTitle, 3);
         await("Wait for 'edit metadata' link to become enabled").pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML")
+                .ignoreExceptions().until(() -> Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata")
                         .isEnabled());
-        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML");
+        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
     }
      */
 

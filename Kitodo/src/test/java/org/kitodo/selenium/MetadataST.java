@@ -110,6 +110,8 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void removeMetadataLockTest() throws Exception {
+        User metadataUser = ServiceManager.getUserService().getByLogin("verylast");
+        Pages.getLoginPage().goTo().performLogin(metadataUser);
         // Open process in metadata editor by default user to set metadata lock for this process and user
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
