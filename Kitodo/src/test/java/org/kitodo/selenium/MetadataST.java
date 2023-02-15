@@ -67,12 +67,6 @@ public class MetadataST extends BaseTestSelenium {
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
 
-    /**
-     * Prepare file system, database and search index for tests.
-     * @throws DAOException when inserting processes into database fails
-     * @throws DataException when inserting processes into index fails
-     * @throws IOException when copying test files fails
-     */
     private static void prepareMediaReferenceProcesses() throws DAOException, DataException, IOException {
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
