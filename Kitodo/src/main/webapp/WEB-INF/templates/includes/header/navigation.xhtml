@@ -21,7 +21,7 @@
             <ul id="menu">
                 <li>
                     <!-- Dashboard menu -->
-                    <p:commandLink id="dashboard-menu"><i class="fa fa-th fa-lg"/></p:commandLink>
+                    <p:commandLink id="dashboard-menu" form="linkProcessesNavigationForm"><i class="fa fa-th fa-lg"/></p:commandLink>
                     <p:overlayPanel for="dashboard-menu" my="right top" at="right bottom">
                         <ul>
                             <li id="dashboard-menu-header">
@@ -83,7 +83,7 @@
                 </li>
                 <li>
                     <!-- User menu -->
-                    <p:commandLink id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></p:commandLink>
+                    <p:commandLink id="user-menu" form="logout-form"><i class="fa fa-user-circle-o fa-lg"/></p:commandLink>
                     <p:overlayPanel for="user-menu">
                         <h:form id="logout-form">
                             <ul id="nav-user">
