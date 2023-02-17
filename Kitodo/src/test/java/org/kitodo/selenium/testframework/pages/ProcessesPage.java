@@ -293,8 +293,24 @@ public class ProcessesPage extends Page<ProcessesPage> {
                         + "kowal/" + Helper.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
     }
 
+    /**
+     * Set 'edit metadata' link for default process with title saved in PROCESS_TITLE and click it.
+     * @throws IllegalAccessException when retrieving metadata editor page fails
+     * @throws InstantiationException when retrieving metadata editor page fails
+     */
     public void editMetadata() throws IllegalAccessException, InstantiationException {
-        setEditMetadataLink();
+        setEditMetadataLink(PROCESS_TITLE);
+        clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+    }
+
+    /**
+     * Set 'edit metadata' link for default process with given title 'processTitle' and click it.
+     * @param processTitle title of process whose 'edit metadata' link is clicked
+     * @throws InstantiationException when retrieving metadata editor page fails
+     * @throws IllegalAccessException when retrieving metadata editor page fails
+     */
+    public void editMetadata(String processTitle) throws InstantiationException, IllegalAccessException {
+        setEditMetadataLink(processTitle);
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
     }
 
@@ -328,8 +344,12 @@ public class ProcessesPage extends Page<ProcessesPage> {
         downloadDocketLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":downloadDocket");
     }
 
-    private void setEditMetadataLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
+    /**
+     * Set metadata edit link.
+     * @param processTitle title of process whose 'edit metadata' link is set
+     */
+    private void setEditMetadataLink(String processTitle) {
+        int index = getRowIndex(processesTable, processTitle, 3);
         editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
     }
 

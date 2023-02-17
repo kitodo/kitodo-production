@@ -1096,6 +1096,12 @@ main i.fa {
     line-height: 22px;
 }
 
+.ui-dialog-content .dialog-text {
+    padding: 0 32px 16px 32px;
+    hyphens: auto;
+    line-height: 22px;
+}
+
 .ui-dialog-content .select-selector {
     padding: 16px 32px 16px 32px;
 }
@@ -2436,6 +2442,11 @@ form#metadata div label,
     overflow-x: hidden;
     text-overflow: ellipsis;
     width: auto;
+}
+
+#paginationForm\:updateMediaReferencesButton {
+    margin: 0;
+    width: 100%;
 }
 
 /*

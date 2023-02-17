@@ -30,6 +30,18 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(css = "#portal-logo a")
     private WebElement poralLogoLink;
 
+    @FindBy(id = "fileReferencesUpdatedDialog")
+    private WebElement fileReferencesUpdatedDialog;
+
+    @FindBy(id = "ok")
+    private WebElement okButton;
+
+    @FindBy(id = "buttonForm:close")
+    private WebElement closeButton;
+
+    @FindBy(id = "buttonForm:save")
+    private WebElement saveButton;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -65,5 +77,34 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void clickPortalLogo() {
         poralLogoLink.click();
+    }
+
+    /**
+     * Check and return whether information dialog about updated media references is displayed or not.
+     * @return whether information dialog about updated media references is displayed or not
+     */
+    public boolean isFileReferencesUpdatedDialogVisible() {
+        return fileReferencesUpdatedDialog.isDisplayed();
+    }
+
+    /**
+     * Acknowledge file reference changes by clicking "OK" button on corresponding popup dialog.
+     */
+    public void acknowledgeFileReferenceChanges() {
+        okButton.click();
+    }
+
+    /**
+     * Close Metadata editor to release metadata lock.
+     */
+    public void closeEditor() {
+        closeButton.click();
+    }
+
+    /**
+     * Click save button.
+     */
+    public void save() {
+        saveButton.click();
     }
 }

@@ -1,0 +1,57 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+   <p:dialog id="fileReferencesUpdatedDialog"
+             widgetVar="fileReferencesUpdatedDialog"
+             width="500"
+             closable="false"
+             modal="true"
+             resizable="false"
+             showHeader="false"
+             dynamic="true"
+             appendTo="@(body)">
+      <ui:fragment rendered="#{not DataEditorForm.mediaUpdated}">
+         <h3>#{msgs['dataEditor.fileReferencesUnchanged']}</h3>
+      </ui:fragment>
+      <ui:fragment rendered="#{DataEditorForm.mediaUpdated}">
+         <h3>#{msgs['dataEditor.fileReferencesChangedTitle']}</h3>
+         <h:panelGroup layout="block"
+                       styleClass="dialog-text">
+            <h:outputText value="#{msgs['dataEditor.fileReferencesChanged']}"/>
+         </h:panelGroup>
+         <h:panelGroup layout="block"
+                       styleClass="select-note ui-messages-warn">
+            <div>
+               <h:outputText styleClass="bold" value="#{msgs['important']}: "/>
+            </div>
+            <div>
+               <h:outputText value="#{msgs['dataEditor.fileReferencesChangedUnsavedWarning']}"/>
+            </div>
+         </h:panelGroup>
+      </ui:fragment>
+      <h:panelGroup layout="block"
+                    styleClass="dialogButtonWrapper">
+         <p:commandButton id="ok"
+                          value="#{msgs.ok}"
+                          icon="fa fa-check"
+                          iconPos="right"
+                          styleClass="primary right"
+                          onclick="PF('fileReferencesUpdatedDialog').hide();"/>
+      </h:panelGroup>
+   </p:dialog>
+</ui:composition>
