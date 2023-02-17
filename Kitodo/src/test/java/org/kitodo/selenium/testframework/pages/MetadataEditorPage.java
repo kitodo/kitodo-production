@@ -36,8 +36,11 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "ok")
     private WebElement okButton;
 
-    @FindBy(id = "close")
+    @FindBy(id = "buttonForm:close")
     private WebElement closeButton;
+
+    @FindBy(id = "buttonForm:save")
+    private WebElement saveButton;
 
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
@@ -96,5 +99,12 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void closeEditor() {
         closeButton.click();
+    }
+
+    /**
+     * Click save button.
+     */
+    public void save() {
+        saveButton.click();
     }
 }

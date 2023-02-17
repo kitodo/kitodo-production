@@ -120,6 +120,7 @@ public class MockDatabase {
     private static HashMap<String, Integer> removableObjectIDs;
     private static final int CUSTOM_CONFIGURATION_ID = 4;
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
+    public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -868,7 +869,6 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        firstProject.getUsers().add(sixthUser);
         firstProject.setClient(client);
         ServiceManager.getProjectService().save(firstProject);
 
@@ -881,12 +881,14 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
+        secondProject.getUsers().add(sixthUser);
         secondProject.setClient(client);
         ServiceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
+        sixthUser.getProjects().add(secondProject);
         ServiceManager.getUserService().saveToDatabase(firstUser);
         ServiceManager.getProjectService().saveToIndex(secondProject, true);
 
@@ -1016,16 +1018,36 @@ public class MockDatabase {
     }
 
     /**
+     * Add test process for media references update test to second project.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(MEDIA_REFERENCES_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for metadata lock test to second project.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(METADATA_LOCK_TEST_PROCESS_TITLE);
+    }
+
+    /**
      * Insert test process for media reference updates into database.
      * @return database ID of created test process
      * @throws DAOException when loading test project fails
      * @throws DataException when saving test process fails
      */
-    public static int insertTestProcessIntoSecondProject() throws DAOException, DataException {
+    private static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DataException {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Template template = projectTwo.getTemplates().get(0);
         Process mediaReferencesProcess = new Process();
-        mediaReferencesProcess.setTitle(MEDIA_REFERENCES_TEST_PROCESS_TITLE);
+        mediaReferencesProcess.setTitle(processTitle);
         mediaReferencesProcess.setProject(projectTwo);
         mediaReferencesProcess.setTemplate(template);
         mediaReferencesProcess.setRuleset(template.getRuleset());
@@ -1448,7 +1470,7 @@ public class MockDatabase {
         List<Authority> userMetadataAuthorities = new ArrayList<>();
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllProcesses" + CLIENT_ASSIGNABLE));
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessImages" + CLIENT_ASSIGNABLE));
-        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessMetaData" + CLIENT_ASSIGNABLE));
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("editProcessMetaData" + CLIENT_ASSIGNABLE));
         sixthRole.setAuthorities(userMetadataAuthorities);
 
         ServiceManager.getRoleService().saveToDatabase(sixthRole);
