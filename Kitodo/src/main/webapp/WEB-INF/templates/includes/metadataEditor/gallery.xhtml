@@ -35,7 +35,8 @@
                         paginationForm:paginationWrapperPanel"/>
             <p:graphicImage id="mediaViewData"
                             value="#{imageProvider.mediaView}"
-                            style="display: none;">
+                            style="display: none;"
+                            rendered="#{not empty DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}">
                 <f:param name="mediaId"
                          value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
                 <f:param name="process"
