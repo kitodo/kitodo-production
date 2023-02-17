@@ -41,7 +41,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String FILTER_FORM = "filterMenu";
     private static final String FILTER_INPUT = "filterMenu:filterfield";
     private static final String SECOND_PROCESS_TITLE = "Second process";
-    private static final String THIRD_PROCESS_TITLE = "Parent process";
+    private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
@@ -331,13 +331,13 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     /**
-     * Open third process in metadata editor.
+     * Open parent process in metadata editor.
      * @throws IllegalAccessException when navigating to metadata editor page fails
      * @throws InstantiationException when navigating to metadata editor page fails
      */
-    public void editThirdProcessMetadata() throws InstantiationException, IllegalAccessException {
+    public void editParentProcessMetadata() throws InstantiationException, IllegalAccessException {
         try {
-            setEditMetadataLink(THIRD_PROCESS_TITLE);
+            setEditMetadataLink(PARENT_PROCESS_TITLE);
             clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
         } catch (StaleElementReferenceException e) {
             e.printStackTrace();
@@ -382,18 +382,6 @@ public class ProcessesPage extends Page<ProcessesPage> {
         int index = getRowIndex(processesTable, processTitle, 3);
         editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
     }
-
-    /*
-    private void setEditMetadataLink(String processTitle) throws StaleElementReferenceException {
-        await("Wait for processes table to become visible").pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> processesTable.isDisplayed());
-        int index = getRowIndex(processesTable, processTitle, 3);
-        await("Wait for 'edit metadata' link to become enabled").pollDelay(1, TimeUnit.SECONDS).atMost(5, TimeUnit.SECONDS)
-                .ignoreExceptions().until(() -> Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata")
-                        .isEnabled());
-        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
-    }
-     */
 
     private void setDownloadLogLink() {
         int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);

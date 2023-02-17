@@ -53,28 +53,37 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
+    private static int parentProcessId = -1;
+
     private static List<Integer> dummyProcessIds = new LinkedList<>();
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
     private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
-    private static final String DUMMY_PROCESS_TITLE = "Dummy process";
     private static final String TEST_PARENT_PROCESS_METADATA_FILE = "testParentProcessMeta.xml";
     private static final String FIRST_CHILD_ID = "FIRST_CHILD_ID";
     private static final String SECOND_CHILD_ID = "SECOND_CHILD_ID";
     private static final String META_XML = "/meta.xml";
     private static List<Integer> processHierarchyTestProcessIds = new LinkedList<>();
-    private static int parentProcessId = -1;
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
 
-    private static void prepareMediaReferenceProcesses() throws DAOException, DataException, IOException {
+    private static void prepareMediaReferenceProcess() throws DAOException, DataException, IOException {
+        insertDummyProcesses();
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
     }
 
     private static void prepareMetadataLockProcess() throws DAOException, DataException, IOException {
+        insertDummyProcesses();
         insertTestProcessForMetadataLockTest();
         copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
+    }
+
+    private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DataException {
+        insertDummyProcesses();
+        processHierarchyTestProcessIds = linkProcesses();
+        copyTestParentProcessMetadataFile();
+        updateChildProcessIdsInParentProcessMetadataFile();
     }
 
     /**
@@ -86,10 +95,9 @@ public class MetadataST extends BaseTestSelenium {
     @BeforeClass
     public static void prepare() throws DAOException, DataException, IOException {
         MockDatabase.insertFoldersForSecondProject();
-        insertDummyProcesses();
         prepareMetadataLockProcess();
-        insertDummyProcesses();
-        prepareMediaReferenceProcesses();
+        prepareMediaReferenceProcess();
+        prepareProcessHierarchyProcesses();
     }
 
     /**
@@ -110,8 +118,6 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void removeMetadataLockTest() throws Exception {
-        User metadataUser = ServiceManager.getUserService().getByLogin("verylast");
-        Pages.getLoginPage().goTo().performLogin(metadataUser);
         // Open process in metadata editor by default user to set metadata lock for this process and user
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
@@ -132,25 +138,19 @@ public class MetadataST extends BaseTestSelenium {
      */
     @Test
     public void changeProcessLinkOrderTest() throws Exception {
-        processHierarchyTestProcessIds = linkProcesses();
-        copyTestParentProcessMetadataFile();
-        updateChildProcessIdsInParentProcessMetadataFile();
-        User metadataUser = ServiceManager.getUserService().getByLogin("kowal");
-        Pages.getLoginPage().goTo().performLogin(metadataUser);
-        Pages.getProcessesPage().goTo().editThirdProcessMetadata();
+        login("kowal");
+        Pages.getProcessesPage().goTo().editParentProcessMetadata();
         Assert.assertTrue("Wrong initial order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
         Assert.assertTrue("Wrong initial order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
         Pages.getMetadataEditorPage().changeOrderOfLinkedChildProcesses();
         Pages.getMetadataEditorPage().saveAndExit();
-        Pages.getProcessesPage().goTo().editThirdProcessMetadata();
+        Pages.getProcessesPage().goTo().editParentProcessMetadata();
         Assert.assertTrue("Wrong resulting order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
         Assert.assertTrue("Wrong resulting order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
-        Pages.getMetadataEditorPage().closeEditor();
-        cleanup();
     }
 
     /**
@@ -162,7 +162,6 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata();
         assertEquals("Total number of scans is not correct", "(Anzahl von Scans: 1)",
                 Pages.getMetadataEditorPage().getNumberOfScans());
-        Pages.getMetadataEditorPage().closeEditor();
     }
 
     /**
@@ -178,7 +177,6 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getUserEditPage().setPaginationToShowByDefault();
         Pages.getProcessesPage().goTo().editMetadata();
         assertTrue(Pages.getMetadataEditorPage().isPaginationPanelVisible());
-        Pages.getMetadataEditorPage().closeEditor();
     }
 
     /**
@@ -292,7 +290,7 @@ public class MetadataST extends BaseTestSelenium {
                 + "/images/").toUri();
         try {
             if (!ServiceManager.getFileService().isDirectory(targetImages)) {
-                ServiceManager.getFileService().createDirectory(processDir, "images");
+                ServiceManager.getFileService().createDirectory(processDir, TEST_IMAGES_DIR);
             }
             ServiceManager.getFileService().copyDirectory(testImagesUri, targetImages);
         } catch (IOException e) {
@@ -305,7 +303,7 @@ public class MetadataST extends BaseTestSelenium {
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
                 .toUri();
         URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
-                + "/meta.xml").toUri();
+                + META_XML).toUri();
         URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
         if (!ServiceManager.getFileService().isDirectory(processDir)) {
             ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
