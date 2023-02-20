@@ -36,7 +36,7 @@
             <p:graphicImage id="mediaViewData"
                             value="#{imageProvider.mediaView}"
                             style="display: none;"
-                            rendered="#{not empty DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}">
+                            rendered="#{imageProvider.hasMediaViewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}">
                 <f:param name="mediaId"
                          value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
                 <f:param name="process"
@@ -122,7 +122,7 @@
                                                     a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                                     a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                             <p:graphicImage value="#{imageProvider.previewData}"
-                                                            rendered="#{media.showingInPreview}"
+                                                            rendered="#{imageProvider.hasPreviewVariant(media)}"
                                                             a:loading="lazy">
                                                 <f:param name="mediaId"
                                                         value="#{media.id}" />
@@ -180,7 +180,7 @@
                                                            a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                                                     <p:graphicImage value="#{imageProvider.previewData}"
-                                                                    rendered="#{media.showingInPreview}"
+                                                                    rendered="#{imageProvider.hasPreviewVariant(media)}"
                                                                     a:loading="lazy">
                                                         <f:param name="mediaId"
                                                                  value="#{media.id}"/>
@@ -233,7 +233,7 @@
                                                            a:data-order="#{media.order}"
                                                            a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
                                                 <h:outputText><p:graphicImage value="#{imageProvider.previewData}"
-                                                                              rendered="#{media.showingInPreview}"
+                                                                              rendered="#{imageProvider.hasPreviewVariant(media)}"
                                                                               a:loading="lazy">
                                                     <f:param name="mediaId"
                                                              value="#{media.id}" />
