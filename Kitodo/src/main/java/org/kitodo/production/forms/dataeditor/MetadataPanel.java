@@ -147,7 +147,7 @@ public class MetadataPanel implements Serializable {
     }
 
     void showLogical(Optional<LogicalDivision> optionalStructure) {
-        if (optionalStructure.isPresent()) {
+        if (optionalStructure.isPresent() && Objects.isNull(optionalStructure.get().getLink())) {
             logicalMetadataTable = createProcessFieldedMetadata(optionalStructure.get());
             dataEditorForm.getAddMetadataDialog().prepareAddableMetadataForStructure(
                     getLogicalMetadataRows().getChildren());

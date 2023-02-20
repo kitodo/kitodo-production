@@ -103,7 +103,7 @@
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
             <p:menuitem value="#{msgs.addElement}"
-                        rendered="#{DataEditorForm.selectedMedia.size() lt 1}"
+                        rendered="#{DataEditorForm.selectedMedia.size() lt 1 and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -115,7 +115,7 @@
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
             <p:menuitem value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
-                        rendered="#{DataEditorForm.selectedMedia.size() ge 1}"
+                        rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
@@ -126,7 +126,7 @@
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
             <p:menuitem value="#{msgs.changeDocstructType}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View' and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-pencil fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -138,7 +138,7 @@
                         icon="fa fa-link fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
-                        rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes}"
+                        rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         action="#{DataEditorForm.structurePanel.assign}"
                         process="@this"
                         oncomplete="$('#loadingScreen').hide()"
@@ -151,7 +151,7 @@
                         icon="fa fa-chain-broken fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
-                        rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes}"
+                        rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         action="#{DataEditorForm.structurePanel.unassign}"
                         process="@this"
                         oncomplete="$('#loadingScreen').hide()"
@@ -162,14 +162,14 @@
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.uploadMedia}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
-                        rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete()}"
+                        rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-download fa-sm"
                         styleClass="plain"
                         update = "uploadFileDialog"
                         disabled="#{readOnly}"
                         process="@this"/>
-            <p:menuitem value="#{msgs.removeElement}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+            <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNode.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"

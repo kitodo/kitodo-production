@@ -14,7 +14,6 @@ package org.kitodo.api.dataformat;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -121,8 +120,7 @@ public abstract class Division<T extends Division<T>> {
      * @return the children
      */
     public List<T> getAllChildren() {
-        return Collections
-                .unmodifiableList(children.stream().flatMap(Workpiece::treeStream).collect(Collectors.toList()));
+        return children.stream().flatMap(Workpiece::treeStream).collect(Collectors.toUnmodifiableList());
     }
 
     /**

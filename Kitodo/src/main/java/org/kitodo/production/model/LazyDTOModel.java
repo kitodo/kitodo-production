@@ -74,7 +74,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
     public Object getRowData(String rowKey) {
         try {
             return searchService.getById(Integer.parseInt(rowKey));
-        } catch (DAOException e) {
+        } catch (DAOException | NumberFormatException e) {
             logger.error(e.getMessage());
             return null;
         }

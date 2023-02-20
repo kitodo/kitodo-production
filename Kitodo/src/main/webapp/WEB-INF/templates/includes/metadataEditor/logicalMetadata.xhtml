@@ -35,6 +35,7 @@
                          rendered="#{not readOnly}">
                 <p:row>
                     <h:panelGroup id="addMetadataButtonWrapper"
+                                  rendered="#{not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                                   title="#{DataEditorForm.metadataPanel.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
                         <p:commandButton id="addMetadataButton"
                                          icon="fa fa-plus"

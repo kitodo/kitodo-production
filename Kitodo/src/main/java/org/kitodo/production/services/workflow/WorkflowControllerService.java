@@ -179,13 +179,19 @@ public class WorkflowControllerService {
                 ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
                 task.getProcess().getRuleset().getFile()).toString()));
         ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset);
-        if (State.ERROR.equals(validationResult.getState())) {
+        boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
+        State state = validationResult.getState();
+        if (State.ERROR.equals(state) || (strictValidation && !State.SUCCESS.equals(state))) {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
             for (String message : validationResult.getResultMessages()) {
                 Helper.setErrorMessage(message);
             }
         }
-        return !validationResult.getState().equals(State.ERROR);
+        if (strictValidation) {
+            return State.SUCCESS.equals(state);
+        } else {
+            return !State.ERROR.equals(state);
+        }
     }
 
     /**

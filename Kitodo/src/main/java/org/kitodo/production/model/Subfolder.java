@@ -347,7 +347,7 @@ public class Subfolder {
         FilenameFilter filter = (dir, name) -> query.getRight().matcher(name).matches();
         try (Stream<URI> relativeURIs = fileService.getSubUris(filter, query.getLeft()).parallelStream()) {
             Stream<URI> resultURIs = absolute ? relativeURIs.map(
-                uri -> new File(FilenameUtils.concat(ConfigCore.getKitodoDataDirectory(), uri.getPath())).toURI())
+                uri -> new File(ConfigCore.getKitodoDataDirectory().concat(uri.getPath())).toURI())
                     : relativeURIs.map(uri -> URI.create(uri.toString().replaceFirst("^[^/]+/", "")));
             Function<URI, String> keyMapper = createKeyMapperForPattern(query.getRight());
             return resultURIs.collect(Collectors.toMap(keyMapper, Function.identity(), (previous, latest) -> latest,

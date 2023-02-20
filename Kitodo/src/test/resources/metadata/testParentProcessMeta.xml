@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2022-11-14T10:46:14.828+01:00" LASTMODDATE="2023-01-05T14:18:06.974+01:00"/>
+    <mets:dmdSec ID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99">
+        <mets:mdWrap MDTYPE="OTHER">
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="title">Test parent process</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec/>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="uuid-f8f131e5-b063-40f2-9942-f9efeedf7ed7"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="uuid-1400b722-c7ae-488c-8322-f4a5f198a443" DMDID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99" TYPE="MultiVolumeWork" ORDER="1">
+            <mets:div ID="uuid-1925382b-24be-4940-aea9-03e770880c3a" DMDID="uuid-f4eff582-9aa6-36de-bb1e-c2ea49a9a17b" ORDER="1">
+                <mets:mptr xlink:href="database://?process.id=FIRST_CHILD_ID" LOCTYPE="OTHER" OTHERLOCTYPE="Kitodo.Production"/>
+            </mets:div>
+            <mets:div ID="uuid-f5c14b89-27e5-45af-9cc9-65e4ac803ca2" ORDER="1">
+                <mets:mptr xlink:href="database://?process.id=SECOND_CHILD_ID" LOCTYPE="OTHER" OTHERLOCTYPE="Kitodo.Production"/>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+    <mets:structLink/>
+</mets:mets>

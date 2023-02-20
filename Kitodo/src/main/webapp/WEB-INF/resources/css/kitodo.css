@@ -1096,6 +1096,12 @@ main i.fa {
     line-height: 22px;
 }
 
+.ui-dialog-content .dialog-text {
+    padding: 0 32px 16px 32px;
+    hyphens: auto;
+    line-height: 22px;
+}
+
 .ui-dialog-content .select-selector {
     padding: 16px 32px 16px 32px;
 }
@@ -2438,6 +2444,11 @@ form#metadata div label,
     width: auto;
 }
 
+#paginationForm\:updateMediaReferencesButton {
+    margin: 0;
+    width: 100%;
+}
+
 /*
 Column content
  */
@@ -2534,11 +2545,6 @@ Column content
 
 .ui-tree .ui-treenode.linked {
     background: transparent;
-    cursor: not-allowed;
-}
-
-.ui-tree .ui-treenode.linked span {
-    pointer-events: none;
 }
 
 .ui-tree .ui-treenode.undefined .ui-treenode-label span {
