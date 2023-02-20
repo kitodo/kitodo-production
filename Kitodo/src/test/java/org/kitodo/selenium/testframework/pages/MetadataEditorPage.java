@@ -11,7 +11,12 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import org.kitodo.selenium.testframework.Browser;
+import org.kitodo.selenium.testframework.Pages;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
 public class MetadataEditorPage extends Page<MetadataEditorPage> {
@@ -41,6 +46,18 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
 
     @FindBy(id = "buttonForm:save")
     private WebElement saveButton;
+
+    @FindBy(id = "buttonForm:saveExit")
+    private WebElement saveAndExitButton;
+
+    @FindBy(id = "logicalTree:0")
+    private WebElement logicalTree;
+
+    @FindBy(id = "logicalTree:0_0")
+    private WebElement firstChildProcess;
+
+    @FindBy(id = "logicalTree:0_1")
+    private WebElement secondChildProcess;
 
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
@@ -106,5 +123,30 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void save() {
         saveButton.click();
+    }
+
+    /**
+     * Change order of child processes in metadata editor by moving the second child process before
+     * the first child process via drag and drop.
+     */
+    public void changeOrderOfLinkedChildProcesses() {
+        secondChildProcess.click();
+        WebDriver webDriver = Browser.getDriver();
+        Actions moveAction = new Actions(webDriver);
+        WebElement dropArea = logicalTree.findElement(By.className("ui-tree-droppoint"));
+        moveAction.dragAndDrop(secondChildProcess, dropArea).build().perform();
+    }
+
+    public ProcessesPage saveAndExit() throws InstantiationException, IllegalAccessException {
+        clickButtonAndWaitForRedirect(saveAndExitButton, Pages.getProcessesPage().getUrl());
+        return Pages.getProcessesPage();
+    }
+
+    public String getNameOfFirstLinkedChildProcess() {
+        return firstChildProcess.getText();
+    }
+
+    public String getNameOfSecondLinkedChildProcess() {
+        return secondChildProcess.getText();
     }
 }

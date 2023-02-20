@@ -620,6 +620,21 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(thirdProcess);
     }
 
+    /**
+     * The folders up to and including number 9 in the metadata folder are
+     * already in use, so here we insert placeholder processes so that the
+     * newspaper’s overall process gets the number 10.
+     * @param startId ID of first placeholder process to add
+     * @param endId ID of last placeholder process to add
+     */
+    public static void insertPlaceholderProcesses(int startId, int endId) throws DataException {
+        for (int processNumber = startId; processNumber <= endId; processNumber++) {
+            Process nthProcess = new Process();
+            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
+            ServiceManager.getProcessService().save(nthProcess);
+        }
+    }
+
     public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
         Process fourthProcess = new Process();
         fourthProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -1988,5 +2003,32 @@ public class MockDatabase {
      */
     public static ImportConfiguration getCustomTypeImportConfiguration() throws DAOException {
         return ServiceManager.getImportConfigurationService().getById(CUSTOM_CONFIGURATION_ID);
+    }
+
+    /**
+     * Add process with title 'processTitle' to MockDatabase.
+     *
+     * @param processTitle title of process
+     * @param projectId ID of project to add to new process
+     * @param templateId ID of template to add to new process
+     * @return new process
+     * @throws DAOException when retrieving entities from database fails
+     * @throws DataException when saving new process to database fails
+     */
+    public static Process addProcess(String processTitle, int projectId, int templateId)
+            throws DAOException, DataException {
+        Project projectOne = ServiceManager.getProjectService().getById(projectId);
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        LocalDate localDate = LocalDate.of(2023, 1, 3);
+        Process process = new Process();
+        process.setTitle(processTitle);
+        process.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        process.setSortHelperImages(30);
+        process.setDocket(template.getDocket());
+        process.setProject(projectOne);
+        process.setRuleset(template.getRuleset());
+        process.setTemplate(template);
+        ServiceManager.getProcessService().save(process);
+        return process;
     }
 }

@@ -131,7 +131,7 @@ public class MetadataEditor {
      * Remove link to process with ID 'childProcessId' from workpiece of Process 'parentProcess'.
      *
      * @param parentProcess Process from which link is removed
-     * @param childProcessId ID of process whose link will be remove from workpiece of parent process
+     * @param childProcessId ID of process whose link will be removed from workpiece of parent process
      * @throws IOException thrown if meta.xml could not be loaded
      */
     public static void removeLink(Process parentProcess, int childProcessId) throws IOException {

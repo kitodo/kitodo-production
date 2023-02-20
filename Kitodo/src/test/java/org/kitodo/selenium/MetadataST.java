@@ -17,6 +17,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -41,6 +43,9 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 
+/**
+ * Tests for functions in the metadata editor.
+ */
 public class MetadataST extends BaseTestSelenium {
 
     private static final String TEST_IMAGES_DIR = "images";
@@ -48,22 +53,37 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
-    private static List<Integer> dummyProcessIds = new LinkedList<>();
+    private static int parentProcessId = -1;
 
-    /**
-     * Prepare file system, database and search index for tests.
-     * @throws DAOException when inserting processes into database fails
-     * @throws DataException when inserting processes into index fails
-     * @throws IOException when copying test files fails
-     */
-    private static void prepareMediaReferenceProcesses() throws DAOException, DataException, IOException {
+    private static List<Integer> dummyProcessIds = new LinkedList<>();
+    private static final String PARENT_PROCESS_TITLE = "Parent process";
+    private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
+    private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
+    private static final String TEST_PARENT_PROCESS_METADATA_FILE = "testParentProcessMeta.xml";
+    private static final String FIRST_CHILD_ID = "FIRST_CHILD_ID";
+    private static final String SECOND_CHILD_ID = "SECOND_CHILD_ID";
+    private static final String META_XML = "/meta.xml";
+    private static List<Integer> processHierarchyTestProcessIds = new LinkedList<>();
+    private static final int TEST_PROJECT_ID = 1;
+    private static final int TEST_TEMPLATE_ID = 1;
+
+    private static void prepareMediaReferenceProcess() throws DAOException, DataException, IOException {
+        insertDummyProcesses();
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
     }
 
     private static void prepareMetadataLockProcess() throws DAOException, DataException, IOException {
+        insertDummyProcesses();
         insertTestProcessForMetadataLockTest();
         copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
+    }
+
+    private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DataException {
+        insertDummyProcesses();
+        processHierarchyTestProcessIds = linkProcesses();
+        copyTestParentProcessMetadataFile();
+        updateChildProcessIdsInParentProcessMetadataFile();
     }
 
     /**
@@ -75,10 +95,9 @@ public class MetadataST extends BaseTestSelenium {
     @BeforeClass
     public static void prepare() throws DAOException, DataException, IOException {
         MockDatabase.insertFoldersForSecondProject();
-        insertDummyProcesses();
         prepareMetadataLockProcess();
-        insertDummyProcesses();
-        prepareMediaReferenceProcesses();
+        prepareMediaReferenceProcess();
+        prepareProcessHierarchyProcesses();
     }
 
     /**
@@ -111,6 +130,27 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
         Assert.assertTrue("Unable to open metadata editor that was not closed by 'close' button",
                 Browser.getCurrentUrl().contains("metadataEditor.jsf"));
+    }
+
+    /**
+     * Verifies that linked child processes can be reordered via drag'n'drop in the metadata editor.
+     * @throws Exception if processes cannot be saved or loaded
+     */
+    @Test
+    public void changeProcessLinkOrderTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editParentProcessMetadata();
+        Assert.assertTrue("Wrong initial order of linked child processes",
+                Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
+        Assert.assertTrue("Wrong initial order of linked child processes",
+                Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
+        Pages.getMetadataEditorPage().changeOrderOfLinkedChildProcesses();
+        Pages.getMetadataEditorPage().saveAndExit();
+        Pages.getProcessesPage().goTo().editParentProcessMetadata();
+        Assert.assertTrue("Wrong resulting order of linked child processes",
+                Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
+        Assert.assertTrue("Wrong resulting order of linked child processes",
+                Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
     }
 
     /**
@@ -171,6 +211,9 @@ public class MetadataST extends BaseTestSelenium {
      */
     @AfterClass
     public static void cleanup() throws DAOException, CustomResponseException, DataException, IOException {
+        for (int processId : processHierarchyTestProcessIds) {
+            ProcessService.deleteProcess(processId);
+        }
         for (int dummyProcessId : dummyProcessIds) {
             ServiceManager.getProcessService().removeFromDatabase(dummyProcessId);
             ServiceManager.getProcessService().removeFromIndex(dummyProcessId, false);
@@ -190,6 +233,34 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void insertTestProcessForMetadataLockTest() throws DAOException, DataException {
         metadataLockProcessId = MockDatabase.insertTestProcessForMetadataLockTestIntoSecondProject();
+    }
+
+    /**
+     * Creates dummy parent process and links first two test processes as child processes to parent process.
+     * @throws DAOException if loading of processes fails
+     * @throws DataException if saving of processes fails
+     */
+    private static List<Integer> linkProcesses() throws DAOException, DataException {
+        List<Integer> processIds = new LinkedList<>();
+        List<Process> childProcesses = new LinkedList<>();
+        childProcesses.add(addProcess(FIRST_CHILD_PROCESS_TITLE));
+        childProcesses.add(addProcess(SECOND_CHILD_PROCESS_TITLE));
+        Process parentProcess = addProcess(PARENT_PROCESS_TITLE);
+        parentProcess.getChildren().addAll(childProcesses);
+        ServiceManager.getProcessService().save(parentProcess);
+        parentProcessId = parentProcess.getId();
+        for (Process childProcess : childProcesses) {
+            childProcess.setParent(parentProcess);
+            ServiceManager.getProcessService().save(childProcess);
+            processIds.add(childProcess.getId());
+        }
+        processIds.add(parentProcess.getId());
+        return processIds;
+    }
+
+    private static Process addProcess(String processTitle) throws DAOException, DataException {
+        insertDummyProcesses();
+        return MockDatabase.addProcess(processTitle, TEST_PROJECT_ID, TEST_TEMPLATE_ID);
     }
 
     private static void insertDummyProcesses() throws DAOException, DataException {
@@ -219,7 +290,7 @@ public class MetadataST extends BaseTestSelenium {
                 + "/images/").toUri();
         try {
             if (!ServiceManager.getFileService().isDirectory(targetImages)) {
-                ServiceManager.getFileService().createDirectory(processDir, "images");
+                ServiceManager.getFileService().createDirectory(processDir, TEST_IMAGES_DIR);
             }
             ServiceManager.getFileService().copyDirectory(testImagesUri, targetImages);
         } catch (IOException e) {
@@ -232,12 +303,27 @@ public class MetadataST extends BaseTestSelenium {
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
                 .toUri();
         URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
-                + "/meta.xml").toUri();
+                + META_XML).toUri();
         URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
         if (!ServiceManager.getFileService().isDirectory(processDir)) {
             ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
                     String.valueOf(processId));
         }
         ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
+    }
+
+    private static void copyTestParentProcessMetadataFile() throws IOException {
+        copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
+    }
+
+    private static void updateChildProcessIdsInParentProcessMetadataFile() throws IOException, DAOException {
+        Process parentProcess = ServiceManager.getProcessService().getById(parentProcessId);
+        Path metaXml = Paths.get(ConfigCore.getKitodoDataDirectory(), parentProcessId + META_XML);
+        String xmlContent = Files.readString(metaXml);
+        String firstChildId = String.valueOf(parentProcess.getChildren().get(0).getId());
+        String secondChildId = String.valueOf(parentProcess.getChildren().get(1).getId());
+        xmlContent = xmlContent.replaceAll(FIRST_CHILD_ID, String.valueOf(firstChildId));
+        xmlContent = xmlContent.replaceAll(SECOND_CHILD_ID, String.valueOf(secondChildId));
+        Files.write(metaXml, xmlContent.getBytes());
     }
 }
