@@ -161,7 +161,7 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void toggleAllStructureNodesTest() throws Exception {
         login("kowal");
-        Pages.getProcessesPage().goTo().editMetadata();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.METADATA_LOCK_TEST_PROCESS_TITLE);
         Assert.assertEquals("Number of visible nodes is wrong initially", 2,
                 Pages.getMetadataEditorPage().getNumberOfDisplayedStructureElements());
         Pages.getMetadataEditorPage().collapseAll();
