@@ -13,6 +13,7 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getSelectedRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.io.File;
@@ -45,6 +46,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
+
+    private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -148,6 +151,18 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @FindBy(id = FILTER_INPUT)
     private WebElement filterInput;
 
+    @FindBy(css = ".ui-chkbox-all .ui-chkbox-box")
+    private WebElement selectAllCheckBox;
+
+    @FindBy(id = PROCESSES_FORM + ":selectAllRowsOnPage")
+    private WebElement selectAllRowsOnPageLink;
+
+    @FindBy(id = PROCESSES_FORM + ":selectAllRows")
+    private WebElement selectAllRowsLink;
+
+    @FindBy(className = "ui-paginator-next")
+    private WebElement nextPage;
+
     public ProcessesPage() {
         super("pages/processes.jsf");
     }
@@ -190,6 +205,18 @@ public class ProcessesPage extends Page<ProcessesPage> {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
         Select batchSelect = new Select(batchesSelect);
         return batchSelect.getOptions().size();
+    }
+
+    /**
+     * Gets number of selected rows in processesTable.
+     * @return number of selected rows
+     * @throws Exception exception
+     */
+    public long countListedSelectedProcesses() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getSelectedRowsOfTable(processesTable);
     }
 
     /**
@@ -436,5 +463,40 @@ public class ProcessesPage extends Page<ProcessesPage> {
             .atMost(10, TimeUnit.SECONDS)
             .ignoreExceptions()
             .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
+    }
+
+    /**
+     * Select all rows on a page in processesTable.
+     */
+    public void selectAllRowsOnPage() {
+        selectAllCheckBox.click();
+        await(WAIT_FOR_SELECTION_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> selectAllRowsOnPageLink.isDisplayed());
+        selectAllRowsOnPageLink.click();
+        await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+    }
+
+    /**
+     * Select all rows on all pages in processesTable.
+     */
+    public void selectAllRows() {
+        selectAllCheckBox.click();
+        await(WAIT_FOR_SELECTION_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> selectAllRowsLink.isDisplayed());
+        selectAllRowsLink.click();
+        await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+    }
+
+    /**
+     * Go to next page in processesTable.
+     */
+    public void goToNextPage() {
+        if (nextPage.isEnabled()) {
+            nextPage.click();
+            await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
+                    .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+        }
     }
 }
