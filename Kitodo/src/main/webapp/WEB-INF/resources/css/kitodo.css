@@ -2878,6 +2878,10 @@ Column content
     justify-content: center;
 }
 
+#imagePreviewForm\:mediaDetail .mediaPreviewItem {
+    max-height: 100%;
+}
+
 #imagePreviewForm .mediaListIconItem {
     height: 100%;
     width: 100%;
@@ -3081,6 +3085,10 @@ Column content
 .thumbnail-parent audio,
 .thumbnail-parent video {
     width: 100%;
+    max-height: 100%;
+}
+
+.thumbnail-parent video {
     height: auto;
 }
 

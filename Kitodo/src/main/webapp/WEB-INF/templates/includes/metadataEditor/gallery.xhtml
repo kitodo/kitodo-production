@@ -37,7 +37,7 @@
             <p:remoteCommand name="sendGallerySelect"
                              action="#{DataEditorForm.galleryPanel.select}"
                              update="galleryHeadingWrapper
-                                     imagePreviewForm:mediaViewData
+                                     imagePreviewForm:mediaDetailContainer
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
                                      metadataAccordion:logicalMetadataWrapperPanel"/>
@@ -64,7 +64,7 @@
                 <p:column>
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-image"
+                                     icon="fa fa-file"
                                      oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView()"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
@@ -165,13 +165,11 @@
             <!-- View current page with OpenLayers -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' and not empty DataEditorForm.galleryPanel.medias}">
                 <!-- OpenLayers Kitodo custom controls -->
-                <h:panelGroup id="olWrapper"
+                <h:panelGroup id="mediaDetailContainer"
                               layout="block"
                               a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
                               a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
-                    <div id="map" class="map">
-                        <i class="fa fa-spinner fa-spin"/>
-                    </div>
+                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail.xhtml"/>
                     <h:panelGroup layout="block" id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">

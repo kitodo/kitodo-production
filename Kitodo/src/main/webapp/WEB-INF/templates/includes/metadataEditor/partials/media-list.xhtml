@@ -41,7 +41,7 @@
             <ui:fragment
                     rendered="#{media.showingInPreview and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
                 <p:media styleClass="mediaListItem" cache="true"
-                         value="#{DataEditorForm.galleryPanel.previewData}"
+                         value="#{imageProvider.previewData}"
                          player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                          rendered="#{media.showingInPreview}">
                     <f:param name="mediaId"

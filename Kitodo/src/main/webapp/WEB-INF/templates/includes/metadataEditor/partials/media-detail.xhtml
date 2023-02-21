@@ -18,13 +18,13 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <h:panelGroup id="mediaDetail">
+    <h:panelGroup id="mediaDetail" layout="block">
         <ui:param name="selectedGalleryMediaContent"
                   value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
 
         <ui:fragment
                 rendered="#{selectedGalleryMediaContent.showingInMediaView and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
-            <p:media styleClass="mediaPreviewItem" value="#{DataEditorForm.galleryPanel.mediaViewData}"
+            <p:media styleClass="mediaPreviewItem" value="#{imageProvider.mediaView}"
                      player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                      width="90%" height="auto">
                 <f:param name="mediaId"
