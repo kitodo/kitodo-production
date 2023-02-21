@@ -44,15 +44,21 @@
                  id="metadataTable">
         <p:column>
             <span class="input-wrapper">
-                <!-- field label -->
-                <p:outputLabel value="#{item.label}:" rendered="#{not item.undefined}"/>
-                <p:outputLabel value="#{item.label}: ⚠️" style="background-color: gold;"
-                               title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}" />
+                <!-- field label
+                The field ID must match the field's input attribute "#{item.input}", so that the outputLabel can be mapped to the field with the "for" attribute -->
+                
+                <p:outputLabel for="#{item.input eq 'dataTable' ? '' : item.input}"
+                               value="#{item.label}:"
+                               rendered="#{not item.undefined}"/>
+                <p:outputLabel value="#{item.label}: ⚠️"
+                               style="background-color: gold;"
+                               title="#{msgs['dataEditor.undefinedKey']}" rendered="#{item.undefined}"/>
 
                 <!-- inputText -->
                 <h:panelGroup rendered="#{item.input eq 'inputText'}"
                               title="#{item.value}">
                     <p:inputText id="inputText"
+                                 label="#{item.label}"
                                  value="#{item.value}"
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
@@ -65,6 +71,7 @@
                 <h:panelGroup rendered="#{item.input eq 'inputTextarea'}"
                               title="#{item.value}">
                     <p:inputTextarea id="inputTextarea"
+                                     label="#{item.label}"
                                      value="#{item.value}"
                                      rows="2"
                                      disabled="#{not item.editable or readOnly}"
@@ -78,6 +85,7 @@
                 <h:panelGroup rendered="#{item.input eq 'spinner'}"
                               title="#{item.value}">
                     <p:spinner id="spinner"
+                               label="#{item.label}"
                                value="#{item.value}"
                                disabled="#{not item.editable or readOnly}"
                                required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
@@ -89,6 +97,7 @@
                 <!-- calendar -->
                 <h:panelGroup rendered="#{item.input eq 'calendar'}">
                     <p:calendar id="calendar"
+                                label="#{item.label}"
                                 value="#{item.date}"
                                 pattern="yyyy-MM-dd"
                                 styleClass="input-with-button #{not item.editable or readOnly ? 'read-only disabled' : ''}"
@@ -101,7 +110,8 @@
 
                 <!-- manyMenu -->
                 <h:panelGroup rendered="#{item.input eq 'manyMenu'}">
-                    <p:selectManyMenu id="selectManyMenu"
+                    <p:selectManyMenu id="manyMenu"
+                                      label="#{item.label}"
                                       value="#{item.selectedItems}"
                                       readonly="#{not item.editable}"
                                       styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
@@ -116,7 +126,8 @@
                 <!-- oneMenu -->
                 <h:panelGroup rendered="#{item.input eq 'oneMenu'}"
                               title="#{item.selectedItem}">
-                    <p:selectOneMenu id="selectOneMenu"
+                    <p:selectOneMenu id="oneMenu"
+                                     label="#{item.label}"
                                      value="#{item.selectedItem}"
                                      readonly="#{not item.editable}"
                                      autoWidth="false"
@@ -134,7 +145,8 @@
 
                 <!-- oneRadio -->
                 <h:panelGroup rendered="#{item.input eq 'oneRadio'}">
-                    <p:selectOneRadio id="selectOneRadio"
+                    <p:selectOneRadio id="oneRadio"
+                                      label="#{item.label}"
                                       value="#{item.selectedItem}"
                                       readonly="#{not item.editable}"
                                       required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
@@ -150,7 +162,8 @@
                 <!-- toggleSwitch -->
                 <h:panelGroup rendered="#{item.input eq 'toggleSwitch'}"
                               title="#{item.active.toString()}">
-                    <p:selectBooleanCheckbox id="selectBooleanCheckbox"
+                    <p:selectBooleanCheckbox id="toggleSwitch"
+                                             label="#{item.label}"
                                              disabled="#{not item.editable or readOnly}"
                                              required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                              value="#{item.active}">
