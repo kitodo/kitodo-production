@@ -567,7 +567,13 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
         return service.findByQuery(createSetQueryForIds(ids), true);
     }
 
-    private QueryBuilder createSetQueryForIds(List<Integer> ids) {
+    /**
+     * Builds a ElasticSearch query for list of Ids.
+     *
+     * @param ids as a List of Integer
+     * @return query as QueryBuilder
+     */
+    public QueryBuilder createSetQueryForIds(List<Integer> ids) {
         return termsQuery("_id", ids);
     }
 

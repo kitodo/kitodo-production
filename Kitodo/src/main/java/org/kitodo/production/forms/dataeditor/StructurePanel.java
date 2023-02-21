@@ -514,7 +514,7 @@ public class StructurePanel implements Serializable {
      * Constructs a page range string by combining the labels of the first and last view
      * of the provided logical division.
      *
-     * @param structure the logical divsion
+     * @param structure the logical division
      * @return the page range string
      */
     private String buildPageRangeFromLogicalDivision(LogicalDivision structure) {
@@ -1246,12 +1246,10 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Change order fields of physical elements. When saved to METS this is represented by the physical structMap divs' "ORDER" attribute.
-     * @param toElement Logical element to which the physical elements are assigned. The physical elements' order follows the order of the
-     *                  logical elements.
-     * @param elementsToBeMoved List of physical elements to be moved
+     * Change order fields of physical elements. When saved to METS this is represented by the physical structMap divs'
+     * "ORDER" attribute.
      */
-    void changePhysicalOrderFields(LogicalDivision toElement, List<Pair<View, LogicalDivision>> elementsToBeMoved) {
+    void changePhysicalOrderFields() {
         ServiceManager.getFileService().renumberPhysicalDivisions(dataEditor.getWorkpiece(), false);
     }
 
@@ -1365,16 +1363,17 @@ public class StructurePanel implements Serializable {
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
         LinkedList<LogicalDivision> dragParents;
-        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())) {
+        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())
+                || Objects.nonNull(dragStructure.getLink())) {
             dragParents = MetadataEditor.getAncestorsOfLogicalDivision(dragStructure,
                     dataEditor.getWorkpiece().getLogicalStructure());
             if (!dragParents.isEmpty()) {
                 LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    if (!this.logicalStructureTreeContainsMedia()) {
-                        preserveLogical();
-                    } else {
+                    if (logicalStructureTreeContainsMedia()) {
                         preserveLogicalAndPhysical();
+                    } else {
+                        preserveLogical();
                     }
                     this.dataEditor.getGalleryPanel().updateStripes();
                     this.dataEditor.getPaginationPanel().show();
