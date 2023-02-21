@@ -20,23 +20,32 @@
         <h:form id="logicalStructureMenuForm">
             <ul>
                 <li>
-                    <p:selectBooleanCheckbox 
+                    <p:selectBooleanCheckbox
                     id="showPageRange"
-                    value="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree}" 
+                    value="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree}"
                     itemLabel="#{msgs.showAssignedPages}">
-                        <p:ajax event="change" 
+                        <p:ajax event="change"
                             update="@this logicalTree"/>
                     </p:selectBooleanCheckbox>
                 </li>
                 <li>
-                    <p:selectBooleanCheckbox 
+                    <p:selectBooleanCheckbox
                     id="hideMediaCheckbox"
-                    value="#{DataEditorForm.structurePanel.hideMediaInLogicalTree}" 
+                    value="#{DataEditorForm.structurePanel.hideMediaInLogicalTree}"
                     disabled="#{DataEditorForm.structurePanel.separateMedia}"
                     itemLabel="#{msgs.showOnlyStructureElements}">
-                        <p:ajax event="change" 
-                            listener="#{DataEditorForm.structurePanel.onHideMediaInLogicalTreeChange}" 
+                        <p:ajax event="change"
+                            listener="#{DataEditorForm.structurePanel.onHideMediaInLogicalTreeChange}"
                             update="@this logicalTree @(.pageList) imagePreviewForm:thumbnailStripe"/>
+                    </p:selectBooleanCheckbox>
+                </li>
+                <li>
+                    <p:selectBooleanCheckbox
+                            id="showHierarchyLevel"
+                            value="#{DataEditorForm.structurePanel.showHierarchyLevel}"
+                            itemLabel="#{msgs.showHierarchyLevel}">
+                        <p:ajax event="change"
+                                update="@this logicalTree"/>
                     </p:selectBooleanCheckbox>
                 </li>
             </ul>

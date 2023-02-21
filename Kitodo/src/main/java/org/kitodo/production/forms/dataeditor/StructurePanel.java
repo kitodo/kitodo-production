@@ -137,6 +137,11 @@ public class StructurePanel implements Serializable {
     private boolean showPageRangeInLogicalTree = false;
 
     /**
+     * Determines whether the hierarchy level of a tree node should be displayed with its label or not.
+     */
+    private boolean showHierarchyLevel = false;
+
+    /**
      * Creates a new structure panel.
      *
      * @param dataEditor
@@ -1816,4 +1821,40 @@ public class StructurePanel implements Serializable {
         this.showPageRangeInLogicalTree = showPageRangeInLogicalTree;
     }
 
+    /**
+     * Returns whether the user selected to show the hierarchy level of individual tree nodes in the structure tree.
+     * @return value of showHierarchyLevel
+     */
+    public boolean isShowHierarchyLevel() {
+        return showHierarchyLevel;
+    }
+
+    /**
+     * Set whether the hierarchy level of individual tree nodes in the structure tree should be displayed.
+     * @param showHierarchyLevel boolean
+     */
+    public void setShowHierarchyLevel(boolean showHierarchyLevel) {
+        this.showHierarchyLevel = showHierarchyLevel;
+    }
+
+    /**
+     * Expand all tree nodes in the logical structure tree.
+     */
+    public void expandAll() {
+        toggleAll(this.logicalTree, true);
+    }
+
+    /**
+     * Collapse all tree nodes in the logical structure tree.
+     */
+    public void collapseAll() {
+        toggleAll(this.logicalTree, false);
+    }
+
+    private void toggleAll(TreeNode treeNode, boolean expanded) {
+        for (TreeNode childNode : treeNode.getChildren()) {
+            toggleAll(childNode, expanded);
+        }
+        treeNode.setExpanded(expanded);
+    }
 }

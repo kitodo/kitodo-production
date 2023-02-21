@@ -34,6 +34,9 @@
         <mets:div ID="uuid-1400b722-c7ae-488c-8322-f4a5f198a443"
                   DMDID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99"
                   TYPE="monograph"
-                  ORDER="1"/>
+                  ORDER="1">
+            <mets:div ID="uuid-1400b723-c7ae-488c-8322-f4a5f198a443"
+                      TYPE="chapter"/>
+        </mets:div>
     </mets:structMap>
 </mets:mets>

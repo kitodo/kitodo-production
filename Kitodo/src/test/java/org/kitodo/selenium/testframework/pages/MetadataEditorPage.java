@@ -19,6 +19,10 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
 
+import java.util.concurrent.TimeUnit;
+
+import static org.awaitility.Awaitility.await;
+
 public class MetadataEditorPage extends Page<MetadataEditorPage> {
 
     @SuppressWarnings("unused")
@@ -58,6 +62,12 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
 
     @FindBy(id = "logicalTree:0_1")
     private WebElement secondChildProcess;
+
+    @FindBy(id = "expandAllButton")
+    private WebElement expandAllButton;
+
+    @FindBy(id = "collapseAllButton")
+    private WebElement collapseAllButton;
 
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
@@ -148,5 +158,32 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
 
     public String getNameOfSecondLinkedChildProcess() {
         return secondChildProcess.getText();
+    }
+
+    /**
+     * Click "expand all" button in structure panel of metadata editor.
+     */
+    public void expandAll() {
+        expandAllButton.click();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(1, TimeUnit.SECONDS)
+                .until(() -> expandAllButton.isEnabled());
+    }
+
+    /**
+     * Click "collapse all" button in structure panel of metadata editor.
+     */
+    public void collapseAll() {
+        collapseAllButton.click();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(1, TimeUnit.SECONDS)
+                .until(() -> collapseAllButton.isEnabled());
+    }
+
+    /**
+     * Retrieve and return number of currently displayed nodes in structure tree.
+     * @return number of currently displayed nodes in structure tree
+     */
+    public long getNumberOfDisplayedStructureElements() {
+        return Browser.getDriver().findElements(By.cssSelector(".ui-treenode")).stream().filter(WebElement::isDisplayed)
+                .count();
     }
 }
