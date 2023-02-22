@@ -34,7 +34,7 @@ public class KitodoResourceHandler extends PrimeResourceHandler {
         // Check if parameter is available to stream with RangeStreamedContentHandler
         if (params.containsKey(KITODO_RANGE_STREAMED_CONTENT_KEY) && params.get(KITODO_RANGE_STREAMED_CONTENT_KEY)
                 .equals("true")) {
-            new RangeStreamedContentHandler().handle(context);
+            new RangeStreamContentHandler().handle(context);
             return;
         }
         super.handleResourceRequest(context);

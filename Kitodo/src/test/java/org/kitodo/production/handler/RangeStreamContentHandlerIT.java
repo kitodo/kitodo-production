@@ -12,6 +12,7 @@
 package org.kitodo.production.handler;
 
 import static org.junit.Assert.assertEquals;
+import static org.kitodo.production.handler.RangeHelper.DEFAULT_BUFFER_SIZE;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -123,7 +124,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag", FILENAME);
         verify(httpServletResponse).setHeader("Accept-Ranges", "bytes");
-        verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
+        verify(httpServletResponse).setBufferSize(DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
         verify(httpServletResponse).setHeader("Content-Range", "bytes 0-33/34");
         verify(httpServletResponse).setHeader("Content-Length", "34");
@@ -146,7 +147,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag", FILENAME);
         verify(httpServletResponse).setHeader("Accept-Ranges", "bytes");
-        verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
+        verify(httpServletResponse).setBufferSize(DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
         verify(httpServletResponse).setHeader("Content-Range", "bytes */34");
         verify(httpServletResponse).setHeader("Content-Length", "34");
@@ -171,7 +172,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag", FILENAME);
         verify(httpServletResponse).setHeader("Accept-Ranges", "bytes");
-        verify(httpServletResponse).setBufferSize(RangeStreamedContentHandler.DEFAULT_BUFFER_SIZE);
+        verify(httpServletResponse).setBufferSize(DEFAULT_BUFFER_SIZE);
         verify(httpServletResponse).setContentType(MIMETYPE);
         verify(httpServletResponse).setHeader("Content-Range", "bytes " + start + "-" + end + "/34");
         verify(httpServletResponse).setHeader("Content-Length", "18");
