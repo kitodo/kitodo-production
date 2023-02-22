@@ -48,7 +48,7 @@
                 The field ID must match the field's input attribute "#{item.input}", so that the outputLabel can be mapped to the field with the "for" attribute -->
                 
                 <p:outputLabel for="#{item.input eq 'dataTable' ? '' : item.input}"
-                               value="#{item.label}:"
+                               value="#{item.label}: #{item.required ? ' *' :''}"
                                rendered="#{not item.undefined}"/>
                 <p:outputLabel value="#{item.label}: ⚠️"
                                style="background-color: gold;"
