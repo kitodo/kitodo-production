@@ -11,8 +11,9 @@
 
 package org.kitodo.production.handler;
 
+import static org.apache.commons.io.IOUtils.toInputStream;
 import static org.junit.Assert.assertEquals;
-import static org.kitodo.production.handler.RangeHelper.DEFAULT_BUFFER_SIZE;
+import static org.kitodo.production.helper.RangeStreamHelper.DEFAULT_BUFFER_SIZE;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +28,6 @@ import javax.el.ValueExpression;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.io.IOUtils;
 import org.jboss.weld.el.WeldExpressionFactory;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,7 +39,7 @@ import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.util.Constants;
 
-public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
+public class RangeStreamContentHandlerIT extends BasePrimefaceTest {
 
     public static final String FILENAME = "test.mp4";
     public static final String MIMETYPE = "video/mp4";
@@ -54,7 +54,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
     private ByteArrayOutputStream byteArrayOutputStream;
 
     @Spy
-    private RangeStreamedContentHandler rangeStreamedContentHandler;
+    private RangeStreamContentHandler rangeStreamContentHandler;
 
     @Mock
     private OmniApplication omniApplication;
@@ -93,12 +93,10 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         when(weldExpressionFactory.createValueExpression(facesContext.getELContext(), dynamicContentValue,
                 StreamedContent.class)).thenReturn(valueExpression);
 
-        InputStream inputStream =
-                IOUtils.toInputStream(data, StandardCharsets.UTF_8);
-        StreamedContent streamedContent = DefaultStreamedContent.builder().stream(() -> inputStream).contentType(
-                        MIMETYPE)
-                .name(Paths.get(FILENAME).getFileName().toString()).contentLength(inputStream.available())
-                .build();
+        InputStream inputStream = toInputStream(data, StandardCharsets.UTF_8);
+        StreamedContent streamedContent = DefaultStreamedContent.builder().stream(() -> inputStream)
+                .contentType(MIMETYPE).name(Paths.get(FILENAME).getFileName().toString())
+                .contentLength(inputStream.available()).build();
 
         when(valueExpression.getValue(facesContext.getELContext())).thenReturn(streamedContent);
 
@@ -117,7 +115,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         int end = 100;
 
         when(httpServletRequest.getHeader("Range")).thenReturn("bytes=" + start + "-" + end);
-        rangeStreamedContentHandler.handle(facesContext);
+        rangeStreamContentHandler.handle(facesContext);
 
         assertEquals(data, byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
@@ -140,7 +138,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
     public void wrongRange() throws Exception {
         when(httpServletRequest.getHeader("Range")).thenReturn("");
 
-        rangeStreamedContentHandler.handle(facesContext);
+        rangeStreamContentHandler.handle(facesContext);
 
         assertEquals(data, byteArrayOutputStream.toString(StandardCharsets.UTF_8));
 
@@ -167,7 +165,7 @@ public class RangeStreamedContentHandlerIT extends BasePrimefaceTest {
         when(httpServletRequest.getHeader("Range")).thenReturn("bytes=" + start + "-" + end);
         when(httpServletRequest.getHeader("If-Range")).thenReturn(FILENAME);
 
-        rangeStreamedContentHandler.handle(facesContext);
+        rangeStreamContentHandler.handle(facesContext);
 
         verify(httpServletResponse).setHeader("Content-Disposition", "inline;filename=\"" + FILENAME + "\"");
         verify(httpServletResponse).setHeader("ETag", FILENAME);

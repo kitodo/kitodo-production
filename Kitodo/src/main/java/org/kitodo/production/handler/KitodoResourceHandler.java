@@ -31,7 +31,7 @@ public class KitodoResourceHandler extends PrimeResourceHandler {
     public void handleResourceRequest(FacesContext context) throws IOException {
         Map<String, String> params = context.getExternalContext().getRequestParameterMap();
 
-        // Check if parameter is available to stream with RangeStreamedContentHandler
+        // Check if parameter is available to stream with RangeStreamContentHandler
         if (params.containsKey(KITODO_RANGE_STREAMED_CONTENT_KEY) && params.get(KITODO_RANGE_STREAMED_CONTENT_KEY)
                 .equals("true")) {
             new RangeStreamContentHandler().handle(context);
