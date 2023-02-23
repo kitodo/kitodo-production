@@ -60,7 +60,8 @@ import org.primefaces.model.TreeNode;
 
 public class StructurePanel implements Serializable {
     private static final Logger logger = LogManager.getLogger(StructurePanel.class);
-
+    public static final String STRUCTURE_NODE_TYPE = "Structure";
+    public static final String VIEW_NODE_TYPE = "View";
     private final DataEditorForm dataEditor;
 
     /**
@@ -510,7 +511,7 @@ public class StructurePanel implements Serializable {
     private DefaultTreeNode buildStructureTree() {
         DefaultTreeNode invisibleRootNode = new DefaultTreeNode();
         invisibleRootNode.setExpanded(true);
-        invisibleRootNode.setType("Structure");
+        invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
         buildStructureTreeRecursively(structure, invisibleRootNode);
         return invisibleRootNode;
@@ -583,7 +584,7 @@ public class StructurePanel implements Serializable {
          * appends it to the parent as a child. That’s the logic of the JSF
          * framework. So you do not have to add the result anywhere.
          */
-        DefaultTreeNode parent = new DefaultTreeNode("Structure", node, result);
+        DefaultTreeNode parent = new DefaultTreeNode(STRUCTURE_NODE_TYPE, node, result);
         if (logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
             parent.setExpanded(true);
         }
@@ -603,7 +604,7 @@ public class StructurePanel implements Serializable {
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
                     DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
-                    viewNode.setType("View");
+                    viewNode.setType(VIEW_NODE_TYPE);
                     viewsShowingOnAChild.add(pair.getLeft());
                 }
             }
