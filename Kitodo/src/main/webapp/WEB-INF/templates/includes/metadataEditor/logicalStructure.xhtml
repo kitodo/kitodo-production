@@ -63,6 +63,7 @@
                 nodeVar="defaultTreeNode"
                 styleClass="focusable"
                 selectionMode="single"
+                dynamic="true"
                 selection="#{DataEditorForm.structurePanel.selectedLogicalNode}"
                 draggable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
                 droppable="#{not readOnly and SecurityAccessController.hasAuthorityToEditProcessStructureData()}"
@@ -108,19 +109,33 @@
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
             <p:ajax event="expand"
                     listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
-            <p:treeNode expandedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
-                        collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}"
+            <p:treeNode type="Structure" expandedIcon="ui-icon-folder-expanded"
+                        collapsedIcon="ui-icon-folder-collapsed"
                         styleClass="#{logicalNode.linked ? 'linked' : ''} #{logicalNode.undefined ? 'undefined' : ''}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
                 <!--@elvariable id="defaultTreeNode" type="org.primefaces.model.DefaultTreeNode"-->
-                <h:outputText rendered="#{DataEditorForm.structurePanel.showHierarchyLevel and logicalNode.dataObject['class'].simpleName ne 'View'}"
+                <h:outputText rendered="#{DataEditorForm.structurePanel.showHierarchyLevel}"
                               value="&lt;#{fn:length(fn:split(defaultTreeNode.rowKey, '_'))}&gt; "/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.withoutType'] : logicalElementType}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type' or logicalNode.dataObject['class'].simpleName eq 'View'}"/>
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata ne 'type' and logicalNode.dataObject['class'].simpleName ne 'View'}"/>
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata ne 'type'}"/>
+                <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
+                              rendered="#{logicalNode.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
+                <h:outputText value="[#{logicalNode.pageRange}]"
+                              rendered="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree and logicalNode.pageRange ne null}"
+                              styleClass="pageRange" />
+            </p:treeNode>
+            <p:treeNode type="View" icon="ui-icon-document"
+                        styleClass="#{logicalNode.linked ? 'linked' : ''} #{logicalNode.undefined ? 'undefined' : ''}">
+                <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
+                <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.withoutType'] : logicalElementType}"
+                              title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
+
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
@@ -154,7 +169,7 @@
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
             <p:menuitem value="#{msgs.changeDocstructType}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View' and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.type eq 'Structure' and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-pencil fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -197,7 +212,7 @@
                         disabled="#{readOnly}"
                         process="@this"/>
             <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNode.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.type ne 'View'}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
