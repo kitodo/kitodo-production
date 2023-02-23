@@ -16,8 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import javax.persistence.PersistenceException;
 
-import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.NativeQuery;
 import org.hibernate.type.StandardBasicTypes;
@@ -187,7 +187,7 @@ public class TaskDAO extends BaseDAO<Task> {
             }
 
             return counts;
-        } catch (HibernateException e) {
+        } catch (PersistenceException e) {
             // catch any exceptions that might be thrown by internals of database connector
             // due to recursive query, which might not be supported by some databases
             throw new DAOException(e);
