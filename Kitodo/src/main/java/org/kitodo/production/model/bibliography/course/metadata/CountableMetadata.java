@@ -251,15 +251,16 @@ public class CountableMetadata {
      * @return true, if the given metadataType and time point of creation match
      */
     public boolean matches(String metadataType, Pair<LocalDate, Issue> issue, Boolean create) {
-        if (metadataType == null || metadataType.equals(this.metadataType)) {
+        if (Objects.isNull(metadataType) || metadataType.equals(this.metadataType)) {
             if (this.create.getRight()) {
                 return  Objects.nonNull(issue) && Objects.equals(this.create.getMiddle(), issue.getRight());
             } else {
-                return (null == create
+                return (Objects.isNull(create)
                         && new IssueComparator(block).compare(Pair.of(this.create.getLeft(), this.create.getMiddle()), issue) <= 0
-                        && (delete == null || new IssueComparator(block).compare(issue, delete) < 0)
-                        || Boolean.TRUE.equals(create) && this.create.equals(issue) || Boolean.FALSE.equals(create)
-                        && (issue == null && this.delete == null || issue.equals(this.delete)));
+                        && (Objects.isNull(delete) || new IssueComparator(block).compare(issue, delete) < 0)
+                        || Boolean.TRUE.equals(create) && Pair.of(this.create.getLeft(), this.create.getMiddle()).equals(issue)
+                        || Boolean.FALSE.equals(create)
+                        && (Objects.isNull(issue) && Objects.isNull(this.delete) || issue.equals(this.delete)));
             }
         }
         return false;

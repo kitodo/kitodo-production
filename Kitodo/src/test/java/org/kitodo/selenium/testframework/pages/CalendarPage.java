@@ -1,33 +1,49 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.selenium.testframework.pages;
 
-import org.kitodo.selenium.testframework.Browser;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.FindBy;
+import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertTrue;
+import org.kitodo.selenium.testframework.Browser;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.FindBy;
 
 public class CalendarPage extends Page<CalendarPage> {
 
     private static final String BUTTON_CANCEL = "editForm:cancel";
     private static final String BUTTON_ADD_BLOCK = "editForm:calendarTabView:addBlock";
     private static final String DATEPICKER_FROM = "#editForm\\:calendarTabView\\:blockList td:first-child .p-datepicker input";
-    private static final String DATEPICKER_FROM_LINK = "//div[@id='editForm:calendarTabView:blockList:0:blockFirstAppearance_panel']//a[text()='1']";
-    private static final String DATEPICKER_TO_LINK = "(//div[@id='editForm:calendarTabView:blockList:0:blockLastAppearance_panel']//a[text()='7'])[last()]";
+    private static final String DATEPICKER_FROM_LINK = "//div[@id='editForm:calendarTabView:blockList:0:blockFirstAppearance_panel']//"
+            + "a[text()='1']";
+    private static final String DATEPICKER_TO_LINK = "(//div[@id='editForm:calendarTabView:blockList:0:blockLastAppearance_panel']//"
+            + "a[text()='7'])[last()]";
     private static final String DATEPICKER_TO = "#editForm\\:calendarTabView\\:blockList td:last-child .p-datepicker input";
     private static final String BUTTON_ADD_ISSUE = "#editForm\\:calendarTabView\\:blockList button[title='Ausgabe hinzufügen']";
     private static final String INPUT_ISSUE = "#editForm\\:calendarTabView\\:blockList\\:0\\:issueList_data tr:last-child .ui-inputtext";
     private static final String HEADER_TEXT = "headerText";
-    private static final String CHECKBOX_MONDAY = "#editForm\\:calendarTabView\\:blockList\\:0\\:issueList_data tr:last-child td:nth-child(2) .ui-chkbox-icon";
-    private static final String CHECKBOX_TUESDAY = "#editForm\\:calendarTabView\\:blockList\\:0\\:issueList_data tr:last-child td:nth-child(3) .ui-chkbox-icon";
+    private static final String CHECKBOX_MONDAY = "#editForm\\:calendarTabView\\:blockList\\:0\\"
+            + ":issueList_data tr:last-child td:nth-child(2) .ui-chkbox-icon";
+    private static final String CHECKBOX_TUESDAY = "#editForm\\:calendarTabView\\:blockList\\:0\\"
+            + ":issueList_data tr:last-child td:nth-child(3) .ui-chkbox-icon";
     private static final String CALENDAR_ENTRY = "(//tbody[@id='editForm:calendarTabView:calendarTable_data']//span[@title='erschien'])[1]";
-    private static final String CALENDAR_ENTRY_BUTTON = "(//tbody[@id='editForm:calendarTabView:calendarTable_data']//span[@title='erschien']/preceding-sibling::button/span)[1]";
+    private static final String CALENDAR_ENTRY_BUTTON = "(//tbody[@id='editForm:calendarTabView:calendarTable_data']//"
+            + "span[@title='erschien']/preceding-sibling::button/span)[1]";
     private static final String BUTTON_ADD_METADATA_TO_THIS = "calendarDayForm:issuesAccordion:0:addMetadataToThisIssue";
     private static final String BUTTON_ADD_METADATA_TO_ALL = "calendarDayForm:issuesAccordion:0:addMetadata";
     private static final String METADATA_TYPE = "calendarDayForm:issuesAccordion:0:metadataDataView:0:metadataType";
