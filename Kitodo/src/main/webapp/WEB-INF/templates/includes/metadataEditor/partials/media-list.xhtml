@@ -41,7 +41,7 @@
             <ui:fragment
                     rendered="#{media.showingInPreview and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
                 <p:media styleClass="mediaListItem" cache="true"
-                         value="#{imageProvider.previewData}"
+                         value="#{mediaProvider.previewData}"
                          player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                          rendered="#{media.showingInPreview}">
                     <f:param name="mediaId"
@@ -62,7 +62,7 @@
             <ui:fragment rendered="#{media.showingInPreview and fn:startsWith(media.previewMimeType, 'image')}">
                 <h:outputText>
                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                    <p:graphicImage styleClass="mediaListItem" value="#{imageProvider.previewData}"
+                    <p:graphicImage styleClass="mediaListItem" value="#{mediaProvider.previewData}"
                                     a:loading="lazy">
                         <f:param name="mediaId"
                                  value="#{media.id}"/>

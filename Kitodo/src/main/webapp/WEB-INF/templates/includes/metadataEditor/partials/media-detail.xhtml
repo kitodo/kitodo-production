@@ -24,7 +24,7 @@
 
         <ui:fragment
                 rendered="#{selectedGalleryMediaContent.showingInMediaView and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
-            <p:media styleClass="mediaPreviewItem" value="#{imageProvider.mediaView}"
+            <p:media styleClass="mediaPreviewItem" value="#{mediaProvider.mediaView}"
                      player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                      width="90%" height="auto">
                 <f:param name="mediaId"
@@ -41,7 +41,7 @@
         <ui:fragment
                 rendered="#{selectedGalleryMediaContent.showingInMediaView and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'image')}">
             <p:graphicImage id="mediaPreviewGraphicImage"
-                            value="#{imageProvider.mediaView}"
+                            value="#{mediaProvider.mediaView}"
                             styleClass="mediaPreviewItem"
                             style="display: none;">
                 <f:param name="mediaId"

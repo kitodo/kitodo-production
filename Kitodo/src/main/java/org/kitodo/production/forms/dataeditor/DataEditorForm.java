@@ -197,7 +197,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private String errorMessage;
 
     @Inject
-    private ImageProvider imageProvider;
+    private MediaProvider mediaProvider;
     private boolean mediaUpdated = false;
 
     /**
@@ -380,7 +380,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         ruleset = null;
         currentChildren.clear();
         selectedMedia.clear();
-        imageProvider.resetPreviewImageResolverForProcess(process.getId());
+        mediaProvider.resetMediaResolverForProcess(process.getId());
         // do not unlock process if this locked process was opened by a different user opening editor
         // directly via URL bookmark and 'preDestroy' method was being triggered redirecting him to desktop page
         if (this.user.equals(MetadataLock.getLockUser(process.getId()))) {
@@ -1070,12 +1070,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Get imageProvider.
+     * Get mediaProvider.
      *
-     * @return value of imageProvider
+     * @return value of mediaProvider
      */
-    public ImageProvider getImageProvider() {
-        return imageProvider;
+    public MediaProvider getMediaProvider() {
+        return mediaProvider;
     }
 
     /**

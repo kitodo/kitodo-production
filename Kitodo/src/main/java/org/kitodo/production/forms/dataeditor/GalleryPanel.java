@@ -29,7 +29,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
-import javax.faces.event.PhaseId;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -52,8 +51,6 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.DefaultStreamedContent;
-import org.primefaces.model.StreamedContent;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
@@ -91,8 +88,6 @@ public class GalleryPanel {
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
-    private MediaVariant mediaViewVariant;
-    private MediaVariant previewVariant;
 
     private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
 
@@ -163,48 +158,6 @@ public class GalleryPanel {
      */
     public List<GalleryMediaContent> getMedias() {
         return medias;
-    }
-
-    String getMediaViewMimeType() {
-        return mediaViewVariant.getMimeType();
-    }
-
-    String getPreviewMimeType() {
-        return previewVariant.getMimeType();
-    }
-
-    /**
-     * Returns the media content of the preview media. This is the method that is called when the web browser wants to
-     * retrieve the media file itself.
-     *
-     * @return a Primefaces object that handles the output of preview data
-     */
-    public StreamedContent getPreviewData() {
-        return getData(true);
-    }
-
-    /**
-     * Returns the media content of the media view. This is the method that is called when the web browser wants to
-     * retrieve the media file itself.
-     *
-     * @return a Primefaces object that handles the output of media view data
-     */
-    public StreamedContent getMediaViewData() {
-        return getData(false);
-    }
-
-    private StreamedContent getData(boolean isPreview) {
-        FacesContext context = FacesContext.getCurrentInstance();
-        if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
-            String id = context.getExternalContext().getRequestParameterMap().get("mediaId");
-            GalleryMediaContent mediaContent = previewImageResolver.get(id);
-            if (Objects.nonNull(mediaContent)) {
-                logger.trace("Serving image request {}", id);
-                return (isPreview) ? mediaContent.getPreviewData() : mediaContent.getMediaViewData();
-            }
-            logger.debug("Cannot serve image request, mediaId = {}", id);
-        }
-        return DefaultStreamedContent.builder().build();
     }
 
     List<LanguageRange> getPriorityList() {
@@ -409,7 +362,7 @@ public class GalleryPanel {
 
         medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();
-        dataEditor.getImageProvider().resetPreviewImageResolverForProcess(process.getId());
+        dataEditor.getMediaProvider().resetMediaResolverForProcess(process.getId());
         cachingUUID = UUID.randomUUID().toString();
 
         updateStripes();
@@ -442,14 +395,14 @@ public class GalleryPanel {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
                 .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         medias = new ArrayList<>(physicalDivisions.size());
-        dataEditor.getImageProvider().resetPreviewImageResolverForProcess(dataEditor.getProcess().getId());
+        dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setPhysicalDivision(physicalDivision);
             GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
             medias.add(mediaContent);
-            if (mediaContent.isShowingInPreview()) {
-                dataEditor.getImageProvider().getPreviewImageResolver(dataEditor.getProcess().getId())
+            if (mediaContent.isShowingInPreview() || mediaContent.isShowingInMediaView() ) {
+                dataEditor.getMediaProvider().getMediaResolver(dataEditor.getProcess().getId())
                         .put(mediaContent.getId(), mediaContent);
             }
         }
@@ -527,8 +480,8 @@ public class GalleryPanel {
                         viewTreeNodeIdList.add(siblingWithViewsIdx);
                         String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf).collect(Collectors.joining("_"));
                         galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
-                        if (galleryMediaContent.isShowingInPreview()) {
-                            dataEditor.getImageProvider().getPreviewImageResolver(dataEditor.getProcess().getId())
+                        if (galleryMediaContent.isShowingInPreview() || galleryMediaContent.isShowingInMediaView()) {
+                            dataEditor.getMediaProvider().getMediaResolver(dataEditor.getProcess().getId())
                                     .put(galleryMediaContent.getId(), galleryMediaContent);
                         }
                         siblingWithViewsIdx += 1;
