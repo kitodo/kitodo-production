@@ -399,12 +399,9 @@ public class GalleryPanel {
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setPhysicalDivision(physicalDivision);
-            GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
-            medias.add(mediaContent);
-            if (mediaContent.isShowingInPreview() || mediaContent.isShowingInMediaView() ) {
-                dataEditor.getMediaProvider().getMediaResolver(dataEditor.getProcess().getId())
-                        .put(mediaContent.getId(), mediaContent);
-            }
+            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
+            medias.add(galleryMediaContent);
+            dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
         }
     }
 
@@ -480,10 +477,7 @@ public class GalleryPanel {
                         viewTreeNodeIdList.add(siblingWithViewsIdx);
                         String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf).collect(Collectors.joining("_"));
                         galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
-                        if (galleryMediaContent.isShowingInPreview() || galleryMediaContent.isShowingInMediaView()) {
-                            dataEditor.getMediaProvider().getMediaResolver(dataEditor.getProcess().getId())
-                                    .put(galleryMediaContent.getId(), galleryMediaContent);
-                        }
+                        dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
                         siblingWithViewsIdx += 1;
                         break;
                     }

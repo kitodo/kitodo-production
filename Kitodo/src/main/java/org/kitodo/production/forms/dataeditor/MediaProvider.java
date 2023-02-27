@@ -56,6 +56,15 @@ public class MediaProvider {
     }
 
     /**
+     * Add media content to the media resolver.
+     */
+    public void addMediaContent(int processId, GalleryMediaContent galleryMediaContent) {
+        if (galleryMediaContent.isShowingInPreview() || galleryMediaContent.isShowingInMediaView()) {
+            getMediaResolver(processId).put(galleryMediaContent.getId(), galleryMediaContent);
+        }
+    }
+
+    /**
      * Reset media resolver for process with provided ID 'processId'
      * by removing the corresponding map.
      *
