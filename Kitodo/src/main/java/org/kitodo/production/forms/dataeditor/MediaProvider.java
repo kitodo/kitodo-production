@@ -28,7 +28,7 @@ import org.primefaces.model.StreamedContent;
 
 
 /**
- * Application scoped image provider bean.
+ * Application scoped media provider bean.
  */
 @ApplicationScoped
 @Named
