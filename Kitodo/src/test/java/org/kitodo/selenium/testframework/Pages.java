@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium.testframework;
 
+import org.kitodo.selenium.testframework.pages.CalendarPage;
 import org.kitodo.selenium.testframework.pages.ClientEditPage;
 import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
 import org.kitodo.selenium.testframework.pages.DesktopPage;
@@ -157,4 +158,7 @@ public class Pages {
         return getPage(UsersPage.class);
     }
 
+    public static CalendarPage getCalendarPage() throws InstantiationException, IllegalAccessException {
+        return getPage(CalendarPage.class);
+    }
 }

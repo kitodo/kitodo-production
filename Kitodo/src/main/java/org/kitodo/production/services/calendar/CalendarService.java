@@ -142,10 +142,16 @@ public class CalendarService {
     public static List<CountableMetadata> getMetadata(Block block, LocalDate date, Issue issue) {
         if (Objects.nonNull(block)) {
             List<CountableMetadata> metadata = new ArrayList<>();
-            for (CountableMetadata metadatum :  block.getMetadata()) {
-                MetadataEditMode editMode = metadatum.getEditMode(new ImmutablePair<>(date, issue));
+            for (CountableMetadata countableMetadata :  block.getMetadata()) {
+                MetadataEditMode editMode = countableMetadata.getEditMode(new ImmutablePair<>(date, issue));
                 if (Objects.nonNull(editMode) && !MetadataEditMode.HIDDEN.equals(editMode)) {
-                    metadata.add(metadatum);
+                    if (countableMetadata.getCreate().getRight()) {
+                        if (Objects.equals(countableMetadata.getCreate().getMiddle(), issue)) {
+                            metadata.add(countableMetadata);
+                        }
+                    } else {
+                        metadata.add(countableMetadata);
+                    }
                 }
             }
             return metadata;
@@ -164,12 +170,12 @@ public class CalendarService {
         Map<ProcessDetail, LocalDate> metadataMap = new HashMap<>();
         if (Objects.nonNull(block)) {
             for (CountableMetadata metadata : block.getMetadata()) {
-                if (metadataMap.containsKey(metadata.getMetadataType())) {
-                    if (metadata.getCreate().getLeft().isBefore(metadataMap.get(metadata.getMetadataType()))) {
-                        metadataMap.replace(metadata.getMetadataDetail(), metadata.getCreate().getKey());
+                if (metadataMap.containsKey(metadata.getMetadataDetail())) {
+                    if (metadata.getCreate().getLeft().isBefore(metadataMap.get(metadata.getMetadataDetail()))) {
+                        metadataMap.replace(metadata.getMetadataDetail(), metadata.getCreate().getLeft());
                     }
                 } else {
-                    metadataMap.put(metadata.getMetadataDetail(), metadata.getCreate().getKey());
+                    metadataMap.put(metadata.getMetadataDetail(), metadata.getCreate().getLeft());
                 }
             }
         }
