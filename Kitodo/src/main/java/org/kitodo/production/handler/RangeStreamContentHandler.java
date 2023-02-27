@@ -39,7 +39,7 @@ import org.primefaces.model.StreamedContent;
 import org.primefaces.util.Constants;
 
 /**
- * This handler allows to stream files e.g. video and audio partially to the browser. Only parts of the file are
+ * This handler allows to stream files e.g. video and audio partially to the browser. Only parts of the file that are
  * requested by the browser are returned. This means, for example, that a video does not have to be loaded completely,
  * but byte parts are returned as a response of a so-called HTTP range requests.
  *
