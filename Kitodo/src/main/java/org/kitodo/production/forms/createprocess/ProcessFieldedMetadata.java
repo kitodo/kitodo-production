@@ -238,6 +238,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         Collection<Metadata> entered = addLabels(new HashSet<>(metadata));
         if (Objects.nonNull(treeNode) && !treeNode.getChildren().isEmpty()) {
             try {
+                entered = entered.stream().filter(metadataElem -> !(metadataElem instanceof MetadataGroup))
+                        .collect(Collectors.toSet());
                 entered.addAll(DataEditorService.getExistingMetadataRows(treeNode.getChildren()));
             } catch (InvalidMetadataValueException e) {
                 logger.error(e.getLocalizedMessage());
