@@ -92,6 +92,28 @@ public class MediaProvider {
         return getMediaContent(MEDIA_VIEW);
     }
 
+    /**
+     * Returns if media content has preview variant.
+     *
+     * @param galleryMediaContent
+     *         The gallery media content object
+     * @return True if media content has preview variant
+     */
+    public boolean hasPreviewVariant(GalleryMediaContent galleryMediaContent) {
+        return Objects.nonNull(galleryMediaContent) && galleryMediaContent.isShowingInPreview();
+    }
+
+    /**
+     * Returns if media content has media view variant.
+     *
+     * @param galleryMediaContent
+     *         The gallery media content object
+     * @return True if media content has media view variant
+     */
+    public boolean hasMediaViewVariant(GalleryMediaContent galleryMediaContent) {
+        return Objects.nonNull(galleryMediaContent) && galleryMediaContent.isShowingInMediaView();
+    }
+
     private StreamedContent getMediaContent(String mediaVariant) {
         FacesContext context = FacesContext.getCurrentInstance();
         if (context.getCurrentPhaseId() != PhaseId.RENDER_RESPONSE) {
