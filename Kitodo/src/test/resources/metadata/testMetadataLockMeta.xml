@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:kitodo="http://meta.kitodo.org/v1/"
+           xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2022-11-14T10:46:14.828+01:00"
+                  LASTMODDATE="2023-01-05T14:18:06.974+01:00"/>
+    <mets:dmdSec ID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99">
+        <mets:mdWrap MDTYPE="OTHER">
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="title">Test process for checking metadata lock</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec>
+        <mets:fileGrp USE="DEFAULT"/>
+        <mets:fileGrp USE="SOURCE"/>
+        <mets:fileGrp USE="THUMBS"/>
+    </mets:fileSec>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="uuid-f8f131e5-b063-40f2-9942-f9efeedf7ed7"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="uuid-1400b722-c7ae-488c-8322-f4a5f198a443"
+                  DMDID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99"
+                  TYPE="monograph"
+                  ORDER="1">
+            <mets:div ID="uuid-1400b723-c7ae-488c-8322-f4a5f198a443"
+                      TYPE="chapter"/>
+        </mets:div>
+    </mets:structMap>
+</mets:mets>

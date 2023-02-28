@@ -28,41 +28,50 @@ import org.primefaces.model.StreamedContent;
 
 
 /**
- * Application scoped image provider bean.
+ * Application scoped media provider bean.
  */
 @ApplicationScoped
 @Named
-public class ImageProvider {
+public class MediaProvider {
 
-    private static final Logger logger = LogManager.getLogger(ImageProvider.class);
+    private static final Logger logger = LogManager.getLogger(MediaProvider.class);
 
-    private final Map<Integer, Map<String, GalleryMediaContent>> previewImageResolver = new HashMap<>();
+    private final Map<Integer, Map<String, GalleryMediaContent>> mediaResolver = new HashMap<>();
 
     private static final String PREVIEW = "preview";
 
     private static final String MEDIA_VIEW = "mediaView";
 
     /**
-     * Get previewImageResolver.
+     * Get the media resolver.
      *
-     * @return value of previewImageResolver
+     * @return value of media resolver
      */
-    public Map<String, GalleryMediaContent> getPreviewImageResolver(int processId) {
-        if (!previewImageResolver.containsKey(processId)) {
-            previewImageResolver.put(processId, new HashMap<>());
+    public Map<String, GalleryMediaContent> getMediaResolver(int processId) {
+        if (!mediaResolver.containsKey(processId)) {
+            mediaResolver.put(processId, new HashMap<>());
 
         }
-        return previewImageResolver.get(processId);
+        return mediaResolver.get(processId);
     }
 
     /**
-     * Reset preview image resolver for process with provided ID 'processId'
+     * Add media content to the media resolver.
+     */
+    public void addMediaContent(int processId, GalleryMediaContent galleryMediaContent) {
+        if (galleryMediaContent.isShowingInPreview() || galleryMediaContent.isShowingInMediaView()) {
+            getMediaResolver(processId).put(galleryMediaContent.getId(), galleryMediaContent);
+        }
+    }
+
+    /**
+     * Reset media resolver for process with provided ID 'processId'
      * by removing the corresponding map.
      *
      * @param processId process ID
      */
-    public void resetPreviewImageResolverForProcess(int processId) {
-        previewImageResolver.remove(processId);
+    public void resetMediaResolverForProcess(int processId) {
+        mediaResolver.remove(processId);
     }
 
     /**
@@ -111,9 +120,9 @@ public class ImageProvider {
             String processIdString = context.getExternalContext().getRequestParameterMap().get("process");
             try {
                 int processId = Integer.parseInt(processIdString);
-                if (previewImageResolver.containsKey(processId)) {
+                if (mediaResolver.containsKey(processId)) {
                     String id = context.getExternalContext().getRequestParameterMap().get("mediaId");
-                    Map<String, GalleryMediaContent> processPreviewData = previewImageResolver.get(processId);
+                    Map<String, GalleryMediaContent> processPreviewData = mediaResolver.get(processId);
                     GalleryMediaContent mediaContent = processPreviewData.get(id);
                     if (Objects.nonNull(mediaContent)) {
                         logger.trace("Serving image request {}", id);
@@ -127,7 +136,7 @@ public class ImageProvider {
                     }
                     logger.debug("Cannot serve image request, mediaId = {}", id);
                 }
-                logger.debug("Preview image resolver does not contain media content for process with ID {}", processId);
+                logger.debug("Media resolver does not contain media content for process with ID {}", processId);
             } catch (NumberFormatException e) {
                 Helper.setErrorMessage("Process ID '" + processIdString + "' is not numeric!");
             }

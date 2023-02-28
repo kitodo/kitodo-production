@@ -60,6 +60,9 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleSelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
@@ -1125,4 +1128,44 @@ public class ProcessForm extends TemplateBaseForm {
         return "/pages/processes?tabIndex=0&faces-redirect=true";
     }
 
+    /**
+     * Callback function triggered when a process is unselected in the data table.
+     *
+     * @param unselectEvent as UnUnselectEvent
+     */
+    public void onRowUnselect(UnselectEvent unselectEvent) {
+        if (allSelected) {
+            excludedProcessIds.add(getProcessId(unselectEvent.getObject()));
+        }
+    }
+
+    /**
+     * Callback function triggered when a process is selected in the data table.
+     *
+     * @param selectEvent as SelectEvent
+     */
+    public void onRowSelect(SelectEvent selectEvent) {
+        if (allSelected) {
+            excludedProcessIds.remove(getProcessId(selectEvent.getObject()));
+            PrimeFaces.current().executeScript("PF('processesTable').selection=new Array('@all')");
+            PrimeFaces.current().executeScript("$(PF('processesTable').selectionHolder).val('@all')");
+        }
+    }
+
+    /**
+     * Callback function triggered when all processes are selected or unselected in the data table.
+     *
+     * @param toggleSelectEvent as ToggleSelectEvent
+     */
+    public void selectAll(ToggleSelectEvent toggleSelectEvent) {
+        setAllSelected(false);
+    }
+
+    private int getProcessId(Object process) {
+        if (process instanceof Process) {
+            return ((Process) process).getId();
+        } else {
+            return ((ProcessDTO) process).getId();
+        }
+    }
 }

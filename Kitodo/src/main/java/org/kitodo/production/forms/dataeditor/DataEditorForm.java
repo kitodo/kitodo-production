@@ -197,7 +197,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private String errorMessage;
 
     @Inject
-    private ImageProvider imageProvider;
+    private MediaProvider mediaProvider;
+    private boolean mediaUpdated = false;
 
     /**
      * Public constructor.
@@ -230,6 +231,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } catch (IOException e) {
                 Helper.setErrorMessage("noProcessSelected");
             }
+        } else {
+            if (mediaUpdated) {
+                PrimeFaces.current().executeScript("PF('fileReferencesUpdatedDialog').show();");
+            }
         }
     }
 
@@ -258,7 +263,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
-            openMetsFile();
+            mediaUpdated = openMetsFile();
             if (!workpiece.getId().equals(process.getId().toString())) {
                 errorMessage = Helper.getTranslation("metadataConfusion", String.valueOf(process.getId()),
                         workpiece.getId());
@@ -310,7 +315,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private void openMetsFile() throws IOException, InvalidImagesException {
+    private boolean openMetsFile() throws IOException, InvalidImagesException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
@@ -318,8 +323,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
         }
-        ServiceManager.getFileService().searchForMedia(process, workpiece);
         setNumberOfScans(workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES));
+        return ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
     private void init() {
@@ -375,7 +380,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         ruleset = null;
         currentChildren.clear();
         selectedMedia.clear();
-        imageProvider.resetPreviewImageResolverForProcess(process.getId());
+        mediaProvider.resetMediaResolverForProcess(process.getId());
         // do not unlock process if this locked process was opened by a different user opening editor
         // directly via URL bookmark and 'preDestroy' method was being triggered redirecting him to desktop page
         if (this.user.equals(MetadataLock.getLockUser(process.getId()))) {
@@ -383,6 +388,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
         process = null;
         user = null;
+        mediaUpdated = false;
     }
 
     private void deleteUnsavedDeletedMedia() {
@@ -1064,11 +1070,29 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Get imageProvider.
+     * Get mediaProvider.
      *
-     * @return value of imageProvider
+     * @return value of mediaProvider
      */
-    public ImageProvider getImageProvider() {
-        return imageProvider;
+    public MediaProvider getMediaProvider() {
+        return mediaProvider;
+    }
+
+    /**
+     * Get mediaUpdated.
+     *
+     * @return value of mediaUpdated
+     */
+    public boolean isMediaUpdated() {
+        return mediaUpdated;
+    }
+
+    /**
+     * Set mediaUpdated.
+     *
+     * @param mediaUpdated as boolean
+     */
+    public void setMediaUpdated(boolean mediaUpdated) {
+        this.mediaUpdated = mediaUpdated;
     }
 }

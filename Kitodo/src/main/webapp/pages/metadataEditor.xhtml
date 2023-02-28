@@ -31,7 +31,8 @@
         <f:viewParam name="templateTaskId"/>
         <o:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}" if="#{not empty templateTaskId}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
-        <f:viewAction action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
+        <f:viewAction
+                action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
     </f:metadata>
     <ui:define name="content">
 
@@ -207,14 +208,18 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null}"
+                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType eq 'video/mp4'}"
+                                                  value="#{msgs.video}
+                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                    <h:outputText styleClass="columnHeading"
+                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType ne 'video/mp4'}"
                                                   value="#{msgs.image}
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
-                                                         #{msgs.page}
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
+                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
+                                                 #{msgs.page}
+                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.lastSelection eq null}"
-                                                  value="#{msgs.notSelected}" />
+                                                  value="#{msgs.notSelected}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
@@ -244,6 +249,7 @@
         <ui:include src="/WEB-INF/templates/includes/comments/newCommentDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/uploadFile.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataLocked.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/fileReferencesUpdatedDialog.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">

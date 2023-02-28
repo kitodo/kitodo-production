@@ -15,6 +15,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -44,6 +45,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
@@ -59,46 +61,46 @@ public class GalleryPanel {
     private static final FileService fileService = ServiceManager.getFileService();
 
     // Structured media
-    private static final Pattern DRAG_STRIPE_IMAGE = Pattern
-            .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPagePanel");
+    private static final Pattern DRAG_STRIPE_IMAGE = Pattern.compile(
+            "imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPagePanel");
 
-    private static final Pattern DROP_STRIPE = Pattern
-            .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList");
+    private static final Pattern DROP_STRIPE = Pattern.compile(
+            "imagePreviewForm:structuredPages:(\\d+):structureElementDataList");
 
-    private static final Pattern DROP_MEDIA_AREA = Pattern
-            .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageDropArea");
+    private static final Pattern DROP_MEDIA_AREA = Pattern.compile(
+            "imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageDropArea");
 
-    private static final Pattern DROP_MEDIA_LAST_AREA = Pattern
-            .compile("imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageLastDropArea");
+    private static final Pattern DROP_MEDIA_LAST_AREA = Pattern.compile(
+            "imagePreviewForm:structuredPages:(\\d+):structureElementDataList:(\\d+):structuredPageLastDropArea");
 
     // Unstructured media
-    private static final Pattern DRAG_UNSTRUCTURED_MEDIA = Pattern
-            .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredMediaPanel");
+    private static final Pattern DRAG_UNSTRUCTURED_MEDIA = Pattern.compile(
+            "imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredMediaPanel");
 
-    private static final Pattern DROP_UNSTRUCTURED_STRIPE = Pattern
-            .compile("imagePreviewForm:unstructuredMediaList");
+    private static final Pattern DROP_UNSTRUCTURED_STRIPE = Pattern.compile("imagePreviewForm:unstructuredMediaList");
 
-    private static final Pattern DROP_UNSTRUCTURED_MEDIA_AREA = Pattern
-            .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageDropArea");
+    private static final Pattern DROP_UNSTRUCTURED_MEDIA_AREA = Pattern.compile(
+            "imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageDropArea");
 
-    private static final Pattern DROP_UNSTRUCTURED_MEDIA_LAST_AREA = Pattern
-            .compile("imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageLastDropArea");
+    private static final Pattern DROP_UNSTRUCTURED_MEDIA_LAST_AREA = Pattern.compile(
+            "imagePreviewForm:unstructuredMediaList:(\\d+):unstructuredPageLastDropArea");
 
     private final DataEditorForm dataEditor;
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
 
-    private MediaVariant mediaViewVariant;
-    private MediaVariant previewVariant;
+    private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
+
+    private Map<MediaContentType, Map<GalleryViewMode, MediaVariant>> mediaContentTypeVariants = new HashMap<>();
+
+    private Map<MediaContentType, Subfolder> mediaContentTypePreviewFolder = new HashMap<>();
 
     private List<GalleryStripe> stripes;
 
-    private Subfolder previewFolder;
-
     private String cachingUUID = "";
 
-    private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator
-            .comparing(pair -> pair.getLeft().getPhysicalDivision().getOrder());
+    private static final Comparator<Pair<View, LogicalDivision>> IMAGE_ORDER_COMPARATOR = Comparator.comparing(
+            pair -> pair.getLeft().getPhysicalDivision().getOrder());
 
     GalleryPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -156,14 +158,6 @@ public class GalleryPanel {
      */
     public List<GalleryMediaContent> getMedias() {
         return medias;
-    }
-
-    String getMediaViewMimeType() {
-        return mediaViewVariant.getMimeType();
-    }
-
-    String getPreviewMimeType() {
-        return previewVariant.getMimeType();
     }
 
     List<LanguageRange> getPriorityList() {
@@ -291,7 +285,7 @@ public class GalleryPanel {
         dataEditor.getStructurePanel().changeLogicalOrderFields(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().reorderPhysicalDivisions(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
         dataEditor.getStructurePanel().moveViews(toStripe.getStructure(), viewsToBeMoved, toMediaIndex);
-        dataEditor.getStructurePanel().changePhysicalOrderFields(toStripe.getStructure(), viewsToBeMoved);
+        dataEditor.getStructurePanel().changePhysicalOrderFields();
     }
 
     /**
@@ -354,19 +348,23 @@ public class GalleryPanel {
     void show() {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
 
-        Folder previewSettings = project.getPreview();
-        previewVariant = Objects.nonNull(previewSettings) ? getMediaVariant(previewSettings, physicalDivisions) : null;
-        Folder mediaViewSettings = project.getMediaView();
-        mediaViewVariant = Objects.nonNull(mediaViewSettings) ? getMediaVariant(mediaViewSettings, physicalDivisions) : null;
+        mediaContentTypeVariants.clear();
+        mediaContentTypePreviewFolder.clear();
+
+        initMediaContentType(physicalDivisions, project.getPreview(), project.getMediaView(), MediaContentType.IMAGE);
+        initMediaContentType(physicalDivisions, project.getAudioPreview(), project.getAudioMediaView(),
+                MediaContentType.AUDIO);
+        initMediaContentType(physicalDivisions, project.getVideoPreview(), project.getVideoMediaView(),
+                MediaContentType.VIDEO);
 
         medias = new ArrayList<>(physicalDivisions.size());
         stripes = new ArrayList<>();
-        dataEditor.getImageProvider().resetPreviewImageResolverForProcess(process.getId());
+        dataEditor.getMediaProvider().resetMediaResolverForProcess(process.getId());
         cachingUUID = UUID.randomUUID().toString();
 
-        previewFolder = new Subfolder(process, project.getPreview());
         updateStripes();
 
         int imagesInStructuredView = stripes.parallelStream().mapToInt(stripe -> stripe.getMedias().size()).sum();
@@ -375,22 +373,35 @@ public class GalleryPanel {
         }
     }
 
+    private void initMediaContentType(List<PhysicalDivision> physicalDivisions, Folder previewSettings,
+            Folder mediaViewSettings, MediaContentType mediaContentType) {
+        Map<GalleryViewMode, MediaVariant> galleryViewModeMediaVariant = new HashMap<>();
+        if (Objects.nonNull(previewSettings)) {
+            galleryViewModeMediaVariant.put(GalleryViewMode.LIST, getMediaVariant(previewSettings, physicalDivisions));
+            mediaContentTypePreviewFolder.put(mediaContentType,
+                    new Subfolder(dataEditor.getProcess(), previewSettings));
+        }
+        if (Objects.nonNull(mediaViewSettings)) {
+            galleryViewModeMediaVariant.put(GalleryViewMode.PREVIEW,
+                    getMediaVariant(mediaViewSettings, physicalDivisions));
+        }
+        mediaContentTypeVariants.put(mediaContentType, galleryViewModeMediaVariant);
+    }
+
     /**
      * Recreate media list from workpiece, which provides medias in correct order after drag and drop.
      */
     private void updateMedia() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         medias = new ArrayList<>(physicalDivisions.size());
-        dataEditor.getImageProvider().resetPreviewImageResolverForProcess(dataEditor.getProcess().getId());
+        dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             View wholeMediaUnitView = new View();
             wholeMediaUnitView.setPhysicalDivision(physicalDivision);
-            GalleryMediaContent mediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
-            medias.add(mediaContent);
-            if (mediaContent.isShowingInPreview()) {
-                dataEditor.getImageProvider().getPreviewImageResolver(dataEditor.getProcess().getId())
-                        .put(mediaContent.getId(), mediaContent);
-            }
+            GalleryMediaContent galleryMediaContent = createGalleryMediaContent(wholeMediaUnitView, null, null);
+            medias.add(galleryMediaContent);
+            dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
         }
     }
 
@@ -466,10 +477,7 @@ public class GalleryPanel {
                         viewTreeNodeIdList.add(siblingWithViewsIdx);
                         String viewTreeNodeId = viewTreeNodeIdList.stream().map(String::valueOf).collect(Collectors.joining("_"));
                         galleryMediaContent.setLogicalTreeNodeId(viewTreeNodeId);
-                        if (galleryMediaContent.isShowingInPreview()) {
-                            dataEditor.getImageProvider().getPreviewImageResolver(dataEditor.getProcess().getId())
-                                    .put(galleryMediaContent.getId(), galleryMediaContent);
-                        }
+                        dataEditor.getMediaProvider().addMediaContent(dataEditor.getProcess().getId(), galleryMediaContent);
                         siblingWithViewsIdx += 1;
                         break;
                     }
@@ -478,31 +486,66 @@ public class GalleryPanel {
         }
     }
 
-    private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer idx) {
+    private GalleryMediaContent createGalleryMediaContent(View view, String stripeTreeNodeId, Integer index) {
         PhysicalDivision physicalDivision = view.getPhysicalDivision();
-        URI previewUri = physicalDivision.getMediaFiles().get(previewVariant);
-        URI resourcePreviewUri = null;
+
+        MediaContentType mediaContentType = MediaContentType.IMAGE;
+        if (physicalDivision.getMediaFiles().keySet().stream()
+                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("video"))) {
+            mediaContentType = MediaContentType.VIDEO;
+        } else if (physicalDivision.getMediaFiles().keySet().stream()
+                .anyMatch(mediaFile -> mediaFile.getMimeType().startsWith("audio"))) {
+            mediaContentType = MediaContentType.AUDIO;
+        }
+
+        return buildGalleryMediaContent(view, stripeTreeNodeId, index, mediaContentType, physicalDivision);
+    }
+
+    private GalleryMediaContent buildGalleryMediaContent(View view, String stripeTreeNodeId, Integer index,
+            MediaContentType mediaContentType, PhysicalDivision physicalDivision) {
+
+        MediaVariant previewMediaVariant = mediaContentTypeVariants.get(mediaContentType).get(GalleryViewMode.LIST);
+        URI previewUri = physicalDivision.getMediaFiles()
+                .get(previewMediaVariant);
+
+        URI resourceListUri = null;
         if (Objects.nonNull(previewUri)) {
-            resourcePreviewUri = previewUri.isAbsolute() ? previewUri
+            resourceListUri = previewUri.isAbsolute()
+                    ? previewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), previewUri);
         }
-        URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewVariant);
+
+        // prefer canonical of preview folder
+        MediaVariant mediaViewMediaVariant = mediaContentTypeVariants.get(mediaContentType)
+                .get(GalleryViewMode.PREVIEW);
+        URI mediaViewUri = physicalDivision.getMediaFiles().get(mediaViewMediaVariant);
         URI resourceMediaViewUri = null;
         if (Objects.nonNull(mediaViewUri)) {
-            resourceMediaViewUri = mediaViewUri.isAbsolute() ? mediaViewUri
+            resourceMediaViewUri = mediaViewUri.isAbsolute()
+                    ? mediaViewUri
                     : fileService.getResourceUriForProcessRelativeUri(dataEditor.getProcess(), mediaViewUri);
         }
+
         // prefer canonical of preview folder
-        String canonical = Objects.nonNull(resourcePreviewUri) ? previewFolder.getCanonical(resourcePreviewUri) : null;
+        String canonical = Objects.nonNull(resourceListUri) && mediaContentTypePreviewFolder.containsKey(
+                mediaContentType) && Objects.nonNull(mediaContentTypePreviewFolder.get(mediaContentType))
+                ? mediaContentTypePreviewFolder.get(mediaContentType).getCanonical(resourceListUri)
+                : null;
         if (Objects.isNull(canonical)) {
             // if preview media not available, load canonical id from other folders
             canonical = dataEditor.getStructurePanel().findCanonicalIdForView(view);
         }
+
         String treeNodeId = "unknown";
-        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(idx)) {
-            treeNodeId = stripeTreeNodeId + "_" + String.valueOf(idx);
+        if (Objects.nonNull(stripeTreeNodeId) && Objects.nonNull(index)) {
+            treeNodeId = stripeTreeNodeId + "_" + index;
         }
-        return new GalleryMediaContent(this, view, canonical, resourcePreviewUri, resourceMediaViewUri, treeNodeId);
+
+        return new GalleryMediaContent(mediaContentType, view, canonical,
+                Objects.nonNull(previewMediaVariant) ? previewMediaVariant.getMimeType() : null,
+                resourceListUri,
+                Objects.nonNull(mediaViewMediaVariant) ? mediaViewMediaVariant.getMimeType() : null,
+                resourceMediaViewUri, treeNodeId);
     }
 
     /**

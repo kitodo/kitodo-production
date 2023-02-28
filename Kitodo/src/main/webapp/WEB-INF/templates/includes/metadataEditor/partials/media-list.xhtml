@@ -1,0 +1,99 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <p:outputPanel styleClass="thumbnail-parent #{fn:startsWith(media.previewMimeType, 'video') ? 'media-type-video' : ''}#{fn:startsWith(media.previewMimeType, 'audio') ? 'media-type-audio' : ''}" >
+        <c:choose>
+            <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
+                <c:set var="thumbnailStyleClass"
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
+            </c:when>
+            <c:otherwise>
+                <c:set var="thumbnailStyleClass"
+                       value="#{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
+            </c:otherwise>
+        </c:choose>
+        <p:outputPanel
+                styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{thumbnailStyleClass}"/>
+        <p:outputPanel styleClass="thumbnail-container"
+                       a:data-order="#{media.order}"
+                       a:data-stripe="#{uiParamStripeIndex}"
+                       a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
+
+            <ui:fragment
+                    rendered="#{media.showingInPreview and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
+                <p:media styleClass="mediaListItem" cache="true"
+                         value="#{mediaProvider.previewData}"
+                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}"
+                         rendered="#{media.showingInPreview}">
+                    <f:param name="mediaId"
+                             value="#{media.id}"/>
+                    <f:param name="process"
+                             value="#{DataEditorForm.process.id}"/>
+                    <f:param name="sessionId"
+                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    <f:param name="controls"
+                             value="#{fn:startsWith(media.previewMimeType, 'video') ? 'false' : 'true'}"/>
+                    <f:param name="type" value="#{media.previewMimeType}"/>
+                    <f:param name="krsc"
+                             value="true"/>
+                </p:media>
+                <ui:include src="media-list-overlay.xhtml"/>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{media.showingInPreview and fn:startsWith(media.previewMimeType, 'image')}">
+                <h:outputText>
+                    <!-- only render those pages that are not assigned to a stripe (structure) here! -->
+                    <p:graphicImage styleClass="mediaListItem" value="#{mediaProvider.previewData}"
+                                    a:loading="lazy">
+                        <f:param name="mediaId"
+                                 value="#{media.id}"/>
+                        <f:param name="process"
+                                 value="#{DataEditorForm.process.id}"/>
+                        <f:param name="sessionId"
+                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                    </p:graphicImage>
+                </h:outputText>
+                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                              rendered="#{media.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
+                <ui:include src="media-list-overlay.xhtml"/>
+            </ui:fragment>
+
+            <ui:fragment rendered="#{not media.showingInPreview}">
+                <p:outputPanel styleClass="mediaListIconItem" >
+                    <h:panelGroup rendered="#{media.type eq 'VIDEO'}">
+                        <i class="fa fa-file-video-o"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{media.type eq 'AUDIO'}">
+                        <i class="fa fa-file-audio-o"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{media.type eq 'IMAGE'}">
+                        <i class="fa fa-file-image-o"/>
+                    </h:panelGroup>
+                </p:outputPanel>
+                <ui:include src="media-list-overlay.xhtml"/>
+            </ui:fragment>
+
+        </p:outputPanel>
+    </p:outputPanel>
+
+</ui:composition>

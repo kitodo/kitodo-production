@@ -12,7 +12,6 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -33,7 +32,7 @@ public class Workpiece {
     /**
      * The processing history.
      */
-    private List<ProcessingNote> editHistory = new ArrayList<>();
+    private final List<ProcessingNote> editHistory = new ArrayList<>();
 
     /**
      * The identifier of the workpiece.
@@ -169,13 +168,13 @@ public class Workpiece {
      * Returns all logical divisions of the logical structure of the
      * workpiece as a flat list. The list isn’t backed by the included
      * structural elements, which means that insertions and deletions in the
-     * list would not change the logical divisions. Therefore a list
+     * list would not change the logical divisions. Therefore, a list
      * that cannot be modified is returned.
      *
      * @return all logical divisions as an unmodifiable list
      */
     public List<LogicalDivision> getAllLogicalDivisions() {
-        return Collections.unmodifiableList(treeStream(logicalStructure).collect(Collectors.toList()));
+        return treeStream(logicalStructure).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -183,16 +182,15 @@ public class Workpiece {
      * type "page" sorted by their {@code order} as a flat list. The root media
      * unit is not contained. The list isn’t backed by the physical divisions, which
      * means that insertions and deletions in the list would not change the
-     * physical divisions. Therefore a list that cannot be modified is returned.
+     * physical divisions. Therefore, a list that cannot be modified is returned.
      *
      * @return all physical divisions with type "page", sorted by their {@code order}
      */
     public List<PhysicalDivision> getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted() {
-        List<PhysicalDivision> physicalDivisions = physicalStructure.getChildren().stream()
+        return physicalStructure.getChildren().stream()
                 .flatMap(Workpiece::treeStream)
-                .filter(physicalDivisionToCheck -> Objects.equals(physicalDivisionToCheck.getType(), PhysicalDivision.TYPE_PAGE))
-                .sorted(Comparator.comparing(PhysicalDivision::getOrder)).collect(Collectors.toList());
-        return Collections.unmodifiableList(physicalDivisions);
+                .filter(division -> Objects.equals(division.getType(), PhysicalDivision.TYPE_PAGE))
+                .sorted(Comparator.comparing(PhysicalDivision::getOrder)).collect(Collectors.toUnmodifiableList());
     }
 
     /**
@@ -211,12 +209,12 @@ public class Workpiece {
      * Returns all physical divisions of the physical division of the workpiece as a flat
      * list. The list isn’t backed by the physical divisions, which means that
      * insertions and deletions in the list would not change the physical divisions.
-     * Therefore a list that cannot be modified is returned.
+     * Therefore, a list that cannot be modified is returned.
      *
      * @return all physical divisions as an unmodifiable list
      */
     public List<PhysicalDivision> getAllPhysicalDivisions() {
-        return Collections.unmodifiableList(treeStream(physicalStructure).collect(Collectors.toList()));
+        return treeStream(physicalStructure).collect(Collectors.toUnmodifiableList());
     }
 
     /**

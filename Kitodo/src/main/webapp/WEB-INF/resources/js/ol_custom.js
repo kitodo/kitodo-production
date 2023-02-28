@@ -226,8 +226,8 @@ function addListener(element) {
 function initializeImage() {
     resetNorth();
     hideCanvas();
-    let image = $("#imagePreviewForm\\:mediaViewData");
-    if ( image.length > 0 ) {
+    let image = $("#imagePreviewForm\\:mediaPreviewGraphicImage");
+    if (image.length > 0) {
         addListener(image);
         image[0].src = image[0].src.replace(/&uuid=[a-z0-9]+/i, "") + "&uuid=" + random(8);
     }
