@@ -79,6 +79,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private WebElement editMetadataLink;
 
+    @FindBy(xpath = "//a[@href='/kitodo/pages/calendarEdit.jsf?id=10']")
+    private WebElement openCalendarLink;
+
     @SuppressWarnings("unused")
     @FindBy(id = "search")
     private WebElement searchForProcessesButton;
@@ -463,6 +466,13 @@ public class ProcessesPage extends Page<ProcessesPage> {
             .atMost(10, TimeUnit.SECONDS)
             .ignoreExceptions()
             .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
+    }
+
+    public void goToCalendar() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        openCalendarLink.click();
     }
 
     /**

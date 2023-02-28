@@ -15,7 +15,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../../Kitodo-DataEditor/src/test/resources/ruleset.xsd">
     <declaration>
-        <division id="Newspaper">
+        <division id="Newspaper" processTitle="'Zeitung_'" use="createChildrenWithCalendar">
             <label>Newspaper ‹complete edition›</label>
             <label lang="de">Zeitung ‹Gesamtausgabe›</label>
             <subdivisionByDate>

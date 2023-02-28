@@ -1906,8 +1906,8 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog {
-    width: 80% !important;
-    height: 80% !important;
+    width: 90% !important;
+    height: 90% !important;
     overflow-y: hidden ;
 }
 
@@ -1924,7 +1924,7 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog form {
-    height: calc(100% - 100px);
+    height: calc(100% - 60px);
     overflow-y: auto;
 }
 
@@ -1942,19 +1942,25 @@ h3#headerText.calendar-heading {
     overflow-y: hidden;
 }
 
-#calendarDayDialogHeader {
-    width: 100%;
+#calendarDayForm\:calendarDayDialogHeader {
+    border-bottom: solid var(--contrast-border-width) var(--cloudy-gray);
+    margin-bottom: var(--default-full-size);
+    padding-bottom: var(--default-half-size);
     padding-left: var(--default-double-size);
     padding-right: var(--default-double-size);
-    padding-bottom: var(--default-full-size);
+    width: 100%;
 }
 
-#calendarDayDialog .issue-wrapper:not(:last-child) {
+#calendarDayForm .ui-toolbar.ui-widget-header {
+    background: transparent;
     border-bottom: solid var(--default-border-width) var(--cloudy-gray);
+    border-radius: 0;
+    margin-bottom: var(--default-full-size);
+    padding: 0 0 var(--default-half-size) 0;
 }
 
-#calendarDayDialog .appearance-wrapper {
-    margin-bottom: var(--default-full-size);
+#calendarDayForm .ui-toolbar.ui-widget-header button.secondary {
+    margin : 0 0 0 var(--group-margin);
 }
 
 #calendarDayDialog .ui-dataview-header {

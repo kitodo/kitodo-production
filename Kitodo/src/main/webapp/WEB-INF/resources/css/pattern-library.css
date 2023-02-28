@@ -193,7 +193,8 @@ label.ui-state-error {
 .ui-button.secondary,
 .ui-widget-content .ui-button.secondary,
 .ui-menubutton.secondary > button,
-.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label {
+.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label,
+.ui-splitbutton.secondary .ui-button {
     background: var(--pure-white);
     border: solid var(--default-border-width) var(--light-blue);
     color: var(--light-blue);
@@ -356,6 +357,22 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     height: 20px;
     margin-left: 5px;
     vertical-align: bottom;
+}
+
+.ui-splitbutton > .ui-button,
+.ui-splitbutton > .ui-button .ui-icon {
+    padding-right: var(--default-half-size);
+}
+
+.ui-splitbutton .ui-splitbutton-menubutton .ui-icon {
+    background-image: none;
+    line-height: var(--default-full-size);
+    text-indent: 0;
+}
+
+.ui-splitbutton .ui-splitbutton-menubutton .ui-icon-triangle-1-s::after {
+    content: "\f078";
+    font-family: FontAwesome;
 }
 
 .ui-row-toggler.ui-icon,
