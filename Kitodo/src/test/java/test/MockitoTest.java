@@ -11,8 +11,8 @@
 
 package test;
 
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
@@ -22,11 +22,11 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.kitodo.production.converter.ProcessConverter;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.production.converter.ProcessConverter;
 import org.kitodo.production.services.data.ProcessService;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.MockitoJUnitRunner;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MockitoTest {
@@ -62,6 +62,5 @@ public class MockitoTest {
         when(mockedProcessConverter.getAsObject(eq(null), eq(null), any(String.class))).thenReturn(process2);
         Object object = mockedProcessConverter.getAsObject(null, null, "1");
         Assert.assertEquals(process2, object);
-
     }
 }

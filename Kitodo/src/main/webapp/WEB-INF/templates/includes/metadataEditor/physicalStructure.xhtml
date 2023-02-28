@@ -37,7 +37,7 @@
                                 initializeImage();
                                 expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
-                            imagePreviewForm:mediaViewData
+                            imagePreviewForm:mediaDetailContainer
                             metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
@@ -46,7 +46,7 @@
                     update="@(.stripe)
                                 @(.thumbnail)
                                 galleryHeadingWrapper
-                                imagePreviewForm:mediaViewData
+                                imagePreviewForm:mediaDetailContainer
                                 contextMenuPhysicalTree
                                 logicalTree
                                 metadataAccordion:physicalMetadataWrapperPanel"/>
