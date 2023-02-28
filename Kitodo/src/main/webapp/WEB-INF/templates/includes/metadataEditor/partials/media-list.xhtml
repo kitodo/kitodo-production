@@ -39,11 +39,10 @@
                        a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
 
             <ui:fragment
-                    rendered="#{media.showingInPreview and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
+                    rendered="#{mediaProvider.hasPreviewVariant(media) and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
                 <p:media styleClass="mediaListItem" cache="true"
                          value="#{mediaProvider.previewData}"
-                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}"
-                         rendered="#{media.showingInPreview}">
+                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}">
                     <f:param name="mediaId"
                              value="#{media.id}"/>
                     <f:param name="process"
@@ -59,7 +58,7 @@
                 <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
-            <ui:fragment rendered="#{media.showingInPreview and fn:startsWith(media.previewMimeType, 'image')}">
+            <ui:fragment rendered="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')}">
                 <h:outputText>
                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
                     <p:graphicImage styleClass="mediaListItem" value="#{mediaProvider.previewData}"
@@ -78,7 +77,7 @@
                 <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
-            <ui:fragment rendered="#{not media.showingInPreview}">
+            <ui:fragment rendered="#{not mediaProvider.hasPreviewVariant(media)}">
                 <p:outputPanel styleClass="mediaListIconItem" >
                     <h:panelGroup rendered="#{media.type eq 'VIDEO'}">
                         <i class="fa fa-file-video-o"/>

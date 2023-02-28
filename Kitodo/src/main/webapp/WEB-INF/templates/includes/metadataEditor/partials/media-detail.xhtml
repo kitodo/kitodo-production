@@ -23,7 +23,7 @@
                   value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
 
         <ui:fragment
-                rendered="#{selectedGalleryMediaContent.showingInMediaView and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
+                rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
             <p:media styleClass="mediaPreviewItem" value="#{mediaProvider.mediaView}"
                      player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                      width="90%" height="auto">
@@ -39,7 +39,7 @@
         </ui:fragment>
 
         <ui:fragment
-                rendered="#{selectedGalleryMediaContent.showingInMediaView and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'image')}">
+                rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'image')}">
             <p:graphicImage id="mediaPreviewGraphicImage"
                             value="#{mediaProvider.mediaView}"
                             styleClass="mediaPreviewItem"
@@ -55,7 +55,7 @@
             </div>
         </ui:fragment>
 
-        <ui:fragment rendered="#{not selectedGalleryMediaContent.showingInMediaView}">
+        <ui:fragment rendered="#{not mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent)}">
             <p:outputPanel styleClass="mediaListIconItem">
                 <h:panelGroup rendered="#{selectedGalleryMediaContent.type eq 'VIDEO'}">
                     <i class="fa fa-file-video-o"/>
