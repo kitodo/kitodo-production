@@ -47,7 +47,7 @@ public abstract class Division<T extends Division<T>> {
     /**
      * The metadata for this division.
      */
-    private Collection<Metadata> metadata = new HashSet<>();
+    private HashSet<Metadata> metadata = new HashSet<>();
 
     /**
      * Sequence number. The sequence number must be unique across all divisions.
@@ -165,7 +165,7 @@ public abstract class Division<T extends Division<T>> {
      *
      * @return the metadata
      */
-    public Collection<Metadata> getMetadata() {
+    public HashSet<Metadata> getMetadata() {
         return metadata;
     }
 

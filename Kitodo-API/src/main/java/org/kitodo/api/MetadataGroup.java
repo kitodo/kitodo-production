@@ -11,7 +11,6 @@
 
 package org.kitodo.api;
 
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -23,25 +22,25 @@ public class MetadataGroup extends Metadata {
     /**
      * The contents of the metadata group.
      */
-    private Collection<Metadata> group = new HashSet<>();
+    private HashSet<Metadata> metadata = new HashSet<>();
 
     /**
      * Get the grouped metadata.
      *
      * @return The grouped metadata
      */
-    public Collection<Metadata> getGroup() {
-        return group;
+    public HashSet<Metadata> getMetadata() {
+        return metadata;
     }
 
     /**
      * Set the grouped metadata.
      *
-     * @param group
+     * @param metadata
      *            the grouped metadata
      */
-    public void setGroup(Collection<Metadata> group) {
-        this.group = group;
+    public void setMetadata(HashSet<Metadata> metadata) {
+        this.metadata = metadata;
     }
 
     @Override
@@ -63,7 +62,7 @@ public class MetadataGroup extends Metadata {
                 : MdSec.DMD_SEC)) {
             return false;
         }
-        return Objects.equals(group, other.group);
+        return Objects.equals(metadata, other.metadata);
     }
 
     @Override
@@ -71,7 +70,7 @@ public class MetadataGroup extends Metadata {
         final int prime = 31;
         int result = 1;
         result = prime * result + (Objects.nonNull(domain) ? domain : MdSec.DMD_SEC).hashCode();
-        result = prime * result + ((group == null) ? 0 : group.hashCode());
+        result = prime * result + ((metadata == null) ? 0 : metadata.hashCode());
         result = prime * result + ((key == null) ? 0 : key.hashCode());
         return result;
     }
@@ -79,6 +78,6 @@ public class MetadataGroup extends Metadata {
     @Override
     public String toString() {
         return (Objects.nonNull(domain) ? "(" + domain + ") " : "") + key + ": {"
-                + group.stream().map(String::valueOf).collect(Collectors.joining(", ")) + '}';
+                + metadata.stream().map(String::valueOf).collect(Collectors.joining(", ")) + '}';
     }
 }
