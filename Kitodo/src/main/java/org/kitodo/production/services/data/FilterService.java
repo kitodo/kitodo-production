@@ -524,7 +524,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
         for (String string : strings) {
             String[] split = string.split(":");
-            propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            if (split.length > 1) {
+                propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            }
         }
         if (objectType == ObjectType.PROCESS) {
             return propertyQuery;
