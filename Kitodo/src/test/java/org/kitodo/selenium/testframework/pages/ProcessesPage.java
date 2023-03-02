@@ -450,6 +450,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
         return Browser.getDriver().findElements(By.cssSelector(PARSED_FILTERS));
     }
 
+    /**
+     * Remove filter with index 'index' from list of parsed filters.
+     * @param index index of filter to remove
+     */
     public void removeParsedFilter(int index) {
         getParsedFilters().get(index).findElement(By.tagName("button")).click();
         await("Wait for loading screen to disappear").pollDelay(700, TimeUnit.MILLISECONDS)

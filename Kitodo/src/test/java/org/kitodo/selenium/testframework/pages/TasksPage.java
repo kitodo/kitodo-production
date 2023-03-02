@@ -101,6 +101,10 @@ public class TasksPage extends Page<TasksPage> {
                 .until(() -> taskTable.isDisplayed());
     }
 
+    /**
+     * Input given String 'character' into filter field.
+     * @param character as String
+     */
     public void typeCharactersIntoFilter(String character) {
         filterField.click();
         filterField.sendKeys(character);
@@ -109,6 +113,9 @@ public class TasksPage extends Page<TasksPage> {
                 .until(() -> filterOptionsMenu.isDisplayed());
     }
 
+    /**
+     * Submit filter.
+     */
     public void submitFilter() {
         filterField.sendKeys(Keys.RETURN);
         await("Wait for task list to be filtered").pollDelay(700, TimeUnit.MILLISECONDS)
@@ -116,10 +123,18 @@ public class TasksPage extends Page<TasksPage> {
                 .until(() -> taskTable.isDisplayed());
     }
 
+    /**
+     * Get suggestions.
+     * @return suggestions as list of WebElement
+     */
     public List<WebElement> getSuggestions() {
         return Browser.getDriver().findElements(By.cssSelector(SUGGESTION_ITEMS));
     }
 
+    /**
+     * Select suggestion with given index 'suggestionIndex'.
+     * @param suggestionIndex index of suggestion to select
+     */
     public void selectSuggestion(int suggestionIndex) {
         for (int i = 0; i <= suggestionIndex; i++) {
             filterField.sendKeys(Keys.ARROW_DOWN);
@@ -155,7 +170,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     /**
-     * Clicks the header of the the n-th column of the task table in order to 
+     * Clicks the header of the the n-th column of the task table in order to
      * trigger sorting tasks by that column.
      */
     public void clickTaskTableColumnHeaderForSorting(int column) {
@@ -176,7 +191,7 @@ public class TasksPage extends Page<TasksPage> {
 
     /**
      * Returns the task title of the first row in the task table.
-     * 
+     *
      * @return the task title
      */
     public String getFirstRowTaskTitle() {
@@ -212,5 +227,5 @@ public class TasksPage extends Page<TasksPage> {
 
         throw new NotFoundException("Row for task title " + searchedTaskTitle + " and process title "
                 + searchedProcessTitle + "was not found!");
-    }    
+    }
 }
