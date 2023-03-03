@@ -1036,8 +1036,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName)
                 .collect(Collectors.toList());
         for (String filter : splitFilters(parseFilterString(filters))) {
-            if (StringUtils.countMatches(filter, ":") == 1) {
-                String[] filterComponents = filter.split(":");
+            String[] filterComponents = filter.split(":");
+            if (filterComponents.length == 2) {
                 String parameterName = filterComponents[0].trim();
                 String parameterValue = filterComponents[1].trim();
                 if (declaredFields.contains(parameterName)) {
