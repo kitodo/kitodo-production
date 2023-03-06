@@ -787,7 +787,7 @@ public class StructurePanel implements Serializable {
                  * Show the process title of the parent process and a warning
                  * sign.
                  */
-                addTreeNode(parent.getTitle(), true, true, parent, tree);
+                addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
             } else {
                 /*
                  * Default case: Show the path through the parent process to the
@@ -798,6 +798,7 @@ public class StructurePanel implements Serializable {
                         break;
                     } else {
                         parentNode = addTreeNode(parent, logicalDivision.getType(), parentNode);
+                        parentNode.setType(STRUCTURE_NODE_TYPE);
                         parentNode.setExpanded(true);
                     }
                 }
@@ -809,7 +810,7 @@ public class StructurePanel implements Serializable {
              * warning sign.
              */
             Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-            addTreeNode(parent.getTitle(), true, true, parent, tree);
+            addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
         }
     }
 
