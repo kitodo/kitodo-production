@@ -727,8 +727,14 @@ public class AddDocStrucTypeDialog {
         }
     }
     
+    private StructuralElementViewInterface getDivisionViewOfStructure(String structure) {
+        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement()
+                .getStructuralElementView(newStructure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        return divisionView;
+    }
+    
     private MetadataViewInterface getMetadataViewFromKey(String structure, String metadataKey) {
-        StructuralElementViewInterface divisionView = getDivisionViewOfNewStructure(structure);
+        StructuralElementViewInterface divisionView = getDivisionViewOfStructure(structure);
 
         return divisionView.getAllowedMetadata().stream().filter(metaDatum -> metaDatum.getId().equals(metadataKey))
                 .findFirst().orElse(null);
