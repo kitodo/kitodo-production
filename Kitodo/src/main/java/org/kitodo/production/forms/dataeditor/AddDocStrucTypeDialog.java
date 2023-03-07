@@ -729,7 +729,7 @@ public class AddDocStrucTypeDialog {
     
     private StructuralElementViewInterface getDivisionViewOfStructure(String structure) {
         StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement()
-                .getStructuralElementView(newStructure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+                .getStructuralElementView(structure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         return divisionView;
     }
     
