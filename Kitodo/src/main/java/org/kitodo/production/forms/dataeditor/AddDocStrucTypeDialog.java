@@ -727,7 +727,7 @@ public class AddDocStrucTypeDialog {
         }
     }
     
-     private MetadataViewInterface getMetadataViewFromKey(String structure, String metadataKey) {
+    private MetadataViewInterface getMetadataViewFromKey(String structure, String metadataKey) {
         StructuralElementViewInterface divisionView = getDivisionViewOfNewStructure(structure);
 
         return divisionView.getAllowedMetadata().stream().filter(metaDatum -> metaDatum.getId().equals(metadataKey))
