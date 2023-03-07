@@ -16,6 +16,8 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Locale;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
@@ -27,9 +29,18 @@ import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.forms.dataeditor.DataEditorForm;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 
@@ -83,6 +94,7 @@ public class MetadataEditorIT {
 
     @Test
     public void shouldAddMultipleStructuresWithoutMetadata() throws Exception {
+
         File metaXmlFile = new File("src/test/resources/metadata/2/meta.xml");
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
 
@@ -91,11 +103,94 @@ public class MetadataEditorIT {
         int newNrDivisions = oldNrLogicalDivisions + addedDivisions;
 
         MetadataEditor.addMultipleStructures(addedDivisions, "section", workpiece, workpiece.getLogicalStructure(),
-            InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, "", "");        
+            InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT);
 
         List<LogicalDivision> logicalDivisions = workpiece.getAllLogicalDivisions();
-        assertTrue("Metadata should be empty",
-            logicalDivisions.get(newNrDivisions - 1).getMetadata().isEmpty());
+        assertTrue("Metadata should be empty", logicalDivisions.get(newNrDivisions - 1).getMetadata().isEmpty());
+    }
+
+    @Test
+    public void shouldAddMultipleStructures() throws Exception {
+
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        ruleset.load(new File("src/test/resources/rulesets/ruleset_test.xml"));
+        StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("Monograph", "edit",
+            Locale.LanguageRange.parse("en"));
+        String metadataKey = "TitleDocMain";
+
+        File metaXmlFile = new File("src/test/resources/metadata/2/meta.xml");
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
+
+        int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();
+        int addedDivisions = 2;
+        int newNrDivisions = oldNrLogicalDivisions + addedDivisions;
+
+        MetadataViewInterface mvi = divisionView.getAllowedMetadata().stream()
+                .filter(metaDatum -> metaDatum.getId().equals(metadataKey)).findFirst().orElse(null);
+
+        MetadataEditor.addMultipleStructuresWithMetadata(addedDivisions, "Monograph", workpiece,
+            workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, mvi, "value");
+        LogicalDivision newSection1 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
+        List<Metadata> metadataList1 = new ArrayList<Metadata>(newSection1.getMetadata());
+        LogicalDivision newSection2 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
+        List<Metadata> metadataList2 = new ArrayList<Metadata>(newSection2.getMetadata());
+        Metadata metadatum1 = metadataList1.get(0);
+        Metadata metadatum2 = metadataList2.get(0);
+
+        assertTrue("Metadata should be of type MetadataGroup", metadatum1 instanceof MetadataEntry);
+        assertTrue("Metadata value was incorrectly added", ((MetadataEntry) metadatum1).getValue().equals("value 1")
+                && ((MetadataEntry) metadatum2).getValue().equals("value 2"));
+    }
+
+    @Test
+    public void shouldAddMultipleStructuresWithMetadataGroup() throws Exception {
+
+        File metaXmlFile = new File("src/test/resources/metadata/2/meta.xml");
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
+
+        int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();
+        int addedDivisions = 2;
+        int newNrDivisions = oldNrLogicalDivisions + addedDivisions;
+
+        MetadataEditor.addMultipleStructuresWithMetadataGroup(addedDivisions, "section", workpiece,
+            workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, "person");
+
+        LogicalDivision newSection1 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
+        List<Metadata> metadataList1 = new ArrayList<Metadata>(newSection1.getMetadata());
+        LogicalDivision newSection2 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
+        List<Metadata> metadataList2 = new ArrayList<Metadata>(newSection2.getMetadata());
+        Metadata metadatum1 = metadataList1.get(0);
+        Metadata metadatum2 = metadataList2.get(0);
+        assertTrue("Metadata should be of type MetadataGroup",
+            metadatum1 instanceof MetadataGroup && metadatum2 instanceof MetadataGroup);
+        assertTrue("Metadata value was incorrectly added",
+            metadatum1.getKey().equals("person") && metadatum2.getKey().equals("person"));
+    }
+
+    @Test
+    public void shouldAddMultipleStructuresWithMetadataEntry() throws Exception {
+
+        File metaXmlFile = new File("src/test/resources/metadata/2/meta.xml");
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
+
+        int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();
+        int addedDivisions = 2;
+        int newNrDivisions = oldNrLogicalDivisions + addedDivisions;
+
+        MetadataEditor.addMultipleStructuresWithMetadataEntry(addedDivisions, "section", workpiece,
+            workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, "title", "value");
+
+        LogicalDivision newSection1 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
+        List<Metadata> metadataList1 = new ArrayList<Metadata>(newSection1.getMetadata());
+        LogicalDivision newSection2 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
+        List<Metadata> metadataList2 = new ArrayList<Metadata>(newSection2.getMetadata());
+        Metadata metadatum1 = metadataList1.get(0);
+        Metadata metadatum2 = metadataList2.get(0);
+
+        assertTrue("Metadata should be of type MetadataEntry",
+            metadatum1 instanceof MetadataEntry && metadatum2 instanceof MetadataEntry);
+        assertTrue("Metadata value was incorrectly added", ((MetadataEntry) metadatum1).getValue().equals("value 1")
+                && ((MetadataEntry) metadatum2).getValue().equals("value 2"));
     }
 
     private boolean isInternalMetsLink(String lineOfMets, int recordNumber) {
