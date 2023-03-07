@@ -45,7 +45,7 @@ import org.kitodo.production.services.data.ProcessService;
 
 import org.kitodo.data.database.beans.Ruleset;
 
-public class MetadataEditorITTest {
+public class MetadataEditorIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
