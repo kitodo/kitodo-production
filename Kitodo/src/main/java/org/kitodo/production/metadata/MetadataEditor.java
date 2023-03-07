@@ -34,8 +34,8 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -174,29 +174,7 @@ public class MetadataEditor {
         return false;
     }
 
-    /**
-     * Creates a given number of new structures and inserts them into the
-     * workpiece. The insertion position is given relative to an existing
-     * structure. In addition, you can specify metadata, which is assigned to
-     * the structures consecutively with a counter.
-     *
-     * @param number
-     *            number of structures to create
-     * @param type
-     *            type of new structure
-     * @param workpiece
-     *            workpiece to which the new structure is to be added
-     * @param structure
-     *            structure relative to which the new structure is to be
-     *            inserted
-     * @param position
-     *            relative insertion position
-     * @param metadataKey
-     *            key of the metadata to create
-     * @param metadataValue
-     *            value of the first metadata entry
-     */
-    public static void addMultipleStructuresWithMetadataEntry(int number, String type, Workpiece workpiece, LogicalDivision structure,
+    private static void addMultipleStructuresWithMetadataEntry(int number, String type, Workpiece workpiece, LogicalDivision structure,
             InsertionPosition position, String metadataKey, String metadataValue) {
         for (int i = 0; i < number; i++) {
             LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position,
@@ -213,29 +191,7 @@ public class MetadataEditor {
         }
     }
 
-    /**
-     * Creates a given number of new structures and inserts them into the
-     * workpiece. The insertion position is given relative to an existing
-     * structure. In addition, you can specify metadata, which is assigned to
-     * the structures consecutively with a counter.
-     *
-     * @param number
-     *            number of structures to create
-     * @param type
-     *            type of new structure
-     * @param workpiece
-     *            workpiece to which the new structure is to be added
-     * @param structure
-     *            structure relative to which the new structure is to be
-     *            inserted
-     * @param position
-     *            relative insertion position
-     * @param metadataKey
-     *            key of the metadata to create
-     * @param metadataValue
-     *            value of the first metadata entry
-     */
-    public static void addMultipleStructuresWithMetadataGroup(int number, String type, Workpiece workpiece, LogicalDivision structure,
+    private static void addMultipleStructuresWithMetadataGroup(int number, String type, Workpiece workpiece, LogicalDivision structure,
             InsertionPosition position, String metadataKey) {
 
         for (int i = 0; i < number; i++) {
@@ -284,6 +240,23 @@ public class MetadataEditor {
         }
     }
     
+    /**
+     * Creates a given number of new structures and inserts them into the
+     * workpiece. The insertion position is given relative to an existing
+     * structure.
+     *
+     * @param number
+     *            number of structures to create
+     * @param type
+     *            type of new structure
+     * @param workpiece
+     *            workpiece to which the new structure is to be added
+     * @param structure
+     *            structure relative to which the new structure is to be
+     *            inserted
+     * @param position
+     *            relative insertion position
+     */
     public static void addMultipleStructures(int number, String type, Workpiece workpiece, LogicalDivision structure,
             InsertionPosition position) {
         for (int i = 0; i < number; i++) {
