@@ -38,7 +38,7 @@
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="reload"
-                                         action="#{DataEditorForm.open(DataEditorForm.process.id, DataEditorForm.referringView)}"
+                                         action="#{DataEditorForm.open(DataEditorForm.process.id, DataEditorForm.referringView, DataEditorForm.templateTaskId)}"
                                          oncomplete="PF('addMetadataDialog').hide();"
                                          value="#{msgs.ok}"
                                          icon="fa fa-check"

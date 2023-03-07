@@ -108,25 +108,32 @@
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
             <p:ajax event="expand"
                     listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
-            <p:treeNode expandedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
-                        collapsedIcon="#{logicalNode.dataObject['class'].simpleName eq 'View' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}"
+            <p:treeNode type="#{StructurePanel.STRUCTURE_NODE_TYPE}"
+                        expandedIcon="ui-icon-folder-expanded"
+                        collapsedIcon="ui-icon-folder-collapsed"
                         styleClass="#{logicalNode.linked ? 'linked' : ''} #{logicalNode.undefined ? 'undefined' : ''}">
                 <!--@elvariable id="logicalElementType" type="java.lang.String"-->
                 <ui:param name="logicalElementType" value="#{logicalNode.label}"/>
                 <!--@elvariable id="defaultTreeNode" type="org.primefaces.model.DefaultTreeNode"-->
-                <h:outputText rendered="#{DataEditorForm.structurePanel.showHierarchyLevel and logicalNode.dataObject['class'].simpleName ne 'View'}"
+                <h:outputText rendered="#{DataEditorForm.structurePanel.showHierarchyLevel}"
                               value="&lt;#{fn:length(fn:split(defaultTreeNode.rowKey, '_'))}&gt; "/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.withoutType'] : logicalElementType}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type' or logicalNode.dataObject['class'].simpleName eq 'View'}"/>
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata ne 'type' and logicalNode.dataObject['class'].simpleName ne 'View'}"/>
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata ne 'type'}"/>
+                <h:outputText value="[#{logicalNode.pageRange}]"
+                              rendered="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree and logicalNode.pageRange ne null}"
+                              styleClass="pageRange"/>
+            </p:treeNode>
+            <p:treeNode type="#{StructurePanel.VIEW_NODE_TYPE}"
+                        icon="ui-icon-document">
+                <h:outputText value="#{empty logicalNode.label ? msgs['dataEditor.withoutType'] : logicalNode.label}"
+                              title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
-                <h:outputText value="[#{logicalNode.pageRange}]"
-                              rendered="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree and logicalNode.pageRange ne null}"
-                              styleClass="pageRange" />
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
@@ -142,19 +149,20 @@
                         update="dialogAddDocStrucTypeDialog">
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
-            <p:menuitem value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
-                        rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
-                        icon="fa fa-plus fa-sm"
-                        styleClass="plain"
-                        disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
-                        action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
-                        process="@this"
-                        oncomplete="PF('dialogAddDocStrucType').show()"
-                        update="dialogAddDocStrucTypeDialog">
+            <p:menuitem
+                    value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
+                    rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
+                    icon="fa fa-plus fa-sm"
+                    styleClass="plain"
+                    disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
+                    action="#{DataEditorForm.addDocStrucTypeDialog.prepare}"
+                    process="@this"
+                    oncomplete="PF('dialogAddDocStrucType').show()"
+                    update="dialogAddDocStrucTypeDialog">
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
             <p:menuitem value="#{msgs.changeDocstructType}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View' and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.STRUCTURE_NODE_TYPE and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-pencil fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -193,11 +201,11 @@
                         rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-download fa-sm"
                         styleClass="plain"
-                        update = "uploadFileDialog"
+                        update="uploadFileDialog"
                         disabled="#{readOnly}"
                         process="@this"/>
             <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNode.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName ne 'View'}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.type ne StructurePanel.VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -210,7 +218,7 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.removeElement}"
-                        rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject['class'].simpleName eq 'View'}"
+                        rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
