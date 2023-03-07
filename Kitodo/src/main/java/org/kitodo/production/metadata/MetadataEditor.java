@@ -182,7 +182,7 @@ public class MetadataEditor {
             if (Objects.isNull(newStructure) || metadataKey.isEmpty()) {
                 continue;
             }
-            if(!metadataKey.isEmpty()) {
+            if (!metadataKey.isEmpty()) {
                 MetadataEntry metadataEntry = new MetadataEntry();
                 metadataEntry.setKey(metadataKey);
                 metadataEntry.setValue(metadataValue + " " + (number - i));
@@ -264,7 +264,6 @@ public class MetadataEditor {
                 Collections.emptyList());
         }
     }
-    
 
     /**
      * Creates a new structure and inserts it into a workpiece. The insertion
