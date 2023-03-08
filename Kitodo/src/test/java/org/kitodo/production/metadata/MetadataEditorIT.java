@@ -132,9 +132,9 @@ public class MetadataEditorIT {
         MetadataEditor.addMultipleStructuresWithMetadata(addedDivisions, "Monograph", workpiece,
             workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, mvi, "value");
         LogicalDivision newSectionOne = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
-        List<Metadata> metadataListOne = new ArrayList<Metadata>(newSection1.getMetadata());
+        List<Metadata> metadataListOne = new ArrayList<Metadata>(newSectionOne.getMetadata());
         LogicalDivision newSectionTwo = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
-        List<Metadata> metadataListTwo = new ArrayList<Metadata>(newSection2.getMetadata());
+        List<Metadata> metadataListTwo = new ArrayList<Metadata>(newSectionTwo.getMetadata());
         Metadata metadatumOne = metadataListOne.get(0);
         Metadata metadatumTwo = metadataListTwo.get(0);
 
@@ -164,9 +164,9 @@ public class MetadataEditorIT {
         MetadataEditor.addMultipleStructuresWithMetadata(addedDivisions, "Monograph", workpiece,
             workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, mvi, "value");
         LogicalDivision newSectionOne = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
-        List<Metadata> metadataListOne = new ArrayList<Metadata>(newSection1.getMetadata());
+        List<Metadata> metadataListOne = new ArrayList<Metadata>(newSectionOne.getMetadata());
         LogicalDivision newSectionTwo = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
-        List<Metadata> metadataListTwo = new ArrayList<Metadata>(newSection2.getMetadata());
+        List<Metadata> metadataListTwo = new ArrayList<Metadata>(newSectionTwo.getMetadata());
         Metadata metadatumOne = metadataListOne.get(0);
         Metadata metadatumTwo = metadataListTwo.get(0);
 
