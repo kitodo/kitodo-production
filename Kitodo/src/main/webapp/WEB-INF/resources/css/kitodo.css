@@ -911,13 +911,15 @@ label.ui-outputlabel[for] {
 #parsedFiltersForm\:parsedFilters {
     position: absolute;
     max-width: calc(100% - 200px);
+    z-index: 1;
 }
 
 #parsedFiltersForm\:parsedFilters .ui-widget-content {
     background: none;
 }
+
 #parsedFiltersForm\:parsedFilters .ui-datalist-data {
-    padding: var(--group-margin);
+    padding-right: var(--group-margin);
 }
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-empty-message {
@@ -931,7 +933,7 @@ label.ui-outputlabel[for] {
     line-height: 24px;
     padding: 3px;
     border-radius: var(--default-border-radius);
-    margin-right: var(--group-margin);
+    margin: var(--group-margin) 0 var(--group-margin) var(--group-margin);
 }
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-item,
