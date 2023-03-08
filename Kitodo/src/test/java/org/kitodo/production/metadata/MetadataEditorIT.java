@@ -17,8 +17,8 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.List;
+import java.util.Locale;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;
@@ -37,13 +37,13 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 
-import org.kitodo.data.database.beans.Ruleset;
 
 public class MetadataEditorIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
@@ -131,16 +131,16 @@ public class MetadataEditorIT {
 
         MetadataEditor.addMultipleStructuresWithMetadata(addedDivisions, "Monograph", workpiece,
             workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, mvi, "value");
-        LogicalDivision newSection1 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
-        List<Metadata> metadataList1 = new ArrayList<Metadata>(newSection1.getMetadata());
-        LogicalDivision newSection2 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
-        List<Metadata> metadataList2 = new ArrayList<Metadata>(newSection2.getMetadata());
-        Metadata metadatum1 = metadataList1.get(0);
-        Metadata metadatum2 = metadataList2.get(0);
+        LogicalDivision newSectionOne = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
+        List<Metadata> metadataListOne = new ArrayList<Metadata>(newSectionOne.getMetadata());
+        LogicalDivision newSectionTwo = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
+        List<Metadata> metadataListTwo = new ArrayList<Metadata>(newSectionTwo.getMetadata());
+        Metadata metadatumOne = metadataListOne.get(0);
+        Metadata metadatumTwo = metadataListTwo.get(0);
 
-        assertTrue("Metadata should be of type MetadataEntry", metadatum1 instanceof MetadataEntry);
-        assertTrue("Metadata value was incorrectly added", ((MetadataEntry) metadatum1).getValue().equals("value 1")
-                && ((MetadataEntry) metadatum2).getValue().equals("value 2"));
+        assertTrue("Metadata should be of type MetadataEntry", metadatumOne instanceof MetadataEntry);
+        assertTrue("Metadata value was incorrectly added", ((MetadataEntry) metadatumOne).getValue().equals("value 1")
+                && ((MetadataEntry) metadatumTwo).getValue().equals("value 2"));
     }
 
     @Test
@@ -163,17 +163,17 @@ public class MetadataEditorIT {
 
         MetadataEditor.addMultipleStructuresWithMetadata(addedDivisions, "Monograph", workpiece,
             workpiece.getLogicalStructure(), InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT, mvi, "value");
-        LogicalDivision newSection1 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
-        List<Metadata> metadataList1 = new ArrayList<Metadata>(newSection1.getMetadata());
-        LogicalDivision newSection2 = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
-        List<Metadata> metadataList2 = new ArrayList<Metadata>(newSection2.getMetadata());
-        Metadata metadatum1 = metadataList1.get(0);
-        Metadata metadatum2 = metadataList2.get(0);
+        LogicalDivision newSectionOne = workpiece.getAllLogicalDivisions().get(newNrDivisions - 2);
+        List<Metadata> metadataListOne = new ArrayList<Metadata>(newSectionOne.getMetadata());
+        LogicalDivision newSectionTwo = workpiece.getAllLogicalDivisions().get(newNrDivisions - 1);
+        List<Metadata> metadataListTwo = new ArrayList<Metadata>(newSectionTwo.getMetadata());
+        Metadata metadatumOne = metadataListOne.get(0);
+        Metadata metadatumTwo = metadataListTwo.get(0);
 
         assertTrue("Metadata should be of type MetadataGroup",
-            metadatum1 instanceof MetadataGroup && metadatum2 instanceof MetadataGroup);
+            metadatumOne instanceof MetadataGroup && metadatumTwo instanceof MetadataGroup);
         assertTrue("Metadata value was incorrectly added",
-            metadatum1.getKey().equals("Person") && metadatum2.getKey().equals("Person"));
+            metadatumOne.getKey().equals("Person") && metadatumTwo.getKey().equals("Person"));
     }
 
     private boolean isInternalMetsLink(String lineOfMets, int recordNumber) {
