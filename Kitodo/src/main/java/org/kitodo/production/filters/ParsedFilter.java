@@ -62,7 +62,7 @@ public class ParsedFilter {
         if (matcher.find()) {
             return matcher.group().replaceFirst("^ -?", "");
         }
-        return plainFilter.replaceAll("^\"|\"$", "");
+        return plainFilter.replaceAll("^\"|\"$", "").replace(getCategory(), "");
     }
 
     /**
