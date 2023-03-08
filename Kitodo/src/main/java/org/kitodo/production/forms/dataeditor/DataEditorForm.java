@@ -384,7 +384,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         ruleset = null;
         currentChildren.clear();
         selectedMedia.clear();
-        mediaProvider.resetMediaResolverForProcess(process.getId());
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            mediaProvider.resetMediaResolverForProcess(process.getId());
+        }
         // do not unlock process if this locked process was opened by a different user opening editor
         // directly via URL bookmark and 'preDestroy' method was being triggered redirecting him to desktop page
         if (this.user.equals(MetadataLock.getLockUser(process.getId()))) {
