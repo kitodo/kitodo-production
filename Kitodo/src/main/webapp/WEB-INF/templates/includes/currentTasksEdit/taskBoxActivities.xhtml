@@ -55,12 +55,12 @@
                     </h:panelGroup>
 
                     <!-- Script-button -->
-                    <h:commandLink id="executeScript"
+                    <p:commandLink id="executeScript"
                                    rendered="#{task.scriptPath != null and task.scriptPath != '' and task.process.blockedUser == null}"
                                    action="#{CurrentTaskForm.executeScript}" title="#{task.scriptName}">
                         <f:setPropertyActionListener target="#{CurrentTaskForm.scriptPath}" value="#{task.scriptPath}"/>
                         <h:outputText><i class="fa fa-cogs"/> #{msgs.scriptExecute}: #{task.scriptName}</h:outputText>
-                    </h:commandLink>
+                    </p:commandLink>
 
                     <!-- tiffHeaderDownload-button -->
                     <h:commandLink id="downloadTiffHeader" rendered="#{0==1 and process.blockedUser == null}"

@@ -370,11 +370,11 @@ public class CurrentTaskForm extends BaseForm {
     public void executeScript() throws DAOException, DataException {
         Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
         if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
-            Helper.setMessageWithoutDescription(MessageFormat.format(
-                    Helper.getTranslation("scriptExecutionSuccessful"), this.currentTask.getScriptName()));
+            Helper.setMessageWithoutDescription(
+                    Helper.getTranslation("scriptExecutionSuccessful", this.currentTask.getScriptName()));
         } else {
-            Helper.setErrorMessagesWithoutDescription(MessageFormat.format(
-                    Helper.getTranslation("scriptExecutionError"), this.currentTask.getScriptName()));
+            Helper.setErrorMessagesWithoutDescription(
+                    Helper.getTranslation("scriptExecutionError", this.currentTask.getScriptName()));
         }
     }
 

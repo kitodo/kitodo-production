@@ -60,7 +60,8 @@ import org.primefaces.model.TreeNode;
 
 public class StructurePanel implements Serializable {
     private static final Logger logger = LogManager.getLogger(StructurePanel.class);
-
+    public static final String STRUCTURE_NODE_TYPE = "Structure";
+    public static final String VIEW_NODE_TYPE = "View";
     private final DataEditorForm dataEditor;
 
     /**
@@ -135,6 +136,11 @@ public class StructurePanel implements Serializable {
      * e.g. "4 : iv - 6 : vi".
      */
     private boolean showPageRangeInLogicalTree = false;
+
+    /**
+     * Determines whether the hierarchy level of a tree node should be displayed with its label or not.
+     */
+    private boolean showHierarchyLevel = false;
 
     /**
      * Creates a new structure panel.
@@ -505,6 +511,7 @@ public class StructurePanel implements Serializable {
     private DefaultTreeNode buildStructureTree() {
         DefaultTreeNode invisibleRootNode = new DefaultTreeNode();
         invisibleRootNode.setExpanded(true);
+        invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
         buildStructureTreeRecursively(structure, invisibleRootNode);
         return invisibleRootNode;
@@ -577,7 +584,7 @@ public class StructurePanel implements Serializable {
          * appends it to the parent as a child. That’s the logic of the JSF
          * framework. So you do not have to add the result anywhere.
          */
-        DefaultTreeNode parent = new DefaultTreeNode(node, result);
+        DefaultTreeNode parent = new DefaultTreeNode(STRUCTURE_NODE_TYPE, node, result);
         if (logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
             parent.setExpanded(true);
         }
@@ -596,7 +603,8 @@ public class StructurePanel implements Serializable {
                     viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent));
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
-                    addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
+                    DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
+                    viewNode.setType(VIEW_NODE_TYPE);
                     viewsShowingOnAChild.add(pair.getLeft());
                 }
             }
@@ -670,10 +678,10 @@ public class StructurePanel implements Serializable {
         if (mediaFileIterator.hasNext()) {
             Entry<MediaVariant, URI> mediaFileEntry = mediaFileIterator.next();
             Subfolder subfolder = this.subfoldersCache.computeIfAbsent(mediaFileEntry.getKey().getUse(),
-                use -> new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
-                    .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny()
-                    .orElseThrow(() ->  new IllegalStateException("Missing folder with file group \"" + use
-                        + "\" in project \"" + dataEditor.getProcess().getProject().getTitle()))));
+                    use -> new Subfolder(dataEditor.getProcess(), dataEditor.getProcess().getProject().getFolders()
+                            .parallelStream().filter(folder -> folder.getFileGroup().equals(use)).findAny()
+                            .orElseThrow(() ->  new IllegalStateException("Missing folder with file group \"" + use
+                                    + "\" in project \"" + dataEditor.getProcess().getProject().getTitle()))));
             canonical = subfolder.getCanonical(mediaFileEntry.getValue());
         }
         return canonical;
@@ -779,7 +787,7 @@ public class StructurePanel implements Serializable {
                  * Show the process title of the parent process and a warning
                  * sign.
                  */
-                addTreeNode(parent.getTitle(), true, true, parent, tree);
+                addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
             } else {
                 /*
                  * Default case: Show the path through the parent process to the
@@ -790,6 +798,7 @@ public class StructurePanel implements Serializable {
                         break;
                     } else {
                         parentNode = addTreeNode(parent, logicalDivision.getType(), parentNode);
+                        parentNode.setType(STRUCTURE_NODE_TYPE);
                         parentNode.setExpanded(true);
                     }
                 }
@@ -801,7 +810,7 @@ public class StructurePanel implements Serializable {
              * warning sign.
              */
             Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-            addTreeNode(parent.getTitle(), true, true, parent, tree);
+            addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
         }
     }
 
@@ -1816,4 +1825,40 @@ public class StructurePanel implements Serializable {
         this.showPageRangeInLogicalTree = showPageRangeInLogicalTree;
     }
 
+    /**
+     * Returns whether the user selected to show the hierarchy level of individual tree nodes in the structure tree.
+     * @return value of showHierarchyLevel
+     */
+    public boolean isShowHierarchyLevel() {
+        return showHierarchyLevel;
+    }
+
+    /**
+     * Set whether the hierarchy level of individual tree nodes in the structure tree should be displayed.
+     * @param showHierarchyLevel boolean
+     */
+    public void setShowHierarchyLevel(boolean showHierarchyLevel) {
+        this.showHierarchyLevel = showHierarchyLevel;
+    }
+
+    /**
+     * Expand all tree nodes in the logical structure tree.
+     */
+    public void expandAll() {
+        toggleAll(this.logicalTree, true);
+    }
+
+    /**
+     * Collapse all tree nodes in the logical structure tree.
+     */
+    public void collapseAll() {
+        toggleAll(this.logicalTree, false);
+    }
+
+    private void toggleAll(TreeNode treeNode, boolean expanded) {
+        for (TreeNode childNode : treeNode.getChildren()) {
+            toggleAll(childNode, expanded);
+        }
+        treeNode.setExpanded(expanded);
+    }
 }

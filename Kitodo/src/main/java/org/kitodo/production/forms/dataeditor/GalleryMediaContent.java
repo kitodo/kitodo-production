@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 import javax.faces.context.FacesContext;
@@ -24,6 +25,7 @@ import javax.faces.event.PhaseId;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -32,11 +34,8 @@ import org.primefaces.model.StreamedContent;
  * A single media content in the media gallery.
  */
 public class GalleryMediaContent {
+
     private static final Logger logger = LogManager.getLogger(GalleryMediaContent.class);
-    /**
-     * Gallery panel in which the medium is displayed.
-     */
-    private final GalleryPanel panel;
 
     /**
      * Identifier for the media content.
@@ -54,11 +53,23 @@ public class GalleryMediaContent {
     private final URI mediaViewUri;
     private final View view;
 
+    private final String previewMimeType;
+
+    private final String mediaViewMimeType;
+
+    /**
+     * Type of the current object.
+     *
+     * <p>Mime types are used for streaming, but they are not the representative type of the object. Therefore, we need
+     * this fixed type for distinction.</p>
+     */
+    private final MediaContentType type;
+
     /**
      * Stores the primefaces tree node id of the corresponding tree node of the logical structure 
      * tree. This id can be used in the user interface to identify which gallery thumbnail 
      * corresponds to which tree node in the logical structure tree.
-     * 
+     *
      * <p>It consists of a sequence of numbers separated by underscore, e.g. "0_1_4". Each number
      * describes the position of a child amongst its siblings at that level. For example, "0_1_4" 
      * references the node that is reached when moving from root node to leaf node using the first 
@@ -71,24 +82,21 @@ public class GalleryMediaContent {
     /**
      * Creates a new gallery media content.
      *
-     * @param panel
-     *            gallery panel in which the medium is displayed. The panel
-     *            provides configuration information.
      * @param canonical
-     *            the canonical part of the file name, used as the identifier
-     *            for the media content
+     *         the canonical part of the file name, used as the identifier for the media content
      * @param previewUri
-     *            URI to content for media preview. Can be {@code null}, then a
-     *            placeholder is used.
+     *         URI to content for media preview. Can be {@code null}, then a placeholder is used.
      * @param mediaViewUri
-     *            URI to the content for the media view. Can be {@code null},
-     *            then no media view is offered.
+     *         URI to the content for the media view. Can be {@code null}, then no media view is offered.
      */
-    GalleryMediaContent(GalleryPanel panel, View view, String canonical, URI previewUri, URI mediaViewUri, String logicalTreeNodeId) {
-        this.panel = panel;
+    GalleryMediaContent(MediaContentType type, View view, String canonical, String previewMimeType, URI previewUri,
+            String mediaViewMimeType, URI mediaViewUri, String logicalTreeNodeId) {
+        this.type = type;
         this.view = view;
         this.id = canonical;
+        this.previewMimeType = previewMimeType;
         this.previewUri = previewUri;
+        this.mediaViewMimeType = mediaViewMimeType;
         this.mediaViewUri = mediaViewUri;
         this.logicalTreeNodeId = logicalTreeNodeId;
     }
@@ -116,13 +124,31 @@ public class GalleryMediaContent {
     }
 
     /**
-     * Returns the media content. This is the method that is called when the web
-     * browser wants to retrieve the media file itself.
+     * Get the mime type of the selected media view of the project.
+     *
+     * @return the mime type of media view
+     */
+    public String getMediaViewMimeType() {
+        return mediaViewMimeType;
+    }
+
+    /**
+     * Get the mime type of the selected preview of the project.
+     *
+     * @return the mime type of preview
+     */
+    public String getPreviewMimeType() {
+        return previewMimeType;
+    }
+
+    /**
+     * Returns the media content. This is the method that is called when the web browser wants to retrieve the media
+     * file itself.
      *
      * @return a Primefaces object that handles the output of media data
      */
     public StreamedContent getMediaViewData() {
-        return sendData(mediaViewUri, panel.getMediaViewMimeType());
+        return sendData(mediaViewUri, mediaViewMimeType);
     }
 
     /**
@@ -150,7 +176,7 @@ public class GalleryMediaContent {
      * @return a Primefaces object that handles the output of media data
      */
     StreamedContent getPreviewData() {
-        return sendData(previewUri, panel.getPreviewMimeType());
+        return sendData(previewUri, previewMimeType);
     }
 
     /**
@@ -180,12 +206,21 @@ public class GalleryMediaContent {
     }
 
     /**
+     * Returns the type of gallery media content object.
+     *
+     * @return the type of gallery media content object.
+     */
+    public String getType() {
+        return type.name();
+    }
+
+    /**
      * Method for output of URL-referenced media content.
      *
      * @param uri
-     *            internal URI of the media file to be transferred
+     *         internal URI of the media file to be transferred
      * @param mimeType
-     *            the Internet MIME type of the media file
+     *         the Internet MIME type of the media file
      * @return a Primefaces object that handles the output of media data
      */
     private StreamedContent sendData(URI uri, String mimeType) {
@@ -203,8 +238,10 @@ public class GalleryMediaContent {
          * that after transferring the data.
          */
         try {
-            InputStream previewData = ServiceManager.getFileService().read(uri);
-            return DefaultStreamedContent.builder().stream(() -> previewData).contentType(mimeType).build();
+            InputStream viewData = ServiceManager.getFileService().read(uri);
+            return DefaultStreamedContent.builder().stream(() -> viewData).contentType(mimeType)
+                    .name(Paths.get(uri.getPath()).getFileName().toString()).contentLength(viewData.available())
+                    .build();
         } catch (IOException e) {
             logger.catching(e);
             String errorpage = "<html>" + System.lineSeparator() + "<h1>Error!</h1>" + System.lineSeparator() + "<p>"
@@ -243,11 +280,14 @@ public class GalleryMediaContent {
     }
 
     /**
-     * Sets the id of the corresponding tree node of the primefaces tree component used to 
-     * visualize the logical structure tree.
-     * @param treeNodeId the tree node id
+     * Sets the id of the corresponding tree node of the primefaces tree component used to visualize the logical
+     * structure tree.
+     *
+     * @param treeNodeId
+     *         the tree node id
      */
     public void setLogicalTreeNodeId(String treeNodeId) {
         this.logicalTreeNodeId = treeNodeId;
     }
+
 }

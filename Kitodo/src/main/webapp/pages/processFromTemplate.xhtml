@@ -28,7 +28,7 @@
         <f:viewParam name="parentId"/>
         <!--@elvariable id="referrer" type="java.lang.String"-->
         <f:viewParam name="referrer"/>
-        <f:viewAction action="#{ProcessForm.load(id)}" />
+        <f:viewAction action="#{ProcessForm.load(id)}"/>
         <f:viewAction action="#{CreateProcessForm.prepareProcess(templateId, projectId, referrer, parentId)}"/>
     </f:metadata>
 
@@ -84,29 +84,33 @@
         </p:menuButton>
 
         <p:commandButton id="saveContinue"
-                  value="#{msgs.save} + #{msgs.newElement}"
-                  action="#{CreateProcessForm.createNewProcessAndContinue}"
-                  icon="fa fa-floppy-o fa-lg"
-                  iconPos="right"
-                  onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
-                  update="notifications, sticky-notifications"
-                  styleClass="secondary"/>
+                         value="#{msgs.save} + #{msgs.newElement}"
+                         action="#{CreateProcessForm.createNewProcessAndContinue}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         oncomplete="if($('#editForm\\:error-messages')) {PF('processFromTemplateTabView').select(0)}"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                         update="notifications, sticky-notifications"
+                         styleClass="secondary"/>
 
         <p:commandButton id="save"
-                  value="#{msgs.save}"
-                  action="#{CreateProcessForm.createNewProcess}"
-                  icon="fa fa-floppy-o fa-lg" iconPos="right"
-                  onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
-                  update="notifications, sticky-notifications"/>
+                         value="#{msgs.save}"
+                         action="#{CreateProcessForm.createNewProcess}"
+                         icon="fa fa-floppy-o fa-lg" iconPos="right"
+                         onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.validatingData}','detail':'','severity':'info'});"
+                         oncomplete="if($('#editForm\\:error-messages')) {PF('processFromTemplateTabView').select(0)}"
+                         update="notifications, sticky-notifications"/>
     </ui:define>
 
     <ui:define name="pageTabView">
-        <p:tabView id="processFromTemplateTabView" activeIndex="#{CreateProcessForm.editActiveTabIndex}">
+        <p:tabView id="processFromTemplateTabView"
+                   widgetVar="processFromTemplateTabView"
+                   activeIndex="#{CreateProcessForm.editActiveTabIndex}">
             <p:tab id="processDataTab" title="#{msgs.processData}">
-                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dataEdit.xhtml" />
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dataEdit.xhtml"/>
             </p:tab>
             <p:tab id="titleRecordLinkTab" title="#{msgs.titleRecordLink}">
-                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/titleRecordLink.xhtml" />
+                <ui:include src="/WEB-INF/templates/includes/processFromTemplate/titleRecordLink.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>
