@@ -207,7 +207,7 @@
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.addableMetadata}" />
                                     <p:ajax event="change" update="addMetadata"/>
                                 </p:selectOneMenu>
-                                <h:panelGroup id="inputMetadataValueGroup" rendered="#{not empty DataEditorForm.addDocStrucTypeDialog.selectedMetadata}">
+                                <h:panelGroup id="inputMetadataValueGroup" rendered="#{not empty DataEditorForm.addDocStrucTypeDialog.selectedMetadata and not DataEditorForm.addDocStrucTypeDialog.isSelectedMetadataComplex()}">
                                     <p:outputLabel value="#{msgs.value}:"
                                                    for="inputMetaDataValue"/>
                                     <p:inputText 
