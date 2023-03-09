@@ -742,12 +742,12 @@ public class AddDocStrucTypeDialog {
         MetadataViewInterface mvi = getMetadataViewFromKey(docStructAddTypeSelectionSelectedItem,selectedMetadata);
         return mvi.isComplex();
     }
-    
+
     private MetadataViewInterface getMetadataViewFromKey(String structure, String metadataKey) {
         StructuralElementViewInterface divisionView = getDivisionViewOfStructure(structure);
 
         return divisionView.getAllowedMetadata().stream().filter(metaDatum -> metaDatum.getId().equals(metadataKey))
                 .findFirst().orElseThrow(IllegalStateException::new);
     }
-    
+
 }
