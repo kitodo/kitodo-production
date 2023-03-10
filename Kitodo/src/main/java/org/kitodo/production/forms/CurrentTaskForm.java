@@ -780,6 +780,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return path of the page
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return filterList();
     }
