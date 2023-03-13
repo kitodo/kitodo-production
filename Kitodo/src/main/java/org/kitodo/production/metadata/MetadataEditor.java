@@ -23,6 +23,7 @@ import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -416,7 +417,11 @@ public class MetadataEditor {
         Collection<View> viewsToAdd = getViewsFromChildrenRecursive(structure);
         Collection<View> assignedViews = structure.getViews();
         viewsToAdd.removeAll(assignedViews);
-        assignedViews.addAll(viewsToAdd);
+        List<View> sortedViews = Stream.concat(assignedViews.stream(), viewsToAdd.stream())
+                .sorted(Comparator.comparing(view -> view.getPhysicalDivision().getOrder()))
+                .collect(Collectors.toList());
+        assignedViews.clear();
+        assignedViews.addAll(sortedViews);
     }
 
     private static Collection<View> getViewsFromChildrenRecursive(LogicalDivision structure) {
