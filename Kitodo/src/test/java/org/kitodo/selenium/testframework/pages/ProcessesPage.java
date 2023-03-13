@@ -166,6 +166,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @FindBy(className = "ui-paginator-next")
     private WebElement nextPage;
 
+    @FindBy(id = "headerText")
+    private WebElement headerText;
+
     public ProcessesPage() {
         super("pages/processes.jsf");
     }
@@ -444,9 +447,14 @@ public class ProcessesPage extends Page<ProcessesPage> {
         filterInput.clear();
         filterInput.sendKeys(filterQuery);
         filterInput.sendKeys(Keys.RETURN);
-        await("Wait for loading screen to disappear").pollDelay(700, TimeUnit.MILLISECONDS)
+        await("Wait for loading screen to disappear").pollDelay(100, TimeUnit.MILLISECONDS)
                 .atMost(5, TimeUnit.SECONDS)
                 .until(() -> filterInput.isDisplayed());
+        // hide filter menu to enable action buttons positioned behind it
+        headerText.click();
+        await("Wait for filter menu to close").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> filterInput.isEnabled());
     }
 
     public List<WebElement> getParsedFilters() {
