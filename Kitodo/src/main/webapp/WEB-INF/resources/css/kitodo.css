@@ -965,8 +965,9 @@ label.ui-outputlabel[for] {
 }
 
 #savedFilters\:savedFiltersOverlay {
-    width: 430px;
     border-radius: var(--default-border-radius);
+    margin-left: -430px; /* Make sure the overlay does not overflow the page when invisible. Gets repositioned when being displayed. */
+    width: 430px;
 }
 
 #savedFilters\:savedFiltersOverlay .ui-overlaypanel-content {
