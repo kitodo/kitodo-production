@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -51,9 +52,11 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.dto.FilterDTO;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
 import org.primefaces.model.SortOrder;
@@ -521,7 +524,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
         for (String string : strings) {
             String[] split = string.split(":");
-            propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            if (split.length > 1) {
+                propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            }
         }
         if (objectType == ObjectType.PROCESS) {
             return propertyQuery;
@@ -1031,8 +1036,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName)
                 .collect(Collectors.toList());
         for (String filter : splitFilters(parseFilterString(filters))) {
-            if (StringUtils.countMatches(filter, ":") == 1) {
-                String[] filterComponents = filter.split(":");
+            String[] filterComponents = filter.split(":");
+            if (filterComponents.length == 2) {
                 String parameterName = filterComponents[0].trim();
                 String parameterValue = filterComponents[1].trim();
                 if (declaredFields.contains(parameterName)) {
@@ -1072,5 +1077,70 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             sqlUserFilter.append(" AND ").append(filter).append(" = :").append(filter);
         }
         return sqlUserFilter.toString();
+    }
+
+    /**
+     * Initialise list of process property titles.
+     *
+     * @return List of String objects containing the process property labels.
+     */
+    public List<String> initProcessPropertyTitles() {
+        return ServiceManager.getPropertyService().findDistinctTitles();
+    }
+
+    /**
+     * Initialise list of projects.
+     *
+     * @return List of String objects containing the project
+     */
+    public List<String> initProjects() {
+        List<ProjectDTO> projectsSortedByTitle = Collections.emptyList();
+        try {
+            projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorInitializingProjects", logger, e);
+        }
+
+        return projectsSortedByTitle.stream().map(ProjectDTO::getTitle).sorted().collect(Collectors.toList());
+    }
+
+    /**
+     * Initialise list of step statuses.
+     *
+     * @return List of TaskStatus objects
+     */
+    public List<TaskStatus> initStepStatus() {
+        return List.of(TaskStatus.values());
+    }
+
+    /**
+     * Initialise list of task titles.
+     *
+     * @return List of String objects containing the titles of all workflow steps
+     */
+    public List<String> initStepTitles() {
+        List<String> taskTitles = new ArrayList<>();
+        try {
+            taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return taskTitles;
+    }
+
+
+    /**
+     * Initialise list of users.
+     *
+     * @return List of User objects
+     */
+    public List<User> initUserList() {
+        try {
+            return ServiceManager.getUserService().getAllActiveUsersSortedByNameAndSurname();
+        } catch (RuntimeException e) {
+            logger.warn("RuntimeException caught. List of users could be empty!");
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
+        }
+        return new ArrayList<>();
     }
 }

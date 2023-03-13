@@ -43,6 +43,7 @@ import org.kitodo.export.TiffHeader;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
@@ -78,6 +79,7 @@ public class CurrentTaskForm extends BaseForm {
 
     private List<String> taskFilters;
     private List<String> selectedTaskFilters;
+    private FilterMenu filterMenu = new FilterMenu(this);
 
     private List<TaskStatus> taskStatus;
     private List<TaskStatus> selectedTaskStatus;
@@ -778,6 +780,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return path of the page
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return filterList();
     }
@@ -804,5 +807,14 @@ public class CurrentTaskForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
         }
+    }
+
+    /**
+     * Get filterMenu.
+     *
+     * @return value of filterMenu
+     */
+    public FilterMenu getFilterMenu() {
+        return filterMenu;
     }
 }
