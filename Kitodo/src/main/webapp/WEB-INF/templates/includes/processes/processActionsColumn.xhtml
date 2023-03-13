@@ -34,8 +34,7 @@
                         rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}"
                         styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
                         disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
-                    <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
-                    <f:param name="id" value="#{process.id}"/>
+                    <h:outputText><i class="fa fa-plus-circle fa-lg"/></h:outputText>
                 </h:link>
             </h:panelGroup>
 

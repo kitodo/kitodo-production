@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2022-05-13T09:37:39.621+02:00" LASTMODDATE="2022-05-13T12:59:46.925+02:00"/>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="uuid-040a7640-a58e-4191-8b71-af8fddb79ccd"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="uuid-da9e08d3-97e6-437a-ad51-587461ee21fa" TYPE="MultiVolumeWork" ORDER="1"/>
+    </mets:structMap>
+</mets:mets>
