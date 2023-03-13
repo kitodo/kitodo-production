@@ -37,6 +37,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -150,10 +151,16 @@ public class AddDocStrucTypeDialog {
     private void addMultiDocStruc() {
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
-            MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
-                dataEditor.getWorkpiece(), selectedStructure.get(),
-                    selectedDocStructPosition, selectedMetadata,
-                    inputMetaDataValue);
+            if (selectedMetadata != "") {
+                MetadataViewInterface metadataViewInterface = getMetadataViewFromKey(
+                    docStructAddTypeSelectionSelectedItem, selectedMetadata);
+                MetadataEditor.addMultipleStructuresWithMetadata(elementsToAddSpinnerValue,
+                    docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(), selectedStructure.get(),
+                    selectedDocStructPosition, metadataViewInterface, inputMetaDataValue);
+            } else {
+                MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
+                    dataEditor.getWorkpiece(), selectedStructure.get(), selectedDocStructPosition);
+            }
             dataEditor.refreshStructurePanel();
             dataEditor.getPaginationPanel().show();
         }
@@ -719,4 +726,28 @@ public class AddDocStrucTypeDialog {
             return " - ";
         }
     }
+    
+    private StructuralElementViewInterface getDivisionViewOfStructure(String structure) {
+        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement()
+                .getStructuralElementView(structure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
+        return divisionView;
+    }
+    
+    /**
+     * This method checks if the selected metadatakey refers to complex metadata.
+     * 
+     * @return True if metadata is of complex type.
+     */
+    public boolean isSelectedMetadataComplex() {
+        MetadataViewInterface mvi = getMetadataViewFromKey(docStructAddTypeSelectionSelectedItem,selectedMetadata);
+        return mvi.isComplex();
+    }
+
+    private MetadataViewInterface getMetadataViewFromKey(String structure, String metadataKey) {
+        StructuralElementViewInterface divisionView = getDivisionViewOfStructure(structure);
+
+        return divisionView.getAllowedMetadata().stream().filter(metaDatum -> metaDatum.getId().equals(metadataKey))
+                .findFirst().orElseThrow(IllegalStateException::new);
+    }
+
 }
