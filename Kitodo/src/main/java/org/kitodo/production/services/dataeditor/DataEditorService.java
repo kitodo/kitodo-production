@@ -242,7 +242,7 @@ public class DataEditorService {
      */
     public static StructuralElementViewInterface getStructuralElementView(DataEditorForm dataEditor) {
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
-        if (selectedStructure.isPresent()) {
+        if (Objects.nonNull(selectedStructure) && selectedStructure.isPresent()) {
             return dataEditor.getRulesetManagement()
                     .getStructuralElementView(
                             selectedStructure.get().getType(),

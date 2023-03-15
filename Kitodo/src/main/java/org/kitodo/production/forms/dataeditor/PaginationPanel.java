@@ -31,6 +31,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
@@ -77,7 +78,7 @@ public class PaginationPanel {
         try {
             mediaReferencesChanged = ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(),
                     dataEditor.getWorkpiece());
-        } catch (InvalidImagesException e) {
+        } catch (InvalidImagesException | MediaNotFoundException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
