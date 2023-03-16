@@ -523,7 +523,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
         } catch (IOException | DAOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        } catch (MediaNotFoundException e ) {
+        } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
         }
         return executedSuccessful;
