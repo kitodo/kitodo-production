@@ -204,13 +204,13 @@ public class KitodoScriptService {
                 copyDataToChildren(processes, script);
                 break;
             default:
-                return executeRemainingScript(processes);
+                return executeRemainingScript(processes, script);
         }
         return true;
     }
 
-    private boolean executeRemainingScript(List<Process> processes)
-            throws IOException, InvalidImagesException, MediaNotFoundException {
+    private boolean executeRemainingScript(List<Process> processes, String script)
+            throws DataException, IOException, InvalidImagesException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "generateImages":

@@ -293,7 +293,7 @@ public class StructurePanel implements Serializable {
 
     Optional<LogicalDivision> getSelectedStructure() {
         if (Objects.isNull(selectedLogicalNode)) {
-            return null;
+            return Optional.empty();
         }
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
@@ -302,7 +302,7 @@ public class StructurePanel implements Serializable {
 
     Optional<PhysicalDivision> getSelectedPhysicalDivision() {
         if (Objects.isNull(selectedPhysicalNode)) {
-            return null;
+            return Optional.empty();
         }
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedPhysicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
