@@ -15,12 +15,16 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Collections;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
@@ -29,11 +33,17 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
+import org.kitodo.production.services.ServiceManager;
 
 public class FileServiceTest {
 
@@ -132,6 +142,28 @@ public class FileServiceTest {
         URI newUri = URI.create("fileServiceTest/newName.xml");
         assertFalse(fileService.fileExist(oldUri));
         assertTrue(fileService.fileExist(newUri));
+    }
+
+
+    @Test(expected = MediaNotFoundException.class)
+    public void testMediaNotFound()
+            throws MediaNotFoundException, IOException, InvalidImagesException, URISyntaxException {
+        Process process = mock(Process.class);
+        Project project = mock(Project.class);
+        Folder folder = mock(Folder.class);
+
+        String processBasePath = "/usr/local/kitodo/metadata/231263";
+
+        when(folder.getFileGroup()).thenReturn("LOCAL");
+        when(folder.getPath()).thenReturn(processBasePath + "images");
+        when(folder.getMimeType()).thenReturn("image/tiff");
+        when(project.getFolders()).thenReturn(Collections.singletonList(folder));
+        when(process.getProject()).thenReturn(project);
+        when(process.getProcessBaseUri()).thenReturn(new URI(processBasePath));
+
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(Paths.get("./src/test/resources/metadata/testmeta.xml").toUri());
+
+        fileService.searchForMedia(process, workpiece);
     }
 
     @Test(expected = IOException.class)

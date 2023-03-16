@@ -210,7 +210,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeRemainingScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException {
+            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "generateImages":
