@@ -521,8 +521,10 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 executedSuccessful = commandResult.isSuccessful();
             }
             finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
-        } catch (IOException | DAOException | InvalidImagesException | MediaNotFoundException e) {
+        } catch (IOException | DAOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } catch (MediaNotFoundException e ){
+            Helper.setWarnMessage(e.getMessage());
         }
         return executedSuccessful;
     }

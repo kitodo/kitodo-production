@@ -640,8 +640,10 @@ public class ProcessForm extends TemplateBaseForm {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DataException | IOException | InvalidImagesException | MediaNotFoundException e) {
+        } catch (DataException | IOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } catch (MediaNotFoundException e) {
+            Helper.setWarnMessage(e.getMessage());
         }
     }
 

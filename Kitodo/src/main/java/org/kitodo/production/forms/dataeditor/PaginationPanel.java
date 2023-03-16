@@ -78,8 +78,10 @@ public class PaginationPanel {
         try {
             mediaReferencesChanged = ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(),
                     dataEditor.getWorkpiece());
-        } catch (InvalidImagesException | MediaNotFoundException e) {
+        } catch (InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
+        } catch (MediaNotFoundException e) {
+            Helper.setWarnMessage(e.getMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
