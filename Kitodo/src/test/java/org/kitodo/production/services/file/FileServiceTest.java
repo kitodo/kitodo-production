@@ -144,9 +144,14 @@ public class FileServiceTest {
         assertTrue(fileService.fileExist(newUri));
     }
 
-
+    /**
+     * Tests searchForMedia function if a MediaNotFoundException is thrown.
+     *
+     * MediaNotFoundException will be thrown instead of removing file references from workpiece, if no media are present
+     * but workpiece contains file references.
+     */
     @Test(expected = MediaNotFoundException.class)
-    public void testMediaNotFound()
+    public void testSearchForMedia()
             throws MediaNotFoundException, IOException, InvalidImagesException, URISyntaxException {
         Process process = mock(Process.class);
         Project project = mock(Project.class);
@@ -159,9 +164,10 @@ public class FileServiceTest {
         when(folder.getMimeType()).thenReturn("image/tiff");
         when(project.getFolders()).thenReturn(Collections.singletonList(folder));
         when(process.getProject()).thenReturn(project);
-        when(process.getProcessBaseUri()).thenReturn(new URI(processBasePath));
 
-        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(Paths.get("./src/test/resources/metadata/testmeta.xml").toUri());
+        when(process.getProcessBaseUri()).thenReturn(new URI(processBasePath));
+        URI testmeta = Paths.get("./src/test/resources/metadata/testmeta.xml").toUri();
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(testmeta);
 
         fileService.searchForMedia(process, workpiece);
     }
