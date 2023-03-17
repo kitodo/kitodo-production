@@ -1676,6 +1676,20 @@ Import form
     margin-bottom: var(--default-double-size);
 }
 
+#editForm\:processFromTemplateTabView\:titleRecordLinkTab,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent_content,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent_content > .ui-g,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent_content > .ui-g > .ui-panelgrid-cell,
+#editForm\:processFromTemplateTabView\:insertionTree {
+    height: 100%;
+}
+
+#editForm\:processFromTemplateTabView\:logicalStructure {
+    height: calc(100% - 170px);
+    overflow: scroll;
+}
+
 /*----------------------------------------------------------------------
 Mass import
 ----------------------------------------------------------------------*/
