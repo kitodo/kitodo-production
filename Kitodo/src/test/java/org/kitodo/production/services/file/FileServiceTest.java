@@ -147,8 +147,8 @@ public class FileServiceTest {
     /**
      * Tests searchForMedia function if a MediaNotFoundException is thrown.
      *
-     * MediaNotFoundException will be thrown instead of removing file references from workpiece, if no media are present
-     * but workpiece contains file references.
+     * <p>MediaNotFoundException will be thrown instead of removing file references from workpiece, if no media are
+     * present but workpiece contains file references.</p>
      */
     @Test(expected = MediaNotFoundException.class)
     public void testSearchForMedia()
