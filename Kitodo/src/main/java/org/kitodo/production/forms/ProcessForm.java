@@ -312,8 +312,7 @@ public class ProcessForm extends TemplateBaseForm {
             List<URI> subDirs = fileService.getSubUris(directory);
             for (URI imageDir : subDirs) {
                 if (fileService.isDirectory(imageDir)) {
-                    fileService.renameFile(imageDir,
-                        fileService.getFileName(imageDir).replace(process.getTitle(), newProcessTitle));
+                    fileService.renameFile(imageDir, imageDir.toString().replace(process.getTitle(), newProcessTitle));
                 }
             }
         }

@@ -374,7 +374,7 @@ public class FileService {
      * @param newFileName
      *            New file name / destination
      * @throws IOException
-     *             is thrown if the rename fails permanently
+     *             is thrown if renaming the file fails permanently
      */
     public URI renameFile(URI fileUri, String newFileName) throws IOException {
         return fileManagementModule.rename(fileUri, newFileName);
