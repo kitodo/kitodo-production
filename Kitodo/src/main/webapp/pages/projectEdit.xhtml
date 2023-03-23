@@ -67,6 +67,10 @@
                          update="notifications"/>
     </ui:define>
 
+    <ui:define name="messages">
+        <p:messages id="error-messages" showIcon="false" closable="true"/>
+    </ui:define>
+
     <ui:define name="pageTabView">
         <p:tabView id="projectTabView" activeIndex="#{ProjectForm.editActiveTabIndex}">
             <p:ajax event="tabChange" listener="#{ProjectForm.onEditTabChange}"/>
