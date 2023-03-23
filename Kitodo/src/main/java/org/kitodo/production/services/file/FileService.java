@@ -55,6 +55,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
@@ -1079,15 +1080,15 @@ public class FileService {
     }
 
     /**
-     * Searches for new media and adds them to the media list of the workpiece,
-     * if any are found.
+     * Searches for new media and adds them to the media list of the workpiece, if any are found.
      *
      * @param process
-     *            Process in which folders should be searched for media
+     *         Process in which folders should be searched for media
      * @param workpiece
-     *            Workpiece to which the media are to be added
+     *         Workpiece to which the media are to be added
      */
-    public boolean searchForMedia(Process process, Workpiece workpiece) throws InvalidImagesException {
+    public boolean searchForMedia(Process process, Workpiece workpiece)
+            throws InvalidImagesException, MediaNotFoundException {
         final long begin = System.nanoTime();
         List<Folder> folders = process.getProject().getFolders();
         int mapCapacity = (int) Math.ceil(folders.size() / 0.75);
@@ -1102,12 +1103,19 @@ public class FileService {
                 currentMedia.get(element.getKey()).put(subfolder, element.getValue());
             }
         }
+
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
-            process.getProcessBaseUri());
+                process.getProcessBaseUri());
+
+        if (currentMedia.size() == 0 && canonicals.size() > 0) {
+            throw new MediaNotFoundException();
+        }
+
         addNewURIsToExistingPhysicalDivisions(currentMedia,
-            workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
+                workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
         Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(currentMedia);
         List<String> mediaToRemove = new LinkedList<>(canonicals);
+
         mediaToRemove.removeAll(mediaToAdd.keySet());
         canonicals.forEach(mediaToAdd.keySet()::remove);
         removeMissingMediaFromWorkpiece(mediaToRemove, workpiece, subfolders.values());

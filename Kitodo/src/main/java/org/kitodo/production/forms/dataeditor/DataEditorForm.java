@@ -54,6 +54,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
@@ -267,7 +268,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
-            mediaUpdated = openMetsFile();
+            try {
+                mediaUpdated = openMetsFile();
+            } catch (MediaNotFoundException e) {
+                mediaUpdated = false;
+                Helper.setWarnMessage(e.getMessage());
+            }
             if (!workpiece.getId().equals(process.getId().toString())) {
                 errorMessage = Helper.getTranslation("metadataConfusion", String.valueOf(process.getId()),
                         workpiece.getId());
@@ -319,7 +325,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private boolean openMetsFile() throws IOException, InvalidImagesException {
+    private boolean openMetsFile() throws IOException, InvalidImagesException, MediaNotFoundException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);

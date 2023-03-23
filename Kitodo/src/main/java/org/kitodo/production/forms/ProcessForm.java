@@ -47,6 +47,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.TaskDTO;
@@ -641,6 +642,8 @@ public class ProcessForm extends TemplateBaseForm {
             service.execute(processes, kitodoScript);
         } catch (DataException | IOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } catch (MediaNotFoundException e) {
+            Helper.setWarnMessage(e.getMessage());
         }
     }
 
