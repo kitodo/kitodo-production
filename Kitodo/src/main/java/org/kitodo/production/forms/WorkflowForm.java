@@ -218,7 +218,7 @@ public class WorkflowForm extends BaseForm {
             return MIGRATION_FORM_PATH;
         }
 
-        return "projects?keepPagination=true";
+        return "projects?keepPagination=true&faces-redirect=true";
     }
 
     /**
