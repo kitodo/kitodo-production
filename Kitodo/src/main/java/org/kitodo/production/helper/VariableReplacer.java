@@ -323,11 +323,11 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
         if (Objects.isNull(process.getProject())) {
-            logger.warn("Cannot replace \"(" + match + ")\":process has no project assigned");
+            logger.warn("Cannot replace \"(" + match + ")\": process has no project assigned");
             return variableFinder.group(1);
         }
         if (Objects.isNull(process.getProject().getGeneratorSource())) {
-            logger.warn("Cannot replace \"(" + match + ")\":: process has no generator source assigned");
+            logger.warn("Cannot replace \"(" + match + ")\": process has no generator source assigned");
             return variableFinder.group(1);
         }
 
