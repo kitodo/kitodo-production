@@ -88,8 +88,8 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
 
     public boolean isRequired() {
         if (container != null && container.getChildMetadata().isEmpty()) {
-            ComplexMetadataViewInterface containerInterface = container.getMetadataView();
-            if (containerInterface == null || containerInterface.getMinOccurs() == 0) return false;
+            ComplexMetadataViewInterface containerSettings = container.getMetadataView();
+            if (containerSettings == null || containerSettings.getMinOccurs() == 0) return false;
         }
         return Objects.nonNull(settings) && settings.getMinOccurs() > 0;
     }
