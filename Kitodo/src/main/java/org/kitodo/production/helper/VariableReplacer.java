@@ -26,6 +26,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -69,7 +70,7 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|"
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
                 + "(?:(filename|basename|relativepath))))\\)");
 
@@ -240,6 +241,9 @@ public class VariableReplacer {
                 return determineReplacementForStepid(variableFinder);
             case "stepname":
                 return determineReplacementForStepname(variableFinder);
+            case "generatorsource" :
+            case "generatorsourcepath":
+                return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
@@ -311,6 +315,32 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
         return variableFinder.group(1) + task.getTitle();
+    }
+
+    private String determineReplacementForGeneratorSource(Matcher variableFinder, String match) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(" + match + ")\": no process given");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getProject())) {
+            logger.warn("Cannot replace \"(" + match + ")\":process has no project assigned");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getProject().getGeneratorSource())) {
+            logger.warn("Cannot replace \"(" + match + ")\":: process has no generator source assigned");
+            return variableFinder.group(1);
+        }
+
+        //Since image paths may contain variables themselves, use recursion
+        String generatorSource = replace(String.valueOf(process.getProject().getGeneratorSource().getPath()));
+        String replacedString = variableFinder.group(1);
+        if (match.equals("generatorsource")) {
+            replacedString += generatorSource;    
+        }
+        else if (match.equals("generatorsourcepath")) {
+            replacedString += KitodoConfig.getKitodoDataDirectory() + process.getId() + "/" + generatorSource;
+        }
+        return replacedString;
     }
 
     /**
