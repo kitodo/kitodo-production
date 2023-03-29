@@ -622,4 +622,42 @@ public class ProcessListBaseView extends BaseForm {
                     .executeScript("PF('processesTable').unselectRow($('tr[data-rk=\"" + processId + "\"]'), true);"));
         }
     }
+
+    /**
+     * Returns the number of global images of the process list base view.
+     * 
+     * @return the number of global images
+     */
+    public int getNumberOfGlobalImages() {
+        return numberOfGlobalImages;
+    }
+
+    /**
+     * Returns the number of global structural elements of the process list base
+     * view.
+     * 
+     * @return the number of global structural elements
+     */
+    public int getNumberOfGlobalStructuralElements() {
+        return numberOfGlobalStructuralElements;
+    }
+
+    /**
+     * Returns the number of global metadata of the process list base view.
+     * 
+     * @return the number of global metadata
+     */
+    public int getNumberOfGlobalMetadata() {
+        return numberOfGlobalMetadata;
+    }
+
+    /**
+     * Returns the number of global process metadata statistics of the process
+     * list base view.
+     * 
+     * @return the number of global process metadata statistics
+     */
+    public int getNumberOfGlobalProcessMetadataStatistics() {
+        return processMetadataStatistics.size();
+    }
 }
