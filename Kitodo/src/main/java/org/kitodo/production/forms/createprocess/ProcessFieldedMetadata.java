@@ -116,16 +116,19 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     /**
-     * Creates a new root metadata group representing the metadata table
-     * content in the processMetadata.
+     * Creates a new root metadata group representing the metadata table content
+     * in the processMetadata.
      *
      * @param structure
      *            structure selected by the user
      * @param divisionView
      *            information about that structure from the rule set
-     * @param rulesetManagementInterface 
+     * @param rulesetService
+     *            the ruleset used for displaying
      */
-    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView, RulesetManagementInterface rulesetService) {
+    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView,
+            RulesetManagementInterface rulesetService) {
+
         this(null, structure, divisionView, null, null, structure.getMetadata());
         this.rulesetService = rulesetService;
         buildTreeNodeAndCreateMetadataTable();
@@ -138,7 +141,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            metadata to add if not exist
      * @return returns count of added metadata
      */
-    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+
         preserve();
         int count = rulesetService.updateMetadata(metadata, "create", potentialMetadataItems);
         buildTreeNodeAndCreateMetadataTable();

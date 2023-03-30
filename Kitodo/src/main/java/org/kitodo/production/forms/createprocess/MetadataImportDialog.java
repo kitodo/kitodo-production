@@ -122,7 +122,9 @@ public abstract class MetadataImportDialog {
      * @param processes
      *            The linked list of TempProcess instances
      */
-    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+
         int countOfAddedMetadata = 0;
         if (processes.size() > 0) {
             TempProcess process = processes.getFirst();
