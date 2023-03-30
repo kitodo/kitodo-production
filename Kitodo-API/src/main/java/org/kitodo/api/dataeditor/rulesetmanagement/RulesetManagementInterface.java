@@ -16,6 +16,9 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+
+import org.kitodo.api.Metadata;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -143,4 +146,18 @@ public interface RulesetManagementInterface {
      * @return the “always showing” value or its default value
      */
     boolean isAlwaysShowingForKey(String keyId);
+
+    /**
+     * Updates metadata during a repeated catalog import, depending on the
+     * reimport settings specified in the ruleset.
+     * 
+     * @param metadata
+     *            current metadata
+     * @param acquisitionStage
+     *            current acquisition stage
+     * @param updateItems
+     *            items obtained from import
+     * @return number of metadata added items
+     */
+    int updateMetadata(Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems);
 }

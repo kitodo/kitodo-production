@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale.LanguageRange;
@@ -40,6 +41,7 @@ import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.Test;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
@@ -1066,6 +1068,113 @@ public class RulesetManagementIT {
             Collections.emptyList()));
     }
 
+    public void testReimportOfMetadataModesCreate() throws Exception {
+        RulesetManagement underTest = new RulesetManagement();
+        underTest.load(new File("src/test/resources/testReimportOfMetadataModes.xml"));
+
+        Collection<Metadata> metadata = new HashSet<>();
+        metadata.add(newMetadataEntry("metadataToReplaceByDefault", "value to replace"));
+        metadata.add(newMetadataEntry("metadataToReplaceExplicitly", "value to replace"));
+        metadata.add(newMetadataEntry("metadataToAdd", "value 1"));
+        metadata.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value 1"));
+        metadata.add(newMetadataEntry("metadataToKeep", "value not to replace"));
+        metadata.add(newMetadataEntry("metadataToKeepExceptInEditing", "value not to replace"));
+
+        Collection<Metadata> imported = new HashSet<>();
+        imported.add(newMetadataEntry("metadataToReplaceByDefault", "replaced value")); // 0
+        imported.add(newMetadataEntry("metadataToReplaceExplicitly", "replaced value")); // 0
+        imported.add(newMetadataEntry("metadataToAdd", "value 2")); // 1
+        imported.add(newMetadataEntry("metadataToAdd", "value 3")); // 1
+        imported.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value 2")); // 1
+        imported.add(newMetadataEntry("metadataToKeep", "value must not appear in result")); // 0
+        imported.add(newMetadataEntry("metadataToKeepExceptInEditing", "value not to replace")); // 0
+        imported.add(newMetadataEntry("metadataThatIsNew", "new value")); // 1
+
+        int numAdded = underTest.updateMetadata(metadata, "create", imported);
+        assertEquals(4, numAdded);
+
+        List<Metadata> defaultReplace = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToReplaceByDefault")).collect(Collectors.toList());
+        assertEquals(1, defaultReplace.size());
+        assertEquals("replaced value", ((MetadataEntry) defaultReplace.get(0)).getValue());
+
+        List<Metadata> explicitReplace = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToReplaceExplicitly")).collect(Collectors.toList());
+        assertEquals(1, explicitReplace.size());
+        assertEquals("replaced value", ((MetadataEntry) explicitReplace.get(0)).getValue());
+
+        List<Metadata> add = metadata.stream().filter(element -> element.getKey().equals("metadataToAdd"))
+                .collect(Collectors.toList());
+        assertEquals(2, add.size());
+        assertThat(
+            add.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
+            containsInAnyOrder("value 1", "value 2"));
+
+        List<Metadata> addCreate = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
+                .collect(Collectors.toList());
+        assertEquals(2, addCreate.size());
+        assertThat(
+            addCreate.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
+            containsInAnyOrder("value 1", "value 2"));
+
+        List<Metadata> keep = metadata.stream().filter(element -> element.getKey().equals("metadataToKeep"))
+                .collect(Collectors.toList());
+        assertEquals(1, keep.size());
+        assertEquals("value not to replace", ((MetadataEntry) keep.get(0)).getValue());
+
+        List<Metadata> keepNoEdit = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
+                .collect(Collectors.toList());
+        assertEquals(1, keepNoEdit.size());
+        assertEquals("value not to replace", ((MetadataEntry) keepNoEdit.get(0)).getValue());
+    }
+
+    public void testReimportOfMetadataModesEdit() throws Exception {
+        RulesetManagement underTest = new RulesetManagement();
+        underTest.load(new File("src/test/resources/testReimportOfMetadataModes.xml"));
+
+        Collection<Metadata> metadata = new HashSet<>();
+        metadata.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value 1"));
+        metadata.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value 2"));
+        metadata.add(newMetadataEntry("metadataToKeepExceptInEditing", "value 1"));
+        metadata.add(newMetadataEntry("metadataToKeepExceptInEditing", "value 2"));
+
+        Collection<Metadata> imported = new HashSet<>();
+        imported.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value not to replace")); // 0
+        imported.add(newMetadataEntry("metadataToKeepExceptInEditing", "replaced value")); // -1
+
+        int numAdded = underTest.updateMetadata(metadata, "edit", imported);
+        assertEquals(-1, numAdded);
+
+        List<Metadata> keepLater = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
+                .collect(Collectors.toList());
+        assertEquals(2, keepLater.size());
+        assertThat(
+            keepLater.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
+            containsInAnyOrder("value 1", "value 2"));
+
+        List<Metadata> addCreate = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
+                .collect(Collectors.toList());
+        assertEquals(2, addCreate.size());
+        assertThat(
+            addCreate.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
+            containsInAnyOrder("value 1", "value 2"));
+
+        List<Metadata> keep = metadata.stream().filter(element -> element.getKey().equals("metadataToKeep"))
+                .collect(Collectors.toList());
+        assertEquals(1, keep.size());
+        assertEquals("value not to replace", ((MetadataEntry) keep.get(0)).getValue());
+
+        List<Metadata> replaceInEdit = metadata.stream()
+                .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
+                .collect(Collectors.toList());
+        assertEquals(1, replaceInEdit.size());
+        assertEquals("replaced value", ((MetadataEntry) replaceInEdit.get(0)).getValue());
+    }
+
     /**
      * The method provides a simple access to a metadata key in a list of
      * MetadataViewWithValuesInterface.
@@ -1127,5 +1236,13 @@ public class RulesetManagementIT {
                 .filter(metadataViewWithValuesInterface -> metadataViewWithValuesInterface.getMetadata().isPresent())
                 .map(metadataViewWithValuesInterface -> metadataViewWithValuesInterface.getMetadata().get().getId())
                 .collect(Collectors.toList());
+    }
+
+    private MetadataEntry newMetadataEntry(String key, String value) {
+        MetadataEntry newMetadataEntry = new MetadataEntry();
+        newMetadataEntry.setKey(key);
+        newMetadataEntry.setValue(value);
+        newMetadataEntry.setDomain(MdSec.DMD_SEC);
+        return newMetadataEntry;
     }
 }

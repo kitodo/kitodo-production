@@ -27,6 +27,7 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -321,5 +322,8 @@ public class RulesetManagement implements RulesetManagementInterface {
         return false;
     }
 
-
+    @Override
+    public int updateMetadata(Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems) {
+        throw new UnsupportedOperationException("not yet implemented");
+    }
 }
