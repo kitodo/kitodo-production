@@ -138,15 +138,10 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            metadata to add if not exist
      * @return returns count of added metadata
      */
-    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
+    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+        preserve();
         int count = rulesetService.updateMetadata(metadata, "create", potentialMetadataItems);
-
-        TreeNode editedTreeNode = treeNode;
-
         buildTreeNodeAndCreateMetadataTable();
-
-        overwriteTreeNodes(editedTreeNode.getChildren(), treeNode.getChildren());
-
         return count;
     }
 
@@ -154,29 +149,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
         createMetadataTable();
-    }
-
-    /**
-     * Overwrites the target list with source list of tree nodes based on the
-     * metadata id.
-     *
-     * @param source
-     *            The list of source tree nodes
-     * @param target
-     *            The list of target tree nodes
-     */
-    private static void overwriteTreeNodes(List<TreeNode> source, List<TreeNode> target) {
-        int index = 0;
-        for (TreeNode targetNode : target) {
-            ProcessDetail row = (ProcessDetail) targetNode.getData();
-            Optional<TreeNode> treeNodeOptional = source.stream().filter(
-                sourceNode -> ((ProcessDetail) sourceNode.getData()).getMetadataID().equals(row.getMetadataID()))
-                    .findFirst();
-            if (treeNodeOptional.isPresent()) {
-                target.set(index, treeNodeOptional.get());
-            }
-            index++;
-        }
     }
 
     /**
@@ -613,7 +585,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         } else {
             result.setMetadata(new HashSet<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
         }
-        return Collections.singletonList(result);
+        return result.getMetadata().isEmpty() ? Collections.emptyList() : Collections.singletonList(result);
     }
 
     /**

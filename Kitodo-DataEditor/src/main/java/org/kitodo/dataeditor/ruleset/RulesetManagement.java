@@ -13,23 +13,23 @@ package org.kitodo.dataeditor.ruleset;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.function.Function;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.commons.lang3.tuple.MutableTriple;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
@@ -330,9 +330,46 @@ public class RulesetManagement implements RulesetManagementInterface {
     public int updateMetadata(Collection<Metadata> currentMetadata, String acquisitionStage,
             Collection<Metadata> updateMetadata) {
 
-        MetadataUpdater metadataUpdater = new MetadataUpdater();
+        final Function<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> entryProducer = key -> {
+            var entry = new MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>();
+            entry.setLeft(new ArrayList<>());
+            entry.setRight(new ArrayList<>());
+            return entry;
+        };
+
+        HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifying = new HashMap<>();
+        for (Metadata metadata : currentMetadata) {
+            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getLeft().add(metadata);
+        }
+        for (Metadata metadata : updateMetadata) {
+            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getRight().add(metadata);
+        }
+        Settings settings = ruleset.getSettings(acquisitionStage);
+        for (var entry : unifying.entrySet()) {
+            entry.getValue().setMiddle(settings.getReimport(entry.getKey()));
+        }
+
         int sizeBefore = currentMetadata.size();
-        metadataUpdater.update(currentMetadata, updateMetadata, ruleset.getSettings(acquisitionStage));
+        currentMetadata.clear();
+        for (var entry : unifying.entrySet()) {
+            var metadata = entry.getValue();
+            Collection<Metadata> currentEntries = metadata.getLeft();
+            Collection<Metadata> updateEntries = metadata.getRight();
+
+            switch (metadata.getMiddle()) {
+                case ADD:
+                    currentMetadata.addAll(currentEntries);
+                    currentMetadata.addAll(updateEntries);
+                break;
+                case KEEP:
+                    currentMetadata.addAll(currentEntries);
+                break;
+                case REPLACE:
+                    currentMetadata.addAll(updateEntries.isEmpty() ? currentEntries : updateEntries);
+                break;
+                default: throw new IllegalStateException("complete switch");
+            }
+        }
         return currentMetadata.size() - sizeBefore;
     }
 }
