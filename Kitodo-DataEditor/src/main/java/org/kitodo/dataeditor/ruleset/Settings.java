@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.kitodo.dataeditor.ruleset.xml.Reimport;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
 
 /**
@@ -42,6 +43,21 @@ public class Settings {
     public Settings(Collection<Setting> baseSettings) {
         this.currentSettings = baseSettings.parallelStream()
                 .collect(Collectors.toMap(Setting::getKey, Function.identity()));
+    }
+
+    /**
+     * Returns the reimport setting for a key.
+     *
+     * @param keyId
+     *            key for which the query is
+     * @return reimport setting
+     */
+    Reimport getReimport(String keyId) {
+        if (currentSettings.containsKey(keyId)) {
+            return currentSettings.get(keyId).getReimport();
+        } else {
+            return Reimport.REPLACE;
+        }
     }
 
     /**

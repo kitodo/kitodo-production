@@ -13,20 +13,23 @@ package org.kitodo.dataeditor.ruleset;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.commons.lang3.tuple.MutableTriple;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
@@ -36,6 +39,7 @@ import org.kitodo.dataeditor.ruleset.xml.AcquisitionStage;
 import org.kitodo.dataeditor.ruleset.xml.Division;
 import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Namespace;
+import org.kitodo.dataeditor.ruleset.xml.Reimport;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
 import org.kitodo.utils.JAXBContextCache;
@@ -323,9 +327,12 @@ public class RulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
-    public int updateMetadata(Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems) {
-        Settings settings = ruleset.getSettings(acquisitionStage);
+    public int updateMetadata(Collection<Metadata> currentMetadata, String acquisitionStage,
+            Collection<Metadata> updateMetadata) {
 
-        throw new UnsupportedOperationException("not yet implemented");
+        MetadataUpdater metadataUpdater = new MetadataUpdater();
+        int sizeBefore = currentMetadata.size();
+        metadataUpdater.update(currentMetadata, updateMetadata, ruleset.getSettings(acquisitionStage));
+        return currentMetadata.size() - sizeBefore;
     }
 }

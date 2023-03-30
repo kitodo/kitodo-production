@@ -1068,6 +1068,7 @@ public class RulesetManagementIT {
             Collections.emptyList()));
     }
 
+    @Test
     public void testReimportOfMetadataModesCreate() throws Exception {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testReimportOfMetadataModes.xml"));
@@ -1105,10 +1106,10 @@ public class RulesetManagementIT {
 
         List<Metadata> add = metadata.stream().filter(element -> element.getKey().equals("metadataToAdd"))
                 .collect(Collectors.toList());
-        assertEquals(2, add.size());
+        assertEquals(3, add.size());
         assertThat(
             add.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
-            containsInAnyOrder("value 1", "value 2"));
+            containsInAnyOrder("value 1", "value 2", "value 3"));
 
         List<Metadata> addCreate = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
@@ -1130,6 +1131,7 @@ public class RulesetManagementIT {
         assertEquals("value not to replace", ((MetadataEntry) keepNoEdit.get(0)).getValue());
     }
 
+    @Test
     public void testReimportOfMetadataModesEdit() throws Exception {
         RulesetManagement underTest = new RulesetManagement();
         underTest.load(new File("src/test/resources/testReimportOfMetadataModes.xml"));
@@ -1154,19 +1156,6 @@ public class RulesetManagementIT {
         assertThat(
             keepLater.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
             containsInAnyOrder("value 1", "value 2"));
-
-        List<Metadata> addCreate = metadata.stream()
-                .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
-                .collect(Collectors.toList());
-        assertEquals(2, addCreate.size());
-        assertThat(
-            addCreate.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
-            containsInAnyOrder("value 1", "value 2"));
-
-        List<Metadata> keep = metadata.stream().filter(element -> element.getKey().equals("metadataToKeep"))
-                .collect(Collectors.toList());
-        assertEquals(1, keep.size());
-        assertEquals("value not to replace", ((MetadataEntry) keep.get(0)).getValue());
 
         List<Metadata> replaceInEdit = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToKeepExceptInEditing"))
