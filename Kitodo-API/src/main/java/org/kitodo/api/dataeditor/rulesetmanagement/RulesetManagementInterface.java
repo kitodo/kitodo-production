@@ -157,7 +157,7 @@ public interface RulesetManagementInterface {
      *            current acquisition stage
      * @param updateItems
      *            items obtained from import
-     * @return number of metadata added items
+     * @return number of added metadata items
      */
     int updateMetadata(Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems);
 }

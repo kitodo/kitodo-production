@@ -99,7 +99,7 @@ public class ProcessHelper {
             RulesetManagementInterface managementInterface, String stage, List<Locale.LanguageRange> priorityList) {
         StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
                 stage, priorityList);
-        return new ProcessFieldedMetadata(structure, divisionView);
+        return new ProcessFieldedMetadata(structure, divisionView, managementInterface);
     }
 
     /**

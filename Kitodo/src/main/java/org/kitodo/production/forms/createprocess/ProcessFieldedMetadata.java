@@ -41,6 +41,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
@@ -94,6 +95,11 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     private ComplexMetadataViewInterface metadataView;
 
     /**
+     * To access the ruleset functions.
+     */
+    private RulesetManagementInterface rulesetService;
+
+    /**
      * The tree node that JSF has to display.
      */
     protected TreeNode treeNode;
@@ -117,9 +123,11 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            structure selected by the user
      * @param divisionView
      *            information about that structure from the rule set
+     * @param rulesetManagementInterface 
      */
-    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView) {
+    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView, RulesetManagementInterface rulesetService) {
         this(null, structure, divisionView, null, null, structure.getMetadata());
+        this.rulesetService = rulesetService;
         buildTreeNodeAndCreateMetadataTable();
     }
 
@@ -131,18 +139,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * @return returns count of added metadata
      */
     public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
-        Collection<Metadata> metadataToAdd = new ArrayList<>();
-        potentialMetadataItems.forEach( potentialMetadataItem -> {
-            if (metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
-                if (!(METADATA_KEY_LABEL.equals(potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(
-                        division.getLabel()) || METADATA_KEY_ORDERLABEL.equals(
-                        potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(division.getOrderlabel()))) {
-                    metadataToAdd.add(potentialMetadataItem);
-                }
-
-            }
-        });
-        metadata.addAll(metadataToAdd);
+        int count = rulesetService.updateMetadata(metadata, "create", potentialMetadataItems);
 
         TreeNode editedTreeNode = treeNode;
 
@@ -150,7 +147,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
 
         overwriteTreeNodes(editedTreeNode.getChildren(), treeNode.getChildren());
 
-        return metadataToAdd.size();
+        return count;
     }
 
     private void buildTreeNodeAndCreateMetadataTable() {

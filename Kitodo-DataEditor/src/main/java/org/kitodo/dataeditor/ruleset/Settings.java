@@ -53,11 +53,13 @@ public class Settings {
      * @return reimport setting
      */
     Reimport getReimport(String keyId) {
-        if (currentSettings.containsKey(keyId)) {
-            return currentSettings.get(keyId).getReimport();
-        } else {
-            return Reimport.REPLACE;
+        Setting settingForKey = currentSettings.get(keyId);
+        if (settingForKey != null) {
+            Reimport reimport = settingForKey.getReimport();
+            if (reimport != null)
+                return reimport;
         }
+        return Reimport.REPLACE;
     }
 
     /**

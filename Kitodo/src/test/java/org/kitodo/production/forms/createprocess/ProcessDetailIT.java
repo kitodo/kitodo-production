@@ -39,7 +39,7 @@ public class ProcessDetailIT {
         titleDocMain.setKey("TitleDocMain");
         titleDocMain.setValue("Lorem Ipsum");
         division.getMetadata().add(titleDocMain);
-        ProcessFieldedMetadata processFieldedMetadata = new ProcessFieldedMetadata(division, divisionView);
+        ProcessFieldedMetadata processFieldedMetadata = new ProcessFieldedMetadata(division, divisionView, ruleset);
         TreeNode treeNode = processFieldedMetadata.getTreeNode();
         ProcessDetail processDetail = (ProcessDetail) treeNode.getChildren().get(0).getData();
         int beforeCopying = treeNode.getChildCount();
