@@ -157,6 +157,7 @@ public class Settings {
                     merged.setEditable(other.getEditable() != null ? other.getEditable() : current.getEditable());
                     merged.setExcluded(other.getExcluded() != null ? other.getExcluded() : current.getExcluded());
                     merged.setMultiline(other.getMultiline() != null ? other.getMultiline() : current.getMultiline());
+                    merged.setReimport(other.getReimport() != null ? other.getReimport() : current.getReimport());
                     merged.setSettings(merge(current.getSettings(), other.getSettings()));
                     mergedSettings.add(merged);
                 } else {

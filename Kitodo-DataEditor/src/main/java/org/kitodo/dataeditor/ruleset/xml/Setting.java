@@ -74,6 +74,12 @@ public class Setting {
     private Boolean multiline;
 
     /**
+     * This will specify how to update metadata in repeated imports.
+     */
+    @XmlAttribute
+    private Reimport reimport;
+
+    /**
      * The settings for sub-keys.
      */
     @XmlElement(name = "setting", namespace = "http://names.kitodo.org/ruleset/v2")
@@ -247,5 +253,13 @@ public class Setting {
      */
     public void setSettings(List<Setting> settings) {
         this.settings = settings;
+    }
+
+    public Reimport getReimport() {
+        return reimport;
+    }
+
+    public void setReimport(Reimport reimport) {
+        this.reimport = reimport;
     }
 }

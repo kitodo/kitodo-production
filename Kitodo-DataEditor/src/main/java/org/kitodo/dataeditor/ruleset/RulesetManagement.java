@@ -324,6 +324,8 @@ public class RulesetManagement implements RulesetManagementInterface {
 
     @Override
     public int updateMetadata(Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems) {
+        Settings settings = ruleset.getSettings(acquisitionStage);
+
         throw new UnsupportedOperationException("not yet implemented");
     }
 }
