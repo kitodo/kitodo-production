@@ -56,8 +56,9 @@ public class Settings {
         Setting settingForKey = currentSettings.get(keyId);
         if (settingForKey != null) {
             Reimport reimport = settingForKey.getReimport();
-            if (reimport != null)
+            if (reimport != null) {
                 return reimport;
+            }
         }
         return Reimport.REPLACE;
     }

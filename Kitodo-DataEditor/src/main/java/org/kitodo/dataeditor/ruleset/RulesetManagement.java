@@ -18,11 +18,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.function.Function;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
@@ -360,13 +360,13 @@ public class RulesetManagement implements RulesetManagementInterface {
                 case ADD:
                     currentMetadata.addAll(currentEntries);
                     currentMetadata.addAll(updateEntries);
-                break;
+                    break;
                 case KEEP:
                     currentMetadata.addAll(currentEntries);
-                break;
+                    break;
                 case REPLACE:
                     currentMetadata.addAll(updateEntries.isEmpty() ? currentEntries : updateEntries);
-                break;
+                    break;
                 default: throw new IllegalStateException("complete switch");
             }
         }
