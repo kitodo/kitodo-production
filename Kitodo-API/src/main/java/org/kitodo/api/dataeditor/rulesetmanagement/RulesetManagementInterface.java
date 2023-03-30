@@ -16,11 +16,10 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-
-import org.kitodo.api.Metadata;
-
 import java.util.Map;
 import java.util.Optional;
+
+import org.kitodo.api.Metadata;
 
 /**
  * Interface for a service that provides access to the ruleset.
