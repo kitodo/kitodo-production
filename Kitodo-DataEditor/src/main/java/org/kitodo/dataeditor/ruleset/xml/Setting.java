@@ -143,6 +143,17 @@ public class Setting {
     }
 
     /**
+     * Returns the value “reimport” if one is set. This getter returns
+     * {@code null} if the attribute was not entered. This is needed, for
+     * example, when merging attributes.
+     * 
+     * @return the value “excluded”, if set, else {@code null}
+     */
+    public Reimport getReimport() {
+        return reimport;
+    }
+
+    /**
      * Returns the editor settings.
      *
      * @return the editor settings
@@ -246,6 +257,17 @@ public class Setting {
     }
 
     /**
+     * This sets the “reimport” value. If you set the value to {@code null}, no
+     * attribute is written.
+     * 
+     * @param reimport
+     *            “reimport” value to set
+     */
+    public void setReimport(Reimport reimport) {
+        this.reimport = reimport;
+    }
+
+    /**
      * Sets the settings for nested keys.
      * 
      * @param settings
@@ -253,13 +275,5 @@ public class Setting {
      */
     public void setSettings(List<Setting> settings) {
         this.settings = settings;
-    }
-
-    public Reimport getReimport() {
-        return reimport;
-    }
-
-    public void setReimport(Reimport reimport) {
-        this.reimport = reimport;
     }
 }
