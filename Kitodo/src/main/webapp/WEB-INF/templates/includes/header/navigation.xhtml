@@ -101,7 +101,7 @@
                                     <p:outputPanel deferred="true" deferredMode="visible">
                                         <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
                                             <li class="toggle-list">
-                                                <p:commandLink value="#{language.displayLanguageTranslated}" action="#{LanguageForm.setLanguage(language['id'])}"/>
+                                                <p:commandLink value="#{language.displayLanguageSelf}" action="#{LanguageForm.setLanguage(language['id'])}"/>
                                             </li>
                                         </p:repeat>
                                     </p:outputPanel>
