@@ -1170,6 +1170,25 @@
                         selection list is displayed, otherwise a multi-line
                         text field.
 
+                - optional attribute 'reimport':
+                        Defines the behaviour on repeated imports. Defaults to
+                        'replace'. Possible values:
+
+                        add                 Add the additionally imported
+                                            metadata to the existing ones.
+
+                        keep                Only import a new value if there
+                                            isn’t an existing value. If there
+                                            is, keep the existing value(s) and
+                                            doesn’t change it.
+
+                        replace             Remove any existing values, and
+                                            replace them with the newly
+                                            imported values.
+
+                        Note that 'reimport' settings only affect the top level
+                        metadata and have no effect on sub-keys.
+
                 - optional member tag:
                         setting             (optional, repeatable)
                                             To define settings on sub-keys of
@@ -1180,6 +1199,8 @@
         -->
         <!-- Some metadata keys for which fields should be displayed by
              default -->
+        <setting key="ORDERLABEL" reimport="keep"/>
+        <setting key="LABEL" reimport="keep"/>
         <setting key="singleDigCollection" alwaysShowing="true"/>
         <setting key="Person" alwaysShowing="true"/>
         <setting key="TitleDocMain" alwaysShowing="true"/>
