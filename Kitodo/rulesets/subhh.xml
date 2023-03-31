@@ -1197,10 +1197,12 @@
                 At least one of the optional attributes should be assigned or
                 at least one child setting tag should be present.
         -->
-        <!-- Some metadata keys for which fields should be displayed by
-             default -->
+        <!-- Keys that shouldn’t be changed by additional imports -->
         <setting key="ORDERLABEL" reimport="keep"/>
         <setting key="LABEL" reimport="keep"/>
+
+        <!-- Some metadata keys for which fields should be displayed by
+             default -->
         <setting key="singleDigCollection" alwaysShowing="true"/>
         <setting key="Person" alwaysShowing="true"/>
         <setting key="TitleDocMain" alwaysShowing="true"/>
