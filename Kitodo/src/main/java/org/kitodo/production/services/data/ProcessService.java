@@ -2331,7 +2331,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param task Task for which symlinks are removed
      */
     public static void deleteSymlinksFromUserHomes(Task task) {
-        if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+        if (Objects.nonNull(task.getProcessingUser()) && (task.isTypeImagesRead() || task.isTypeImagesWrite())) {
             WebDav webDav = new WebDav();
             try {
                 webDav.uploadFromHome(task.getProcessingUser(), task.getProcess());
