@@ -331,7 +331,7 @@ public class RulesetManagement implements RulesetManagementInterface {
             Collection<Metadata> updateMetadata) {
 
         final Function<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> entryProducer = key -> {
-            var entry = new MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>();
+            MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>> entry = new MutableTriple<>();
             entry.setLeft(new ArrayList<>());
             entry.setRight(new ArrayList<>());
             return entry;
