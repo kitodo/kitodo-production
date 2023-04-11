@@ -158,7 +158,11 @@ public class FileManagement implements FileManagementInterface {
         }
 
         if (isDirectory(uri)) {
-            return renameDirectory(uri, newName);
+            if (uri.toString().equals(newName + "/")) {
+                return null;
+            } else {
+                return renameDirectory(uri, newName);
+            }
         }
 
         String substring = uri.toString().substring(0, uri.toString().lastIndexOf('/') + 1);
