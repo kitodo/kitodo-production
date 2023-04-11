@@ -367,7 +367,9 @@ public class RulesetManagement implements RulesetManagementInterface {
                 case REPLACE:
                     currentMetadata.addAll(updateEntries.isEmpty() ? currentEntries : updateEntries);
                     break;
-                default: throw new IllegalStateException("complete switch");
+                default:
+                    throw new IllegalStateException(
+                            "Used not supported reimport case {}".replace("{}", metadata.getMiddle().toString()));
             }
         }
         return currentMetadata.size() - sizeBefore;
