@@ -14,6 +14,8 @@ package org.kitodo.imagemanagement;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -162,7 +164,7 @@ class ImageConverter {
         IMOperation commandLine = new IMOperation();
         configureImageMagick(commandLine);
         commandLine.addRawArgs(OPTION_UNITS, OPTION_UNITS_TYPE_PIXELSPERINCH);
-        commandLine.addImage(source);
+        commandLine.addImage(URLDecoder.decode( "'" + source + "'", StandardCharsets.UTF_8));
         results.forEach(result -> result.addToCommandLine(commandLine));
         commandLine.addImage(FORMAT_OFF);
         ConvertRunner convertRunner = new ConvertRunner();

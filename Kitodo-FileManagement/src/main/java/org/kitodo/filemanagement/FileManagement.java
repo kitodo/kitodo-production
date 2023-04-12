@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -79,13 +80,13 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return Files.newOutputStream(Paths.get(uri));
+        return Files.newOutputStream(Paths.get(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8)));
     }
 
     @Override
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return uri.toURL().openStream();
+        return new File(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8)).toURI().toURL().openStream();
     }
 
     @Override
