@@ -8,7 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals removeFilter, updateSuggestions, submitFilters */
+/* globals removeFilter, updateSuggestions, submitFilters, filterKeydownEvents */
 
 /* Define identifiers used to select elements */
 const LIST_WRAPPER = "#listWrapper";
