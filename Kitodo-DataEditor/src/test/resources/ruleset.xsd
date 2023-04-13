@@ -49,9 +49,13 @@
                 URI; if the type is specified, this applies. If a namespace has been specified, Production looks for an
                 XML file in the same directory whose file name is the same as the last segment of the namespace URI
                 and, if it finds it, makes the namespace elements available as a selection list.
+                
+                The attribute "minDigits" can be used with type="integer" to define a minimum number of digits, which
+                will save the value with leading zeroes, if it has less digits.
             </xs:documentation>
         </xs:annotation>
         <xs:attribute type="ruleset:Type" name="type"/>
+        <xs:attribute type="xs:positiveInteger" name="minDigits" default="1"/>
         <xs:attribute type="xs:anyURI" name="namespace"/>
     </xs:complexType>
 
@@ -297,7 +301,8 @@
             <xs:documentation xml:lang="en">
                 A &lt;ruleset&gt; technically describes the description of digital objects in structure and the
                 assignment of metadata. The assumed default language of &lt;label&gt;s without the "lang" attribute is
-                English, unless another language is specified as default with the "lang" attribute here. Section
+                English, unless another language is specified as default with the "lang" attribute here.
+                &lt;include&gt;s allow to preload embedded ruleset files. Section
                 &lt;declaration&gt; defines the possible &lt;division&gt;s and metadata &lt;key&gt;s. In section
                 &lt;restriction&gt;, the possible combinations of the former can be restricted. In section
                 &lt;editing&gt;, settings for displaying the input fields in the metadata editor can be made.
@@ -305,6 +310,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="include" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
                 <xs:element name="declaration" minOccurs="1" maxOccurs="1" type="ruleset:DeclarationElement"/>
                 <xs:element name="correlation" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
@@ -420,15 +426,19 @@
 
                 'authorLastName' The value is used as the author's last name to form the author-title key.
 
+                'childCount' will set the (1-based) child number, when creating child documents.
+
                 'dataSource' Internal identifier of the data source in order to be able to update the imported
                     metadata entries from the data source later.
 
                 'displaySummary' will be displayed as summary on the Title Record Link tab when creating a new process.
 
+                'docType' During import, the type of the logical root of the document is set from this metadata value.
+
                 'higherlevelIdentifier' must be available when fetching a data record from a data source in order to
                     fetch a higher-level data record as well.
 
-                'processTitle' The generated author-title key is written in this field.
+                'processTitle' The process title is written in this field.
 
                 'recordIdentifier' Identifier of the data record fetched from an external data source, so that the
                     imported metadata entries from the data source can be updated later.
@@ -442,13 +452,14 @@
                     <xs:simpleType>
                         <xs:restriction base="xs:token">
                             <xs:enumeration value="authorLastName"/>
+                            <xs:enumeration value="childCount"/>
                             <xs:enumeration value="dataSource"/>
                             <xs:enumeration value="displaySummary"/>
+                            <xs:enumeration value="docType"/>
                             <xs:enumeration value="higherlevelIdentifier"/>
                             <xs:enumeration value="processTitle"/>
                             <xs:enumeration value="recordIdentifier"/>
                             <xs:enumeration value="title"/>
-                            <xs:enumeration value="docType"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:list>

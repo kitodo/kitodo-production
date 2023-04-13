@@ -35,8 +35,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
@@ -632,10 +635,34 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private void saveTempProcessMetadata(TempProcess tempProcess) {
         try (OutputStream out = ServiceManager.getFileService()
                 .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()))) {
-            tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
-            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            Workpiece workpiece = tempProcess.getWorkpiece();
+            workpiece.setId(tempProcess.getProcess().getId().toString());
+            setProcessTitleMetadata(workpiece);
+            ServiceManager.getMetsService().save(workpiece, out);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private void setProcessTitleMetadata(Workpiece workpiece) {
+        String processTitle = currentProcess.getProcess().getTitle();
+        Collection<String> keysForProcessTitle = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        addAddableMetadataRecursive(workpiece.getLogicalStructure(), keysForProcessTitle, processTitle);
+        addAddableMetadataRecursive(workpiece.getPhysicalStructure(), keysForProcessTitle, processTitle);
+    }
+
+    private void addAddableMetadataRecursive(Division<?> division, Collection<String> keys, String value) {
+        StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(division.getType(),
+            acquisitionStage, priorityList);
+        for (MetadataViewInterface addableMetadataView : divisionView.getAddableMetadata(division.getMetadata(),
+            Collections.emptyList())) {
+            if (addableMetadataView instanceof SimpleMetadataViewInterface
+                    && keys.contains(addableMetadataView.getId())) {
+                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) addableMetadataView, value);
+            }
+        }
+        for (Division<?> child : division.getChildren()) {
+            addAddableMetadataRecursive(child, keys, value);
         }
     }
 
