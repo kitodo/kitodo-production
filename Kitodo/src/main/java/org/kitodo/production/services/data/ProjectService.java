@@ -137,7 +137,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     public Long countNotIndexedDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
-    
+
     @Override
     public Long countResults(Map filters) throws DataException {
         return countDocuments(getProjectsForCurrentUserQuery());
@@ -224,14 +224,14 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
             templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
             templateDTOS.add(templateDTO);
         }
-        return templateDTOS;
+        return templateDTOS.stream().filter(TemplateDTO::isActive).collect(Collectors.toList());
     }
 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectDTO projectDTO) throws DataException {
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-            ServiceManager.getTemplateService()));
+            ServiceManager.getTemplateService()).stream().filter(TemplateDTO::isActive).collect(Collectors.toList()));
     }
 
     /**

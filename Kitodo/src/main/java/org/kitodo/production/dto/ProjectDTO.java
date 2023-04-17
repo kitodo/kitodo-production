@@ -229,7 +229,7 @@ public class ProjectDTO extends BaseDTO {
      * @return list of active templates as TemplateDTO
      */
     public List<TemplateDTO> getTemplates() {
-        return templates.stream().filter(TemplateDTO::isActive).collect(Collectors.toList());
+        return templates;
     }
 
     /**
