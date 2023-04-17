@@ -524,11 +524,7 @@ public class FileService {
      * @return the name of the file
      */
     public String getFileName(URI uri) {
-        String fileNameWithExtension = fileManagementModule.getFileNameWithExtension(uri);
-        if (fileNameWithExtension.contains(".")) {
-            return fileNameWithExtension.substring(0, fileNameWithExtension.lastIndexOf('.'));
-        }
-        return fileNameWithExtension;
+        return FilenameUtils.getBaseName(fileManagementModule.getFileNameWithExtension(uri));
     }
 
     /**
