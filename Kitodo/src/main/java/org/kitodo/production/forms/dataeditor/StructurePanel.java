@@ -61,6 +61,8 @@ import org.primefaces.model.TreeNode;
 public class StructurePanel implements Serializable {
     private static final Logger logger = LogManager.getLogger(StructurePanel.class);
     public static final String STRUCTURE_NODE_TYPE = "Structure";
+    public static final String PHYS_STRUCTURE_NODE_TYPE = "PhysStructure";
+    public static final String MEDIA_NODE_TYPE = "Media";
     public static final String VIEW_NODE_TYPE = "View";
     private final DataEditorForm dataEditor;
 
@@ -844,6 +846,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode buildMediaTree(PhysicalDivision mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
+        rootTreeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);
         }
@@ -857,6 +860,13 @@ public class StructurePanel implements Serializable {
         DefaultTreeNode treeNode = addTreeNode(Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)
                         ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
                 false, false, physicalDivision, parentTreeNode);
+
+        if (PhysicalDivision.TYPES.contains(physicalDivision.getType())) {
+            treeNode.setType(MEDIA_NODE_TYPE);
+        } else {
+            treeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
+        }
+
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, treeNode)) {
             treeNode.setExpanded(true);
         }
