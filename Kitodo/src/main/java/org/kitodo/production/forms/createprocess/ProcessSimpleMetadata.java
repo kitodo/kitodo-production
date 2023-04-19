@@ -90,7 +90,7 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     }
 
     @Override
-    public int getMinOcc() {
+    public int getMinOccurs() {
         return settings.getMinOccurs();
     }
 }

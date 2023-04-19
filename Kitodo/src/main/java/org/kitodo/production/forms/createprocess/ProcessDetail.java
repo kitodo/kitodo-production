@@ -184,7 +184,7 @@ public abstract class ProcessDetail implements Serializable {
         container.preserve();
     }
 
-    public abstract int getMinOcc();
+    public abstract int getMinOccurs();
 
     /**
      * Sets whether this metadata entry is leading for options of other metadata

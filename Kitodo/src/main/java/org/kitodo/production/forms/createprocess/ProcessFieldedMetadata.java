@@ -796,7 +796,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     @Override
-    public int getMinOcc() {
+    public int getMinOccurs() {
         return metadataView.getMinOccurs();
     }
 }

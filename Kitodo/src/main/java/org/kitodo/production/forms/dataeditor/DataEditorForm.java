@@ -884,7 +884,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     @Override
     public boolean canBeDeleted(ProcessDetail processDetail) {
-        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOccurs()
                 || (!processDetail.isRequired() && !this.ruleset.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 

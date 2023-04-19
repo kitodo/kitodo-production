@@ -698,7 +698,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     @Override
     public boolean canBeDeleted(ProcessDetail processDetail) {
-        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOccurs()
                 || (!processDetail.isRequired() && !this.rulesetManagement.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
