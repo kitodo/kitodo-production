@@ -273,8 +273,12 @@
         <xs:annotation>
             <xs:documentation xml:lang="en">
                 The attribute "reimport" indicates how the metadata entry should behave when imported repeatedly:
+
                 'add' adds the newly imported metadata entry to the existing entries.
+
                 'replace' replaces an existing metadata entry with the new value. (This is the default case.)
+                    Note that metadata, for which there is no value, is kept and not deleted.
+
                 'keep' keeps the first existing value and discards the additionally imported value.
             </xs:documentation>
         </xs:annotation>
