@@ -21,6 +21,7 @@ import java.util.function.BiConsumer;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -87,13 +88,12 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
     }
 
     public boolean isRequired() {
-        if (container != null && container.getChildMetadata().isEmpty()) {
-            ComplexMetadataViewInterface containerSettings = container.getMetadataView();
-            if (containerSettings == null || containerSettings.getMinOccurs() == 0) {
-                return false;
-            }
+        ComplexMetadataViewInterface containerSettings = container.getMetadataView();
+        if (!(containerSettings instanceof StructuralElementViewInterface) && container.getChildMetadata().isEmpty()
+                && containerSettings.getMinOccurs() == 0) {
+            return false;
         }
-        return Objects.nonNull(settings) && settings.getMinOccurs() > 0;
+        return settings.getMinOccurs() > 0;
     }
 
     @Override
