@@ -77,12 +77,12 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      * @return whether the field is editable
      */
     public boolean isEditable() {
-        return Objects.isNull(settings) || settings.isEditable();
+        return settings.isEditable();
     }
 
     @Override
     public boolean isUndefined() {
-        return Objects.isNull(settings) || settings.isUndefined();
+        return settings.isUndefined();
     }
 
     public boolean isRequired() {
