@@ -11,8 +11,6 @@
 
 package org.kitodo.api.schemaconverter;
 
-import java.util.UnknownFormatConversionException;
-
 public enum MetadataFormat {
     MODS,
     MARC,
@@ -34,8 +32,7 @@ public enum MetadataFormat {
                 return format;
             }
         }
-        throw new UnknownFormatConversionException("Unable to find MetadataFormat for given String '"
-                + formatString + "'!");
+        return OTHER;
     }
 
     /**

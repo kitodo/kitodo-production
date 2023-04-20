@@ -245,6 +245,8 @@ public class ImportService {
             return Helper.getTranslation("recordId");
         } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
             return importConfiguration.getDefaultSearchField().getLabel();
+        } else if (!importConfiguration.getSearchFields().isEmpty()) {
+            return importConfiguration.getSearchFields().get(0).getLabel();
         }
         return "";
     }
@@ -1225,8 +1227,8 @@ public class ImportService {
 
     private void setParentProcess(String parentId, int projectId, Template template)
             throws DAOException, IOException, ProcessGenerationException {
+        parentTempProcess = null;
         if (StringUtils.isNotBlank(parentId)) {
-            parentTempProcess = null;
             checkForParent(parentId, template.getRuleset(), projectId);
         }
     }

@@ -62,9 +62,6 @@ public class ImportConfiguration extends BaseBean {
     @Column(name = "default_import_depth")
     private Integer defaultImportDepth;
 
-    @Column(name = "parent_element_type")
-    private String parentElementType;
-
     @Column(name = "parent_element_trim_mode")
     private String parentElementTrimMode;
 
@@ -311,24 +308,6 @@ public class ImportConfiguration extends BaseBean {
      */
     public void setDefaultImportDepth(Integer defaultImportDepth) {
         this.defaultImportDepth = defaultImportDepth;
-    }
-
-    /**
-     * Get parentElementType.
-     *
-     * @return value of parentElementType
-     */
-    public String getParentElementType() {
-        return parentElementType;
-    }
-
-    /**
-     * Set parentElementType.
-     *
-     * @param parentElementType as java.lang.String
-     */
-    public void setParentElementType(String parentElementType) {
-        this.parentElementType = parentElementType;
     }
 
     /**
