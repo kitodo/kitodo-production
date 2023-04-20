@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
@@ -48,25 +59,32 @@ public class MediaViewForm implements Serializable {
         return Objects.nonNull(mediaViewDivision);
     }
 
+    /**
+     * Clean the media view division.
+     */
     public void clean() {
         mediaViewDivision = null;
         title = "";
         begin = "";
     }
 
+    /**
+     * Save the media view.
+     */
     public void save() {
         if (isEdit()) {
             mediaViewDivision.getKey().setLabel(getTitle());
             mediaViewDivision.getValue().setBegin(getBegin());
         } else {
             if (Objects.nonNull(mediaSelection)) {
-                MediaView mediaView = new MediaView(getBegin());
                 LogicalDivision logicalDivision = new LogicalDivision();
                 logicalDivision.setType(getType());
                 logicalDivision.setLabel(getTitle());
                 PhysicalDivision physicalDivision = new PhysicalDivision();
                 physicalDivision.getMediaFiles().putAll(mediaSelection.getKey().getMediaFiles());
                 physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
+
+                MediaView mediaView = new MediaView(getBegin());
                 physicalDivision.addMediaView(mediaView);
                 mediaView.setPhysicalDivision(physicalDivision);
                 logicalDivision.getViews().add(mediaView);
@@ -78,7 +96,6 @@ public class MediaViewForm implements Serializable {
 
                 ancestorsOfPhysicalDivision.getLast().getChildren().add(physicalDivision);
                 mediaSelection.getValue().getChildren().add(logicalDivision);
-
             }
         }
 

@@ -180,6 +180,11 @@ public class StructurePanel implements Serializable {
         deleteLogicalDivision(getSelectedStructure().get());
     }
 
+    /**
+     * Delete the logical division.
+     *
+     * @param selectedStructure The logical division.
+     */
     public void deleteLogicalDivision(LogicalDivision selectedStructure) {
         LinkedList<LogicalDivision> ancestors = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure,
                 structure);
@@ -226,14 +231,15 @@ public class StructurePanel implements Serializable {
             if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
                 if (physicalDivision.getLogicalDivisions().size() > 1) {
                     Helper.setMessage(
-                            physicalDivision.toString() + ": is removed fom all assigned structural elements");
+                            physicalDivision + ": is removed fom all assigned structural elements");
                 }
                 for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
                     structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
                 }
                 physicalDivision.getLogicalDivisions().clear();
-                if (!deletePhysicalDivision(physicalDivision))
+                if (!deletePhysicalDivision(physicalDivision)) {
                     return;
+                }
 
                 dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
             }
@@ -251,6 +257,12 @@ public class StructurePanel implements Serializable {
         dataEditor.getPaginationPanel().show();
     }
 
+    /**
+     * Delete as physical division.
+     *
+     * @param physicalDivision The physical division.
+     * @return True if deleted
+     */
     public boolean deletePhysicalDivision(PhysicalDivision physicalDivision) {
         LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(physicalDivision,
                 dataEditor.getWorkpiece().getPhysicalStructure());

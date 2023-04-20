@@ -1,3 +1,14 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
@@ -23,6 +34,11 @@ public class MediaViewsPanel implements Serializable {
         mediaViewForm = new MediaViewForm(dataEditor);
     }
 
+    /**
+     * Get the media view divisions.
+     *
+     * @return The media view divisions
+     */
     public Map<LogicalDivision, MediaView> getMediaViewDivisions() {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         mediaViewForm.setMediaSelection(lastSelection);
@@ -32,21 +48,6 @@ public class MediaViewsPanel implements Serializable {
             getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
         }
         return mediaViewDivisions;
-    }
-
-    public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
-        LogicalDivision logicalDivision = mediaViewDivision.getKey();
-        if (dataEditor.getStructurePanel()
-                .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
-            logicalDivision.getViews().remove();
-            dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
-        }
-    }
-
-    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
-        mediaViewForm.setMediaViewDivision(mediaViewDivision);
-        mediaViewForm.setTitle(mediaViewDivision.getKey().getLabel());
-        mediaViewForm.setBegin(mediaViewDivision.getValue().getBegin());
     }
 
     private static void getMediaViewDivisions(Map<LogicalDivision, MediaView> mediaViewDivisions,
@@ -60,6 +61,31 @@ public class MediaViewsPanel implements Serializable {
             }
             getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
         }
+    }
+
+    /**
+     * Delete media view division from structure panel.
+     *
+     * @param mediaViewDivision to delete
+     */
+    public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
+        LogicalDivision logicalDivision = mediaViewDivision.getKey();
+        if (dataEditor.getStructurePanel()
+                .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
+            logicalDivision.getViews().remove();
+            dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
+        }
+    }
+
+    /**
+     * Edit media view division form.
+     *
+     * @param mediaViewDivision the media view division
+     */
+    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
+        mediaViewForm.setMediaViewDivision(mediaViewDivision);
+        mediaViewForm.setTitle(mediaViewDivision.getKey().getLabel());
+        mediaViewForm.setBegin(mediaViewDivision.getValue().getBegin());
     }
 
     public boolean isEnabled() {
