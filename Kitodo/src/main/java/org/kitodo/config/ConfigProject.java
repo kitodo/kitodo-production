@@ -113,7 +113,7 @@ public class ConfigProject {
      * @return value of useTemplates
      */
     public boolean isUseTemplates() {
-        return getParamBoolean(CREATE_NEW_PROCESS + ".templates[@use]");
+        return getParamBoolean(CREATE_NEW_PROCESS + ".templates[@use]", true);
     }
 
     /**
@@ -258,16 +258,28 @@ public class ConfigProject {
     }
 
     /**
+     * Determine a boolean parameter of the configuration. Return given 'defaultValue' if boolean
+     * parameter was not found in the configuration.
+     *
+     * @param parameter as boolean
+     * @param defaultValue default value
+     * @return value of parameter in configuration
+     */
+    public boolean getParamBoolean(String parameter, boolean defaultValue) {
+        try {
+            return this.config.getBoolean(this.projectTitle + parameter);
+        } catch (RuntimeException e) {
+            return defaultValue;
+        }
+    }
+
+    /**
      * Determine a boolean parameter of the configuration.
      *
      * @return Parameter als boolean
      */
     public boolean getParamBoolean(String parameter) {
-        try {
-            return this.config.getBoolean(this.projectTitle + parameter);
-        } catch (RuntimeException e) {
-            return false;
-        }
+        return getParamBoolean(parameter, false);
     }
 
     /**

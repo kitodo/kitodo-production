@@ -12,8 +12,8 @@
 package org.kitodo.production.helper;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -253,8 +253,8 @@ public class ProcessHelper {
      *            domain of metadata
      * @return metadata from node list
      */
-    public static List<Metadata> convertMetadata(NodeList nodes, MdSec domain) {
-        List<Metadata> allMetadata = new ArrayList<>();
+    public static HashSet<Metadata> convertMetadata(NodeList nodes, MdSec domain) {
+        HashSet<Metadata> allMetadata = new HashSet<>();
         if (Objects.nonNull(nodes)) {
             for (int index = 0; index < nodes.getLength(); index++) {
                 Node node = nodes.item(index);
@@ -271,7 +271,7 @@ public class ProcessHelper {
                         break;
                     case "metadataGroup": {
                         MetadataGroup group = new MetadataGroup();
-                        group.setGroup(convertMetadata(element.getChildNodes(), null));
+                        group.setMetadata(convertMetadata(element.getChildNodes(), null));
                         metadata = group;
                         break;
                     }

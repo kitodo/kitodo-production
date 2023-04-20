@@ -1,0 +1,134 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:p="http://primefaces.org/ui">
+    <p:remoteCommand name="removeFilter"
+                     action="#{CurrentTaskForm.filterMenu.removeFilter}"
+                     oncomplete="setFilterInputPadding()"
+                     update="tasksTabView:tasksForm:taskTable parsedFiltersForm:parsedFilters"/>
+    <p:remoteCommand name="updateSuggestions"
+                     action="#{CurrentTaskForm.filterMenu.updateSuggestions}"
+                     update="filterOptionsForm:suggestions"/>
+    <p:remoteCommand name="submitFilters"
+                     action="#{CurrentTaskForm.filterMenu.submitFilters}"
+                     onstart="PF('taskTable').getPaginator().setPage(0);"
+                     oncomplete="setFilterInputPadding();"
+                     update="tasksTabView:tasksForm:taskTable
+                             filterInputForm:filterfield
+                             parsedFiltersForm:parsedFilters
+                             filterOptionsForm:suggestions"/>
+    <div class="ui-inputgroup">
+        <div class="input-wrapper">
+            <h:form id="filterInputForm">
+                <p:inputText forceId="true"
+                             id="filterfield"
+                             value="#{CurrentTaskForm.filterMenu.filterInEditMode}"
+                             autocomplete="off"
+                             placeholder="#{msgs.filter}">
+                    <p:ajax event="keydown"
+                            delay="1000"
+                            listener="#{CurrentTaskForm.filterMenu.updateSuggestions(CurrentTaskForm.filterMenu.filterInEditMode)}"
+                            onstart="return filterKeydownEvents(event);"
+                            update="filterOptionsForm:suggestions"/>
+                </p:inputText>
+            </h:form>
+            <h:form id="parsedFiltersForm">
+                <p:dataList id="parsedFilters"
+                            value="#{CurrentTaskForm.filterMenu.parsedFilters}"
+                            var="parsedFilter"
+                            emptyMessage="">
+                    <p:outputPanel styleClass="plainFilter hidden">#{parsedFilter.getPlainFilter()}</p:outputPanel>
+                    <p:outputPanel styleClass="not-modifier" rendered="#{parsedFilter.isNot()}">-</p:outputPanel>
+                    <p:outputPanel styleClass="category">#{parsedFilter.category}</p:outputPanel>
+                    <p:outputPanel styleClass="value">#{parsedFilter.value}</p:outputPanel>
+                    <p:commandButton title="#{msgs.removeFilter}"
+                                     icon="fa fa-times"
+                                     action="#{CurrentTaskForm.filterMenu.removeFilter(parsedFilter)}"
+                                     oncomplete="setFilterInputPadding()"
+                                     update="tasksTabView:tasksForm:taskTable parsedFilters"/>
+                </p:dataList>
+            </h:form>
+            <h:form id="filterOptionsForm">
+                <div id="filterOptionsFormWrapper">
+                    <!-- Suggestions -->
+                    <p:dataList id="suggestions"
+                                value="#{CurrentTaskForm.filterMenu.suggestions}"
+                                var="menuItem"
+                                itemStyleClass="suggestion">
+                        <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}"
+                                       a:data-input="#{menuItem.getInput()}">#{menuItem.getSuggestion()}</p:outputPanel>
+                    </p:dataList>
+                    <!-- Options at the end of overlay panel -->
+                    <p:selectManyCheckbox id="taskFilters"
+                                          value="#{CurrentTaskForm.selectedTaskFilters}"
+                                          styleClass="switch"
+                                          layout="pageDirection">
+                        <f:selectItems value="#{CurrentTaskForm.taskFilters}"
+                                       var="taskFilter"
+                                       itemLabel="#{msgs[taskFilter]}"/>
+                        <p:ajax event="change"
+                                onstart="PF('taskTable').getPaginator().setPage(0);"
+                                listener="#{CurrentTaskForm.taskFiltersChanged}"
+                                update="tasksTabView:tasksForm:taskTable"/>
+                    </p:selectManyCheckbox>
+
+                    <p:selectManyCheckbox id="taskStatus"
+                                          value="#{CurrentTaskForm.selectedTaskStatus}"
+                                          styleClass="switch"
+                                          layout="pageDirection">
+                        <f:selectItems value="#{CurrentTaskForm.taskStatus}"
+                                       var="taskStatus"
+                                       itemLabel="#{msgs.processingStatus} &quot;#{msgs[taskStatus.title]}&quot;"/>
+                        <p:ajax event="change"
+                                onstart="PF('taskTable').getPaginator().setPage(0);"
+                                listener="#{CurrentTaskForm.taskStatusChanged}"
+                                update="tasksTabView:tasksForm:taskTable"/>
+                    </p:selectManyCheckbox>
+
+                </div>
+            </h:form>
+        </div>
+        <h:form id="savedFilters">
+            <p:commandButton id="savedFiltersTrigger" icon="fa fa-chevron-down"/>
+            <p:overlayPanel for="savedFiltersTrigger" id="savedFiltersOverlay" my="right top" at="right bottom">
+                <ul>
+                    <li>
+                        <p:commandButton id="addFilter"
+                                         action="#{CurrentTaskForm.addFilterToUser}"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         value="#{msgs.addFilter}" update="@form"/>
+                    </li>
+                    <ui:repeat value="#{CurrentTaskForm.userFilters}" var="filter">
+                        <li>
+                            <p:commandLink value="#{filter}"
+                                           action="#{CurrentTaskForm.changeFilter(filter)}"
+                                           title="#{filter}"/>
+                            <p:commandLink title="#{msgs.removeFilter}"
+                                           action="#{CurrentTaskForm.removeFilterFromUser(filter)}"
+                                           styleClass="filter-delete plain"
+                                           update="@form">
+                                <i class="fa fa-trash-o fa-lg"/>
+                            </p:commandLink>
+                        </li>
+                    </ui:repeat>
+                </ul>
+            </p:overlayPanel>
+        </h:form>
+    </div>
+    <h:outputScript library="js" name="filter.js" target="body"/>
+</ui:composition>

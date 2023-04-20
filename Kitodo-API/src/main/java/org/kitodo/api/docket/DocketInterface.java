@@ -40,4 +40,11 @@ public interface DocketInterface {
      */
     File generateMultipleDockets(Collection<DocketData> docketData, URI xslFileUri) throws IOException;
 
+    /**
+     * Save XML log, which is used as input for docket XSLT transformation.
+     *
+     * @param docketData  the data shown in the docket
+     * @param destination where to save the file
+     */
+    void exportXmlLog(DocketData docketData, String destination) throws IOException;
 }

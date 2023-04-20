@@ -88,7 +88,6 @@
                                                      class="input"
                                                      value="#{DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                                      required="#{not empty param['dialogAddDocStrucTypeForm:addDocStruc'] or not empty param['dialogAddDocStrucTypeForm:addAndEditStruc']}"
-                                                     immediate="true"
                                                      style="width: 180px;">
                                         <f:selectItem itemValue="#{null}"
                                                       itemLabel="#{msgs.notSelected}"
@@ -198,17 +197,24 @@
                                 <p:outputLabel value="#{msgs.metadata}:"
                                                for="selectAddableMetadataTypes" />
                                 <p:selectOneMenu id="selectAddableMetadataTypes"
+                                                 disabled="#{empty DataEditorForm.addDocStrucTypeDialog.docStructAddTypeSelectionSelectedItem}"
                                                  class="input"
                                                  value="#{DataEditorForm.addDocStrucTypeDialog.selectedMetadata}"
                                                  style="width: 180px;">
+                                    <f:selectItem itemValue=""
+                                        itemLabel="#{msgs.notSelected}"
+                                        itemDisabled="false"/>
                                     <f:selectItems value="#{DataEditorForm.addDocStrucTypeDialog.addableMetadata}" />
+                                    <p:ajax event="change" update="addMetadata"/>
                                 </p:selectOneMenu>
-
-                                <p:outputLabel value="#{msgs.value}:"
-                                               for="inputMetaDataValue"/>
-                                <p:inputText id="inputMetaDataValue"
-                                             class="input"
-                                             value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValue}"/>
+                                <h:panelGroup id="inputMetadataValueGroup" rendered="#{not empty DataEditorForm.addDocStrucTypeDialog.selectedMetadata and not DataEditorForm.addDocStrucTypeDialog.isSelectedMetadataComplex()}">
+                                    <p:outputLabel value="#{msgs.value}:"
+                                                   for="inputMetaDataValue"/>
+                                    <p:inputText 
+                                                 id="inputMetaDataValue"
+                                                 class="input"
+                                                 value="#{DataEditorForm.addDocStrucTypeDialog.inputMetaDataValue}"/>
+                                </h:panelGroup>
                             </p:row>
                         </p:panelGrid>
                     </h:panelGroup>

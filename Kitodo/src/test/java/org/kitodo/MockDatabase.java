@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -57,6 +58,7 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -119,6 +121,9 @@ public class MockDatabase {
     private static Server tcpServer;
     private static HashMap<String, Integer> removableObjectIDs;
     private static final int CUSTOM_CONFIGURATION_ID = 4;
+    public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
+    public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
+    public static final String META_XML = "/meta.xml";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -618,6 +623,69 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(thirdProcess);
     }
 
+    /**
+     * The folders up to and including number 9 in the metadata folder are
+     * already in use, so here we insert placeholder processes so that the
+     * newspaper’s overall process gets the number 10.
+     * @param startId ID of first placeholder process to add
+     * @param endId ID of last placeholder process to add
+     */
+    public static void insertPlaceholderProcesses(int startId, int endId) throws DataException {
+        for (int processNumber = startId; processNumber <= endId; processNumber++) {
+            Process nthProcess = new Process();
+            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
+            ServiceManager.getProcessService().save(nthProcess);
+        }
+    }
+
+    /**
+     * Insert process of type 'MultiVolumeWork' used to test creation of subordinate process of type 'Volume'.
+     * @throws DAOException when retrieving project or ruleset from database fails
+     * @throws DataException when saving new process object fails
+     */
+    public static int insertMultiVolumeWork() throws DAOException, DataException {
+        Process multiVolumeWork = new Process();
+        multiVolumeWork.setBaseType("MultiVolumeWork");
+        multiVolumeWork.setTitle("Multi volume work test process");
+        Project project = ServiceManager.getProjectService().getById(1);
+        multiVolumeWork.setProject(project);
+        multiVolumeWork.setTemplate(project.getTemplates().get(0));
+        multiVolumeWork.setRuleset(ServiceManager.getRulesetService().getById(1));
+        ServiceManager.getProcessService().save(multiVolumeWork);
+        return multiVolumeWork.getId();
+    }
+
+    /**
+     * Create template process of type 'Volume' and corresponding template process import configuration.
+     * @throws DAOException when loading required objects from database fails
+     * @throws DataException when saving process or import configuration fails
+     */
+    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException, DataException {
+
+        // create template process
+        Project firstProject = ServiceManager.getProjectService().getById(1);
+        Process templateProcess = new Process();
+        templateProcess.setBaseType("Volume");
+        templateProcess.setTitle("Test volume");
+        templateProcess.setProject(firstProject);
+        templateProcess.setTemplate(firstProject.getTemplates().get(0));
+        templateProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
+        templateProcess.setInChoiceListShown(true);
+        ServiceManager.getProcessService().save(templateProcess);
+
+        // create import configuration for template process
+        Process newProcess = ServiceManager.getProcessService().getById(12);
+        ImportConfiguration templateProcessConfiguration = new ImportConfiguration();
+        templateProcessConfiguration.setConfigurationType(ImportConfigurationType.PROCESS_TEMPLATE.name());
+        templateProcessConfiguration.setDefaultTemplateProcess(newProcess);
+        ServiceManager.getImportConfigurationService().saveToDatabase(templateProcessConfiguration);
+        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().countDatabaseRows());
+        ImportConfiguration savedConfig = ServiceManager.getImportConfigurationService().getById(numberOfConfigs);
+        firstProject.setDefaultChildProcessImportConfiguration(savedConfig);
+        ServiceManager.getProjectService().save(firstProject);
+        ServiceManager.getImportService().setUsingTemplates(true);
+    }
+
     public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
         Process fourthProcess = new Process();
         fourthProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -662,16 +730,7 @@ public class MockDatabase {
         fivthRuleset.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getRulesetService().save(fivthRuleset);
 
-        /*
-         * The folders up to and including number 9 in the metadata folder are
-         * already in use, so here we insert placeholder processes so that the
-         * newspaper’s overall process gets the number 10.
-         */
-        for (int processNumber = 4; processNumber <= 9; processNumber++) {
-            Process nthProcess = new Process();
-            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
-            ServiceManager.getProcessService().save(nthProcess);
-        }
+        insertPlaceholderProcesses(4, 9);
 
         Process tenthProcess = new Process();
         tenthProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -867,7 +926,6 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        firstProject.getUsers().add(sixthUser);
         firstProject.setClient(client);
         ServiceManager.getProjectService().save(firstProject);
 
@@ -880,12 +938,14 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
+        secondProject.getUsers().add(sixthUser);
         secondProject.setClient(client);
         ServiceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
+        sixthUser.getProjects().add(secondProject);
         ServiceManager.getUserService().saveToDatabase(firstUser);
         ServiceManager.getProjectService().saveToIndex(secondProject, true);
 
@@ -964,6 +1024,14 @@ public class MockDatabase {
         fifthFolder.setCreateFolder(true);
         fifthFolder.setLinkingMode(LinkingMode.ALL);
 
+        Folder sixthFolder = new Folder();
+        sixthFolder.setFileGroup("LOCAL");
+        sixthFolder.setMimeType("image/tiff");
+        sixthFolder.setPath("images/(processtitle)_media");
+        sixthFolder.setCopyFolder(false);
+        sixthFolder.setCreateFolder(true);
+        sixthFolder.setLinkingMode(LinkingMode.NO);
+
         firstFolder.setProject(project);
         project.getFolders().add(firstFolder);
 
@@ -978,6 +1046,123 @@ public class MockDatabase {
 
         fifthFolder.setProject(project);
         project.getFolders().add(fifthFolder);
+
+        sixthFolder.setProject(project);
+        project.getFolders().add(sixthFolder);
+
+        project.setMediaView(secondFolder);
+        ServiceManager.getProjectService().save(project);
+    }
+
+    /**
+     * Insert dummy process into database.
+     * @param dummyProcessId id used in dummy process title
+     * @return database ID of created dummy process
+     * @throws DAOException when loading test project fails
+     * @throws DataException when saving dummy process fails
+     */
+    public static int insertDummyProcess(int dummyProcessId) throws DAOException, DataException {
+        Project firstProject = ServiceManager.getProjectService().getById(2);
+        Template template = firstProject.getTemplates().get(0);
+        Process dummyProcess = new Process();
+        dummyProcess.setTitle("Dummy_process_" + dummyProcessId);
+        dummyProcess.setProject(firstProject);
+        dummyProcess.setTemplate(template);
+        dummyProcess.setRuleset(template.getRuleset());
+        dummyProcess.setDocket(template.getDocket());
+        ServiceManager.getProcessService().save(dummyProcess);
+        return dummyProcess.getId();
+    }
+
+    /**
+     * Add test process for media references update test to second project.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(MEDIA_REFERENCES_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for metadata lock test to second project.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(METADATA_LOCK_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Insert test process for media reference updates into database.
+     * @return database ID of created test process
+     * @throws DAOException when loading test project fails
+     * @throws DataException when saving test process fails
+     */
+    private static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DataException {
+        Project projectTwo = ServiceManager.getProjectService().getById(2);
+        Template template = projectTwo.getTemplates().get(0);
+        Process mediaReferencesProcess = new Process();
+        mediaReferencesProcess.setTitle(processTitle);
+        mediaReferencesProcess.setProject(projectTwo);
+        mediaReferencesProcess.setTemplate(template);
+        mediaReferencesProcess.setRuleset(template.getRuleset());
+        mediaReferencesProcess.setDocket(template.getDocket());
+        ServiceManager.getProcessService().save(mediaReferencesProcess);
+        return mediaReferencesProcess.getId();
+    }
+
+    /**
+     * Insert folders into database and add them to second test project.
+     * @throws DAOException when loading project or template fails
+     * @throws DataException when saving project or template fails
+     */
+    public static void insertFoldersForSecondProject() throws DAOException, DataException {
+        Project project = ServiceManager.getProjectService().getById(2);
+
+        Template template = ServiceManager.getTemplateService().getById(1);
+        project.getTemplates().add(template);
+        template.getProjects().add(project);
+        ServiceManager.getTemplateService().save(template);
+
+        Folder detailViewsFolder = new Folder();
+        detailViewsFolder.setFileGroup("DEFAULT");
+        detailViewsFolder.setUrlStructure("https://www.example.com/content/$(meta.CatalogIDDigital)/images/default/");
+        detailViewsFolder.setMimeType("image/png");
+        detailViewsFolder.setPath("images/default");
+        detailViewsFolder.setCopyFolder(true);
+        detailViewsFolder.setCreateFolder(true);
+        detailViewsFolder.setDerivative(1.0);
+        detailViewsFolder.setLinkingMode(LinkingMode.ALL);
+        detailViewsFolder.setProject(project);
+        project.getFolders().add(detailViewsFolder);
+        project.setMediaView(detailViewsFolder);
+
+        Folder thumbnailsFolder = new Folder();
+        thumbnailsFolder.setFileGroup("THUMBS");
+        thumbnailsFolder.setUrlStructure("https://www.example.com/content/$(meta.CatalogIDDigital)/images/thumbs/");
+        thumbnailsFolder.setMimeType("image/png");
+        thumbnailsFolder.setPath("images/thumbs");
+        thumbnailsFolder.setCopyFolder(true);
+        thumbnailsFolder.setCreateFolder(true);
+        thumbnailsFolder.setImageSize(150);
+        thumbnailsFolder.setLinkingMode(LinkingMode.ALL);
+        thumbnailsFolder.setProject(project);
+        project.getFolders().add(thumbnailsFolder);
+        project.setPreview(thumbnailsFolder);
+
+        Folder scansFolder = new Folder();
+        scansFolder.setFileGroup("SOURCE");
+        scansFolder.setUrlStructure("https://www.example.com/content/$(meta.CatalogIDDigital)/images/scans/");
+        scansFolder.setMimeType("image/tiff");
+        scansFolder.setPath("images/scans");
+        scansFolder.setCopyFolder(false);
+        scansFolder.setCreateFolder(true);
+        scansFolder.setLinkingMode(LinkingMode.NO);
+        scansFolder.setProject(project);
+        project.getFolders().add(scansFolder);
+        project.setGeneratorSource(scansFolder);
 
         ServiceManager.getProjectService().save(project);
     }
@@ -1342,7 +1527,7 @@ public class MockDatabase {
         List<Authority> userMetadataAuthorities = new ArrayList<>();
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllProcesses" + CLIENT_ASSIGNABLE));
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessImages" + CLIENT_ASSIGNABLE));
-        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessMetaData" + CLIENT_ASSIGNABLE));
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("editProcessMetaData" + CLIENT_ASSIGNABLE));
         sixthRole.setAuthorities(userMetadataAuthorities);
 
         ServiceManager.getRoleService().saveToDatabase(sixthRole);
@@ -1860,5 +2045,52 @@ public class MockDatabase {
      */
     public static ImportConfiguration getCustomTypeImportConfiguration() throws DAOException {
         return ServiceManager.getImportConfigurationService().getById(CUSTOM_CONFIGURATION_ID);
+    }
+
+    /**
+     * Add process with title 'processTitle' to MockDatabase.
+     *
+     * @param processTitle title of process
+     * @param projectId ID of project to add to new process
+     * @param templateId ID of template to add to new process
+     * @return new process
+     * @throws DAOException when retrieving entities from database fails
+     * @throws DataException when saving new process to database fails
+     */
+    public static Process addProcess(String processTitle, int projectId, int templateId)
+            throws DAOException, DataException {
+        Project projectOne = ServiceManager.getProjectService().getById(projectId);
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        LocalDate localDate = LocalDate.of(2023, 1, 3);
+        Process process = new Process();
+        process.setTitle(processTitle);
+        process.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        process.setSortHelperImages(30);
+        process.setDocket(template.getDocket());
+        process.setProject(projectOne);
+        process.setRuleset(template.getRuleset());
+        process.setTemplate(template);
+        ServiceManager.getProcessService().save(process);
+        return process;
+    }
+
+    /**
+     * Copy test metadata xml file with provided 'filename' to process directory of process with provided ID
+     * 'processId'. Creates directory if it does not exist.
+     * @param processId process ID
+     * @param filename filename of metadata file
+     * @throws IOException when subdirectory cannot be created or metadata file cannot be copied
+     */
+    public static void copyTestMetadataFile(int processId, String filename) throws IOException {
+        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
+                .toUri();
+        URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
+                + META_XML).toUri();
+        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
+        if (!ServiceManager.getFileService().isDirectory(processDir)) {
+            ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
+                    String.valueOf(processId));
+        }
+        ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
     }
 }

@@ -28,6 +28,8 @@ import org.kitodo.selenium.testframework.pages.DesktopPage;
 import org.kitodo.selenium.testframework.pages.ExtendedSearchPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.SearchResultPage;
+import org.kitodo.selenium.testframework.pages.TasksPage;
+import org.openqa.selenium.WebElement;
 
 public class SearchingST extends BaseTestSelenium {
 
@@ -37,6 +39,7 @@ public class SearchingST extends BaseTestSelenium {
     private static SearchResultPage searchResultPage;
     private static ExtendedSearchPage extendedSearchPage;
     private static ProcessesPage processesPage;
+    private static TasksPage tasksPage;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -44,6 +47,7 @@ public class SearchingST extends BaseTestSelenium {
         searchResultPage = Pages.getSearchResultPage();
         extendedSearchPage = Pages.getExtendedSearchPage();
         processesPage = Pages.getProcessesPage();
+        tasksPage = Pages.getTasksPage();
     }
 
     @Before
@@ -138,5 +142,40 @@ public class SearchingST extends BaseTestSelenium {
                 assertEquals("Case insensitive filter should match \"First process\"", "First process", 
                     processTitles.get(0));
             });
+    }
+
+    /**
+     * Checks whether adding and removing filters work on the processes page.
+     */
+    @Test
+    public void addAndRemoveFilters() throws Exception {
+        processesPage.goTo();
+        processesPage.applyFilter("\"id:to be removed\"");
+        processesPage.applyFilter("\"project:Example Project\"");
+        assertEquals("Number of parsed filters does not match", 2, processesPage.getParsedFilters().size());
+
+        processesPage.removeParsedFilter(0);
+        assertEquals("Number of parsed filters does not match after removing filter", 1,
+            processesPage.getParsedFilters().size());
+    }
+
+    /**
+     * Checks whether suggestions and filtering work on the tasks page.
+     */
+    @Test
+    public void filterTasksTest() throws Exception {
+        tasksPage.goTo();
+
+        tasksPage.typeCharactersIntoFilter("i");
+        List<WebElement> suggestions = tasksPage.getSuggestions();
+        assertEquals("Displayed wrong number of suggestions for input \"i\"", 1, suggestions.size());
+        assertEquals("Displayed wrong suggestion for input \"i\"", "id:", suggestions.get(0).getText());
+
+        tasksPage.selectSuggestion(0);
+        assertEquals("Filter input value is wrong", "id:", tasksPage.getFilterInputValue());
+
+        tasksPage.typeCharactersIntoFilter("1");
+        tasksPage.submitFilter();
+        assertEquals("Task list does not match filter", 2, tasksPage.countListedTasks());
     }
 }

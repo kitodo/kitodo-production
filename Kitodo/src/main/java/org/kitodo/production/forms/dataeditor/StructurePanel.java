@@ -60,7 +60,10 @@ import org.primefaces.model.TreeNode;
 
 public class StructurePanel implements Serializable {
     private static final Logger logger = LogManager.getLogger(StructurePanel.class);
-
+    public static final String STRUCTURE_NODE_TYPE = "Structure";
+    public static final String PHYS_STRUCTURE_NODE_TYPE = "PhysStructure";
+    public static final String MEDIA_NODE_TYPE = "Media";
+    public static final String VIEW_NODE_TYPE = "View";
     private final DataEditorForm dataEditor;
 
     /**
@@ -124,17 +127,22 @@ public class StructurePanel implements Serializable {
     private String titleMetadata = "type";
 
     /**
-     * Determines whether the logical tree is built as a combination of physical media nodes and 
+     * Determines whether the logical tree is built as a combination of physical media nodes and
      * logical structure nodes (default) or whether it only contains structure nodes.
      */
     private boolean hideMediaInLogicalTree = false;
 
-    /** 
-     * Determines whether a page range is show together with the label of a logical structure node. 
-     * The page consists of the label of the first and last media of the logical division, 
+    /**
+     * Determines whether a page range is show together with the label of a logical structure node.
+     * The page consists of the label of the first and last media of the logical division,
      * e.g. "4 : iv - 6 : vi".
      */
     private boolean showPageRangeInLogicalTree = false;
+
+    /**
+     * Determines whether the hierarchy level of a tree node should be displayed with its label or not.
+     */
+    private boolean showHierarchyLevel = false;
 
     /**
      * Creates a new structure panel.
@@ -300,12 +308,18 @@ public class StructurePanel implements Serializable {
     }
 
     Optional<LogicalDivision> getSelectedStructure() {
+        if (Objects.isNull(selectedLogicalNode)) {
+            return Optional.empty();
+        }
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
         return Optional.ofNullable(dataObject instanceof LogicalDivision ? (LogicalDivision) dataObject : null);
     }
 
     Optional<PhysicalDivision> getSelectedPhysicalDivision() {
+        if (Objects.isNull(selectedPhysicalNode)) {
+            return Optional.empty();
+        }
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedPhysicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
         return Optional.ofNullable(dataObject instanceof PhysicalDivision ? (PhysicalDivision) dataObject : null);
@@ -389,7 +403,7 @@ public class StructurePanel implements Serializable {
     private void preserveLogical() {
         if (!this.logicalTree.getChildren().isEmpty()) {
             preserveLogicalRecursive(this.logicalTree.getChildren().get(logicalTree.getChildCount() - 1));
-            this.dataEditor.checkForChanges();
+            dataEditor.checkForChanges();
         }
     }
 
@@ -420,7 +434,7 @@ public class StructurePanel implements Serializable {
     private void preservePhysical() {
         if (!physicalTree.getChildren().isEmpty()) {
             preservePhysicalRecursive(physicalTree.getChildren().get(0));
-            this.dataEditor.checkForChanges();
+            dataEditor.checkForChanges();
         }
     }
 
@@ -494,7 +508,7 @@ public class StructurePanel implements Serializable {
         this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNode = selectedLogicalNode;
         this.previouslySelectedPhysicalNode = selectedPhysicalNode;
-        this.dataEditor.checkForChanges();
+        dataEditor.checkForChanges();
     }
 
     private void restoreSelection(String rowKey, TreeNode parentNode) {
@@ -519,6 +533,7 @@ public class StructurePanel implements Serializable {
     private DefaultTreeNode buildStructureTree() {
         DefaultTreeNode invisibleRootNode = new DefaultTreeNode();
         invisibleRootNode.setExpanded(true);
+        invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
         buildStructureTreeRecursively(structure, invisibleRootNode);
         return invisibleRootNode;
@@ -527,8 +542,8 @@ public class StructurePanel implements Serializable {
     /**
      * Constructs a page range string by combining the labels of the first and last view
      * of the provided logical division.
-     * 
-     * @param structure the logical divsion
+     *
+     * @param structure the logical division
      * @return the page range string
      */
     private String buildPageRangeFromLogicalDivision(LogicalDivision structure) {
@@ -543,7 +558,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Build a StructureTreeNode for a logical division, which is then visualized in the logical structure tree.
-     * 
+     *
      * @param structure the logical division
      * @return the StructureTreeNode instance
      */
@@ -579,8 +594,8 @@ public class StructurePanel implements Serializable {
 
     /**
      * Recursively build the logical structure tree.
-     * 
-     * @param structure the current logical structure 
+     *
+     * @param structure the current logical structure
      * @param result the current corresponding primefaces tree node
      * @return a collection of views that contains all views of the full sub-tree
      */
@@ -591,7 +606,7 @@ public class StructurePanel implements Serializable {
          * appends it to the parent as a child. That’s the logic of the JSF
          * framework. So you do not have to add the result anywhere.
          */
-        DefaultTreeNode parent = new DefaultTreeNode(node, result);
+        DefaultTreeNode parent = new DefaultTreeNode(STRUCTURE_NODE_TYPE, node, result);
         if (logicalNodeStateUnknown(this.previousExpansionStatesLogicalTree, parent)) {
             parent.setExpanded(true);
         }
@@ -606,11 +621,12 @@ public class StructurePanel implements Serializable {
             List<Pair<View, LogicalDivision>> merged = mergeLogicalStructureViewsAndChildren(structure);
             for (Pair<View, LogicalDivision> pair : merged) {
                 if (Objects.nonNull(pair.getRight())) {
-                    // add child an their views
+                    // add child and their views
                     viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent));
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
-                    addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
+                    DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
+                    viewNode.setType(VIEW_NODE_TYPE);
                     viewsShowingOnAChild.add(pair.getLeft());
                 }
             }
@@ -618,21 +634,21 @@ public class StructurePanel implements Serializable {
         return viewsShowingOnAChild;
     }
 
-    /** 
+    /**
      * Returns a list containing both views and children of a LogicalDivision ordered by their ORDER attribute.
      * This ordering reflects how tree nodes are visualized in the logical structure tree.
-     * 
+     *
      * <p>Unfortunately, the mets ORDER attribute of logical divisions and physical divisions is maintained and stored
      * separately, which means the order does not reflect a consistent tree traversal strategy, e.g. depth-first search.
-     * Instead, the ORDER-attribute is partially updated upon various drag-&-drop operations, which can lead to 
+     * Instead, the ORDER-attribute is partially updated upon various drag-&-drop operations, which can lead to
      * arbitrary ORDER-values, e.g. a view can have the same ORDER-value as a child.</p>
-     * 
+     *
      * @param structure the logical division
      * @return a sorted list of Views and LogicalDivisions, each pair only containing one or the other
      */
     public static List<Pair<View, LogicalDivision>> mergeLogicalStructureViewsAndChildren(LogicalDivision structure) {
-        List<Pair<View, LogicalDivision>> merged = new ArrayList<Pair<View, LogicalDivision>>();
-        
+        List<Pair<View, LogicalDivision>> merged = new ArrayList<>();
+
         Iterator<View> viewIterator = structure.getViews().iterator();
         Iterator<LogicalDivision> childIterator = structure.getChildren().iterator();
         View nextView = null;
@@ -650,24 +666,20 @@ public class StructurePanel implements Serializable {
             }
 
             // decide on whether to add child or view first
-            Boolean addChildNext = false;
+            boolean addChildNext;
             if (Objects.nonNull(nextChild) && Objects.nonNull(nextView)) {
                 // compare order attribute between child and view to figure out which one is added first in tree
-                if (nextChild.getOrder() <= nextView.getPhysicalDivision().getOrder()) {
-                    addChildNext = true;
-                } else {
-                    addChildNext = false;
-                }
+                addChildNext = nextChild.getOrder() <= nextView.getPhysicalDivision().getOrder();
             } else {
                 addChildNext = Objects.nonNull(nextChild);
             }
 
             // add child or view to the merged result list
             if (addChildNext) {
-                merged.add(new ImmutablePair<View, LogicalDivision>(null, nextChild));
+                merged.add(new ImmutablePair<>(null, nextChild));
                 nextChild = null;
             } else {
-                merged.add(new ImmutablePair<View, LogicalDivision>(nextView, null));
+                merged.add(new ImmutablePair<>(nextView, null));
                 nextView = null;
             }
         }
@@ -797,7 +809,7 @@ public class StructurePanel implements Serializable {
                  * Show the process title of the parent process and a warning
                  * sign.
                  */
-                addTreeNode(parent.getTitle(), true, true, parent, tree);
+                addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
             } else {
                 /*
                  * Default case: Show the path through the parent process to the
@@ -808,6 +820,7 @@ public class StructurePanel implements Serializable {
                         break;
                     } else {
                         parentNode = addTreeNode(parent, logicalDivision.getType(), parentNode);
+                        parentNode.setType(STRUCTURE_NODE_TYPE);
                         parentNode.setExpanded(true);
                     }
                 }
@@ -819,17 +832,17 @@ public class StructurePanel implements Serializable {
              * warning sign.
              */
             Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-            addTreeNode(parent.getTitle(), true, true, parent, tree);
+            addTreeNode(parent.getTitle(), true, true, parent, tree).setType(STRUCTURE_NODE_TYPE);
         }
     }
 
     /**
-     * Builds the parent link tree in a temporary primefaces tree in order to determine how many 
-     * nodes are added to the tree. The number of nodes influences the order of nodes in the logical 
-     * structure tree and is needed to determine the correct tree node id, see 
+     * Builds the parent link tree in a temporary primefaces tree in order to determine how many
+     * nodes are added to the tree. The number of nodes influences the order of nodes in the logical
+     * structure tree and is needed to determine the correct tree node id, see
      * `GalleryPanel.addStripesRecursive`.
-     * 
-     * @return the number of root nodes (first level children) that are 
+     *
+     * @return the number of root nodes (first level children) that are
      *         added as a result of calling `addParentLinksRecursive`.
      */
     public Integer getNumberOfParentLinkRootNodesAdded() {
@@ -847,6 +860,7 @@ public class StructurePanel implements Serializable {
      */
     private DefaultTreeNode buildMediaTree(PhysicalDivision mediaRoot) {
         DefaultTreeNode rootTreeNode = new DefaultTreeNode();
+        rootTreeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, rootTreeNode)) {
             rootTreeNode.setExpanded(true);
         }
@@ -860,6 +874,13 @@ public class StructurePanel implements Serializable {
         DefaultTreeNode treeNode = addTreeNode(Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)
                         ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
                 false, false, physicalDivision, parentTreeNode);
+
+        if (PhysicalDivision.TYPES.contains(physicalDivision.getType())) {
+            treeNode.setType(MEDIA_NODE_TYPE);
+        } else {
+            treeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
+        }
+
         if (physicalNodeStateUnknown(this.previousExpansionStatesPhysicalTree, treeNode)) {
             treeNode.setExpanded(true);
         }
@@ -1264,12 +1285,10 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Change order fields of physical elements. When saved to METS this is represented by the physical structMap divs' "ORDER" attribute.
-     * @param toElement Logical element to which the physical elements are assigned. The physical elements' order follows the order of the
-     *                  logical elements.
-     * @param elementsToBeMoved List of physical elements to be moved
+     * Change order fields of physical elements. When saved to METS this is represented by the physical structMap divs'
+     * "ORDER" attribute.
      */
-    void changePhysicalOrderFields(LogicalDivision toElement, List<Pair<View, LogicalDivision>> elementsToBeMoved) {
+    void changePhysicalOrderFields() {
         ServiceManager.getFileService().renumberPhysicalDivisions(dataEditor.getWorkpiece(), false);
     }
 
@@ -1383,16 +1402,17 @@ public class StructurePanel implements Serializable {
                 dropStructure.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
 
         LinkedList<LogicalDivision> dragParents;
-        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())) {
+        if (divisionView.getAllowedSubstructuralElements().containsKey(dragStructure.getType())
+                || Objects.nonNull(dragStructure.getLink())) {
             dragParents = MetadataEditor.getAncestorsOfLogicalDivision(dragStructure,
                     dataEditor.getWorkpiece().getLogicalStructure());
             if (!dragParents.isEmpty()) {
                 LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    if (!this.logicalStructureTreeContainsMedia()) {
-                        preserveLogical();
-                    } else {
+                    if (logicalStructureTreeContainsMedia()) {
                         preserveLogicalAndPhysical();
+                    } else {
+                        preserveLogical();
                     }
                     this.dataEditor.getGalleryPanel().updateStripes();
                     this.dataEditor.getPaginationPanel().show();
@@ -1783,8 +1803,8 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media). 
-     * 
+     * Returns true if the logical structure tree is a combined tree of structure nodes and view nodes (media).
+     *
      * @return true if logical structure tree contains media
      */
     public boolean logicalStructureTreeContainsMedia() {
@@ -1793,7 +1813,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Return true if the users selected the option to hide media in the logical structure tree.
-     * 
+     *
      * @return true if the user want to hide media in the logical structure tree
      */
     public boolean isHideMediaInLogicalTree() {
@@ -1802,7 +1822,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Sets whether media should be shown in the logical structure tree.
-     * 
+     *
      * @param hideMediaInLogicalTree boolean
      */
     public void setHideMediaInLogicalTree(boolean hideMediaInLogicalTree) {
@@ -1820,7 +1840,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Returns whether the user selected to show the page range for each logical structure node.
-     * 
+     *
      * @return value of showPageRangeInLogicalTree
      */
     public boolean isShowPageRangeInLogicalTree() {
@@ -1835,4 +1855,40 @@ public class StructurePanel implements Serializable {
         this.showPageRangeInLogicalTree = showPageRangeInLogicalTree;
     }
 
+    /**
+     * Returns whether the user selected to show the hierarchy level of individual tree nodes in the structure tree.
+     * @return value of showHierarchyLevel
+     */
+    public boolean isShowHierarchyLevel() {
+        return showHierarchyLevel;
+    }
+
+    /**
+     * Set whether the hierarchy level of individual tree nodes in the structure tree should be displayed.
+     * @param showHierarchyLevel boolean
+     */
+    public void setShowHierarchyLevel(boolean showHierarchyLevel) {
+        this.showHierarchyLevel = showHierarchyLevel;
+    }
+
+    /**
+     * Expand all tree nodes in the logical structure tree.
+     */
+    public void expandAll() {
+        toggleAll(this.logicalTree, true);
+    }
+
+    /**
+     * Collapse all tree nodes in the logical structure tree.
+     */
+    public void collapseAll() {
+        toggleAll(this.logicalTree, false);
+    }
+
+    private void toggleAll(TreeNode treeNode, boolean expanded) {
+        for (TreeNode childNode : treeNode.getChildren()) {
+            toggleAll(childNode, expanded);
+        }
+        treeNode.setExpanded(expanded);
+    }
 }

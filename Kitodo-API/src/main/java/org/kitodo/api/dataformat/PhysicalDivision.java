@@ -12,6 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.net.URI;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -46,6 +47,7 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
     public static final String TYPE_TRACK = "track";
     public static final String TYPE_OTHER = "other";
 
+    public static final List<String> TYPES = Arrays.asList(TYPE_PAGE, TYPE_TRACK, TYPE_OTHER);
     /**
      * Each physical division can be available in different variants, for each of which a media file is available. This
      * is in this map.

@@ -19,6 +19,7 @@
             <mets:name>Kitodo - kitodo-ugh-3.0-SNAPSHOT - 18-April-2018 13:20:13</mets:name>
             <mets:note>Kitodo</mets:note>
         </mets:agent>
+        <mets:metsDocumentID>2</mets:metsDocumentID>
     </mets:metsHdr>
     <mets:dmdSec ID="DMDLOG_0000">
         <mets:mdWrap MDTYPE="MODS">
@@ -36,13 +37,36 @@
         </mets:mdWrap>
     </mets:dmdSec>
     <mets:dmdSec ID="DMDPHYS_0000"/>
+    <mets:fileSec>
+        <mets:fileGrp USE="LOCAL">
+            <mets:file ID="FILE_0001" MIMETYPE="image/tiff">
+                <mets:FLocat LOCTYPE="URL" xlink:href="images/SecondProcess_media/00000001.tif" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+            </mets:file>
+        </mets:fileGrp>
+        <mets:fileGrp USE="MAX">
+            <mets:file ID="FILE_0002" MIMETYPE="image/jpeg">
+                <mets:FLocat LOCTYPE="URL" xlink:href="jpgs/max/00000001.jpg" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+            </mets:file>
+        </mets:fileGrp>
+        <mets:fileGrp USE="THUMBS">
+            <mets:file ID="FILE_0003" MIMETYPE="image/jpeg">
+                <mets:FLocat LOCTYPE="URL" xlink:href="jpgs/thumbs/00000001.jpg" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+            </mets:file>
+        </mets:fileGrp>
+    </mets:fileSec>
     <mets:structMap TYPE="LOGICAL">
         <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
     </mets:structMap>
     <mets:structMap TYPE="PHYSICAL">
-        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence"/>
+        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence">
+            <mets:div ID="PHYS_0001" TYPE="page" ORDER="1" ORDERLABEL=" - ">
+                <mets:fptr FILEID="FILE_0001"/>
+                <mets:fptr FILEID="FILE_0002"/>
+                <mets:fptr FILEID="FILE_0003"/>
+            </mets:div>
+        </mets:div>
     </mets:structMap>
     <mets:structLink>
-        <mets:smLink xlink:to="PHYS_0000" xlink:from="LOG_0000" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <mets:smLink xlink:to="PHYS_0001" xlink:from="LOG_0000" xmlns:xlink="http://www.w3.org/1999/xlink"/>
     </mets:structLink>
 </mets:mets>

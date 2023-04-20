@@ -139,7 +139,8 @@
                 <p:tooltip for="defaultSearchFieldHelp"
                            value="#{msgs['tooltip.importConfig.defaultSearchFieldHelp']}"/>
             </div>
-            <div>
+            <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}">
                 <p:outputLabel for="parentIdSearchField" value="#{msgs['importConfig.searchFields.parentIdField']}"/>
                 <p:selectOneMenu id="parentIdSearchField"
                                  styleClass="input-with-button"
@@ -155,7 +156,7 @@
                                  styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="parentIdSearchFieldHelp"
                            value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
-            </div>
+            </h:panelGroup>
         </p:row>
     </f:view>
 </ui:composition>

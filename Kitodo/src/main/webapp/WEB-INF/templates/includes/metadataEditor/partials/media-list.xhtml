@@ -39,38 +39,29 @@
                        a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
 
             <ui:fragment
-                    rendered="#{fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio')}">
+                    rendered="#{mediaProvider.hasPreviewVariant(media) and (fn:startsWith(media.previewMimeType, 'video') or fn:startsWith(media.previewMimeType, 'audio'))}">
                 <p:media styleClass="mediaListItem" cache="true"
-                         value="#{DataEditorForm.galleryPanel.previewData}"
-                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}"
-                         rendered="#{media.showingInPreview}">
+                         value="#{mediaProvider.previewData}"
+                         player="#{fn:startsWith(media.previewMimeType, 'video') ? 'html-video' : 'html-audio'}">
                     <f:param name="mediaId"
                              value="#{media.id}"/>
                     <f:param name="process"
                              value="#{DataEditorForm.process.id}"/>
                     <f:param name="sessionId"
                              value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                    <c:if test="${fn:startsWith(media.previewMimeType, 'video')}">
-                        <f:param name="controls" value="false"/>
-                    </c:if>
+                    <f:param name="controls"
+                             value="#{fn:startsWith(media.previewMimeType, 'video') ? 'false' : 'true'}"/>
                     <f:param name="type" value="#{media.previewMimeType}"/>
                     <f:param name="krsc"
                              value="true"/>
                 </p:media>
-                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'VIDEO'}">
-                    #{msgs.video} #{media.shortId}
-                </h:panelGroup>
-                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'AUDIO'}">
-                    #{msgs.audio} #{media.shortId}
-                </h:panelGroup>
+                <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
-            <ui:fragment
-                    rendered="#{not fn:startsWith(media.previewMimeType, 'video') and not fn:startsWith(media.previewMimeType, 'audio')}">
+            <ui:fragment rendered="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')}">
                 <h:outputText>
                     <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                    <p:graphicImage styleClass="mediaListItem" value="#{DataEditorForm.galleryPanel.previewData}"
-                                    rendered="#{media.showingInPreview}"
+                    <p:graphicImage styleClass="mediaListItem" value="#{mediaProvider.previewData}"
                                     a:loading="lazy">
                         <f:param name="mediaId"
                                  value="#{media.id}"/>
@@ -83,17 +74,23 @@
                 <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
                               rendered="#{media.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
-                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'VIDEO'}">
-                    #{msgs.video} #{media.shortId}
-                </h:panelGroup>
-                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'AUDIO'}">
-                    #{msgs.audio} #{media.shortId}
-                </h:panelGroup>
-                <h:panelGroup class="thumbnail-overlay" rendered="#{media.type eq 'DEFAULT'}">
-                    #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                </h:panelGroup>
+                <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
+            <ui:fragment rendered="#{not mediaProvider.hasPreviewVariant(media)}">
+                <p:outputPanel styleClass="mediaListIconItem" >
+                    <h:panelGroup rendered="#{media.type eq 'VIDEO'}">
+                        <i class="fa fa-file-video-o"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{media.type eq 'AUDIO'}">
+                        <i class="fa fa-file-audio-o"/>
+                    </h:panelGroup>
+                    <h:panelGroup rendered="#{media.type eq 'IMAGE'}">
+                        <i class="fa fa-file-image-o"/>
+                    </h:panelGroup>
+                </p:outputPanel>
+                <ui:include src="media-list-overlay.xhtml"/>
+            </ui:fragment>
 
         </p:outputPanel>
     </p:outputPanel>

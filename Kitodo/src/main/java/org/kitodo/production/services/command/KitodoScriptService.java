@@ -37,6 +37,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
@@ -96,7 +97,7 @@ public class KitodoScriptService {
      *            from frontend passed as String
      */
     public void execute(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException {
+            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
         this.parameters = new HashMap<>();
         // decompose and capture all script parameters
         StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
@@ -124,7 +125,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException {
+            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -169,7 +170,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeOtherScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException {
+            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "runscript":
@@ -209,7 +210,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeRemainingScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException {
+            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "generateImages":
@@ -430,7 +431,8 @@ public class KitodoScriptService {
         }
     }
 
-    private void searchForMedia(List<Process> processes) throws IOException, InvalidImagesException {
+    private void searchForMedia(List<Process> processes)
+            throws IOException, InvalidImagesException, MediaNotFoundException {
         FileService fileService = ServiceManager.getFileService();
         MetsService metsService = ServiceManager.getMetsService();
         ProcessService processService = ServiceManager.getProcessService();

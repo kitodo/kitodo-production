@@ -1,0 +1,46 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="metadataLockedDialog"
+              widgetVar="metadataLockedDialog"
+              width="500px"
+              showHeader="false"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false"
+              modal="true">
+        <h:panelGroup id="messageWrapper">
+            <h3>#{err['metadataLocked']}</h3>
+            <h:panelGroup layout="block"
+                          styleClass="select-note ui-messages-error">
+                <h:outputText value="#{DataEditorForm.errorMessage}"/>
+                <h:outputText styleClass="bold-centered"
+                              value="#{MetadataLock.getLockUser(DataEditorForm.process.id).fullName}"/>
+            </h:panelGroup>
+        </h:panelGroup>
+        <h:panelGroup layout="block"
+                      styleClass="dialogButtonWrapper">
+            <p:button outcome="/pages/desktop.jsf"
+                      value="#{msgs['ok']}"
+                      id="okButton"
+                      styleClass="primary right"
+                      icon="fa fa-close"
+                      iconPos="right"/>
+        </h:panelGroup>
+    </p:dialog>
+</ui:composition>

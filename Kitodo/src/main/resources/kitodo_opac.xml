@@ -17,7 +17,7 @@
     </doctypes>
 
     <!--
-    Catalog / OPAC configurations are not configured using the GUI and the new "ImportConfiguration" class.
+    Catalog / OPAC configurations are now configured using the GUI and the new "ImportConfiguration" class.
     These can be created on the "Projects" page by users with the necessary permissions!
     -->
 

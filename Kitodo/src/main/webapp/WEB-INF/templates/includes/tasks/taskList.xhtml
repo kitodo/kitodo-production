@@ -113,15 +113,24 @@
                               title="#{item.processingEnd}"/>
             </p:column>
 
-            <p:column styleClass="correction-column genericSortIcon"
+            <p:column styleClass="comment-column genericSortIcon"
                       width="85"
-                      rendered="#{CurrentTaskForm.showColumn('task.correctionMessage')}"
+                      rendered="#{CurrentTaskForm.showColumn('task.comments')}"
                       sortBy="#{item.correctionCommentStatus}"
-                      headerText="#{msgs.correction}">
-                <h:outputText value="#{msgs.correctionK}"
-                              title="#{CurrentTaskForm.getCorrectionMessages(item)}"
-                              styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                              rendered="#{item.correctionCommentStatus gt 0}"/>
+                      headerText="#{msgs.comments}">
+                <h:panelGroup id="commentIcon">
+                    <h:panelGroup styleClass="fa fa-comment"
+                                  rendered="#{item.getProcess().hasComments() and item.correctionCommentStatus eq 0}"/>
+                    <h:outputText value="#{msgs.correctionK}"
+                                  styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{item.correctionCommentStatus gt 0}"/>
+                </h:panelGroup>
+                <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
+                    <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
+                        <ui:param name="comments" value="#{commentTooltipView.getComments(item)}"/>
+                    </ui:include>
+                </p:tooltip>
+
             </p:column>
 
             <!-- columns for tasks that have been configured in kitodo config file! -->
@@ -269,39 +278,4 @@
             </p:rowExpansion>
         </p:dataTable>
     </h:form>
-
-    <div id="dropDownMenus">
-        <h:form id="filterForm"
-                style="display: inline-block;">
-            <p:selectCheckboxMenu id="taskFilters"
-                                  panelStyleClass="task-filter-panel"
-                                  value="#{CurrentTaskForm.selectedTaskFilters}"
-                                  styleClass="secondary"
-                                  label="#{msgs.filter}">
-                <f:selectItems value="#{CurrentTaskForm.taskFilters}"
-                               var="taskFilter"
-                               itemLabel="#{msgs[taskFilter]}"/>
-                <p:ajax event="change"
-                        onstart="PF('taskTable').getPaginator().setPage(0);"
-                        listener="#{CurrentTaskForm.taskFiltersChanged}"
-                        update="tasksTabView:tasksForm:taskTable"/>
-            </p:selectCheckboxMenu>
-        </h:form>
-        <h:form id="statusForm"
-                style="display: inline-block;">
-            <p:selectCheckboxMenu id="taskStatus"
-                                  panelStyleClass="task-filter-panel"
-                                  value="#{CurrentTaskForm.selectedTaskStatus}"
-                                  styleClass="secondary"
-                                  label="#{msgs.processingStatus}">
-                <f:selectItems value="#{CurrentTaskForm.taskStatus}"
-                               var="taskStatus"
-                               itemLabel="#{msgs[taskStatus.title]}"/>
-                <p:ajax event="change"
-                        onstart="PF('taskTable').getPaginator().setPage(0);"
-                        listener="#{CurrentTaskForm.taskStatusChanged}"
-                        update="tasksTabView:tasksForm:taskTable"/>
-            </p:selectCheckboxMenu>
-        </h:form>
-    </div>
 </ui:composition>

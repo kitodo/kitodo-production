@@ -34,8 +34,7 @@
                         rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}"
                         styleClass="#{ProcessForm.createProcessAsChildPossible(process) ? '' : 'ui-state-disabled'}"
                         disabled="#{not ProcessForm.createProcessAsChildPossible(process)}">
-                    <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
-                    <f:param name="id" value="#{process.id}"/>
+                    <h:outputText><i class="fa fa-plus-circle fa-lg"/></h:outputText>
                 </h:link>
             </h:panelGroup>
 
@@ -72,14 +71,18 @@
             </h:link>
 
             <!-- Open metadata editor -->
-            <h:commandLink id="readXML"
-                           action="#{DataEditorForm.open(process.id, referer)}"
-                           styleClass="action"
-                           title="#{msgs.metadataEdit}"
-                           rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
-                <f:actionListener binding="#{CommentForm.setProcessById(process.id)}"/>
-                <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
-            </h:commandLink>
+            <h:panelGroup styleClass="action"
+                          title="#{MetadataLock.isLocked(process.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(process.id).fullName) : msgs['metadataEdit']}">
+                <h:link id="editMetadata"
+                        outcome="metadataEditor"
+                        disabled="#{MetadataLock.isLocked(process.id)}"
+                        styleClass="#{MetadataLock.isLocked(process.id) ? 'ui-state-disabled' : ''}"
+                        rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                    <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
+                    <f:param name="id" value="#{process.id}"/>
+                    <f:param name="referer" value="#{referer}"/>
+                </h:link>
+            </h:panelGroup>
 
             <p:commandLink id="download"
                            action="#{ProcessListView.downloadToHome(process.id)}"

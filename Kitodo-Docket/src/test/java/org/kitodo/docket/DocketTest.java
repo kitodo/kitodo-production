@@ -19,6 +19,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 import org.apache.pdfbox.io.RandomAccessRead;
@@ -45,7 +46,7 @@ public class DocketTest {
     }
 
     @Test
-    public void testCorrectExportDocket() throws IOException {
+    public void testCorrectExportDocket() throws IOException, URISyntaxException {
         String processId = "processID";
         String signature = "AZ-234";
         String docType = "manuscript";
@@ -62,7 +63,7 @@ public class DocketTest {
     }
 
     @Test
-    public void testIncorrectExportDocket() throws IOException {
+    public void testIncorrectExportDocket() throws IOException, URISyntaxException {
         File expectedFile = new File("src/test/resources/docket.pdf");
         File generatedFile = generateDocket("falscheId", "AZ-234", "manuscript");
 
@@ -73,7 +74,7 @@ public class DocketTest {
     }
 
     @Test
-    public void testExportMultipleDockets() throws IOException {
+    public void testExportMultipleDockets() throws IOException, URISyntaxException {
         String expectedFileStrings = getPDFText(new File("src/test/resources/docket_multipage.pdf"));
 
         ArrayList<String> processIds = new ArrayList<>();
@@ -94,7 +95,8 @@ public class DocketTest {
         }
     }
 
-    private File generateDocket(String processId, String signatur, String docType) throws IOException {
+    private File generateDocket(String processId, String signatur, String docType)
+            throws IOException, URISyntaxException {
         URI pathToXslFile = new File("src/test/resources/docket.xsl").toURI();
 
         Docket docket = new Docket();
@@ -102,7 +104,7 @@ public class DocketTest {
                 pathToXslFile);
     }
 
-    private File generateMultipleDockets(ArrayList<String> processIds) throws IOException {
+    private File generateMultipleDockets(ArrayList<String> processIds) throws IOException, URISyntaxException {
         URI pathToXslFile = new File("src/test/resources/docket_multipage.xsl").toURI();
 
         Docket docket = new Docket();

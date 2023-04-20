@@ -375,6 +375,11 @@ public enum ParameterCore implements ParameterInterface {
     VALIDATE_IDENTIFIER_REGEX(new Parameter<>("validateIdentifierRegex", "[\\w|-]")),
 
     /**
+     * Flag to control whether metadata validation should fail on warnings or just on errors.
+     */
+    VALIDATION_FAIL_ON_WARNING(new Parameter<>("validationFailOnWarning", false)),
+
+    /**
      * Colours used to represent the issues in the calendar editor.
      */
     ISSUE_COLOURS(new Parameter<>("issue.colours",

@@ -22,7 +22,7 @@
                  styleClass="default-layout"
                  var="process">
         <p:column headerText="#{msgs.id}"
-                  width="50"
+                  width="70"
                   styleClass="numeric">
             <h:outputText title="#{process.id}"
                           value="#{process.id}"/>
@@ -35,13 +35,22 @@
             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
         </p:column>
 
-        <p:column styleClass="correction-column"
+        <p:column styleClass="comment-column"
                   width="85"
-                  headerText="#{msgs.correction}">
-            <h:outputText value="#{msgs.correctionK}"
-                          title="#{DesktopForm.getCorrectionMessages(process)}"
-                          styleClass="correction-marker #{DesktopForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
-                          rendered="#{DesktopForm.hasCorrectionTask(process.id) gt 0}"/>
+                  headerText="#{msgs.comments}">
+            <h:panelGroup id="commentIcon">
+                <h:panelGroup styleClass="fa fa-comment"
+                              rendered="#{process.hasComments() and DesktopForm.hasCorrectionTask(process.id) eq 0}"/>
+                <h:outputText value="#{msgs.correctionK}"
+                              styleClass="correction-marker #{DesktopForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
+                              rendered="#{DesktopForm.hasCorrectionTask(process.id) gt 0}"/>
+            </h:panelGroup>
+            <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
+                <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
+                    <ui:param name="comments" value="#{commentTooltipView.getComments(process)}"/>
+                </ui:include>
+            </p:tooltip>
+
         </p:column>
 
         <p:column headerText="#{msgs.project}">
@@ -61,14 +70,18 @@
                 </h:link>
 
                 <!-- open metadata editor -->
-                <h:commandLink id="readXML"
-                               action="#{DataEditorForm.open(process.id, 'desktop')}"
-                               styleClass="action"
-                               title="#{msgs.metadataEdit}"
-                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
-                    <f:actionListener binding="#{CommentForm.setProcessById(process.id)}"/>
-                    <h:outputText><i class="fa fa-list-alt"/></h:outputText>
-                </h:commandLink>
+                <h:panelGroup styleClass="action"
+                              title="#{MetadataLock.isLocked(process.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(process.id).fullName) : msgs['metadataEdit']}">
+                    <h:link id="editMetadata"
+                            outcome="metadataEditor"
+                            disabled="#{MetadataLock.isLocked(process.id)}"
+                            styleClass="#{MetadataLock.isLocked(process.id) ? 'ui-state-disabled' : ''}"
+                            rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                        <h:outputText><i class="fa fa-list-alt"/></h:outputText>
+                        <f:param name="id" value="#{process.id}"/>
+                        <f:param name="referer" value="desktop"/>
+                    </h:link>
+                </h:panelGroup>
 
                 <p:commandLink id="download"
                                action="#{DesktopForm.downloadToHome(process.id)}"

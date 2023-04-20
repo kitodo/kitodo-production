@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -32,7 +33,9 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -62,10 +65,10 @@ public class MetadataEditor {
 
     /**
      * Connects two processes by means of a link. The link is sorted as a linked
-     * logical division in a logical division of the
-     * parent process. The order is based on the order number specified by the
-     * user. This method does not create a link between the two processes in the
-     * database, this must and can only happen when saving.
+     * logical division in a logical division of the parent process. The order
+     * is based on the order number specified by the user. This method does not
+     * create a link between the two processes in the database, this must and
+     * can only happen when saving.
      *
      * @param process
      *            the parent process in which the link is to be added
@@ -83,8 +86,7 @@ public class MetadataEditor {
         LogicalDivision logicalDivision = workpiece.getLogicalStructure();
         for (int index = 0; index < indices.size(); index++) {
             if (index < indices.size() - 1) {
-                logicalDivision = logicalDivision.getChildren()
-                        .get(Integer.parseInt(indices.get(index)));
+                logicalDivision = logicalDivision.getChildren().get(Integer.parseInt(indices.get(index)));
             } else {
                 addLink(logicalDivision, Integer.parseInt(indices.get(index)), childProcessId);
             }
@@ -95,14 +97,14 @@ public class MetadataEditor {
 
     /**
      * Connects two processes by means of a link. The link is sorted as a linked
-     * logical division in a logical division of the
-     * parent process. The order is based on the order number specified by the
-     * user. This method does not create a link between the two processes in the
-     * database, this must and can only happen when saving.
+     * logical division in a logical division of the parent process. The order
+     * is based on the order number specified by the user. This method does not
+     * create a link between the two processes in the database, this must and
+     * can only happen when saving.
      *
      * @param parentLogicalDivision
-     *            document logical division of the parent process in
-     *            which the link is to be added
+     *            document logical division of the parent process in which the
+     *            link is to be added
      * @param childProcessId
      *            Database ID of the child process to be linked
      */
@@ -110,8 +112,7 @@ public class MetadataEditor {
         addLink(parentLogicalDivision, -1, childProcessId);
     }
 
-    private static void addLink(LogicalDivision parentLogicalDivision, int index,
-            int childProcessId) {
+    private static void addLink(LogicalDivision parentLogicalDivision, int index, int childProcessId) {
 
         LinkedMetsResource link = new LinkedMetsResource();
         link.setLoctype(INTERNAL_LOCTYPE);
@@ -128,11 +129,16 @@ public class MetadataEditor {
     }
 
     /**
-     * Remove link to process with ID 'childProcessId' from workpiece of Process 'parentProcess'.
+     * Remove link to process with ID 'childProcessId' from workpiece of Process
+     * 'parentProcess'.
      *
-     * @param parentProcess Process from which link is removed
-     * @param childProcessId ID of process whose link will be remove from workpiece of parent process
-     * @throws IOException thrown if meta.xml could not be loaded
+     * @param parentProcess
+     *            Process from which link is removed
+     * @param childProcessId
+     *            ID of process whose link will be remove from workpiece of
+     *            parent process
+     * @throws IOException
+     *             thrown if meta.xml could not be loaded
      */
     public static void removeLink(Process parentProcess, int childProcessId) throws IOException {
         URI metadataFileUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
@@ -160,12 +166,45 @@ public class MetadataEditor {
                 }
             }
         }
-        // no need to check if 'linkElement' is Null since it is set in the same place as 'parentElement'!
+        // no need to check if 'linkElement' is Null since it is set in the same
+        // place as 'parentElement'!
         if (Objects.nonNull(parentElement)) {
             parentElement.getChildren().remove(linkElement);
             return true;
         }
         return false;
+    }
+
+    private static void addMultipleStructuresWithMetadataEntry(int number, String type, Workpiece workpiece, LogicalDivision structure,
+            InsertionPosition position, String metadataKey, String metadataValue) {
+        for (int i = 0; i < number; i++) {
+            LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position,
+                Collections.emptyList());
+            if (Objects.isNull(newStructure) || metadataKey.isEmpty()) {
+                continue;
+            }
+            if (!metadataKey.isEmpty()) {
+                MetadataEntry metadataEntry = new MetadataEntry();
+                metadataEntry.setKey(metadataKey);
+                metadataEntry.setValue(metadataValue + " " + (number - i));
+                newStructure.getMetadata().add(metadataEntry);
+            }
+        }
+    }
+
+    private static void addMultipleStructuresWithMetadataGroup(int number, String type, Workpiece workpiece, LogicalDivision structure,
+            InsertionPosition position, String metadataKey) {
+
+        for (int i = 0; i < number; i++) {
+            LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position,
+                Collections.emptyList());
+            if (Objects.isNull(newStructure) || metadataKey.isEmpty() || metadataKey == null) {
+                continue;
+            }
+            MetadataGroup metadataGroup = new MetadataGroup();
+            metadataGroup.setKey(metadataKey);
+            newStructure.getMetadata().add(metadataGroup);
+        }
     }
 
     /**
@@ -185,23 +224,45 @@ public class MetadataEditor {
      *            inserted
      * @param position
      *            relative insertion position
-     * @param metadataKey
-     *            key of the metadata to create
+     * @param metadataViewInterface
+     *            interface of the metadata to be added
      * @param metadataValue
      *            value of the first metadata entry
      */
-    public static void addMultipleStructures(int number, String type, Workpiece workpiece, LogicalDivision structure,
-            InsertionPosition position, String metadataKey, String metadataValue) {
+    public static void addMultipleStructuresWithMetadata(int number, String type, Workpiece workpiece, LogicalDivision structure,
+            InsertionPosition position, MetadataViewInterface metadataViewInterface, String metadataValue) {
 
+        String metadataKey = metadataViewInterface.getId();
+        
+        if (metadataViewInterface.isComplex()) {
+            addMultipleStructuresWithMetadataGroup(number, type, workpiece, structure, position, metadataKey);
+        } else {
+            addMultipleStructuresWithMetadataEntry(number, type, workpiece, structure, position, metadataKey, metadataValue);
+        }
+    }
+    
+    /**
+     * Creates a given number of new structures and inserts them into the
+     * workpiece. The insertion position is given relative to an existing
+     * structure.
+     *
+     * @param number
+     *            number of structures to create
+     * @param type
+     *            type of new structure
+     * @param workpiece
+     *            workpiece to which the new structure is to be added
+     * @param structure
+     *            structure relative to which the new structure is to be
+     *            inserted
+     * @param position
+     *            relative insertion position
+     */
+    public static void addMultipleStructures(int number, String type, Workpiece workpiece, LogicalDivision structure,
+            InsertionPosition position) {
         for (int i = 0; i < number; i++) {
-            LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position, Collections.emptyList());
-            if (Objects.isNull(newStructure)) {
-                continue;
-            }
-            MetadataEntry metadataEntry = new MetadataEntry();
-            metadataEntry.setKey(metadataKey);
-            metadataEntry.setValue(metadataValue + " " + (number - i));
-            newStructure.getMetadata().add(metadataEntry);
+            LogicalDivision newStructure = addLogicalDivision(type, workpiece, structure, position,
+                Collections.emptyList());
         }
     }
 
@@ -356,7 +417,11 @@ public class MetadataEditor {
         Collection<View> viewsToAdd = getViewsFromChildrenRecursive(structure);
         Collection<View> assignedViews = structure.getViews();
         viewsToAdd.removeAll(assignedViews);
-        assignedViews.addAll(viewsToAdd);
+        List<View> sortedViews = Stream.concat(assignedViews.stream(), viewsToAdd.stream())
+                .sorted(Comparator.comparing(view -> view.getPhysicalDivision().getOrder()))
+                .collect(Collectors.toList());
+        assignedViews.clear();
+        assignedViews.addAll(sortedViews);
     }
 
     private static Collection<View> getViewsFromChildrenRecursive(LogicalDivision structure) {

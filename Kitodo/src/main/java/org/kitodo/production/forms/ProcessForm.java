@@ -47,10 +47,12 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
@@ -60,6 +62,9 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.event.SelectEvent;
+import org.primefaces.event.ToggleSelectEvent;
+import org.primefaces.event.UnselectEvent;
 import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
@@ -77,6 +82,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Property> templates;
     private List<Property> workpieces;
     private Property property;
+    private final FilterMenu filterMenu = new FilterMenu(this);
     private final transient FileService fileService = ServiceManager.getFileService();
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
@@ -198,7 +204,7 @@ public class ProcessForm extends TemplateBaseForm {
     public String createProcessAsChild(ProcessDTO processDTO) {
         try {
             Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getRuleset())) {
+            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
                 return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
                         + process.getProject().getId() + "&parentId=" + process.getId();
             }
@@ -636,6 +642,8 @@ public class ProcessForm extends TemplateBaseForm {
             service.execute(processes, kitodoScript);
         } catch (DataException | IOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } catch (MediaNotFoundException e) {
+            Helper.setWarnMessage(e.getMessage());
         }
     }
 
@@ -1001,6 +1009,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return reloadpath of th page.
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return filterList();
     }
@@ -1059,22 +1068,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Retrieve correction comments of given process and return them as a tooltip String.
-     *
-     * @param processDTO
-     *          process for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given process
-     */
-    public String getCorrectionMessages(ProcessDTO processDTO) {
-        try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
-    }
-
-    /**
      * Return path to processes page.
      * @return path to processes page
      */
@@ -1082,7 +1075,7 @@ public class ProcessForm extends TemplateBaseForm {
         return this.processesPage;
     }
 
-    /** 
+    /**
      * Returns the provided date as string in the format of "yyyy-MM-dd HH:mm:ss".
      * @param date the date to be converted
      * @return the converted date as string
@@ -1119,7 +1112,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void resetProcessListMultiViewState() {
         if (Objects.nonNull(FacesContext.getCurrentInstance())) {
-            // check whether there is a mulit view state registered (to avoid warning log message in case there is not)
+            // check whether there is a multi view state registered (to avoid warning log message in case there is not)
             Object mvs = PrimeFaces.current().multiViewState().get(PROCESS_TABLE_VIEW_ID, PROCESS_TABLE_ID, false, null);
             if (Objects.nonNull(mvs)) {
                 // clear multi view state only if there is a state available
@@ -1130,7 +1123,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Navigates to processes list and optionally resets table view state.
-     * 
+     *
      * @param resetTableViewState whether to reset table view state
      */
     public String navigateToProcessesList(boolean resetTableViewState) {
@@ -1141,4 +1134,53 @@ public class ProcessForm extends TemplateBaseForm {
         return "/pages/processes?tabIndex=0&faces-redirect=true";
     }
 
+    /**
+     * Callback function triggered when a process is unselected in the data table.
+     *
+     * @param unselectEvent as UnUnselectEvent
+     */
+    public void onRowUnselect(UnselectEvent unselectEvent) {
+        if (allSelected) {
+            excludedProcessIds.add(getProcessId(unselectEvent.getObject()));
+        }
+    }
+
+    /**
+     * Callback function triggered when a process is selected in the data table.
+     *
+     * @param selectEvent as SelectEvent
+     */
+    public void onRowSelect(SelectEvent selectEvent) {
+        if (allSelected) {
+            excludedProcessIds.remove(getProcessId(selectEvent.getObject()));
+            PrimeFaces.current().executeScript("PF('processesTable').selection=new Array('@all')");
+            PrimeFaces.current().executeScript("$(PF('processesTable').selectionHolder).val('@all')");
+        }
+    }
+
+    /**
+     * Callback function triggered when all processes are selected or unselected in the data table.
+     *
+     * @param toggleSelectEvent as ToggleSelectEvent
+     */
+    public void selectAll(ToggleSelectEvent toggleSelectEvent) {
+        setAllSelected(false);
+    }
+
+    private int getProcessId(Object process) {
+        if (process instanceof Process) {
+            return ((Process) process).getId();
+        } else {
+            return ((ProcessDTO) process).getId();
+        }
+    }
+
+    /**
+     * Get filterMenu.
+     *
+     * @return value of filterMenu
+     */
+    public FilterMenu getFilterMenu() {
+        return filterMenu;
+    }
 }

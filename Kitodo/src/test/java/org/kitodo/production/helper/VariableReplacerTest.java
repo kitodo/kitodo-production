@@ -18,6 +18,8 @@ import static org.junit.Assert.assertTrue;
 import java.net.URI;
 
 import org.junit.Test;
+import org.kitodo.config.KitodoConfig;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
@@ -104,6 +106,19 @@ public class VariableReplacerTest {
 
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
+    
+    @Test
+    public void shouldReplaceRelativePath() {
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+        String testFilenameWithPath = "src/testFile.txt";
+
+        String replaced = variableReplacer.replaceWithFilename("-filename (relativepath) -hardcoded test",
+                testFilenameWithPath);
+        String expected = "-filename " + testFilenameWithPath + " -hardcoded test";
+
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
 
     @Test
     public void shouldContainFile() {
@@ -124,6 +139,26 @@ public class VariableReplacerTest {
                 variableReplacer.containsFiles(toBeMatched));
     }
 
+    @Test
+    public void shouldReplaceGeneratorSource() {
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+        String replaced = variableReplacer.replace("-filename (generatorsource) -hardcoded test");
+        String expected = "-filename " + "images/Replacementscans" + " -hardcoded test";
+        assertEquals("String should not match as containing file variables!", expected,
+                replaced);
+    }
+
+    @Test
+    public void shouldReplaceGeneratorSourcePath() {
+        VariableReplacer variableReplacer = new VariableReplacer(null, prepareProcess(), null);
+
+        String replaced = variableReplacer.replace("-filename (generatorsourcepath) -hardcoded test");
+        String expected = "-filename " + KitodoConfig.getKitodoDataDirectory() + "2/" + "images/Replacementscans" + " -hardcoded test";
+        assertEquals("String should not match as containing file variables!", expected,
+                replaced);
+    }
+
     private Process prepareProcess() {
         Process process = new Process();
         process.setId(2);
@@ -133,9 +168,15 @@ public class VariableReplacerTest {
         ruleset.setFile("ruleset_test.xml");
         process.setRuleset(ruleset);
         process.setProcessBaseUri(URI.create("2"));
+        Folder scansFolder = new Folder();
+        scansFolder.setFileGroup("SOURCE");
+        scansFolder.setPath("images/(processtitle)scans");
         Project project = new Project();
         project.setId(projectId);
         process.setProject(project);
+        scansFolder.setProject(project);
+        project.getFolders().add(scansFolder);
+        project.setGeneratorSource(scansFolder);
 
         return process;
     }

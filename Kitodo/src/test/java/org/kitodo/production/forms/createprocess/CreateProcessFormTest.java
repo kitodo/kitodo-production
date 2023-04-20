@@ -18,6 +18,7 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 import org.junit.Test;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
@@ -44,6 +45,6 @@ public class CreateProcessFormTest {
         assertEquals("The child count was not set correctly", "4",
             result.getLogicalStructure().getMetadata().parallelStream().filter(MetadataEntry.class::isInstance)
                     .map(MetadataEntry.class::cast)
-                    .collect(Collectors.toMap(entry -> entry.getKey(), entry -> entry.getValue())).get("ChildCount"));
+                    .collect(Collectors.toMap(Metadata::getKey, MetadataEntry::getValue)).get("ChildCount"));
     }
 }

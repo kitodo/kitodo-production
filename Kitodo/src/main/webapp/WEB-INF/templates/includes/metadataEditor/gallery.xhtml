@@ -26,9 +26,9 @@
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
 
-            <p:remoteCommand 
-                name="triggerOnPageDrop" 
-                actionListener="#{DataEditorForm.galleryPanel.onPageDrop}" 
+            <p:remoteCommand
+                name="triggerOnPageDrop"
+                actionListener="#{DataEditorForm.galleryPanel.onPageDrop}"
                 update="@(.pageList)
                         logicalTree
                         physicalTree
@@ -40,9 +40,7 @@
                                      imagePreviewForm:mediaDetailContainer
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
-                                     metadataAccordion:logicalMetadataWrapperPanel"
-                             oncomplete="metadataEditor.shortcuts.updateViews()"
-            />
+                                     metadataAccordion:logicalMetadataWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -61,17 +59,6 @@
                                      title="#{msgs['dataEditor.galleryStructuredView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'list' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="list" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
-                    </p:commandButton>
-                </p:column>
-                <p:column>
-                    <p:commandButton id="gridViewButton"
-                                     update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-th-large"
-                                     oncomplete="metadataEditor.shortcuts.updateViews()"
-                                     title="#{msgs['dataEditor.galleryUnstructuredView']}"
-                                     rendered="false"
-                                     styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
-                        <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
                     </p:commandButton>
                 </p:column>
                 <p:column>
@@ -175,19 +162,6 @@
                 </p:fieldset>
             </ui:fragment>
 
-            <!-- Pages in UNstructured view -->
-            <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' and not empty DataEditorForm.galleryPanel.medias}">
-                <div class="thumbnail-wrapper"
-                     a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
-                     a:onmouseup="metadataEditor.gallery.handleMouseUp(event)"
-                     a:ondragstart="metadataEditor.gallery.handleDragStart(event)">
-                    <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
-                               var="media">
-                        <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
-                    </ui:repeat>
-                </div>
-            </ui:fragment>
-
             <!-- View current page with OpenLayers -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' and not empty DataEditorForm.galleryPanel.medias}">
                 <!-- OpenLayers Kitodo custom controls -->
@@ -197,8 +171,7 @@
                               a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail.xhtml"/>
                     <h:panelGroup layout="block" id="thumbnailStripe">
-                        <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up"
-                                         styleClass="scroll-button scroll-up"/>
+                        <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
                             <h:panelGroup id="thumbnailWrapper"
                                           layout="block">

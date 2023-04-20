@@ -93,7 +93,7 @@ public class LoginForm implements Serializable {
     }
 
     /**
-     * Check if index is up to date and if user has multiple clients and display corresponding notification dialogs.
+     * Check if index is up-to-date and if user has multiple clients and display corresponding notification dialogs.
      */
     public void performPostLoginChecks() throws DataException, DAOException, IOException {
 
