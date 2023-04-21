@@ -14,6 +14,27 @@
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
+function addLeadingZeros(num, totalLength) {
+    return String(num).padStart(totalLength, '0');
+}
+
+function mediaViewFormatTime( ms ) {
+    let seconds = ms / 1000;
+    let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
+    seconds = seconds % 3600; // seconds remaining after extracting hours
+    let minutes = parseInt( seconds / 60 ); // 60 seconds in 1 minute
+    seconds = seconds % 60;
+    let formattedTime = addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":";
+    seconds = seconds.toString();
+    if(seconds.includes(".")) {
+        let secondsSplitted = seconds.split(".");
+        formattedTime += addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1];
+    } else {
+        formattedTime += addLeadingZeros(seconds, 2);
+    }
+    return formattedTime;
+}
+
 var metadataEditor = {};
 
 /**
@@ -1027,27 +1048,6 @@ function deactivateButtons() {
     PF('save').disable();
     PF('validate').disable();
     PF('close').disable();
-}
-
-function addLeadingZeros(num, totalLength) {
-    return String(num).padStart(totalLength, '0');
-}
-
-function mediaViewFormatTime( ms ) {
-    let seconds = ms / 1000;
-    let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
-    seconds = seconds % 3600; // seconds remaining after extracting hours
-    let minutes = parseInt( seconds / 60 ); // 60 seconds in 1 minute
-    seconds = seconds % 60;
-    let formattedTime = addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":";
-    seconds = seconds.toString();
-    if(seconds.includes(".")) {
-        let secondsSplitted = seconds.split(".");
-        formattedTime += addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1];
-    } else {
-        formattedTime += addLeadingZeros(seconds, 2);
-    }
-    return formattedTime;
 }
 
 $(function () {
