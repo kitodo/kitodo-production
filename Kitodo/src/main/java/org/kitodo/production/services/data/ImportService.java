@@ -1353,6 +1353,7 @@ public class ImportService {
         Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
         Collection<String> recordIdentifierMetadata = rulesetManagementInterface
                 .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
+        boolean isConfigured = true;
         for (Map.Entry<String, String> division : structuralElements.entrySet()) {
             StructuralElementViewInterface viewInterface = rulesetManagementInterface
                     .getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
@@ -1360,9 +1361,12 @@ public class ImportService {
                     .map(MetadataViewInterface::getId).collect(Collectors.toList());
             allowedMetadataKeys.retainAll(recordIdentifierMetadata);
             if (allowedMetadataKeys.isEmpty()) {
-                return false;
+                logger.error("Division '{}' allows no metadata for use 'recordIdentifier': None of [{}] in allowed metadata keys [{}].",
+                    division.getKey(), String.join(", ", recordIdentifierMetadata),
+                    viewInterface.getAllowedMetadata().stream().map(MetadataViewInterface::getId).collect(Collectors.joining(", ")));
+                isConfigured = false;
             }
         }
-        return true;
+        return isConfigured;
     }
 }
