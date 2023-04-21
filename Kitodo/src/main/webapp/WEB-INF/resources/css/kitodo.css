@@ -3083,7 +3083,7 @@ Column content
 }
 
 #imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions button:first-child {
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 #imagePreviewForm\:mediaViewsListContainer .mediaViewsList li:first-child {

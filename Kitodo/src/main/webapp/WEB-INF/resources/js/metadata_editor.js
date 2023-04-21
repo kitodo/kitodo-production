@@ -65,8 +65,8 @@ metadataEditor.gallery = {
         setBeginIfEmpty() {
             let begin = document.getElementById("mediaViewForm:beginInput");
             if(!begin.value) {
-                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000
-                begin.value = mediaViewFormatTime(currentMilliseconds)
+                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000;
+                begin.value = mediaViewFormatTime(currentMilliseconds);
             }
         }
     },
@@ -1029,6 +1029,10 @@ function deactivateButtons() {
     PF('close').disable();
 }
 
+function addLeadingZeros(num, totalLength) {
+    return String(num).padStart(totalLength, '0');
+}
+
 function mediaViewFormatTime( ms ) {
     let seconds = ms / 1000;
     let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
@@ -1044,10 +1048,6 @@ function mediaViewFormatTime( ms ) {
         formattedTime += addLeadingZeros(seconds, 2);
     }
     return formattedTime;
-};
-
-function addLeadingZeros(num, totalLength) {
-  return String(num).padStart(totalLength, '0');
 }
 
 $(function () {
