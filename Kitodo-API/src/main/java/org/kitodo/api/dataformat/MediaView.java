@@ -11,20 +11,15 @@
 
 package org.kitodo.api.dataformat;
 
-/**
- * A view on a physical division. The individual levels of the {@link LogicalDivision} refer to {@code View}s on
- * {@link PhysicalDivision}s. At the moment, each {@code View} refers to exactly one {@code PhysicalDivision} as a
- * whole.
- */
 public class MediaView extends View {
 
-    /**
-     * Starting point of a view on time-based media (sound, video). {@code null} if not applicable.
-     */
     private String begin;
 
-    public MediaView(String begin) {
+    private String extent;
+
+    public MediaView(String begin, String extent) {
         this.begin = begin;
+        this.extent = extent;
     }
 
     public void setBegin(String begin) {
@@ -35,4 +30,11 @@ public class MediaView extends View {
         return begin;
     }
 
+    public String getExtent() {
+        return extent;
+    }
+
+    public void setExtent(String extent) {
+        this.extent = extent;
+    }
 }

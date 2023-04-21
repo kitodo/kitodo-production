@@ -28,9 +28,10 @@ function mediaViewFormatTime( ms ) {
     seconds = seconds.toString();
     if(seconds.includes(".")) {
         let secondsSplitted = seconds.split(".");
-        formattedTime += addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1];
+        let last = parseFloat(addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1]);
+        formattedTime += last.toFixed(2);
     } else {
-        formattedTime += addLeadingZeros(seconds, 2);
+        formattedTime += addLeadingZeros(seconds, 2) + ".00";
     }
     return formattedTime;
 }

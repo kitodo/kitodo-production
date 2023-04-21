@@ -69,7 +69,7 @@ public class FileXmlElementAccess {
         for (Fptr fptr : div.getFptr()) {
             Object fileId = fptr.getFILEID();
             if (Objects.nonNull(fptr.getArea())) {
-                physicalDivision.addMediaView(new MediaView(fptr.getArea().getBEGIN()));
+                physicalDivision.addMediaView(new MediaView(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
                 fileId = fptr.getArea().getFILEID();
             }
             if (fileId instanceof FileType) {
@@ -158,8 +158,10 @@ public class FileXmlElementAccess {
                 areaType.setFILEID(fileId);
                 areaType.setBEGIN(mediaView.getBegin());
                 areaType.setBETYPE("TIME");
-                areaType.setEXTENT("00:00:00.00");
-                areaType.setEXTTYPE("TIME");
+                if (!mediaView.getExtent().isEmpty()) {
+                    areaType.setEXTENT(mediaView.getExtent());
+                    areaType.setEXTTYPE("TIME");
+                }
                 fptr.setArea(areaType);
             } else {
                 fptr.setFILEID(fileId);

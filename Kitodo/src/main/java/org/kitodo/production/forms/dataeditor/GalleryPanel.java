@@ -38,7 +38,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
-import org.kitodo.api.dataformat.MediaView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
@@ -46,10 +45,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
@@ -953,39 +950,6 @@ public class GalleryPanel {
             }
         } else {
             dataEditor.getSelectedMedia().add(selectedMediaPair);
-        }
-    }
-
-    /**
-     * Add a media view.
-     */
-    public void addMediaView() {
-        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
-        if (Objects.nonNull(lastSelection)) {
-            LogicalDivision logicalDivision = new LogicalDivision();
-            logicalDivision.setType("Track");
-            logicalDivision.setLabel("Test");
-            PhysicalDivision physicalDivision = new PhysicalDivision();
-            physicalDivision.getMediaFiles().putAll(lastSelection.getKey().getMediaFiles());
-            physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
-            MediaView mediaView = new MediaView("23:59:50");
-            physicalDivision.addMediaView(mediaView);
-            mediaView.setPhysicalDivision(physicalDivision);
-            logicalDivision.getViews().add(mediaView);
-
-            physicalDivision.getLogicalDivisions().add(logicalDivision);
-
-            LinkedList<PhysicalDivision> ancestorsOfPhysicalDivision = MetadataEditor.getAncestorsOfPhysicalDivision(
-                    lastSelection.getKey(), dataEditor.getWorkpiece().getPhysicalStructure());
-
-            ancestorsOfPhysicalDivision.getLast().getChildren().add(physicalDivision);
-            lastSelection.getValue().getChildren().add(logicalDivision);
-
-            try {
-                dataEditor.refreshStructurePanel();
-            } catch (UnknownTreeNodeDataException e) {
-                Helper.setErrorMessage(e.getMessage());
-            }
         }
     }
 

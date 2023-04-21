@@ -3020,6 +3020,41 @@ Column content
     width: 100%;
 }
 
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li {
+    border-top: 1px solid var(--cloudy-gray);
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li:first-child {
+    border: none;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail {
+    width: 100%;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .metadata {
+
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .metadata td {
+    padding: 5px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions {
+    width: 85px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions button {
+    margin-left: 8px;
+}
+
+#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions button:first-child {
+    margin-left: 0;
+}
+
+
+
+
 #imagePreviewForm\:mediaDetail {
     display: flex;
     width: 100%;
@@ -3054,40 +3089,8 @@ Column content
     height: 100%;
     overflow-y: scroll;
     background: var(--trans-blue);
-    flex: 0 0 30%;
+    flex: 0 0 32%;
     min-width: 130px;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList ol {
-    list-style-type: none;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li {
-    padding: 16px;
-    border-top: 1px solid var(--cloudy-gray);
-    display: flex;
-    flex-direction: row;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewData {
-    margin-right: 8px;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions {
-    margin-left: auto;
-    flex: 0 0 85px;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions button {
-    margin-left: 8px;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li .mediaViewActions button:first-child {
-    margin-left: 0;
-}
-
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li:first-child {
-    border: none;
 }
 
 #imagePreviewForm\:addMediaView {

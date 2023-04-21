@@ -48,22 +48,33 @@
                         var="mediaViewDivision"
                         type="ordered">
 
-                    <h:panelGroup styleClass="mediaViewData" layout="block">
-                        #{mediaViewDivision.key.label}
-                        #{mediaViewDivision.value.begin}
-                    </h:panelGroup>
-
-                    <h:panelGroup styleClass="mediaViewActions" layout="block">
-                        <p:commandButton styleClass="editMediaView secondary"
-                                         action="#{DataEditorForm.galleryPanel.mediaViewsPanel.editMediaViewDivision(mediaViewDivision)}"
-                                         update="mediaViewDialog"
-                                         icon="fa fa-pencil-square-o"
-                                         oncomplete="PF('mediaViewDialog').show();"/>
-                        <p:commandButton styleClass="deleteMediaView secondary"
-                                         action="#{DataEditorForm.galleryPanel.mediaViewsPanel.deleteMediaViewDivision(mediaViewDivision)}"
-                                         update="imagePreviewForm:mediaViewsListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
-                                         icon="fa fa-trash"/>
-                    </h:panelGroup>
+                    <p:dataViewListItem>
+                        <h:panelGrid columns="2" layout="flex"
+                                     columnClasses="metadata,actions"
+                                     styleClass="mediaViewsDetail">
+                            <p:outputPanel>
+                                <h:panelGrid columns="2" >
+                                    <h:outputText value="Title:"/>
+                                    <h:outputText value="#{mediaViewDivision.key.label}"/>
+                                    <h:outputText value="Begin:"/>
+                                    <h:outputText value="#{mediaViewDivision.value.begin}"/>
+                                    <h:outputText value="Extend:"/>
+                                    <h:outputText value="#{mediaViewDivision.value.extent}"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                            <p:outputPanel>
+                                <p:commandButton styleClass="editMediaView secondary"
+                                                 action="#{DataEditorForm.galleryPanel.mediaViewsPanel.editMediaViewDivision(mediaViewDivision)}"
+                                                 update="mediaViewDialog"
+                                                 icon="fa fa-pencil-square-o"
+                                                 oncomplete="PF('mediaViewDialog').show();"/>
+                                <p:commandButton styleClass="deleteMediaView secondary"
+                                                 action="#{DataEditorForm.galleryPanel.mediaViewsPanel.deleteMediaViewDivision(mediaViewDivision)}"
+                                                 update="imagePreviewForm:mediaViewsListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                                 icon="fa fa-trash"/>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataViewListItem>
 
                 </p:dataList>
                 <h:panelGroup id="addMediaViewContainer">

@@ -33,6 +33,8 @@ public class MediaViewForm implements Serializable {
     private String title;
     private String begin;
 
+    private String extent;
+
     private String type;
 
     public String getTitle() {
@@ -66,6 +68,7 @@ public class MediaViewForm implements Serializable {
         mediaViewDivision = null;
         title = "";
         begin = "";
+        extent = "";
     }
 
     /**
@@ -75,6 +78,7 @@ public class MediaViewForm implements Serializable {
         if (isEdit()) {
             mediaViewDivision.getKey().setLabel(getTitle());
             mediaViewDivision.getValue().setBegin(getBegin());
+            mediaViewDivision.getValue().setExtent(getExtent());
         } else {
             if (Objects.nonNull(mediaSelection)) {
                 LogicalDivision logicalDivision = new LogicalDivision();
@@ -84,7 +88,7 @@ public class MediaViewForm implements Serializable {
                 physicalDivision.getMediaFiles().putAll(mediaSelection.getKey().getMediaFiles());
                 physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
 
-                MediaView mediaView = new MediaView(getBegin());
+                MediaView mediaView = new MediaView(getBegin(),getExtent());
                 physicalDivision.addMediaView(mediaView);
                 mediaView.setPhysicalDivision(physicalDivision);
                 logicalDivision.getViews().add(mediaView);
@@ -120,5 +124,13 @@ public class MediaViewForm implements Serializable {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getExtent() {
+        return extent;
+    }
+
+    public void setExtent(String extent) {
+        this.extent = extent;
     }
 }
