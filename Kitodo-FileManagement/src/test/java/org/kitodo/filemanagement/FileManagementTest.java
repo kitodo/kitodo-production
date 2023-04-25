@@ -158,6 +158,9 @@ public class FileManagementTest {
         assumeTrue(fileManagement.isDirectory(resource));
         assertNull("Renaming directory to the identical name should return null",
                 fileManagement.rename(resource, directoryName));
+        String directoryWithTrailingSlash = directoryName + "/";
+        assertNull("Renaming directory to the identical name with trailing slash should return null",
+                fileManagement.rename(resource, directoryWithTrailingSlash));
         fileManagement.delete(resource);
     }
 
