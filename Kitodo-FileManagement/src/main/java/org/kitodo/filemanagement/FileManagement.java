@@ -157,16 +157,11 @@ public class FileManagement implements FileManagementInterface {
             return null;
         }
 
-        String uriString = uri.toString();
         if (isDirectory(uri)) {
-            if (uriString.equals(newName + "/") || uriString.equals(newName)) {
-                return null;
-            } else {
-                return renameDirectory(uri, newName);
-            }
+            return renameDirectory(uri, newName);
         }
 
-        String substring = uriString.substring(0, uriString.lastIndexOf('/') + 1);
+        String substring = uri.toString().substring(0, uri.toString().lastIndexOf('/') + 1);
         if (newName.contains("/")) {
             newName = newName.substring(newName.lastIndexOf('/') + 1);
         }
@@ -189,6 +184,10 @@ public class FileManagement implements FileManagementInterface {
     }
 
     private URI renameDirectory(URI directoryPath, String newDirectoryName) throws IOException {
+        String uriString = directoryPath.toString();
+        if (uriString.equals(newDirectoryName + "/") || uriString.equals(newDirectoryName)) {
+            return null;
+        }
         File newDirectory = new File(KitodoConfig.getKitodoDataDirectory() + newDirectoryName);
         File oldDirectory = new File(KitodoConfig.getKitodoDataDirectory() + directoryPath);
         boolean success = oldDirectory.renameTo(newDirectory);
