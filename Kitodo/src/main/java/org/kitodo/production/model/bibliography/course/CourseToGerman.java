@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.production.helper.DateUtils;
 
 /**
@@ -100,7 +101,7 @@ public class CourseToGerman {
         appendDate(result, block.getLastAppearance());
         result.append(" regelmäßig ");
 
-        result.append(iterateOverIssues(block, result));
+        iterateOverIssues(block, result);
         return result.toString();
     }
 
@@ -124,8 +125,10 @@ public class CourseToGerman {
                     }
                 }
             }
-            result.append(" als ");
-            result.append(issue.getHeading());
+            if (!Strings.isBlank(issue.getHeading())) {
+                result.append(" als ");
+                result.append(issue.getHeading());
+            }
             if (issueIndex < currentIssuesSize - 2) {
                 result.append(", ");
             }
