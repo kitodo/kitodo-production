@@ -263,8 +263,8 @@ public class WorkflowControllerService {
         if (!process.getChildren().isEmpty()) {
             boolean allChildrenClosed = true;
             for (Process child : process.getChildren()) {
-                allChildrenClosed &= child.getSortHelperStatus().equals("100000000")
-                        || child.getSortHelperStatus().equals("100000000000");
+                allChildrenClosed &= "100000000".equals(child.getSortHelperStatus())
+                        || "100000000000".equals(child.getSortHelperStatus());
             }
             return allChildrenClosed;
         }
