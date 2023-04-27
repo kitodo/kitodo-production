@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:f="http://java.sun.com/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui">
@@ -28,6 +29,13 @@
             <h3>#{err['createProcessForm.createNewProcess.recordIdentifierMissing.caption']}</h3>
             <div class="select-note ui-messages-error">
                 <h:outputText value="#{err['createProcessForm.createNewProcess.recordIdentifierMissing.description']}"/>
+                <ui:repeat var="detail" value="#{ImportService.detailsOfRecordIdentifierMissingError}">
+                    <p><h:outputFormat value="❌ #{err['createProcessForm.createNewProcess.recordIdentifierMissing.detail']}">
+                        <f:param value="#{detail.division}" />
+                        <f:param value="#{detail.recordIdentifierMetadata}" />
+                        <f:param value="#{detail.allowedMetadata}" />
+                    </h:outputFormat></p>
+                </ui:repeat>
             </div>
       </h:panelGroup>
 

@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -32,6 +33,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
@@ -87,6 +90,7 @@ import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
@@ -111,7 +115,9 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-public class ImportService {
+@Named("ImportService")
+@ViewScoped
+public class ImportService implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(ImportService.class);
     public static final String ACQUISITION_STAGE_CREATE = "create";
@@ -138,6 +144,7 @@ public class ImportService {
     private static final String VOLUME = "Volume";
     private static final String MULTI_VOLUME_WORK = "MultiVolumeWork";
 
+    private static Collection<RecordIdentifierMissingDetail> recordIdentifierMissingDetails = new ArrayList<>();
     private String tiffDefinition = "";
     private boolean usingTemplates;
 
@@ -881,6 +888,15 @@ public class ImportService {
     }
 
     /**
+     * Returns details about the missing record identifiers.
+     * 
+     * @return details about the missing record identifiers
+     */
+    public Collection<RecordIdentifierMissingDetail> getRecordIdentifierMissingDetails() {
+        return recordIdentifierMissingDetails;
+    }
+
+    /**
      * Get tiffDefinition.
      *
      * @return value of tifDefinition
@@ -1343,7 +1359,7 @@ public class ImportService {
      * Check and return whether the functional metadata 'recordIdentifier' is configured for all top level doc struct
      * types in the given RulesetManagementInterface or not.
      * @param rulesetManagementInterface RulesetManagementInterface to use
-     * @return whether 'recordIdentifier' is seht for all doc struct types
+     * @return whether 'recordIdentifier' is set for all doc struct types
      */
     public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagementInterface) {
         User user = ServiceManager.getUserService().getCurrentUser();
@@ -1353,6 +1369,7 @@ public class ImportService {
         Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
         Collection<String> recordIdentifierMetadata = rulesetManagementInterface
                 .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
+        recordIdentifierMissingDetails.clear();
         boolean isConfigured = true;
         for (Map.Entry<String, String> division : structuralElements.entrySet()) {
             StructuralElementViewInterface viewInterface = rulesetManagementInterface
@@ -1361,12 +1378,19 @@ public class ImportService {
                     .map(MetadataViewInterface::getId).collect(Collectors.toList());
             allowedMetadataKeys.retainAll(recordIdentifierMetadata);
             if (allowedMetadataKeys.isEmpty()) {
-                logger.error("Division '{}' allows no metadata for use 'recordIdentifier': None of [{}] in allowed metadata keys [{}].",
-                    division.getKey(), String.join(", ", recordIdentifierMetadata),
-                    viewInterface.getAllowedMetadata().stream().map(MetadataViewInterface::getId).collect(Collectors.joining(", ")));
+                recordIdentifierMissingDetails.add(new RecordIdentifierMissingDetail(division.getKey(), recordIdentifierMetadata, viewInterface.getAllowedMetadata()));
                 isConfigured = false;
             }
         }
         return isConfigured;
+    }
+
+    /**
+     * Returns the details of the missing record identifier error.
+     * 
+     * @return the details as a list of error description
+     */
+    public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
+        return recordIdentifierMissingDetails;
     }
 }
