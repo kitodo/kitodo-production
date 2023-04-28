@@ -94,7 +94,7 @@ public interface FileManagementInterface {
      *            the URI to the resource to rename
      * @param newName
      *            the new name of the resource
-     * @return URI of renamed resource
+     * @return URI of renamed resource, or null if either 'uri' or 'newName' is null
      */
     URI rename(URI uri, String newName) throws IOException;
 
