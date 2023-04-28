@@ -184,17 +184,18 @@ public class FileManagement implements FileManagementInterface {
     }
 
     private URI renameDirectory(URI directoryPath, String newDirectoryName) throws IOException {
-        String uriString = directoryPath.toString();
-        if (uriString.equals(newDirectoryName + "/") || uriString.equals(newDirectoryName)) {
-            return null;
-        }
         File newDirectory = new File(KitodoConfig.getKitodoDataDirectory() + newDirectoryName);
         File oldDirectory = new File(KitodoConfig.getKitodoDataDirectory() + directoryPath);
-        boolean success = oldDirectory.renameTo(newDirectory);
-        if (success) {
-            return newDirectory.toURI();
+
+        if (!oldDirectory.equals(newDirectory)) {
+            boolean success = oldDirectory.renameTo(newDirectory);
+            if (success) {
+                return newDirectory.toURI();
+            } else {
+                throw new IOException("Unable to rename directory '" + directoryPath + "'!");
+            }
         } else {
-            throw new IOException("Unable to rename directory '" + directoryPath + "'!");
+            return newDirectory.toURI();
         }
     }
 
