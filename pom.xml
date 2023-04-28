@@ -528,7 +528,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
-                <version>20190722</version>
+                <version>20230227</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
