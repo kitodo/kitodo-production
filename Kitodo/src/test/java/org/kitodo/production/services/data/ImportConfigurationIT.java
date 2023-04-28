@@ -11,6 +11,10 @@
 
 package org.kitodo.production.services.data;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,10 +22,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
-
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
 
 public class ImportConfigurationIT {
 
