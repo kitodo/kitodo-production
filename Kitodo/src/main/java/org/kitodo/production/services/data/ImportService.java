@@ -1372,13 +1372,15 @@ public class ImportService implements Serializable {
         recordIdentifierMissingDetails.clear();
         boolean isConfigured = true;
         for (Map.Entry<String, String> division : structuralElements.entrySet()) {
-            StructuralElementViewInterface viewInterface = rulesetManagementInterface
+            StructuralElementViewInterface divisionView = rulesetManagementInterface
                     .getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
-            List<String> allowedMetadataKeys = viewInterface.getAllowedMetadata().stream()
+            List<String> allowedMetadataKeys = divisionView.getAllowedMetadata().stream()
                     .map(MetadataViewInterface::getId).collect(Collectors.toList());
             allowedMetadataKeys.retainAll(recordIdentifierMetadata);
             if (allowedMetadataKeys.isEmpty()) {
-                recordIdentifierMissingDetails.add(new RecordIdentifierMissingDetail(division.getKey(), recordIdentifierMetadata, viewInterface.getAllowedMetadata()));
+                recordIdentifierMissingDetails.add(
+                    new RecordIdentifierMissingDetail(division.getKey(), recordIdentifierMetadata, divisionView.getAllowedMetadata())
+                );
                 isConfigured = false;
             }
         }

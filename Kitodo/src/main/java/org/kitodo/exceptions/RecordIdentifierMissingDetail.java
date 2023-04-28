@@ -29,6 +29,17 @@ public class RecordIdentifierMissingDetail {
     private String recordIdentifierMetadata;
     private String allowedMetadata;
 
+    /**
+     * <b>Constructor.</b><!-- --> Builds a new data object to store details
+     * about a missing record identifier.
+     * 
+     * @param division
+     *            division that does not have a record identifier
+     * @param recordIdentifierMetadata
+     *            metadata marked as record identifiers
+     * @param allowedMetadata
+     *            metadata allowed at the given division
+     */
     public RecordIdentifierMissingDetail(String division, Collection<String> recordIdentifierMetadata,
             Collection<MetadataViewInterface> allowedMetadata) {
         this.division = division;
