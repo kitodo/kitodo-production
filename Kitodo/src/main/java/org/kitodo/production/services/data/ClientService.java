@@ -111,6 +111,11 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
      * @return String containing client names
      */
     public static String getClientNames(List<Client> clients) {
-        return clients.stream().map(Client::getName).collect(Collectors.joining(", "));
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
+            return clients.stream().map(Client::getName).collect(Collectors.joining(", "));
+        } else {
+            return clients.stream().filter(client -> ServiceManager.getUserService().getAuthenticatedUser().getClients()
+                    .contains(client)).map(Client::getName).collect(Collectors.joining(", "));
+        }
     }
 }

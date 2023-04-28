@@ -350,8 +350,16 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @param projects list of roles
      * @return String containing project titles
      */
-    public static String getProjectTitles(List<Project> projects) {
-        return projects.stream().map(Project::getTitle).collect(Collectors.joining(", "));
+    public String getProjectTitles(List<Project> projects) throws DataException {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
+                && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
+            return projects.stream().map(Project::getTitle).collect(Collectors.joining());
+        } else {
+            List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(ProjectDTO::getId)
+                    .collect(Collectors.toList());
+            return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
+                    .collect(Collectors.joining(", "));
+        }
     }
 
     /**
