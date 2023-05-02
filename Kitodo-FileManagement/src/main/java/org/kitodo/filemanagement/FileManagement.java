@@ -80,13 +80,13 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return Files.newOutputStream(Paths.get(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8)));
+        return Files.newOutputStream(Paths.get(URLDecoder.decode(Paths.get(uri).toString(), StandardCharsets.UTF_8)));
     }
 
     @Override
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return new File(URLDecoder.decode(uri.getPath(), StandardCharsets.UTF_8)).toURI().toURL().openStream();
+        return new File(URLDecoder.decode(Paths.get(uri).toString(), StandardCharsets.UTF_8)).toURI().toURL().openStream();
     }
 
     @Override
