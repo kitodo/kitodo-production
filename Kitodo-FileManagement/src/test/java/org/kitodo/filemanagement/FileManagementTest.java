@@ -156,11 +156,11 @@ public class FileManagementTest {
         URI resource = fileManagement.create(URI.create(""), directoryName, false);
         assumeTrue(fileManagement.isDirectory(resource));
         URI expectedUri = new File(KitodoConfig.getKitodoDataDirectory() + resource).toURI();
-        assertEquals("Renaming directory to the identical name should return null", expectedUri,
+        assertEquals("Renaming directory to the identical name should return identical URI", expectedUri,
                 fileManagement.rename(resource, directoryName));
         String directoryWithTrailingSlash = directoryName + "/";
-        assertEquals("Renaming directory to the identical name with trailing slash should return null", expectedUri,
-                fileManagement.rename(resource, directoryWithTrailingSlash));
+        assertEquals("Renaming directory to the identical name with trailing slash should return identical URI",
+                expectedUri, fileManagement.rename(resource, directoryWithTrailingSlash));
         fileManagement.delete(resource);
     }
 
