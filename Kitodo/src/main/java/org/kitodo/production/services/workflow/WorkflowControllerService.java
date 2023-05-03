@@ -201,7 +201,7 @@ public class WorkflowControllerService {
      *            object
      */
     public void closeTaskByUser(Task task) throws DataException, IOException, DAOException {
-        if( Objects.isNull(task) ) {
+        if ( Objects.isNull(task) ) {
             return;
         }
 
@@ -384,7 +384,7 @@ public class WorkflowControllerService {
      */
     public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
         comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
-        if( Objects.isNull(comment.getCorrectionTask()) ) {
+        if ( Objects.isNull(comment.getCorrectionTask()) ) {
             MetadataLock.setFree(comment.getCurrentTask().getProcess().getId());
         } else {
             closeTaskByUser(comment.getCorrectionTask());

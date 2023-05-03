@@ -27,6 +27,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ProcessorException;
 import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -63,7 +64,7 @@ public abstract class ActiveMQProcessor implements MessageListener {
      *            an object providing access to the fields of the received map
      *            message
      */
-    protected abstract void process(MapMessageObjectReader ticket) throws DAOException, JMSException;
+    protected abstract void process(MapMessageObjectReader ticket) throws ProcessorException, JMSException;
 
     /**
      * Instantiating the class ActiveMQProcessor always requires to pass the
