@@ -14,15 +14,21 @@ package org.kitodo.exceptions;
 public class ProcessorException extends Exception {
 
     /**
-     * Constructor with given exception message.
+     * Constructor with given exception.
      *
      * @param exception
-     *            as Exception
+     *         as Exception
      */
     public ProcessorException(Exception exception) {
         super(exception);
     }
 
+    /**
+     * Constructor with given message.
+     *
+     * @param message
+     *         the exception message
+     */
     public ProcessorException(String message) {
         super(message);
     }

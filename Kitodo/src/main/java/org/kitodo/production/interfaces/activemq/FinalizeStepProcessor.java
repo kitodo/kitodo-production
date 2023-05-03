@@ -53,7 +53,7 @@ public class FinalizeStepProcessor extends ActiveMQProcessor {
      *         the incoming message
      */
     @Override
-    protected void process(MapMessageObjectReader ticket) throws ProcessorException {
+    protected void process(MapMessageObjectReader ticket) throws ProcessorException, JMSException {
         CurrentTaskForm dialog = new CurrentTaskForm();
         try {
             Integer stepID = ticket.getMandatoryInteger("id");
@@ -65,14 +65,14 @@ public class FinalizeStepProcessor extends ActiveMQProcessor {
             if (ticket.hasField("message")) {
                 Comment comment = new Comment();
                 comment.setProcess(dialog.getCurrentTask().getProcess());
-                comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
                 comment.setMessage(ticket.getString("message"));
+                comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
                 comment.setType(CommentType.INFO);
                 comment.setCreationDate(new Date());
                 ServiceManager.getCommentService().saveToDatabase(comment);
             }
             dialog.closeTaskByUser();
-        } catch (DAOException | JMSException e) {
+        } catch (DAOException e) {
             throw new ProcessorException(e);
         }
     }
