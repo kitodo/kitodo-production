@@ -201,10 +201,6 @@ public class WorkflowControllerService {
      *            object
      */
     public void closeTaskByUser(Task task) throws DataException, IOException, DAOException {
-        if ( Objects.isNull(task) ) {
-            return;
-        }
-
         // if the result of the task is to be verified first, then if necessary,
         // cancel the completion
         if (task.isTypeCloseVerify()) {
@@ -383,13 +379,11 @@ public class WorkflowControllerService {
      *              as Comment object
      */
     public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
-        comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
-        if ( Objects.nonNull(comment.getCorrectionTask()) ) {
+        if (Objects.nonNull(comment.getCorrectionTask())) {
             closeTaskByUser(comment.getCorrectionTask());
             comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
-        } else {
-            MetadataLock.setFree(comment.getCurrentTask().getProcess().getId());
         }
+        comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
         comment.setCorrected(Boolean.TRUE);
         comment.setCorrectionDate(new Date());
         try {
