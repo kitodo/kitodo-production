@@ -68,7 +68,8 @@
                 <p:row>
                     <div>
                         <!-- process title -->
-                        <p:outputLabel for="processTitle" value="#{msgs.processTitle}"/>
+                        <p:outputLabel for="processTitle"
+                                       value="#{msgs.processTitle}#{empty param['editForm:save'] and empty param['editForm:saveContinue'] ? ' *' : ''}"/>
                         <p:inputText id="processTitle"
                                      value="#{CreateProcessForm.currentProcess.process.title}"
                                      styleClass="input-with-button"
@@ -78,7 +79,9 @@
                         <p:commandButton id="generateTitleButton"
                                          process="@this"
                                          actionListener="#{CreateProcessForm.processDataTab.generateAtstslFields}"
-                                         icon="fa fa-cog" title="#{msgs.generate}" resetValues="true"/>
+                                         icon="fa fa-cog"
+                                         title="#{msgs.generate}"
+                                         resetValues="true"/>
                     </div>
 
                     <div>

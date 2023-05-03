@@ -61,8 +61,6 @@ public class Browser {
 
     private static Actions actions;
 
-    private static boolean onTravis = false;
-
     private static RemoteWebDriver webDriver;
 
     /**
@@ -80,11 +78,6 @@ public class Browser {
         webDriver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
         goTo("");
         webDriver.manage().window().setSize(new Dimension(1280, 1024));
-
-        if ("true".equals(System.getenv().get("TRAVIS"))) {
-            logger.debug("TRAVIS environment detected");
-            onTravis = true;
-        }
     }
 
     private static void provideChromeDriver() throws IOException {
@@ -219,6 +212,18 @@ public class Browser {
         return table.findElements(By.tagName("tr"));
     }
 
+    /**
+     * Gets number of selected rows in a given table.
+     * @param table as a WebElement
+     * @return number of selected rows
+     */
+    public static long getSelectedRowsOfTable(WebElement table) {
+        return getRowsOfTable(table)
+                .stream()
+                .filter(element -> element.getAttribute("aria-selected").equals("true"))
+                .count();
+    }
+
     public static List<WebElement> getCellsOfRow(WebElement row) {
         return row.findElements(By.tagName("td"));
     }
@@ -234,7 +239,7 @@ public class Browser {
 
     public static String getCellDataByRow(WebElement row, int columnIndex) {
         List<WebElement> cells = getCellsOfRow(row);
-        if(cells.size()<=columnIndex){
+        if (cells.size() <= columnIndex) {
             return "";
         }
         return cells.get(columnIndex).getText();
@@ -332,15 +337,6 @@ public class Browser {
      */
     public static int getDelayAfterCatalogSelection() {
         return DELAY_AFTER_CATALOG_SELECTION;
-    }
-
-    /**
-     * Gets onTravis.
-     *
-     * @return True if this runs on Travis.
-     */
-    public static boolean isOnTravis() {
-        return onTravis;
     }
 
 }

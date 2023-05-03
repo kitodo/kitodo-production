@@ -63,11 +63,17 @@ public class ExportDms extends ExportMets {
 
     private boolean exportWithImages = true;
 
+    private Task workFlowTask;
+
     public ExportDms() {
     }
 
     public ExportDms(boolean exportImages) {
         this.exportWithImages = exportImages;
+    }
+
+    public ExportDms(Task workFlowTask) {
+        this.workFlowTask = workFlowTask;
     }
 
     /**
@@ -130,7 +136,7 @@ public class ExportDms extends ExportMets {
             TaskManager.addTask(new ExportDmsTask(this, process));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
-            return true;
+            return false;
         } else {
             return startExport(process, (ExportDmsTask) null);
         }
@@ -257,8 +263,7 @@ public class ExportDms extends ExportMets {
         }
 
         // export the file to the import folder
-        asyncExportWithImport(process, gdzfile, destination);
-        return true;
+        return asyncExportWithImport(process, gdzfile, destination);
     }
 
     private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
@@ -306,18 +311,20 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
+    private boolean asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
             throws IOException, DAOException {
 
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
-        writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
+        boolean metsFileWrittenSuccesful = writeMetsFile(process, fileService.createResource(userHome,
+                File.separator + atsPpnBand + ".xml"), gdzfile);
 
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
         }
+        return metsFileWrittenSuccesful;
     }
 
     /**
@@ -328,6 +335,26 @@ public class ExportDms extends ExportMets {
     public EmptyTask getExportDmsTask() {
         return exportDmsTask;
     }
+
+    /**
+     * Get workflowTask.
+     *
+     * @return value of workFlowTask
+     */
+    public Task getWorkflowTask() {
+        return workFlowTask;
+    }
+
+    /**
+     * Set workflowTask.
+     *
+     * @param workFlowTask
+     *              the workflow stask associated with the export
+     */
+    public void setWorkflowTask(Task workFlowTask) {
+        this.workFlowTask = workFlowTask;
+    }
+
 
     /**
      * Setter method to pass in a task thread to whom progress and error messages

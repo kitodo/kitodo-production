@@ -166,6 +166,10 @@ label.ui-state-error {
     padding: 0;
 }
 
+.hidden {
+    display: none;
+}
+
 /* Buttons */
 .ui-button,
 .ui-widget-content .ui-button {
@@ -193,7 +197,8 @@ label.ui-state-error {
 .ui-button.secondary,
 .ui-widget-content .ui-button.secondary,
 .ui-menubutton.secondary > button,
-.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label {
+.ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label,
+.ui-splitbutton.secondary .ui-button {
     background: var(--pure-white);
     border: solid var(--default-border-width) var(--light-blue);
     color: var(--light-blue);
@@ -356,6 +361,22 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     height: 20px;
     margin-left: 5px;
     vertical-align: bottom;
+}
+
+.ui-splitbutton > .ui-button,
+.ui-splitbutton > .ui-button .ui-icon {
+    padding-right: var(--default-half-size);
+}
+
+.ui-splitbutton .ui-splitbutton-menubutton .ui-icon {
+    background-image: none;
+    line-height: var(--default-full-size);
+    text-indent: 0;
+}
+
+.ui-splitbutton .ui-splitbutton-menubutton .ui-icon-triangle-1-s::after {
+    content: "\f078";
+    font-family: FontAwesome;
 }
 
 .ui-row-toggler.ui-icon,
@@ -726,16 +747,23 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     display: none;
 }
 
+.switch .ui-chkbox-box .ui-chkbox-icon::before {
+    display: none;
+}
+
+.switch .ui-chkbox .ui-chkbox-box,
 .switch.ui-chkbox .ui-chkbox-box,
+.switch .ui-chkbox .ui-chkbox-box.ui-state-hover,
 .switch.ui-chkbox .ui-chkbox-box.ui-state-hover {
     width: var(--input-height);
     height: var(--input-height);
+    border: none;
     border-radius: var(--default-border-radius);
     background: var(--orange);
     cursor: pointer;
 }
 
-.switch.ui-chkbox .ui-chkbox-icon {
+.switch .ui-chkbox-icon {
     border: solid 2px var(--pure-white);
     border-radius: 25px;
     box-sizing: border-box;
@@ -750,7 +778,7 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     width: 70%;
 }
 
-.switch.ui-chkbox .ui-chkbox-icon:after {
+.switch .ui-chkbox-icon:after {
     background: var(--orange);
     border: solid 2px var(--pure-white);
     border-radius: 50%;
@@ -766,32 +794,32 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     width: 14px;
 }
 
-.switch.ui-chkbox .ui-chkbox-box.ui-state-active,
+.switch .ui-chkbox-box.ui-state-active,
 .switch .ui-chkbox-box.ui-state-active.ui-state-hover {
     background: var(--green);
 }
 
-.switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
+.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon {
     background: var(--pure-white);
 }
 
-.switch.ui-chkbox .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
+.switch .ui-chkbox-box.ui-state-active .ui-chkbox-icon:after {
     background: var(--green);
     left: calc(100% - 14px + 2px);
 }
 
-.switch.ui-chkbox .ui-chkbox-box.disabled,
-.switch.ui-chkbox .ui-chkbox-box.ui-state-disabled,
-.switch.ui-chkbox .ui-chkbox-box.disabled .ui-chkbox-icon:after,
-.switch.ui-chkbox .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
+.switch .ui-chkbox-box.disabled,
+.switch .ui-chkbox-box.ui-state-disabled,
+.switch .ui-chkbox-box.disabled .ui-chkbox-icon:after,
+.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon:after {
     background: var(--cloudy-gray);
     border-color: var(--medium-gray);
     cursor: default;
     opacity: initial;
 }
 
-.switch.ui-chkbox .ui-chkbox-box.disabled .ui-chkbox-icon,
-.switch.ui-chkbox .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
+.switch .ui-chkbox-box.disabled .ui-chkbox-icon,
+.switch .ui-chkbox-box.ui-state-disabled .ui-chkbox-icon {
     background: transparent;
     border-color: var(--medium-gray);
 }
@@ -1722,4 +1750,8 @@ Popup dialogs
 
 .pagination-select-items .ui-chkbox {
     height: 0;
+}
+
+.bold {
+    font-weight: bold;
 }

@@ -39,7 +39,7 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
 
     /**
      * Constructor for a metadata entry group gained from METS.
-     * 
+     *
      * @param domain
      *            domain of the METS document where the metadata was read
      * @param xmlMetadataGroup
@@ -49,7 +49,7 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
         this();
         metadataGroup.setDomain(domain);
         metadataGroup.setKey(xmlMetadataGroup.getName());
-        metadataGroup.getGroup()
+        metadataGroup.getMetadata()
                 .addAll(Stream.concat(
                     xmlMetadataGroup.getMetadata().parallelStream()
                             .map(kitodoMetadata -> new MetadataXmlElementAccess(null, kitodoMetadata)
@@ -70,13 +70,13 @@ public class MetadataGroupXmlElementAccess extends MetadataXmlElementsAccess {
 
     /**
      * Generates a {@code <kitodo:metadataGroup>} XML element from this group.
-     * 
+     *
      * @return a {@code <kitodo:metadataGroup>} XML element
      */
     MetadataGroupType toXMLMetadataGroup() {
         MetadataGroupType xmlMetadataGroup = new MetadataGroupType();
         xmlMetadataGroup.setName(metadataGroup.getKey());
-        for (org.kitodo.api.Metadata entry : metadataGroup.getGroup()) {
+        for (org.kitodo.api.Metadata entry : metadataGroup.getMetadata()) {
             if (entry instanceof MetadataEntry) {
                 xmlMetadataGroup.getMetadata().add(new MetadataXmlElementAccess((MetadataEntry) entry).toMetadata());
             } else if (entry instanceof MetadataGroup) {

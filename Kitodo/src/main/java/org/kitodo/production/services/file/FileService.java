@@ -22,6 +22,7 @@ import java.nio.file.FileSystems;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
@@ -53,12 +55,14 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
@@ -82,6 +86,13 @@ public class FileService {
     private static final String TEMPORARY_FILENAME_PREFIX = "temporary_";
     private final FileManagementInterface fileManagementModule = new KitodoServiceLoader<>(
             FileManagementInterface.class).loadModule();
+
+    private static final String ARABIC = "arabic";
+    private static final String ROMAN = "roman";
+    private static final String ARABIC_DEFAULT_VALUE = "1";
+    private static final String ROMAN_DEFAULT_VALUE = "I";
+    private static final String UNCOUNTED_DEFAULT_VALUE = " - ";
+
 
     /**
      * Adds a slash to a URI to mark it as a directory, if it does not already
@@ -1069,15 +1080,15 @@ public class FileService {
     }
 
     /**
-     * Searches for new media and adds them to the media list of the workpiece,
-     * if any are found.
+     * Searches for new media and adds them to the media list of the workpiece, if any are found.
      *
      * @param process
-     *            Process in which folders should be searched for media
+     *         Process in which folders should be searched for media
      * @param workpiece
-     *            Workpiece to which the media are to be added
+     *         Workpiece to which the media are to be added
      */
-    public void searchForMedia(Process process, Workpiece workpiece) throws InvalidImagesException {
+    public boolean searchForMedia(Process process, Workpiece workpiece)
+            throws InvalidImagesException, MediaNotFoundException {
         final long begin = System.nanoTime();
         List<Folder> folders = process.getProject().getFolders();
         int mapCapacity = (int) Math.ceil(folders.size() / 0.75);
@@ -1085,19 +1096,32 @@ public class FileService {
         for (Folder folder : folders) {
             subfolders.put(folder.getFileGroup(), new Subfolder(process, folder));
         }
-        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(metadataImageComparator);
+        Map<String, Map<Subfolder, URI>> currentMedia = new TreeMap<>(metadataImageComparator);
         for (Subfolder subfolder : subfolders.values()) {
             for (Entry<String, URI> element : subfolder.listContents(false).entrySet()) {
-                mediaToAdd.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
-                mediaToAdd.get(element.getKey()).put(subfolder, element.getValue());
+                currentMedia.computeIfAbsent(element.getKey(), any -> new HashMap<>(mapCapacity));
+                currentMedia.get(element.getKey()).put(subfolder, element.getValue());
             }
         }
+
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
-            process.getProcessBaseUri());
-        addNewURIsToExistingPhysicalDivisions(mediaToAdd,
-            workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
-        mediaToAdd.keySet().removeAll(canonicals);
-        addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece);
+                process.getProcessBaseUri());
+
+        if (currentMedia.size() == 0 && canonicals.size() > 0) {
+            throw new MediaNotFoundException();
+        }
+
+        addNewURIsToExistingPhysicalDivisions(currentMedia,
+                workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
+        Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(currentMedia);
+        List<String> mediaToRemove = new LinkedList<>(canonicals);
+
+        mediaToRemove.removeAll(mediaToAdd.keySet());
+        canonicals.forEach(mediaToAdd.keySet()::remove);
+        removeMissingMediaFromWorkpiece(mediaToRemove, workpiece, subfolders.values());
+        List<PhysicalDivision> children = workpiece.getPhysicalStructure().getChildren();
+        boolean orderedChildren = (!children.isEmpty() && children.get(0).getOrder() > 0);
+        addNewMediaToWorkpiece(canonicals, mediaToAdd, workpiece, orderedChildren);
         renumberPhysicalDivisions(workpiece, true);
         if (ConfigCore.getBooleanParameter(ParameterCore.WITH_AUTOMATIC_PAGINATION)) {
             repaginatePhysicalDivisions(workpiece);
@@ -1109,6 +1133,7 @@ public class FileService {
         if (logger.isTraceEnabled()) {
             logger.trace("Searching for media took {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - begin));
         }
+        return orderedChildren && !(mediaToAdd.isEmpty() && mediaToRemove.isEmpty());
     }
 
     private void automaticallyAssignPhysicalDivisionsToEffectiveRootRecursive(Workpiece workpiece,
@@ -1183,39 +1208,94 @@ public class FileService {
         }
     }
 
+    private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece,
+                                                 Collection<Subfolder> subfolders) {
+        List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        for (String removal : mediaToRemove) {
+            if (StringUtils.isNotBlank(removal)) {
+                for (PhysicalDivision page : pages) {
+                    if (removal.equals(getCanonical(subfolders, page))) {
+                        workpiece.getPhysicalStructure().getChildren().remove(page);
+                        for (LogicalDivision structuralElement : page.getLogicalDivisions()) {
+                            structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(page));
+                        }
+                        page.getLogicalDivisions().clear();
+                        LinkedList<PhysicalDivision> ancestors = MetadataEditor
+                                .getAncestorsOfPhysicalDivision(page, workpiece.getPhysicalStructure());
+                        if (!ancestors.isEmpty()) {
+                            PhysicalDivision parent = ancestors.getLast();
+                            parent.getChildren().remove(page);
+                        }
+                    }
+                }
+            }
+        }
+        if (!mediaToRemove.isEmpty()) {
+            int i = 1;
+            for (PhysicalDivision division : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+                division.setOrder(i);
+                i++;
+            }
+        }
+    }
+
+    private String getCanonical(Collection<Subfolder> folders, PhysicalDivision division) {
+        Map<MediaVariant, URI> mediaFiles = division.getMediaFiles();
+        for (Subfolder folder : folders) {
+            for (URI mediaUri : mediaFiles.values()) {
+                if (mediaUri.getPath().startsWith(folder.getFolder().getRelativePath())) {
+                    String canonical = folder.getCanonical(mediaUri);
+                    if (Objects.nonNull(canonical)) {
+                        return canonical;
+                    }
+                }
+            }
+        }
+        return "";
+    }
+
     /**
      * Adds the new media to the workpiece. The media are sorted in according to
      * the canonical part of the file name.
      */
     private void addNewMediaToWorkpiece(List<String> canonicals, Map<String, Map<Subfolder, URI>> mediaToAdd,
-            Workpiece workpiece) {
+            Workpiece workpiece, boolean orderedChildren) {
 
         LogicalDivision actualLogicalRoot = workpiece.getLogicalStructure();
         while (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() == 1) {
             actualLogicalRoot = actualLogicalRoot.getChildren().get(0);
         }
-        // If the newspaper has multiple issues in the process, then everything
-        // stays as it was
+        // If the newspaper has multiple issues in the process, then everything stays as it was
         if (Objects.isNull(actualLogicalRoot.getType()) && actualLogicalRoot.getChildren().size() != 1) {
             actualLogicalRoot = workpiece.getLogicalStructure();
         }
 
         for (Entry<String, Map<Subfolder, URI>> entry : mediaToAdd.entrySet()) {
-            int insertionPoint = 0;
-            for (String canonical : canonicals) {
-                if (metadataImageComparator.compare(entry.getKey(), canonical) > 0) {
-                    insertionPoint++;
-                } else {
-                    break;
-                }
-            }
             PhysicalDivision physicalDivision = createPhysicalDivision(entry.getValue());
-            workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
             View view = new View();
             view.setPhysicalDivision(physicalDivision);
-            actualLogicalRoot.getViews().add(view);
-            view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
-            canonicals.add(insertionPoint, entry.getKey());
+            // do not use canonical filename parts if existing physical structures already have "order" values > 0!
+            if (orderedChildren) {
+                physicalDivision.setOrder(workpiece.getPhysicalStructure().getChildren().size());
+                workpiece.getPhysicalStructure().getChildren().add(physicalDivision);
+                actualLogicalRoot.getViews().add(view);
+                view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
+                canonicals.add(entry.getKey());
+            } else {
+                // only use canonical filename parts if no ordered physical structures exist in the workpiece, yet
+                int insertionPoint = 0;
+                for (String canonical : canonicals) {
+                    if (metadataImageComparator.compare(entry.getKey(), canonical) > 0) {
+                        insertionPoint++;
+                    } else {
+                        break;
+                    }
+                }
+                workpiece.getPhysicalStructure().getChildren().add(insertionPoint, physicalDivision);
+                actualLogicalRoot.getViews().add(insertionPoint, view);
+                view.getPhysicalDivision().getLogicalDivisions().add(actualLogicalRoot);
+                canonicals.add(insertionPoint, entry.getKey());
+            }
         }
     }
 
@@ -1266,24 +1346,26 @@ public class FileService {
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
-            case "arabic":
-                value = "1";
+            case ARABIC:
+                value = ARABIC_DEFAULT_VALUE;
                 break;
-            case "roman":
-                value = "I";
+            case ROMAN:
+                value = ROMAN_DEFAULT_VALUE;
                 break;
             default:
-                value = " - ";
+                value = UNCOUNTED_DEFAULT_VALUE;
                 break;
         }
-        for (int i = physicalDivisions.size() - 1; i >= 0; i--) {
-            PhysicalDivision physicalDivision = physicalDivisions.get(i);
-            String orderlabel = physicalDivision.getOrderlabel();
-            if (Objects.nonNull(orderlabel) && !physicalDivision.getMediaFiles().isEmpty()) {
-                first = i + 1;
-                value = orderlabel;
-                physicalDivisions.get(i).setType(PhysicalDivision.TYPE_PAGE);
-                break;
+        if (!UNCOUNTED_DEFAULT_VALUE.equals(value)) {
+            for (int i = physicalDivisions.size() - 1; i >= 0; i--) {
+                PhysicalDivision physicalDivision = physicalDivisions.get(i);
+                String orderlabel = physicalDivision.getOrderlabel();
+                if (Objects.nonNull(orderlabel) && !physicalDivision.getMediaFiles().isEmpty()) {
+                    first = i + 1;
+                    value = orderlabel;
+                    physicalDivisions.get(i).setType(PhysicalDivision.TYPE_PAGE);
+                    break;
+                }
             }
         }
         Paginator paginator = new Paginator(value);
@@ -1295,7 +1377,7 @@ public class FileService {
         }
         for (PhysicalDivision physicalDivision : physicalDivisions) {
             if (Objects.isNull(physicalDivision.getOrderlabel())) {
-                physicalDivision.setOrderlabel(" - ");
+                physicalDivision.setOrderlabel(UNCOUNTED_DEFAULT_VALUE);
             }
         }
     }

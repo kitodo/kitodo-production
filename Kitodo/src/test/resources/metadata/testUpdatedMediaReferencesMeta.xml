@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2022-11-14T10:46:14.828+01:00" LASTMODDATE="2023-01-05T14:18:06.974+01:00"/>
+    <mets:dmdSec ID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99">
+        <mets:mdWrap MDTYPE="OTHER">
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="title">Test process for checking updated media references</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec>
+        <mets:fileGrp USE="DEFAULT">
+            <mets:file ID="uuid-ccc049a1-aef3-4640-adb9-bbe90726d280" MIMETYPE="image/png">
+                <mets:FLocat xlink:href="images/default/01.png" LOCTYPE="URL"/>
+            </mets:file>
+        </mets:fileGrp>
+        <mets:fileGrp USE="SOURCE">
+            <mets:file ID="uuid-d95b2ae1-2289-451b-9a5f-6734bd9a94dc" MIMETYPE="image/tiff">
+                <mets:FLocat xlink:href="images/scans/01.tif" LOCTYPE="URL"/>
+            </mets:file>
+        </mets:fileGrp>
+        <mets:fileGrp USE="THUMBS">
+            <mets:file ID="uuid-7729f443-e98a-4eb8-9f65-4f44eb3fa43b" MIMETYPE="image/png">
+                <mets:FLocat xlink:href="images/thumbs/01.png" LOCTYPE="URL"/>
+            </mets:file>
+        </mets:fileGrp>
+    </mets:fileSec>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="uuid-f8f131e5-b063-40f2-9942-f9efeedf7ed7">
+            <mets:div ID="uuid-90544efb-2275-4dfd-bcc7-ee6581eba07a" TYPE="page" ORDER="1" ORDERLABEL="1">
+                <mets:fptr FILEID="uuid-ccc049a1-aef3-4640-adb9-bbe90726d280"/>
+                <mets:fptr FILEID="uuid-d95b2ae1-2289-451b-9a5f-6734bd9a94dc"/>
+                <mets:fptr FILEID="uuid-7729f443-e98a-4eb8-9f65-4f44eb3fa43b"/>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="uuid-1400b722-c7ae-488c-8322-f4a5f198a443" DMDID="uuid-b58a9855-b945-38c2-8fba-972ad0c4eb99" TYPE="monograph" ORDER="1"/>
+    </mets:structMap>
+    <mets:structLink>
+        <mets:smLink xlink:to="uuid-90544efb-2275-4dfd-bcc7-ee6581eba07a" xlink:from="uuid-1400b722-c7ae-488c-8322-f4a5f198a443"/>
+    </mets:structLink>
+</mets:mets>

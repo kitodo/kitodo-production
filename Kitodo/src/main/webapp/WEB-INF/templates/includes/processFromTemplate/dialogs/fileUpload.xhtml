@@ -22,6 +22,7 @@
               id="fileUpload"
               width="578"
               modal="true"
+              visible="#{CreateProcessForm.defaultConfigurationType eq 'FILE_UPLOAD'}"
               appendTo="@(body)"
               resizable="false">
         <h3>#{msgs['newProcess.fileUpload.heading']}</h3>

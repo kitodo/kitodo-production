@@ -1,0 +1,122 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
+        xmlns:p="http://primefaces.org/ui">
+    <p:remoteCommand name="removeFilter"
+                     action="#{ProcessForm.filterMenu.removeFilter}"
+                     oncomplete="setFilterInputPadding()"
+                     update="processesTabView:processesForm:processesTable parsedFiltersForm:parsedFilters"/>
+    <p:remoteCommand name="updateSuggestions"
+                     action="#{ProcessForm.filterMenu.updateSuggestions}"
+                     update="filterOptionsForm:suggestions"/>
+    <p:remoteCommand name="submitFilters"
+                     action="#{ProcessForm.filterMenu.submitFilters}"
+                     onstart="PF('processesTable').getPaginator().setPage(0);"
+                     oncomplete="setFilterInputPadding();"
+                     update="processesTabView:processesForm:processesTable
+                             processCount
+                             filterInputForm:filterfield
+                             parsedFiltersForm:parsedFilters
+                             filterOptionsForm:suggestions"/>
+    <div class="ui-inputgroup">
+        <div class="input-wrapper">
+            <h:form id="filterInputForm">
+                <p:inputText forceId="true"
+                             id="filterfield"
+                             value="#{ProcessForm.filterMenu.filterInEditMode}"
+                             autocomplete="off"
+                             placeholder="#{msgs.filter}">
+                    <p:ajax event="keydown"
+                            delay="1000"
+                            listener="#{ProcessForm.filterMenu.updateSuggestions(ProcessForm.filterMenu.filterInEditMode)}"
+                            onstart="return filterKeydownEvents(event);"
+                            update="filterOptionsForm:suggestions"/>
+                </p:inputText>
+            </h:form>
+            <h:form id="parsedFiltersForm">
+                <p:dataList id="parsedFilters"
+                            value="#{ProcessForm.filterMenu.parsedFilters}"
+                            var="parsedFilter"
+                            emptyMessage="">
+                    <p:outputPanel styleClass="plainFilter hidden">#{parsedFilter.getPlainFilter()}</p:outputPanel>
+                    <p:outputPanel styleClass="not-modifier" rendered="#{parsedFilter.isNot()}">-</p:outputPanel>
+                    <p:outputPanel styleClass="category">#{parsedFilter.category}</p:outputPanel>
+                    <p:outputPanel styleClass="value">#{parsedFilter.value}</p:outputPanel>
+                    <p:commandButton title="#{msgs.removeFilter}"
+                                     icon="fa fa-times"
+                                     action="#{ProcessForm.filterMenu.removeFilter(parsedFilter)}"
+                                     oncomplete="setFilterInputPadding()"
+                                     update="processesTabView:processesForm:processesTable parsedFilters"/>
+                </p:dataList>
+            </h:form>
+            <h:form id="filterOptionsForm">
+                <div id="filterOptionsFormWrapper">
+                    <!-- Suggestions -->
+                    <p:dataList id="suggestions"
+                                value="#{ProcessForm.filterMenu.suggestions}"
+                                var="menuItem"
+                                itemStyleClass="suggestion">
+                        <p:outputPanel a:data-suggestion="#{menuItem.getSuggestion()}"
+                                       a:data-input="#{menuItem.getInput()}">#{menuItem.getSuggestion()}</p:outputPanel>
+                    </p:dataList>
+                    <!-- Options at the end of overlay panel -->
+                    <p:selectBooleanCheckbox id="showClosedProcesses"
+                                             value="#{ProcessForm.showClosedProcesses}"
+                                             itemLabel="#{msgs.showClosedProcesses}"
+                                             styleClass="switch">
+                        <p:ajax onstart="PF('processesTable').getPaginator().setPage(0);"
+                                update="processesTabView:processesForm,processCount"/>
+                    </p:selectBooleanCheckbox>
+                    <p:selectBooleanCheckbox id="showInactiveProjects"
+                                             value="#{ProcessForm.showInactiveProjects}"
+                                             itemLabel="#{msgs.showInactiveProjects}"
+                                             styleClass="switch">
+                        <p:ajax onstart="PF('processesTable').getPaginator().setPage(0);"
+                                update="processesTabView:processesForm,processCount"/>
+                    </p:selectBooleanCheckbox>
+                </div>
+            </h:form>
+        </div>
+        <h:form id="savedFilters">
+            <p:commandButton id="savedFiltersTrigger" icon="fa fa-chevron-down"/>
+            <p:overlayPanel for="savedFiltersTrigger" id="savedFiltersOverlay" my="right top" at="right bottom">
+                <ul>
+                    <li>
+                        <p:commandButton id="addFilter"
+                                         action="#{ProcessForm.addFilterToUser}"
+                                         icon="fa fa-floppy-o fa-lg"
+                                         value="#{msgs.addFilter}" update="@form"/>
+                    </li>
+                    <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
+                        <li>
+                            <p:commandLink value="#{filter}"
+                                           action="#{ProcessForm.changeFilter(filter)}"
+                                           title="#{filter}"/>
+                            <p:commandLink title="#{msgs.removeFilter}"
+                                           action="#{ProcessForm.removeFilterFromUser(filter)}"
+                                           styleClass="filter-delete plain"
+                                           update="@form">
+                                <i class="fa fa-trash-o fa-lg"/>
+                            </p:commandLink>
+                        </li>
+                    </ui:repeat>
+                </ul>
+            </p:overlayPanel>
+        </h:form>
+    </div>
+    <h:outputScript library="js" name="filter.js" target="body"/>
+</ui:composition>

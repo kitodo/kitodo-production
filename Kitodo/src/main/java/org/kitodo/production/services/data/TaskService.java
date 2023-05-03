@@ -52,6 +52,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
@@ -522,6 +523,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
             finishOrReturnAutomaticTask(task, automatic, executedSuccessful);
         } catch (IOException | DAOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } catch (MediaNotFoundException e) {
+            Helper.setWarnMessage(e.getMessage());
         }
         return executedSuccessful;
     }
@@ -613,7 +616,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      *            as Task object
      */
     public void executeDmsExport(Task task) throws DataException, IOException, DAOException {
-        new ExportDms().startExport(task);
+        new ExportDms(task).startExport(task);
     }
 
     /**

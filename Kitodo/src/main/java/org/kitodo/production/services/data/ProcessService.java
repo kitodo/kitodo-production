@@ -44,6 +44,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -136,7 +137,6 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.exporter.ExportXmlLog;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -169,7 +169,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
-    private final FileService fileService = ServiceManager.getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
     private static final String JSON_TITLE = "title";
@@ -920,6 +920,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
             processDTO.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
             processDTO.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+            processDTO.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
             convertLastProcessingDates(jsonObject, processDTO);
             convertTaskProgress(jsonObject, processDTO);
 
@@ -1626,7 +1627,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return table;
     }
 
-    private DocketInterface initialiseDocketModule() {
+    private static DocketInterface initialiseDocketModule() {
         KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
         return loader.loadModule();
     }
@@ -2004,7 +2005,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            the process to create the docket data for.
      * @return A List of DocketData objects
      */
-    private List<DocketData> getDocketData(List<Process> processes) {
+    private List<DocketData> getDocketData(List<Process> processes) throws IOException {
         List<DocketData> docketData = new ArrayList<>();
         for (Process process : processes) {
             docketData.add(getDocketData(process));
@@ -2019,10 +2020,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            The process to create the docket data for.
      * @return The DocketData for the process.
      */
-    private DocketData getDocketData(Process process) {
+    private static DocketData getDocketData(Process process) throws IOException {
         DocketData docketdata = new DocketData();
 
         docketdata.setCreationDate(process.getCreationDate().toString());
+        URI metadataFilePath = fileService.getMetadataFilePath(process);
+        docketdata.setMetadataFile(fileService.getFile(metadataFilePath).toURI());
+        if (Objects.nonNull(process.getParent())) {
+            docketdata.setParent(getDocketData(process.getParent()));
+        }
         docketdata.setProcessId(process.getId().toString());
         docketdata.setProcessName(process.getTitle());
         docketdata.setProjectName(process.getProject().getTitle());
@@ -2040,7 +2046,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return docketdata;
     }
 
-    private ArrayList<org.kitodo.api.docket.Property> getDocketDataForProperties(List<Property> properties) {
+    private static ArrayList<org.kitodo.api.docket.Property> getDocketDataForProperties(List<Property> properties) {
         ArrayList<org.kitodo.api.docket.Property> propertiesForDocket = new ArrayList<>();
         for (Property property : properties) {
             org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
@@ -2325,7 +2331,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param task Task for which symlinks are removed
      */
     public static void deleteSymlinksFromUserHomes(Task task) {
-        if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+        if (Objects.nonNull(task.getProcessingUser()) && (task.isTypeImagesRead() || task.isTypeImagesWrite())) {
             WebDav webDav = new WebDav();
             try {
                 webDav.uploadFromHome(task.getProcessingUser(), task.getProcess());
@@ -2454,27 +2460,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Create and return String used as tooltip for a given process. Tooltip contains authors, timestamps and messages
-     * of correction comments associated with tasks of the given process.
+     * Retrieve comments for the given process.
      *
      * @param processDTO
      *          process for which the tooltip is created
-     * @return tooltip containing correction messages
+     * @return List containing comments of given process
      *
      * @throws DAOException thrown when process cannot be loaded from database
      */
-    public String createCorrectionMessagesTooltip(ProcessDTO processDTO) throws DAOException {
+    public List<Comment> getComments(ProcessDTO processDTO) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
-                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        return createCommentTooltip(correctionComments);
-    }
-
-    private String createCommentTooltip(List<Comment> comments) {
-        return comments.stream()
-                .map(c -> " - [" + c.getCreationDate() + "] " + c.getAuthor().getFullName() + ": " + c.getMessage()
-                        + " (" + Helper.getTranslation("fixed") + ": " + c.isCorrected() + ")")
-                .collect(Collectors.joining(NEW_LINE_ENTITY));
+        return ServiceManager.getCommentService().getAllCommentsByProcess(process);
     }
 
     /**
@@ -2533,10 +2529,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Starts generation of xml logfile for current process.
      */
     public static void createXML(Process process, User user) throws IOException {
-        ExportXmlLog xmlExport = new ExportXmlLog();
+        DocketInterface xmlExport = initialiseDocketModule();
         String directory = new File(ServiceManager.getUserService().getHomeDirectory(user)).getPath();
         String destination = directory + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_log.xml";
-        xmlExport.startExport(process, destination);
+        xmlExport.exportXmlLog(getDocketData(process), destination);
     }
 
     /**
@@ -2692,8 +2688,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Get template processes.
-     * @return template processes
+     * Get template processes sorted by title.
+     * @return template processes sorted by title
      */
     public List<Process> getTemplateProcesses() throws DataException, DAOException {
         List<Process> templateProcesses = new ArrayList<>();
@@ -2703,6 +2699,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         for (ProcessDTO processDTO : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
             templateProcesses.add(getById(processDTO.getId()));
         }
+        templateProcesses.sort(Comparator.comparing(Process::getTitle));
         return templateProcesses;
     }
 

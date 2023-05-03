@@ -20,16 +20,26 @@
         xmlns:p="http://primefaces.org/ui">
 
     <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
+        <f:viewParam name="id"/>
+        <!--@elvariable id="referer" type="java.lang.String"-->
+        <f:viewParam name="referer"/>
         <!--@elvariable id="templateTaskId" type="int"-->
         <f:viewParam name="templateTaskId"/>
-        <f:viewAction action="#{DataEditorForm.setTemplateTaskId(templateTaskId)}"/>
+        <f:viewAction action="#{DataEditorForm.open(id, referer, templateTaskId)}"/>
+        <f:viewAction action="#{CommentForm.setProcessById(id)}"/>
         <f:viewAction action="#{DataEditorForm.initMetadataEditor()}"/>
-        <f:viewAction action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
+        <f:viewAction
+                action="#{DataEditorForm.structurePanel.setActiveTabs(DataEditorForm.structurePanel.separateMedia ? '0,1' : '0')}"/>
+        <f:importConstants type="org.kitodo.production.forms.dataeditor.StructurePanel" />
     </f:metadata>
     <ui:define name="content">
 
-        <p:remoteCommand name="preserveMetadata"
-                         actionListener="#{DataEditorForm.preserveMetadataPanel()}"/>
+        <h:form id="preserveMetadataForm">
+            <p:remoteCommand id="preserveMetadataCommand"
+                             name="preserveMetadata"
+                             actionListener="#{DataEditorForm.preserveMetadataPanel()}"/>
+        </h:form>
 
         <!--@elvariable id="viewStructure" type="boolean"-->
         <ui:param name="viewStructure" value="#{SecurityAccessController.hasAuthorityToViewProcessStructureData()}"/>
@@ -88,11 +98,15 @@
                                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/structure.xhtml"/>
                                 </h:form>
                             </div>
-                            <div id="verticalResizerFirstColumn"></div>
+                            <h:panelGroup id="verticalResizerFirstColumn"
+                                          layout="block"
+                                          styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'disabled'}"/>
                             <div class="columnHeadingWrapper">
-                                <button id="secondSectionFirstColumnToggler" onclick="toggleSecondSectionFirstColumn()">
-                                    <i class="fa fa-chevron-circle-up fa-lg"/>
-                                </button>
+                                <p:commandButton id="secondSectionFirstColumnToggler"
+                                                 type="button"
+                                                 styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'collapsed'}"
+                                                 icon="fa fa-chevron-circle-up fa-lg"
+                                                 onclick="toggleSecondSectionFirstColumn()"/>
                                 <h:outputText value="#{msgs.comments}"/>
                                 <h:panelGroup id="commentsNumberWrapper">
                                     <h:outputText
@@ -101,9 +115,12 @@
                                             rendered="#{commentsNumber gt 0}"/>
                                 </h:panelGroup>
                             </div>
-                            <div id="commentsPanel" data-min-height="100">
+                            <h:panelGroup layout="block"
+                                          styleClass="#{LoginForm.loggedUser.isShowCommentsByDefault() ? '' : 'collapsed'}"
+                                          id="commentsPanel"
+                                          a:data-min-height="100">
                                 <ui:include src="/WEB-INF/templates/includes/comments/comments.xhtml"/>
-                            </div>
+                            </h:panelGroup>
                         </p:panel>
                     </h:panelGroup>
 
@@ -145,20 +162,23 @@
                             </div>
 
                             <!-- Vertical resizer -->
-                            <div id="verticalResizerSecondColumn"></div>
-
+                            <h:panelGroup id="verticalResizerSecondColumn"
+                                          layout="block"
+                                          styleClass="#{LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'disabled'}"/>
                             <div class="columnHeadingWrapper">
                                 <ui:fragment rendered="#{viewMetadata and viewPagination}">
-                                    <button id="secondSectionSecondColumnToggler" onclick="toggleSecondSectionSecondColumn()">
-                                        <i class="fa fa-chevron-circle-up fa-lg"/>
-                                    </button>
+                                    <p:commandButton id="secondSectionSecondColumnToggler"
+                                                     type="button"
+                                                     styleClass="#{LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'collapsed'}"
+                                                     icon="fa fa-chevron-circle-up fa-lg"
+                                                     onclick="toggleSecondSectionSecondColumn()"/>
                                 </ui:fragment>
                                 <h:outputText value="#{msgs.pagination}"/>
                             </div>
-                            <!-- 'collapsed' class is inverted by javascript function on page load -->
                             <h:panelGroup id="paginationPanel"
-                                          data-min-height="100"
-                                          layout="block" styleClass="#{not viewMetadata ? 'collapsed' : ''}">
+                                          a:data-min-height="100"
+                                          layout="block"
+                                          styleClass="#{viewMetadata and LoginForm.loggedUser.isShowPaginationByDefault() ? '' : 'collapsed'}">
                                 <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/pagination.xhtml"/>
                             </h:panelGroup>
                         </p:panel>
@@ -187,14 +207,18 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null}"
-                                                  value="#{msgs.image} 
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}, 
-                                                         #{msgs.page}
-                                                         #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
+                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType eq 'video/mp4'}"
+                                                  value="#{msgs.video}
+                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                    <h:outputText styleClass="columnHeading"
+                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType ne 'video/mp4'}"
+                                                  value="#{msgs.image}
+                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
+                                                 #{msgs.page}
+                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.lastSelection eq null}"
-                                                  value="#{msgs.notSelected}" />
+                                                  value="#{msgs.notSelected}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>
@@ -223,6 +247,9 @@
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/corruptDataWarning.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/comments/newCommentDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/uploadFile.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataLocked.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/fileReferencesUpdatedDialog.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/dataEditorSettingSavingResult.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
@@ -237,6 +264,7 @@
         <h:outputScript name="js/resize.js" target="body"/>
         <h:outputScript name="js/scroll.js" target="body"/>
         <h:outputScript name="js/metadata_editor.js" target="body"/>
+        <h:outputScript name="js/metadata_editor_unsaved_changes.js" target="head"/>
         <h:outputScript name="js/metadataeditor_jquery-ui_fix.js" />
         <h:outputScript name="js/pf_contextMenu_custom.js" target="body"/>
         <h:outputScript>

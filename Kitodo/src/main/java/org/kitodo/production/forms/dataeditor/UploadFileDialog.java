@@ -39,6 +39,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
@@ -177,7 +178,7 @@ public class UploadFileDialog {
      *
      * @return value of progress
      */
-    public int getProgress() throws NoSuchMetadataFieldException, InvalidImagesException {
+    public int getProgress() throws NoSuchMetadataFieldException, InvalidImagesException, MediaNotFoundException {
         if (generateMediaTasks.stream().anyMatch(emptyTask -> taskBlockedStates.contains(emptyTask.getTaskState()))) {
             PrimeFaces.current().executeScript("PF('progressBar').cancel();");
             updateWorkpiece();
@@ -379,7 +380,7 @@ public class UploadFileDialog {
     /**
      * Reset the progress bar after generating media is completed and update the workpiece.
      */
-    public void updateWorkpiece() throws InvalidImagesException, NoSuchMetadataFieldException {
+    public void updateWorkpiece() throws InvalidImagesException, NoSuchMetadataFieldException, MediaNotFoundException {
         generateMediaTasks.clear();
         addMediaToWorkpiece();
         refresh();
@@ -394,7 +395,7 @@ public class UploadFileDialog {
         progress = 0;
     }
 
-    private void addMediaToWorkpiece() throws InvalidImagesException {
+    private void addMediaToWorkpiece() throws InvalidImagesException, MediaNotFoundException {
         ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(), dataEditor.getWorkpiece());
 
         List<View> views = selectedMedia.stream()

@@ -14,6 +14,7 @@ package org.kitodo.selenium.testframework.pages;
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
+import static org.kitodo.selenium.testframework.Browser.scrollWebElementIntoView;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -21,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
 import org.openqa.selenium.NotFoundException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -31,7 +33,7 @@ public class TasksPage extends Page<TasksPage> {
     private static final String TASK_TABLE = TASKS_TAB_VIEW + ":tasksForm:taskTable";
     private static final String TASK_TABLE_DATA = TASK_TABLE + "_data";
     private static final String TASK_TABLE_HEADER = TASK_TABLE + "_head";
-    private static final String STATUS_FORM = TASKS_TAB_VIEW + ":statusForm";
+    private static final String SUGGESTION_ITEMS = "#filterOptionsForm\\:suggestions .suggestion";
     private static final String WAIT_FOR_FILTER_FORM_MENU = "Wait for filter form menu to open";
     private static final String WAIT_FOR_TASK_TABLE_COLUMN_SORT = "Wait for task table column sort";
 
@@ -47,14 +49,14 @@ public class TasksPage extends Page<TasksPage> {
 
     private WebElement takeTaskLink;
 
-    @FindBy(id = STATUS_FORM + ":taskStatus")
-    private WebElement statusButton;
+    @FindBy(id = "filterInputForm:filterfield")
+    private WebElement filterField;
 
     @SuppressWarnings("unused")
-    @FindBy(id = STATUS_FORM + ":taskStatus_panel")
-    private WebElement taskStatusMenuPanel;
+    @FindBy(id = "filterOptionsFormWrapper")
+    private WebElement filterOptionsMenu;
 
-    @FindBy(css = ".task-filter-panel + .task-filter-panel li:last-child .ui-chkbox")
+    @FindBy(css = "#filterOptionsForm\\:taskStatus tr:last-child .ui-chkbox-box")
     private WebElement inWorkStatusCheckbox;
 
     public TasksPage() {
@@ -87,15 +89,61 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     public void applyFilterShowOnlyOpenTasks() {
-        statusButton.click();
+        filterField.click();
         await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS)
-                .until(() -> taskStatusMenuPanel.isDisplayed());
+                .until(() -> filterOptionsMenu.isDisplayed());
+        scrollWebElementIntoView(inWorkStatusCheckbox);
         inWorkStatusCheckbox.click();
 
         await("Wait for task list to be restricted to open tasks").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
-                .until(() -> statusButton.isEnabled());
+                .until(() -> taskTable.isDisplayed());
+    }
+
+    /**
+     * Input given String 'character' into filter field.
+     * @param character as String
+     */
+    public void typeCharactersIntoFilter(String character) {
+        filterField.click();
+        filterField.sendKeys(character);
+        await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(4, TimeUnit.SECONDS)
+                .atMost(8, TimeUnit.SECONDS)
+                .until(() -> filterOptionsMenu.isDisplayed());
+    }
+
+    /**
+     * Submit filter.
+     */
+    public void submitFilter() {
+        filterField.sendKeys(Keys.RETURN);
+        await("Wait for task list to be filtered").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS)
+                .until(() -> taskTable.isDisplayed());
+    }
+
+    /**
+     * Get suggestions.
+     * @return suggestions as list of WebElement
+     */
+    public List<WebElement> getSuggestions() {
+        return Browser.getDriver().findElements(By.cssSelector(SUGGESTION_ITEMS));
+    }
+
+    /**
+     * Select suggestion with given index 'suggestionIndex'.
+     * @param suggestionIndex index of suggestion to select
+     */
+    public void selectSuggestion(int suggestionIndex) {
+        for (int i = 0; i <= suggestionIndex; i++) {
+            filterField.sendKeys(Keys.ARROW_DOWN);
+        }
+        filterField.sendKeys(Keys.RETURN);
+    }
+
+    public String getFilterInputValue() {
+        return filterField.getAttribute("value");
     }
 
     public int countListedTasks() throws Exception {
@@ -122,7 +170,7 @@ public class TasksPage extends Page<TasksPage> {
     }
 
     /**
-     * Clicks the header of the the n-th column of the task table in order to 
+     * Clicks the header of the the n-th column of the task table in order to
      * trigger sorting tasks by that column.
      */
     public void clickTaskTableColumnHeaderForSorting(int column) {
@@ -143,7 +191,7 @@ public class TasksPage extends Page<TasksPage> {
 
     /**
      * Returns the task title of the first row in the task table.
-     * 
+     *
      * @return the task title
      */
     public String getFirstRowTaskTitle() {
@@ -179,5 +227,5 @@ public class TasksPage extends Page<TasksPage> {
 
         throw new NotFoundException("Row for task title " + searchedTaskTitle + " and process title "
                 + searchedProcessTitle + "was not found!");
-    }    
+    }
 }

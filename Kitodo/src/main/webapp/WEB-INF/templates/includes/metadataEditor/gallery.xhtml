@@ -26,20 +26,18 @@
 
         <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
 
-            <p:remoteCommand 
-                name="triggerOnPageDrop" 
-                actionListener="#{DataEditorForm.galleryPanel.onPageDrop}" 
+            <p:remoteCommand
+                name="triggerOnPageDrop"
+                actionListener="#{DataEditorForm.galleryPanel.onPageDrop}"
                 update="@(.pageList)
                         logicalTree
                         physicalTree
                         paginationForm:paginationWrapperPanel"/>
-            
-            <p:graphicImage id="mediaViewData" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewData}" style="display: none;"/>
 
             <p:remoteCommand name="sendGallerySelect"
                              action="#{DataEditorForm.galleryPanel.select}"
                              update="galleryHeadingWrapper
-                                     imagePreviewForm:mediaViewData
+                                     imagePreviewForm:mediaDetailContainer
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
                                      metadataAccordion:logicalMetadataWrapperPanel"/>
@@ -64,20 +62,9 @@
                     </p:commandButton>
                 </p:column>
                 <p:column>
-                    <p:commandButton id="gridViewButton"
-                                     update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-th-large"
-                                     oncomplete="metadataEditor.shortcuts.updateViews()"
-                                     title="#{msgs['dataEditor.galleryUnstructuredView']}"
-                                     rendered="false"
-                                     styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' ? 'active' : 'inactive'}">
-                        <f:setPropertyActionListener value="grid" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
-                    </p:commandButton>
-                </p:column>
-                <p:column>
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
-                                     icon="fa fa-image"
+                                     icon="fa fa-file"
                                      oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView()"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
@@ -119,30 +106,11 @@
                                          rendered="#{editImages}"
                                          styleClass="page-drop-area"/>
                                 <p:panel id="structuredPagePanel" styleClass="draggableStructurePagePanel">
-                                    <p:outputPanel styleClass="thumbnail-parent">
-                                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, stripe) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, stripe) ? 'last-selection' : ''}"/>
-                                        <p:outputPanel styleClass="thumbnail-container"
-                                                    a:data-order="#{media.order}"
-                                                    a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
-                                                    a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
-                                            <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                            rendered="#{media.showingInPreview}"
-                                                            a:loading="lazy">
-                                                <f:param name="mediaId"
-                                                        value="#{media.id}" />
-                                                <f:param name="process"
-                                                        value="#{DataEditorForm.process.id}"/>
-                                                <f:param name="sessionId"
-                                                        value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                            </p:graphicImage>
-                                            <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
-                                                        rendered="#{media.assignedSeveralTimes}"
-                                                        styleClass="assigned-several-times"/>
-                                            <p:outputPanel class="thumbnail-overlay">
-                                                #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                            </p:outputPanel>
-                                        </p:outputPanel>
-                                    </p:outputPanel>
+                                    <ui:include
+                                            src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
+                                        <ui:param name="uiParamStripeIndex"
+                                                  value="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"/>
+                                    </ui:include>
                                 </p:panel>
                                 <!-- add one last drop area after the last page in a stripe -->
                                 <ui:fragment rendered="#{editImages and stripe.medias.size() ne 0 and  stripe.medias.size() - 1 eq structuredThumbnail.rowIndex}">
@@ -176,28 +144,10 @@
                                              rendered="#{editImages}"
                                              styleClass="page-drop-area"/>
                                     <p:panel id="unstructuredMediaPanel" styleClass="draggableUnstructuredMediaPanel">
-                                        <h:panelGroup id="updateSelectedUnstructuredMediaLink" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, DataEditorForm.galleryPanel.stripes.get(0)) ? 'last-selection' : ''}"/>
-                                            <p:outputPanel styleClass="thumbnail-container"
-                                                           a:data-order="#{media.order}"
-                                                           a:data-stripe="0"
-                                                           a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
-                                                    <!-- only render those pages that are not assigned to a stripe (structure) here! -->
-                                                    <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                    rendered="#{media.showingInPreview}"
-                                                                    a:loading="lazy">
-                                                        <f:param name="mediaId"
-                                                                 value="#{media.id}"/>
-                                                        <f:param name="process"
-                                                                 value="#{DataEditorForm.process.id}"/>
-                                                        <f:param name="sessionId"
-                                                                 value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                                    </p:graphicImage>
-                                                    <p:outputPanel class="thumbnail-overlay">
-                                                        #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                                    </p:outputPanel>
-                                            </p:outputPanel>
-                                        </h:panelGroup>
+                                        <ui:include
+                                                src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml">
+                                            <ui:param name="uiParamStripeIndex" value="0"/>
+                                        </ui:include>
                                     </p:panel>
                                     <!-- add one last drop area after the last page in a stripe -->
                                     <ui:fragment rendered="#{editImages and DataEditorForm.galleryPanel.stripes.get(0).medias.size() ne 0 and DataEditorForm.galleryPanel.stripes.get(0).medias.size() - 1 eq currentMedia.rowIndex}">
@@ -212,47 +162,14 @@
                 </p:fieldset>
             </ui:fragment>
 
-            <!-- Pages in UNstructured view -->
-            <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'grid' and not empty DataEditorForm.galleryPanel.medias}">
-                <div class="thumbnail-wrapper"
-                     a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
-                     a:onmouseup="metadataEditor.gallery.handleMouseUp(event)"
-                     a:ondragstart="metadataEditor.gallery.handleDragStart(event)">
-                    <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
-                               var="media">
-                        <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}">
-                            <p:panel a:data-order="#{media.order}">
-                                <h:panelGroup layout="block" styleClass="thumbnail-container">
-                                        <p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                        rendered="#{media.showingInPreview}"
-                                                        a:loading="lazy">
-                                            <f:param name="id"
-                                                     value="#{media.id}"/>
-                                            <f:param name="process"
-                                                     value="#{DataEditorForm.process.id}"/>
-                                            <f:param name="sessionId"
-                                                     value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                        </p:graphicImage>
-                                    <p:outputPanel class="thumbnail-overlay">
-                                        #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                    </p:outputPanel>
-                                </h:panelGroup>
-                            </p:panel>
-                        </p:outputPanel>
-                    </ui:repeat>
-                </div>
-            </ui:fragment>
-
             <!-- View current page with OpenLayers -->
             <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' and not empty DataEditorForm.galleryPanel.medias}">
                 <!-- OpenLayers Kitodo custom controls -->
-                <h:panelGroup id="olWrapper"
+                <h:panelGroup id="mediaDetailContainer"
                               layout="block"
                               a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
                               a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
-                    <div id="map" class="map">
-                        <i class="fa fa-spinner fa-spin"/>
-                    </div>
+                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail.xhtml"/>
                     <h:panelGroup layout="block" id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">
@@ -260,29 +177,8 @@
                                           layout="block">
                                 <ui:repeat value="#{DataEditorForm.galleryPanel.medias}"
                                            var="media">
-                                    <p:outputPanel>
-                                        <h:panelGroup layout="block" styleClass="thumbnail-parent">
-                                            <p:outputPanel styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{DataEditorForm.galleryPanel.isSelected(media, null) ? 'selected' : ''} #{DataEditorForm.galleryPanel.isLastSelection(media, null) ? 'last-selection' : ''}"/>
-                                            <p:outputPanel layout="block"
-                                                           styleClass="thumbnail-container"
-                                                           a:data-order="#{media.order}"
-                                                           a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
-                                                <h:outputText><p:graphicImage value="#{DataEditorForm.galleryPanel.previewData}"
-                                                                              rendered="#{media.showingInPreview}"
-                                                                              a:loading="lazy">
-                                                    <f:param name="mediaId"
-                                                             value="#{media.id}" />
-                                                    <f:param name="process"
-                                                             value="#{DataEditorForm.process.id}"/>
-                                                    <f:param name="sessionId"
-                                                             value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
-                                                </p:graphicImage></h:outputText>
-                                                <p:outputPanel layout="block" class="thumbnail-overlay">
-                                                    #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-                                                </p:outputPanel>
-                                            </p:outputPanel>
-                                        </h:panelGroup>
-                                    </p:outputPanel>
+                                    <ui:include
+                                            src="/WEB-INF/templates/includes/metadataEditor/partials/media-list.xhtml"/>
                                 </ui:repeat>
                             </h:panelGroup>
                         </div>

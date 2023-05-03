@@ -84,6 +84,15 @@
                 </ui:include>
             </p:tab>
 
+            <p:tab id="metadataEditorSettingsTab"
+                   title="#{msgs['userEdit.metadataEditorSettings']}">
+                   <ui:include src="/WEB-INF/templates/includes/userEdit/metadataEditorSettings.xhtml">
+                       <ui:param name="isEditMode" value="#{isEditMode}" />
+                       <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                       <ui:param name="isViewMode" value="#{isViewMode}" />
+                   </ui:include>
+            </p:tab>
+
             <p:tab id="roleTab" title="#{msgs.roles}">
                 <ui:include src="/WEB-INF/templates/includes/userEdit/roleList.xhtml">
                     <ui:param name="isEditMode" value="#{isEditMode}" />

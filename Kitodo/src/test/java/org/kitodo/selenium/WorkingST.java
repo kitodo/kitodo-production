@@ -156,7 +156,7 @@ public class WorkingST extends BaseTestSelenium {
 
     @Test
     public void editMetadataTest() throws Exception {
-        processesPage.goTo().editMetadata();
+        processesPage.goTo().editSecondProcessMetadata();
         assertTrue("Redirection after click edit metadata was not successful", Pages.getMetadataEditorPage().isAt());
     }
 

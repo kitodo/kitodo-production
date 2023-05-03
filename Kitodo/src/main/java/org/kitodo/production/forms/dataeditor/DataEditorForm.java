@@ -28,11 +28,13 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import javax.enterprise.context.SessionScoped;
+import javax.annotation.PreDestroy;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -52,6 +54,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
@@ -61,11 +64,12 @@ import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
+import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.TreeNode;
 
 @Named("DataEditorForm")
-@SessionScoped
+@ViewScoped
 public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupInterface, Serializable {
 
     private static final Logger logger = LogManager.getLogger(DataEditorForm.class);
@@ -191,6 +195,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private boolean folderConfigurationComplete = false;
 
+    private int numberOfScans = 0;
+    private String errorMessage;
+
+    @Inject
+    private MediaProvider mediaProvider;
+    private boolean mediaUpdated = false;
+
     /**
      * Public constructor.
      */
@@ -209,8 +220,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Checks if the process is correctly set. Otherwise redirect to desktop,
-     * because metadataeditor doesn't work without a process.
+     * Checks if the process is correctly set. Otherwise, redirect to desktop,
+     * because metadata editor doesn't work without a process.
      */
     public void initMetadataEditor() {
         if (Objects.isNull(process)) {
@@ -221,6 +232,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 context.getExternalContext().redirect(path);
             } catch (IOException e) {
                 Helper.setErrorMessage("noProcessSelected");
+            }
+        } else {
+            if (mediaUpdated) {
+                PrimeFaces.current().executeScript("PF('fileReferencesUpdatedDialog').show();");
             }
         }
     }
@@ -233,38 +248,47 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @param referringView
      *            JSF page the user came from
      */
-    public String open(String processID, String referringView) {
+    public void open(String processID, String referringView, String taskId) {
         try {
             this.referringView = referringView;
             this.process = ServiceManager.getProcessService().getById(Integer.parseInt(processID));
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
             this.checkProjectFolderConfiguration();
+            if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
+                this.templateTaskId = Integer.parseInt(taskId);
+            }
             this.loadDataEditorSettings();
+            errorMessage = "";
 
             User blockedUser = MetadataLock.getLockUser(process.getId());
             if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
-                Helper.setErrorMessage("blocked", blockedUser.getFullName());
-                return referringView;
+                errorMessage = Helper.getTranslation("blocked");
             }
-
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
-            openMetsFile();
+            try {
+                mediaUpdated = openMetsFile();
+            } catch (MediaNotFoundException e) {
+                mediaUpdated = false;
+                Helper.setWarnMessage(e.getMessage());
+            }
             if (!workpiece.getId().equals(process.getId().toString())) {
-                Helper.setErrorMessage("metadataConfusion", process.getId(), workpiece.getId());
-                return referringView;
+                errorMessage = Helper.getTranslation("metadataConfusion", String.valueOf(process.getId()),
+                        workpiece.getId());
             }
             selectedMedia = new LinkedList<>();
             unsavedUploadedMedia = new ArrayList<>();
             init();
-            MetadataLock.setLocked(process.getId(), user);
+            if (Objects.isNull(errorMessage) || errorMessage.isEmpty()) {
+                MetadataLock.setLocked(process.getId(), user);
+            } else {
+                PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
+            }
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return referringView;
         }
-        return "/pages/metadataEditor?faces-redirect=true";
     }
 
     private void checkProjectFolderConfiguration() {
@@ -301,7 +325,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @throws IOException
      *             if filesystem I/O fails
      */
-    private void openMetsFile() throws IOException, InvalidImagesException {
+    private boolean openMetsFile() throws IOException, InvalidImagesException, MediaNotFoundException {
         mainFileUri = ServiceManager.getProcessService().getMetadataFileUri(process);
         workpiece = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
         workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
@@ -309,7 +333,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
         }
-        ServiceManager.getFileService().searchForMedia(process, workpiece);
+        setNumberOfScans(workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES));
+        return ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
     private void init() {
@@ -324,6 +349,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         structurePanel.getSelectedPhysicalNode().setSelected(true);
         metadataPanel.showLogical(getSelectedStructure());
         metadataPanel.showPhysical(getSelectedPhysicalDivision());
+        galleryPanel.setGalleryViewMode(GalleryViewMode.getByName(user.getDefaultGalleryViewMode()).name());
         galleryPanel.show();
         paginationPanel.show();
 
@@ -340,7 +366,20 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      *
      * @return the referring view, to return there
      */
-    public String close() {
+    public String closeAndReturn() {
+        if (referringView.contains("?")) {
+            return referringView + "&faces-redirect=true";
+        } else {
+            return referringView + "?faces-redirect=true";
+        }
+    }
+
+    /**
+     * Close method called before destroying ViewScoped DataEditorForm bean instance. Cleans up various properties
+     * and releases metadata lock of current process if current user equals user of metadata lock.
+     */
+    @PreDestroy
+    public void close() {
         deleteNotSavedUploadedMedia();
         unsavedDeletedMedia.clear();
         metadataPanel.clear();
@@ -351,14 +390,17 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         ruleset = null;
         currentChildren.clear();
         selectedMedia.clear();
-        MetadataLock.setFree(process.getId());
+        if (!FacesContext.getCurrentInstance().isPostback()) {
+            mediaProvider.resetMediaResolverForProcess(process.getId());
+        }
+        // do not unlock process if this locked process was opened by a different user opening editor
+        // directly via URL bookmark and 'preDestroy' method was being triggered redirecting him to desktop page
+        if (this.user.equals(MetadataLock.getLockUser(process.getId()))) {
+            MetadataLock.setFree(process.getId());
+        }
         process = null;
         user = null;
-        if (referringView.contains("?")) {
-            return referringView + "&faces-redirect=true";
-        } else {
-            return referringView + "?faces-redirect=true";
-        }
+        mediaUpdated = false;
     }
 
     private void deleteUnsavedDeletedMedia() {
@@ -454,10 +496,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 unsavedUploadedMedia.clear();
                 deleteUnsavedDeletedMedia();
                 if (close) {
-                    return close();
+                    return closeAndReturn();
                 } else {
                     PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                             + Helper.getTranslation("metadataSaved") + "','severity':'info'})");
+                    workpieceOriginalState = ServiceManager.getMetsService().loadWorkpiece(mainFileUri);
+                    PrimeFaces.current().executeScript("setUnsavedChanges(false);");
                 }
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -686,7 +730,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     /**
      * Checks and returns if consecutive physical divisions in one structure element are selected or not.
-     * 
+     *
      * <p>Note: This method is called potentially thousands of times when rendering large galleries.</p>
      */
     public boolean consecutivePagesSelected() {
@@ -696,17 +740,17 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         int maxOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).max().orElseThrow(NoSuchElementException::new);
         int minOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).min().orElseThrow(NoSuchElementException::new);
 
-        // Check whether the set of selected media all belong to the same logical division, otherwise the selection 
-        // is not consecutive. However, do not use stream().distinct(), which will do pairwise comparisons, which is 
-        // slow for large amounts of selected images. Instead, just check whether the first logical division matches 
+        // Check whether the set of selected media all belong to the same logical division, otherwise the selection
+        // is not consecutive. However, do not use stream().distinct(), which will do pairwise comparisons, which is
+        // slow for large amounts of selected images. Instead, just check whether the first logical division matches
         // all others in a simple loop.
-        Boolean theSameLogicalDivisions = true;
-        LogicalDivision firstSelectedMediaLogicalDivison = null;
+        boolean theSameLogicalDivisions = true;
+        LogicalDivision firstSelectedMediaLogicalDivision = null;
         for (Pair<PhysicalDivision, LogicalDivision> pair : selectedMedia) {
-            if (Objects.isNull(firstSelectedMediaLogicalDivison)) {
-                firstSelectedMediaLogicalDivison = pair.getRight();
+            if (Objects.isNull(firstSelectedMediaLogicalDivision)) {
+                firstSelectedMediaLogicalDivision = pair.getRight();
             } else {
-                if (!Objects.equals(firstSelectedMediaLogicalDivison, pair.getRight())) {
+                if (!Objects.equals(firstSelectedMediaLogicalDivision, pair.getRight())) {
                     theSameLogicalDivisions = false;
                     break;
                 }
@@ -894,7 +938,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void checkForChanges() {
         if (Objects.nonNull(PrimeFaces.current())) {
             boolean unsavedChanges = !this.workpiece.equals(workpieceOriginalState);
-            PrimeFaces.current().executeScript("setConfirmUnload(" + unsavedChanges + ");");
+            PrimeFaces.current().executeScript("setUnsavedChanges(" + unsavedChanges + ");");
         }
     }
 
@@ -922,15 +966,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Set templateTaskId.
-     *
-     * @param templateTaskId as int
-     */
-    public void setTemplateTaskId(int templateTaskId) {
-        this.templateTaskId = templateTaskId;
-    }
-
-    /**
      * Get dataEditorSetting.
      *
      * @return value of dataEditorSetting
@@ -949,12 +984,31 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
+     * Gets numberOfScans.
+     *
+     * @return value of numberOfScans
+     */
+    public int getNumberOfScans() {
+        return numberOfScans;
+    }
+
+    /**
+     * Sets numberOfScans.
+     *
+     * @param numberOfScans value of numberOfScans
+     */
+    public void setNumberOfScans(int numberOfScans) {
+        this.numberOfScans = numberOfScans;
+    }
+
+    /**
      * Save current metadata editor layout.
      */
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             }
@@ -1008,5 +1062,41 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(treeNode);
+    }
+
+    /**
+     * Get errorMessage.
+     *
+     * @return value of errorMessage
+     */
+    public String getErrorMessage() {
+        return errorMessage;
+    }
+
+    /**
+     * Get mediaProvider.
+     *
+     * @return value of mediaProvider
+     */
+    public MediaProvider getMediaProvider() {
+        return mediaProvider;
+    }
+
+    /**
+     * Get mediaUpdated.
+     *
+     * @return value of mediaUpdated
+     */
+    public boolean isMediaUpdated() {
+        return mediaUpdated;
+    }
+
+    /**
+     * Set mediaUpdated.
+     *
+     * @param mediaUpdated as boolean
+     */
+    public void setMediaUpdated(boolean mediaUpdated) {
+        this.mediaUpdated = mediaUpdated;
     }
 }

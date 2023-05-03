@@ -129,13 +129,18 @@
                                                     <f:param name="referer" value="processes"/>
                                                     <f:param name="id" value="#{parent.id}"/>
                                                 </h:link>
-                                                <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes')}"
-                                                               styleClass="action"
-                                                               title="#{msgs.metadataEdit}"
-                                                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
-                                                    <f:actionListener binding="#{CommentForm.setProcessById(parent.id)}"/>
-                                                    <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
-                                                </h:commandLink>
+                                                <h:panelGroup styleClass="action"
+                                                              title="#{MetadataLock.isLocked(parent.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(parent.id).fullName) : msgs['metadataEdit']}">
+                                                    <h:link id="editMetadata"
+                                                            outcome="metadataEditor"
+                                                            disabled="#{MetadataLock.isLocked(parent.id)}"
+                                                            styleClass="#{MetadataLock.isLocked(parent.id) ? 'ui-state-disabled' : ''}"
+                                                            rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                                                        <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
+                                                        <f:param name="id" value="#{parent.id}"/>
+                                                        <f:param name="referer" value="processes"/>
+                                                    </h:link>
+                                                </h:panelGroup>
                                             </p:column>
                                         </p:dataTable>
                                         <h:outputText value="#{msgs.none}"

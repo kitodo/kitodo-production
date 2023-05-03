@@ -16,7 +16,8 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:panelGrid columns="2" layout="grid">
+    <p:panelGrid columns="2"
+                 layout="grid">
         <p:row>
             <div>
                 <p:outputLabel for="defaultImportConfiguration"
@@ -36,10 +37,37 @@
                     <p:ajax event="change"
                             oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-                <p:commandButton id="defaultConfigurationHelp" type="button"
-                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:commandButton id="defaultConfigurationHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
                 <p:tooltip for="defaultConfigurationHelp"
-                           value="The default configuration will be preselected when creating a new process for this project"/>
+                           value="#{msgs['tooltip.project.defaultImportConfiguration']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="defaultChildProcessImportConfiguration"
+                               value="#{msgs['importConfig.defaultChildProcessConfiguration']}"/>
+                <p:selectOneMenu id="defaultChildProcessImportConfiguration"
+                                 styleClass="input-with-button"
+                                 disabled="#{ProjectForm.locked}"
+                                 converter="#{importConfigurationConverter}"
+                                 value="#{ProjectForm.project.defaultChildProcessImportConfiguration}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectDefaultConfiguration']}"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{ProjectForm.importConfigurations}"
+                                   var="importConfig"
+                                   itemValue="#{importConfig}"
+                                   itemLabel="#{importConfig.title}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="defaultChildProcessConfigurationHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultChildProcessConfigurationHelp"
+                           value="#{msgs['tooltip.project.defaultChildProcessImportConfiguration']}"/>
             </div>
         </p:row>
     </p:panelGrid>
