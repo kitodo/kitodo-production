@@ -610,7 +610,7 @@ public enum ParameterCore implements ParameterInterface {
 
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
 
-    ACTIVE_MQ_STEP_STATE_QUEUE(new Parameter<UndefinedParameter>("activeMQ.stepState.queue")),
+    ACTIVE_MQ_TASK_STATE_QUEUE(new Parameter<UndefinedParameter>("activeMQ.taskState.queue")),
 
     ACTIVE_MQ_USER(new Parameter<UndefinedParameter>("activeMQ.user")),
 

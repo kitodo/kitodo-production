@@ -47,7 +47,7 @@ public class TaskStateProcessor extends ActiveMQProcessor {
      * this service.
      */
     public TaskStateProcessor() {
-        super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_STEP_STATE_QUEUE).orElse(null));
+        super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_TASK_STATE_QUEUE).orElse(null));
     }
 
     /**
