@@ -57,7 +57,7 @@ public class ActiveMQDirector implements Runnable, ServletContextListener {
     private static Collection<? extends ActiveMQProcessor> services;
 
     static {
-        services = Arrays.asList(new FinalizeStepProcessor(), new TaskStateProcessor());
+        services = Arrays.asList(new FinalizeStepProcessor(), new TaskStatusChangeProcessor());
     }
 
     private static Connection connection = null;

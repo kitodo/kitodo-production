@@ -363,10 +363,12 @@ public class WorkflowControllerService {
         taskService.save(currentTask);
 
         Task correctionTask = comment.getCorrectionTask();
-        correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        correctionTask.setProcessingEnd(null);
-        correctionTask.setCorrection(true);
-        taskService.save(correctionTask);
+        if ( Objects.isNull(correctionTask) ) {
+            correctionTask.setProcessingStatus(TaskStatus.OPEN);
+            correctionTask.setProcessingEnd(null);
+            correctionTask.setCorrection(true);
+            taskService.save(correctionTask);
+        }
 
         lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
         updateProcessSortHelperStatus(currentTask.getProcess());

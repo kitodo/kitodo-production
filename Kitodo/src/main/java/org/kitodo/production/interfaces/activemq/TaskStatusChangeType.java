@@ -11,7 +11,7 @@
 
 package org.kitodo.production.interfaces.activemq;
 
-public enum TaskState {
+public enum TaskStatusChangeType {
     INFO,
     ERROR_OPEN,
     ERROR_CLOSE,
