@@ -65,7 +65,7 @@
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
         <junit.version>5.9.2</junit.version>
-        <elasticsearch.version>7.17.7</elasticsearch.version>
+        <elasticsearch.version>7.17.8</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
