@@ -77,6 +77,7 @@ public class ExportDmsTask extends EmptyTask {
         try {
             exportSuccessful = exportDms.startExport(process, this);
             Task workflowTask = exportDms.getWorkflowTask();
+            // close only the task of the original process and not of other processes (parent process, other child processes)
             if (Objects.nonNull(workflowTask)
                     && workflowTask.getProcess().getId().equals(process.getId())
                     && exportSuccessful) {
