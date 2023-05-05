@@ -13,6 +13,7 @@ package org.kitodo.production.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Project DTO object.
@@ -223,9 +224,9 @@ public class ProjectDTO extends BaseDTO {
     }
 
     /**
-     * Get list of templates.
+     * Get list of active templates.
      *
-     * @return list of templates as TemplateDTO
+     * @return list of active templates as TemplateDTO
      */
     public List<TemplateDTO> getTemplates() {
         return templates;

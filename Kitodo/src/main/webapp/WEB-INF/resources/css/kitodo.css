@@ -1785,7 +1785,7 @@ Mass import
     color: var(--medium-gray);
 }
 
-.task-filter-panel.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
+.filter-panel.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
     overflow-y: hidden;
 }
 
@@ -1793,7 +1793,7 @@ Mass import
     margin-right: var(--default-full-size);
 }
 
-#tasksTabView\:filterForm .ui-selectcheckboxmenu-label,
+.filter-form .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
 #tasksTabView\:statusForm .ui-selectcheckboxmenu-label {
     padding-right: var(--input-height);
 }
