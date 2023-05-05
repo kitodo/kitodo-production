@@ -349,28 +349,27 @@ public class WorkflowControllerService {
      *
      * @param comment as Comment object
      */
-    public void reportProblem(Comment comment) throws DataException {
+    public void reportProblem(Comment comment, TaskEditType taskEditType) throws DataException {
         Task currentTask = comment.getCurrentTask();
         if (currentTask.isTypeImagesRead() || currentTask.isTypeImagesWrite()) {
             this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
         }
         Date date = new Date();
         currentTask.setProcessingStatus(TaskStatus.LOCKED);
-        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        currentTask.setEditType(taskEditType);
         currentTask.setProcessingTime(date);
         taskService.replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
         taskService.save(currentTask);
 
         Task correctionTask = comment.getCorrectionTask();
-        if ( Objects.isNull(correctionTask) ) {
+        if ( Objects.nonNull(correctionTask) ) {
             correctionTask.setProcessingStatus(TaskStatus.OPEN);
             correctionTask.setProcessingEnd(null);
             correctionTask.setCorrection(true);
             taskService.save(correctionTask);
+            lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
         }
-
-        lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
 

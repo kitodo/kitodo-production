@@ -40,7 +40,7 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 /**
  * This is a web service interface to modify task states.
  */
-public class TaskStatusChangeProcessor extends ActiveMQProcessor {
+public class TaskActionProcessor extends ActiveMQProcessor {
 
     private final TaskService taskService = ServiceManager.getTaskService();
 
@@ -49,8 +49,8 @@ public class TaskStatusChangeProcessor extends ActiveMQProcessor {
      * “null” is passed to the super constructor, this will prevent ActiveMQDirector.registerListeners() from starting
      * this service.
      */
-    public TaskStatusChangeProcessor() {
-        super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_TASK_STATE_QUEUE).orElse(null));
+    public TaskActionProcessor() {
+        super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_TASK_ACTION_QUEUE).orElse(null));
     }
 
     /**
@@ -65,21 +65,24 @@ public class TaskStatusChangeProcessor extends ActiveMQProcessor {
     protected void process(MapMessageObjectReader mapMessageObjectReader) throws ProcessorException, JMSException {
         CurrentTaskForm currentTaskForm = new CurrentTaskForm();
         Integer taskId = mapMessageObjectReader.getMandatoryInteger("id");
-        String state = mapMessageObjectReader.getMandatoryString("type");
-        TaskStatusChangeType taskStatusChangeType;
+        String state = mapMessageObjectReader.getMandatoryString("action");
+        TaskAction taskAction;
         try {
-            taskStatusChangeType = TaskStatusChangeType.valueOf(state);
+            taskAction = TaskAction.valueOf(state);
         } catch (IllegalArgumentException e) {
-            throw new ProcessorException("Unknown task state: " + state);
+            throw new ProcessorException("Unknown task state " + state);
         }
 
         try {
             Task currentTask = taskService.getById(taskId);
+            if (Objects.isNull(currentTask)) {
+                throw new ProcessorException("Task with id " + taskId + "not found.");
+            }
+
             currentTaskForm.setCurrentTask(currentTask);
             Comment comment = new Comment();
             comment.setProcess(currentTaskForm.getCurrentTask().getProcess());
             comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
-
             String message = mapMessageObjectReader.getMandatoryString("message");
             comment.setMessage(message);
             comment.setCreationDate(new Date());
@@ -87,16 +90,23 @@ public class TaskStatusChangeProcessor extends ActiveMQProcessor {
             comment.setCurrentTask(currentTask);
 
             User currentUser = ServiceManager.getUserService().getCurrentUser();
-            if (TaskStatusChangeType.PROCESS.equals(taskStatusChangeType)) {
+            if (TaskAction.PROCESS.equals(taskAction)) {
                 if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus())) {
                     throw new ProcessorException("Status of task is not OPEN.");
                 }
-                processTaskStateProcess(currentTask, currentUser);
-            } else if (TaskStatusChangeType.ERROR_OPEN.equals(taskStatusChangeType)) {
-                processTaskStateErrorOpen(mapMessageObjectReader, comment);
-            } else if (TaskStatusChangeType.ERROR_CLOSE.equals(taskStatusChangeType)) {
-                processTaskStateErrorClose(mapMessageObjectReader, currentTask, currentUser);
-            } else if (TaskStatusChangeType.CLOSE.equals(taskStatusChangeType)) {
+                actionProcess(currentTask, currentUser);
+            } else if (TaskAction.ERROR_OPEN.equals(taskAction)) {
+                if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus()) && !TaskStatus.INWORK.equals(
+                        currentTask.getProcessingStatus())) {
+                    throw new ProcessorException("Status of task is not OPEN or INWORK.");
+                }
+                actionErrorOpen(mapMessageObjectReader, comment);
+            } else if (TaskAction.ERROR_CLOSE.equals(taskAction)) {
+                if (!TaskStatus.LOCKED.equals(currentTask.getProcessingStatus())) {
+                    throw new ProcessorException("Status of task is not LOCKED.");
+                }
+                actionErrorClose(mapMessageObjectReader, currentTask, currentUser);
+            } else if (TaskAction.CLOSE.equals(taskAction)) {
                 currentTaskForm.closeTaskByUser();
             }
 
@@ -107,26 +117,28 @@ public class TaskStatusChangeProcessor extends ActiveMQProcessor {
                 // update tasks in elastic search index, which includes correction comment status
                 taskService.saveToIndex(task, true);
             }
-
         } catch (DataException | DAOException | CustomResponseException | IOException e) {
             throw new ProcessorException(e);
         }
     }
 
-    private void processTaskStateErrorOpen(MapMessageObjectReader mapMessageObjectReader, Comment comment)
-            throws JMSException, DataException, DAOException {
+    private void actionErrorOpen(MapMessageObjectReader mapMessageObjectReader, Comment comment)
+            throws ProcessorException, JMSException, DAOException, DataException {
         if (mapMessageObjectReader.hasField("correctionTaskId")) {
-            Integer correctionTaskId = Integer.parseInt(mapMessageObjectReader.getString("correctionTaskId"));
+            Integer correctionTaskId = mapMessageObjectReader.getMandatoryInteger("correctionTaskId");
             Task correctionTask = taskService.getById(correctionTaskId);
+            if (Objects.isNull(correctionTask)) {
+                throw new ProcessorException("Correction task with id " + correctionTaskId + " not found.");
+            }
             comment.setCorrectionTask(correctionTask);
         }
         comment.setType(CommentType.ERROR);
-        new WorkflowControllerService().reportProblem(comment);
+        new WorkflowControllerService().reportProblem(comment, TaskEditType.QUEUE);
     }
 
-    private void processTaskStateProcess(Task currentTask, User currentUser) throws DataException {
+    private void actionProcess(Task currentTask, User currentUser) throws DataException {
         currentTask.setProcessingStatus(TaskStatus.INWORK);
-        currentTask.setEditType(TaskEditType.AUTOMATIC);
+        currentTask.setEditType(TaskEditType.QUEUE);
         currentTask.setProcessingTime(new Date());
         taskService.replaceProcessingUser(currentTask, currentUser);
         if (Objects.isNull(currentTask.getProcessingBegin())) {
@@ -135,7 +147,7 @@ public class TaskStatusChangeProcessor extends ActiveMQProcessor {
         }
     }
 
-    private void processTaskStateErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask,
+    private void actionErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask,
             User currentUser) throws JMSException, DataException {
         List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByCurrentTask(currentTask);
         Optional<Comment> optionalComment;
@@ -149,18 +161,19 @@ public class TaskStatusChangeProcessor extends ActiveMQProcessor {
                     currentTaskComment.getType()) && !currentTaskComment.isCorrected() && Objects.isNull(
                     currentTaskComment.getCorrectionTask())).findFirst();
         }
-        if (optionalComment.isPresent()) {
+
+        if (!optionalComment.isEmpty()) {
             CommentForm commentForm = new CommentForm();
             commentForm.solveProblem(optionalComment.get());
-
-            currentTask.setProcessingStatus(TaskStatus.OPEN);
-            currentTask.setEditType(TaskEditType.AUTOMATIC);
-            currentTask.setProcessingBegin(null);
-            currentTask.setProcessingTime(null);
-
-            taskService.replaceProcessingUser(currentTask, currentUser);
-            taskService.save(currentTask);
         }
+
+        currentTask.setProcessingStatus(TaskStatus.OPEN);
+        currentTask.setEditType(TaskEditType.QUEUE);
+        currentTask.setProcessingBegin(null);
+        currentTask.setProcessingTime(null);
+
+        taskService.replaceProcessingUser(currentTask, currentUser);
+        taskService.save(currentTask);
     }
 
 }

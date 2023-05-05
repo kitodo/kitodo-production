@@ -27,6 +27,7 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
@@ -159,7 +160,7 @@ public class CommentForm extends BaseForm {
      */
     private void reportProblem(Comment comment) {
         try {
-            this.workflowControllerService.reportProblem(comment);
+            this.workflowControllerService.reportProblem(comment, TaskEditType.MANUAL_SINGLE);
         } catch (DataException e) {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }

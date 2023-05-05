@@ -11,10 +11,29 @@
 
 package org.kitodo.production.interfaces.activemq;
 
-public enum TaskStatusChangeType {
-    INFO,
+public enum TaskAction {
+    /**
+     * Adds a comment to the task.
+     */
+    COMMENT,
+
+    /**
+     * Lock a task and add an error comment when task status is OPEN or INWORK.
+     */
     ERROR_OPEN,
+
+    /**
+     * Set task status of logged task to OPEN.
+     */
     ERROR_CLOSE,
+
+    /**
+     * Set task status of open task to INWORK.
+     */
     PROCESS,
+
+    /**
+     * Close a task
+     */
     CLOSE
 }
