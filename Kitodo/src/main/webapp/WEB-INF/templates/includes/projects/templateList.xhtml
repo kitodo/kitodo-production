@@ -60,6 +60,19 @@
                           title="#{item.ruleset.title}"/>
         </p:column>
 
+        <p:column headerText="#{msgs.active}"
+                  styleClass="checkboxColumn"
+                  sortBy="#{item.active}">
+            <h:outputText>
+                <ui:fragment rendered="#{item.isActive()}">
+                    <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+                </ui:fragment>
+                <ui:fragment rendered="#{not item.isActive()}">
+                    <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
+                </ui:fragment>
+            </h:outputText>
+        </p:column>
+
         <p:column headerText="#{msgs.actions}"
                   resizable="false"
                   width="115"
@@ -68,11 +81,11 @@
                 <h:form id="templateActionForm">
 
                     <h:panelGroup styleClass="action"
-                                  title="#{item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
+                                  title="#{item.isActive() and item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
                         <p:commandLink id="createProcessFromTemplate"
                                        actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
                                        action="#{SelectProjectDialogView.createProcessFromTemplate()}"
-                                       disabled="#{item.projects.size() lt 1}"
+                                       disabled="#{item.projects.size() lt 1 or not item.active}"
                                        rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                             <f:setPropertyActionListener value="0" target="#{SelectProjectDialogView.selectedProjectId}"/>
                             <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
@@ -162,7 +175,7 @@
                                                       title="#{project.title}"
                                                       styleClass="expansion-list-item-title"/>
                                         <h:panelGroup class="expansion-list-item-actions">
-                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and item.isActive()}">
                                                 <h:link id="createProcess"
                                                         outcome="/pages/processFromTemplate?faces-redirect=true"
                                                         styleClass="action"
