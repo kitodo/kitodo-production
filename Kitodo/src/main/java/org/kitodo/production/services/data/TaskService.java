@@ -572,6 +572,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
                 new WorkflowControllerService().close(task);
             } else {
                 task.setProcessingStatus(TaskStatus.OPEN);
+                save(task);
             }
         }
     }

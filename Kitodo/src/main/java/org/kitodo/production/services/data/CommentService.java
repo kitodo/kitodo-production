@@ -72,6 +72,13 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
         return dao.getAllByProcess(process);
     }
 
+    /**
+     * Get all comments by task ordered by id ascending.
+     *
+     * @param task
+     *         The current task to get the comments for
+     * @return List of comments
+     */
     public List<Comment> getAllCommentsByTask(Task task) {
         return dao.getAllByTask(task);
     }
