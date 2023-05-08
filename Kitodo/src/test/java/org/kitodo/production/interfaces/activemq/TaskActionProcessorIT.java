@@ -183,7 +183,7 @@ public class TaskActionProcessorIT {
         String message = "Process action " +  taskAction.name();
         processAction(task.getId(), taskAction.name(), message);
 
-        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByCurrentTask(task);
+        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(task);
         assertEquals("Comment should be created!", 1, comments.size());
         assertEquals("Comment message should be '" + message + "'!", message, comments.get(0).getMessage());
     }

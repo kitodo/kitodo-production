@@ -55,11 +55,17 @@ public class CommentDAO extends BaseDAO<Comment> {
                 Collections.singletonMap("processId", process.getId()));
     }
 
-    public List<Comment> getAllByCurrentTask(Task task) {
+    /**
+     * Get all comments by task ordered by id ascending.
+     *
+     * @param task
+     *         The current task to get the comments for
+     * @return List of comments
+     */
+    public List<Comment> getAllByTask(Task task) {
         return getByQuery("FROM Comment WHERE currentTask_id = :taskId ORDER BY id ASC",
                 Collections.singletonMap("taskId", task.getId()));
     }
-
 
     /**
      * Save list of comments.

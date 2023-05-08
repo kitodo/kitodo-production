@@ -72,8 +72,8 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
         return dao.getAllByProcess(process);
     }
 
-    public List<Comment> getAllCommentsByCurrentTask(Task task) {
-        return dao.getAllByCurrentTask(task);
+    public List<Comment> getAllCommentsByTask(Task task) {
+        return dao.getAllByTask(task);
     }
 
     /**

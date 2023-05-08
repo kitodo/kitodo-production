@@ -182,7 +182,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
 
     private void closeCorrectionTask(Task currentTask, Integer correctionTaskId)
             throws DAOException, DataException, IOException {
-        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByCurrentTask(currentTask);
+        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(currentTask);
         Optional<Comment> optionalComment;
         optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
                 currentTaskComment.getType()) && !currentTaskComment.isCorrected() && correctionTaskId.equals(
