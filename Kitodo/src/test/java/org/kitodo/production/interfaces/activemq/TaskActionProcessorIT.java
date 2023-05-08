@@ -21,6 +21,7 @@ import java.util.List;
 
 import javax.jms.JMSException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
@@ -144,6 +145,12 @@ public class TaskActionProcessorIT {
         processAction(task, TaskAction.ERROR_OPEN);
     }
 
+    @Test(expected = ProcessorException.class)
+    public void testActionErrorOpenWithoutMessage() throws Exception {
+        Task task = taskService.getById(10);
+        processAction(task.getId(), TaskAction.ERROR_OPEN.name(), StringUtils.EMPTY);
+    }
+
     @Test
     public void testActionErrorClose() throws Exception {
         Task task = taskService.getById(10);
@@ -186,7 +193,10 @@ public class TaskActionProcessorIT {
         MapMessageObjectReader mapMessageObjectReader = mock(MapMessageObjectReader.class);
         when(mapMessageObjectReader.getMandatoryInteger("id")).thenReturn(taskId);
         when(mapMessageObjectReader.getMandatoryString("action")).thenReturn(action);
-        when(mapMessageObjectReader.getMandatoryString("message")).thenReturn(message);
+        if(StringUtils.isNotEmpty(message)) {
+            when(mapMessageObjectReader.hasField("message")).thenReturn(Boolean.TRUE);
+            when(mapMessageObjectReader.getMandatoryString("message")).thenReturn(message);
+        }
         taskActionProcessor.process(mapMessageObjectReader);
     }
 }

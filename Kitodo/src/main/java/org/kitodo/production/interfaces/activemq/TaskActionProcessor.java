@@ -31,8 +31,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessorException;
-import org.kitodo.production.forms.CommentForm;
-import org.kitodo.production.forms.CurrentTaskForm;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -42,7 +40,12 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
  */
 public class TaskActionProcessor extends ActiveMQProcessor {
 
+    public static final String KEY_CORRECTION_TASK_ID = "correctionTaskId";
+    public static final String KEY_MESSAGE = "message";
+    public static final String KEY_TASK_ACTION = "action";
+    public static final String KEY_TASK_ID = "id";
     private final TaskService taskService = ServiceManager.getTaskService();
+    private WorkflowControllerService workflowControllerService;
 
     /**
      * The default constructor looks up the queue name to use in kitodo_config.properties. If that is not configured and
@@ -51,6 +54,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
      */
     public TaskActionProcessor() {
         super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_TASK_ACTION_QUEUE).orElse(null));
+        workflowControllerService = new WorkflowControllerService();
     }
 
     /**
@@ -63,9 +67,8 @@ public class TaskActionProcessor extends ActiveMQProcessor {
      */
     @Override
     protected void process(MapMessageObjectReader mapMessageObjectReader) throws ProcessorException, JMSException {
-        CurrentTaskForm currentTaskForm = new CurrentTaskForm();
-        Integer taskId = mapMessageObjectReader.getMandatoryInteger("id");
-        String state = mapMessageObjectReader.getMandatoryString("action");
+        Integer taskId = mapMessageObjectReader.getMandatoryInteger(KEY_TASK_ID);
+        String state = mapMessageObjectReader.getMandatoryString(KEY_TASK_ACTION);
         TaskAction taskAction;
         try {
             taskAction = TaskAction.valueOf(state);
@@ -79,38 +82,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
                 throw new ProcessorException("Task with id " + taskId + "not found.");
             }
 
-            currentTaskForm.setCurrentTask(currentTask);
-            Comment comment = new Comment();
-            comment.setProcess(currentTaskForm.getCurrentTask().getProcess());
-            comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
-            String message = mapMessageObjectReader.getMandatoryString("message");
-            comment.setMessage(message);
-            comment.setCreationDate(new Date());
-            comment.setType(CommentType.INFO);
-            comment.setCurrentTask(currentTask);
-
-            User currentUser = ServiceManager.getUserService().getCurrentUser();
-            if (TaskAction.PROCESS.equals(taskAction)) {
-                if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus())) {
-                    throw new ProcessorException("Status of task is not OPEN.");
-                }
-                actionProcess(currentTask, currentUser);
-            } else if (TaskAction.ERROR_OPEN.equals(taskAction)) {
-                if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus()) && !TaskStatus.INWORK.equals(
-                        currentTask.getProcessingStatus())) {
-                    throw new ProcessorException("Status of task is not OPEN or INWORK.");
-                }
-                actionErrorOpen(mapMessageObjectReader, comment);
-            } else if (TaskAction.ERROR_CLOSE.equals(taskAction)) {
-                if (!TaskStatus.LOCKED.equals(currentTask.getProcessingStatus())) {
-                    throw new ProcessorException("Status of task is not LOCKED.");
-                }
-                actionErrorClose(mapMessageObjectReader, currentTask, currentUser);
-            } else if (TaskAction.CLOSE.equals(taskAction)) {
-                currentTaskForm.closeTaskByUser();
-            }
-
-            ServiceManager.getCommentService().saveToDatabase(comment);
+            processAction(mapMessageObjectReader, taskAction, currentTask);
             ServiceManager.getProcessService().saveToIndex(currentTask.getProcess(), true);
 
             for (Task task : currentTask.getProcess().getTasks()) {
@@ -122,10 +94,57 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         }
     }
 
+    private void processAction(MapMessageObjectReader mapMessageObjectReader, TaskAction taskAction, Task currentTask)
+            throws JMSException, ProcessorException, DataException, DAOException, IOException {
+        Comment comment = null;
+        if (mapMessageObjectReader.hasField(KEY_MESSAGE)) {
+            comment = buildComment(currentTask, mapMessageObjectReader.getMandatoryString(KEY_MESSAGE));
+        }
+
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        if (TaskAction.PROCESS.equals(taskAction)) {
+            if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus())) {
+                throw new ProcessorException("Status of task is not OPEN.");
+            }
+            actionProcess(currentTask, currentUser);
+        } else if (TaskAction.ERROR_OPEN.equals(taskAction)) {
+            if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus()) && !TaskStatus.INWORK.equals(
+                    currentTask.getProcessingStatus())) {
+                throw new ProcessorException("Status of task is not OPEN or INWORK.");
+            }
+            if (!mapMessageObjectReader.hasField(KEY_MESSAGE)) {
+                throw new ProcessorException("Message field of task action ERROR_OPEN is required.");
+            }
+            actionErrorOpen(mapMessageObjectReader, comment);
+        } else if (TaskAction.ERROR_CLOSE.equals(taskAction)) {
+            if (!TaskStatus.LOCKED.equals(currentTask.getProcessingStatus())) {
+                throw new ProcessorException("Status of task is not LOCKED.");
+            }
+            actionErrorClose(mapMessageObjectReader, currentTask, currentUser);
+        } else if (TaskAction.CLOSE.equals(taskAction)) {
+            workflowControllerService.closeTaskByUser(currentTask);
+        }
+
+        if (Objects.nonNull(comment)) {
+            ServiceManager.getCommentService().saveToDatabase(comment);
+        }
+    }
+
+    private static Comment buildComment(Task currentTask, String message) {
+        Comment comment = new Comment();
+        comment.setProcess(currentTask.getProcess());
+        comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
+        comment.setMessage(message);
+        comment.setCreationDate(new Date());
+        comment.setType(CommentType.INFO);
+        comment.setCurrentTask(currentTask);
+        return comment;
+    }
+
     private void actionErrorOpen(MapMessageObjectReader mapMessageObjectReader, Comment comment)
             throws ProcessorException, JMSException, DAOException, DataException {
-        if (mapMessageObjectReader.hasField("correctionTaskId")) {
-            Integer correctionTaskId = mapMessageObjectReader.getMandatoryInteger("correctionTaskId");
+        if (mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID)) {
+            Integer correctionTaskId = mapMessageObjectReader.getMandatoryInteger(KEY_CORRECTION_TASK_ID);
             Task correctionTask = taskService.getById(correctionTaskId);
             if (Objects.isNull(correctionTask)) {
                 throw new ProcessorException("Correction task with id " + correctionTaskId + " not found.");
@@ -133,7 +152,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
             comment.setCorrectionTask(correctionTask);
         }
         comment.setType(CommentType.ERROR);
-        new WorkflowControllerService().reportProblem(comment, TaskEditType.QUEUE);
+        workflowControllerService.reportProblem(comment, TaskEditType.QUEUE);
     }
 
     private void actionProcess(Task currentTask, User currentUser) throws DataException {
@@ -147,26 +166,11 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         }
     }
 
-    private void actionErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask,
-            User currentUser) throws JMSException, DataException {
-        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByCurrentTask(currentTask);
-        Optional<Comment> optionalComment;
-        if (mapMessageObjectReader.hasField("correctionTaskId")) {
-            Integer correctionTaskId = Integer.parseInt(mapMessageObjectReader.getString("correctionTaskId"));
-            optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
-                    currentTaskComment.getType()) && !currentTaskComment.isCorrected() && correctionTaskId.equals(
-                    currentTaskComment.getCorrectionTask().getId())).findFirst();
-        } else {
-            optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
-                    currentTaskComment.getType()) && !currentTaskComment.isCorrected() && Objects.isNull(
-                    currentTaskComment.getCorrectionTask())).findFirst();
+    private void actionErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask, User currentUser)
+            throws JMSException, DataException, DAOException, IOException {
+        if (mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID)) {
+            closeCorrectionTask(currentTask, mapMessageObjectReader.getMandatoryInteger(KEY_CORRECTION_TASK_ID));
         }
-
-        if (!optionalComment.isEmpty()) {
-            CommentForm commentForm = new CommentForm();
-            commentForm.solveProblem(optionalComment.get());
-        }
-
         currentTask.setProcessingStatus(TaskStatus.OPEN);
         currentTask.setEditType(TaskEditType.QUEUE);
         currentTask.setProcessingBegin(null);
@@ -174,6 +178,18 @@ public class TaskActionProcessor extends ActiveMQProcessor {
 
         taskService.replaceProcessingUser(currentTask, currentUser);
         taskService.save(currentTask);
+    }
+
+    private void closeCorrectionTask(Task currentTask, Integer correctionTaskId)
+            throws DAOException, DataException, IOException {
+        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByCurrentTask(currentTask);
+        Optional<Comment> optionalComment;
+        optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
+                currentTaskComment.getType()) && !currentTaskComment.isCorrected() && correctionTaskId.equals(
+                currentTaskComment.getCorrectionTask().getId())).findFirst();
+        if (!optionalComment.isEmpty()) {
+            workflowControllerService.solveProblem(optionalComment.get());
+        }
     }
 
 }

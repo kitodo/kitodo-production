@@ -33,7 +33,7 @@ public enum TaskAction {
     PROCESS,
 
     /**
-     * Close a task
+     * Close a task.
      */
     CLOSE
 }

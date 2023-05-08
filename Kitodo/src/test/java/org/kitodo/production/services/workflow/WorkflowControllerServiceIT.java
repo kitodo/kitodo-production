@@ -38,6 +38,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -423,7 +424,7 @@ public class WorkflowControllerServiceIT {
 
         ServiceManager.getCommentService().saveToDatabase(problem);
 
-        workflowService.reportProblem(problem);
+        workflowService.reportProblem(problem, TaskEditType.MANUAL_SINGLE);
 
         assertEquals(
             "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not set up to open!",
@@ -459,7 +460,7 @@ public class WorkflowControllerServiceIT {
 
         ServiceManager.getCommentService().saveToDatabase(correctionComment);
 
-        workflowService.reportProblem(correctionComment);
+        workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
         workflowService.solveProblem(correctionComment);
 
         Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
