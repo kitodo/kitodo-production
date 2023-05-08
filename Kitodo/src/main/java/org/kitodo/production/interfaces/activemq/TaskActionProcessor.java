@@ -58,9 +58,8 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * This is the main routine processing incoming tickets. It gets an CurrentTaskForm object, sets it to the
-     * appropriate step which is retrieved from the database, appends the message − if any − to the wiki field, and
-     * executes the form’s the step close function.
+     * This is the main routine processing incoming tickets. It gets the task id and the task action for processing.
+     * Every action has its own behavior so please read the comment on the action for more information.
      *
      * @param mapMessageObjectReader
      *         the incoming message
