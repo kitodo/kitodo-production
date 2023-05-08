@@ -443,6 +443,15 @@ public class FileServiceTest {
     }
 
     @Test
+    public void testGetFileNameWithMultipleDots() throws IOException {
+        URI existing = fileService.createResource(URI.create("fileServiceTest"), "fileName.with.dots.xml");
+
+        String fileName = fileService.getFileName(existing);
+
+        assertEquals("fileName.with.dots", fileName);
+    }
+
+    @Test
     public void testGetFileNameFromDirectory() throws IOException {
         URI existing = fileService.createDirectory(URI.create("fileServiceTest"), "directoryName");
 
