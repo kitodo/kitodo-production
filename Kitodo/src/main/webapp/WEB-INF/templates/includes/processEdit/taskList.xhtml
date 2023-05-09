@@ -45,7 +45,7 @@
                     <!-- Set workflow state to previous step -->
                     <p:commandButton action="#{ProcessForm.setTaskStatusDown}"
                                      id="taskStatusDown"
-                                     title="#{msgs.statusRunterSetzen}"
+                                     title="#{msgs.statusDown}"
                                      oncomplete="toggleSave()"
                                      update="taskTable"
                                      icon="fa fa-long-arrow-left"
@@ -56,7 +56,7 @@
                     <!-- Set workflow state to next step -->
                     <p:commandButton action="#{ProcessForm.setTaskStatusUp}"
                                      id="taskStatusUp"
-                                     title="#{msgs.statusHoeherSetzen}"
+                                     title="#{msgs.statusUp}"
                                      oncomplete="toggleSave()"
                                      update="taskTable"
                                      icon="fa fa-long-arrow-right"

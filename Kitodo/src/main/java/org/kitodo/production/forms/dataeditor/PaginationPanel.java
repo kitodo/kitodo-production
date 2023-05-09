@@ -307,9 +307,9 @@ public class PaginationPanel {
                 "paginierung_seite.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "columnCount",
                 "paginierung_spalte.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "blattzaehlung",
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "sheetCounting",
                 "paginierung_blatt.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "blattzaehlungrectoverso",
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "sheetCountingRectoVerso",
                 "paginierung_blatt_rectoverso.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO, "pageCountRectoVerso",
                 "paginierung_seite_rectoverso.svg"));
@@ -319,8 +319,8 @@ public class PaginationPanel {
 
     private void prepareSelectPaginationScopeItems() {
         selectPaginationScopeItems = new HashMap<>(2);
-        selectPaginationScopeItems.put(Boolean.TRUE, "abDerErstenMarkiertenSeite");
-        selectPaginationScopeItems.put(Boolean.FALSE, "nurDieMarkiertenSeiten");
+        selectPaginationScopeItems.put(Boolean.TRUE, "fromFirstSelectedPage");
+        selectPaginationScopeItems.put(Boolean.FALSE, "onlySelectedPages");
     }
 
     /**
