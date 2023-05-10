@@ -101,27 +101,31 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         }
 
         User currentUser = ServiceManager.getUserService().getCurrentUser();
-        if (TaskAction.PROCESS.equals(taskAction)) {
-            if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus())) {
-                throw new ProcessorException("Status of task is not OPEN.");
-            }
-            actionProcess(currentTask, currentUser);
-        } else if (TaskAction.ERROR_OPEN.equals(taskAction)) {
-            if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus()) && !TaskStatus.INWORK.equals(
-                    currentTask.getProcessingStatus())) {
-                throw new ProcessorException("Status of task is not OPEN or INWORK.");
-            }
-            if (!mapMessageObjectReader.hasField(KEY_MESSAGE)) {
-                throw new ProcessorException("Message field of task action ERROR_OPEN is required.");
-            }
-            actionErrorOpen(mapMessageObjectReader, comment);
-        } else if (TaskAction.ERROR_CLOSE.equals(taskAction)) {
-            if (!TaskStatus.LOCKED.equals(currentTask.getProcessingStatus())) {
-                throw new ProcessorException("Status of task is not LOCKED.");
-            }
-            actionErrorClose(mapMessageObjectReader, currentTask, currentUser);
-        } else if (TaskAction.CLOSE.equals(taskAction)) {
-            workflowControllerService.closeTaskByUser(currentTask);
+        switch (taskAction) {
+            case PROCESS:
+                if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus())) {
+                    throw new ProcessorException("Status of task is not OPEN.");
+                }
+                actionProcess(currentTask, currentUser);
+                break;
+            case ERROR_OPEN:
+                if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus()) && !TaskStatus.INWORK.equals(
+                        currentTask.getProcessingStatus())) {
+                    throw new ProcessorException("Status of task is not OPEN or INWORK.");
+                }
+                if (!mapMessageObjectReader.hasField(KEY_MESSAGE)) {
+                    throw new ProcessorException("Message field of task action ERROR_OPEN is required.");
+                }
+                actionErrorOpen(mapMessageObjectReader, comment);
+                break;
+            case ERROR_CLOSE:
+                if (!TaskStatus.LOCKED.equals(currentTask.getProcessingStatus())) {
+                    throw new ProcessorException("Status of task is not LOCKED.");
+                }
+                actionErrorClose(mapMessageObjectReader, currentTask, currentUser);
+                break;
+            case CLOSE:
+                workflowControllerService.closeTaskByUser(currentTask);
         }
 
         if (Objects.nonNull(comment)) {

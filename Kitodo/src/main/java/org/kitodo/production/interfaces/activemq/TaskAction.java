@@ -23,7 +23,7 @@ public enum TaskAction {
     ERROR_OPEN,
 
     /**
-     * Set task status of logged task to OPEN.
+     * Set task status of locked task to OPEN.
      */
     ERROR_CLOSE,
 
