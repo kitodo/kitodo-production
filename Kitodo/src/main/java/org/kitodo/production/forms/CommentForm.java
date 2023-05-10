@@ -226,11 +226,11 @@ public class CommentForm extends BaseForm {
      */
     public String solveProblem(Comment comment) {
         try {
-            this.workflowControllerService.solveProblem(comment);
+            this.workflowControllerService.solveProblem(comment, TaskEditType.MANUAL_SINGLE);
         } catch (DataException | DAOException | IOException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
-        refreshProcess(this.currentTask.getProcess());
+        refreshProcess(comment.getCurrentTask().getProcess());
         return MessageFormat.format(REDIRECT_PATH, "tasks");
     }
 

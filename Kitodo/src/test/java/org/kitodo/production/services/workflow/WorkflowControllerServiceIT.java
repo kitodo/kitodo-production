@@ -461,7 +461,7 @@ public class WorkflowControllerServiceIT {
         ServiceManager.getCommentService().saveToDatabase(correctionComment);
 
         workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
-        workflowService.solveProblem(correctionComment);
+        workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
 
         Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
         for (Task task : process.getTasks()) {

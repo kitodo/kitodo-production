@@ -362,8 +362,8 @@ public class WorkflowControllerService {
         currentTask.setProcessingBegin(null);
         taskService.save(currentTask);
 
-        Task correctionTask = comment.getCorrectionTask();
-        if ( Objects.nonNull(correctionTask) ) {
+        if (comment.hasSeparateCorrectionTask()) {
+            Task correctionTask = comment.getCorrectionTask();
             correctionTask.setProcessingStatus(TaskStatus.OPEN);
             correctionTask.setProcessingEnd(null);
             correctionTask.setCorrection(true);
@@ -377,12 +377,21 @@ public class WorkflowControllerService {
      * Unified method for solve problem.
      *
      * @param comment
-     *              as Comment object
+     *         as Comment object
      */
-    public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
-        if (Objects.nonNull(comment.getCorrectionTask())) {
+    public void solveProblem(Comment comment, TaskEditType taskEditType)
+            throws DataException, DAOException, IOException {
+        if (comment.hasSeparateCorrectionTask()) {
             closeTaskByUser(comment.getCorrectionTask());
             comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
+        } else {
+            Task currentTask = comment.getCurrentTask();
+            currentTask.setProcessingStatus(TaskStatus.OPEN);
+            currentTask.setEditType(taskEditType);
+            currentTask.setProcessingTime(new Date());
+            currentTask.setProcessingBegin(null);
+            taskService.replaceProcessingUser(currentTask, getCurrentUser());
+            taskService.save(currentTask);
         }
         comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
         comment.setCorrected(Boolean.TRUE);

@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.Date;
+import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -234,10 +235,20 @@ public class Comment extends BaseBean {
     /**
      * Set correctionTask.
      *
-     * @param correctionTask as org.kitodo.data.database.beans.Task
+     * @param correctionTask
+     *         as org.kitodo.data.database.beans.Task
      */
     public void setCorrectionTask(Task correctionTask) {
         this.correctionTask = correctionTask;
+    }
+
+    /**
+     * Check if the comment has a correction task which differs from the current task.
+     *
+     * @return true if the comment has a separate correction task
+     */
+    public boolean hasSeparateCorrectionTask() {
+        return Objects.nonNull(correctionTask) && !correctionTask.equals(currentTask);
     }
 
     /**
