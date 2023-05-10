@@ -88,6 +88,20 @@ public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends 
         return super.findByQuery(queryForProjects(query), sort, offset, size, related);
     }
 
+    /**
+     * Execute a search query without filtering
+     * for projects of the current user.
+     * @param query
+     *            as QueryBuilder object
+     * @param related
+     *            determines if converted object is related to some other object (if
+     *            so, objects related to it are not included in conversion)
+     * @return list of found DTO objects
+     */
+    public List<S> findByQueryInAllProjects(QueryBuilder query, boolean related) throws DataException {
+        return super.findByQuery(query, related);
+    }
+
     @Override
     public Long countDocuments(QueryBuilder query) throws DataException {
         return super.countDocuments(queryForProjects(query));
