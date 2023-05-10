@@ -73,6 +73,12 @@ public class TaskActionProcessorIT {
         processAction(9, "UNSUPPORTED", "");
     }
 
+    /**
+     * Test the task action PROCESS.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test
     public void testActionProcess() throws Exception {
         Task task = taskService.getById(9);
@@ -83,6 +89,12 @@ public class TaskActionProcessorIT {
                 taskService.getById(task.getId()).getProcessingStatus());
     }
 
+    /**
+     * Test the error case without task status OPEN for task action PROCESS.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test(expected = ProcessorException.class)
     public void testActionProcessWithoutTaskStatusOpen() throws Exception {
         Task task = taskService.getById(8);
@@ -91,7 +103,12 @@ public class TaskActionProcessorIT {
         processAction(task, TaskAction.PROCESS);
     }
 
-
+    /**
+     * Test the task action CLOSE.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test
     public void testActionClose() throws Exception {
         Task task = taskService.getById(9);
@@ -102,10 +119,17 @@ public class TaskActionProcessorIT {
                 taskService.getById(task.getId()).getProcessingStatus());
     }
 
+    /**
+     * Test the task action ERROR_OPEN.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test
     public void testActionErrorOpen() throws Exception {
         Task openTask = taskService.getById(9);
-        assertEquals("Task '" + openTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN, openTask.getProcessingStatus());
+        assertEquals("Task '" + openTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                openTask.getProcessingStatus());
         processAction(openTask, TaskAction.ERROR_OPEN);
         assertEquals("Task '" + openTask.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
                 taskService.getById(openTask.getId()).getProcessingStatus());
@@ -118,6 +142,12 @@ public class TaskActionProcessorIT {
                 taskService.getById(inWorkTask.getId()).getProcessingStatus());
     }
 
+    /**
+     * Test the task action ERROR_OPEN.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     public void testActionErrorOpenWithCorrectionTask() throws Exception {
         Task openTask = taskService.getById(9);
         assertEquals("Task '" + openTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
@@ -128,6 +158,12 @@ public class TaskActionProcessorIT {
 
     }
 
+    /**
+     * Test the error case with wrong task status for task action ERROR_OPEN.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test(expected = ProcessorException.class)
     public void testActionErrorOpenWithoutTaskStatusOpenOrInWork() throws Exception {
         Task task = taskService.getById(10);
@@ -136,12 +172,24 @@ public class TaskActionProcessorIT {
         processAction(task, TaskAction.ERROR_OPEN);
     }
 
+    /**
+     * Test the error case without message for task action ERROR_OPEN.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test(expected = ProcessorException.class)
     public void testActionErrorOpenWithoutMessage() throws Exception {
         Task task = taskService.getById(10);
         processAction(task.getId(), TaskAction.ERROR_OPEN.name(), StringUtils.EMPTY);
     }
 
+    /**
+     * Test the task action ERROR_CLOSE.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test
     public void testActionErrorClose() throws Exception {
         Task task = taskService.getById(10);
@@ -152,6 +200,12 @@ public class TaskActionProcessorIT {
                 taskService.getById(task.getId()).getProcessingStatus());
     }
 
+    /**
+     * Test the error case without task status LOCKED for task action ERROR_CLOSE.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test(expected = ProcessorException.class)
     public void testActionErrorCloseWithoutTaskStatusLocked() throws Exception {
         Task task = taskService.getById(9);
@@ -160,6 +214,12 @@ public class TaskActionProcessorIT {
         processAction(task, TaskAction.ERROR_CLOSE);
     }
 
+    /**
+     * Test the task action COMMENT.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
     @Test
     public void testActionComment() throws Exception {
         Task task = taskService.getById(10);
