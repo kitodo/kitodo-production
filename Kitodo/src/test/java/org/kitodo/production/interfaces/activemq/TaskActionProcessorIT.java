@@ -17,6 +17,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.jms.JMSException;
 
@@ -65,12 +66,12 @@ public class TaskActionProcessorIT {
 
     @Test(expected = ProcessorException.class)
     public void testTaskNotFound() throws Exception {
-        processAction(Integer.MIN_VALUE, TaskAction.COMMENT.name(), "");
+        processAction(Integer.MIN_VALUE, TaskAction.COMMENT.name(), StringUtils.EMPTY, null);
     }
 
     @Test(expected = ProcessorException.class)
     public void testUnsupportedAction() throws Exception {
-        processAction(9, "UNSUPPORTED", "");
+        processAction(9, "UNSUPPORTED", StringUtils.EMPTY, null);
     }
 
     /**
@@ -143,19 +144,22 @@ public class TaskActionProcessorIT {
     }
 
     /**
-     * Test the task action ERROR_OPEN.
+     * Test the task action ERROR_OPEN with a correction task.
      *
      * @throws Exception
      *         if something goes wrong
      */
+    @Test
     public void testActionErrorOpenWithCorrectionTask() throws Exception {
-        Task openTask = taskService.getById(9);
-        assertEquals("Task '" + openTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                openTask.getProcessingStatus());
-        processAction(openTask, TaskAction.ERROR_OPEN);
-        assertEquals("Task '" + openTask.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
-                taskService.getById(openTask.getId()).getProcessingStatus());
-
+        Task task = taskService.getById(9);
+        Task correctionTask = taskService.getById(6);
+        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                task.getProcessingStatus());
+        processAction(task, TaskAction.ERROR_OPEN, correctionTask.getId(), 1);
+        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
+                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals("Correction task '" + correctionTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                taskService.getById(correctionTask.getId()).getProcessingStatus());
     }
 
     /**
@@ -181,7 +185,7 @@ public class TaskActionProcessorIT {
     @Test(expected = ProcessorException.class)
     public void testActionErrorOpenWithoutMessage() throws Exception {
         Task task = taskService.getById(10);
-        processAction(task.getId(), TaskAction.ERROR_OPEN.name(), StringUtils.EMPTY);
+        processAction(task.getId(), TaskAction.ERROR_OPEN.name(), StringUtils.EMPTY, null);
     }
 
     /**
@@ -198,6 +202,32 @@ public class TaskActionProcessorIT {
         processAction(task, TaskAction.ERROR_CLOSE);
         assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
                 taskService.getById(task.getId()).getProcessingStatus());
+    }
+
+    /**
+     * Test the task action ERROR_CLOSE with a correction task.
+     *
+     * @throws Exception
+     *         if something goes wrong
+     */
+    @Test
+    public void testActionErrorCloseWithCorrectionTask() throws Exception {
+        Task task = taskService.getById(9);
+        Task correctionTask = taskService.getById(6);
+        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                task.getProcessingStatus());
+
+        processAction(task, TaskAction.ERROR_OPEN, correctionTask.getId(), 1);
+        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
+                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals("Correction task '" + correctionTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                taskService.getById(correctionTask.getId()).getProcessingStatus());
+
+        processAction(task, TaskAction.ERROR_CLOSE, correctionTask.getId(), 2);
+        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+                taskService.getById(task.getId()).getProcessingStatus());
+        assertEquals("Correction task '" + correctionTask.getTitle() + "' status should be DONE!", TaskStatus.DONE,
+                taskService.getById(correctionTask.getId()).getProcessingStatus());
     }
 
     /**
@@ -231,21 +261,32 @@ public class TaskActionProcessorIT {
     }
 
     private static void processAction(Task task, TaskAction taskAction) throws JMSException, ProcessorException {
-        String message = "Process action " +  taskAction.name();
-        processAction(task.getId(), taskAction.name(), message);
-        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(task);
-        assertEquals("Comment should be created!", 1, comments.size());
-        assertEquals("Comment message should be '" + message + "'!", message, comments.get(0).getMessage());
+        processAction(task, taskAction, null, 1);
     }
 
-    private static void processAction(Integer taskId, String action, String message) throws JMSException,
-            ProcessorException {
+    private static void processAction(Task task, TaskAction taskAction, Integer correctionTaskId, int commentCount)
+            throws JMSException, ProcessorException {
+        String message = "Process action " + taskAction.name();
+        processAction(task.getId(), taskAction.name(), message, correctionTaskId);
+        List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(task);
+        assertEquals("Comment should be created!", commentCount, comments.size());
+        assertEquals("Comment message should be '" + message + "'!", message,
+                comments.get(commentCount - 1).getMessage());
+    }
+
+    private static void processAction(Integer taskId, String action, String message, Integer correctionTaskId)
+            throws JMSException, ProcessorException {
         MapMessageObjectReader mapMessageObjectReader = mock(MapMessageObjectReader.class);
-        when(mapMessageObjectReader.getMandatoryInteger("id")).thenReturn(taskId);
-        when(mapMessageObjectReader.getMandatoryString("action")).thenReturn(action);
+        when(mapMessageObjectReader.getMandatoryInteger(TaskActionProcessor.KEY_TASK_ID)).thenReturn(taskId);
+        when(mapMessageObjectReader.getMandatoryString(TaskActionProcessor.KEY_TASK_ACTION)).thenReturn(action);
         if (StringUtils.isNotEmpty(message)) {
-            when(mapMessageObjectReader.hasField("message")).thenReturn(Boolean.TRUE);
-            when(mapMessageObjectReader.getMandatoryString("message")).thenReturn(message);
+            when(mapMessageObjectReader.hasField(TaskActionProcessor.KEY_MESSAGE)).thenReturn(Boolean.TRUE);
+            when(mapMessageObjectReader.getMandatoryString(TaskActionProcessor.KEY_MESSAGE)).thenReturn(message);
+        }
+        if (Objects.nonNull(correctionTaskId)) {
+            when(mapMessageObjectReader.hasField(TaskActionProcessor.KEY_CORRECTION_TASK_ID)).thenReturn(Boolean.TRUE);
+            when(mapMessageObjectReader.getMandatoryInteger(TaskActionProcessor.KEY_CORRECTION_TASK_ID)).thenReturn(
+                    correctionTaskId);
         }
         TaskActionProcessor taskActionProcessor = spy(TaskActionProcessor.class);
         taskActionProcessor.process(mapMessageObjectReader);
