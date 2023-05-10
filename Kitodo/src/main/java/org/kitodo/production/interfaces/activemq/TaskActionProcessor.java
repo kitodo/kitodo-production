@@ -126,6 +126,11 @@ public class TaskActionProcessor extends ActiveMQProcessor {
                 break;
             case CLOSE:
                 workflowControllerService.closeTaskByUser(currentTask);
+                break;
+            default:
+                if (!mapMessageObjectReader.hasField(KEY_MESSAGE)) {
+                    throw new ProcessorException("Message field of task action COMMENT is required.");
+                }
         }
 
         if (Objects.nonNull(comment)) {
