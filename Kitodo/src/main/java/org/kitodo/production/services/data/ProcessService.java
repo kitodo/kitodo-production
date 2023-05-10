@@ -607,6 +607,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
     public List<ProcessDTO> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        QueryBuilder query = constructMetadataQuery(metadata, exactMatch);
+        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
+    }
+
+    /**
+     * Find processes by metadata across all projects of the current client.
+     *
+     * @param metadata
+     *            key is metadata tag and value is metadata content
+     * @return list of ProcessDTO objects with processes for specific metadata tag
+     */
+    public List<ProcessDTO> findByMetadataInAllProjects(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        QueryBuilder query = constructMetadataQuery(metadata, exactMatch);
+        return findByQueryInAllProjects(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
+    }
+
+    private BoolQueryBuilder constructMetadataQuery(Map<String, String> metadata, boolean exactMatch) {
         String nameSearchKey = METADATA_SEARCH_KEY + ".name";
         String contentSearchKey = METADATA_SEARCH_KEY + ".content";
         if (exactMatch) {
@@ -620,8 +637,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             pairQuery.must(matchQuery(contentSearchKey, entry.getValue()));
             query.must(pairQuery);
         }
-
-        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
+        return query;
     }
 
     /**
@@ -816,9 +832,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true));
         }
         BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
-                .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-        return findByQuery(query, false);
+        return findByQueryInAllProjects(query, false);
     }
 
     /**
