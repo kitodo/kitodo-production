@@ -28,7 +28,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.index.query.Operator;
@@ -58,6 +57,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -451,7 +451,7 @@ public class ProcessServiceIT {
         ProcessService processService = ServiceManager.getProcessService();
         Process secondProcess = processService.getById(2);
         final String sortHelperStatusOld = secondProcess.getSortHelperStatus();
-        secondProcess.setSortHelperStatus("100000000");
+        secondProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         processService.save(secondProcess);
 
         QueryBuilder querySortHelperStatusTrue = processService.getQueryForClosedProcesses();
