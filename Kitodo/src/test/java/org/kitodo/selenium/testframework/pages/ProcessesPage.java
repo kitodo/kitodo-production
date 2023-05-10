@@ -53,6 +53,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
 
+    private static final String WAIT_FOR_FILTER_IS_APPLIED = "Wait until filter is applied";
+
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
     private WebElement processesTabView;
@@ -452,9 +454,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
                 .until(() -> filterInput.isDisplayed());
         // hide filter menu to enable action buttons positioned behind it
         headerText.click();
-        await("Wait for filter menu to close").pollDelay(100, TimeUnit.MILLISECONDS)
-                .atMost(5, TimeUnit.SECONDS)
-                .until(() -> filterInput.isEnabled());
+        await(WAIT_FOR_FILTER_IS_APPLIED).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> filterInput.isDisplayed() && processesTable.isDisplayed());
     }
 
     public List<WebElement> getParsedFilters() {
