@@ -337,18 +337,23 @@ public class PaginationPanel {
             logger.info(e.getMessage());
         }
         List<Separator> pageSeparators = Separator.factory(ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS));
-        String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
+        try {
+            String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
                 paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());
-        Paginator paginator = new Paginator(initializer);
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
-        if (selectPaginationScopeSelectedItem) {
-            for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
-                physicalDivisions.get(i).setOrderlabel(paginator.next());
+            Paginator paginator = new Paginator(initializer);
+            List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                    .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+            if (selectPaginationScopeSelectedItem) {
+                for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
+                    physicalDivisions.get(i).setOrderlabel(paginator.next());
+                }
+            } else {
+                for (int i : paginationSelectionSelectedItems) {
+                    physicalDivisions.get(i).setOrderlabel(paginator.next());
+                }
             }
-        } else {
-            for (int i : paginationSelectionSelectedItems) {
-                physicalDivisions.get(i).setOrderlabel(paginator.next());
-            }
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage("paginationFormatError", new Object[] { paginationStartValue });
         }
         paginationSelectionSelectedItems = new ArrayList<>();
         preparePaginationSelectionItems();
