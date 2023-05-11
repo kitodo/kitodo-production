@@ -79,7 +79,7 @@ public class GeneratesNewspaperProcessesThread extends EmptyTask {
                 if (!generator.nextStep()) {
                     return;
                 }
-                super.setProgress(generator.getProgress() / generator.getNumberOfSteps());
+                super.setProgress(100 * generator.getProgress() / generator.getNumberOfSteps());
                 if (Thread.currentThread().isInterrupted()) {
                     return;
                 }
