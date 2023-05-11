@@ -36,7 +36,7 @@ import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 /**
- * This is a web service interface to modify task states.
+ * This is a web service interface to modify task status.
  */
 public class TaskActionProcessor extends ActiveMQProcessor {
 
@@ -58,7 +58,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * This is the main routine processing incoming tickets. It gets the task id and the task action for processing.
+     * This is the main routine processing incoming messages. It gets the task id and the task action for processing.
      * Every action has its own behavior so please read the comment on the action for more information.
      *
      * @param mapMessageObjectReader
