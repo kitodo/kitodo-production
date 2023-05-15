@@ -20,7 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.production.helper.DateUtils;
 
 /**
@@ -125,7 +125,7 @@ public class CourseToGerman {
                     }
                 }
             }
-            if (!Strings.isBlank(issue.getHeading())) {
+            if (!StringUtils.isBlank(issue.getHeading())) {
                 result.append(" als ");
                 result.append(issue.getHeading());
             }

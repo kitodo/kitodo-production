@@ -34,7 +34,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.util.Strings;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.model.bibliography.course.metadata.CountableMetadata;
 import org.kitodo.production.model.bibliography.course.metadata.RecoveredMetadata;
@@ -862,7 +861,7 @@ public class Course extends ArrayList<Block> {
             blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
         }
         Element issueNode = xml.createElement(ELEMENT_APPEARED);
-        if (!Strings.isBlank(issue.getHeading())) {
+        if (!StringUtils.isBlank(issue.getHeading())) {
             issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
         }
         issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
