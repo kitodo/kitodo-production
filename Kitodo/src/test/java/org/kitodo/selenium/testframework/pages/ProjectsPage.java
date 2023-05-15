@@ -175,6 +175,15 @@ public class ProjectsPage extends Page<ProjectsPage> {
     @FindBy(id = RULESET_TABLE + ":0:actionForm:deleteRuleset")
     private WebElement deleteFirstRulesetButton;
 
+    @FindBy(id = "filterForm:templateFilters")
+    private WebElement filterMenu;
+
+    @FindBy(id = "filterForm:templateFilters_panel")
+    private WebElement checkBoxPanel;
+
+    @FindBy(css = ".filter-panel li:last-child .ui-chkbox")
+    private WebElement toggleHiddenTemplatesWrapper;
+
     public ProjectsPage() {
         super("pages/projects.jsf");
     }
@@ -629,5 +638,20 @@ public class ProjectsPage extends Page<ProjectsPage> {
      */
     public Long getNumberOfMappingFiles() {
         return (long) Browser.getRowsOfTable(Browser.getDriver().findElementById(MAPPING_FILE_TABLE)).size();
+    }
+
+    /**
+     * Toggle switch to hide/show inactive templates.
+     */
+    public void toggleHiddenTemplates() {
+        filterMenu.click();
+        await(WAIT_FOR_FILTER_FORM_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                        .atMost(3, TimeUnit.SECONDS)
+                                .until(() -> checkBoxPanel.isDisplayed());
+        toggleHiddenTemplatesWrapper.click();
+
+        await("Wait for template filter list to be updated").pollDelay(700, TimeUnit.MILLISECONDS)
+                        .atMost(3, TimeUnit.SECONDS)
+                                .until(() -> filterMenu.isEnabled());
     }
 }

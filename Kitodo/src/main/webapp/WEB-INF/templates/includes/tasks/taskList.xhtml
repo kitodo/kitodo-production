@@ -278,4 +278,40 @@
             </p:rowExpansion>
         </p:dataTable>
     </h:form>
+
+    <div id="dropDownMenus">
+        <h:form id="filterForm"
+                styleClass="filter-form"
+                style="display: inline-block;">
+            <p:selectCheckboxMenu id="taskFilters"
+                                  panelStyleClass="filter-panel"
+                                  value="#{CurrentTaskForm.selectedTaskFilters}"
+                                  styleClass="secondary"
+                                  label="#{msgs.filter}">
+                <f:selectItems value="#{CurrentTaskForm.taskFilters}"
+                               var="taskFilter"
+                               itemLabel="#{msgs[taskFilter]}"/>
+                <p:ajax event="change"
+                        onstart="PF('taskTable').getPaginator().setPage(0);"
+                        listener="#{CurrentTaskForm.taskFiltersChanged}"
+                        update="tasksTabView:tasksForm:taskTable"/>
+            </p:selectCheckboxMenu>
+        </h:form>
+        <h:form id="statusForm"
+                style="display: inline-block;">
+            <p:selectCheckboxMenu id="taskStatus"
+                                  panelStyleClass="filter-panel"
+                                  value="#{CurrentTaskForm.selectedTaskStatus}"
+                                  styleClass="secondary"
+                                  label="#{msgs.processingStatus}">
+                <f:selectItems value="#{CurrentTaskForm.taskStatus}"
+                               var="taskStatus"
+                               itemLabel="#{msgs[taskStatus.title]}"/>
+                <p:ajax event="change"
+                        onstart="PF('taskTable').getPaginator().setPage(0);"
+                        listener="#{CurrentTaskForm.taskStatusChanged}"
+                        update="tasksTabView:tasksForm:taskTable"/>
+            </p:selectCheckboxMenu>
+        </h:form>
+    </div>
 </ui:composition>

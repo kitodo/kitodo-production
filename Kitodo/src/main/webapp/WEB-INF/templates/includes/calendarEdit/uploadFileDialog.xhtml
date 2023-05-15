@@ -22,7 +22,7 @@
               showHeader="false"
               dynamic="true"
               modal="true">
-        <h:form id="uploadFileForm">
+        <h:form id="uploadFileForm" enctype="multipart/form-data">
             <p:panelGrid columns="1" layout="grid">
                 <h3>#{msgs['calendar.upload']}</h3>
                 <h:panelGroup layout="block"
@@ -37,6 +37,7 @@
                               styleClass="dialogButtonWrapper">
                     <p:commandButton id="upload"
                                      action="#{CalendarForm.upload}"
+                                     ajax="false"
                                      oncomplete="PF('uploadFileDialog').hide()"
                                      value="#{msgs['calendar.upload.submit']}"
                                      icon="fa fa-upload"
