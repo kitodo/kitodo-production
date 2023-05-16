@@ -25,7 +25,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
  */
 public class RecordIdentifierMissingDetail {
 
-    private String division;
+    private final String division;
     private String recordIdentifierMetadata;
     private String allowedMetadata;
 
