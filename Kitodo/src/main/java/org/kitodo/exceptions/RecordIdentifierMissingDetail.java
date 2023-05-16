@@ -27,7 +27,7 @@ public class RecordIdentifierMissingDetail {
 
     private final String division;
     private String recordIdentifierMetadata;
-    private String allowedMetadata;
+    private final String allowedMetadata;
 
     /**
      * <b>Constructor.</b><!-- --> Builds a new data object to store details
