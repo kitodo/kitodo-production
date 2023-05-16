@@ -18,7 +18,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 
 /**
  * Gathers the characteristics for displaying an error message for an error that
- * occurs only in an extremely rare case of a misconfiguration. But since the
+ * occurs only in the case of a misconfiguration. But since the
  * error occurs in a different part of the application than the part that prints
  * the error message, complex passing of details must be in place to
  * successfully populate the error message.
