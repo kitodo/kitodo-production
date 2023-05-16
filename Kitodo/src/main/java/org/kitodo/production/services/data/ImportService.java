@@ -115,9 +115,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-@Named("ImportService")
-@ViewScoped
-public class ImportService implements Serializable {
+public class ImportService {
 
     private static final Logger logger = LogManager.getLogger(ImportService.class);
     public static final String ACQUISITION_STAGE_CREATE = "create";
