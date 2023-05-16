@@ -49,7 +49,7 @@ public class RecordIdentifierMissingDetail {
     }
 
     /**
-     * Returns the division of the detail of the missing disc identifier.
+     * Returns the division of the detail of the missing record identifier.
      * 
      * @return the division
      */
