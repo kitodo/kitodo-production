@@ -24,12 +24,7 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Release**
-Please specify the version of Kitodo.Production in which the bug was encountered [e.g. 3.3.1, 3.4.3 etc]
-
-**Desktop (please complete the following information):**
- - OS: [e.g. iOS]
- - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
+Please specify the version of Kitodo.Production in which the bug was encountered [e.g. 3.4.3, 3.5.0 etc]
 
 **Additional context**
 Add any other context about the problem here.
