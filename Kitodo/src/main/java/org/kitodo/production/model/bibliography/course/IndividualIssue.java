@@ -53,16 +53,16 @@ public class IndividualIssue {
     private static final DateTimeFormatter MONTH = DateTimeFormatter.ofPattern("MM");
 
     /**
-     * The constant YEAR2 holds a DateTimeFormatter used to get the a four-digit
+     * The constant YEAR2 holds a DateTimeFormatter used to get the a two-digit
      * year of era (00—99, always positive) from the newspaper’s date.
      */
-    private static final DateTimeFormatter YEAR2 = DateTimeFormatter.ofPattern("YY");
+    private static final DateTimeFormatter YEAR2 = DateTimeFormatter.ofPattern("yy");
 
     /**
      * The constant YEAR4 holds a DateTimeFormatter used to get the a four-digit
      * year of era (0001—9999, always positive) from the newspaper’s date.
      */
-    private static final DateTimeFormatter YEAR4 = DateTimeFormatter.ofPattern("YYYY");
+    private static final DateTimeFormatter YEAR4 = DateTimeFormatter.ofPattern("yyyy");
 
     /**
      * Metadata key to store the sorting number.
