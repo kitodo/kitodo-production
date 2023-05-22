@@ -387,7 +387,7 @@ public class UploadFileDialog {
         if (progress != 100) {
             Helper.setErrorMessage("generateMediaFailed");
             PrimeFaces.current().executeScript("PF('uploadFileDialog').hide();");
-            PrimeFaces.current().ajax().update("logicalTree", "metadataAccordion:logicalMetadataWrapperPanel",
+            PrimeFaces.current().ajax().update("numberOfScans", "logicalTree", "metadataAccordion:logicalMetadataWrapperPanel",
                     "paginationForm:paginationWrapperPanel", "galleryWrapperPanel");
         } else {
             Helper.setMessage(Helper.getTranslation("uploadMediaCompleted"));
@@ -440,6 +440,7 @@ public class UploadFileDialog {
                     MetadataEditor.createUnrestrictedViewOn(selectedMedia.get(selectedMedia.size() - 1).getKey()));
             dataEditor.switchStructure(structureTreeNode, false);
             dataEditor.getPaginationPanel().show();
+            dataEditor.updateNumberOfScans();
             uploadFileUri = null;
         }
     }

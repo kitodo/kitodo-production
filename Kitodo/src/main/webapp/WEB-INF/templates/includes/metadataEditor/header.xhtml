@@ -31,7 +31,7 @@
                           value="(#{msgs.id}: #{DataEditorForm.process.id})"/>
             <h:outputText id="numberOfScans"
                           styleClass="set-apart"
-                          value="(#{msgs['dataEditor.numberOfScans']}: #{DataEditorForm.numberOfScans})"/>
+                          value="(#{DataEditorForm.numberOfScans} #{DataEditorForm.numberOfScans eq 1 ? msgs.medium : msgs.media})"/>
 
         </h3>
         <h:form id="metadataEditorLayoutForm">

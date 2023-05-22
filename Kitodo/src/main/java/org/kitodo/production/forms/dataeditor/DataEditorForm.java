@@ -333,7 +333,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
         }
-        setNumberOfScans(workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES));
         return ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
@@ -354,6 +353,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         paginationPanel.show();
 
         editPagesDialog.prepare();
+        updateNumberOfScans();
 
         if (logger.isTraceEnabled()) {
             logger.trace("Initializing editor beans took {} ms",
@@ -550,6 +550,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void deletePhysicalDivision() {
         structurePanel.deleteSelectedPhysicalDivision();
+        updateNumberOfScans();
     }
 
     @Override
@@ -995,11 +996,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     /**
      * Sets numberOfScans.
      *
-     * @param numberOfScans value of numberOfScans
      */
-    public void setNumberOfScans(int numberOfScans) {
-        this.numberOfScans = numberOfScans;
+    public void updateNumberOfScans() {
+        this.numberOfScans = workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES);
     }
+
 
     /**
      * Save current metadata editor layout.

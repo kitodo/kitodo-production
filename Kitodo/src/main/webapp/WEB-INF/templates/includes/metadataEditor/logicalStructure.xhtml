@@ -217,7 +217,7 @@
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
-            <p:menuitem value="#{msgs.removeElement}"
+            <p:menuitem value="#{msgs.deleteMedia}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
@@ -226,7 +226,8 @@
                         oncomplete="$('#loadingScreen').hide()"
                         action="#{DataEditorForm.deletePhysicalDivision()}"
                         process="@this"
-                        update="logicalTree
+                        update="numberOfScans
+                                logicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
