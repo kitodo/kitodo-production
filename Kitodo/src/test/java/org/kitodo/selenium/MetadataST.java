@@ -178,7 +178,7 @@ public class MetadataST extends BaseTestSelenium {
     public void totalNumberOfScansTest() throws Exception {
         login("kowal");
         Pages.getProcessesPage().goTo().editMetadata();
-        assertEquals("Total number of scans is not correct", "(1 Medien)",
+        assertEquals("Total number of scans is not correct", "(1 Medium)",
                 Pages.getMetadataEditorPage().getNumberOfScans());
     }
 
