@@ -110,28 +110,26 @@ public class ImageManagementIT {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);
         ImageManagementInterface module = new ImageManagement();
-        assertTrue(
-            module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
+        assertTrue(module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
         assertTrue(maxDerivative.exists());
         assertEquals(new Info(_00000001_TIF, true).getImageWidth(), new Info(_00000001_MAX_JPG, true).getImageWidth());
 
-        Path _00000001_TIF_Path = Paths.get(_00000001_TIF);
-        Files.copy(_00000001_TIF_Path, Paths.get(_00000001_TIF_WITH_WHITESPACE), StandardCopyOption.REPLACE_EXISTING);
+        Path tifPath = Paths.get(_00000001_TIF);
+        Files.copy(tifPath, Paths.get(_00000001_TIF_WITH_WHITESPACE), StandardCopyOption.REPLACE_EXISTING);
 
         assert new File(_00000001_TIF_WITH_WHITESPACE).exists();
         maxDerivative = new File(_00000001_MAX_JPG_WITH_WHITESPACE);
-        assertTrue(
-                module.createDerivative(new File(_00000001_TIF_WITH_WHITESPACE).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
+        assertTrue(module.createDerivative(new File(_00000001_TIF_WITH_WHITESPACE).toURI(), 1.0, maxDerivative.toURI(),
+                ImageFileFormat.JPEG));
         assertTrue(maxDerivative.exists());
 
-        Files.copy(_00000001_TIF_Path, Paths.get(_00000001_TIF_WITH_SPECIAL_CHARACTER), StandardCopyOption.REPLACE_EXISTING);
+        Files.copy(tifPath, Paths.get(_00000001_TIF_WITH_SPECIAL_CHARACTER), StandardCopyOption.REPLACE_EXISTING);
 
         assert new File(_00000001_TIF_WITH_SPECIAL_CHARACTER).exists();
         maxDerivative = new File(_00000001_MAX_JPG_WITH_SPECIAL_CHARACTER);
-        assertTrue(
-                module.createDerivative(new File(_00000001_TIF_WITH_SPECIAL_CHARACTER).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
+        assertTrue(module.createDerivative(new File(_00000001_TIF_WITH_SPECIAL_CHARACTER).toURI(), 1.0, maxDerivative.toURI(),
+                ImageFileFormat.JPEG));
         assertTrue(maxDerivative.exists());
-
     }
 
     @Test
