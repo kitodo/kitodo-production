@@ -11,9 +11,13 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -338,13 +342,12 @@ public class UploadFileDialog {
             PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(getPhysicalDivType(),
                     dataEditor.getWorkpiece(), dataEditor.getWorkpiece().getPhysicalStructure(),
                     InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
-            uploadFileUri = sourceFolderURI.resolve(event.getFile().getFileName());
-
+            uploadFileUri = new File(sourceFolderURI.getPath().concat(event.getFile().getFileName())).toURI();
             //TODO: Find a better way to avoid overwriting an existing file
             if (ServiceManager.getFileService().fileExist(uploadFileUri)) {
                 String newFileName = ServiceManager.getFileService().getFileName(uploadFileUri)
                         + "_" + Helper.generateRandomString(3) + "." + fileExtension;
-                uploadFileUri = sourceFolderURI.resolve(newFileName);
+                uploadFileUri = sourceFolderURI.resolve(new File(sourceFolderURI.getPath().concat(newFileName)).toURI());
             }
             physicalDivision.getMediaFiles().put(mediaVariant, uploadFileUri);
             //upload file in sourceFolder
@@ -387,7 +390,7 @@ public class UploadFileDialog {
         if (progress != 100) {
             Helper.setErrorMessage("generateMediaFailed");
             PrimeFaces.current().executeScript("PF('uploadFileDialog').hide();");
-            PrimeFaces.current().ajax().update("logicalTree", "metadataAccordion:logicalMetadataWrapperPanel",
+            PrimeFaces.current().ajax().update("numberOfScans", "logicalTree", "metadataAccordion:logicalMetadataWrapperPanel",
                     "paginationForm:paginationWrapperPanel", "galleryWrapperPanel");
         } else {
             Helper.setMessage(Helper.getTranslation("uploadMediaCompleted"));
@@ -440,6 +443,7 @@ public class UploadFileDialog {
                     MetadataEditor.createUnrestrictedViewOn(selectedMedia.get(selectedMedia.size() - 1).getKey()));
             dataEditor.switchStructure(structureTreeNode, false);
             dataEditor.getPaginationPanel().show();
+            dataEditor.updateNumberOfScans();
             uploadFileUri = null;
         }
     }

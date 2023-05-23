@@ -861,7 +861,9 @@ public class Course extends ArrayList<Block> {
             blockNode.setAttribute(ATTRIBUTE_VARIANT, Integer.toString(index + 1));
         }
         Element issueNode = xml.createElement(ELEMENT_APPEARED);
-        issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+        if (!StringUtils.isBlank(issue.getHeading())) {
+            issueNode.setAttribute(ATTRIBUTE_ISSUE_HEADING, issue.getHeading());
+        }
         issueNode.setAttribute(ATTRIBUTE_DATE, issue.getDate().toString());
         addMetadataToIssue(xml, issue, issueNode);
         Pair<Integer, String> afterDeclaration = Pair.of(index, issue.getHeading());
