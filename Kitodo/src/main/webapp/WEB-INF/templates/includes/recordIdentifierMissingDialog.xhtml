@@ -29,8 +29,10 @@
             <h3>#{err['createProcessForm.createNewProcess.recordIdentifierMissing.caption']}</h3>
             <div class="select-note ui-messages-error">
                 <h:outputText value="#{err['createProcessForm.createNewProcess.recordIdentifierMissing.description']}"/>
-                <ui:repeat var="detail" value="#{CreateProcessForm.detailsOfRecordIdentifierMissingError}">
-                    <p><h:outputFormat value="❌ #{err['createProcessForm.createNewProcess.recordIdentifierMissing.detail']}">
+                <p:dataList value="#{CreateProcessForm.detailsOfRecordIdentifierMissingError}"
+                            itemStyleClass="error-item"
+                            var="detail">
+                    <p><h:outputFormat value="#{err['createProcessForm.createNewProcess.recordIdentifierMissing.detail']}">
                         <f:param value="#{detail.division}" />
                         <f:param value="#{detail.recordIdentifierMetadata}" />
                         <f:param value="#{detail.allowedMetadata}" />
