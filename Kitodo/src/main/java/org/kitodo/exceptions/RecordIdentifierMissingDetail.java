@@ -40,10 +40,10 @@ public class RecordIdentifierMissingDetail {
      * @param allowedMetadata
      *            metadata allowed at the given division
      */
-    public RecordIdentifierMissingDetail(String division, Collection<String> recordIdentifierMetadata,
+    public RecordIdentifierMissingDetail(String division, String recordIdentifierMetadata,
             Collection<MetadataViewInterface> allowedMetadata) {
         this.division = division;
-        this.recordIdentifierMetadata = String.join(", ", recordIdentifierMetadata);
+        this.recordIdentifierMetadata = recordIdentifierMetadata;
         this.allowedMetadata = allowedMetadata.stream().map(MetadataViewInterface::getLabel)
                 .collect(Collectors.joining(", "));
     }

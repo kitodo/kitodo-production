@@ -1364,6 +1364,9 @@ public class ImportService {
         Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
         Collection<String> recordIdentifierMetadata = rulesetManagementInterface
                 .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
+        String recordIdentifierLabels = recordIdentifierMetadata.stream()
+                .map(key -> rulesetManagementInterface.getTranslationForKey(key, languages).orElse(key))
+                .collect(Collectors.joining(", "));
         recordIdentifierMissingDetails.clear();
         boolean isConfigured = true;
         for (Map.Entry<String, String> division : structuralElements.entrySet()) {
@@ -1374,7 +1377,7 @@ public class ImportService {
             allowedMetadataKeys.retainAll(recordIdentifierMetadata);
             if (allowedMetadataKeys.isEmpty()) {
                 recordIdentifierMissingDetails.add(
-                    new RecordIdentifierMissingDetail(division.getKey(), recordIdentifierMetadata, divisionView.getAllowedMetadata())
+                    new RecordIdentifierMissingDetail(division.getValue(), recordIdentifierLabels, divisionView.getAllowedMetadata())
                 );
                 isConfigured = false;
             }
