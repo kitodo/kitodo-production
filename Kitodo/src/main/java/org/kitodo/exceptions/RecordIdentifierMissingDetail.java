@@ -44,7 +44,7 @@ public class RecordIdentifierMissingDetail {
             Collection<MetadataViewInterface> allowedMetadata) {
         this.division = division;
         this.recordIdentifierMetadata = String.join(", ", recordIdentifierMetadata);
-        this.allowedMetadata = allowedMetadata.stream().map(MetadataViewInterface::getId)
+        this.allowedMetadata = allowedMetadata.stream().map(MetadataViewInterface::getLabel)
                 .collect(Collectors.joining(", "));
     }
 
