@@ -17,8 +17,14 @@ import static org.junit.Assert.assertTrue;
 import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Arrays;
+import java.util.Objects;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.im4java.core.ConvertCmd;
 import org.im4java.core.IM4JavaException;
@@ -55,11 +61,15 @@ public class ImageManagementIT {
      * Input tiff file.
      */
     private static final String _00000001_TIF = RESOURCES + "/00000001.tif";
+    private static final String _00000001_TIF_WITH_WHITESPACE = RESOURCES + "/00000001 whiteSpace.tif";
+    private static final String _00000001_TIF_WITH_SPECIAL_CHARACTER = RESOURCES + "/00000001_ÄÜÖ#.tif";
 
     /**
      * Derivative to generate.
      */
     private static final String _00000001_MAX_JPG = RESOURCES + "/00000001_max.jpg";
+    private static final String _00000001_MAX_JPG_WITH_WHITESPACE = RESOURCES + "/00000001 whiteSpace_max.jpg";
+    private static final String _00000001_MAX_JPG_WITH_SPECIAL_CHARACTER = RESOURCES + "/00000001_ÄÜÖ#_max.jpg";
 
     /**
      * Creates the input tiff file. The tiff file will contain the “wizard”
@@ -100,10 +110,26 @@ public class ImageManagementIT {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);
         ImageManagementInterface module = new ImageManagement();
-        assertTrue(
-            module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
+        assertTrue(module.createDerivative(new File(_00000001_TIF).toURI(), 1.0, maxDerivative.toURI(), ImageFileFormat.JPEG));
         assertTrue(maxDerivative.exists());
         assertEquals(new Info(_00000001_TIF, true).getImageWidth(), new Info(_00000001_MAX_JPG, true).getImageWidth());
+
+        Path tifPath = Paths.get(_00000001_TIF);
+        Files.copy(tifPath, Paths.get(_00000001_TIF_WITH_WHITESPACE), StandardCopyOption.REPLACE_EXISTING);
+
+        assert new File(_00000001_TIF_WITH_WHITESPACE).exists();
+        maxDerivative = new File(_00000001_MAX_JPG_WITH_WHITESPACE);
+        assertTrue(module.createDerivative(new File(_00000001_TIF_WITH_WHITESPACE).toURI(), 1.0, maxDerivative.toURI(),
+                ImageFileFormat.JPEG));
+        assertTrue(maxDerivative.exists());
+
+        Files.copy(tifPath, Paths.get(_00000001_TIF_WITH_SPECIAL_CHARACTER), StandardCopyOption.REPLACE_EXISTING);
+
+        assert new File(_00000001_TIF_WITH_SPECIAL_CHARACTER).exists();
+        maxDerivative = new File(_00000001_MAX_JPG_WITH_SPECIAL_CHARACTER);
+        assertTrue(module.createDerivative(new File(_00000001_TIF_WITH_SPECIAL_CHARACTER).toURI(), 1.0, maxDerivative.toURI(),
+                ImageFileFormat.JPEG));
+        assertTrue(maxDerivative.exists());
     }
 
     @Test
@@ -128,13 +154,11 @@ public class ImageManagementIT {
      */
     @AfterClass
     public static void cleanUp() {
-        File tiffFile = new File(_00000001_TIF);
-        if (tiffFile.exists()) {
-            tiffFile.delete();
-        }
-        File jpgMaxFile = new File(_00000001_MAX_JPG);
-        if (jpgMaxFile.exists()) {
-            jpgMaxFile.delete();
+        File resources = new File(RESOURCES);
+        for (File file : Objects.requireNonNull(resources.listFiles())) {
+            if (FilenameUtils.isExtension(file.getName(), "tif", "jpg")) {
+                file.delete();
+            }
         }
     }
 }

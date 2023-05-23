@@ -86,7 +86,7 @@ class ConvertRunner {
         } catch (NoSuchElementException e) {
             logger.trace("SSH not configured.", e);
             command = new CommandLine(convertCommand);
-            command.addArguments(commandLine.toString());
+            command.addArguments(commandLine.toString(), false);
         }
 
         try {
