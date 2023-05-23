@@ -1690,6 +1690,15 @@ Import form
     overflow: scroll;
 }
 
+#recordIdentifierMissingDialog ul {
+    background-color: var(--orange);
+    color: var(--pure-white);
+}
+
+.error-item {
+    margin-top: var(--default-half-size);
+}
+
 /*----------------------------------------------------------------------
 Mass import
 ----------------------------------------------------------------------*/
