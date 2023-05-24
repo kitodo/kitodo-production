@@ -330,25 +330,8 @@ public class RulesetManagement implements RulesetManagementInterface {
     public int updateMetadata(Collection<Metadata> currentMetadata, String acquisitionStage,
             Collection<Metadata> updateMetadata) {
 
-        final Function<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> entryProducer = key -> {
-            MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>> entry = new MutableTriple<>();
-            entry.setLeft(new ArrayList<>());
-            entry.setRight(new ArrayList<>());
-            return entry;
-        };
-
-        HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifying = new HashMap<>();
-        for (Metadata metadata : currentMetadata) {
-            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getLeft().add(metadata);
-        }
-        for (Metadata metadata : updateMetadata) {
-            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getRight().add(metadata);
-        }
-        Settings settings = ruleset.getSettings(acquisitionStage);
-        for (var entry : unifying.entrySet()) {
-            entry.getValue().setMiddle(settings.getReimport(entry.getKey()));
-        }
-
+        HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifying = unifyMetadataByKey(
+            currentMetadata, acquisitionStage, updateMetadata);
         int sizeBefore = currentMetadata.size();
         currentMetadata.clear();
         for (var entry : unifying.entrySet()) {
@@ -373,5 +356,29 @@ public class RulesetManagement implements RulesetManagementInterface {
             }
         }
         return currentMetadata.size() - sizeBefore;
+    }
+
+    private HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifyMetadataByKey(
+            Collection<Metadata> currentMetadata, String acquisitionStage, Collection<Metadata> updateMetadata) {
+
+        final Function<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> entryProducer = key -> {
+            MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>> entry = new MutableTriple<>();
+            entry.setLeft(new ArrayList<>());
+            entry.setRight(new ArrayList<>());
+            return entry;
+        };
+
+        HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifying = new HashMap<>();
+        for (Metadata metadata : currentMetadata) {
+            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getLeft().add(metadata);
+        }
+        for (Metadata metadata : updateMetadata) {
+            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getRight().add(metadata);
+        }
+        Settings settings = ruleset.getSettings(acquisitionStage);
+        for (var entry : unifying.entrySet()) {
+            entry.getValue().setMiddle(settings.getReimport(entry.getKey()));
+        }
+        return unifying;
     }
 }
