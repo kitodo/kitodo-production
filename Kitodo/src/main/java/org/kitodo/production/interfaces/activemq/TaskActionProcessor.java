@@ -204,7 +204,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
                 currentTaskComment.getType()) && !currentTaskComment.isCorrected() && correctionTaskId.equals(
                 currentTaskComment.getCorrectionTask().getId())).findFirst();
-        if (!optionalComment.isEmpty()) {
+        if (optionalComment.isPresent()) {
             workflowControllerService.solveProblem(optionalComment.get(), TaskEditType.QUEUE);
         }
     }
