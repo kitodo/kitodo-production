@@ -45,7 +45,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     public static final String KEY_TASK_ACTION = "action";
     public static final String KEY_TASK_ID = "id";
     private final TaskService taskService = ServiceManager.getTaskService();
-    private WorkflowControllerService workflowControllerService;
+    private final WorkflowControllerService workflowControllerService;
 
     /**
      * The default constructor looks up the queue name to use in kitodo_config.properties. If that is not configured and
