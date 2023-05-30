@@ -78,7 +78,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         try {
             Task currentTask = taskService.getById(taskId);
             if (Objects.isNull(currentTask)) {
-                throw new ProcessorException("Task with id " + taskId + "not found.");
+                throw new ProcessorException("Task with id " + taskId + " not found.");
             }
 
             processAction(mapMessageObjectReader, taskAction, currentTask);
