@@ -22,24 +22,22 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import javax.xml.bind.JAXBException;
 
-import org.apache.commons.lang3.tuple.MutableTriple;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.dataeditor.ruleset.xml.AcquisitionStage;
 import org.kitodo.dataeditor.ruleset.xml.Division;
 import org.kitodo.dataeditor.ruleset.xml.Key;
 import org.kitodo.dataeditor.ruleset.xml.Namespace;
-import org.kitodo.dataeditor.ruleset.xml.Reimport;
 import org.kitodo.dataeditor.ruleset.xml.Ruleset;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
 import org.kitodo.utils.JAXBContextCache;
@@ -52,6 +50,11 @@ public class RulesetManagement implements RulesetManagementInterface {
      * A logger can be used to keep a log.
      */
     private static final Logger logger = LogManager.getLogger(RulesetManagement.class);
+
+    /**
+     * Language used internally in places where language does not matter.
+     */
+    private static final List<LanguageRange> ENGLISH = LanguageRange.parse("en");
 
     /**
      * The ruleset.
@@ -327,58 +330,42 @@ public class RulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
-    public int updateMetadata(Collection<Metadata> currentMetadata, String acquisitionStage,
+    public int updateMetadata(String division, Collection<Metadata> currentMetadata, String acquisitionStage,
             Collection<Metadata> updateMetadata) {
 
-        HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifying = unifyMetadataByKey(
-            currentMetadata, acquisitionStage, updateMetadata);
+        Settings settings = ruleset.getSettings(acquisitionStage);
+        Collection<MetadataViewInterface> allowedMetadata = getStructuralElementView(division, acquisitionStage,
+            ENGLISH).getAllowedMetadata();
+        Collection<ReimportMetadata> metadataForReimport = createListOfMetadataToMerge(currentMetadata, settings,
+            allowedMetadata, updateMetadata);
+
         int sizeBefore = currentMetadata.size();
         currentMetadata.clear();
-        for (var entry : unifying.entrySet()) {
-            var metadata = entry.getValue();
-            Collection<Metadata> currentEntries = metadata.getLeft();
-            Collection<Metadata> updateEntries = metadata.getRight();
-
-            switch (metadata.getMiddle()) {
-                case ADD:
-                    currentMetadata.addAll(currentEntries);
-                    currentMetadata.addAll(updateEntries);
-                    break;
-                case KEEP:
-                    currentMetadata.addAll(currentEntries);
-                    break;
-                case REPLACE:
-                    currentMetadata.addAll(updateEntries.isEmpty() ? currentEntries : updateEntries);
-                    break;
-                default:
-                    throw new IllegalStateException(
-                            "Used not supported reimport case {}".replace("{}", metadata.getMiddle().toString()));
-            }
+        for (ReimportMetadata metadataInReimport : metadataForReimport) {
+            currentMetadata.addAll(metadataInReimport.get());
         }
         return currentMetadata.size() - sizeBefore;
     }
 
-    private HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifyMetadataByKey(
-            Collection<Metadata> currentMetadata, String acquisitionStage, Collection<Metadata> updateMetadata) {
-
-        final Function<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> entryProducer = key -> {
-            MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>> entry = new MutableTriple<>();
-            entry.setLeft(new ArrayList<>());
-            entry.setRight(new ArrayList<>());
-            return entry;
-        };
-
-        HashMap<String, MutableTriple<Collection<Metadata>, Reimport, Collection<Metadata>>> unifying = new HashMap<>();
+    private Collection<ReimportMetadata> createListOfMetadataToMerge(Collection<Metadata> currentMetadata,
+            Settings settings, Collection<MetadataViewInterface> allowedMetadata, Collection<Metadata> updateMetadata) {
+        HashMap<String, ReimportMetadata> unifying = new HashMap<>();
         for (Metadata metadata : currentMetadata) {
-            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getLeft().add(metadata);
+            unifying.computeIfAbsent(metadata.getKey(), ReimportMetadata::new).addToCurrentEntries(metadata);
         }
         for (Metadata metadata : updateMetadata) {
-            unifying.computeIfAbsent(metadata.getKey(), entryProducer).getRight().add(metadata);
+            unifying.computeIfAbsent(metadata.getKey(), ReimportMetadata::new).addToUpdateEntries(metadata);
         }
-        Settings settings = ruleset.getSettings(acquisitionStage);
-        for (var entry : unifying.entrySet()) {
-            entry.getValue().setMiddle(settings.getReimport(entry.getKey()));
+        Collection<ReimportMetadata> result = unifying.values();
+        for (ReimportMetadata entry : result) {
+            entry.setReimport(settings.getReimport(entry.getKey()));
         }
-        return unifying;
+        for (MetadataViewInterface metadataView : allowedMetadata) {
+            ReimportMetadata metadataToMerge = unifying.get(metadataView.getId());
+            if (Objects.nonNull(metadataToMerge)) {
+                metadataToMerge.setMaxOccurs(metadataView.getMaxOccurs());
+            }
+        }
+        return result;
     }
 }

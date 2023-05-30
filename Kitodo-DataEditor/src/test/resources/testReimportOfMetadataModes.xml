@@ -15,8 +15,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ruleset.xsd">
     <declaration>
-        <division id="aDivisionUnused">
-            <label>A division (unused)</label>
+        <division id="division">
+            <label>A division</label>
         </division>
 
         <!-- simple tests -->
@@ -30,6 +30,10 @@
 
         <key id="metadataToAdd">
             <label>Metadata to add</label>
+        </key>
+
+        <key id="metadataToAddWithLimit">
+            <label>Metadata to add with limit</label>
         </key>
 
         <key id="metadataThatIsNew">
@@ -50,8 +54,15 @@
         </key>
     </declaration>
 
+    <correlation>
+        <restriction division="division" unspecified="unrestricted">
+            <permit key="metadataToAddWithLimit" maxOccurs="2"/>
+        </restriction>
+    </correlation>
+
     <editing>
         <setting key="metadataToAdd" reimport="add" />
+        <setting key="metadataToAddWithLimit" reimport="add" />
         <setting key="metadataToReplaceExplicitly" reimport="replace" />
         <setting key="metadataToKeep" reimport="keep" />
 

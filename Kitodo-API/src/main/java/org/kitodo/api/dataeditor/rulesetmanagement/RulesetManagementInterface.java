@@ -150,6 +150,8 @@ public interface RulesetManagementInterface {
      * Updates metadata during a repeated catalog import, depending on the
      * reimport settings specified in the ruleset.
      * 
+     * @param division
+     *            current division
      * @param metadata
      *            current metadata
      * @param acquisitionStage
@@ -158,5 +160,5 @@ public interface RulesetManagementInterface {
      *            items obtained from import
      * @return number of added metadata items
      */
-    int updateMetadata(Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems);
+    int updateMetadata(String division, Collection<Metadata> metadata, String acquisitionStage, Collection<Metadata> updateItems);
 }

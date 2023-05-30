@@ -12,6 +12,7 @@
 package org.kitodo.dataeditor.ruleset;
 
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.anyOf;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.empty;
@@ -1077,6 +1078,7 @@ public class RulesetManagementIT {
         metadata.add(newMetadataEntry("metadataToReplaceByDefault", "value to replace"));
         metadata.add(newMetadataEntry("metadataToReplaceExplicitly", "value to replace"));
         metadata.add(newMetadataEntry("metadataToAdd", "value 1"));
+        metadata.add(newMetadataEntry("metadataToAddWithLimit", "value 1"));
         metadata.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value 1"));
         metadata.add(newMetadataEntry("metadataToKeep", "value not to replace"));
         metadata.add(newMetadataEntry("metadataToKeepExceptInEditing", "value not to replace"));
@@ -1084,15 +1086,19 @@ public class RulesetManagementIT {
         Collection<Metadata> imported = new HashSet<>();
         imported.add(newMetadataEntry("metadataToReplaceByDefault", "replaced value")); // 0
         imported.add(newMetadataEntry("metadataToReplaceExplicitly", "replaced value")); // 0
+        imported.add(newMetadataEntry("metadataToAdd", "value 1")); // 0
         imported.add(newMetadataEntry("metadataToAdd", "value 2")); // 1
         imported.add(newMetadataEntry("metadataToAdd", "value 3")); // 1
+        imported.add(newMetadataEntry("metadataToAddWithLimit", "value 1")); // 0
+        imported.add(newMetadataEntry("metadataToAddWithLimit", "value 2")); // 0.5
+        imported.add(newMetadataEntry("metadataToAddWithLimit", "value 3")); // 0.5
         imported.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value 2")); // 1
         imported.add(newMetadataEntry("metadataToKeep", "value must not appear in result")); // 0
         imported.add(newMetadataEntry("metadataToKeepExceptInEditing", "value not to replace")); // 0
         imported.add(newMetadataEntry("metadataThatIsNew", "new value")); // 1
 
-        int numAdded = underTest.updateMetadata(metadata, "create", imported);
-        assertEquals(4, numAdded);
+        int numAdded = underTest.updateMetadata("division", metadata, "create", imported);
+        assertEquals(5, numAdded);
 
         List<Metadata> defaultReplace = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToReplaceByDefault")).collect(Collectors.toList());
@@ -1110,6 +1116,13 @@ public class RulesetManagementIT {
         assertThat(
             add.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
             containsInAnyOrder("value 1", "value 2", "value 3"));
+
+        List<Metadata> limitedAdd = metadata.stream().filter(element -> element.getKey().equals("metadataToAddWithLimit"))
+                .collect(Collectors.toList());
+        assertEquals(2, limitedAdd.size());
+        assertThat(
+            limitedAdd.stream().map(MetadataEntry.class::cast).map(MetadataEntry::getValue).collect(Collectors.toList()),
+            anyOf(containsInAnyOrder("value 1", "value 2"), containsInAnyOrder("value 1", "value 3")));
 
         List<Metadata> addCreate = metadata.stream()
                 .filter(element -> element.getKey().equals("metadataToAddDuringCreationAndKeepLater"))
@@ -1146,7 +1159,7 @@ public class RulesetManagementIT {
         imported.add(newMetadataEntry("metadataToAddDuringCreationAndKeepLater", "value not to replace")); // 0
         imported.add(newMetadataEntry("metadataToKeepExceptInEditing", "replaced value")); // -1
 
-        int numAdded = underTest.updateMetadata(metadata, "edit", imported);
+        int numAdded = underTest.updateMetadata("division", metadata, "edit", imported);
         assertEquals(-1, numAdded);
 
         List<Metadata> keepLater = metadata.stream()
