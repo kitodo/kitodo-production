@@ -650,23 +650,24 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         Collection<String> keysForProcessTitle = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
         if (!keysForProcessTitle.isEmpty()) {
             String processTitle = currentProcess.getProcess().getTitle();
-            addAddableMetadataRecursive(workpiece.getLogicalStructure(), keysForProcessTitle, processTitle);
-            addAddableMetadataRecursive(workpiece.getPhysicalStructure(), keysForProcessTitle, processTitle);
+            addAllowedMetadataRecursive(workpiece.getLogicalStructure(), keysForProcessTitle, processTitle);
+            addAllowedMetadataRecursive(workpiece.getPhysicalStructure(), keysForProcessTitle, processTitle);
         }
     }
 
-    private void addAddableMetadataRecursive(Division<?> division, Collection<String> keys, String value) {
+    private void addAllowedMetadataRecursive(Division<?> division, Collection<String> keys, String value) {
         StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(division.getType(),
             acquisitionStage, priorityList);
-        for (MetadataViewInterface addableMetadataView : divisionView.getAddableMetadata(division.getMetadata(),
-            Collections.emptyList())) {
-            if (addableMetadataView instanceof SimpleMetadataViewInterface
-                    && keys.contains(addableMetadataView.getId())) {
-                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) addableMetadataView, value);
+        for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {
+            if (metadataView instanceof SimpleMetadataViewInterface && keys.contains(metadataView.getId())
+                    && division.getMetadata().parallelStream()
+                            .filter(metadata -> metadataView.getId().equals(metadata.getKey()))
+                            .count() < metadataView.getMaxOccurs()) {
+                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) metadataView, value);
             }
         }
         for (Division<?> child : division.getChildren()) {
-            addAddableMetadataRecursive(child, keys, value);
+            addAllowedMetadataRecursive(child, keys, value);
         }
     }
 
