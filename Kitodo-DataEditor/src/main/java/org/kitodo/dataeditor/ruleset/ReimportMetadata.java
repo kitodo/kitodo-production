@@ -11,7 +11,7 @@
 
 package org.kitodo.dataeditor.ruleset;
 
-import java.util.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.function.Supplier;
