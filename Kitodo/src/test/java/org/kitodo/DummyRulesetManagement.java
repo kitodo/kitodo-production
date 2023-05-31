@@ -80,7 +80,7 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     }
 
     @Override
-    public int updateMetadata(Collection<Metadata> metadata, String acquisitionStage,
+    public int updateMetadata(String division, Collection<Metadata> metadata, String acquisitionStage,
             Collection<Metadata> updateItems) {
         throw new UnsupportedOperationException();
     }
