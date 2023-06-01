@@ -109,11 +109,8 @@ public class CommandService {
      */
     public void runCommandAsync(String script) {
         if (Objects.nonNull(script)) {
-            KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
-            CommandInterface commandInterface = serviceLoader.loadModule();
-
             Flowable<CommandResult> source = Flowable.fromCallable(() ->
-                commandInterface.runCommand(random.nextInt(), script)
+                commandModule.runCommand(random.nextInt(), script)
             );
 
             Flowable<CommandResult> commandBackgroundWorker = source.subscribeOn(Schedulers.io());

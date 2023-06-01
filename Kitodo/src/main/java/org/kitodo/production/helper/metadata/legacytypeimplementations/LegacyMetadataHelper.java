@@ -35,7 +35,7 @@ public class LegacyMetadataHelper {
      */
     private LegacyInnerPhysicalDocStructHelper legacyInnerPhysicalDocStructHelper;
 
-    private BindingSaveInterface bindingSaveInterface;
+    private BindingSaveInterface bindingSaver;
 
     private MetadataEntry binding;
 
@@ -78,7 +78,7 @@ public class LegacyMetadataHelper {
      * This allows the metadata to be saved.
      */
     public void saveToBinding() {
-        bindingSaveInterface.saveMetadata(this);
+        bindingSaver.saveMetadata(this);
     }
 
     /**
@@ -88,7 +88,7 @@ public class LegacyMetadataHelper {
      * the value may be, aside from the value of a metadata entry, the value of
      * a field of the container, which makes the matter a bit unwieldy.
      *
-     * @param bsi
+     * @param bindingSaver
      *            thee binding save interface via which the metadata can
      *            automatically save itself afterwards
      * @param binding
@@ -97,8 +97,8 @@ public class LegacyMetadataHelper {
      * @param domain
      *            the domain where the metadata entry is stored
      */
-    public void setBinding(BindingSaveInterface bsi, MetadataEntry binding, Domain domain) {
-        this.bindingSaveInterface = bsi;
+    public void setBinding(BindingSaveInterface bindingSaver, MetadataEntry binding, Domain domain) {
+        this.bindingSaver = bindingSaver;
         this.binding = binding;
         this.domain = domain;
     }
@@ -124,7 +124,7 @@ public class LegacyMetadataHelper {
     @Deprecated
     public void setStringValue(String value) {
         this.value = value;
-        if (bindingSaveInterface != null) {
+        if (bindingSaver != null) {
             saveToBinding();
         }
     }
