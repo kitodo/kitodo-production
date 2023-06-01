@@ -25,22 +25,12 @@ import org.kitodo.api.dataeditor.DataEditorInterface;
  */
 public class DataEditor implements DataEditorInterface {
 
-    private MetsKitodoWrapper metsKitodoWrapper;
-
     @Override
     public void readData(URI xmlFileUri, URI xsltFileUri) throws IOException {
         try {
-            this.metsKitodoWrapper = new MetsKitodoWrapper(xmlFileUri, xsltFileUri);
-        } catch (JAXBException  | TransformerException | DatatypeConfigurationException e) {
-            // TODO add also message for module frontend, when it is ready!
-            // For now we wrap exceptions in an IOException so that we don't need to
-            // implement JAXB to core
+            MetsKitodoReader.readAndValidateUriToMets(xmlFileUri, xsltFileUri);
+        } catch (JAXBException  | TransformerException e) {
             throw new IOException("Unable to read file", e);
         }
-    }
-
-    @Override
-    public boolean editData(URI xmlFileUri, URI rulesetFileUri) {
-        return false;
     }
 }

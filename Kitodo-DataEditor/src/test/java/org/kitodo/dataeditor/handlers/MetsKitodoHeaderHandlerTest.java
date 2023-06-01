@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
+import org.kitodo.dataeditor.MetsKitodoHeaderHandler;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
 

@@ -24,7 +24,6 @@ import javax.xml.transform.TransformerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.filemanagement.FileManagementInterface;
-import org.kitodo.dataeditor.handlers.MetsKitodoHeaderHandler;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.utils.JAXBContextCache;

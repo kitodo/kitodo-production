@@ -20,13 +20,11 @@ import java.util.jar.Manifest;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.dataformat.DataFormatVersionProvider;
 
 /**
  * Provides methods to get information about module or data format.
  */
 public class VersionProvider {
-    private static DataFormatVersionProvider dataFormatVersionProvider = new DataFormatVersionProvider();
     private static final Logger logger = LogManager.getLogger(VersionProvider.class);
 
     /**
@@ -63,14 +61,5 @@ public class VersionProvider {
         }
         logger.error("Could not read application version info for writing in header of mets file!");
         return "Version info is missing";
-    }
-
-    /**
-     * Gets the current version of used data format.
-     * 
-     * @return the current version of used data format
-     */
-    public static String getDataFormatVersion() {
-        return dataFormatVersionProvider.getDataFormatVersion();
     }
 }

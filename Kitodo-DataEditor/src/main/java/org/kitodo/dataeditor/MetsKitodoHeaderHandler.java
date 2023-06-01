@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.dataeditor.handlers;
+package org.kitodo.dataeditor;
 
 import java.util.List;
 import java.util.Objects;
