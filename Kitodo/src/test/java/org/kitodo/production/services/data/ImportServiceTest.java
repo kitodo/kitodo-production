@@ -47,9 +47,9 @@ public class ImportServiceTest {
         List<ProcessDTO> processes = new ArrayList<>(Arrays.asList(processOne, processTwo, processThree));
 
         ImportService importService = new ImportService();
-        importService.sortProcessesByProjectID(processes, 9);
+        List<ProcessDTO> sortedProcesses = importService.sortProcessesByProjectID(processes, 9);
 
-        int projectIdOfFirstProcess = processes.get(0).getProject().getId();
+        int projectIdOfFirstProcess = sortedProcesses.get(0).getProject().getId();
 
         Assert.assertEquals("Process not sorted based on provided projectId",9,
                 projectIdOfFirstProcess);
