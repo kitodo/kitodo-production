@@ -983,6 +983,7 @@ public class ImportService {
      * @param projectId projectId by which the list gets sorted
      */
     public List<ProcessDTO> sortProcessesByProjectID(List<ProcessDTO> processDTOs, int projectId) {
+        List<ProcessDTO> sortedList = new ArrayList<>(processDTOs);
         Comparator<ProcessDTO> comparator = Comparator.comparingInt(obj -> {
             if (obj.getProject().getId() == projectId) {
                 return 0; // Matching value should come first
@@ -990,8 +991,8 @@ public class ImportService {
                 return 1; // Non-matching value comes later
             }
         });
-        Collections.sort(processDTOs, comparator);
-        return processDTOs;
+        Collections.sort(sortedList, comparator);
+        return sortedList;
     }
 
     /**
