@@ -16,9 +16,6 @@ import java.util.Objects;
 
 public class CommandResult {
 
-    /** The id of the command. */
-    private Integer id;
-
     /** The command as a String. */
     private String command;
 
@@ -31,8 +28,6 @@ public class CommandResult {
     /**
      * Constructor.
      * 
-     * @param id
-     *            The id.
      * @param command
      *            The command.
      * @param successful
@@ -40,20 +35,10 @@ public class CommandResult {
      * @param messages
      *            The resultMessages
      */
-    public CommandResult(Integer id, String command, boolean successful, List<String> messages) {
-        this.id = id;
+    public CommandResult(String command, boolean successful, List<String> messages) {
         this.command = command;
         this.successful = successful;
         this.messages = messages;
-    }
-
-    /**
-     * Gets the id.
-     * 
-     * @return The id.
-     */
-    public Integer getId() {
-        return id;
     }
 
     /**
@@ -99,8 +84,7 @@ public class CommandResult {
         if (object instanceof CommandResult) {
             CommandResult that = (CommandResult) object;
 
-            return this.id.equals(that.id)
-                    && this.successful == that.successful
+            return this.successful == that.successful
                     && this.command.equals(that.command)
                     && this.messages.equals(that.messages);
         }
@@ -109,6 +93,6 @@ public class CommandResult {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, successful, command, messages);
+        return Objects.hash(successful, command, messages);
     }
 }
