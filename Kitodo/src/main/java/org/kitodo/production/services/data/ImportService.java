@@ -976,7 +976,13 @@ public class ImportService {
         return parentProcess;
     }
 
-    private List<ProcessDTO> sortProcessesByProjectID(List<ProcessDTO> processDTOs, int projectId) {
+    /**
+     * Sorts a list of process DTOs based on a provided projectId.
+     * Processes which match the provided projectId should come first.
+     * @param processDTOs list of process DTOs
+     * @param projectId projectId by which the list gets sorted
+     */
+    public List<ProcessDTO> sortProcessesByProjectID(List<ProcessDTO> processDTOs, int projectId) {
         Comparator<ProcessDTO> comparator = Comparator.comparingInt(obj -> {
             if (obj.getProject().getId() == projectId) {
                 return 0; // Matching value should come first
