@@ -22,9 +22,8 @@
         <p:dataViewListItem>
             <h:panelGrid columns="4" columnClasses="icon,date,name,message">
                 <h:panelGroup>
-                    <h:outputText value="#{msgs.correctionK}"
-                                  id="commentIcon"
-                                  styleClass="correction-marker #{comment.isCorrected() ? 'corrected' : ''}"
+                    <h:outputText id="commentIcon"
+                                  styleClass="fa fa-exclamation-circle correction #{comment.isCorrected() ? 'corrected' : ''}"
                                   rendered="#{comment.getType() eq 'ERROR'}"/>
                 </h:panelGroup>
 

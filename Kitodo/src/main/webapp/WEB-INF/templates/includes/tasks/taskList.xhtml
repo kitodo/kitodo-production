@@ -119,11 +119,10 @@
                       sortBy="#{item.correctionCommentStatus}"
                       headerText="#{msgs.comments}">
                 <h:panelGroup id="commentIcon">
-                    <h:panelGroup styleClass="fa fa-comment"
-                                  rendered="#{item.getProcess().hasComments() and item.correctionCommentStatus eq 0}"/>
-                    <h:outputText value="#{msgs.correctionK}"
-                                  styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                                  rendered="#{item.correctionCommentStatus gt 0}"/>
+                    <h:panelGroup styleClass="fa
+                        #{item.correctionCommentStatus gt 0 ? 'fa-exclamation-circle correction' : 'fa-comment'}
+                        #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{item.getProcess().hasComments()}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">

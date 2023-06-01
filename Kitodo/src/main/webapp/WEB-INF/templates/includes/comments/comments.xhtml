@@ -21,9 +21,8 @@
             <!-- Existing comments -->
             <p:dataTable id="commentsGrid" value="#{CommentForm.getAllComments()}" var="item">
                 <p:column style="width: 100%;">
-                    <p:outputLabel value="#{msgs.correctionK} "
-                                   styleClass="#{(item.corrected) ? 'correction corrected' : 'correction'}"
-                                   rendered="#{item.type eq 'ERROR'}"/>
+                    <h:outputText styleClass="comment-correction fa fa-exclamation-circle #{(item.corrected) ? 'correction corrected' : 'correction'}"
+                                  rendered="#{item.type eq 'ERROR'}"/>
 
                     <h:outputText value="#{item.author ne null ? item.author.fullName : 'System'}"
                                   styleClass="comment-author"/>
