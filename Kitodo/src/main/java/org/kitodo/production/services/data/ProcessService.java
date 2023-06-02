@@ -832,7 +832,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public QueryBuilder createPropertyQuery(String title, String value) {
         String titleSearchKey = ProcessTypeField.PROPERTIES + ".title.keyword";
-        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value.keyword";
+        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value";
 
         BoolQueryBuilder pairQuery = new BoolQueryBuilder();
         if (!WILDCARD.equals(title)) {
