@@ -72,22 +72,6 @@ public class ImageService {
     }
 
     /**
-     * Scales an image at a given path and returns it.
-     *
-     * @param imageFileUri
-     *            the URI to the image which should be scaled
-     * @param percent
-     *            the percentage for scaling
-     * @return the scaled image
-     * @throws IOException
-     *             if the plug-in is configured incorrectly, the image is
-     *             missing or corrupted, etc.
-     */
-    Image getScaledWebImage(URI imageFileUri, double percent) throws IOException {
-        return imageManagement.getScaledWebImage(imageFileUri, percent);
-    }
-
-    /**
      * Changes the size (in pixel) of the image.
      *
      * @param imageFileUri
