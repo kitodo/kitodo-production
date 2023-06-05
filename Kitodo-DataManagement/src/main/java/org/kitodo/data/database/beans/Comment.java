@@ -24,7 +24,6 @@ import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.CommentType;
 
-
 @Entity
 @Table(name = "comment")
 public class Comment extends BaseBean {
