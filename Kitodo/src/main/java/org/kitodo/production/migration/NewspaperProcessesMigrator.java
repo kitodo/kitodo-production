@@ -54,6 +54,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.tasks.NewspaperMigrationTask;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -658,7 +659,7 @@ public class NewspaperProcessesMigrator {
             processService.saveToDatabase(child);
         }
         if (WorkflowControllerService.allChildrenClosed(yearProcess)) {
-            yearProcess.setSortHelperStatus("100000000");
+            yearProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         }
         processService.saveToDatabase(yearProcess);
         addToBatch(yearProcess);

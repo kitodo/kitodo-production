@@ -51,6 +51,7 @@ import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -822,5 +823,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public String getDefaultConfigurationType() {
         return defaultConfigurationType;
+    }
+    
+    /**
+     * Returns the details of the missing record identifier error.
+     * 
+     * @return the details as a list of error description
+     */
+    public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
+        return ServiceManager.getImportService().getDetailsOfRecordIdentifierMissingError();
     }
 }

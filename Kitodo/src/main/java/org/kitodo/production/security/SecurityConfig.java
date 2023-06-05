@@ -99,29 +99,137 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         http.sessionManagement().maximumSessions(1).sessionRegistry(getSessionRegistry())
                 .expiredUrl(LOGIN_PAGE);
 
-        // viewAll... Authority to view list of entities
-        // view...... Authority to view entity at edit page
-        // edit...... Authority to change and save entities at edit page
+        // site specific rules
+        authorizeSpecificPages(http);
+
+        // more general rules should be at end
+        authorizeGeneralPages(http);
+
+        http.addFilterAfter(new SecurityObjectAccessFilter(), FilterSecurityInterceptor.class);
+
+        handleFormLogin(http);
+    }
+
+    private void authorizeSpecificPages(HttpSecurity http) throws Exception {
+        authorizePageClientEdit(http);
+
+        authorizePageIndexing(http);
+
+        authorizePageProcesses(http);
+
+        authorizePageProcessEdit(http);
+
+        authorizePageProjects(http);
+
+        authorizePageProjectEdit(http);
+
+        authorizePageTemplateEdit(http);
+
+        authorizePageDocketEdit(http);
+
+        authorizePageRulesetEdit(http);
+
+        authorizePageWorkflowEdit(http);
+
+        authorizePageTasks(http);
+
+        authorizePageUsers(http);
+
+        authorizePageRoleEdit(http);
+
+        authorizePageLdapGroupEdit(http);
+    }
+
+    private void authorizeGeneralPages(HttpSecurity http) throws Exception {
         http.authorizeRequests()
-            .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
-                EDIT_CLIENT + GLOBAL,
-                EDIT_CLIENT + CLIENT_ANY,
-                VIEW_CLIENT + GLOBAL,
-                VIEW_CLIENT + CLIENT_ANY)
+            .antMatchers("/pages/images/**").permitAll()
+            .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
+            .antMatchers("/js/modeler.js").permitAll()
+            .antMatchers("/js/toggle.js").permitAll()
+            .anyRequest().authenticated();
+    }
 
-            .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
-                "editIndex_" + GLOBAL,
-                "viewIndex_" + GLOBAL)
+    private void authorizePageLdapGroupEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
+                "editLdapGroup_" + GLOBAL,
+                "viewLdapGroup_" + GLOBAL);
+    }
 
-            .antMatchers("/pages/processes.jsf").hasAnyAuthority(
-                VIEW_ALL_PROCESSES + GLOBAL,
-                VIEW_ALL_PROCESSES + CLIENT_ANY)
-            .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
-                EDIT_PROCESS + GLOBAL,
-                EDIT_PROCESS + CLIENT_ANY,
-                VIEW_PROCESS + GLOBAL,
-                VIEW_PROCESS + CLIENT_ANY)
+    private void authorizePageRoleEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
+                EDIT_ROLE + GLOBAL,
+                EDIT_ROLE + CLIENT_ANY,
+                VIEW_ROLE + GLOBAL,
+                VIEW_ROLE + CLIENT_ANY);
+    }
 
+    private void authorizePageUsers(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/users.jsf").hasAnyAuthority(
+                VIEW_ALL_USERS + GLOBAL,
+                VIEW_ALL_USERS + CLIENT_ANY,
+                VIEW_ALL_ROLES + GLOBAL,
+                VIEW_ALL_ROLES + CLIENT_ANY,
+                "viewAllClients_" + GLOBAL,
+                "viewAllLdapGroups_" + GLOBAL);
+    }
+
+    private void authorizePageTasks(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
+                VIEW_ALL_TASKS + GLOBAL,
+                VIEW_ALL_TASKS + CLIENT_ANY);
+    }
+
+    private void authorizePageWorkflowEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
+                EDIT_WORKFLOW + GLOBAL,
+                EDIT_WORKFLOW + CLIENT_ANY,
+                VIEW_WORKFLOW + GLOBAL,
+                VIEW_WORKFLOW + CLIENT_ANY);
+    }
+
+    private void authorizePageRulesetEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
+                EDIT_RULESET + GLOBAL,
+                EDIT_RULESET + CLIENT_ANY,
+                VIEW_RULESET + GLOBAL,
+                VIEW_RULESET + CLIENT_ANY);
+    }
+
+    private void authorizePageDocketEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
+                EDIT_DOCKET + GLOBAL,
+                EDIT_DOCKET + CLIENT_ANY,
+                VIEW_DOCKET + GLOBAL,
+                VIEW_DOCKET + CLIENT_ANY);
+    }
+
+    private void authorizePageTemplateEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/templateEdit.jsf*").hasAnyAuthority(
+                EDIT_TEMPLATE + GLOBAL,
+                EDIT_TEMPLATE + CLIENT_ANY,
+                VIEW_TEMPLATE + GLOBAL,
+                VIEW_TEMPLATE + CLIENT_ANY);
+    }
+
+    private void authorizePageProjectEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
+                EDIT_PROJECT + GLOBAL,
+                EDIT_PROJECT + CLIENT_ANY,
+                VIEW_PROJECT + GLOBAL,
+                VIEW_PROJECT + CLIENT_ANY);
+    }
+
+    private void authorizePageProjects(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
             .antMatchers("/pages/projects.jsf").hasAnyAuthority(
                 VIEW_ALL_PROJECTS + GLOBAL,
                 VIEW_ALL_PROJECTS + CLIENT_ANY,
@@ -131,67 +239,42 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 VIEW_ALL_DOCKETS + CLIENT_ANY,
                 VIEW_ALL_RULESETS + GLOBAL,
                 VIEW_ALL_RULESETS + CLIENT_ANY,
-                VIEW_ALL_WORKFLOWS + GLOBAL)
-            .antMatchers("/pages/projectEdit.jsf*").hasAnyAuthority(
-                EDIT_PROJECT + GLOBAL,
-                EDIT_PROJECT + CLIENT_ANY,
-                VIEW_PROJECT + GLOBAL,
-                VIEW_PROJECT + CLIENT_ANY)
+                VIEW_ALL_WORKFLOWS + GLOBAL);
+    }
 
-                .antMatchers("/pages/templateEdit.jsf*").hasAnyAuthority(
-                EDIT_TEMPLATE + GLOBAL,
-                EDIT_TEMPLATE + CLIENT_ANY,
-                VIEW_TEMPLATE + GLOBAL,
-                VIEW_TEMPLATE + CLIENT_ANY)
+    private void authorizePageProcessEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/processEdit.jsf*").hasAnyAuthority(
+                EDIT_PROCESS + GLOBAL,
+                EDIT_PROCESS + CLIENT_ANY,
+                VIEW_PROCESS + GLOBAL,
+                VIEW_PROCESS + CLIENT_ANY);
+    }
 
-            .antMatchers("/pages/docketEdit.jsf*").hasAnyAuthority(
-                EDIT_DOCKET + GLOBAL,
-                EDIT_DOCKET + CLIENT_ANY,
-                VIEW_DOCKET + GLOBAL,
-                VIEW_DOCKET + CLIENT_ANY)
+    private void authorizePageProcesses(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/processes.jsf").hasAnyAuthority(
+                VIEW_ALL_PROCESSES + GLOBAL,
+                VIEW_ALL_PROCESSES + CLIENT_ANY);
+    }
 
-            .antMatchers("/pages/rulesetEdit.jsf*").hasAnyAuthority(
-                EDIT_RULESET + GLOBAL,
-                EDIT_RULESET + CLIENT_ANY,
-                VIEW_RULESET + GLOBAL,
-                VIEW_RULESET + CLIENT_ANY)
+    private void authorizePageIndexing(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/indexingPage.jsf").hasAnyAuthority(
+                "editIndex_" + GLOBAL,
+                "viewIndex_" + GLOBAL);
+    }
 
-            .antMatchers("/pages/workflowEdit.jsf*").hasAnyAuthority(
-                EDIT_WORKFLOW + GLOBAL,
-                EDIT_WORKFLOW + CLIENT_ANY,
-                VIEW_WORKFLOW + GLOBAL,
-                VIEW_WORKFLOW + CLIENT_ANY)
+    private void authorizePageClientEdit(HttpSecurity http) throws Exception {
+        http.authorizeRequests()
+            .antMatchers("/pages/clientEdit.jsf*").hasAnyAuthority(
+                EDIT_CLIENT + GLOBAL,
+                EDIT_CLIENT + CLIENT_ANY,
+                VIEW_CLIENT + GLOBAL,
+                VIEW_CLIENT + CLIENT_ANY);
+    }
 
-            .antMatchers("/pages/tasks.jsf").hasAnyAuthority(
-                VIEW_ALL_TASKS + GLOBAL,
-                VIEW_ALL_TASKS + CLIENT_ANY)
-
-            .antMatchers("/pages/users.jsf").hasAnyAuthority(
-                VIEW_ALL_USERS + GLOBAL,
-                VIEW_ALL_USERS + CLIENT_ANY,
-                VIEW_ALL_ROLES + GLOBAL,
-                VIEW_ALL_ROLES + CLIENT_ANY,
-                "viewAllClients_" + GLOBAL,
-                "viewAllLdapGroups_" + GLOBAL)
-
-            .antMatchers("/pages/roleEdit.jsf*").hasAnyAuthority(
-                EDIT_ROLE + GLOBAL,
-                EDIT_ROLE + CLIENT_ANY,
-                VIEW_ROLE + GLOBAL,
-                VIEW_ROLE + CLIENT_ANY)
-
-            .antMatchers("/pages/ldapgroupEdit.jsf*").hasAnyAuthority(
-                "editLdapGroup_" + GLOBAL,
-                "viewLdapGroup_" + GLOBAL)
-
-            .antMatchers("/pages/images/**").permitAll()
-            .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
-            .antMatchers("/js/modeler.js").permitAll()
-            .antMatchers("/js/toggle.js").permitAll()
-            .anyRequest().authenticated();
-
-        http.addFilterAfter(new SecurityObjectAccessFilter(), FilterSecurityInterceptor.class);
-
+    private void handleFormLogin(HttpSecurity http) throws Exception {
         http.formLogin()
                 .loginPage(LOGIN_PAGE)
                 .loginProcessingUrl("/login")
