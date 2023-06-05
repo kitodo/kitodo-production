@@ -363,7 +363,7 @@ public class WorkflowControllerService {
         currentTask.setProcessingBegin(null);
         taskService.save(currentTask);
 
-        if (comment.hasSeparateCorrectionTask()) {
+        if (Objects.nonNull(comment.getCorrectionTask())) {
             Task correctionTask = comment.getCorrectionTask();
             correctionTask.setProcessingStatus(TaskStatus.OPEN);
             correctionTask.setProcessingEnd(null);
@@ -382,7 +382,7 @@ public class WorkflowControllerService {
      */
     public void solveProblem(Comment comment, TaskEditType taskEditType)
             throws DataException, DAOException, IOException {
-        if (comment.hasSeparateCorrectionTask()) {
+        if (Objects.nonNull(comment.getCorrectionTask())) {
             closeTaskByUser(comment.getCorrectionTask());
             comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
         } else {

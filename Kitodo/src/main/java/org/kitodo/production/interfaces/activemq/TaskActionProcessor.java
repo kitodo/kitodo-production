@@ -158,8 +158,6 @@ public class TaskActionProcessor extends ActiveMQProcessor {
                 throw new ProcessorException("Correction task with id " + correctionTaskId + " not found.");
             }
             comment.setCorrectionTask(correctionTask);
-        } else {
-            comment.setCorrectionTask(currentTask);
         }
         comment.setType(CommentType.ERROR);
         workflowControllerService.reportProblem(comment, TaskEditType.QUEUE);
@@ -194,7 +192,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     private void markErrorCommentAsCorrected(Task currentTask) throws DAOException, DataException, IOException {
-        markErrorCommentAsCorrected(currentTask, currentTask.getId());
+        markErrorCommentAsCorrected(currentTask, null);
     }
 
     private void markErrorCommentAsCorrected(Task currentTask, Integer correctionTaskId)
@@ -202,8 +200,10 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(currentTask);
         Optional<Comment> optionalComment;
         optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
-                currentTaskComment.getType()) && !currentTaskComment.isCorrected() && correctionTaskId.equals(
-                currentTaskComment.getCorrectionTask().getId())).findFirst();
+                        currentTaskComment.getType()) && !currentTaskComment.isCorrected() && ((Objects.isNull(
+                        correctionTaskId) && Objects.isNull(currentTaskComment.getCorrectionTask())) || (Objects.nonNull(
+                        correctionTaskId) && correctionTaskId.equals(currentTaskComment.getCorrectionTask().getId()))))
+                .findFirst();
         if (optionalComment.isPresent()) {
             workflowControllerService.solveProblem(optionalComment.get(), TaskEditType.QUEUE);
         }
