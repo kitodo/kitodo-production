@@ -243,15 +243,6 @@ public class Comment extends BaseBean {
     }
 
     /**
-     * Check if the comment has a correction task which differs from the current task.
-     *
-     * @return true if the comment has a separate correction task
-     */
-    public boolean hasSeparateCorrectionTask() {
-        return Objects.nonNull(correctionTask) && !correctionTask.equals(currentTask);
-    }
-
-    /**
      * Get process.
      *
      * @return value of process
