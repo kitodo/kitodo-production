@@ -12,7 +12,6 @@
 package org.kitodo.data.database.beans;
 
 import java.util.Date;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.CommentType;
+
 
 @Entity
 @Table(name = "comment")
@@ -235,8 +235,7 @@ public class Comment extends BaseBean {
     /**
      * Set correctionTask.
      *
-     * @param correctionTask
-     *         as org.kitodo.data.database.beans.Task
+     * @param correctionTask as org.kitodo.data.database.beans.Task
      */
     public void setCorrectionTask(Task correctionTask) {
         this.correctionTask = correctionTask;
