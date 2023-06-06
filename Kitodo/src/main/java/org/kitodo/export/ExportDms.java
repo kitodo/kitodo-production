@@ -111,12 +111,11 @@ public class ExportDms extends ExportMets {
         }
 
         boolean exportSuccessful = startExport(process, (URI) null);
-        if (exportSuccessful) {
-            if (Objects.nonNull(process.getParent())) {
-                startExport(process.getParent());
-            }
-        } else if (wasNotAlreadyExported) {
-            process.setExported(false);
+        if (Objects.nonNull(process.getParent())) {
+            startExport(process.getParent());
+        }
+        if (wasNotAlreadyExported) {
+            process.setExported(exportSuccessful);
             processService.save(process);
         }
         return exportSuccessful;

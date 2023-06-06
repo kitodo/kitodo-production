@@ -14,10 +14,14 @@ package org.kitodo.production.helper.tasks;
 import java.io.IOException;
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 /**
@@ -27,6 +31,8 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
  * copy.
  */
 public class ExportDmsTask extends EmptyTask {
+
+    private static final Logger logger = LogManager.getLogger(ExportDmsTask.class);
 
     private final ExportDms exportDms;
     private final Process process;
@@ -67,14 +73,26 @@ public class ExportDmsTask extends EmptyTask {
      */
     @Override
     public void run() {
+        boolean exportSuccessful;
         try {
-            boolean exportSuccessful = exportDms.startExport(process, this);
-            if (Objects.nonNull(exportDms.getWorkflowTask()) && exportSuccessful) {
+            exportSuccessful = exportDms.startExport(process, this);
+            Task workflowTask = exportDms.getWorkflowTask();
+            // close only the task of the original process and not of other processes (parent process, other child processes)
+            if (Objects.nonNull(workflowTask)
+                    && workflowTask.getProcess().getId().equals(process.getId())
+                    && exportSuccessful) {
                 setProgress(100);
                 new WorkflowControllerService().close(exportDms.getWorkflowTask());
             }
         } catch (RuntimeException | DataException | IOException | DAOException e) {
             setException(e);
+            exportSuccessful = false;
+        }
+        try {
+            process.setExported(exportSuccessful);
+            ServiceManager.getProcessService().save(process);
+        } catch (DataException e) {
+            logger.error(e.getMessage(), e);
         }
     }
 
