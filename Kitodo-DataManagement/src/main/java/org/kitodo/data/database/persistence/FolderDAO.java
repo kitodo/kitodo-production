@@ -34,7 +34,7 @@ public class FolderDAO extends BaseDAO<Folder> {
 
     @Override
     public List<Folder> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Folder ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM folder ORDER BY id ASC", offset, size);
     }
 
     @Override

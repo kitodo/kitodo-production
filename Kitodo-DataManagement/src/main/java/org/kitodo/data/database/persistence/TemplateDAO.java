@@ -36,12 +36,12 @@ public class TemplateDAO extends BaseDAO<Template> {
 
     @Override
     public List<Template> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Template ORDER BY title ASC", offset, size);
+        return retrieveObjects("FROM template ORDER BY title ASC", offset, size);
     }
 
     @Override
     public List<Template> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Template WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+        return retrieveObjects("FROM template WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 
@@ -81,7 +81,7 @@ public class TemplateDAO extends BaseDAO<Template> {
     public List<Template> getTemplatesWithTitle(String title) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", title);
-        return getByQuery("FROM Template WHERE title LIKE :title ORDER BY title ASC", parameters);
+        return getByQuery("FROM template WHERE title LIKE :title ORDER BY title ASC", parameters);
     }
 
     /**
@@ -92,7 +92,7 @@ public class TemplateDAO extends BaseDAO<Template> {
     public List<Template> getActiveTemplates(int clientId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientId", clientId);
-        return getByQuery("SELECT t FROM Template AS t WHERE active = 1 AND client_id = :clientId",
+        return getByQuery("SELECT t FROM template AS t WHERE active = 1 AND client_id = :clientId",
             parameters);
     }
 }

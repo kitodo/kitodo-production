@@ -34,7 +34,7 @@ public class ClientDAO extends BaseDAO<Client> {
 
     @Override
     public List<Client> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Client ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM client ORDER BY id ASC", offset, size);
     }
 
     @Override

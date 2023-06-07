@@ -40,12 +40,12 @@ public class BatchDAO extends BaseDAO<Batch> {
 
     @Override
     public List<Batch> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Batch ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM batch ORDER BY id ASC", offset, size);
     }
 
     @Override
     public List<Batch> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+        return retrieveObjects("FROM batch WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
             size);
     }
 

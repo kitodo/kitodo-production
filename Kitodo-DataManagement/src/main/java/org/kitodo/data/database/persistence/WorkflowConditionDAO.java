@@ -34,7 +34,7 @@ public class WorkflowConditionDAO extends BaseDAO<WorkflowCondition> {
 
     @Override
     public List<WorkflowCondition> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM WorkflowCondition ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM workflowcondition ORDER BY id ASC", offset, size);
     }
 
     @Override

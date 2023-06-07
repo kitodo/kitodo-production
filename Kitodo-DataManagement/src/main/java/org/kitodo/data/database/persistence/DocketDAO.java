@@ -34,12 +34,12 @@ public class DocketDAO extends BaseDAO<Docket> {
 
     @Override
     public List<Docket> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Docket ORDER BY id", offset, size);
+        return retrieveObjects("FROM docket ORDER BY id", offset, size);
     }
 
     @Override
     public List<Docket> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
+        return retrieveObjects("FROM docket WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC", offset,
                 size);
     }
 

@@ -39,12 +39,12 @@ public class PropertyDAO extends BaseDAO<Property> {
 
     @Override
     public List<Property> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Property ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM property ORDER BY id ASC", offset, size);
     }
 
     @Override
     public List<Property> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Property WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+        return retrieveObjects("FROM property WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 
@@ -60,7 +60,7 @@ public class PropertyDAO extends BaseDAO<Property> {
      */
     public List<String> retrieveDistinctTitles() {
         try (Session session = HibernateUtil.getSession()) {
-            List<?> titles = session.createQuery("SELECT DISTINCT title FROM Property").list();
+            List<?> titles = session.createQuery("SELECT DISTINCT title FROM property").list();
             return titles.stream().map(Object::toString).sorted().collect(Collectors.toList());
         } catch (PersistenceException e) {
             return Collections.emptyList();

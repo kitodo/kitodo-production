@@ -34,7 +34,7 @@ public class DataEditorSettingDAO extends BaseDAO<DataEditorSetting> {
 
     @Override
     public List<DataEditorSetting> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM DataEditorSetting ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM dataeditor_setting ORDER BY id ASC", offset, size);
     }
 
     @Override

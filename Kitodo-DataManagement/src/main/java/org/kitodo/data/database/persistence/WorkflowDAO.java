@@ -35,12 +35,12 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
 
     @Override
     public List<Workflow> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Workflow ORDER BY id", offset, size);
+        return retrieveObjects("FROM workflow ORDER BY id", offset, size);
     }
 
     @Override
     public List<Workflow> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+        return retrieveObjects("FROM workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 
@@ -59,7 +59,7 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
      */
     public List<Workflow> getAvailableWorkflows(int clientId) {
         return getByQuery(
-            "SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId WHERE w.status = 'ACTIVE'",
+            "SELECT w FROM workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId WHERE w.status = 'ACTIVE'",
             Collections.singletonMap("clientId", clientId));
     }
 
@@ -68,6 +68,6 @@ public class WorkflowDAO extends BaseDAO<Workflow> {
      * @return A list of workflows with status "active"
      */
     public List<Workflow> getAllActive() {
-        return getByQuery("FROM Workflow WHERE status = 'ACTIVE'");
+        return getByQuery("FROM workflow WHERE status = 'ACTIVE'");
     }
 }

@@ -39,7 +39,7 @@ public class LdapGroupDAO extends BaseDAO<LdapGroup> {
 
     @Override
     public List<LdapGroup> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM LdapGroup ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM ldapgroup ORDER BY id ASC", offset, size);
     }
 
     @Override

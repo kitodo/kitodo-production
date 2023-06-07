@@ -46,13 +46,13 @@ public class TaskDAO extends BaseDAO<Task> {
 
     @Override
     public List<Task> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Task WHERE " + getDateFilter("processingBegin") + " ORDER BY id ASC", offset,
+        return retrieveObjects("FROM task WHERE " + getDateFilter("processingBegin") + " ORDER BY id ASC", offset,
             size);
     }
 
     @Override
     public List<Task> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Task WHERE " + getDateFilter("processingBegin")
+        return retrieveObjects("FROM task WHERE " + getDateFilter("processingBegin")
                 + " AND (indexAction = 'INDEX' OR indexAction IS NULL) ORDER BY id ASC",
             offset,
             size);
@@ -80,7 +80,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("title", title);
         parameters.put("batchId", batchId);
-        return getByQuery("SELECT t FROM Task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
+        return getByQuery("SELECT t FROM task AS t INNER JOIN t.process AS p INNER JOIN p.batches AS b WHERE t.title = "
                 + ":title AND batchStep = 1 AND b.id = :batchId",
             parameters);
     }
@@ -101,7 +101,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("orderingMax", orderingMax);
         parameters.put("orderingMin", orderingMin);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :orderingMin"
+        return getByQuery("FROM task WHERE process_id = :processId AND ordering < :orderingMin"
                 + " AND ordering > :orderingMax ORDER BY ordering ASC",
             parameters);
     }
@@ -119,7 +119,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
+        return getByQuery("FROM task WHERE process_id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
             parameters);
     }
 
@@ -137,7 +137,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery(
-            "FROM Task WHERE process_id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
+            "FROM task WHERE process_id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
     }
 
     /**

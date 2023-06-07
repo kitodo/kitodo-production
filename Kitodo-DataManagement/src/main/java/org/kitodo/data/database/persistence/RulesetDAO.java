@@ -34,12 +34,12 @@ public class RulesetDAO extends BaseDAO<Ruleset> {
 
     @Override
     public List<Ruleset> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Ruleset ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM ruleset ORDER BY id ASC", offset, size);
     }
 
     @Override
     public List<Ruleset> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+        return retrieveObjects("FROM ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 

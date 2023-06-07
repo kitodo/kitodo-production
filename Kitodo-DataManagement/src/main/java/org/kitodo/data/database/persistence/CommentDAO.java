@@ -36,7 +36,7 @@ public class CommentDAO extends BaseDAO<Comment> {
 
     @Override
     public List<Comment> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Comment ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM comment ORDER BY id ASC", offset, size);
     }
 
     @Override
@@ -50,7 +50,7 @@ public class CommentDAO extends BaseDAO<Comment> {
     }
 
     public List<Comment> getAllByProcess(Process process) {
-        return getByQuery("FROM Comment WHERE process_id = :processId ORDER BY id ASC",
+        return getByQuery("FROM comment WHERE process_id = :processId ORDER BY id ASC",
                 Collections.singletonMap("processId", process.getId()));
     }
 

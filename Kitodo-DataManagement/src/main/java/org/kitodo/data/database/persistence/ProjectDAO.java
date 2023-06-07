@@ -34,12 +34,12 @@ public class ProjectDAO extends BaseDAO<Project> {
 
     @Override
     public List<Project> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Project ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM project ORDER BY id ASC", offset, size);
     }
 
     @Override
     public List<Project> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
+        return retrieveObjects("FROM project WHERE indexAction = 'INDEX' OR indexAction IS NULL ORDER BY id ASC",
             offset, size);
     }
 
@@ -54,7 +54,7 @@ public class ProjectDAO extends BaseDAO<Project> {
      * @return all projects sorted by title as Project objects
      */
     public List<Project> getAllProjectsSortedByTitle() {
-        return getByQuery("FROM Project ORDER BY title ASC");
+        return getByQuery("FROM project ORDER BY title ASC");
     }
 
     /**
@@ -63,6 +63,6 @@ public class ProjectDAO extends BaseDAO<Project> {
      * @return all active projects sorted by title as Project objects
      */
     public List<Project> getAllActiveProjectsSortedByTitle() {
-        return getByQuery("FROM Project WHERE active = 1 ORDER BY title ASC");
+        return getByQuery("FROM project WHERE active = 1 ORDER BY title ASC");
     }
 }

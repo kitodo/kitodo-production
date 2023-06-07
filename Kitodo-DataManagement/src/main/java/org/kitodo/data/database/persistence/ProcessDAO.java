@@ -34,13 +34,13 @@ public class ProcessDAO extends BaseDAO<Process> {
 
     @Override
     public List<Process> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Process WHERE " + getDateFilter("creationDate") + " ORDER BY id ASC", offset,
+        return retrieveObjects("FROM process WHERE " + getDateFilter("creationDate") + " ORDER BY id ASC", offset,
             size);
     }
 
     @Override
     public List<Process> getAllNotIndexed(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Process WHERE " + getDateFilter("creationDate")
+        return retrieveObjects("FROM process WHERE " + getDateFilter("creationDate")
                 + " AND (indexAction = 'INDEX' OR indexAction IS NULL) ORDER BY id ASC",
             offset, size);
     }

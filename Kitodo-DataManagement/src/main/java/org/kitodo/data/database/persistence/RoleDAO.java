@@ -38,7 +38,7 @@ public class RoleDAO extends BaseDAO<Role> {
 
     @Override
     public List<Role> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Role ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM role ORDER BY id ASC", offset, size);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class RoleDAO extends BaseDAO<Role> {
     public List<Role> getAllRolesByClientId(int clientId) {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientId", clientId);
-        return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WHERE c.id = :clientId GROUP BY r.id",
+        return getByQuery("SELECT r FROM role AS r JOIN r.client AS c WHERE c.id = :clientId GROUP BY r.id",
             parameters);
     }
 
@@ -82,7 +82,7 @@ public class RoleDAO extends BaseDAO<Role> {
 
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("clientIds", clientIds);
-        return getByQuery("SELECT r FROM Role AS r JOIN r.client AS c WITH c.id IN :clientIds",
+        return getByQuery("SELECT r FROM role AS r JOIN r.client AS c WITH c.id IN :clientIds",
                 parameters);
     }
 }

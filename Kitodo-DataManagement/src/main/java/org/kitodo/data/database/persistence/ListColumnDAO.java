@@ -34,7 +34,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
 
     @Override
     public List<ListColumn> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM ListColumn ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM listcolumn ORDER BY id ASC", offset, size);
     }
 
     /**
@@ -43,7 +43,7 @@ public class ListColumnDAO extends BaseDAO<ListColumn> {
      * @return list of standard list columns
      */
     public List<ListColumn> getAllStandard() {
-        return getByQuery("FROM ListColumn WHERE custom = 0");
+        return getByQuery("FROM listcolumn WHERE custom = 0");
     }
 
     /**

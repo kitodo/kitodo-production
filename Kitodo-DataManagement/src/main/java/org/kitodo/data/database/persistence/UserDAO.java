@@ -32,12 +32,12 @@ public class UserDAO extends BaseDAO<User> {
 
     @Override
     public List<User> getAll() {
-        return getByQuery("FROM User WHERE deleted = 0");
+        return getByQuery("FROM user WHERE deleted = 0");
     }
 
     @Override
     public List<User> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM User WHERE deleted = 0 ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM user WHERE deleted = 0 ORDER BY id ASC", offset, size);
     }
 
     @Override
@@ -73,12 +73,12 @@ public class UserDAO extends BaseDAO<User> {
         if (Objects.nonNull(id)) {
             parameters.put("id", id);
             parameters.put("login", login);
-            return count("SELECT COUNT(*) FROM User WHERE id != :id AND login = :login",
+            return count("SELECT COUNT(*) FROM user WHERE id != :id AND login = :login",
                     parameters);
         }
 
         parameters.put("login", login);
-        return count("SELECT COUNT(*) FROM User WHERE login = :login", parameters);
+        return count("SELECT COUNT(*) FROM user WHERE login = :login", parameters);
     }
 
     /**
@@ -87,6 +87,6 @@ public class UserDAO extends BaseDAO<User> {
      * @return sorted list of all active users as User objects
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
-        return getByQuery("FROM User WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
+        return getByQuery("FROM user WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
     }
 }

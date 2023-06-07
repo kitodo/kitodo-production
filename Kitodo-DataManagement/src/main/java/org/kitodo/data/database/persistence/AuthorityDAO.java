@@ -35,7 +35,7 @@ public class AuthorityDAO extends BaseDAO<Authority> {
 
     @Override
     public List<Authority> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM Authority ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM authority ORDER BY id ASC", offset, size);
     }
 
     @Override
@@ -56,7 +56,7 @@ public class AuthorityDAO extends BaseDAO<Authority> {
      * @return matching authority
      */
     public Authority getByTitle(String title) throws DAOException {
-        List<Authority> authorities = getByQuery("FROM Authority WHERE title = :title", Collections.singletonMap("title", title));
+        List<Authority> authorities = getByQuery("FROM authority WHERE title = :title", Collections.singletonMap("title", title));
 
         if (!authorities.isEmpty()) {
             return authorities.get(0);
