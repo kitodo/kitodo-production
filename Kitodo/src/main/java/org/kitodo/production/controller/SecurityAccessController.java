@@ -1114,5 +1114,7 @@ public class SecurityAccessController {
      *
      * @return true if the current user has the authority to view ocr workflow.
      */
-    public boolean hasAuthorityToViewOCRWorkflow() { return securityAccessService.hasAuthorityToViewOCRWorkflow(); }
+    public boolean hasAuthorityToViewOCRWorkflow() {
+        return securityAccessService.hasAuthorityToViewOCRWorkflow();
+    }
 }
