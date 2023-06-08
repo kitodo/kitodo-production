@@ -162,7 +162,6 @@ public class DesktopForm extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-            Helper.setMessage(EXPORT_FINISHED);
         } catch (DAOException | DataException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
@@ -248,22 +247,6 @@ public class DesktopForm extends BaseForm {
      */
     public void emptyProjectCache() {
         projectList.clear();
-    }
-
-    /**
-     * Retrieve correction comments of given process and return them as a tooltip String.
-     *
-     * @param processDTO
-     *          process for which comment tooltip is created and returned
-     * @return String containing correction comment messages for given process
-     */
-    public String getCorrectionMessages(ProcessDTO processDTO) {
-        try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(processDTO);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
     }
 
     /**

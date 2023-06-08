@@ -17,7 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
@@ -44,12 +43,12 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.apache.commons.net.ftp.FTPFileFilter;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -65,6 +64,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.externaldatamanagement.DataImport;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
@@ -72,12 +72,9 @@ import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
-import org.kitodo.config.OPACConfig;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.NoRecordFoundException;
-import org.kitodo.exceptions.ParameterNotFoundException;
-import org.kitodo.exceptions.ResponseHandlerNotFoundException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -87,62 +84,28 @@ import org.xml.sax.SAXException;
 public class QueryURLImport implements ExternalDataImportInterface {
 
     private static final Logger logger = LogManager.getLogger(QueryURLImport.class);
-    private static final String NAME_ATTRIBUTE = "[@name]";
-    private static final String VALUE_ATTRIBUTE = "[@value]";
-    private static final String LABEL_ATTRIBUTE = "[@label]";
-    private static final String HOST_CONFIG = "host";
-    private static final String SCHEME_CONFIG = "scheme";
-    private static final String PATH_CONFIG = "path";
-    private static final String PORT_CONFIG = "port";
-    private static final String PARAM_TAG = "param";
-    private static final String SEARCHFIELD_TAG = "searchField";
-    private static final String RETURN_FORMAT_TAG = "returnFormat";
-    private static final String METADATA_FORMAT_TAG = "metadataFormat";
     private static final String MODS_RECORD_TAG = "mods";
     private static final String HTTP_PROTOCOL = "http";
     private static final String HTTPS_PROTOCOL = "https";
     private static final String FTP_PROTOCOL = "ftp";
-    private static final String equalsOperand = "=";
+    private static final String EQUALS_OPERAND = "=";
     private static final String AND = "&";
-
-    private SearchInterfaceType interfaceType;
-    private String protocol;
-    private String host;
-    private String path;
-    private int port = -1;
-    private String idParameter;
-    private String idPrefix;
-    private String fileFormat;
-    private String metadataFormat;
-    private String username;
-    private String password;
+    private static final String OAI_IDENTIFIER = "identifier";
     private final Charset encoding = StandardCharsets.UTF_8;
-
-    private LinkedHashMap<String, String> parameters = new LinkedHashMap<>();
-    private final HashMap<String, String> searchFieldMapping = new HashMap<>();
 
     private CloseableHttpClient httpClient = HttpClientBuilder.create().build();
     private final FTPClient ftpClient = new FTPClient();
 
-    private static final HashMap<String, XmlResponseHandler> formatHandlers;
-
-    static {
-        formatHandlers = new HashMap<>();
-        formatHandlers.put(MetadataFormat.MODS.name(), new ModsResponseHandler());
-        formatHandlers.put(MetadataFormat.MARC.name(), new MarcResponseHandler());
-        formatHandlers.put(MetadataFormat.PICA.name(), new PicaResponseHandler());
-    }
-
     @Override
-    public DataRecord getFullRecordById(String catalogId, String identifier) throws NoRecordFoundException {
-        loadOPACConfiguration(catalogId);
-        LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
+    public DataRecord getFullRecordById(DataImport dataImport, String identifier) throws NoRecordFoundException {
+        LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(dataImport.getUrlParameters());
+        SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
         try {
             if (SearchInterfaceType.FTP.equals(interfaceType)) {
-                return performFTPQueryToRecord(catalogId, identifier);
+                return performFTPQueryToRecord(dataImport, identifier);
             } else {
-                URI queryURL = createQueryURI(queryParameters);
-                return performQueryToRecord(queryURL.toString(), identifier);
+                URI queryURL = createQueryURI(dataImport, queryParameters);
+                return performQueryToRecord(dataImport, queryURL.toString(), identifier);
             }
         } catch (URISyntaxException e) {
             throw new ConfigException(e.getLocalizedMessage());
@@ -150,34 +113,35 @@ public class QueryURLImport implements ExternalDataImportInterface {
     }
 
     @Override
-    public List<DataRecord> getMultipleFullRecordsFromQuery(String catalogId, String field, String value, int rows) {
-        loadOPACConfiguration(catalogId);
+    public List<DataRecord> getMultipleFullRecordsFromQuery(DataImport dataImport, String field, String value,
+                                                            int rows) {
         HashMap<String, String> searchFields = new HashMap<>();
         searchFields.put(field, value);
-        if (searchFieldMapping.keySet().containsAll(searchFields.keySet())) {
+        if (dataImport.getSearchFields().containsKey(field)) {
             // Query parameters for HTTP request
-            LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
+            LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(dataImport.getUrlParameters());
             // Search fields and terms of query
-            LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchFields);
+            LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(dataImport, searchFields);
 
             try {
-                URI queryURL = createQueryURI(queryParameters);
+                URI queryURL = createQueryURI(dataImport, queryParameters);
                 String queryString = queryURL + AND;
+                SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
                 if (Objects.nonNull(interfaceType)) {
                     if (Objects.nonNull(interfaceType.getStartRecordString())
                             && Objects.nonNull(interfaceType.getDefaultStartValue())) {
-                        queryString = queryString + interfaceType.getStartRecordString() + equalsOperand
+                        queryString = queryString + interfaceType.getStartRecordString() + EQUALS_OPERAND
                                 + interfaceType.getDefaultStartValue() + AND;
                     }
                     if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
-                        queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + rows + AND;
+                        queryString = queryString + interfaceType.getMaxRecordsString() + EQUALS_OPERAND + rows + AND;
                     }
                     if (Objects.nonNull(interfaceType.getQueryString())) {
-                        queryString = queryString + interfaceType.getQueryString() + equalsOperand;
+                        queryString = queryString + interfaceType.getQueryString() + EQUALS_OPERAND;
                     }
                 }
-                queryString = queryString + createSearchFieldString(searchFieldMap);
-                return performQueryToMultipleRecords(queryString);
+                queryString = queryString + createSearchFieldString(interfaceType, searchFieldMap);
+                return performQueryToMultipleRecords(dataImport, queryString);
             } catch (URISyntaxException | IOException | ParserConfigurationException | SAXException
                     | TransformerException e) {
                 logger.error(e.getLocalizedMessage());
@@ -187,26 +151,27 @@ public class QueryURLImport implements ExternalDataImportInterface {
     }
 
     @Override
-    public SearchResult search(String catalogId, String field, String term, int rows) {
-        loadOPACConfiguration(catalogId);
-        return search(catalogId, field, term, 1, rows);
+    public SearchResult search(DataImport dataImport, String field, String term, int rows) {
+        return search(dataImport, field, term, 1, rows);
     }
 
     @Override
-    public SearchResult search(String catalogId, String key, String value, int start, int numberOfRecords) {
-        loadOPACConfiguration(catalogId);
-        switch (protocol) {
+    public SearchResult search(DataImport dataImport, String key, String value, int start, int numberOfRecords) {
+        switch (dataImport.getScheme()) {
             case FTP_PROTOCOL:
-                return performFtpRequest(value, catalogId, start, numberOfRecords);
+                return performFtpRequest(dataImport, value, start, numberOfRecords);
             case HTTP_PROTOCOL:
             case HTTPS_PROTOCOL:
-                if (searchFieldMapping.containsKey(key)) {
-                    return performHTTPRequest(Collections.singletonMap(key, value), start, numberOfRecords);
+                if (dataImport.getSearchFields().containsKey(key)
+                        || SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType())) {
+                    return performHTTPRequest(dataImport, Collections.singletonMap(key, value),
+                            start, numberOfRecords);
                 }
                 return null;
             default:
-                throw new CatalogException("Error: unknown protocol '" + protocol + "' configured for catalog '"
-                        + catalogId + "' (supported protocols are http, https and ftp)!");
+                throw new CatalogException("Error: unknown protocol '" + dataImport.getScheme()
+                        + "' configured in import configuration '" + dataImport.getTitle()
+                        + "' (supported protocols are http, https and ftp)!");
         }
     }
 
@@ -215,7 +180,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return Collections.emptyList();
     }
 
-    private void reinitializeHttpClient() throws IOException {
+    private void reinitializeHttpClient(String username, String password) throws IOException {
         httpClient.close();
         if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password)) {
             CredentialsProvider provider = new BasicCredentialsProvider();
@@ -227,19 +192,14 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private SearchResult performQuery(String queryURL) throws ResponseHandlerNotFoundException {
+    private SearchResult performQuery(DataImport dataImport, String queryURL) {
         try {
-            this.reinitializeHttpClient();
+            this.reinitializeHttpClient(dataImport.getUsername(), dataImport.getPassword());
             logger.debug("Requesting: {}", queryURL);
             HttpResponse response = httpClient.execute(new HttpGet(queryURL));
             int responseStatusCode = response.getStatusLine().getStatusCode();
             if (Objects.equals(responseStatusCode, SC_OK)) {
-                if (formatHandlers.containsKey(metadataFormat)) {
-                    return formatHandlers.get(metadataFormat).getSearchResult(response, interfaceType);
-                } else {
-                    throw new ResponseHandlerNotFoundException("No ResponseHandler found for metadata format "
-                            + metadataFormat);
-                }
+                return XmlResponseHandler.getSearchResult(response, dataImport);
             } else {
                 throw new CatalogException(response.getStatusLine().getReasonPhrase() + " (Http status code "
                         + responseStatusCode + ")");
@@ -253,23 +213,27 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private DataRecord performFTPQueryToRecord(String catalog, String identifier) {
-        if (StringUtils.isBlank(host) || StringUtils.isBlank(path)) {
+    private DataRecord performFTPQueryToRecord(DataImport dataImport, String filename) {
+        if (StringUtils.isBlank(dataImport.getHost()) || StringUtils.isBlank(dataImport.getPath())) {
             throw new CatalogException("Missing host or path configuration for FTP import in OPAC configuration "
-                    + "for catalog '" + catalog + "'");
+                    + "for import configuration '" + dataImport.getTitle() + "'");
         }
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
+        if (StringUtils.isBlank(dataImport.getUsername()) || StringUtils.isBlank(dataImport.getPassword())) {
             throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration "
-                    + "for catalog '" + catalog + "'");
+                    + "for import configuration '" + dataImport.getTitle() + "'");
         }
         try {
-            ftpLogin();
-            InputStream inputStream = ftpClient.retrieveFileStream(path + "/" + identifier);
+            ftpLogin(dataImport);
+            String filepath = dataImport.getPath() + "/" + filename;
+            InputStream inputStream = ftpClient.retrieveFileStream(filepath);
+            if (Objects.isNull(inputStream)) {
+                throw new CatalogException("Unable to load file '" + filepath + "' from configured FTP source!");
+            }
             String stringContent = IOUtils.toString(inputStream, Charset.defaultCharset());
             inputStream.close();
-            DataRecord dataRecord = createRecordFromXMLElement(stringContent);
+            DataRecord dataRecord = createRecordFromXMLElement(dataImport, stringContent);
             if (!ftpClient.completePendingCommand()) {
-                throw new CatalogException("Unable to import '" + identifier + "'!");
+                throw new CatalogException("Unable to import '" + filename + "'!");
             }
             ftpLogout();
             return dataRecord;
@@ -286,33 +250,48 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    private DataRecord performQueryToRecord(String queryURL, String identifier) throws NoRecordFoundException {
-        String fullUrl = queryURL + AND;
+    private DataRecord performQueryToRecord(DataImport dataImport, String queryURL, String identifier)
+            throws NoRecordFoundException {
+        String fullUrl = queryURL;
+        if (!dataImport.getUrlParameters().isEmpty()) {
+            fullUrl = fullUrl + AND;
+        }
+        SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
         if (Objects.nonNull(interfaceType)) {
             if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
-                fullUrl = fullUrl + interfaceType.getMaxRecordsString() + equalsOperand + "1&";
+                fullUrl = fullUrl + interfaceType.getMaxRecordsString() + EQUALS_OPERAND + "1&";
             }
             if (Objects.nonNull(interfaceType.getQueryString())) {
-                fullUrl = fullUrl + interfaceType.getQueryString() + equalsOperand;
+                fullUrl = fullUrl + interfaceType.getQueryString() + EQUALS_OPERAND;
             }
         }
+        String idPrefix = dataImport.getIdPrefix();
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
-        String queryParameter = idParameter + equalsOperand + prefix + identifier;
+        String idParameter = SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) ? OAI_IDENTIFIER
+                : dataImport.getIdParameter();
+        String queryParameter = idParameter + EQUALS_OPERAND + prefix + identifier;
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            fullUrl += encodeQueryParameter(queryParameter, encoding);
+            fullUrl += URLEncoder.encode(queryParameter, encoding);
         } else {
             fullUrl += queryParameter;
         }
         try {
-            this.reinitializeHttpClient();
+            this.reinitializeHttpClient(dataImport.getUsername(), dataImport.getPassword());
             logger.debug("Requesting: {}", fullUrl);
             HttpResponse response = httpClient.execute(new HttpGet(fullUrl));
             if (Objects.equals(response.getStatusLine().getStatusCode(), SC_OK)) {
-                if (Objects.isNull(response.getEntity())) {
-                    throw new NoRecordFoundException("No record with ID '" + identifier + "' found!");
+                HttpEntity httpEntity = response.getEntity();
+                if (Objects.isNull(httpEntity)) {
+                    throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
                 }
-                return createRecordFromXMLElement(IOUtils.toString(response.getEntity().getContent(),
-                        Charset.defaultCharset()));
+                try (InputStream inputStream = httpEntity.getContent()) {
+                    String content = IOUtils.toString(inputStream, Charset.defaultCharset());
+                    if (Objects.nonNull(interfaceType.getNumberOfRecordsString())
+                            && XmlResponseHandler.extractNumberOfRecords(content, interfaceType) < 1) {
+                        throw new NoRecordFoundException("No record with ID \"" + identifier + "\" found!");
+                    }
+                    return createRecordFromXMLElement(dataImport, content);
+                }
             }
             throw new ConfigException("Search Query Request Failed");
         } catch (IOException e) {
@@ -320,34 +299,9 @@ public class QueryURLImport implements ExternalDataImportInterface {
         }
     }
 
-    /**
-     * Encodes a parameter value as part of the query of a URL. Characters
-     * outside of the readable ASCII range are converted into hexadecimal
-     * representations, preceded by a percent sign (so-called “percent coding”).
-     *
-     * @param value
-     *            value to encode
-     * @param charset
-     *            charset to use for encoding
-     * @return encoded value
-     */
-    /*
-     * The exception announced by {@code URLEncoder} cannot occur if a Charset
-     * object is used.
-     *
-     * TODO: This method can be replaced by URLEncoder.encode(String, Charset)
-     * in Java ≥ 10.
-     */
-    private static String encodeQueryParameter(String value, Charset charset) {
-        try {
-            return URLEncoder.encode(value, charset.toString());
-        } catch (UnsupportedEncodingException e) {
-            throw new Error("Virtual machine is missing charset " + charset + '!', e);
-        }
-    }
 
-    private List<DataRecord> performQueryToMultipleRecords(String queryURL) throws IOException,
-            ParserConfigurationException, SAXException, TransformerException {
+    private List<DataRecord> performQueryToMultipleRecords(DataImport dataImport, String queryURL)
+            throws IOException, ParserConfigurationException, SAXException, TransformerException {
         List<DataRecord> records = new LinkedList<>();
         HttpGet request = new HttpGet(queryURL);
         RequestConfig.Builder requestConfigBuilder = RequestConfig.custom();
@@ -363,7 +317,7 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 Document document = stringToDocument(xmlContent);
                 NodeList recordNodes = document.getElementsByTagName(MODS_RECORD_TAG);
                 for (int i = 0; i < recordNodes.getLength(); i++) {
-                    records.add(createRecordFromXMLElement(nodeToString(recordNodes.item(i))));
+                    records.add(createRecordFromXMLElement(dataImport, nodeToString(recordNodes.item(i))));
                 }
             } else {
                 throw new CatalogException(response.getStatusLine().getReasonPhrase() + " (Http status code "
@@ -375,42 +329,44 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return records;
     }
 
-    private SearchResult performHTTPRequest(Map<String, String> searchParameters, int start, int numberOfRecords) {
+    private SearchResult performHTTPRequest(DataImport dataImport, Map<String, String> searchParameters,
+                                            int start, int numberOfRecords) {
         // Query parameters for search request
-        LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(parameters);
+        LinkedHashMap<String, String> queryParameters = new LinkedHashMap<>(dataImport.getUrlParameters());
         // Search fields and terms of query
-        LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(searchParameters);
+        LinkedHashMap<String, String> searchFieldMap = getSearchFieldMap(dataImport, searchParameters);
+        SearchInterfaceType interfaceType = dataImport.getSearchInterfaceType();
         try {
-            URI queryURL = createQueryURI(queryParameters);
+            URI queryURL = createQueryURI(dataImport, queryParameters);
             String queryString = queryURL + AND;
             if (Objects.nonNull(interfaceType)) {
                 if (start > 0 && Objects.nonNull(interfaceType.getStartRecordString())) {
-                    queryString += interfaceType.getStartRecordString() + equalsOperand + start + AND;
+                    queryString += interfaceType.getStartRecordString() + EQUALS_OPERAND + start + AND;
                 }
                 if (Objects.nonNull(interfaceType.getMaxRecordsString())) {
-                    queryString = queryString + interfaceType.getMaxRecordsString() + equalsOperand + numberOfRecords
+                    queryString = queryString + interfaceType.getMaxRecordsString() + EQUALS_OPERAND + numberOfRecords
                             + AND;
                 }
                 if (Objects.nonNull(interfaceType.getQueryString())) {
-                    queryString = queryString + interfaceType.getQueryString() + equalsOperand;
+                    queryString = queryString + interfaceType.getQueryString() + EQUALS_OPERAND;
                 }
             }
-            return performQuery(queryString + createSearchFieldString(searchFieldMap));
-        } catch (URISyntaxException | ResponseHandlerNotFoundException e) {
+            return performQuery(dataImport, queryString + createSearchFieldString(interfaceType, searchFieldMap));
+        } catch (URISyntaxException e) {
             throw new CatalogException(e.getLocalizedMessage());
         }
     }
 
-    private SearchResult performFtpRequest(String filenamePart, String catalog, int startIndex, int rows) {
-        if (StringUtils.isBlank(username) || StringUtils.isBlank(password)) {
-            throw new CatalogException("Incomplete credentials configured for FTP import in OPAC configuration for "
-                    + "catalog '" + catalog + "'");
+    private SearchResult performFtpRequest(DataImport dataImport, String filenamePart, int startIndex, int rows) {
+        if (StringUtils.isBlank(dataImport.getUsername()) || StringUtils.isBlank(dataImport.getPassword())) {
+            throw new CatalogException("Incomplete credentials configured for FTP import in import configuration '"
+                    + dataImport.getTitle() + "'");
         }
         SearchResult searchResult = new SearchResult();
         FTPFileFilter searchFilter = file -> file.isFile() && file.getName().contains(filenamePart);
         try {
-            ftpLogin();
-            FTPFile[] files = ftpClient.listFiles(path, searchFilter);
+            ftpLogin(dataImport);
+            FTPFile[] files = ftpClient.listFiles(dataImport.getPath(), searchFilter);
             searchResult.setNumberOfHits(files.length);
             LinkedList<SingleHit> hits = new LinkedList<>();
             for (int i = startIndex; i < Math.min(startIndex + rows, files.length); i++) {
@@ -432,16 +388,23 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return searchResult;
     }
 
-    private DataRecord createRecordFromXMLElement(String xmlContent) {
+    private DataRecord createRecordFromXMLElement(DataImport dataImport, String xmlContent) {
         DataRecord record = new DataRecord();
-        record.setMetadataFormat(MetadataFormat.getMetadataFormat(metadataFormat));
-        record.setFileFormat(FileFormat.getFileFormat(fileFormat));
+        record.setMetadataFormat(MetadataFormat.getMetadataFormat(dataImport.getMetadataFormat().name()));
+        record.setFileFormat(FileFormat.getFileFormat(dataImport.getReturnFormat().name()));
         record.setOriginalData(xmlContent);
         return record;
     }
 
-    private URI createQueryURI(LinkedHashMap<String, String> searchFields) throws URISyntaxException {
-        return new URI(protocol, null, host, port, path, createQueryParameterString(searchFields), null);
+    private URI createQueryURI(DataImport dataImport, LinkedHashMap<String, String> searchFields)
+            throws URISyntaxException {
+        if (dataImport.getPort() > 0) {
+            return new URI(dataImport.getScheme(), null, dataImport.getHost(), dataImport.getPort(),
+                    dataImport.getPath(), createQueryParameterString(searchFields), null);
+        } else {
+            return new URI(dataImport.getScheme(), dataImport.getHost(), dataImport.getPath(),
+                    createQueryParameterString(searchFields), null);
+        }
     }
 
     private String createQueryParameterString(LinkedHashMap<String, String> searchFields) {
@@ -451,73 +414,15 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return URLEncodedUtils.format(nameValuePairList, StandardCharsets.UTF_8);
     }
 
-    private String createSearchFieldString(LinkedHashMap<String, String> searchFields) {
+    private String createSearchFieldString(SearchInterfaceType interfaceType, LinkedHashMap<String, String> searchFields) {
         List<String> searchOperands = searchFields.entrySet().stream()
-                .map(entry -> entry.getKey() + equalsOperand + entry.getValue())
+                .map(entry -> entry.getKey() + EQUALS_OPERAND + entry.getValue())
                 .collect(Collectors.toList());
         String searchString = String.join(" AND ", searchOperands);
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            return encodeQueryParameter(searchString, encoding);
+            return URLEncoder.encode(searchString, encoding);
         } else {
             return searchString;
-        }
-    }
-
-    private void loadOPACConfiguration(String opacName) {
-        try {
-            // XML configuration of OPAC
-            loadServerConfiguration(OPACConfig.getOPACConfiguration(opacName));
-
-            interfaceType = OPACConfig.getInterfaceType(opacName);
-            idParameter = OPACConfig.getIdentifierParameter(opacName);
-            idPrefix = OPACConfig.getIdentifierPrefix(opacName);
-            fileFormat = OPACConfig.getConfigValue(opacName, RETURN_FORMAT_TAG);
-            metadataFormat = OPACConfig.getConfigValue(opacName, METADATA_FORMAT_TAG);
-            try {
-                username = OPACConfig.getUsername(opacName);
-                password = OPACConfig.getPassword(opacName);
-            } catch (ConfigException | IllegalArgumentException e) {
-                // ftpUserName and ftpPassword are only required for FTP servers
-                if (SearchInterfaceType.FTP.equals(interfaceType)) {
-                    throw new CatalogException("Missing mandatory credential configuration for FTP OPAC '" + opacName + "'");
-                }
-            }
-
-            HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opacName);
-
-            for (HierarchicalConfiguration searchField : searchFields.configurationsAt(SEARCHFIELD_TAG)) {
-                searchFieldMapping.put(searchField.getString(LABEL_ATTRIBUTE), searchField.getString(VALUE_ATTRIBUTE));
-            }
-
-            HierarchicalConfiguration urlParameters = OPACConfig.getUrlParameters(opacName);
-
-            parameters = new LinkedHashMap<>();
-            for (HierarchicalConfiguration queryParam : urlParameters.configurationsAt(PARAM_TAG)) {
-                parameters.put(queryParam.getString(NAME_ATTRIBUTE), queryParam.getString(VALUE_ATTRIBUTE));
-            }
-        } catch (IllegalArgumentException | ParameterNotFoundException e) {
-            logger.error(e.getLocalizedMessage());
-        }
-    }
-
-    private void loadServerConfiguration(HierarchicalConfiguration opacConfig) {
-        for (HierarchicalConfiguration queryConfigParam : opacConfig.configurationsAt(PARAM_TAG)) {
-            switch (queryConfigParam.getString(NAME_ATTRIBUTE)) {
-                case SCHEME_CONFIG:
-                    protocol = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                    break;
-                case HOST_CONFIG:
-                    host = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                    break;
-                case PATH_CONFIG:
-                    path = queryConfigParam.getString(VALUE_ATTRIBUTE);
-                    break;
-                case PORT_CONFIG:
-                    port = queryConfigParam.getInt(VALUE_ATTRIBUTE);
-                    break;
-                default:
-                    throw new IllegalStateException("Unexpected value: " + queryConfigParam.getString(NAME_ATTRIBUTE));
-            }
         }
     }
 
@@ -536,10 +441,21 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return writer.toString();
     }
 
-    private LinkedHashMap<String, String> getSearchFieldMap(Map<String, String> searchFields) {
+    private LinkedHashMap<String, String> getSearchFieldMap(DataImport dataImport, Map<String, String> searchFields) {
         LinkedHashMap<String, String> searchFieldMap = new LinkedHashMap<>();
+        String idPrefix = dataImport.getIdPrefix();
+        if (SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) && searchFields.size() == 1) {
+            String value = new LinkedList<>(searchFields.values()).getFirst();
+            if (StringUtils.isBlank(idPrefix) || value.startsWith(idPrefix)) {
+                searchFieldMap.put(OAI_IDENTIFIER, value);
+            } else {
+                searchFieldMap.put(OAI_IDENTIFIER, idPrefix + value);
+            }
+            return searchFieldMap;
+        }
+        String idParameter = dataImport.getIdParameter();
         for (Map.Entry<String, String> entry : searchFields.entrySet()) {
-            String searchField = searchFieldMapping.get(entry.getKey());
+            String searchField = dataImport.getSearchFields().get(entry.getKey());
             if (StringUtils.isNotBlank(idPrefix) && StringUtils.isNotBlank(idParameter)
                     && idParameter.equals(searchField) && !entry.getValue().startsWith(idPrefix)) {
                 searchFieldMap.put(searchField, idPrefix + entry.getValue());
@@ -550,13 +466,13 @@ public class QueryURLImport implements ExternalDataImportInterface {
         return searchFieldMap;
     }
 
-    private void ftpLogin() throws IOException {
-        if (port != -1) {
-            ftpClient.connect(host, port);
+    private void ftpLogin(DataImport dataImport) throws IOException {
+        if (dataImport.getPort() > 0) {
+            ftpClient.connect(dataImport.getHost(), dataImport.getPort());
         } else {
-            ftpClient.connect(host);
+            ftpClient.connect(dataImport.getHost());
         }
-        boolean loginSuccessful = ftpClient.login(username, password);
+        boolean loginSuccessful = ftpClient.login(dataImport.getUsername(), dataImport.getPassword());
         if (!loginSuccessful) {
             String replyString = ftpClient.getReplyString();
             int replyCode = ftpClient.getReplyCode();

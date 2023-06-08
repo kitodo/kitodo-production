@@ -15,11 +15,9 @@ import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
 
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -64,10 +62,8 @@ public class EditingST extends BaseTestSelenium {
 
     @Test
     public void editProcessTest() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
-
         processesPage.editProcess().changeProcessData();
-        assertEquals("Header for edit process is incorrect", "Vorgang bearbeiten (First process, ID: 1)",
+        assertEquals("Header for edit process is incorrect", "First process\n(ID: 1)",
             Pages.getProcessEditPage().getHeaderText());
 
         Pages.getProcessEditPage().save();

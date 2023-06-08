@@ -15,30 +15,42 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.util.Collections;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.CommandException;
+import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
+import org.kitodo.production.services.ServiceManager;
 
 public class FileServiceTest {
 
-    private static FileService fileService = new FileService();
+    private static final FileService fileService = new FileService();
     private static final Logger logger = LogManager.getLogger(FileServiceTest.class);
+    private static final String OLD_DIRECTORY_NAME = "oldDirectoryName";
+    private static final String NEW_DIRECTORY_NAME = "newDirectoryName";
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -132,6 +144,44 @@ public class FileServiceTest {
         URI newUri = URI.create("fileServiceTest/newName.xml");
         assertFalse(fileService.fileExist(oldUri));
         assertTrue(fileService.fileExist(newUri));
+    }
+
+    @Test
+    public void testRenameDirectory() throws Exception {
+        URI oldDirUri = fileService.createDirectory(URI.create(""), OLD_DIRECTORY_NAME);
+        assertTrue(fileService.isDirectory(oldDirUri));
+        URI newDirUri = fileService.renameFile(oldDirUri, NEW_DIRECTORY_NAME);
+        assertTrue(fileService.isDirectory(newDirUri));
+        assertFalse(fileService.isDirectory(oldDirUri));
+        fileService.delete(newDirUri);
+    }
+
+    /**
+     * Tests searchForMedia function if a MediaNotFoundException is thrown.
+     *
+     * <p>MediaNotFoundException will be thrown instead of removing file references from workpiece, if no media are
+     * present but workpiece contains file references.</p>
+     */
+    @Test(expected = MediaNotFoundException.class)
+    public void testSearchForMedia()
+            throws MediaNotFoundException, IOException, InvalidImagesException, URISyntaxException {
+        Process process = mock(Process.class);
+        Project project = mock(Project.class);
+        Folder folder = mock(Folder.class);
+
+        String processBasePath = "/usr/local/kitodo/metadata/231263";
+
+        when(folder.getFileGroup()).thenReturn("LOCAL");
+        when(folder.getPath()).thenReturn(processBasePath + "images");
+        when(folder.getMimeType()).thenReturn("image/tiff");
+        when(project.getFolders()).thenReturn(Collections.singletonList(folder));
+        when(process.getProject()).thenReturn(project);
+
+        when(process.getProcessBaseUri()).thenReturn(new URI(processBasePath));
+        URI testmeta = Paths.get("./src/test/resources/metadata/testmeta.xml").toUri();
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(testmeta);
+
+        fileService.searchForMedia(process, workpiece);
     }
 
     @Test(expected = IOException.class)
@@ -390,6 +440,15 @@ public class FileServiceTest {
         String fileName = fileService.getFileName(existing);
 
         assertEquals("fileName", fileName);
+    }
+
+    @Test
+    public void testGetFileNameWithMultipleDots() throws IOException {
+        URI existing = fileService.createResource(URI.create("fileServiceTest"), "fileName.with.dots.xml");
+
+        String fileName = fileService.getFileName(existing);
+
+        assertEquals("fileName.with.dots", fileName);
     }
 
     @Test

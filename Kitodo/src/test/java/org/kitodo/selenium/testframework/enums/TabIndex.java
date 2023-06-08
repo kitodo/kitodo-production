@@ -21,9 +21,10 @@ public enum TabIndex {
 
     // user edit page
     USER_DETAILS(0),
-    USER_ROLES(1),
-    USER_PROJECT_LIST(2),
-    USER_CLIENT_LIST(3),
+    USER_METADATA_EDITOR_SETTINGS(1),
+    USER_ROLES(2),
+    USER_PROJECT_LIST(3),
+    USER_CLIENT_LIST(4),
 
     // role edit page
     ROLE_DETAILS(0),
@@ -34,6 +35,8 @@ public enum TabIndex {
     WORKFLOWS(2),
     DOCKETS(3),
     RULESETS(4),
+    IMPORT_CONFIGURATIONS(5),
+    MAPPING_FILES(6),
 
     // template edit page
     TEMPLATE_DETAILS(0),
@@ -57,7 +60,12 @@ public enum TabIndex {
 
     // user configuration
     SETTINGS(0),
-    CHANGE_PASSWORD(1);
+    CHANGE_PASSWORD(1),
+
+    // import configuration edit page
+    IMPORT_CONFIGURATION_DETAILS(0),
+    IMPORT_CONFIGURATION_MAPPING_FILES(1);
+
 
     private final int index;
 

@@ -39,7 +39,7 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -56,6 +56,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.filters.FilterMenu;
+import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
@@ -74,6 +76,7 @@ public class UserForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(UserForm.class);
     private final transient SecurityPasswordEncoder passwordEncoder = new SecurityPasswordEncoder();
     private final transient UserService userService = ServiceManager.getUserService();
+    private final transient FilterMenu filterMenu = new FilterMenu(this);
     private static final List<String> AVAILABLE_SHORTCUTS = Arrays.asList(
             "detailView",
             "help",
@@ -154,7 +157,7 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Save user if there is not other user with the same login.
+     * Save user if there is no other user with the same login.
      *
      * @return page or empty String
      */
@@ -189,24 +192,28 @@ public class UserForm extends BaseForm {
         }
 
         try {
-            if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
-                // save the password only when user is created else changePasswordForCurrentUser is used
-                if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
-                    userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
-                }
-                userService.saveToDatabase(userObject);
-
-                if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
-                    loginForm.setLoggedUser(this.userObject);
-                    ServiceManager.getSecurityAccessService().updateAuthentication(this.userObject);
-                }
-                return usersPage;
-            } else {
-                Helper.setErrorMessage("loginInUse");
-                return this.stayOnCurrentPage;
-            }
+            return loginHandling(login);
         } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+            return this.stayOnCurrentPage;
+        }
+    }
+
+    private String loginHandling(String login) throws DAOException {
+        if (userService.getAmountOfUsersWithExactlyTheSameLogin(this.userObject.getId(), login) == 0) {
+            // save the password only when user is created else changePasswordForCurrentUser is used
+            if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
+                userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
+            }
+            userService.saveToDatabase(userObject);
+
+            if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
+                loginForm.setLoggedUser(this.userObject);
+                ServiceManager.getSecurityAccessService().updateAuthentication(this.userObject);
+            }
+            return usersPage;
+        } else {
+            Helper.setErrorMessage("loginInUse");
             return this.stayOnCurrentPage;
         }
     }
@@ -716,6 +723,7 @@ public class UserForm extends BaseForm {
      * @return reload path of the page.
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return usersPage;
     }
@@ -740,5 +748,32 @@ public class UserForm extends BaseForm {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Get gallery view modes.
+     *
+     * @return list of Strings
+     */
+    public List<String> getGalleryViewModes() {
+        return GalleryViewMode.getGalleryViewModes();
+    }
+
+    /**
+     * Get translation of GalleryViewMode with given enum value 'galleryViewMode'.
+     * @param galleryViewModeValue enum value of GalleryViewMode
+     * @return translation of GalleryViewMode
+     */
+    public String getGalleryViewModeTranslation(String galleryViewModeValue) {
+        return GalleryViewMode.getByName(galleryViewModeValue).getTranslation();
+    }
+
+    /**
+     * Get filterMenu.
+     *
+     * @return value of filterMenu
+     */
+    public FilterMenu getFilterMenu() {
+        return filterMenu;
     }
 }

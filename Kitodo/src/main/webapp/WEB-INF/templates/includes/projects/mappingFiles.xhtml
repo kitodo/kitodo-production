@@ -1,0 +1,111 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+   <!--@elvariable id="item" type="org.kitodo.data.database.beans.MappingFile"-->
+   <p:dataTable id="mappingTable"
+                value="#{MappingFileListView.lazyDTOModel}"
+                var="item"
+                styleClass="default-layout"
+                first="#{MappingFileListView.firstRow}"
+                lazy="true"
+                paginator="true"
+                resizableColumns="true"
+                liveResize="true"
+                sortBy="#{item.title}"
+                rows="#{LoginForm.loggedUser.tableSize}"
+                paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {JumpToPageInput} {NextPageLink} {LastPageLink}"
+                currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
+                paginatorPosition="bottom">
+
+      <p:column headerText="#{msgs.title}"
+                sortBy="#{item.title}">
+         <h:outputText value="#{item.title}"
+                       title="#{item.title}"/>
+      </p:column>
+
+      <p:column headerText="#{msgs.file}"
+                sortBy="#{item.file}">
+         <h:outputText value="#{item.file}"
+                       title="#{item.file}"/>
+      </p:column>
+
+      <p:column headerText="#{msgs['mappingFile.inputFormat']}"
+                sortBy="#{item.inputMetadataFormat}">
+         <h:outputText value="#{item.inputMetadataFormat}"
+                       title="#{item.inputMetadataFormat}"/>
+      </p:column>
+
+      <p:column headerText="#{msgs['mappingFile.outputFormat']}"
+                sortBy="#{item.outputMetadataFormat}">
+         <h:outputText value="#{item.outputMetadataFormat}"
+                       title="#{item.outputMetadataFormat}"/>
+      </p:column>
+
+      <p:column headerText="#{msgs['importConfig.field.prestructuredImport']}"
+                styleClass="checkboxColumn genericSortIcon"
+                sortBy="#{item.prestructuredImport}">
+         <h:outputText>
+            <ui:fragment rendered="#{item.prestructuredImport}">
+               <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+            </ui:fragment>
+            <ui:fragment rendered="#{not item.prestructuredImport}">
+               <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
+            </ui:fragment>
+         </h:outputText>
+      </p:column>
+
+      <p:column headerText="#{msgs.actions}"
+                resizable="false"
+                width="70"
+                styleClass="actionsColumn">
+         <h:form id="actionForm">
+            <h:link id="viewMappingFile"
+                    outcome="mappingFileEdit"
+                    styleClass="action"
+                    title="#{msgs.view}"
+                    rendered="#{SecurityAccessController.hasAuthorityToViewMappingFile() and not SecurityAccessController.hasAuthorityToEditMappingFile()}">
+               <f:param name="id" value="#{item.id}"/>
+               <i class="fa fa-eye fa-lg"/>
+            </h:link>
+
+            <h:link id="editMappingFile"
+                    outcome="mappingFileEdit"
+                    styleClass="action"
+                    title="#{msgs.edit}"
+                    rendered="#{SecurityAccessController.hasAuthorityToEditMappingFile()}">
+               <f:param name="id" value="#{item.id}"/>
+               <i class="fa fa-pencil-square-o fa-lg"/>
+            </h:link>
+
+            <p:commandLink id="deleteMappingFile"
+                           action="#{MappingFileListView.deleteById(item.id)}"
+                           styleClass="action"
+                           title="#{msgs.delete}"
+                           rendered="#{SecurityAccessController.hasAuthorityToDeleteMappingFile()}"
+                           update="mappingTable">
+               <h:outputText><i class="fa fa-trash-o"/></h:outputText>
+               <p:confirm header="#{msgs.confirmDelete}"
+                          message="#{mappingFileEditView.formatString('confirmDeleteMappingFile', item.title)}"
+                          icon="ui-icon-alert"/>
+            </p:commandLink>
+         </h:form>
+      </p:column>
+
+   </p:dataTable>
+</ui:composition>

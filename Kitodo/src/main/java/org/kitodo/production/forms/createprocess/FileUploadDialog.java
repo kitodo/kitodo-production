@@ -14,7 +14,6 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,18 +30,18 @@ import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
-import org.kitodo.config.OPACConfig;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
-import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
+import org.omnifaces.util.Ajax;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.file.UploadedFile;
 import org.w3c.dom.Document;
@@ -50,8 +49,9 @@ import org.xml.sax.SAXException;
 
 public class FileUploadDialog extends MetadataImportDialog {
 
-    private String selectedCatalog;
+    private ImportConfiguration importConfiguration;
     private static final Logger logger = LogManager.getLogger(FileUploadDialog.class);
+    private boolean additionalImport = false;
 
     public FileUploadDialog(CreateProcessForm createProcessForm) {
         super(createProcessForm);
@@ -69,8 +69,8 @@ public class FileUploadDialog extends MetadataImportDialog {
         try {
             Document internalDocument = importService.convertDataRecordToInternal(
                 createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
-                selectedCatalog, false);
-            TempProcess tempProcess = importService.createTempProcessFromDocument(selectedCatalog, internalDocument,
+                importConfiguration, false);
+            TempProcess tempProcess = importService.createTempProcessFromDocument(importConfiguration, internalDocument,
                 createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
 
             LinkedList<TempProcess> processes = new LinkedList<>();
@@ -81,9 +81,9 @@ public class FileUploadDialog extends MetadataImportDialog {
 
             if (!higherLevelIdentifier.isEmpty()) {
                 String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0]
-                        .toString());
-                importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset().getId(),
-                        createProcessForm.getProject().getId());
+                                .toString(), importConfiguration.getParentElementTrimMode());
+                importService.checkForParent(parentID, createProcessForm.getTemplate().getRuleset(),
+                    createProcessForm.getProject().getId());
                 if (Objects.isNull(importService.getParentTempProcess())) {
                     TempProcess parentTempProcess = extractParentRecordFromFile(uploadedFile, internalDocument);
                     if (Objects.nonNull(parentTempProcess)) {
@@ -91,9 +91,16 @@ public class FileUploadDialog extends MetadataImportDialog {
                     }
                 }
             }
-            this.createProcessForm.setProcesses(processes);
-            this.createProcessForm.fillCreateProcessForm(processes.getFirst());
-            showRecord();
+
+            if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
+                extendsMetadataTableOfMetadataTab(processes);
+            } else {
+                this.createProcessForm.setProcesses(processes);
+                TempProcess currentTempProcess = processes.getFirst();
+                attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
+                createProcessForm.fillCreateProcessForm(currentTempProcess);
+                Ajax.update(FORM_CLIENTID);
+            }
         } catch (IOException | ProcessGenerationException | URISyntaxException | ParserConfigurationException
                 | UnsupportedFormatException | SAXException | ConfigException | XPathExpressionException
                 | TransformerException | DAOException | InvalidMetadataValueException
@@ -111,12 +118,13 @@ public class FileUploadDialog extends MetadataImportDialog {
 
         if (higherLevelIdentifier.size() > 0) {
             ImportService importService = ServiceManager.getImportService();
-            String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString());
-            if (Objects.nonNull(parentID) && OPACConfig.isParentInRecord(selectedCatalog)) {
+            String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString(),
+                    importConfiguration.getParentElementTrimMode());
+            if (Objects.nonNull(parentID) && Objects.nonNull(importConfiguration.getParentMappingFile())) {
                 Document internalParentDocument = importService.convertDataRecordToInternal(
                         createRecordFromXMLElement(IOUtils.toString(uploadedFile.getInputStream(), Charset.defaultCharset())),
-                        selectedCatalog, true);
-                return importService.createTempProcessFromDocument(selectedCatalog, internalParentDocument,
+                        importConfiguration, true);
+                return importService.createTempProcessFromDocument(importConfiguration, internalParentDocument,
                         createProcessForm.getTemplate().getId(), createProcessForm.getProject().getId());
             }
         }
@@ -125,43 +133,60 @@ public class FileUploadDialog extends MetadataImportDialog {
 
     private DataRecord createRecordFromXMLElement(String xmlContent) {
         DataRecord record = new DataRecord();
-        try {
-            record.setMetadataFormat(
-                MetadataFormat.getMetadataFormat(OPACConfig.getConfigValue(selectedCatalog, "metadataFormat")));
-            record.setFileFormat(FileFormat.getFileFormat(OPACConfig.getConfigValue(selectedCatalog, "returnFormat")));
-        } catch (ParameterNotFoundException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        record.setMetadataFormat(
+            MetadataFormat.getMetadataFormat(importConfiguration.getMetadataFormat()));
+        record.setFileFormat(FileFormat.getFileFormat(importConfiguration.getReturnFormat()));
         record.setOriginalData(xmlContent);
         return record;
     }
 
     @Override
-    public List<String> getCatalogs() {
-        List<String> catalogs = super.getCatalogs();
-        List<String> catalogsWithFileUpload = new ArrayList<>();
-        for (String catalog : catalogs) {
-            boolean isFileUpload = OPACConfig.getFileUploadConfig(catalog);
-            if (isFileUpload) {
-                catalogsWithFileUpload.add(catalog);
+    public List<ImportConfiguration> getImportConfigurations() {
+        if (Objects.isNull(importConfigurations)) {
+            try {
+                importConfigurations = ServiceManager.getImportConfigurationService().getAllFileUploadConfigurations();
+            } catch (IllegalArgumentException | DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                importConfigurations = new LinkedList<>();
             }
         }
-        return catalogsWithFileUpload;
+        return importConfigurations;
     }
 
     /**
-     * Get selectedCatalog.
-     * @return the selected catalog.
+     * Get selected importConfiguration.
+     *
+     * @return the selected importConfiguration.
      */
-    public String getSelectedCatalog() {
-        return selectedCatalog;
+    public ImportConfiguration getImportConfiguration() {
+        return importConfiguration;
     }
 
     /**
-     * Set selected catalog.
-     * @param selectedCatalog the selected catalog.
+     * Set selected importConfiguration.
+     *
+     * @param importConfiguration the selected catalog.
      */
-    public void setSelectedCatalog(String selectedCatalog) {
-        this.selectedCatalog = selectedCatalog;
+    public void setImportConfiguration(ImportConfiguration importConfiguration) {
+        this.importConfiguration = importConfiguration;
+    }
+
+    /**
+     * Checks the additional import.
+     *
+     * @return true if is additional import
+     */
+    public boolean isAdditionalImport() {
+        return additionalImport;
+    }
+
+    /**
+     * Set additional import.
+     *
+     * @param additionalImport
+     *            the value if is additional import
+     */
+    public void setAdditionalImport(boolean additionalImport) {
+        this.additionalImport = additionalImport;
     }
 }

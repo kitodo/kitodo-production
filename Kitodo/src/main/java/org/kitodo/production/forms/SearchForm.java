@@ -23,7 +23,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -84,67 +84,13 @@ public class SearchForm {
      */
     @Inject
     public SearchForm(ProcessForm processForm, CurrentTaskForm taskForm) {
-        initStepStatus();
-        initProjects();
-        initStepTitles();
-        initProcessPropertyTitles();
-        initUserList();
+        this.stepstatus.addAll(ServiceManager.getFilterService().initStepStatus());
+        this.projects = ServiceManager.getFilterService().initProjects();
+        this.stepTitles = ServiceManager.getFilterService().initStepTitles();
+        this.processPropertyTitles = ServiceManager.getFilterService().initProcessPropertyTitles();
+        this.user.addAll(ServiceManager.getFilterService().initUserList());
         this.processForm = processForm;
         this.taskForm = taskForm;
-    }
-
-    /**
-     * Initialise drop down list of process property titles.
-     */
-    private void initProcessPropertyTitles() {
-        this.processPropertyTitles = ServiceManager.getPropertyService().findDistinctTitles();
-    }
-
-    /**
-     * Initialise drop down list of projects.
-     */
-    private void initProjects() {
-        List<ProjectDTO> projectsSortedByTitle = Collections.emptyList();
-        try {
-            projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
-        } catch (DataException e) {
-            Helper.setErrorMessage("errorInitializingProjects", logger, e);
-        }
-
-        this.projects = projectsSortedByTitle.stream().map(ProjectDTO::getTitle).sorted().collect(Collectors.toList());
-    }
-
-    /**
-     * Initialise drop down list of step status.
-     */
-    private void initStepStatus() {
-        this.stepstatus.addAll(Arrays.asList(TaskStatus.values()));
-    }
-
-    /**
-     * Initialise drop down list of task titles.
-     */
-    private void initStepTitles() {
-        List<String> taskTitles = new ArrayList<>();
-        try {
-            taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        this.stepTitles = taskTitles;
-    }
-
-
-    /**
-     * Initialise drop down list of user list.
-     */
-    private void initUserList() {
-        try {
-            this.user.addAll(ServiceManager.getUserService().getAllActiveUsersSortedByNameAndSurname());
-        } catch (RuntimeException e) {
-            logger.warn("RuntimeException caught. List of users could be empty!");
-            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
-        }
     }
 
     public List<String> getProjects() {
@@ -311,14 +257,16 @@ public class SearchForm {
         }
         if (StringUtils.isNotBlank(this.processPropertyValue)) {
             if (StringUtils.isNotBlank(this.processPropertyTitle)) {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":"
-                        + this.processPropertyValue + "\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROPERTY.getFilterEnglish() 
+                        + this.processPropertyTitle + ":" + this.processPropertyValue + "\" ";
             } else {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + "*:" + this.processPropertyValue + "\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROPERTY.getFilterEnglish() 
+                        + "*:" + this.processPropertyValue + "\" ";
             }
         } else {
             if (StringUtils.isNotBlank(this.processPropertyTitle)) {
-                search += "\"" + FilterString.PROPERTY.getFilterEnglish() + this.processPropertyTitle + ":*\" ";
+                search += "\"" + this.processPropertyOperand + FilterString.PROPERTY.getFilterEnglish() 
+                        + this.processPropertyTitle + ":*\" ";
             }
         }
         return search;

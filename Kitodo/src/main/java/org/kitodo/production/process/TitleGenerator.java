@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.StringTokenizer;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.services.data.ImportService;
@@ -27,6 +27,11 @@ public class TitleGenerator extends Generator {
      * Metadata identifier for title doc main.
      */
     public static final String TITLE_DOC_MAIN = "TitleDocMain";
+
+    /**
+     * Metadata identifier for tsl/ats.
+     */
+    public static final String TSL_ATS = "TSL_ATS";
 
     /**
      * Constructor for TitleGenerator.
@@ -171,11 +176,9 @@ public class TitleGenerator extends Generator {
             String rowMetadataID = row.getMetadataID();
             String rowValue = ImportService.getProcessDetailValue(row);
             // if it is the ATS or TSL field, then use the calculated atstsl if it does not already exist
-            if ("TSL_ATS".equals(rowMetadataID)) {
+            if (TSL_ATS.equals(rowMetadataID)) {
                 if (StringUtils.isBlank(rowValue)) {
-                    this.atstsl = createAtstsl(currentTitle, currentAuthors);
-                    ImportService.setProcessDetailValue(row, this.atstsl);
-                    rowValue = this.atstsl;
+                    rowValue = createAtstsl(currentTitle, currentAuthors);
                 }
                 this.atstsl = rowValue;
             }

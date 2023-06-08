@@ -20,6 +20,8 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 
 /**
@@ -63,10 +65,57 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.PARENT_ID.getKey(), processParentId);
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.METADATA.getKey(), process.getMetadata());
+        jsonObject.put(ProcessTypeField.NUMBER_OF_METADATA.getKey(), process.getNumberOfMetadata());
+        jsonObject.put(ProcessTypeField.NUMBER_OF_IMAGES.getKey(), process.getNumberOfImages());
+        jsonObject.put(ProcessTypeField.NUMBER_OF_STRUCTURES.getKey(), process.getNumberOfStructures());
         jsonObject.put(ProcessTypeField.PROPERTIES.getKey(), getProperties(process));
         jsonObject.put(ProcessTypeField.BASE_TYPE.getKey(), process.getBaseType());
         jsonObject.put(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), process.getInChoiceListShown());
+        jsonObject.put(ProcessTypeField.LAST_EDITING_USER.getKey(), ProcessConverter.getLastEditingUser(process));
+        jsonObject.put(
+            ProcessTypeField.CORRECTION_COMMENT_STATUS.getKey(), 
+            ProcessConverter.getCorrectionCommentStatus(process).getValue()
+        );
+        convertLastProcessingTask(jsonObject, process);
+        convertProgressStatus(jsonObject, process);
+
         return jsonObject;
+    }
+
+    /**
+     * Adds last processing task dates to json object for indexing.
+     * 
+     * @param jsonObject the json object used for indexing
+     * @param process the process being index
+     */
+    private void convertLastProcessingTask(Map<String, Object> jsonObject, Process process) {
+        jsonObject.put(
+            ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getKey(), 
+            getFormattedDate(ProcessConverter.getLastProcessingBegin(process))
+        );
+        jsonObject.put(
+            ProcessTypeField.PROCESSING_END_LAST_TASK.getKey(), 
+            getFormattedDate(ProcessConverter.getLastProcessingEnd(process))
+        );
+    }
+
+    /**
+     * Adds progress status properties to json object for indexing.
+     * 
+     * @param jsonObject the json object used for indexing
+     * @param process the process being index
+     */
+    private void convertProgressStatus(Map<String, Object> jsonObject, Process process) {
+        // calculate and save process status
+        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(process, true);
+        jsonObject.put(ProcessTypeField.PROGRESS_CLOSED.getKey(), taskProgress.get(TaskStatus.DONE));
+        jsonObject.put(ProcessTypeField.PROGRESS_IN_PROCESSING.getKey(), taskProgress.get(TaskStatus.INWORK));
+        jsonObject.put(ProcessTypeField.PROGRESS_OPEN.getKey(), taskProgress.get(TaskStatus.OPEN));
+        jsonObject.put(ProcessTypeField.PROGRESS_LOCKED.getKey(), taskProgress.get(TaskStatus.LOCKED));
+        jsonObject.put(
+            ProcessTypeField.PROGRESS_COMBINED.getKey(), 
+            ProcessConverter.getCombinedProgressFromTaskPercentages(taskProgress)
+        );
     }
 
     private List<Map<String, String>> getProperties(Process process) {
@@ -100,7 +149,7 @@ public class ProcessType extends BaseType<Process> {
         List<Comment> processComments = process.getComments();
         for (Comment comment : processComments) {
             if (Objects.nonNull(comment) && Objects.nonNull(comment.getMessage())) {
-                commentsMessages = commentsMessages.concat(comment.getMessage());
+                commentsMessages = commentsMessages.concat(comment.getMessage() + "\n");
             }
         }
         return commentsMessages;

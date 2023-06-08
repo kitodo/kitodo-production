@@ -642,10 +642,50 @@ section#content-section {
     opacity: 1;
 }
 
-#editForm table.ui-selectmanycheckbox tbody {
+#editForm table.ui-selectmanycheckbox tbody,
+#importCatalogConfigurationsForm table.ui-selectmanycheckbox tbody {
     display: inline-block;
     overflow-y: scroll;
     width: 100%;
+}
+
+#catalogConfigurationImportResultDialog_content {
+    overflow-y: hidden;
+}
+
+#catalogConfigurationImportResultDialog_content h3 {
+    margin-bottom: 0;
+}
+
+#importCatalogConfigurationsForm tbody {
+    height: 200px;
+}
+
+#importResultsForm\:successfulImports,
+#importResultsForm\:failedImports {
+    border-radius: var(--default-border-radius);
+    margin: var(--default-full-size) 0;
+}
+
+#importResultsForm\:successfulImports {
+    border: 3px solid var(--green);
+}
+
+#importResultsForm\:failedImports {
+    border: 3px solid var(--orange);
+}
+
+#importResultsForm\:successfulImports th {
+    background-color: var(--light-green);
+}
+
+#importResultsForm\:failedImports th {
+    background-color: var(--light-orange);
+}
+
+.ui-dialog #importResultsForm .ui-datatable .ui-datatable-tablewrapper th,
+.ui-dialog #importResultsForm .ui-datatable .ui-datatable-tablewrapper td {
+    padding-left: var(--default-half-size);
 }
 
 #editForm\:templateTabView\:project tbody {
@@ -659,17 +699,36 @@ section#content-section {
 
 .content-header > .ui-panel-content {
     display: flex;
-}
-
-.content-header .ui-panel-content {
     padding: 0;
 }
 
-.content-header .ui-panel-content > h3 {
-    display: inline;
+.content-header > .ui-panel-content > h3 {
+    display: flex;
     flex-grow: 1;
     flex-shrink: 1;
     line-height: 36px;
+    overflow: hidden;
+}
+
+.content-header > .ui-panel-content > h3 span.shortable {
+    flex-grow: 0;
+    flex-shrink: 1;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.content-header > .ui-panel-content > h3 span.set-apart {
+    color: var(--medium-gray);
+    flex-grow: 0;
+    flex-shrink: 0;
+    padding: 0 var(--default-half-size);
+}
+
+.content-header #processCount {
+    font-size: 14px;
+    line-height: 14px;
+    margin: 0 var(--default-half-size);
 }
 
 .content-header .ui-panel-content > form,
@@ -720,8 +779,17 @@ section#content-section {
 }
 
 .input-with-button,
-.input-with-button > input {
+.input-with-button:not(.ui-spinner) > input,
+.ui-panelgrid-cell .ui-selectonemenu.input-with-button {
     width: calc(100% - 44px);
+}
+
+.input-with-button > input.ui-selectonemenu-label.ui-inputfield {
+    width: 100%;
+}
+
+.ui-panelgrid-cell .ui-selectonemenu.input-with-button {
+    display: inline-block;
 }
 
 .input-with-button + .ui-button,
@@ -747,69 +815,201 @@ section#content-section {
     padding: .7em;
 }
 
-#filterMenu {
+.ui-widget-content .ui-button.help-button {
+    background: transparent;
+    color: var(--blue);
+}
+
+.ui-widget-content .ui-button.ui-state-hover.help-button {
+    background: transparent;
+}
+
+label.ui-outputlabel[for] {
+    display: block;
+}
+
+#filterMenuWrapper {
+    min-width: 430px;
+    width: 35%;
+}
+
+#filterMenuWrapper > .ui-inputgroup {
+    position: relative;
+}
+
+#filterInputForm {
     display: inline;
     float: right;
+    width: 100%;
 }
 
-#filterMenu > div > .ui-inputfield {
-    width: 250px;
+#filterMenuWrapper .input-wrapper {
+    position: relative;
+    flex: 1;
+}
+
+#filterInputForm\:filterfield {
     border-radius: var(--default-border-radius) 0 0 var(--default-border-radius);
+    width: 100%;
 }
 
-#filterMenu > div > .ui-button:nth-child(2) {
-    border-radius: 0 var(--default-border-radius) var(--default-border-radius) 0;
-    margin-left: 3px;
-}
-
-#filterMenu .ui-overlaypanel {
-    border-radius: var(--default-border-radius);
-}
-
-#filterMenu .ui-overlaypanel > div {
+#filterOptionsFormWrapper,
+#savedFilters\:savedFiltersOverlay > div {
     padding: 0;
-    width: 250px;
+    width: 100%;
     background: var(--light-gray);
     border-radius: var(--default-border-radius);
 }
 
-#filterMenu .ui-overlaypanel .ui-button {
+#filterOptionsFormWrapper {
+    box-shadow: var(--second-level-shadow);
+    display: none;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    position: absolute;
+    top: 100%;
+    z-index: 1;
+}
+
+#filterOptionsFormWrapper li {
+    border-top: solid 1px var(--cloudy-gray);
+    list-style: none;
+}
+
+#filterOptionsFormWrapper li:hover {
+    background: var(--trans-blue);
+}
+
+#filterOptionsForm\:suggestions  {
+    border-bottom: solid var(--contrast-border-width) var(--medium-gray);
+    margin-bottom: var(--default-full-size);
+}
+
+#filterOptionsForm\:suggestions .selected {
+    background: var(--cloudy-gray);
+}
+
+#filterOptionsFormWrapper .ui-chkbox,
+#filterOptionsForm\:suggestions li {
+    line-height: var(--input-height);
+    padding: 0 var(--default-half-size) 0 var(--default-double-size);
+}
+
+#filterOptionsForm\:taskFilters,
+#filterOptionsForm\:taskStatus {
+    border: none;
+    padding: 0;
+    width: 100%;
+}
+
+#filterOptionsForm\:taskFilters td,
+#filterOptionsForm\:taskStatus td {
+    color: var(--carbon-blue);
+    padding-bottom: var(--default-half-size);
+}
+
+#parsedFiltersForm\:parsedFilters {
+    position: absolute;
+    max-width: calc(100% - 200px);
+    z-index: 1;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-widget-content {
+    background: none;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-data {
+    padding-right: var(--group-margin);
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-empty-message {
+    display: none;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item {
+    list-style: none;
+    display: inline-block;
+    height: 24px;
+    line-height: 24px;
+    padding: 3px;
+    border-radius: var(--default-border-radius);
+    margin: var(--group-margin) 0 var(--group-margin) var(--group-margin);
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
+    background: var(--blue);
+    color: var(--pure-white);
+}
+
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .not-modifier,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .category,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .value,
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
+    display: inline-block;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .category {
+    font-weight: bold;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .value {
+    padding-left: var(--group-margin);
+}
+
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
+    height: auto;
+    width: auto;
+}
+
+#savedFilters\:savedFiltersOverlay {
+    border-radius: var(--default-border-radius);
+    margin-left: -430px; /* Make sure the overlay does not overflow the page when invisible. Gets repositioned when being displayed. */
+    width: 430px;
+}
+
+#savedFilters\:savedFiltersOverlay .ui-overlaypanel-content {
+    padding: 0;
+}
+
+#savedFilters\:savedFiltersOverlay ul {
+    list-style: none;
+}
+
+#savedFilters\:savedFiltersTrigger {
+    border-radius: 0 var(--default-border-radius) var(--default-border-radius) 0;
+}
+
+#savedFilters\:savedFiltersOverlay .ui-button {
     width: 100%;
     text-align: left;
     border-bottom-left-radius: 0;
     border-bottom-right-radius: 0;
 }
 
-#filterMenu .ui-overlaypanel li {
-    list-style: none;
-    border-top: solid 1px var(--cloudy-gray);
-}
-
-#filterMenu .ui-overlaypanel li:hover {
-    background: var(--trans-blue);
-}
-
-#filterMenu .ui-overlaypanel li a {
+#savedFilters\:savedFiltersOverlay li a {
     display: inline-block;
     padding: 10px;
     text-decoration: none;
     color: var(--blue);
 }
 
-#filterMenu .ui-overlaypanel li > a:first-child {
+#savedFilters\:savedFiltersOverlay li > a:first-child {
     overflow-x: hidden;
     text-overflow: ellipsis;
     width: 75%;
 }
 
-#filterMenu .ui-overlaypanel li:first-child a {
+#savedFilters\:savedFiltersOverlay li:first-child a {
     width: 100%;
     box-sizing: border-box;
     border-top-left-radius: var(--default-border-radius);
     border-top-right-radius: var(--default-border-radius);
 }
 
-#filterMenu .ui-overlaypanel li .filter-delete {
+#savedFilters\:savedFiltersOverlay li .filter-delete {
     float: right;
     vertical-align: middle;
 }
@@ -1015,6 +1215,12 @@ main i.fa {
     line-height: 22px;
 }
 
+.ui-dialog-content .dialog-text {
+    padding: 0 32px 16px 32px;
+    hyphens: auto;
+    line-height: 22px;
+}
+
 .ui-dialog-content .select-selector {
     padding: 16px 32px 16px 32px;
 }
@@ -1103,13 +1309,6 @@ main i.fa {
     display: inline-block;
     margin-right: var(--default-double-size);
     width: 220px;
-}
-
-h3#headerText {
-    display: inline-block;
-    overflow-x: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
 }
 
 #dropDownMenus {
@@ -1216,24 +1415,6 @@ h3#headerText {
     display: inline-block;
     margin-right: 8px;
     width: calc(100% - 48px);
-}
-
-#titleProcess {
-    flex-grow: 1;
-    flex-shrink: 1;
-}
-
-#titleProcess > .ui-panel-content {
-    display: flex;
-}
-
-#titleProcess h3 {
-    display: inline-block;
-    flex-grow: 0;
-}
-
-#titleProcess h5 {
-    display: inline-block;
 }
 
 /*----------------------------------------------------------------------
@@ -1495,6 +1676,29 @@ Import form
     margin-bottom: var(--default-double-size);
 }
 
+#editForm\:processFromTemplateTabView\:titleRecordLinkTab,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent_content,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent_content > .ui-g,
+#editForm\:processFromTemplateTabView\:titleRecordLinkTabContent_content > .ui-g > .ui-panelgrid-cell,
+#editForm\:processFromTemplateTabView\:insertionTree {
+    height: 100%;
+}
+
+#editForm\:processFromTemplateTabView\:logicalStructure {
+    height: calc(100% - 170px);
+    overflow: scroll;
+}
+
+#recordIdentifierMissingDialog ul {
+    background-color: var(--orange);
+    color: var(--pure-white);
+}
+
+.error-item {
+    margin-top: var(--default-half-size);
+}
+
 /*----------------------------------------------------------------------
 Mass import
 ----------------------------------------------------------------------*/
@@ -1523,6 +1727,10 @@ Mass import
 #editForm\:recordsTable .remove-column button.secondary,
 #editForm\:recordsTable .remove-metadata-column {
     border: none;
+}
+
+#editForm\:recordsTable input.ui-inputtext {
+    width: 100%;
 }
 
 #editForm\:csvSeparator {
@@ -1563,8 +1771,12 @@ Mass import
     padding-right: var(--default-half-size);
 }
 
-.correction-column {
+.comment-column {
     text-align: center;
+}
+
+.comment-column .fa-comment {
+    color: var(--medium-gray);
 }
 
 .correction-marker {
@@ -1582,7 +1794,7 @@ Mass import
     color: var(--medium-gray);
 }
 
-.task-filter-panel.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
+.filter-panel.ui-selectcheckboxmenu-panel .ui-selectcheckboxmenu-items-wrapper {
     overflow-y: hidden;
 }
 
@@ -1590,9 +1802,9 @@ Mass import
     margin-right: var(--default-full-size);
 }
 
-#tasksTabView\:filterForm .ui-selectcheckboxmenu-label,
+.filter-form .ui-selectcheckboxmenu .ui-selectcheckboxmenu-label,
 #tasksTabView\:statusForm .ui-selectcheckboxmenu-label {
-    padding-right: var(--default-double-size);
+    padding-right: var(--input-height);
 }
 
 /*----------------------------------------------------------------------
@@ -1836,8 +2048,8 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog {
-    width: 80% !important;
-    height: 80% !important;
+    width: 90% !important;
+    height: 90% !important;
     overflow-y: hidden ;
 }
 
@@ -1854,7 +2066,7 @@ h3#headerText.calendar-heading {
 }
 
 #calendarDayDialog form {
-    height: calc(100% - 100px);
+    height: calc(100% - 60px);
     overflow-y: auto;
 }
 
@@ -1872,19 +2084,25 @@ h3#headerText.calendar-heading {
     overflow-y: hidden;
 }
 
-#calendarDayDialogHeader {
-    width: 100%;
+#calendarDayForm\:calendarDayDialogHeader {
+    border-bottom: solid var(--contrast-border-width) var(--cloudy-gray);
+    margin-bottom: var(--default-full-size);
+    padding-bottom: var(--default-half-size);
     padding-left: var(--default-double-size);
     padding-right: var(--default-double-size);
-    padding-bottom: var(--default-full-size);
+    width: 100%;
 }
 
-#calendarDayDialog .issue-wrapper:not(:last-child) {
+#calendarDayForm .ui-toolbar.ui-widget-header {
+    background: transparent;
     border-bottom: solid var(--default-border-width) var(--cloudy-gray);
+    border-radius: 0;
+    margin-bottom: var(--default-full-size);
+    padding: 0 0 var(--default-half-size) 0;
 }
 
-#calendarDayDialog .appearance-wrapper {
-    margin-bottom: var(--default-full-size);
+#calendarDayForm .ui-toolbar.ui-widget-header button.secondary {
+    margin : 0 0 0 var(--group-margin);
 }
 
 #calendarDayDialog .ui-dataview-header {
@@ -1963,6 +2181,10 @@ Metadata Editor
     padding: 0;
 }
 
+#metadataEditorHeader .content-header button {
+    margin-left: 16px;
+}
+
 #messagesWrapper {
     display: block;
     overflow: hidden;
@@ -1982,7 +2204,6 @@ Metadata Editor
 
 #messagesWrapper #error-messages {
     overflow: auto;
-    margin: 10px 0;
     max-height: 300px;
 }
 
@@ -2067,6 +2288,12 @@ form#metadata div label,
 .comment-message {
     display: block;
     width: 100%;
+}
+
+.bold-centered {
+    display: block;
+    font-weight: bold;
+    text-align: center;
 }
 
 #newCommentDialog .ui-dialog-content {
@@ -2264,6 +2491,7 @@ form#metadata div label,
 }
 
 #metadataEditorContainer {
+    box-shadow: var(--default-shadow);
     margin: auto 16px;
     overflow: hidden;
     padding: 0;
@@ -2364,6 +2592,11 @@ form#metadata div label,
     width: auto;
 }
 
+#paginationForm\:updateMediaReferencesButton {
+    margin: 0;
+    width: 100%;
+}
+
 /*
 Column content
  */
@@ -2416,13 +2649,15 @@ Column content
     overflow: initial;
 }
 
-#containerStructure.ui-accordion-content,
 #structureAccordion .scroll-wrapper {
     box-sizing: border-box;
-    height: 100%;
-    overflow: auto;
-    padding: var(--default-full-size) var(--default-double-size);
+    height: calc(100% - 53px);
+    overflow: hidden scroll;
     width: 100%;
+}
+
+#structureAccordion .scroll-wrapper .ui-tree {
+    padding: var(--default-half-size);
 }
 
 .scroll-up-area,
@@ -2458,11 +2693,6 @@ Column content
 
 .ui-tree .ui-treenode.linked {
     background: transparent;
-    cursor: not-allowed;
-}
-
-.ui-tree .ui-treenode.linked span {
-    pointer-events: none;
 }
 
 .ui-tree .ui-treenode.undefined .ui-treenode-label span {
@@ -2484,13 +2714,15 @@ Column content
 }
 
 #logicalStructureHeader {
-    padding: 5px;
+    border-bottom: 1px solid var(--cloudy-gray);
     display: flex;
+    padding: var(--default-half-size);
 }
 
 #logicalStructureHeader .logicalStructureTitle {
     flex-grow: 1;
     flex-shrink: 1;
+    margin-right: var(--default-half-size);
 }
 
 #logicalStructureHeader .logicalStructureMenuWrapper {
@@ -2543,10 +2775,6 @@ Column content
     pointer-events: none;
 }
 
-#structureTreeForm button.secondary {
-    margin: 4px;
-}
-
 .pagination-active {
     filter: opacity(100%);
 }
@@ -2590,6 +2818,10 @@ Column content
 #metadataAccordion\:physicalMetadata\:metadataTable {
     background: var(--trans-blue);
     overflow-y: scroll;
+}
+
+#metadataAccordion\:metadata\:metadataTable table[role='treegrid'] {
+    margin-bottom: 42px;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data,
@@ -2781,11 +3013,34 @@ Column content
     overflow-x: hidden;
 }
 
-#imagePreviewForm\:olWrapper {
+#imagePreviewForm\:mediaDetailContainer {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     height: 100%;
+    width: 100%;
+}
+
+#imagePreviewForm\:mediaDetail {
+    display: flex;
+    width: 100%;
+    align-items: center;
+    justify-content: center;
+}
+
+#imagePreviewForm\:mediaDetail .mediaPreviewItem {
+    max-height: 100%;
+}
+
+#imagePreviewForm .mediaListIconItem {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#imagePreviewForm .mediaListIconItem > i {
+    font-size: 70px;
+    color: white;
 }
 
 #map {
@@ -2893,7 +3148,7 @@ Column content
     width: 100%;
 }
 
-#thumbnailStripeScrollableContent::-webkit-scrollbar { 
+#thumbnailStripeScrollableContent::-webkit-scrollbar {
     /* hide scrollbar in WebKit */
     width: 0;
     height: 0;
@@ -2910,7 +3165,10 @@ Column content
 }
 
 #imagePreviewForm\:thumbnailWrapper .thumbnail-parent {
-    display: inline-block;
+    display: block;
+    margin-bottom: var(--group-margin);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #thumbnailStripeScrollableContent a {
@@ -2959,6 +3217,32 @@ Column content
     position: relative;
 }
 
+.thumbnail-parent.media-type-video {
+    width: 185px;
+    height: auto;
+}
+
+.thumbnail-parent.media-type-audio {
+    width: 120px;
+    height: auto;
+}
+
+#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-audio,
+#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-video {
+    width: 90px;
+    height: auto;
+}
+
+.thumbnail-parent audio,
+.thumbnail-parent video {
+    width: 100%;
+    max-height: 100%;
+}
+
+.thumbnail-parent video {
+    height: auto;
+}
+
 .thumbnail {
     height: 100%;
     position: absolute;
@@ -2975,18 +3259,36 @@ Column content
     width: 100%;
 }
 
+.thumbnail + .thumbnail-container .mediaListIconItem,
+.thumbnail + .thumbnail-container audio,
+.thumbnail + .thumbnail-container video {
+    background: var(--carbon-blue);
+    border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+}
+
+.thumbnail.selected + .thumbnail-container .mediaListIconItem,
+.thumbnail.selected + .thumbnail-container audio,
+.thumbnail.selected + .thumbnail-container video,
 .thumbnail.selected + .thumbnail-container img {
     border-color: var(--green);
     border-style: dashed;
 }
 
+.thumbnail.discontinuous.selected + .thumbnail-container .mediaListIconItem,
+.thumbnail.discontinuous.selected + .thumbnail-container audio,
+.thumbnail.discontinuous.selected + .thumbnail-container video,
 .thumbnail.discontinuous.selected + .thumbnail-container img {
     border-color: grey;
 }
 
+.thumbnail.selected.last-selection + .thumbnail-container .mediaListIconItem,
+.thumbnail.selected.last-selection + .thumbnail-container audio,
+.thumbnail.selected.last-selection + .thumbnail-container video,
 .thumbnail.selected.last-selection + .thumbnail-container img {
     border-style: solid;
 }
+
+
 
 .thumbnail-container {
     display: inline-block;
@@ -3016,7 +3318,7 @@ Column content
     margin-right: 3px;
 }
 
-.thumbnail-overlay {
+.ui-widget .thumbnail-overlay {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -3025,6 +3327,7 @@ Column content
     height: 100%;
     width: 100%;
     opacity: 0;
+    word-break: break-word;
     transition: .2s ease;
     background-color: var(--light-blue);
     color: var(--pure-white);
@@ -3210,6 +3513,14 @@ Role authority picklist
 }
 
 /*----------------------------------------------------------------------
+User edit form
+----------------------------------------------------------------------*/
+
+#editForm\:userTabView\:defaultGalleryView {
+    width: 100%;
+}
+
+/*----------------------------------------------------------------------
 System page
 ----------------------------------------------------------------------*/
 
@@ -3387,7 +3698,8 @@ footer {
     padding-right: var(--default-half-size);
 }
 
-.ui-panelgrid-cell > div {
+.ui-panelgrid-cell > div,
+#mappingFileFormatsForm .input {
     margin-bottom: 1.3em;
 }
 
@@ -3455,7 +3767,7 @@ footer {
     cursor: default;
 }
 
-.ui-separator {
+.horizontal-separator {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
     margin: var(--default-half-size) 0;
     width: 100%;
@@ -3500,6 +3812,96 @@ footer {
 #tasksTabView\:actionForm\:timeoutWarning {
     color: var(--orange);
     font-weight: bold;
+}
+
+.ui-datatable.input-with-button,
+#editForm\:importConfigurationTabView\:url {
+    display: inline-block;
+}
+
+#editForm\:importConfigurationTabView\:url .ui-panelgrid-cell {
+    padding: 0;
+}
+
+#editForm\:importConfigurationTabView\:url .url-part {
+    display: inline-block;
+    margin-right: var(--default-half-size);
+}
+
+#editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:not(:first-child):not(:nth-child(3)) {
+    box-sizing: border-box;
+    padding-left: var(--default-half-size);
+    width: calc(33% - var(--default-half-size));
+}
+
+#editForm\:importConfigurationTabView\:url .ui-panelgrid-cell:nth-child(3) {
+    box-sizing: border-box;
+    padding-left: var(--default-half-size);
+    width: 75px;
+}
+
+#editForm\:importConfigurationTabView .ui-datatable-tablewrapper {
+    border: solid var(--default-border-width) var(--blue);
+    border-radius: var(--default-border-radius);
+}
+
+#editForm\:importConfigurationTabView\:searchFieldTable thead {
+    border-top: none;
+}
+
+#editForm\:importConfigurationTabView\:detailsTab .cell-dummy {
+    height: 54px;
+    padding: 0;
+}
+
+.help-button {
+    vertical-align: top;
+}
+
+.ui-tooltip {
+    max-width: 280px;
+}
+
+.ui-tooltip.comments {
+    max-width: none;
+}
+
+.ui-tooltip.comments .ui-tooltip-arrow {
+    display: none;
+}
+
+.ui-tooltip.comments .ui-tooltip-text {
+    padding: var(--default-half-size);
+    background: var(--pure-white);
+}
+
+.ui-tooltip.comments .ui-dataview-header {
+    display: none;
+}
+
+.ui-tooltip.comments td {
+    vertical-align: top;
+}
+
+.ui-tooltip.comments .icon {
+    display: inline-block;
+    width: 1em;
+}
+
+.ui-tooltip.comments .icon .correction-marker {
+    font-size: inherit;
+}
+
+.ui-tooltip.comments .date {
+    color: var(--medium-gray);
+}
+
+.ui-tooltip.comments .name {
+    font-weight: bold;
+}
+
+.ui-tooltip.comments .message {
+    max-width: 300px;
 }
 
 /*----------------------------------------------------------------------
@@ -3593,6 +3995,18 @@ min 1200px
 
     body {
         background-size: 100% auto;
+    }
+
+    .breadcrumb-menu ul li:not(:first-child) .ui-menuitem-icon {
+        padding-left: var(--default-half-size);
+    }
+
+    .breadcrumb-menu ul li .ui-menuitem-link {
+        width: auto;
+    }
+
+    .breadcrumb-menu ul li .ui-menuitem-text {
+        padding: 0 var(--default-half-size);
     }
 }
 

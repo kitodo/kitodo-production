@@ -40,17 +40,17 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
-        <script>
-            window.onload = function () {checkForm('editForm')};
-        </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editUser} (#{UserForm.userObject.fullName})"
+                          styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.userCreate}"
+                          styleClass="shortable"
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewUser}"
                           rendered="#{isViewMode}"/>
             <h:outputText value="#{msgs.userConfiguration}"
+                          styleClass="shortable"
                           rendered="#{isConfigMode}"/>
         </h3>
         <p:button id="cancel" value="#{msgs.cancel}" outcome="users?keepPagination=true" onclick="setConfirmUnload(false);"
@@ -82,6 +82,15 @@
                     <ui:param name="isViewMode" value="#{isViewMode}" />
                     <ui:param name="isConfigMode" value="#{isConfigMode}" />
                 </ui:include>
+            </p:tab>
+
+            <p:tab id="metadataEditorSettingsTab"
+                   title="#{msgs['userEdit.metadataEditorSettings']}">
+                   <ui:include src="/WEB-INF/templates/includes/userEdit/metadataEditorSettings.xhtml">
+                       <ui:param name="isEditMode" value="#{isEditMode}" />
+                       <ui:param name="isCreateMode" value="#{isCreateMode}" />
+                       <ui:param name="isViewMode" value="#{isViewMode}" />
+                   </ui:include>
             </p:tab>
 
             <p:tab id="roleTab" title="#{msgs.roles}">

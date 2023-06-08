@@ -24,8 +24,15 @@
                                     SecurityAccessController.hasAuthorityToEditProcessPagination()}"/>
     <p:panel styleClass="content-header">
         <h3 id="headerText">
-            <h:outputText value="#{DataEditorForm.processTitle} (#{msgs.id}: #{DataEditorForm.process.id})"
-                          title="#{DataEditorForm.processTitle} (#{msgs.id}: #{DataEditorForm.process.id})"/>
+            <h:outputText styleClass="shortable"
+                          value="#{DataEditorForm.processTitle}"
+                          title="#{DataEditorForm.processTitle}"/>
+            <h:outputText styleClass="set-apart"
+                          value="(#{msgs.id}: #{DataEditorForm.process.id})"/>
+            <h:outputText id="numberOfScans"
+                          styleClass="set-apart"
+                          value="(#{DataEditorForm.numberOfScans} #{DataEditorForm.numberOfScans eq 1 ? msgs.medium : msgs.media})"/>
+
         </h3>
         <h:form id="metadataEditorLayoutForm">
             <p:commandButton onclick="saveLayout()"
@@ -33,7 +40,6 @@
                              title="#{DataEditorForm.dataEditorSetting ne null ? msgs['dataEditor.saveLayout'] : msgs['dataEditor.cannotSaveLayout']}"
                              disabled="#{DataEditorForm.dataEditorSetting eq null}"
                              icon="fa fa-wrench"
-                             style="margin-left: 16px;"
                              styleClass="secondary"/>
             <h:inputHidden id="structureWidth"
                            value="#{DataEditorForm.dataEditorSetting.structureWidth}"/>
@@ -42,47 +48,45 @@
             <h:inputHidden id="galleryWidth"
                            value="#{DataEditorForm.dataEditorSetting.galleryWidth}"/>
         </h:form>
-        <p:commandButton id="close"
-                         widgetVar="close"
-                         value="#{msgs.exit}"
-                         onclick="deactivateButtons();setConfirmUnload(false);"
-                         action="#{DataEditorForm.close}"
-                         icon="fa fa-times fa-lg"
-                         iconPos="right"
-                         style="margin-left: 16px;"
-                         styleClass="secondary"/>
-        <p:commandButton id="validate"
-                         widgetVar="validate"
-                         value="#{msgs.validate}"
-                         actionListener="#{DataEditorForm.validate}"
-                         onclick="deactivateButtons();"
-                         oncomplete="activateButtons();setHeight();"
-                         update="error-messages"
-                         icon="fa fa-check fa-lg"
-                         iconPos="right"
-                         style="margin-left: 16px;"
-                         styleClass="secondary"/>
-        <p:commandButton id="save"
-                         widgetVar="save"
-                         action="#{DataEditorForm.save}"
-                         value="#{msgs.save}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         styleClass="secondary"
-                         rendered="#{mayWrite}"
-                         style="margin-left: 16px;"
-                         onclick="deactivateButtons();PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
-                         oncomplete="activateButtons();$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();setConfirmUnload(false);"
-                         update="notifications"/>
-        <p:commandButton id="saveExit"
-                         widgetVar="saveExit"
-                         action="#{DataEditorForm.saveAndExit}"
-                         value="#{msgs.saveExit}"
-                         icon="fa fa-floppy-o fa-lg"
-                         iconPos="right"
-                         rendered="#{mayWrite}"
-                         style="margin-left: 16px;"
-                         onclick="deactivateButtons();setConfirmUnload(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
-                         update="notifications"/>
+        <h:form id="buttonForm">
+            <p:commandButton id="close"
+                             widgetVar="close"
+                             value="#{msgs.exit}"
+                             onclick="deactivateButtons();setUnsavedChanges(false);"
+                             action="#{DataEditorForm.closeAndReturn}"
+                             icon="fa fa-times fa-lg"
+                             iconPos="right"
+                             styleClass="secondary"/>
+            <p:commandButton id="validate"
+                             widgetVar="validate"
+                             value="#{msgs.validate}"
+                             actionListener="#{DataEditorForm.validate}"
+                             onclick="deactivateButtons();"
+                             oncomplete="activateButtons();setHeight();"
+                             update="error-messages"
+                             icon="fa fa-check fa-lg"
+                             iconPos="right"
+                             styleClass="secondary"/>
+            <p:commandButton id="save"
+                             widgetVar="save"
+                             action="#{DataEditorForm.save}"
+                             value="#{msgs.save}"
+                             icon="fa fa-floppy-o fa-lg"
+                             iconPos="right"
+                             styleClass="secondary"
+                             rendered="#{mayWrite}"
+                             onclick="deactivateButtons();PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','severity':'info'});$('loadingScreen').show()"
+                             oncomplete="activateButtons();$('#structureTreeForm\\:physicalTree li[aria-selected=\'true\']').click();"
+                             update="notifications"/>
+            <p:commandButton id="saveExit"
+                             widgetVar="saveExit"
+                             action="#{DataEditorForm.saveAndExit}"
+                             value="#{msgs.saveExit}"
+                             icon="fa fa-floppy-o fa-lg"
+                             iconPos="right"
+                             rendered="#{mayWrite}"
+                             onclick="deactivateButtons();setUnsavedChanges(false);PF('sticky-notifications').renderMessage({'summary':'#{msgs.metadataSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
+                             update="notifications"/>
+        </h:form>
     </p:panel>
 </ui:composition>

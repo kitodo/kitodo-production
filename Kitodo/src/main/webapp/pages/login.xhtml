@@ -84,15 +84,18 @@
                 </sec:authorize>
             </section>
 
-            <section id="login-language-section" >
-                <ul>
-                    <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
-                        <c:set var="languageKey" value="#{language['id']}" />
-                        <li class="#{LanguageForm.getLanguage() eq languageKey ? 'active' : ''}" >
-                            <p:commandLink value="#{language.displayLanguageTranslated}" onclick="setLanguageCookieAndReload('#{languageKey}')"/>
-                        </li>
-                    </p:repeat>
-                </ul>
+            <section id="login-language-section">
+                <h:form id="login-languages-form">
+                    <ul>
+                        <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
+                            <c:set var="languageKey" value="#{language['id']}"/>
+                            <li class="#{LanguageForm.getLanguage() eq languageKey ? 'active' : ''}">
+                                <p:commandLink value="#{language.displayLanguageSelf}"
+                                               onclick="setLanguageCookieAndReload('#{languageKey}')"/>
+                            </li>
+                        </p:repeat>
+                    </ul>
+                </h:form>
             </section>
         </div>
     </ui:define>

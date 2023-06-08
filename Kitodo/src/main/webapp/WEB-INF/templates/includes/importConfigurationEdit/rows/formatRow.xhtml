@@ -1,0 +1,142 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <p:row>
+            <div>
+                <p:outputLabel for="fileFormat"
+                               value="#{msgs['importConfig.field.fileFormat']} *"/>
+                <p:selectOneMenu id="fileFormat"
+                                 styleClass="input-with-button"
+                                 required="#{not empty param['editForm:save']}"
+                                 value="#{importConfigurationEditView.importConfiguration.returnFormat}">
+                    <f:selectItems value="#{importConfigurationEditView.fileFormats}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"
+                            update="editForm:importConfigurationTabView"/>
+                </p:selectOneMenu>
+                <p:commandButton id="returnFormatHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="returnFormatHelp"
+                           value="#{msgs['tooltip.importConfig.returnFormatHelp']}"/>
+            </div>
+            <h:panelGroup layout="block"
+                          id="metadataRecordIdXPathWrapper"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+                <p:outputLabel for="metadataRecordIdXPath"
+                               value="#{msgs['importConfig.field.metadataRecordIDXPath']} *"/>
+                <p:selectOneMenu id="metadataRecordIdXPath"
+                                 styleClass="input-with-button"
+                                 autoWidth="false"
+                                 value="#{importConfigurationEditView.importConfiguration.metadataRecordIdXPath}"
+                                 validator="XPathValidator"
+                                 required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                                 editable="#{true}">
+                    <f:selectItems value="#{importConfigurationEditView.recordIdXPathDefault}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:selectOneMenu>
+                <p:commandButton id="metadataRecordIdXPathHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="metadataRecordIdXPathHelp"
+                           value="#{msgs['tooltip.importConfig.metadataRecordIdXPathHelp']}"/>
+            </h:panelGroup>
+            <div>
+                <p:outputLabel for="parentMappingFile"
+                               value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
+                <p:selectOneMenu id="parentMappingFile"
+                                 styleClass="input-with-button"
+                                 validator="ParentMappingValidator"
+                                 converter="#{mappingFileConverter}"
+                                 value="#{importConfigurationEditView.importConfiguration.parentMappingFile}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.fileupload.selectParentMappingFile']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.mappingFiles}"
+                                   var="mappingFile"
+                                   itemLabel="#{mappingFile.title} (#{mappingFile.inputMetadataFormat} &#8594; #{mappingFile.outputMetadataFormat})"
+                                   itemValue="#{mappingFile}"/>
+                    <p:ajax event="change"
+                            update="editForm:importConfigurationTabView"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="parentMappingFileHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentMappingFileHelp"
+                           value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="metadataFormat"
+                               value="#{msgs['importConfig.field.metadataFormat']} *"/>
+                <p:selectOneMenu id="metadataFormat"
+                                 styleClass="input-with-button"
+                                 required="#{not empty param['editForm:save']}"
+                                 value="#{importConfigurationEditView.importConfiguration.metadataFormat}">
+                    <f:selectItems value="#{importConfigurationEditView.metadataFormats}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="metadataFormatHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="metadataFormatHelp"
+                           value="#{msgs['tooltip.importConfig.metadataFormatHelp']}"/>
+            </div>
+            <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+                <p:outputLabel for="metadataRecordTitleXPath"
+                               value="#{msgs['importConfig.field.metadataRecordTitleXPath']} *"/>
+                <p:selectOneMenu id="metadataRecordTitleXPath"
+                                 styleClass="input-with-button"
+                                 autoWidth="false"
+                                 value="#{importConfigurationEditView.importConfiguration.metadataRecordTitleXPath}"
+                                 validator="XPathValidator"
+                                 required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                                 editable="#{true}">
+                    <f:selectItems value="#{importConfigurationEditView.recordTitleXPathDefault}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:selectOneMenu>
+                <p:commandButton id="metadataRecordTitleXPathHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="metadataRecordTitleXPathHelp"
+                           value="#{msgs['tooltip.importConfig.metadataRecordTitleXPathHelp']}"/>
+            </h:panelGroup>
+            <div>
+                <p:outputLabel for="defaultImportDepth" value="#{msgs['importConfig.field.defaultImportDepth']} *"/>
+                <p:spinner id="defaultImportDepth"
+                           styleClass="input-with-button"
+                           immediate="true"
+                           min="1"
+                           max="5"
+                           required="#{not empty param['editForm:save']}"
+                           onchange="toggleSave();"
+                           value="#{importConfigurationEditView.importConfiguration.defaultImportDepth}"/>
+                <p:commandButton id="defaultImportDepthHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultImportDepthHelpButton"
+                           value="#{msgs['tooltip.importConfig.defaultImportDepthHelp']}"/>
+            </div>
+        </p:row>
+    </f:view>
+</ui:composition>

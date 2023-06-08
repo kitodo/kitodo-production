@@ -24,9 +24,15 @@
 
         <!--@elvariable id="StatisticView" type="org.kitodo.production.forms.ProcessListBaseView"-->
         <h3 id="headerText">
-            <h:outputText value="#{msgs.stateOfVolume}" rendered="#{StatisticView.showPieModel()}"/>
-            <h:outputText value="#{msgs.durationOfTasks}" rendered="#{StatisticView.showBarModel()}"/>
-            <h:outputText value="#{msgs.numberOfMetadata}" rendered="#{StatisticView.showProcessMetadataStatisticTable()}"/>
+            <h:outputText value="#{msgs.stateOfVolume}"
+                          styleClass="shortable"
+                          rendered="#{StatisticView.showPieModel()}"/>
+            <h:outputText value="#{msgs.durationOfTasks}"
+                          styleClass="shortable"
+                          rendered="#{StatisticView.showBarModel()}"/>
+            <h:outputText value="#{msgs.numberOfMetadata}"
+                          styleClass="shortable"
+                          rendered="#{StatisticView.showProcessMetadataStatisticTable()}"/>
         </h3>
 
         <h:panelGroup id="statisticPanel"
@@ -64,11 +70,13 @@
                          value="#{StatisticView.processMetadataStatistics}"
                          var="processStatistic">
                 <p:column headerText="#{msgs.processTitle}"
+                          footerText="#{StatisticView.numberOfGlobalProcessMetadataStatistics} #{msgs.processes}"
                           width="25">
                     <h:outputText title="#{processStatistic.processTitle}"
                                   value="#{processStatistic.processTitle}"/>
                 </p:column>
                 <p:column headerText="#{msgs.images}"
+                          footerText="#{StatisticView.numberOfGlobalImages}"
                           width="10">
                     <h:outputText title="#{processStatistic.numberOfImages}"
                                   value="#{processStatistic.numberOfImages}"/>
@@ -79,6 +87,7 @@
                                    displayOnly="true"/>
                 </p:column>
                 <p:column headerText="#{msgs.structuralElement}"
+                          footerText="#{StatisticView.numberOfGlobalStructuralElements}"
                           width="10">
                     <h:outputText title="#{processStatistic.numberOfStructuralElements}"
                                   value="#{processStatistic.numberOfStructuralElements}"/>
@@ -89,6 +98,7 @@
                                    displayOnly="true"/>
                 </p:column>
                 <p:column headerText="#{msgs.metadata}"
+                          footerText="#{StatisticView.numberOfGlobalMetadata}"
                           width="10">
                     <h:outputText title="#{processStatistic.numberOfMetadata}"
                                   value="#{processStatistic.numberOfMetadata}"/>

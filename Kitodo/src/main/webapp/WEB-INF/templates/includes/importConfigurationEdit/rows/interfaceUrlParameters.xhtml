@@ -1,0 +1,107 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+            <div>
+                <p:outputLabel for="sruVersion"
+                               value="#{msgs['importConfig.field.urlparameter.sruversion']}"/>
+                <p:selectOneMenu id="sruVersion"
+                                 styleClass="input-with-button"
+                                 required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                                 value="#{importConfigurationEditView.importConfiguration.sruVersion}"
+                                 disabled="#{isViewMode}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectSruVersion']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.sruVersions}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="sruVersionButton"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="sruVersionButton"
+                           value="#{msgs['tooltip.importConfig.sruVersionHelp']}"/>
+            </div>
+        </p:row>
+
+        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+            <div>
+                <p:outputLabel for="sruRecordSchema"
+                               value="#{msgs['importConfig.field.urlparameter.srurecordschema']}"/>
+                <p:inputText id="sruRecordSchema"
+                             required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.sruRecordSchema}"
+                             placeholder="#{msgs['importConfig.field.urlparameter.srurecordschema']}"
+                             disabled="#{isViewMode}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="sruRecordSchemaHelpButton"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="sruRecordSchemaHelpButton"
+                           value="#{msgs['tooltip.importConfig.sruRecordSchemaHelp']}"/>
+            </div>
+        </p:row>
+
+        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+            <div>
+                <p:outputLabel for="oaiMetadataPrefix"
+                               value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']} *"/>
+                <p:inputText id="oaiMetadataPrefix"
+                             required="#{not empty param['editForm:save'] and importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.oaiMetadataPrefix}"
+                             placeholder="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']}"
+                             disabled="#{isViewMode}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="oaiMetadataPrefixHelpButton"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="oaiMetadataPrefixHelpButton"
+                           value="#{msgs['tooltip.importConfig.oaiMetadataPrefixHelp']}"/>
+            </div>
+        </p:row>
+        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+            <div>
+                <p:outputLabel for="oaiIdParameterPrefix"
+                               value="#{msgs['importConfig.searchFields.idPrefix']}"/>
+                <p:inputText id="oaiIdParameterPrefix"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.idPrefix}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="oaiIdParameterPrefixHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="oaiIdParameterPrefixHelp"
+                           value="#{msgs['tooltip.importConfig.idParameterPrefixHelp']}"/>
+            </div>
+        </p:row>
+
+    </f:view>
+
+</ui:composition>

@@ -1,0 +1,75 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+
+    <p:panelGrid columns="2"
+                 layout="grid">
+        <p:row>
+            <div>
+                <p:outputLabel for="defaultImportConfiguration"
+                               value="#{msgs['importConfig.defaultConfiguration']}"/>
+                <p:selectOneMenu id="defaultImportConfiguration"
+                                 styleClass="input-with-button"
+                                 disabled="#{ProjectForm.locked}"
+                                 converter="#{importConfigurationConverter}"
+                                 value="#{ProjectForm.project.defaultImportConfiguration}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectDefaultConfiguration']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{ProjectForm.importConfigurations}"
+                                   var="importConfig"
+                                   itemValue="#{importConfig}"
+                                   itemLabel="#{importConfig.title}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="defaultConfigurationHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultConfigurationHelp"
+                           value="#{msgs['tooltip.project.defaultImportConfiguration']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="defaultChildProcessImportConfiguration"
+                               value="#{msgs['importConfig.defaultChildProcessConfiguration']}"/>
+                <p:selectOneMenu id="defaultChildProcessImportConfiguration"
+                                 styleClass="input-with-button"
+                                 disabled="#{ProjectForm.locked}"
+                                 converter="#{importConfigurationConverter}"
+                                 value="#{ProjectForm.project.defaultChildProcessImportConfiguration}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectDefaultConfiguration']}"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{ProjectForm.importConfigurations}"
+                                   var="importConfig"
+                                   itemValue="#{importConfig}"
+                                   itemLabel="#{importConfig.title}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="defaultChildProcessConfigurationHelp"
+                                 type="button"
+                                 styleClass="help-button"
+                                 icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultChildProcessConfigurationHelp"
+                           value="#{msgs['tooltip.project.defaultChildProcessImportConfiguration']}"/>
+            </div>
+        </p:row>
+    </p:panelGrid>
+
+</ui:composition>

@@ -21,7 +21,7 @@
             <ul id="menu">
                 <li>
                     <!-- Dashboard menu -->
-                    <p:commandLink id="dashboard-menu"><i class="fa fa-th fa-lg"/></p:commandLink>
+                    <p:commandLink id="dashboard-menu" form="linkProcessesNavigationForm"><i class="fa fa-th fa-lg"/></p:commandLink>
                     <p:overlayPanel for="dashboard-menu" my="right top" at="right bottom">
                         <ul>
                             <li id="dashboard-menu-header">
@@ -38,9 +38,12 @@
 
                             <h:panelGroup rendered="#{SecurityAccessController.hasAuthorityToViewProcessPage()}">
                                 <li class="nav-pic-text">
-                                    <h:link value="#{msgs.processes}" id="linkProcesses" outcome="processes?tabIndex=0">
-                                        <i class="fa fa-clipboard fa-lg"/>
-                                    </h:link>
+                                    <h:form id="linkProcessesNavigationForm">
+                                        <h:commandLink id="linkProcesses" action="#{ProcessForm.navigateToProcessesList(true)}">
+                                            <i class="fa fa-clipboard fa-lg"/>
+                                            <h:outputText value="#{msgs.processes}" />
+                                        </h:commandLink>
+                                    </h:form>
                                 </li>
                             </h:panelGroup>
 
@@ -80,7 +83,7 @@
                 </li>
                 <li>
                     <!-- User menu -->
-                    <p:commandLink id="user-menu"><i class="fa fa-user-circle-o fa-lg"/></p:commandLink>
+                    <p:commandLink id="user-menu" form="logout-form"><i class="fa fa-user-circle-o fa-lg"/></p:commandLink>
                     <p:overlayPanel for="user-menu">
                         <h:form id="logout-form">
                             <ul id="nav-user">
@@ -98,7 +101,7 @@
                                     <p:outputPanel deferred="true" deferredMode="visible">
                                         <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
                                             <li class="toggle-list">
-                                                <p:commandLink value="#{language.displayLanguageTranslated}" action="#{LanguageForm.setLanguage(language['id'])}"/>
+                                                <p:commandLink value="#{language.displayLanguageSelf}" action="#{LanguageForm.setLanguage(language['id'])}"/>
                                             </li>
                                         </p:repeat>
                                     </p:outputPanel>
@@ -124,7 +127,8 @@
                                     </p:outputPanel>
                                 </div>
                                 <li>
-                                    <h:link value="#{msgs.userData}" outcome="userEdit">
+                                    <h:link id="userSettings"
+                                            value="#{msgs.userData}" outcome="userEdit">
                                         <f:param name="id" value="#{LoginForm.loggedUser.id}"/>
                                     </h:link>
                                 </li>

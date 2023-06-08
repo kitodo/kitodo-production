@@ -43,6 +43,7 @@ import org.kitodo.export.TiffHeader;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.helper.CustomListColumnInitializer;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
@@ -72,11 +73,13 @@ public class CurrentTaskForm extends BaseForm {
     private final WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private List<Property> properties;
     private Property property;
+    private final String tasksPath = MessageFormat.format(REDIRECT_PATH, "tasks");
     private final String taskEditPath = MessageFormat.format(REDIRECT_PATH, "currentTasksEdit");
     private final String taskBatchEditPath = MessageFormat.format(REDIRECT_PATH, "taskBatchEdit");
 
     private List<String> taskFilters;
     private List<String> selectedTaskFilters;
+    private FilterMenu filterMenu = new FilterMenu(this);
 
     private List<TaskStatus> taskStatus;
     private List<TaskStatus> selectedTaskStatus;
@@ -137,10 +140,15 @@ public class CurrentTaskForm extends BaseForm {
             Helper.setErrorMessage("stepInWorkError");
             return this.stayOnCurrentPage;
         } else {
-            this.workflowControllerService.assignTaskToUser(this.currentTask);
             try {
-                ServiceManager.getTaskService().save(this.currentTask);
-            } catch (DataException e) {
+                if (this.currentTask.isTypeAcceptClose()) {
+                    this.workflowControllerService.close(this.currentTask);
+                    return tasksPath;
+                } else {
+                    this.workflowControllerService.assignTaskToUser(this.currentTask);
+                    ServiceManager.getTaskService().save(this.currentTask);
+                }
+            } catch (DataException | IOException | DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
@@ -364,11 +372,11 @@ public class CurrentTaskForm extends BaseForm {
     public void executeScript() throws DAOException, DataException {
         Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
         if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
-            Helper.setMessageWithoutDescription(MessageFormat.format(
-                    Helper.getTranslation("scriptExecutionSuccessful"), this.currentTask.getScriptName()));
+            Helper.setMessageWithoutDescription(
+                    Helper.getTranslation("scriptExecutionSuccessful", this.currentTask.getScriptName()));
         } else {
-            Helper.setErrorMessagesWithoutDescription(MessageFormat.format(
-                    Helper.getTranslation("scriptExecutionError"), this.currentTask.getScriptName()));
+            Helper.setErrorMessagesWithoutDescription(
+                    Helper.getTranslation("scriptExecutionError", this.currentTask.getScriptName()));
         }
     }
 
@@ -772,6 +780,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return path of the page
      */
     public String changeFilter(String filter) {
+        filterMenu.parseFilters(filter);
         setFilter(filter);
         return filterList();
     }
@@ -788,41 +797,6 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     /**
-     * Check and return whether the process of the given task has any correction comments or not.
-     *
-     * @param task
-     *          TaskDTO to check
-     * @return 0, if process of given task has no correction comment
-     *         1, if process of given task has correction comments that are all corrected
-     *         2, if process of given task has at least one open correction comment
-     */
-    public int hasCorrectionComment(TaskDTO task) {
-        try {
-            return ProcessService.hasCorrectionComment(task.getProcess().getId()).getValue();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(),
-                    task.getProcess().getId() }, logger, e);
-            return 0;
-        }
-    }
-
-    /**
-     * Retrieve correction comments of process of given task and return them as a tooltip String.
-     *
-     * @param taskDTO
-     *          task for which comment tooltip is created and returned
-     * @return String containing correction comment messages for process of given task
-     */
-    public String getCorrectionMessages(TaskDTO taskDTO) {
-        try {
-            return ServiceManager.getProcessService().createCorrectionMessagesTooltip(taskDTO.getProcess());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
-    }
-
-    /**
      * Download to home for single process. First check if this volume is currently
      * being edited by another user and placed in his home directory, otherwise
      * download.
@@ -833,5 +807,14 @@ public class CurrentTaskForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage("Error downloading process " + processId + " to home directory!");
         }
+    }
+
+    /**
+     * Get filterMenu.
+     *
+     * @return value of filterMenu
+     */
+    public FilterMenu getFilterMenu() {
+        return filterMenu;
     }
 }

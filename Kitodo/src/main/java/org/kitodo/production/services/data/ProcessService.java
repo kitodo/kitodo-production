@@ -37,7 +37,6 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -72,7 +71,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.join.ScoreMode;
@@ -89,6 +87,7 @@ import org.elasticsearch.index.query.MultiMatchQueryBuilder;
 import org.elasticsearch.index.query.NestedQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.elasticsearch.index.query.WildcardQueryBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.elasticsearch.search.sort.SortOrder;
@@ -97,6 +96,8 @@ import org.json.JSONObject;
 import org.json.XML;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
@@ -111,6 +112,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
@@ -128,7 +130,6 @@ import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
-import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.dto.ProcessDTO;
@@ -136,8 +137,7 @@ import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.exporter.ExportXmlLog;
-import org.kitodo.production.forms.createprocess.ProcessDetail;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -151,10 +151,9 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
-import org.kitodo.production.process.TiffHeaderGenerator;
-import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
+import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
@@ -171,7 +170,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
-    private final FileService fileService = ServiceManager.getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
     private static final String JSON_TITLE = "title";
@@ -179,10 +178,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX, "orig");
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX, "tif");
     private static final String SUFFIX = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX, "");
-    private static final String CLOSED = "closed";
-    private static final String IN_PROCESSING = "inProcessing";
-    private static final String LOCKED = "locked";
-    private static final String OPEN = "open";
     private static final String PROCESS_TITLE = "(processtitle)";
     private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
     private static final String METADATA_GROUP_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadataGroup.metadata";
@@ -279,43 +274,88 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     @Override
     public void save(Process process) throws DataException {
-        WorkflowControllerService.updateProcessSortHelperStatus(process);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent());
-        }
-        super.save(process);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent());
-        }
+        this.save(process, false);
     }
 
     @Override
     public void save(Process process, boolean updateRelatedObjectsInIndex) throws DataException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent(), updateRelatedObjectsInIndex);
+        
+        // save parent processes if they are new and do not have an id yet
+        List<Process> parents = findParentProcesses(process);
+        for (Process parent: parents) {
+            if (Objects.isNull(parent.getId())) {
+                super.save(parent, updateRelatedObjectsInIndex);
+            }
         }
+        
         super.save(process, updateRelatedObjectsInIndex);
-        if (Objects.nonNull(process.getParent())) {
-            save(process.getParent(), updateRelatedObjectsInIndex);
+
+        // save parent processes in order to refresh ElasticSearch index
+        for (Process parent : parents) {
+            super.save(parent, updateRelatedObjectsInIndex);
         }
     }
 
     @Override
     public void saveToIndex(Process process, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
-        process.setMetadata(getMetadataForIndex(process));
-        process.setBaseType(getBaseType(process));
+
+        enrichProcessData(process, false);
+
         super.saveToIndex(process, forceRefresh);
     }
 
+    /**
+     * Find all parent processes for a process ordered such that the root parent comes first.
+     * 
+     * @param process the process whose parents are to be found
+     * @return the list of parent processes (direct parents and grand parents, and more)
+     */
+    public List<Process> findParentProcesses(Process process) {
+        List<Process> parents = new ArrayList<Process>();
+        Process current = process;
+        while (Objects.nonNull(current.getParent())) {
+            current = current.getParent();
+            parents.add(current);
+        }
+        Collections.reverse(parents);
+        return parents;
+    }
+
+    private int getNumberOfImagesForIndex(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getPhysicalStructure())
+                .filter(physicalDivision -> Objects.equals(physicalDivision.getType(), PhysicalDivision.TYPE_PAGE)).count());
+    }
+
+    private int getNumberOfMetadata(Workpiece workpiece) {
+        return Math.toIntExact(MetsService.countLogicalMetadata(workpiece));
+    }
+
+    private int getNumberOfStructures(Workpiece workpiece) {
+        return Math.toIntExact(Workpiece.treeStream(workpiece.getLogicalStructure()).count());
+    }
+
     @Override
-    public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException {
+    public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException, IOException {
         for (Process process : processes) {
-            process.setMetadata(getMetadataForIndex(process, true));
-            process.setBaseType(getBaseType(process));
+            enrichProcessData(process, true);
         }
         super.addAllObjectsToIndex(processes);
+    }
+
+    private void enrichProcessData(Process process, boolean forIndexingAll) throws IOException {
+        process.setMetadata(getMetadataForIndex(process, forIndexingAll));
+        URI metadataFilePath = fileService.getMetadataFilePath(process, false, forIndexingAll);
+        if (!fileService.fileExist(metadataFilePath)) {
+            logger.info("No metadata file for indexing: {}", metadataFilePath);
+        } else {
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+            process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
+            process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
+            process.setNumberOfStructures(getNumberOfStructures(workpiece));
+            process.setBaseType(getBaseType(workpiece));
+        }
     }
 
     /**
@@ -725,8 +765,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             Collection<String> allowedStructuralElementTypes) throws DataException {
 
         BoolQueryBuilder query = new BoolQueryBuilder()
-                .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput))
-                .should(new MatchQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*"))
+                .must(new BoolQueryBuilder()
+                        .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true))
+                        .should(new WildcardQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*")))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
         List<ProcessDTO> linkableProcesses = new LinkedList<>();
 
@@ -816,8 +857,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public QueryBuilder getQueryForClosedProcesses() {
         BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000", true));
-        query.should(createSimpleQuery(ProcessTypeField.SORT_HELPER_STATUS.getKey(), "100000000000", true));
+        query.should(createSimpleQuery(
+            ProcessTypeField.SORT_HELPER_STATUS.getKey(), ProcessState.COMPLETED20.getValue(), true));
+        query.should(createSimpleQuery(
+            ProcessTypeField.SORT_HELPER_STATUS.getKey(), ProcessState.COMPLETED.getValue(), true));
         return query;
     }
 
@@ -874,7 +917,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
             processDTO.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
             processDTO.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
+            processDTO.setNumberOfImages(ProcessTypeField.NUMBER_OF_IMAGES.getIntValue(jsonObject));
+            processDTO.setNumberOfMetadata(ProcessTypeField.NUMBER_OF_METADATA.getIntValue(jsonObject));
+            processDTO.setNumberOfStructures(ProcessTypeField.NUMBER_OF_STRUCTURES.getIntValue(jsonObject));
             processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
+            processDTO.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
+            processDTO.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+            processDTO.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
+            convertLastProcessingDates(jsonObject, processDTO);
+            convertTaskProgress(jsonObject, processDTO);
 
             List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
             List<PropertyDTO> properties = new ArrayList<>();
@@ -903,6 +954,34 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return processDTO;
     }
 
+
+    /**
+     * Parses last processing dates from the jsonObject and adds them to the processDTO bean.
+     * 
+     * @param jsonObject the json object retrieved from elastic search
+     * @param processDTO the processDTO bean that will receive the processing dates
+     */
+    private void convertLastProcessingDates(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
+        String processingBeginLastTask = ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getStringValue(jsonObject);
+        processDTO.setProcessingBeginLastTask(Helper.parseDateFromFormattedString(processingBeginLastTask));
+        String processingEndLastTask = ProcessTypeField.PROCESSING_END_LAST_TASK.getStringValue(jsonObject);
+        processDTO.setProcessingEndLastTask(Helper.parseDateFromFormattedString(processingEndLastTask));
+    }
+
+    /**
+     * Parses task progress properties from the jsonObject and adds them to the processDTO bean.
+     * 
+     * @param jsonObject the json object retrieved from elastic search
+     * @param processDTO the processDTO bean that will receive the progress information
+     */
+    private void convertTaskProgress(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
+        processDTO.setProgressClosed(ProcessTypeField.PROGRESS_CLOSED.getDoubleValue(jsonObject));
+        processDTO.setProgressInProcessing(ProcessTypeField.PROGRESS_IN_PROCESSING.getDoubleValue(jsonObject));
+        processDTO.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
+        processDTO.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
+        processDTO.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
+    }
+
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
         int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
@@ -918,56 +997,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         // TODO: leave it for now - right now it displays only status
         processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
-
-        processDTO.setProgressClosed(getProgressClosed(null, processDTO.getTasks()));
-        processDTO.setProgressInProcessing(getProgressInProcessing(null, processDTO.getTasks()));
-        processDTO.setProgressOpen(getProgressOpen(null, processDTO.getTasks()));
-        processDTO.setProgressLocked(getProgressLocked(null, processDTO.getTasks()));
-
-        if (processDTO.hasChildren()) {
-            List<Process> children;
-            try {
-                children = ServiceManager.getProcessService().getById(processDTO.getId()).getChildren();
-                processDTO.setProgressClosed(progressOfChildrenClosed(children));
-                processDTO.setProgressInProcessing(progressOfChildrenInProcessing(children));
-                processDTO.setProgressOpen(progressOfChildrenOpen(children));
-                processDTO.setProgressLocked(progressOfChildrenLocked(children));
-            } catch (DAOException dao) {
-                throw new DataException(dao);
-            }
-        }
-    }
-    
-    private Double progressOfChildrenClosed(List<Process> children) {
-        DescriptiveStatistics statistics = new DescriptiveStatistics();
-        for (Process child : children) {
-            statistics.addValue(getProgressClosed(child.getTasks(), null));
-        }
-        return statistics.getMean();
-    }
-    
-    private Double progressOfChildrenInProcessing(List<Process> children) {
-        DescriptiveStatistics statistics = new DescriptiveStatistics();
-        for (Process child : children) {
-            statistics.addValue(getProgressInProcessing(child.getTasks(), null));
-        }
-        return statistics.getMean();
-    }
-
-    private Double progressOfChildrenOpen(List<Process> children) {
-        DescriptiveStatistics statistics = new DescriptiveStatistics();
-        for (Process child : children) {
-            statistics.addValue(getProgressOpen(child.getTasks(), null));
-        }
-        return statistics.getMean();
-    }
-
-    private Double progressOfChildrenLocked(List<Process> children) {
-        DescriptiveStatistics statistics = new DescriptiveStatistics();
-        for (Process child : children) {
-            statistics.addValue(getProgressLocked(child.getTasks(), null));
-        }
-        return statistics.getMean();
     }
 
     private List<BatchDTO> getBatchesForProcessDTO(Map<String, Object> jsonObject) throws DataException {
@@ -1271,11 +1300,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
-    private List<TaskDTO> getCompletedTasks(ProcessDTO process) {
-        return process.getTasks().stream()
-                .filter(t -> TaskStatus.DONE.equals(t.getProcessingStatus())).collect(Collectors.toList());
-    }
-
     /**
      * Create and return String used as progress tooltip for a given process. Tooltip contains OPEN tasks and tasks
      * INWORK.
@@ -1321,150 +1345,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return null;
-    }
-
-    /**
-     * Get full progress for process.
-     *
-     * @param tasksBean
-     *            list of Task bean objects
-     * @return string
-     */
-    public String getProgress(List<Task> tasksBean, List<TaskDTO> taskDTOS) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, taskDTOS);
-
-        double closed = calculateProgressClosed(tasks);
-        double inProcessing = calculateProgressInProcessing(tasks);
-        double open = calculateProgressOpen(tasks);
-        double locked = calculateProgressLocked(tasks);
-
-        DecimalFormat decimalFormat = new DecimalFormat("#000");
-        return decimalFormat.format(closed) + decimalFormat.format(inProcessing) + decimalFormat.format(open)
-                + decimalFormat.format(locked);
-    }
-
-    /**
-     * Get progress for closed tasks.
-     *
-     * @param tasksBean
-     *            list of Task bean objects
-     * @param tasksDTO
-     *            list of TaskDTO objects
-     * @return progress for closed steps
-     */
-    double getProgressClosed(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
-
-        return calculateProgressClosed(tasks);
-    }
-
-    /**
-     * Get progress for processed tasks.
-     *
-     * @param tasksBean
-     *            list of Task bean objects
-     * @param tasksDTO
-     *            list of TaskDTO objects
-     * @return progress for processed tasks
-     */
-    double getProgressInProcessing(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
-
-        return calculateProgressInProcessing(tasks);
-    }
-
-    /**
-     * Get progress for open tasks.
-     *
-     * @param tasksBean
-     *            list of Task bean objects
-     * @param tasksDTO
-     *            list of TaskDTO objects
-     * @return return progress for open tasks
-     */
-    double getProgressOpen(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
-        return calculateProgressOpen(tasks);
-    }
-
-    /**
-     * Get progress for open tasks.
-     *
-     * @param tasksBean
-     *            list of Task bean objects
-     * @param tasksDTO
-     *            list of TaskDTO objects
-     * @return return progress for open tasks
-     */
-    double getProgressLocked(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
-        Map<String, Integer> tasks = getCalculationForProgress(tasksBean, tasksDTO);
-        return calculateProgressLocked(tasks);
-    }
-
-    private double calculateProgressClosed(Map<String, Integer> tasks) {
-        return (double) (tasks.get(CLOSED) * 100)
-                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
-    }
-
-    private double calculateProgressInProcessing(Map<String, Integer> tasks) {
-        return (double) (tasks.get(IN_PROCESSING) * 100)
-                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
-    }
-
-    private double calculateProgressOpen(Map<String, Integer> tasks) {
-        return (double) (tasks.get(OPEN) * 100)
-                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
-    }
-
-    private double calculateProgressLocked(Map<String, Integer> tasks) {
-        return (double) (tasks.get(LOCKED) * 100)
-                / (double) (tasks.get(CLOSED) + tasks.get(IN_PROCESSING) + tasks.get(OPEN) + tasks.get(LOCKED));
-    }
-
-    private Map<String, Integer> getCalculationForProgress(List<Task> tasksBean, List<TaskDTO> tasksDTO) {
-        List<TaskStatus> taskStatuses = new ArrayList<>();
-
-        if (Objects.nonNull(tasksBean)) {
-            for (Task task : tasksBean) {
-                taskStatuses.add(task.getProcessingStatus());
-            }
-        } else {
-            for (TaskDTO task : tasksDTO) {
-                taskStatuses.add(task.getProcessingStatus());
-            }
-        }
-        return calculationForProgress(taskStatuses);
-    }
-
-    private Map<String, Integer> calculationForProgress(List<TaskStatus> taskStatuses) {
-        Map<String, Integer> results = new HashMap<>();
-        int open = 0;
-        int inProcessing = 0;
-        int closed = 0;
-        int locked = 0;
-
-        for (TaskStatus taskStatus : taskStatuses) {
-            if (taskStatus.equals(TaskStatus.DONE)) {
-                closed++;
-            } else if (taskStatus.equals(TaskStatus.OPEN)) {
-                open++;
-            } else if (taskStatus.equals(TaskStatus.LOCKED)) {
-                locked++;
-            } else {
-                inProcessing++;
-            }
-        }
-
-        results.put(CLOSED, closed);
-        results.put(IN_PROCESSING, inProcessing);
-        results.put(OPEN, open);
-        results.put(LOCKED, locked);
-
-        if (open + inProcessing + closed + locked == 0) {
-            results.put(LOCKED, 1);
-        }
-
-        return results;
     }
 
     /**
@@ -1750,7 +1630,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return table;
     }
 
-    private DocketInterface initialiseDocketModule() {
+    private static DocketInterface initialiseDocketModule() {
         KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
         return loader.loadModule();
     }
@@ -1781,6 +1661,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             return ServiceManager.getMetsService().getBaseType(metadataFilePath);
         } catch (IOException | IllegalArgumentException e) {
             logger.info("Could not determine base type for process {}: {}", process, e.getMessage());
+            return "";
+        }
+    }
+
+    /**
+     * Returns the type of the top element of the logical structure, and thus the
+     * type of the workpiece of the process.
+     *
+     * @param workpiece
+     *            workpiece whose root type is to be determined
+     * @return the type of the logical structure of the workpiece, "" if unreadable
+     */
+    public String getBaseType(Workpiece workpiece) {
+        try {
+            return ServiceManager.getMetsService().getBaseType(workpiece);
+        } catch (IllegalArgumentException e) {
+            logger.info("Could not determine base type for process {}: {}", workpiece.getId(), e.getMessage());
             return "";
         }
     }
@@ -2111,7 +2008,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            the process to create the docket data for.
      * @return A List of DocketData objects
      */
-    private List<DocketData> getDocketData(List<Process> processes) {
+    private List<DocketData> getDocketData(List<Process> processes) throws IOException {
         List<DocketData> docketData = new ArrayList<>();
         for (Process process : processes) {
             docketData.add(getDocketData(process));
@@ -2126,10 +2023,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            The process to create the docket data for.
      * @return The DocketData for the process.
      */
-    private DocketData getDocketData(Process process) {
+    private static DocketData getDocketData(Process process) throws IOException {
         DocketData docketdata = new DocketData();
 
         docketdata.setCreationDate(process.getCreationDate().toString());
+        URI metadataFilePath = fileService.getMetadataFilePath(process);
+        docketdata.setMetadataFile(fileService.getFile(metadataFilePath).toURI());
+        if (Objects.nonNull(process.getParent())) {
+            docketdata.setParent(getDocketData(process.getParent()));
+        }
         docketdata.setProcessId(process.getId().toString());
         docketdata.setProcessName(process.getTitle());
         docketdata.setProjectName(process.getProject().getTitle());
@@ -2147,7 +2049,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return docketdata;
     }
 
-    private ArrayList<org.kitodo.api.docket.Property> getDocketDataForProperties(List<Property> properties) {
+    private static ArrayList<org.kitodo.api.docket.Property> getDocketDataForProperties(List<Property> properties) {
         ArrayList<org.kitodo.api.docket.Property> propertiesForDocket = new ArrayList<>();
         for (Property property : properties) {
             org.kitodo.api.docket.Property propertyForDocket = new org.kitodo.api.docket.Property();
@@ -2339,41 +2241,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Generate and set the title to process.
-     */
-    public static String generateProcessTitle(List<ProcessDetail> processDetails, String titleDefinition, Process process)
-            throws ProcessGenerationException {
-        return generateProcessTitleAndGetAtstsl(processDetails, titleDefinition, process,
-            TitleGenerator.getValueOfMetadataID(TitleGenerator.TITLE_DOC_MAIN, processDetails));
-    }
-
-    /**
-     * Generate and set the title to process using current title parameter and gets
-     * the atstsl.
-     *
-     * @param title
-     *            of the work to generate atstsl
-     * @return String atstsl
-     */
-    public static String generateProcessTitleAndGetAtstsl(List<ProcessDetail> processDetails, String titleDefinition,
-                                                          Process process, String title) throws ProcessGenerationException {
-        TitleGenerator titleGenerator = new TitleGenerator(null, processDetails);
-        String newTitle = titleGenerator.generateTitle(titleDefinition, null, title);
-        process.setTitle(newTitle);
-        // atstsl is created in title generator and next used in tiff header generator
-        return titleGenerator.getAtstsl();
-    }
-
-    /**
-     * Calculate tiff header.
-     */
-    public static String generateTiffHeader(List<ProcessDetail> processDetails, String atstsl,
-                                            String tiffDefinition, String docType) throws ProcessGenerationException {
-        TiffHeaderGenerator tiffHeaderGenerator = new TiffHeaderGenerator(atstsl, processDetails);
-        return tiffHeaderGenerator.generateTiffHeader(tiffDefinition, docType);
-    }
-
-    /**
      * Set given Process "parentProcess" as parent of given Process "childProcess" and Process "childProcess" as child
      * of given Process "parentProcess".
      * @param parentProcess
@@ -2467,7 +2334,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param task Task for which symlinks are removed
      */
     public static void deleteSymlinksFromUserHomes(Task task) {
-        if (task.isTypeImagesRead() || task.isTypeImagesWrite()) {
+        if (Objects.nonNull(task.getProcessingUser()) && (task.isTypeImagesRead() || task.isTypeImagesWrite())) {
             WebDav webDav = new WebDav();
             try {
                 webDav.uploadFromHome(task.getProcessingUser(), task.getProcess());
@@ -2596,87 +2463,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Create and return String used as tooltip for a given process. Tooltip contains authors, timestamps and messages
-     * of correction comments associated with tasks of the given process.
+     * Retrieve comments for the given process.
      *
      * @param processDTO
      *          process for which the tooltip is created
-     * @return tooltip containing correction messages
+     * @return List containing comments of given process
      *
      * @throws DAOException thrown when process cannot be loaded from database
      */
-    public String createCorrectionMessagesTooltip(ProcessDTO processDTO) throws DAOException {
+    public List<Comment> getComments(ProcessDTO processDTO) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-        List<Comment> correctionComments = ServiceManager.getCommentService().getAllCommentsByProcess(process)
-                .stream().filter(c -> CommentType.ERROR.equals(c.getType())).collect(Collectors.toList());
-        return createCommentTooltip(correctionComments);
-    }
-
-    private String createCommentTooltip(List<Comment> comments) {
-        return comments.stream()
-                .map(c -> " - [" + c.getCreationDate() + "] " + c.getAuthor().getFullName() + ": " + c.getMessage()
-                        + " (" + Helper.getTranslation("fixed") + ": " + c.isCorrected() + ")")
-                .collect(Collectors.joining(NEW_LINE_ENTITY));
-    }
-
-    private TaskDTO getLastProcessedTask(ProcessDTO processDTO) {
-        List<TaskDTO> tasks = getTasksInWork(processDTO);
-        if (tasks.isEmpty()) {
-            tasks = getCompletedTasks(processDTO);
-        }
-        tasks = tasks.stream().filter(t -> Objects.nonNull(t.getProcessingUser())).collect(Collectors.toList());
-        if (tasks.isEmpty()) {
-            return null;
-        } else {
-            tasks.sort(Comparator.comparing(TaskDTO::getProcessingBegin));
-            return tasks.get(0);
-        }
-    }
-
-    /**
-     * Return UserName of user that handled the last task of the given process (either the newest task INWORK or the
-     * newest DONE task, if no task is INWORK). Return an empty String if no task is INWORK or DONE.
-     *
-     * @param processDTO Process
-     * @return name of processing user
-     */
-    public String getUserHandlingLastTask(ProcessDTO processDTO) {
-        TaskDTO lastTask = getLastProcessedTask(processDTO);
-        if (Objects.isNull(lastTask)) {
-            return "";
-        } else {
-            return lastTask.getProcessingUser().getFullName();
-        }
-    }
-
-    /**
-     * Return processing begin of last processed task of given process.
-     *
-     * @param processDTO Process
-     * @return processing begin of last processed task
-     */
-    public String getLastProcessingStart(ProcessDTO processDTO) {
-        TaskDTO lastTask = getLastProcessedTask(processDTO);
-        if (Objects.isNull(lastTask)) {
-            return "";
-        } else {
-            return lastTask.getProcessingBegin();
-        }
-    }
-
-    /**
-     * Return processing end of last processed task of given process.
-     *
-     * @param processDTO Process
-     * @return processing end of last processed task
-     */
-    public String getLastProcessingEnd(ProcessDTO processDTO) {
-        TaskDTO lastTask = getLastProcessedTask(processDTO);
-        if (Objects.isNull(lastTask) || TaskStatus.INWORK.equals(lastTask.getProcessingStatus())) {
-            return "";
-        } else {
-            return lastTask.getProcessingEnd();
-        }
+        return ServiceManager.getCommentService().getAllCommentsByProcess(process);
     }
 
     /**
@@ -2697,8 +2494,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.get(rulesetId);
         } else {
-            functionalDivisions = ServiceManager.getRulesetService()
-                    .getFunctionalDivisions(rulesetId, FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
             RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.put(rulesetId, functionalDivisions);
         }
         return functionalDivisions.contains(processDTO.getBaseType());
@@ -2722,8 +2520,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
         } else {
-            functionalDivisions = ServiceManager.getRulesetService()
-                    .getFunctionalDivisions(rulesetId, FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
+            Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+            functionalDivisions = ServiceManager.getRulesetService().openRuleset(ruleset)
+                    .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
             RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
         }
         return functionalDivisions.contains(processDTO.getBaseType());
@@ -2733,10 +2532,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Starts generation of xml logfile for current process.
      */
     public static void createXML(Process process, User user) throws IOException {
-        ExportXmlLog xmlExport = new ExportXmlLog();
+        DocketInterface xmlExport = initialiseDocketModule();
         String directory = new File(ServiceManager.getUserService().getHomeDirectory(user)).getPath();
         String destination = directory + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_log.xml";
-        xmlExport.startExport(process, destination);
+        xmlExport.exportXmlLog(getDocketData(process), destination);
     }
 
     /**
@@ -2892,16 +2691,19 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * find processes by inChoiceListShown attribute.
-     * @param inChoiceListShown the needed value of the attribute
-     * @param related if the process is related
-     * @return a list of found processes
+     * Get template processes sorted by title.
+     * @return template processes sorted by title
      */
-    public List<ProcessDTO> findByInChoiceListShown(boolean inChoiceListShown, boolean related) throws DataException {
+    public List<Process> getTemplateProcesses() throws DataException, DAOException {
+        List<Process> templateProcesses = new ArrayList<>();
         BoolQueryBuilder inChoiceListShownQuery = new BoolQueryBuilder();
         MatchQueryBuilder matchQuery = matchQuery(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), true);
         inChoiceListShownQuery.must(matchQuery);
-        return ServiceManager.getProcessService().findByQuery(matchQuery, related);
+        for (ProcessDTO processDTO : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
+            templateProcesses.add(getById(processDTO.getId()));
+        }
+        templateProcesses.sort(Comparator.comparing(Process::getTitle));
+        return templateProcesses;
     }
 
     /**

@@ -1,0 +1,196 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{importConfigurationEditView.load(id)}"/>
+    </f:metadata>
+
+    <!--@elvariable id="isEditMode" type="boolean"-->
+    <ui:param name="isEditMode"
+              value="#{importConfigurationEditView.importConfiguration.id ne null and SecurityAccessController.hasAuthorityToEditImportConfiguration()}"/>
+    <!--@elvariable id="isCreateMode" type="boolean"-->
+    <ui:param name="isCreateMode"
+              value="#{importConfigurationEditView.importConfiguration.id eq null and SecurityAccessController.hasAuthorityToAddImportConfiguration()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewImportConfiguration()}"/>
+
+    <ui:define name="messages">
+        <p:messages id="error-messages" showIcon="false" closable="true"/>
+    </ui:define>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <h3 id="headerText">
+            <h:outputText value="#{msgs['importConfig.mode.create']}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs['importConfig.mode.edit']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs['importConfig.mode.view']} (#{importConfigurationEditView.importConfiguration.title})" rendered="#{isViewMode}"/>
+        </h3>
+
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects?keepPagination=true"
+                  icon="fa fa-times fa-lg" iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="save"
+                         widgetVar="save"
+                         value="#{msgs.save}"
+                         action="#{importConfigurationEditView.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         update="editForm:error-messages"
+                         rendered="#{isEditMode || isCreateMode}"
+                         disabled="#{importConfigurationEditView.saveDisabled}"
+                         onclick="setConfirmUnload(false);PF('save').disable();"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{importConfigurationEditView.setSaveDisabled(false)}"
+                         process="@this"
+                         update="save"
+                         style="display:none;"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="importConfigurationTabView">
+            <p:tab id="detailsTab" title="#{msgs.details}">
+                <p:panelGrid id="importConfiguration-grid" columns="2" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="title" value="#{msgs.title} *"/>
+                            <p:inputText id="title"
+                                         styleClass="input-with-button input"
+                                         value="#{importConfigurationEditView.importConfiguration.title}"
+                                         placeholder="#{msgs.title}"
+                                         disabled="#{isViewMode}"
+                                         required="#{not empty param['editForm:save']}">
+                                <p:ajax event="change"/>
+                            </p:inputText>
+                            <p:commandButton id="titleHelp" type="button"
+                                             styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="titleHelp"
+                                       value="#{msgs['tooltip.importConfig.titleHelp']}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="description" value="#{msgs['importConfig.field.description']}"/>
+                            <p:inputText id="description"
+                                         styleClass="input-with-button"
+                                         value="#{importConfigurationEditView.importConfiguration.description}"
+                                         placeholder="#{msgs['importConfig.field.description']}"
+                                         disabled="#{isViewMode}">
+                                <p:ajax event="change"/>
+                            </p:inputText>
+                            <p:commandButton id="descriptionHelp" type="button"
+                                             styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="descriptionHelp"
+                                       value="#{msgs['tooltip.importConfig.descriptionHelp']}"/>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="configurationType" value="#{msgs['importConfig.field.configurationType']} *"/>
+                            <p:selectOneMenu id="configurationType" styleClass="input-with-button"
+                                             required="#{not empty param['editForm:save']}"
+                                             value="#{importConfigurationEditView.importConfiguration.configurationType}">
+                                <f:selectItem itemValue="#{null}"
+                                              itemLabel="-- #{msgs['importConfig.selectConfigurationType']} --"
+                                              noSelectionOption="true"/>
+                                <f:selectItems value="#{importConfigurationEditView.importConfigurationTypes}"
+                                               var="configType"
+                                               itemValue="#{configType}"
+                                               itemLabel="#{msgs[configType.messageKey]}"/>
+                                <p:ajax event="change"
+                                        update="editForm:importConfigurationTabView"
+                                        oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
+                            <p:commandButton id="configurationTypeHelp" type="button"
+                                             styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="configurationTypeHelp"
+                                       value="#{msgs['tooltip.importConfig.configurationTypeHelp']}"/>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+
+                <h:panelGroup layout="block"
+                              styleClass="horizontal-separator"/>
+
+                <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.configurationType eq 'OPAC_SEARCH'}">
+                    <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/opacSearchFields.xhtml"/>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.configurationType eq 'PROCESS_TEMPLATE'}">
+                    <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/processTemplateFields.xhtml"/>
+                </ui:fragment>
+
+                <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.configurationType eq 'FILE_UPLOAD'}">
+                    <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/fileUploadFields.xhtml"/>
+                </ui:fragment>
+
+            </p:tab>
+
+            <p:tab id="mappingFilesTab"
+                   title="#{msgs['mappingFile.files']}"
+                   disabled="#{importConfigurationEditView.importConfiguration.configurationType ne 'FILE_UPLOAD'
+                           and importConfigurationEditView.importConfiguration.configurationType ne 'OPAC_SEARCH'}">
+                <p:panelGrid columns="1"
+                             layout="grid"
+                             id="mappingFiles">
+                    <p:row>
+                        <div>
+                            <!--@elvariable id="mappingfile" type="org.kitodo.data.database.beans.MappingFile"-->
+                            <p:pickList id="mappingFilesPicklist"
+                                        showSourceFilter="true"
+                                        showTargetFilter="true"
+                                        filterMatchMode="contains"
+                                        responsive="true"
+                                        validator="MappingValidator"
+                                        disabled="#{isViewMode}"
+                                        converter="#{mappingFileConverter}"
+                                        value="#{importConfigurationEditView.availableMappingFiles}"
+                                        var="mappingfile"
+                                        itemLabel="#{mappingfile.title} (#{mappingfile.inputMetadataFormat} &#8594; #{mappingfile.outputMetadataFormat})"
+                                        itemValue="#{mappingfile}"
+                                        onTransfer="toggleSave()">
+                                <f:facet name="sourceCaption">#{msgs.available}</f:facet>
+                                <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
+                            </p:pickList>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="dialog">
+        <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/newSearchFieldDialog.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/updateSearchFieldDialog.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/newUrlParameterDialog.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/importConfigurationEdit/updateUrlParameterDialog.xhtml"/>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs['importConfig.mode.edit']}" rendered="#{isEditMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['importConfig.mode.create']}" rendered="#{isCreateMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['importConfig.mode.view']}" rendered="#{isViewMode}" icon="fa fa-cogs"/>
+    </ui:define>
+
+</ui:composition>

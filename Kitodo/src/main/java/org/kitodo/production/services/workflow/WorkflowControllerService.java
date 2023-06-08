@@ -41,7 +41,9 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WebDav;
@@ -57,7 +59,6 @@ import org.kitodo.production.thread.TaskScriptThread;
 public class WorkflowControllerService {
 
     private List<Task> automaticTasks = new ArrayList<>();
-    private List<Task> tasksToFinish = new ArrayList<>();
     private boolean flagWait = false;
     private final ReentrantLock flagWaitLock = new ReentrantLock();
     private final WebDav webDav = new WebDav();
@@ -91,6 +92,7 @@ public class WorkflowControllerService {
                     task.setProcessingTime(new Date());
                     taskService.replaceProcessingUser(task, getCurrentUser());
                     ServiceManager.getTaskService().save(task);
+                    ServiceManager.getProcessService().save(task.getProcess());
                 }
             }
         }
@@ -178,13 +180,19 @@ public class WorkflowControllerService {
                 ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
                 task.getProcess().getRuleset().getFile()).toString()));
         ValidationResult validationResult = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset);
-        if (State.ERROR.equals(validationResult.getState())) {
+        boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
+        State state = validationResult.getState();
+        if (State.ERROR.equals(state) || (strictValidation && !State.SUCCESS.equals(state))) {
             Helper.setErrorMessage(Helper.getTranslation("dataEditor.validation.state.error"));
             for (String message : validationResult.getResultMessages()) {
                 Helper.setErrorMessage(message);
             }
         }
-        return !validationResult.getState().equals(State.ERROR);
+        if (strictValidation) {
+            return State.SUCCESS.equals(state);
+        } else {
+            return !State.ERROR.equals(state);
+        }
     }
 
     /**
@@ -243,7 +251,6 @@ public class WorkflowControllerService {
         taskService.save(task);
 
         automaticTasks = new ArrayList<>();
-        tasksToFinish = new ArrayList<>();
 
         activateTasksForClosedTask(task);
     }
@@ -257,8 +264,8 @@ public class WorkflowControllerService {
         if (!process.getChildren().isEmpty()) {
             boolean allChildrenClosed = true;
             for (Process child : process.getChildren()) {
-                allChildrenClosed &= child.getSortHelperStatus().equals("100000000")
-                        || child.getSortHelperStatus().equals("100000000000");
+                allChildrenClosed &= ProcessState.COMPLETED20.getValue().equals(child.getSortHelperStatus())
+                        || ProcessState.COMPLETED.getValue().equals(child.getSortHelperStatus());
             }
             return allChildrenClosed;
         }
@@ -433,7 +440,6 @@ public class WorkflowControllerService {
         Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!process.getSortHelperImages().equals(numberOfFiles)) {
             process.setSortHelperImages(numberOfFiles);
-            ServiceManager.getProcessService().save(process);
         }
 
         ServiceManager.getProcessService().save(process);
@@ -444,16 +450,13 @@ public class WorkflowControllerService {
             TaskScriptThread thread = new TaskScriptThread(automaticTask);
             TaskManager.addTask(thread);
         }
-        for (Task finish : tasksToFinish) {
-            close(finish);
-        }
 
         closeParent(process);
     }
 
     private void closeParent(Process process) throws DataException {
         if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
-            process.getParent().setSortHelperStatus("100000000");
+            process.getParent().setSortHelperStatus(ProcessState.COMPLETED.getValue());
             ServiceManager.getProcessService().save(process.getParent());
             closeParent(process.getParent());
         }
@@ -600,7 +603,7 @@ public class WorkflowControllerService {
             task.setProcessingTime(new Date());
             task.setEditType(TaskEditType.AUTOMATIC);
 
-            verifyTask(task);
+            processAutomaticTask(task);
 
             taskService.save(task);
         } else {
@@ -652,14 +655,12 @@ public class WorkflowControllerService {
         return ServiceManager.getProcessService().getNodeListFromMetadataFile(process, xpath).getLength() > 0;
     }
 
-    private void verifyTask(Task task) {
+    private void processAutomaticTask(Task task) {
         // if it is an automatic task with script
         if (task.isTypeAutomatic()) {
             task.setProcessingStatus(TaskStatus.INWORK);
             automaticTasks.add(task);
-        } else if (task.isTypeAcceptClose()) {
-            tasksToFinish.add(task);
-        }
+        } 
     }
 
     /**
@@ -670,7 +671,7 @@ public class WorkflowControllerService {
      */
     public static void updateProcessSortHelperStatus(Process process) {
         if (!process.getTasks().isEmpty()) {
-            String value = ServiceManager.getProcessService().getProgress(process.getTasks(), null);
+            String value = ProcessConverter.getCombinedProgressAsString(process, false);
             process.setSortHelperStatus(value);
         }
     }

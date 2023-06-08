@@ -55,17 +55,17 @@
                 <p:graphicImage alt="in progress"
                                 value="/pages/images/ajax-loader.gif"
                                 style="max-height: 20px;"
-                                rendered="#{indexingForm.getObjectIndexState(objectType) == INDEXING_STARTED}"/>
+                                rendered="#{indexingForm.getObjectIndexState(objectType) == 'INDEXING_STARTED'}"/>
                 <!--@elvariable id="INDEXING_FAILED" type="org.kitodo.production.enums.IndexStates"-->
                 <p:graphicImage alt="failed"
                                 value="/pages/images/fail.svg"
                                 style="max-height: 20px;"
-                                rendered="#{indexingForm.getObjectIndexState(objectType) == INDEXING_FAILED}"/>
+                                rendered="#{indexingForm.getObjectIndexState(objectType) == 'INDEXING_FAILED'}"/>
                 <!--@elvariable id="INDEXING_SUCCESSFUL" type="org.kitodo.production.enums.IndexStates"-->
                 <p:graphicImage alt="success"
                                 value="/pages/images/success.svg"
                                 style="max-height: 20px;"
-                                rendered="#{indexingForm.getObjectIndexState(objectType) == INDEXING_SUCCESSFUL}" />
+                                rendered="#{indexingForm.getObjectIndexState(objectType) == 'INDEXING_SUCCESSFUL'}" />
             </td>
         </tr>
     </h:panelGroup>

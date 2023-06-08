@@ -21,6 +21,7 @@
             <default-locale>de</default-locale>
             <supported-locale>de</supported-locale>
             <supported-locale>en</supported-locale>
+            <supported-locale>es</supported-locale>
         </locale-config>
         <resource-bundle>
             <base-name>org.kitodo.production.helper.messages.Error</base-name>
@@ -30,9 +31,20 @@
             <base-name>org.kitodo.production.helper.messages.Message</base-name>
             <var>msgs</var>
         </resource-bundle>
+        <resource-handler>
+            org.kitodo.production.handler.KitodoResourceHandler
+        </resource-handler>
     </application>
     <factory>
-        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory</exception-handler-factory>
+        <exception-handler-factory>org.omnifaces.exceptionhandler.FullAjaxExceptionHandlerFactory
+        </exception-handler-factory>
     </factory>
+    <render-kit>
+        <renderer>
+            <component-family>org.primefaces.component</component-family>
+            <renderer-type>org.primefaces.component.MediaRenderer</renderer-type>
+            <renderer-class>org.kitodo.production.renderer.KitodoMediaRenderer</renderer-class>
+        </renderer>
+    </render-kit>
 </faces-config>
 

@@ -70,7 +70,7 @@ public class BaseForm implements Serializable {
     protected static final String DEFAULT_LINK = "desktop.jsf";
     private static final String LIST_PAGE = TEMPLATE_ROOT + "{0}?keepPagination=true&" + REDIRECT_PARAMETER;
     protected final String usersPage = MessageFormat.format(LIST_PAGE, "users");
-    protected final String processesPage = MessageFormat.format(LIST_PAGE, "processes");
+    protected final String processesPage = "processes?" + REDIRECT_PARAMETER;
     protected final String projectsPage = MessageFormat.format(LIST_PAGE, "projects");
     protected final String tasksPage = MessageFormat.format(LIST_PAGE, "tasks");
 

@@ -11,12 +11,14 @@
 
 package org.kitodo.selenium.testframework;
 
+import org.kitodo.selenium.testframework.pages.CalendarPage;
 import org.kitodo.selenium.testframework.pages.ClientEditPage;
 import org.kitodo.selenium.testframework.pages.CurrentTasksEditPage;
 import org.kitodo.selenium.testframework.pages.DesktopPage;
 import org.kitodo.selenium.testframework.pages.DocketEditPage;
 import org.kitodo.selenium.testframework.pages.ExtendedSearchPage;
 import org.kitodo.selenium.testframework.pages.HelpPage;
+import org.kitodo.selenium.testframework.pages.ImportConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
 import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
@@ -123,6 +125,11 @@ public class Pages {
         return getPage(RulesetEditPage.class);
     }
 
+    public static ImportConfigurationEditPage getImportConfigurationEditPage() throws IllegalAccessException,
+            InstantiationException {
+        return getPage(ImportConfigurationEditPage.class);
+    }
+
     public static StartPage getStartPage() throws InstantiationException, IllegalAccessException {
         return getPage(StartPage.class);
     }
@@ -151,4 +158,7 @@ public class Pages {
         return getPage(UsersPage.class);
     }
 
+    public static CalendarPage getCalendarPage() throws InstantiationException, IllegalAccessException {
+        return getPage(CalendarPage.class);
+    }
 }

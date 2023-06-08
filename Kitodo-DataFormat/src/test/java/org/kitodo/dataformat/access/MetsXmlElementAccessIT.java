@@ -176,11 +176,11 @@ public class MetsXmlElementAccessIT {
         MetadataEntry firstName = new MetadataEntry();
         firstName.setKey("firstName");
         firstName.setValue("Alice");
-        author.getGroup().add(firstName);
+        author.getMetadata().add(firstName);
         MetadataEntry lastName = new MetadataEntry();
         lastName.setKey("firstName");
         lastName.setValue("Smith");
-        author.getGroup().add(lastName);
+        author.getMetadata().add(lastName);
         frontCover.getMetadata().add(author);
 
         MetadataEntry imagesConverted = new MetadataEntry();
@@ -258,7 +258,7 @@ public class MetsXmlElementAccessIT {
 
     @Test
     public void missingMetsFileForPointer() throws Exception {
-        try { 
+        try {
             new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/meta_missing_file.xml")));
         } catch (IllegalArgumentException e) {
             assertEquals("Corrupt file: file id for <mets:fptr> not found for div PHYS_0001", e.getMessage());
@@ -267,7 +267,7 @@ public class MetsXmlElementAccessIT {
 
     @Test
     public void duplicateMetsFileDefinition() throws Exception {
-        try { 
+        try {
             new MetsXmlElementAccess().read(
                 new FileInputStream(new File("src/test/resources/meta_duplicate_file.xml"))
             );
@@ -278,13 +278,13 @@ public class MetsXmlElementAccessIT {
 
     @Test
     public void missingMetsFileGroupUse() throws Exception {
-        try { 
+        try {
             new MetsXmlElementAccess().read(
                 new FileInputStream(new File("src/test/resources/meta_missing_file_use.xml"))
             );
         } catch (IllegalArgumentException e) {
             assertEquals(
-                "Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>", 
+                "Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>",
                 e.getMessage()
             );
         };

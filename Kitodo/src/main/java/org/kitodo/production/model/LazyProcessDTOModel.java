@@ -18,7 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.elasticsearch.ElasticsearchStatusException;
 import org.elasticsearch.index.query.QueryShardException;
 import org.kitodo.data.exceptions.DataException;
@@ -30,6 +30,21 @@ import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
 
 public class LazyProcessDTOModel extends LazyDTOModel {
+
+    /**
+     * The elastic search field that is used to sort processes by their correction comment status.
+     */
+    private static final String CORRECTION_COMMENT_STATUS_FIELD = "correctionCommentStatus";
+
+    /**
+     * The elastic search field that is used to sort processes by their progress status.
+     */
+    private static final String PROGRESS_COMBINED_FIELD = "progressCombined";
+
+    /**
+     * The elastic search field that is used to sort processes by their creation date.
+     */
+    private static final String CREATION_DATE_FIELD = "creationDate";
 
     private boolean showClosedProcesses = false;
     private boolean showInactiveProjects = false;
@@ -88,6 +103,11 @@ public class LazyProcessDTOModel extends LazyDTOModel {
     @SuppressWarnings("unchecked")
     public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
             Map<String, FilterMeta> filters) {
+        // reverse sort order for some process list columns such that first click on column yields more useful ordering
+        if (sortField.equals(CORRECTION_COMMENT_STATUS_FIELD) || sortField.equals(PROGRESS_COMBINED_FIELD)
+                || sortField.equals(CREATION_DATE_FIELD)) {
+            sortOrder = sortOrder.equals(SortOrder.ASCENDING) ? SortOrder.DESCENDING : SortOrder.ASCENDING;
+        }
         if (indexRunning()) {
             try {
                 HashMap<String, String> filterMap = new HashMap<>();
@@ -115,4 +135,13 @@ public class LazyProcessDTOModel extends LazyDTOModel {
         return new LinkedList<>();
     }
 
+    @Override
+    public Object getRowData() {
+        List<Object> data = getWrappedData();
+        if (isRowAvailable()) {
+            return data.get(getRowIndex());
+        } else {
+            return null;
+        }
+    }
 }

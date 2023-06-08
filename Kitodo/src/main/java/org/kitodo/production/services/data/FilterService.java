@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -21,9 +22,12 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.StringTokenizer;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
@@ -48,9 +52,11 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.dto.FilterDTO;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
 import org.primefaces.model.SortOrder;
@@ -62,6 +68,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
+    
+    private static final Pattern CONDITION_PATTERN = Pattern.compile("\\(([^\\)]+)\\)|([^\\(\\)\\|]+)");
     public static final String FILTER_STRING = "filterString";
 
     /**
@@ -143,10 +151,19 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * depending on which data structures are used for applying filtering
      * restrictions conjunctions are formed and collect the restrictions and
      * then will be applied on the corresponding criteria. A criteria is only
-     * added if needed for the presence of filters applying to it. Prefix "-"
-     * means that negated query should be created.
+     * added if needed for the presence of filters applying to it. 
+     * 
+     * <p>Filters are enclosed in double quotes and separated via a space. 
+     * Each filter can be a disjunction of conditions separated by a "|". 
+     * Conditions can be negated by adding the prefix "-".</p>
+     * 
+     * <p>Some examples are: the default filter "word", which filters task or 
+     * processes by their title; a filter "stepinwork:Scanning", which filters 
+     * processes or tasks by the task state "Scanning" which are also currently in 
+     * progress. The negation thereof would be "-stepinwork:Scanning". A disjunction 
+     * of conditions would be "stepinwork:Scanning | stepinwork:QC".</p>
      *
-     * @param filter
+     * @param filters
      *            as String
      * @param objectType
      *            as ObjectType - "PROCESS", "TEMPLATE" or "TASK"
@@ -156,10 +173,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            as Boolean
      * @return query as {@link BoolQueryBuilder}
      */
-    public BoolQueryBuilder queryBuilder(String filter, ObjectType objectType, Boolean onlyOpenTasks,
+    public BoolQueryBuilder queryBuilder(String filters, ObjectType objectType, Boolean onlyOpenTasks,
             Boolean onlyUserAssignedTasks) throws DataException {
 
-        filter = replaceLegacyFilters(filter);
+        filters = replaceLegacyFilters(filters);
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         // this is needed if we filter task
@@ -167,68 +184,80 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             query = buildTaskQuery(onlyOpenTasks, onlyUserAssignedTasks);
         }
 
-        for (String tokenizedFilter : prepareFilters(filter)) {
-            if (evaluateFilterString(tokenizedFilter, FilterString.TASK, null)) {
-                query.must(createHistoricFilter(tokenizedFilter));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKLOCKED, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKOPEN, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONE, null)) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONETITLE, null)) {
-                String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
-                query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONEUSER, null)
-                    && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
-                query.must(filterTaskDoneUser(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKAUTOMATIC, null)) {
-                query.must(filterAutomaticTasks(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, null)) {
-                query.must(filterProject(tokenizedFilter, false, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.ID, null)) {
-                query.must(createProcessIdFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PARENTPROCESSID, null)) {
-                query.must(createParentProcessIdFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROPERTY, null)) {
-                query.must(createProcessPropertyFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROCESS, null)) {
-                query.must(createProcessTitleFilter(tokenizedFilter, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, null)) {
-                query.must(createBatchIdFilter(tokenizedFilter, objectType, true));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKINWORK, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKINWORK, TaskStatus.INWORK, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKLOCKED, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKLOCKED, TaskStatus.LOCKED, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKOPEN, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKOPEN, TaskStatus.OPEN, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONE, "-")) {
-                query.must(
-                    createTaskFilters(tokenizedFilter, FilterString.TASKDONE, TaskStatus.DONE, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.TASKDONETITLE, "-")) {
-                String taskTitle = getFilterValueFromFilterString(tokenizedFilter, FilterString.TASKDONETITLE);
-                query.must(filterTaskTitle(taskTitle, TaskStatus.DONE, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.PROJECT, "-")) {
-                query.must(filterProject(tokenizedFilter, true, objectType));
-            } else if (evaluateFilterString(tokenizedFilter, FilterString.BATCH, "-")) {
-                query.must(createBatchIdFilter(tokenizedFilter, objectType, false));
-            } else if (tokenizedFilter.startsWith("-")) {
-                query.must(createDefaultQuery(tokenizedFilter.substring(1), true, objectType));
-            } else {
-                /* standard-search parameter */
-                query.must(createDefaultQuery(tokenizedFilter, false, objectType));
+        for (String filter : splitFilters(filters)) {
+            BoolQueryBuilder bool = new BoolQueryBuilder();
+            for (String condition : splitConditions(filter)) {
+                boolean negated = condition.startsWith("-");
+                if (negated) {
+                    bool.should(new BoolQueryBuilder().mustNot(
+                        buildQueryFromCondition(condition.substring(1), objectType))
+                    );
+                } else {
+                    bool.should(buildQueryFromCondition(condition, objectType));
+                }
             }
+            query.must(bool);
         }
         return query;
+    }
+
+    /**
+     * Splits a filter into multiple alternative conditions.
+     * 
+     * @param filter the filter string (that was enclosed in double quotes)
+     * @return a list of conditions after splitting the filter at the "|" character
+     */
+    private List<String> splitConditions(String filter) {
+        return CONDITION_PATTERN.matcher(filter).results()
+            .flatMap(mr -> IntStream.rangeClosed(1, mr.groupCount()).mapToObj(mr::group))
+            .filter(Objects::nonNull)
+            .map(String::trim)
+            .filter(Predicate.not(String::isEmpty))
+            .collect(Collectors.toList());
+    }
+
+    /**
+     * Builds a ElasticSearch query from a single condition.
+     * 
+     * @param condition the condition (e.g. a single word, or a pair of "property:value")
+     * @param objectType the object type that is being filtered (either task or process)
+     * @return a elastic search query builder object representing the condition
+     */
+    private QueryBuilder buildQueryFromCondition(String condition, ObjectType objectType) throws DataException {
+        if (evaluateFilterString(condition, FilterString.TASK, null)) {
+            return createHistoricFilter(condition);
+        } else if (evaluateFilterString(condition, FilterString.TASKINWORK, null)) {
+            return createTaskFilters(condition, FilterString.TASKINWORK, TaskStatus.INWORK, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKLOCKED, null)) {
+            return createTaskFilters(condition, FilterString.TASKLOCKED, TaskStatus.LOCKED, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKOPEN, null)) {
+            return createTaskFilters(condition, FilterString.TASKOPEN, TaskStatus.OPEN, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKDONE, null)) {
+            return createTaskFilters(condition, FilterString.TASKDONE, TaskStatus.DONE, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKDONETITLE, null)) {
+            String taskTitle = getFilterValueFromFilterString(condition, FilterString.TASKDONETITLE);
+            return filterTaskTitle(taskTitle, TaskStatus.DONE, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKDONEUSER, null)
+                && ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.WITH_USER_STEP_DONE_SEARCH)) {
+            return filterTaskDoneUser(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.TASKAUTOMATIC, null)) {
+            return filterAutomaticTasks(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PROJECT, null)) {
+            return filterProject(condition, false, objectType);
+        } else if (evaluateFilterString(condition, FilterString.ID, null)) {
+            return createProcessIdFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PARENTPROCESSID, null)) {
+            return createParentProcessIdFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PROPERTY, null)) {
+            return createProcessPropertyFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.PROCESS, null)) {
+            return createProcessTitleFilter(condition, objectType);
+        } else if (evaluateFilterString(condition, FilterString.BATCH, null)) {
+            return createBatchIdFilter(condition, objectType, true);
+        } else {
+            /* standard-search parameter */
+            return createDefaultQuery(condition, false, objectType);
+        }
     }
 
     private String replaceLegacyFilters(String filter) {
@@ -369,7 +398,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            as String
      * @return list of single filters
      */
-    private List<String> prepareFilters(String filter) {
+    private List<String> splitFilters(String filter) {
         List<String> filters = new ArrayList<>();
         String delimiter = "\"";
         StringTokenizer tokenizer = new StringTokenizer(filter, delimiter, true);
@@ -495,7 +524,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         Set<String> strings = filterValuesAsStrings(filter, FilterString.PROPERTY);
         for (String string : strings) {
             String[] split = string.split(":");
-            propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            if (split.length > 1) {
+                propertyQuery.should(ServiceManager.getProcessService().createPropertyQuery(split[0], split[1]));
+            }
         }
         if (objectType == ObjectType.PROCESS) {
             return propertyQuery;
@@ -914,7 +945,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
 
     private QueryBuilder createDefaultQuery(String filter, boolean negate, ObjectType objectType) throws DataException {
         QueryBuilder titleQuery = ServiceManager.getProcessService().getWildcardQueryTitle(filter);
-        return getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
+        QueryBuilder query = getQueryAccordingToObjectTypeAndSearchInObject(objectType, ObjectType.PROCESS, titleQuery);
+        return negate ? new BoolQueryBuilder().mustNot(query) : query;
     }
 
     private QueryBuilder getQueryAccordingToObjectTypeAndSearchInObject(ObjectType objectType,
@@ -1003,9 +1035,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         HashMap<String, Object> filterMap = new HashMap<>();
         List<String> declaredFields = Arrays.stream(baseClass.getDeclaredFields()).map(Field::getName)
                 .collect(Collectors.toList());
-        for (String filter : prepareFilters(parseFilterString(filters))) {
-            if (StringUtils.countMatches(filter, ":") == 1) {
-                String[] filterComponents = filter.split(":");
+        for (String filter : splitFilters(parseFilterString(filters))) {
+            String[] filterComponents = filter.split(":");
+            if (filterComponents.length == 2) {
                 String parameterName = filterComponents[0].trim();
                 String parameterValue = filterComponents[1].trim();
                 if (declaredFields.contains(parameterName)) {
@@ -1045,5 +1077,70 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
             sqlUserFilter.append(" AND ").append(filter).append(" = :").append(filter);
         }
         return sqlUserFilter.toString();
+    }
+
+    /**
+     * Initialise list of process property titles.
+     *
+     * @return List of String objects containing the process property labels.
+     */
+    public List<String> initProcessPropertyTitles() {
+        return ServiceManager.getPropertyService().findDistinctTitles();
+    }
+
+    /**
+     * Initialise list of projects.
+     *
+     * @return List of String objects containing the project
+     */
+    public List<String> initProjects() {
+        List<ProjectDTO> projectsSortedByTitle = Collections.emptyList();
+        try {
+            projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
+        } catch (DataException e) {
+            Helper.setErrorMessage("errorInitializingProjects", logger, e);
+        }
+
+        return projectsSortedByTitle.stream().map(ProjectDTO::getTitle).sorted().collect(Collectors.toList());
+    }
+
+    /**
+     * Initialise list of step statuses.
+     *
+     * @return List of TaskStatus objects
+     */
+    public List<TaskStatus> initStepStatus() {
+        return List.of(TaskStatus.values());
+    }
+
+    /**
+     * Initialise list of task titles.
+     *
+     * @return List of String objects containing the titles of all workflow steps
+     */
+    public List<String> initStepTitles() {
+        List<String> taskTitles = new ArrayList<>();
+        try {
+            taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
+        } catch (DataException | DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+        return taskTitles;
+    }
+
+
+    /**
+     * Initialise list of users.
+     *
+     * @return List of User objects
+     */
+    public List<User> initUserList() {
+        try {
+            return ServiceManager.getUserService().getAllActiveUsersSortedByNameAndSurname();
+        } catch (RuntimeException e) {
+            logger.warn("RuntimeException caught. List of users could be empty!");
+            Helper.setErrorMessage("errorLoadingMany", new Object[] {Helper.getTranslation("activeUsers") }, logger, e);
+        }
+        return new ArrayList<>();
     }
 }

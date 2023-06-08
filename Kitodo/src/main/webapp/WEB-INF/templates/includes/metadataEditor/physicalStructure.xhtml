@@ -37,7 +37,7 @@
                                 initializeImage();
                                 expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
-                            imagePreviewForm:mediaViewData
+                            imagePreviewForm:mediaDetail
                             metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
@@ -46,7 +46,7 @@
                     update="@(.stripe)
                                 @(.thumbnail)
                                 galleryHeadingWrapper
-                                imagePreviewForm:mediaViewData
+                                imagePreviewForm:mediaDetail
                                 contextMenuPhysicalTree
                                 logicalTree
                                 metadataAccordion:physicalMetadataWrapperPanel"/>
@@ -59,16 +59,26 @@
                     listener="#{DataEditorForm.structurePanel.onNodeCollapse}"/>
             <p:ajax event="expand"
                     listener="#{DataEditorForm.structurePanel.onNodeExpand}"/>
-            <p:treeNode expandedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-expanded'}"
-                        collapsedIcon="#{physicalNode.dataObject.type eq 'page' ? 'ui-icon-document' : 'ui-icon-folder-collapsed'}">
+            <p:treeNode type="#{StructurePanel.PHYS_STRUCTURE_NODE_TYPE}"
+                        expandedIcon="ui-icon-folder-expanded"
+                        collapsedIcon="ui-icon-folder-collapsed">
                 <!--@elvariable id="physicalElementType" type="java.lang.String"-->
                 <ui:param name="physicalElementType" value="#{physicalNode.label}"/>
-                <h:outputText 
-                        value="#{empty physicalElementType ? msgs['dataEditor.withoutType'] : physicalElementType}" 
+                <h:outputText
+                        value="#{empty physicalElementType ? msgs['dataEditor.withoutType'] : physicalElementType}"
                         style="#{physicalNode.undefined ? 'background-color: gold' : ''}"
-                        a:data-order="#{physicalNode.order}" />
+                        a:data-order="#{physicalNode.order}"/>
                 <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
-                <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}" style="background-color: gold;" title="#{msgs['dataEditor.undefinedStructure']}"/>
+                <h:outputText value=" ⚠️" rendered="#{physicalNode.undefined}"
+                              style="background-color: gold;"
+                              title="#{msgs['dataEditor.undefinedStructure']}"/>
+            </p:treeNode>
+            <p:treeNode type="#{StructurePanel.MEDIA_NODE_TYPE}"
+                        icon="ui-icon-document">
+                <h:outputText
+                        value="#{physicalNode.label}"
+                        a:data-order="#{physicalNode.order}"/>
+                <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="physicalTree" id="contextMenuPhysicalTree" widgetVar="contextMenuPhysicalTree">
@@ -116,7 +126,8 @@
                         action="#{DataEditorForm.deletePhysicalDivision()}"
                         onclick="$('#loadingScreen').show()"
                         oncomplete="$('#loadingScreen').hide()"
-                        update="physicalTree
+                        update="numberOfScans
+                                physicalTree
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:physicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>

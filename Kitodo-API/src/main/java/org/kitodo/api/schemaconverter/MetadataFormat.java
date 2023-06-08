@@ -11,12 +11,11 @@
 
 package org.kitodo.api.schemaconverter;
 
-import java.util.UnknownFormatConversionException;
-
 public enum MetadataFormat {
     MODS,
     MARC,
     PICA,
+    OTHER,
     KITODO;
 
     /**
@@ -33,7 +32,44 @@ public enum MetadataFormat {
                 return format;
             }
         }
-        throw new UnknownFormatConversionException("Unable to find MetadataFormat for given String '"
-                + formatString + "'!");
+        return OTHER;
+    }
+
+    /**
+     * Get default record ID XPath for given format.
+     *
+     * @param format MetadataFormat
+     * @return default record ID XPath for given format
+     */
+    public static String getDefaultRecordIdXpath(String format) {
+        switch (format) {
+            case "MODS":
+                return ".//*[local-name()='recordInfo']/*[local-name()='recordIdentifier']/text()";
+            case "MARC":
+                return ".//*[local-name()='datafield'][@tag='245']/*[local-name()='subfield'][@code='a']/text()";
+            case "PICA":
+                return ".//*[local-name()='datafield'][@tag='003@']/*[local-name()='subfield'][@code='0']/text()";
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * Get default record title XPath for given format.
+     *
+     * @param format MetadataFormat
+     * @return default record title XPath for given format
+     */
+    public static String getDefaultRecordTitleXpath(String format) {
+        switch (format) {
+            case "MODS":
+                return ".//*[local-name()='titleInfo']/*[local-name()='title']/text()";
+            case "MARC":
+                return ".//*[local-name()='controlfield'][@tag='001']/text()";
+            case "PICA":
+                return ".//*[local-name()='datafield'][@tag='021A']/*[local-name()='subfield'][@code='a']/text()";
+            default:
+                return "";
+        }
     }
 }

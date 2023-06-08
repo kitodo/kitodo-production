@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo-production</artifactId>
-        <version>3.4.4-SNAPSHOT</version>
+        <version>3.6.0-SNAPSHOT</version>
     </parent>
 
     <name>Kitodo - Core</name>
@@ -27,7 +27,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <maxAllowedViolations>15</maxAllowedViolations>
+        <maxAllowedViolations>3</maxAllowedViolations>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
         <jsf.projectStage>Production</jsf.projectStage>
         <myfaces.resourceMaxTimeExpires>604800000</myfaces.resourceMaxTimeExpires>
@@ -47,10 +47,6 @@
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-data-management</artifactId>
             <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>jdom</groupId>
-            <artifactId>jdom</artifactId>
         </dependency>
         <dependency>
             <groupId>com.itextpdf</groupId>
@@ -126,12 +122,8 @@
             <artifactId>plexus-container-default</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-email</artifactId>
+            <groupId>javax.el</groupId>
+            <artifactId>javax.el-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.activemq</groupId>
@@ -248,7 +240,7 @@
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
-            <artifactId>mockito-all</artifactId>
+            <artifactId>mockito-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.primefaces.extensions</groupId>
@@ -281,6 +273,10 @@
         <dependency>
             <groupId>com.opencsv</groupId>
             <artifactId>opencsv</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
         </dependency>
     </dependencies>
 

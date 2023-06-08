@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.SessionScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +44,9 @@ import org.primefaces.PrimeFaces;
 @SessionScoped
 public class SearchResultForm extends ProcessListBaseView {
     private static final Logger logger = LogManager.getLogger(SearchResultForm.class);
+
+    private static final String SEARCH_RESULT_VIEW_ID = "/pages/searchResult.xhtml";
+    private static final String SEARCH_RESULT_TABLE_ID = "searchResultTabView:searchResultForm:searchResultTable";
 
     private List<ProcessDTO> filteredList = new ArrayList<>();
     private List<ProcessDTO> resultList = new ArrayList<>();
@@ -76,6 +80,7 @@ public class SearchResultForm extends ProcessListBaseView {
         setCurrentTaskStatusFilter(null);
         setCurrentProjectFilter(null);
         setCurrentTaskFilter(null);
+        resetSearchResultTableViewState();
         return searchResultListPath;
     }
 
@@ -297,6 +302,25 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     public void setCurrentProjectFilter(Integer currentProjectFilter) {
         this.currentProjectFilter = currentProjectFilter;
+    }
+
+    /**
+     * This method resets the view state of the search result table, which was
+     * enabled by adding "multiViewState=true" to the DataTable component.
+     * 
+     * <p>This affects both the pagination state and the sort order of 
+     * the table. It should be called whenever a new search is triggered such 
+     * that the user is presented with the most relevant results (page 1) 
+     * in the default order.</p>
+     */
+    public void resetSearchResultTableViewState() {
+        if (!Objects.isNull(FacesContext.getCurrentInstance())) {
+            // clear multi view state only if there is a state available
+            Object mvs = PrimeFaces.current().multiViewState().get(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID, false, null);
+            if (Objects.nonNull(mvs)) {
+                PrimeFaces.current().multiViewState().clear(SEARCH_RESULT_VIEW_ID, SEARCH_RESULT_TABLE_ID);
+            }
+        }
     }
 
 }

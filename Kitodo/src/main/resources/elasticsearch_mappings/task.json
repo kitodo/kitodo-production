@@ -27,10 +27,16 @@
             "fields": {
               "keyword": {
                 "type": "keyword",
-                "ignore_above": 256
+                "ignore_above": 256,
+                "normalizer": "lowercase"
               }
             },
             "fielddata": true
+          },
+          "creationDate": {
+            "type": "date",
+            "format": "yyyy-MM-dd HH:mm:ss",
+            "ignore_malformed": true
           }
         }
       },
@@ -38,6 +44,22 @@
         "type": "long"
       },
       "projectForTask": {
+        "properties": {
+          "id": {
+            "type": "long"
+          },
+          "title": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
+          }
+        }
+      },
+      "relatedProjectIds": {
         "type": "long"
       },
       "templateForTask": {
@@ -112,6 +134,15 @@
               }
             },
             "fielddata": true
+          },
+          "fullname": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword",
+                "ignore_above": 256
+              }
+            }
           }
         }
       },
@@ -120,7 +151,8 @@
         "fields": {
           "keyword": {
             "type": "keyword",
-            "ignore_above": 256
+            "ignore_above": 256,
+            "normalizer": "lowercase"
           },
           "raw": {
             "type": "text",
@@ -131,6 +163,9 @@
       },
       "correction": {
         "type": "boolean"
+      },
+      "correctionCommentStatus": {
+        "type": "byte"
       },
       "typeAutomatic": {
         "type": "boolean"

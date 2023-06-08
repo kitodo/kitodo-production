@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -30,9 +31,11 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -46,21 +49,31 @@ import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
-    private boolean exportWithImages = true;
-    private final FileService fileService = ServiceManager.getFileService();
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
+
+    private final FileService fileService = ServiceManager.getFileService();
+    private final ProcessService processService = ServiceManager.getProcessService();
+
+    private boolean exportWithImages = true;
+
+    private Task workFlowTask;
 
     public ExportDms() {
     }
 
     public ExportDms(boolean exportImages) {
         this.exportWithImages = exportImages;
+    }
+
+    public ExportDms(Task workFlowTask) {
+        this.workFlowTask = workFlowTask;
     }
 
     /**
@@ -87,19 +100,23 @@ public class ExportDms extends ExportMets {
      */
     @Override
     public boolean startExport(Process process) throws DataException {
+        if (!exportCompletedChildren(process.getChildren())) {
+            return false;
+        }
+
         boolean wasNotAlreadyExported = !process.isExported();
         if (wasNotAlreadyExported) {
             process.setExported(true);
-            ServiceManager.getProcessService().save(process);
+            processService.save(process);
         }
+
         boolean exportSuccessful = startExport(process, (URI) null);
-        if (exportSuccessful) {
-            if (Objects.nonNull(process.getParent())) {
-                startExport(process.getParent());
-            }
-        } else if (wasNotAlreadyExported) {
-            process.setExported(false);
-            ServiceManager.getProcessService().save(process);
+        if (Objects.nonNull(process.getParent())) {
+            startExport(process.getParent());
+        }
+        if (wasNotAlreadyExported) {
+            process.setExported(exportSuccessful);
+            processService.save(process);
         }
         return exportSuccessful;
     }
@@ -118,7 +135,7 @@ public class ExportDms extends ExportMets {
             TaskManager.addTask(new ExportDmsTask(this, process));
             Helper.setMessage(TaskSitter.isAutoRunningThreads() ? "DMSExportByThread" : "DMSExportThreadCreated",
                 process.getTitle());
-            return true;
+            return false;
         } else {
             return startExport(process, (ExportDmsTask) null);
         }
@@ -140,7 +157,7 @@ public class ExportDms extends ExportMets {
         this.exportDmsTask = exportDmsTask;
         try {
             return startExport(process,
-                ServiceManager.getProcessService().readMetadataFile(process).getDigitalDocument());
+                processService.readMetadataFile(process).getDigitalDocument());
         } catch (IOException | DAOException e) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(e);
@@ -190,6 +207,18 @@ public class ExportDms extends ExportMets {
         return prepareExportLocation(process, gdzfile);
     }
 
+    private boolean exportCompletedChildren(List<Process> children) throws DataException {
+        for (Process child:children) {
+            if (ProcessConverter.getCombinedProgressAsString(child, false).equals(ProcessState.COMPLETED.getValue())
+                    && !child.isExported()) {
+                if (!startExport(child)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private boolean prepareExportLocation(Process process,
             LegacyMetsModsDigitalDocumentHelper gdzfile) throws IOException, DAOException {
 
@@ -234,8 +263,7 @@ public class ExportDms extends ExportMets {
         }
 
         // export the file to the import folder
-        asyncExportWithImport(process, gdzfile, destination);
-        return true;
+        return asyncExportWithImport(process, gdzfile, destination);
     }
 
     private boolean executeDataCopierProcess(LegacyMetsModsDigitalDocumentHelper gdzfile, Process process) {
@@ -283,18 +311,20 @@ public class ExportDms extends ExportMets {
         }
     }
 
-    private void asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
+    private boolean asyncExportWithImport(Process process, LegacyMetsModsDigitalDocumentHelper gdzfile, URI userHome)
             throws IOException, DAOException {
 
         String atsPpnBand = Helper.getNormalizedTitle(process.getTitle());
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setWorkDetail(atsPpnBand + ".xml");
         }
-        writeMetsFile(process, fileService.createResource(userHome, File.separator + atsPpnBand + ".xml"), gdzfile);
+        boolean metsFileWrittenSuccesful = writeMetsFile(process, fileService.createResource(userHome,
+                File.separator + atsPpnBand + ".xml"), gdzfile);
 
         if (Objects.nonNull(exportDmsTask)) {
             exportDmsTask.setProgress(100);
         }
+        return metsFileWrittenSuccesful;
     }
 
     /**
@@ -305,6 +335,26 @@ public class ExportDms extends ExportMets {
     public EmptyTask getExportDmsTask() {
         return exportDmsTask;
     }
+
+    /**
+     * Get workflowTask.
+     *
+     * @return value of workFlowTask
+     */
+    public Task getWorkflowTask() {
+        return workFlowTask;
+    }
+
+    /**
+     * Set workflowTask.
+     *
+     * @param workFlowTask
+     *              the workflow stask associated with the export
+     */
+    public void setWorkflowTask(Task workFlowTask) {
+        this.workFlowTask = workFlowTask;
+    }
+
 
     /**
      * Setter method to pass in a task thread to whom progress and error messages
@@ -350,7 +400,7 @@ public class ExportDms extends ExportMets {
     public void imageDownload(Process process, URI userHome, String atsPpnBand, final String ordnerEndung)
             throws IOException {
         // determine the source folder
-        URI tifOrdner = ServiceManager.getProcessService().getImagesTifDirectory(true, process.getId(),
+        URI tifOrdner = processService.getImagesTifDirectory(true, process.getId(),
             process.getTitle(), process.getProcessBaseUri());
 
         // copy the source folder to the destination folder

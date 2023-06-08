@@ -12,6 +12,7 @@
 package org.kitodo.production.security;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,7 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
     private static final String DESKTOP_LANDING_PAGE = "/pages/desktop.jsf";
     private static final String EMPTY_LANDING_PAGE = "/pages/checks.jsf";
     private static final String SAVED_REQUEST = "SPRING_SECURITY_SAVED_REQUEST";
+    private static final String OMNIFACES_EVENT = "omnifaces.event";
     private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
@@ -74,7 +76,9 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         String redirect = DESKTOP_LANDING_PAGE;
         if (savedRequest instanceof DefaultSavedRequest) {
             DefaultSavedRequest request = (DefaultSavedRequest) savedRequest;
-            if (Objects.nonNull(request.getServletPath()) && !request.getServletPath().isEmpty()) {
+            if (Objects.nonNull(request.getServletPath()) && !request.getServletPath().isEmpty()
+                    && (!request.getParameterMap().containsKey(OMNIFACES_EVENT)
+                    || Arrays.stream(request.getParameterMap().get(OMNIFACES_EVENT)).noneMatch("unload"::equals))) {
                 redirect = request.getServletPath();
                 if (Objects.nonNull(request.getQueryString()) && !request.getQueryString().isEmpty()) {
                     redirect = redirect + "?" + request.getQueryString();

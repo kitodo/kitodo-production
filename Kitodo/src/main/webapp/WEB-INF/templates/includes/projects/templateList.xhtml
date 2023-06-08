@@ -19,6 +19,7 @@
         xmlns:p="http://primefaces.org/ui">
     <!--@elvariable id="item" type="org.kitodo.production.dto.TemplateDTO"-->
     <p:dataTable id="templateTable"
+                 widgetVar="templateTable"
                  styleClass="default-layout"
                  var="item"
                  value="#{TemplateForm.lazyDTOModel}"
@@ -53,9 +54,23 @@
         </p:column>
 
         <p:column headerText="#{msgs.ruleset}"
+                  sortBy="#{item.ruleset.title.keyword}"
                   rendered="#{ProjectForm.showColumn('template.ruleset')}">
             <h:outputText value="#{item.ruleset.title}"
                           title="#{item.ruleset.title}"/>
+        </p:column>
+
+        <p:column headerText="#{msgs.active}"
+                  styleClass="checkboxColumn"
+                  sortBy="#{item.active}">
+            <h:outputText>
+                <ui:fragment rendered="#{item.isActive()}">
+                    <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+                </ui:fragment>
+                <ui:fragment rendered="#{not item.isActive()}">
+                    <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
+                </ui:fragment>
+            </h:outputText>
         </p:column>
 
         <p:column headerText="#{msgs.actions}"
@@ -66,11 +81,11 @@
                 <h:form id="templateActionForm">
 
                     <h:panelGroup styleClass="action"
-                                  title="#{item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
+                                  title="#{item.isActive() and item.projects.size() gt 0 ? msgs['createNewProcess'] : msgs['noProjectsConfigured']}">
                         <p:commandLink id="createProcessFromTemplate"
                                        actionListener="#{SelectProjectDialogView.setTemplateDTO(item)}"
                                        action="#{SelectProjectDialogView.createProcessFromTemplate()}"
-                                       disabled="#{item.projects.size() lt 1}"
+                                       disabled="#{item.projects.size() lt 1 or not item.active}"
                                        rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                             <f:setPropertyActionListener value="0" target="#{SelectProjectDialogView.selectedProjectId}"/>
                             <h:outputText><i class="fa fa-plus-square fa-lg"/></h:outputText>
@@ -160,7 +175,7 @@
                                                       title="#{project.title}"
                                                       styleClass="expansion-list-item-title"/>
                                         <h:panelGroup class="expansion-list-item-actions">
-                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and item.isActive()}">
                                                 <h:link id="createProcess"
                                                         outcome="/pages/processFromTemplate?faces-redirect=true"
                                                         styleClass="action"
@@ -188,5 +203,26 @@
         </p:rowExpansion>
 
     </p:dataTable>
+
+    <div id="dropDownMenus">
+        <h:form id="filterForm"
+                styleClass="filter-form"
+                style="display: inline-block;">
+            <p:selectCheckboxMenu id="templateFilters"
+                                  panelStyleClass="filter-panel"
+                                  value="#{TemplateForm.selectedTemplateFilters}"
+                                  styleClass="secondary"
+                                  label="#{msgs.filter}">
+                <f:selectItems value="#{TemplateForm.templateFilters}"
+                               var="templateFilter"
+                               itemLabel="#{msgs[templateFilter]}"/>
+                <p:ajax event="change"
+                        onstart="PF('templateTable').getPaginator().setPage(0);"
+                        listener="#{TemplateForm.templateFiltersChanged}"
+                        update="templateTable"/>
+            </p:selectCheckboxMenu>
+        </h:form>
+    </div>
+
     <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/selectProject.xhtml"/>
 </ui:composition>

@@ -39,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.xml.fileformats.FileFormat;
 import org.kitodo.config.xml.fileformats.FileFormatsConfig;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -58,7 +59,9 @@ import org.kitodo.production.services.data.ProjectService;
 @Named("ProjectForm")
 @SessionScoped
 public class ProjectForm extends BaseForm {
+    public static final String MIMETYPE_PREFIX_AUDIO = "audio";
     private static final Logger logger = LogManager.getLogger(ProjectForm.class);
+    public static final String MIMETYPE_PREFIX_VIDEO = "video";
     private Project project;
     private List<Template> deletedTemplates = new ArrayList<>();
     private boolean locked = true;
@@ -104,7 +107,7 @@ public class ProjectForm extends BaseForm {
      */
     /*
      * This is a hack. The clean solution would be to have an inner class bean
-     * for the data table row an dialog, but this approach was introduced
+     * for the data table row a dialog, but this approach was introduced
      * decades ago and has been maintained until today.
      */
     private Folder myFolder;
@@ -230,7 +233,6 @@ public class ProjectForm extends BaseForm {
                 addFirstUserToNewProject();
 
                 commitTemplates();
-
                 commitFolders();
 
                 ServiceManager.getProjectService().save(project, true);
@@ -381,6 +383,20 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
+     * Get import configurations.
+     *
+     * @return import configurations
+     */
+    public List<ImportConfiguration> getImportConfigurations() {
+        try {
+            return ServiceManager.getImportConfigurationService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * Add template to project.
      *
      * @return stay on the same page
@@ -519,13 +535,30 @@ public class ProjectForm extends BaseForm {
      * @return modified ArrayList
      */
     public List<SelectItem> getSelectableFolders() {
-        return getFolderList().stream()
-                .map(folder -> new SelectItem(folder.getFileGroup(), folder.toString())).collect(Collectors.toList());
+        return getFolderList().stream().map(folder -> new SelectItem(folder.getFileGroup(), folder.toString()))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Checks if folder list contains audio folder.
+     *
+     * @return true if folder list contains audio folder
+     */
+    public boolean hasAudioFolder() {
+        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith(MIMETYPE_PREFIX_AUDIO));
+    }
+
+    /**
+     * Checks if folder list contains video folder.
+     *
+     * @return true if folder list contains video folder
+     */
+    public boolean hasVideoFolder() {
+        return getFolderList().stream().anyMatch(folder -> folder.getMimeType().startsWith(MIMETYPE_PREFIX_VIDEO));
     }
 
     private Map<String, Folder> getFolderMap() {
-        return getFolderList().parallelStream()
-                .collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
+        return getFolderList().parallelStream().collect(Collectors.toMap(Folder::getFileGroup, Function.identity()));
     }
 
     /**
@@ -615,10 +648,50 @@ public class ProjectForm extends BaseForm {
      * Sets the folder to use for the media view.
      *
      * @param mediaView
-     *            media view folder
+     *         media view folder
      */
     public void setMediaView(String mediaView) {
         project.setMediaView(getFolderMap().get(mediaView));
+    }
+
+    /**
+     * Returns the folder to use for the audio media view.
+     *
+     * @return audio media view folder
+     */
+    public String getAudioMediaView() {
+        Folder audioMediaView = project.getAudioMediaView();
+        return Objects.isNull(audioMediaView) ? null : audioMediaView.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     *
+     * @param audioMediaView
+     *         audio media view folder
+     */
+    public void setAudioMediaView(String audioMediaView) {
+        project.setAudioMediaView(getFolderMap().get(audioMediaView));
+    }
+
+    /**
+     * Returns the folder to use for the video media view.
+     *
+     * @return video media view folder
+     */
+    public String getVideoMediaView() {
+        Folder videoMediaView = project.getVideoMediaView();
+        return Objects.isNull(videoMediaView) ? null : videoMediaView.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for the media view.
+     *
+     * @param videoMediaView
+     *         video media view folder
+     */
+    public void setVideoMediaView(String videoMediaView) {
+        project.setVideoMediaView(getFolderMap().get(videoMediaView));
     }
 
     /**
@@ -635,17 +708,57 @@ public class ProjectForm extends BaseForm {
      * Sets the folder to use for preview.
      *
      * @param preview
-     *            preview folder
+     *         preview folder
      */
     public void setPreview(String preview) {
         project.setPreview(getFolderMap().get(preview));
     }
 
     /**
+     * Returns the folder to use for audio preview.
+     *
+     * @return audio preview folder
+     */
+    public String getAudioPreview() {
+        Folder audioPreview = project.getAudioPreview();
+        return Objects.isNull(audioPreview) ? null : audioPreview.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for audio preview.
+     *
+     * @param audioPreview
+     *         audio preview folder
+     */
+    public void setAudioPreview(String audioPreview) {
+        project.setAudioPreview(getFolderMap().get(audioPreview));
+    }
+
+    /**
+     * Returns the folder to use for video preview.
+     *
+     * @return video preview folder
+     */
+    public String getVideoPreview() {
+        Folder videoPreview = project.getVideoPreview();
+        return Objects.isNull(videoPreview) ? null : videoPreview.getFileGroup();
+    }
+
+    /**
+     * Sets the folder to use for video preview.
+     *
+     * @param videoPreview
+     *         video preview folder
+     */
+    public void setVideoPreview(String videoPreview) {
+        project.setVideoPreview(getFolderMap().get(videoPreview));
+    }
+
+    /**
      * Method being used as viewAction for project edit form.
      *
      * @param id
-     *            ID of the ruleset to load
+     *         ID of the ruleset to load
      */
     public void loadProject(int id) {
         SecurityAccessController securityAccessController = new SecurityAccessController();

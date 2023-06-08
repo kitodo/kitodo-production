@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.kitodo.data.database.beans.DataEditorSetting;
+import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DataEditorSettingDAO;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
@@ -68,6 +69,49 @@ public class DataEditorSettingService extends SearchDatabaseService<DataEditorSe
         return countDatabaseRows();
     }
 
+    /**
+     * Check if there are data editor settings for the tasks of the current workflow.
+     *
+     * @return true if one of the tasks has data editor settings defined
+     */
+    public boolean areDataEditorSettingsDefinedForWorkflow(Workflow workflow) {
+        String query =
+            "SELECT d FROM DataEditorSetting AS d"
+            + " INNER JOIN Task AS ta ON ta.id = d.taskId"
+            + " INNER JOIN Template AS te ON te.id = ta.template"
+            + " INNER JOIN Workflow AS w ON w.id = te.workflow"
+            + " where w.id = :workflowId";
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("workflowId", workflow.getId());
+        List<DataEditorSetting> dataEditorSettings = getByQuery(query, parameters);
+        return !dataEditorSettings.isEmpty();
+    }
+
+    /**
+     * Delete data editor settings identified by task id. 
+     * @param taskId ID of the associated task
+     * @throws DAOException if data editor setting could not be deleted from database
+     * 
+     */
+    public void removeFromDatabaseByTaskId(int taskId) throws DAOException {
+        List<DataEditorSetting> dataEditorSettings = getByTaskId(taskId);
+        for (DataEditorSetting dataEditorSetting: dataEditorSettings) {
+            dao.remove(dataEditorSetting.getId());
+        }
+    }
+
+    /**
+     * Retrieve data editor settings by task id.
+     * @param taskId ID of the task
+     *
+     * @return List of DataEditorSetting objects
+     */
+    public List<DataEditorSetting> getByTaskId(int taskId) {
+        Map<String, Object> parameterMap = new HashMap<>();
+        parameterMap.put("taskId", taskId);
+        return getByQuery("FROM DataEditorSetting WHERE task_id = :taskId ORDER BY id ASC", parameterMap);
+    }
+    
     private List<DataEditorSetting> getByUserAndTask(int userId, int taskId) {
         Map<String, Object> parameterMap = new HashMap<>();
         parameterMap.put("userId", userId);

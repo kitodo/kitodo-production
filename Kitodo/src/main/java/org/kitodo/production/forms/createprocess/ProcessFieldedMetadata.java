@@ -28,6 +28,7 @@ import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.list.UnmodifiableList;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -53,11 +54,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     private static final Logger logger = LogManager.getLogger(ProcessFieldedMetadata.class);
 
     /**
-     * An empty metadata group for the empty metadata panel showing. The empty
-     * metadata panel can be displayed if the element selected in the structure
-     * window isn’t a structure (has no metadata).
+     * An empty metadata group for the empty metadata panel showing. The empty metadata panel can be displayed if the
+     * element selected in the structure window isn’t a structure (has no metadata).
      */
     public static final ProcessFieldedMetadata EMPTY = new ProcessFieldedMetadata();
+    public static final String METADATA_KEY_LABEL = "LABEL";
+    public static final String METADATA_KEY_ORDERLABEL = "ORDERLABEL";
 
     /**
      * Fields the user has selected to show in addition, with no data yet.
@@ -79,7 +81,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     /**
      * The metadata object with the content of this panel.
      */
-    private final Collection<Metadata> metadata;
+    private final HashSet<Metadata> metadata;
 
     /**
      * The key of the metadata group displaying here.
@@ -94,7 +96,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     /**
      * The tree node that JSF has to display.
      */
-    private TreeNode treeNode;
+    protected TreeNode treeNode;
 
     /**
      * Creates an empty metadata group.
@@ -103,7 +105,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         super(null, null);
         this.treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
-        this.metadata = Collections.emptyList();
+        this.metadata = new HashSet<>();
         this.hiddenMetadata = Collections.emptyList();
     }
 
@@ -118,9 +120,66 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView) {
         this(null, structure, divisionView, null, null, structure.getMetadata());
-        this.treeNode = new DefaultTreeNode();
+        buildTreeNodeAndCreateMetadataTable();
+    }
+
+    /**
+     * Add the metadata of this fielded metadata.
+     *
+     * @param potentialMetadataItems
+     *            metadata to add if not exist
+     * @return returns count of added metadata
+     */
+    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
+        Collection<Metadata> metadataToAdd = new ArrayList<>();
+        potentialMetadataItems.forEach( potentialMetadataItem -> {
+            if (metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
+                if (!(METADATA_KEY_LABEL.equals(potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(
+                        division.getLabel()) || METADATA_KEY_ORDERLABEL.equals(
+                        potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(division.getOrderlabel()))) {
+                    metadataToAdd.add(potentialMetadataItem);
+                }
+
+            }
+        });
+        metadata.addAll(metadataToAdd);
+
+        TreeNode editedTreeNode = treeNode;
+
+        buildTreeNodeAndCreateMetadataTable();
+
+        overwriteTreeNodes(editedTreeNode.getChildren(), treeNode.getChildren());
+
+        return metadataToAdd.size();
+    }
+
+    private void buildTreeNodeAndCreateMetadataTable() {
+        treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
         createMetadataTable();
+    }
+
+    /**
+     * Overwrites the target list with source list of tree nodes based on the
+     * metadata id.
+     *
+     * @param source
+     *            The list of source tree nodes
+     * @param target
+     *            The list of target tree nodes
+     */
+    private static void overwriteTreeNodes(List<TreeNode> source, List<TreeNode> target) {
+        int index = 0;
+        for (TreeNode targetNode : target) {
+            ProcessDetail row = (ProcessDetail) targetNode.getData();
+            Optional<TreeNode> treeNodeOptional = source.stream().filter(
+                sourceNode -> ((ProcessDetail) sourceNode.getData()).getMetadataID().equals(row.getMetadataID()))
+                    .findFirst();
+            if (treeNodeOptional.isPresent()) {
+                target.set(index, treeNodeOptional.get());
+            }
+            index++;
+        }
     }
 
     /**
@@ -132,7 +191,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            data of the group, may be empty but must be modifiable
      */
     private ProcessFieldedMetadata(ProcessFieldedMetadata parent, ComplexMetadataViewInterface metadataView,
-            Collection<Metadata> metadata) {
+            HashSet<Metadata> metadata) {
         this(parent, null, metadataView, metadataView.getLabel(), metadataView.getId(), metadata);
     }
 
@@ -149,7 +208,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     private ProcessFieldedMetadata(ProcessFieldedMetadata parent, Division<?> structure,
             ComplexMetadataViewInterface metadataView, String label, String metadataKey,
-                                   Collection<Metadata> metadata) {
+                                   HashSet<Metadata> metadata) {
         super(parent, label);
         this.division = structure;
         this.metadata = metadata;
@@ -158,12 +217,12 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     private ProcessFieldedMetadata(ProcessFieldedMetadata parent, MetadataGroup group) {
-        this(parent, null, null, group.getKey(), group.getKey(), group.getGroup());
+        this(parent, null, null, group.getKey(), group.getKey(), group.getMetadata());
     }
 
     private ProcessFieldedMetadata(ProcessFieldedMetadata template) {
         this(template.container, null, template.metadataView, template.label, template.metadataKey,
-                new ArrayList<>(template.metadata));
+                new HashSet<>(template.metadata));
         copy = true;
         hiddenMetadata = template.hiddenMetadata;
         treeNode = new DefaultTreeNode(this, template.getTreeNode().getParent());
@@ -179,6 +238,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         Collection<Metadata> entered = addLabels(new HashSet<>(metadata));
         if (Objects.nonNull(treeNode) && !treeNode.getChildren().isEmpty()) {
             try {
+                entered = entered.stream().filter(metadataElem -> !(metadataElem instanceof MetadataGroup))
+                        .collect(Collectors.toSet());
                 entered.addAll(DataEditorService.getExistingMetadataRows(treeNode.getChildren()));
             } catch (InvalidMetadataValueException e) {
                 logger.error(e.getLocalizedMessage());
@@ -244,13 +305,13 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
             if (Objects.nonNull(division.getLabel())) {
                 MetadataEntry label = new MetadataEntry();
-                label.setKey("LABEL");
+                label.setKey(METADATA_KEY_LABEL);
                 label.setValue(division.getLabel());
                 displayMetadata.add(label);
             }
             if (Objects.nonNull(division.getOrderlabel())) {
                 MetadataEntry label = new MetadataEntry();
-                label.setKey("ORDERLABEL");
+                label.setKey(METADATA_KEY_ORDERLABEL);
                 label.setValue(division.getOrderlabel());
                 displayMetadata.add(label);
             }
@@ -269,17 +330,17 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      */
     public void createMetadataGroupPanel(ComplexMetadataViewInterface complexMetadataView,
                                                            Collection<Metadata> values) {
-        Collection<Metadata> value;
+        HashSet<Metadata> value;
 
         switch (values.size()) {
             case 0:
-                value = new ArrayList<>();
+                value = new HashSet<>();
                 break;
             case 1:
                 Metadata nextMetadata = values.iterator().next();
                 if (nextMetadata instanceof MetadataGroup) {
                     MetadataGroup metadataGroup = (MetadataGroup) nextMetadata;
-                    value = metadataGroup.getGroup();
+                    value = metadataGroup.getMetadata();
                 } else {
                     throw new IllegalStateException("Got simple metadata entry with key \"" + nextMetadata.getKey()
                             + "\" which is declared as substructured key in the rule set.");
@@ -551,9 +612,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             throw new IllegalStateException("never happening exception");
         }
         if (skipEmpty) {
-            result.setGroup(metadata instanceof List ? metadata : new ArrayList<>(metadata));
+            result.setMetadata(metadata instanceof List ? metadata : new HashSet<>(metadata));
         } else {
-            result.setGroup(new ArrayList<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
+            result.setMetadata(new HashSet<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
         }
         return Collections.singletonList(result);
     }
@@ -667,7 +728,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             metadataGroup.setKey(metadataKey);
             Optional<Domain> optionalDomain = metadataView.getDomain();
             optionalDomain.ifPresent(domain -> metadataGroup.setDomain(DOMAIN_TO_MDSEC.get(domain)));
-            metadataGroup.setGroup(metadata);
+            metadataGroup.setMetadata(metadata);
             container.metadata.add(metadataGroup);
             copy = false;
         }
@@ -700,9 +761,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     public void setMetadata(Collection<Metadata> metadata) {
         this.metadata.clear();
         this.metadata.addAll(metadata);
-        this.treeNode = new DefaultTreeNode();
-        treeNode.setExpanded(true);
-        createMetadataTable();
+        buildTreeNodeAndCreateMetadataTable();
     }
 
     /**
@@ -739,7 +798,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     @Override
-    public int getMinOcc() {
+    public int getMinOccurs() {
         return metadataView.getMinOccurs();
     }
 }

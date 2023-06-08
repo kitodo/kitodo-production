@@ -28,6 +28,7 @@ import org.kitodo.selenium.testframework.pages.DesktopPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.TasksPage;
+import org.kitodo.selenium.testframework.pages.TemplateEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
 
 public class ListingST extends BaseTestSelenium {
@@ -233,5 +234,27 @@ public class ListingST extends BaseTestSelenium {
         int ldapGroupsInDatabase = ServiceManager.getLdapGroupService().getAll().size();
         int ldapGroupsDisplayed = usersPage.countListedLdapGroups();
         assertEquals("Displayed wrong number of ldap groups!", ldapGroupsInDatabase, ldapGroupsDisplayed);
+    }
+
+    /**
+     * Test number of displayed templates. Assert deactivated templates are hidden by default and only visible
+     * when activating the corresponding switch on the projects/templates page.
+     *
+     * @throws Exception when thread is interrupted or templates cannot be loaded.
+     */
+    @Test
+    public void listTemplatesTest() throws Exception {
+        projectsPage.goToTemplateTab();
+        assertEquals("Wrong number of templates before hiding first template", 2,
+                projectsPage.getTemplateTitles().size());
+        TemplateEditPage editTemplatePage = projectsPage.editTemplate();
+        editTemplatePage.hideTemplate();
+        editTemplatePage.save();
+        assertEquals("Wrong number of templates after hiding first template", 1,
+                projectsPage.getTemplateTitles().size());
+        projectsPage.goToTemplateTab();
+        projectsPage.toggleHiddenTemplates();
+        assertEquals("Wrong number of templates after toggling hidden templates", 2,
+                projectsPage.getTemplateTitles().size());
     }
 }

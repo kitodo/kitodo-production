@@ -13,10 +13,13 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
+import static org.kitodo.selenium.testframework.Browser.getSelectedRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 
 import java.io.File;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import org.kitodo.config.KitodoConfig;
@@ -25,6 +28,9 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.enums.TabIndex;
+import org.openqa.selenium.By;
+import org.openqa.selenium.Keys;
+import org.openqa.selenium.StaleElementReferenceException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.ui.Select;
@@ -35,9 +41,17 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String PROCESSES_FORM = PROCESSES_TAB_VIEW + ":processesForm";
     private static final String BATCH_FORM = PROCESSES_TAB_VIEW + ":batchForm";
     private static final String PROCESSES_TABLE = PROCESSES_FORM + ":processesTable";
-    private static final String PROCESS_TITLE = "Second process";
+    private static final String PROCESSES_TABLE_HEADER = PROCESSES_TABLE + "_head";
+    private static final String FILTER_INPUT = "filterInputForm:filterfield";
+    private static final String PARSED_FILTERS = "#parsedFiltersForm\\:parsedFilters .ui-datalist-item";
+    private static final String SECOND_PROCESS_TITLE = "Second process";
+    private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String WAIT_FOR_ACTIONS_BUTTON = "Wait for actions menu button";
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
+    private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
+    private static final String MULTI_VOLUME_WORK_PROCESS_TITLE = "Multi volume work test process";
+
+    private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -46,6 +60,10 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TABLE + DATA)
     private WebElement processesTable;
+
+    @SuppressWarnings("unused")
+    @FindBy(id = PROCESSES_TABLE_HEADER)
+    private WebElement processesTableHeader;
 
     @SuppressWarnings("unused")
     @FindBy(id = BATCH_FORM + ":selectBatches")
@@ -64,6 +82,9 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private WebElement downloadLogLink;
 
     private WebElement editMetadataLink;
+
+    @FindBy(xpath = "//a[@href='/kitodo/pages/calendarEdit.jsf?id=10']")
+    private WebElement openCalendarLink;
 
     @SuppressWarnings("unused")
     @FindBy(id = "search")
@@ -129,6 +150,25 @@ public class ProcessesPage extends Page<ProcessesPage> {
     @FindBy(id = "renameBatchForm:save")
     private WebElement renameBatchSaveButton;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = FILTER_INPUT)
+    private WebElement filterInput;
+
+    @FindBy(css = ".ui-chkbox-all .ui-chkbox-box")
+    private WebElement selectAllCheckBox;
+
+    @FindBy(id = PROCESSES_FORM + ":selectAllRowsOnPage")
+    private WebElement selectAllRowsOnPageLink;
+
+    @FindBy(id = PROCESSES_FORM + ":selectAllRows")
+    private WebElement selectAllRowsLink;
+
+    @FindBy(className = "ui-paginator-next")
+    private WebElement nextPage;
+
+    @FindBy(id = "headerText")
+    private WebElement headerText;
+
     public ProcessesPage() {
         super("pages/processes.jsf");
     }
@@ -171,6 +211,18 @@ public class ProcessesPage extends Page<ProcessesPage> {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
         Select batchSelect = new Select(batchesSelect);
         return batchSelect.getOptions().size();
+    }
+
+    /**
+     * Gets number of selected rows in processesTable.
+     * @return number of selected rows
+     * @throws Exception exception
+     */
+    public long countListedSelectedProcesses() throws Exception {
+        if (!isAt()) {
+            goTo();
+        }
+        return getSelectedRowsOfTable(processesTable);
     }
 
     /**
@@ -254,7 +306,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
-                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + PROCESS_TITLE + ".pdf")));
+                .until(() -> isFileDownloaded.test(new File(Browser.DOWNLOAD_DIR + SECOND_PROCESS_TITLE + ".pdf")));
     }
 
     public void downloadDocket() {
@@ -263,7 +315,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
         await("Wait for docket file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isFileDownloaded.test(
-                    new File(Browser.DOWNLOAD_DIR + Helper.getNormalizedTitle(PROCESS_TITLE) + ".pdf")));
+                    new File(Browser.DOWNLOAD_DIR + Helper.getNormalizedTitle(SECOND_PROCESS_TITLE) + ".pdf")));
     }
 
     public void downloadLog() {
@@ -273,12 +325,56 @@ public class ProcessesPage extends Page<ProcessesPage> {
         await("Wait for log file download").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .until(() -> isFileDownloaded.test(new File(KitodoConfig.getParameter(ParameterCore.DIR_USERS)
-                        + "kowal/" + Helper.getNormalizedTitle(PROCESS_TITLE) + "_log.xml")));
+                        + "kowal/" + Helper.getNormalizedTitle(SECOND_PROCESS_TITLE) + "_log.xml")));
     }
 
+    /**
+     * Set 'edit metadata' link for default process with title saved in PROCESS_TITLE and click it.
+     * @throws IllegalAccessException when retrieving metadata editor page fails
+     * @throws InstantiationException when retrieving metadata editor page fails
+     */
     public void editMetadata() throws IllegalAccessException, InstantiationException {
-        setEditMetadataLink();
+        setEditMetadataLink(SECOND_PROCESS_TITLE);
         clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+    }
+
+    /**
+     * Set 'edit metadata' link for default process with given title 'processTitle' and click it.
+     * @param processTitle title of process whose 'edit metadata' link is clicked
+     * @throws InstantiationException when retrieving metadata editor page fails
+     * @throws IllegalAccessException when retrieving metadata editor page fails
+     */
+    public void editMetadata(String processTitle) throws InstantiationException, IllegalAccessException {
+        setEditMetadataLink(processTitle);
+        clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+    }
+
+    /**
+     * Open second process in metadata editor.
+     * @throws IllegalAccessException when navigating to metadata editor page fails
+     * @throws InstantiationException when navigating to metadata editor page fails
+     */
+    public void editSecondProcessMetadata() throws IllegalAccessException, InstantiationException {
+        try {
+            setEditMetadataLink(SECOND_PROCESS_TITLE);
+            clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+        } catch (StaleElementReferenceException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Open parent process in metadata editor.
+     * @throws IllegalAccessException when navigating to metadata editor page fails
+     * @throws InstantiationException when navigating to metadata editor page fails
+     */
+    public void editParentProcessMetadata() throws InstantiationException, IllegalAccessException {
+        try {
+            setEditMetadataLink(PARENT_PROCESS_TITLE);
+            clickButtonAndWaitForRedirect(editMetadataLink, Pages.getMetadataEditorPage().getUrl());
+        } catch (StaleElementReferenceException e) {
+            e.printStackTrace();
+        }
     }
 
     public void downloadSearchResultAsExcel() {
@@ -307,17 +403,21 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     private void setDownloadDocketLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
+        int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
         downloadDocketLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":downloadDocket");
     }
 
-    private void setEditMetadataLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
-        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":readXML");
+    /**
+     * Set metadata edit link.
+     * @param processTitle title of process whose 'edit metadata' link is set
+     */
+    private void setEditMetadataLink(String processTitle) {
+        int index = getRowIndex(processesTable, processTitle, 3);
+        editMetadataLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":editMetadata");
     }
 
     private void setDownloadLogLink() {
-        int index = getRowIndex(processesTable, PROCESS_TITLE, 3);
+        int index = getRowIndex(processesTable, SECOND_PROCESS_TITLE, 3);
         downloadLogLink = Browser.getDriver().findElementById(PROCESSES_TABLE + ":" + index + ":exportLogXml");
     }
 
@@ -334,5 +434,125 @@ public class ProcessesPage extends Page<ProcessesPage> {
 
     public void navigateToExtendedSearch() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(searchForProcessesButton, Pages.getExtendedSearchPage().getUrl());
+    }
+
+    /**
+     * Submits a filter query by typing some text into the input field and submitting the filter form.
+     *
+     * <p>This method doesn't block until the filter is sucessfully applied.</p>
+     *
+     * @param filterQuery the query
+     */
+    public void applyFilter(String filterQuery) {
+        filterInput.clear();
+        filterInput.sendKeys(filterQuery);
+        filterInput.sendKeys(Keys.RETURN);
+        await("Wait for loading screen to disappear").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> filterInput.isDisplayed());
+        // hide filter menu to enable action buttons positioned behind it
+        headerText.click();
+        await("Wait for filter menu to close").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> filterInput.isEnabled());
+    }
+
+    public List<WebElement> getParsedFilters() {
+        return Browser.getDriver().findElements(By.cssSelector(PARSED_FILTERS));
+    }
+
+    /**
+     * Remove filter with index 'index' from list of parsed filters.
+     * @param index index of filter to remove
+     */
+    public void removeParsedFilter(int index) {
+        getParsedFilters().get(index).findElement(By.tagName("button")).click();
+        await("Wait for loading screen to disappear").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(() -> filterInput.isDisplayed());
+    }
+
+    /**
+     * Clicks a column in the header of the processes table in order to
+     * trigger sorting the processes list by that column.
+     *
+     * @param column the column index
+     */
+    public void clickProcessesTableHeaderForSorting(int column) {
+        WebElement columnHeader = processesTableHeader.findElement(By.cssSelector("tr th:nth-child(" + column + ")"));
+        // remember aria-sort attribute of th-tag of title column
+        String previousAriaSort = columnHeader.getAttribute("aria-sort");
+
+        // click title th-tag to trigger sorting
+        columnHeader.click();
+
+        // wait for the sorting to be applied (which requires ajax request to backend)
+        await(WAIT_FOR_COLUMN_SORT)
+            .pollDelay(100, TimeUnit.MILLISECONDS)
+            .atMost(10, TimeUnit.SECONDS)
+            .ignoreExceptions()
+            .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
+    }
+
+    public void goToCalendar() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        openCalendarLink.click();
+    }
+
+    /**
+     * Select all rows on a page in processesTable.
+     */
+    public void selectAllRowsOnPage() {
+        selectAllCheckBox.click();
+        await(WAIT_FOR_SELECTION_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> selectAllRowsOnPageLink.isDisplayed());
+        selectAllRowsOnPageLink.click();
+        await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+    }
+
+    /**
+     * Select all rows on all pages in processesTable.
+     */
+    public void selectAllRows() {
+        selectAllCheckBox.click();
+        await(WAIT_FOR_SELECTION_MENU).pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> selectAllRowsLink.isDisplayed());
+        selectAllRowsLink.click();
+        await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
+                .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+    }
+
+    /**
+     * Go to next page in processesTable.
+     */
+    public void goToNextPage() {
+        if (nextPage.isEnabled()) {
+            nextPage.click();
+            await("Wait for visible processes table").pollDelay(700, TimeUnit.MILLISECONDS)
+                    .atMost(30, TimeUnit.SECONDS).until(() -> processesTable.isDisplayed());
+        }
+    }
+
+    /**
+     * Clicks 'create child process' link in actions column and waits for redirect to 'create new process' page.
+     * @throws InstantiationException when retrieving process from template page fails
+     * @throws IllegalAccessException when retrieving process from template page fails
+     */
+    public void createChildProcess() throws InstantiationException, IllegalAccessException {
+        List<WebElement> processTitleCells = processesTable.findElements(By.cssSelector("tr td:nth-child(4)"));
+        Optional<WebElement> mvwTitleCell = processTitleCells.stream().filter(row -> row.getText()
+                .equals(MULTI_VOLUME_WORK_PROCESS_TITLE)).findFirst();
+        if (mvwTitleCell.isPresent()) {
+            int rowIndex = processTitleCells.indexOf(mvwTitleCell.get());
+            WebElement createLink = processesTable.findElement(By.id(PROCESSES_TABLE + ":" + rowIndex
+                    + ":createChildren"));
+            clickButtonAndWaitForRedirect(createLink, Pages.getProcessFromTemplatePage().getUrl());
+        } else {
+            throw new NoSuchElementException("Unable to find table row for process with title '"
+                    + MULTI_VOLUME_WORK_PROCESS_TITLE + "'");
+        }
     }
 }

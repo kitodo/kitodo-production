@@ -68,7 +68,8 @@
                 <p:row>
                     <div>
                         <!-- process title -->
-                        <p:outputLabel for="processTitle" value="#{msgs.processTitle}"/>
+                        <p:outputLabel for="processTitle"
+                                       value="#{msgs.processTitle}#{empty param['editForm:save'] and empty param['editForm:saveContinue'] ? ' *' : ''}"/>
                         <p:inputText id="processTitle"
                                      value="#{CreateProcessForm.currentProcess.process.title}"
                                      styleClass="input-with-button"
@@ -77,8 +78,10 @@
                         </p:inputText>
                         <p:commandButton id="generateTitleButton"
                                          process="@this"
-                                         actionListener="#{CreateProcessForm.processDataTab.generateProcessTitleAndTiffHeader}"
-                                         icon="fa fa-cog" title="#{msgs.generate}" resetValues="true"/>
+                                         actionListener="#{CreateProcessForm.processDataTab.generateAtstslFields}"
+                                         icon="fa fa-cog"
+                                         title="#{msgs.generate}"
+                                         resetValues="true"/>
                     </div>
 
                     <div>
@@ -89,10 +92,10 @@
                                            var="step"
                                            itemLabel="#{step.localizedLabel}"
                                            itemValue="#{step.title}"/>
-                            <p:ajax event="change"
+                            <p:ajax event="valueChange"
                                     oncomplete="updateProcessMetadata();"
                                     listener="#{CreateProcessForm.titleRecordLinkTab.createInsertionPositionSelectionTree()}"
-                                    update="editForm:processFromTemplateTabView:metadataTable,editForm:processFromTemplateTabView:insertionTree"/>
+                                    update="editForm:processFromTemplateTabView:insertionTree"/>
                         </p:selectOneMenu>
                     </div>
 
@@ -181,5 +184,6 @@
                      actionListener="#{CreateProcessForm.processMetadata.preserve}"/>
 
     <p:remoteCommand name="updateProcessMetadata"
+                     update="metadataTable"
                      actionListener="#{CreateProcessForm.processDataTab.updateProcessMetadata()}"/>
 </ui:composition>

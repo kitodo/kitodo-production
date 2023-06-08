@@ -381,6 +381,11 @@ public enum ParameterCore implements ParameterInterface {
     VALIDATE_IDENTIFIER_REGEX(new Parameter<>("validateIdentifierRegex", "[\\w|-]")),
 
     /**
+     * Flag to control whether metadata validation should fail on warnings or just on errors.
+     */
+    VALIDATION_FAIL_ON_WARNING(new Parameter<>("validationFailOnWarning", false)),
+
+    /**
      * Colours used to represent the issues in the calendar editor.
      */
     ISSUE_COLOURS(new Parameter<>("issue.colours",
@@ -624,8 +629,11 @@ public enum ParameterCore implements ParameterInterface {
     /*
      * Elasticsearch properties
      */
-    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
     ELASTICSEARCH_INDEXLIMIT(new Parameter<>("elasticsearch.indexLimit", 5000)),
+    ELASTICSEARCH_BATCH(new Parameter<>("elasticsearch.batch", 500)),
+    ELASTICSEARCH_ATTEMPTS(new Parameter<>("elasticsearch.attempts", 10)),
+    ELASTICSEARCH_TIME_BETWEEN_ATTEMPTS(new Parameter<>("elasticsearch.timeBetweenAttempts", 2000)),
+    ELASTICSEARCH_THREADS(new Parameter<>("elasticsearch.threads", 4)),
 
     /*
      * Security properties

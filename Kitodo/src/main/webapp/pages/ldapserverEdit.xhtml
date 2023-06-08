@@ -29,15 +29,15 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
-        <script>
-            window.onload = function () {checkForm('editForm')};
-        </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editLdapServer} (#{LdapServerForm.ldapServer.title})"
+                          styleClass="shortable"
                           rendered="#{isEditMode}"/>
             <h:outputText value="#{msgs.ldapServerNew}"
+                          styleClass="shortable"
                           rendered="#{isCreateMode}"/>
             <h:outputText value="#{msgs.viewLdapServer}"
+                          styleClass="shortable"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:button id="cancel" value="#{msgs.cancel}"

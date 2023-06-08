@@ -44,6 +44,9 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
     @FindBy(id = TEMPLATE_TAB_VIEW + ":docket")
     private WebElement docketSelect;
 
+    @FindBy(id = "editForm:templateTabView:active")
+    private WebElement activeSwitch;
+
     @SuppressWarnings("unused")
     @FindBy(id = TEMPLATE_TAB_VIEW + ":taskTable:0:editTask")
     private WebElement editTaskLink;
@@ -96,5 +99,12 @@ public class TemplateEditPage extends EditPage<TemplateEditPage> {
     public ProjectsPage save() throws IllegalAccessException, InstantiationException {
         clickButtonAndWaitForRedirect(saveButton, Pages.getProjectsPage().getUrl());
         return Pages.getProjectsPage();
+    }
+
+    /**
+     * Toggle switch to activate/deactivate template.
+     */
+    public void hideTemplate() {
+        activeSwitch.findElement(By.className("ui-chkbox-box")).click();
     }
 }

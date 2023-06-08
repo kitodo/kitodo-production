@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
@@ -150,7 +150,7 @@ public class MassImportService {
                 commonMetadata = new ArrayList<>(List.copyOf(metadataView));
             } else {
                 commonMetadata.removeIf(item -> metadataView.stream()
-                        .noneMatch(metadataElement -> Objects.equals(item.getId(),metadataElement.getId())));
+                        .noneMatch(metadataElement -> Objects.equals(item.getId(), metadataElement.getId())));
             }
             if (commonMetadata.isEmpty()) {
                 break;

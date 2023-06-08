@@ -57,16 +57,6 @@
                              value="#{UserForm.userObject.ldapLogin}"/>
             </div>
             <div>
-                <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
-                <p:selectOneMenu id="ldapGroup" value="#{UserForm.userObject.ldapGroup}"
-                                 disabled="#{isViewMode || isConfigMode}" converter="#{ldapGroupConverter}">
-                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                    <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
-                                   itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()" update="@form"/>
-                </p:selectOneMenu>
-            </div>
-            <div>
                 <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
                 <p:selectBooleanCheckbox id="active" styleClass="switch input" disabled="#{isViewMode || isConfigMode}"
                                          value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
@@ -81,6 +71,8 @@
                                  disabled="#{isViewMode || isConfigMode || UserForm.userObject.ldapGroup eq null}"
                                  class="button-filled-green">
                 </p:commandButton>
+            </div>
+            <div>
                 <p:commandButton onclick="PF('changePasswordDialog').show()"
                                  id="changePasswordButton"
                                  value="#{msgs.passwordChange}"
@@ -146,12 +138,13 @@
                 </p:selectOneMenu>
             </div>
             <div>
-                <p:outputLabel for="metaDataLanguage" value="#{msgs.metadataLanguage}"/>
-                <p:selectOneMenu id="metaDataLanguage" value="#{UserForm.userObject.metadataLanguage}" disabled="#{isViewMode}"
-                                 required="#{empty param['editForm:saveButtonToggler']}">
-                    <f:selectItems value="#{UserForm.metadataLanguages.entrySet().toArray()}" var="language"
-                                   itemLabel="#{language.key}" itemValue="#{language.value}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
+                <p:selectOneMenu id="ldapGroup" value="#{UserForm.userObject.ldapGroup}"
+                                 disabled="#{isViewMode || isConfigMode}" converter="#{ldapGroupConverter}">
+                    <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
+                    <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
+                                   itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
                 </p:selectOneMenu>
             </div>
             <div>
@@ -165,15 +158,6 @@
                 <p:outputLabel for="show-process-data" value="#{msgs.showProcessInTaskList}" />
                 <p:selectBooleanCheckbox id="show-process-data" styleClass="switch input" onchange="toggleSave()"
                                          disabled="#{isViewMode}" value="#{UserForm.userObject.configProductionDateShow}"/>
-            </div>
-            <div>
-                <p:commandButton onclick="PF('changeShortcutsDialog').show()"
-                                 id="showShortcutsDialogButton"
-                                 value="#{msgs['shortcuts.change']}"
-                                 icon="fa fa-pencil fa-lg"
-                                 iconPos="right"
-                                 styleClass="secondary">
-                </p:commandButton>
             </div>
         </p:row>
     </p:panelGrid>

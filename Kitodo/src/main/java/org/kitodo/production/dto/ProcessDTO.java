@@ -12,6 +12,7 @@
 package org.kitodo.production.dto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Double progressInProcessing;
     private Double progressOpen;
     private Double progressLocked;
+    private String progressCombined;
     private String wikiField;
     private String processBaseUri;
     private String batchID;
@@ -37,8 +39,16 @@ public class ProcessDTO extends BaseTemplateDTO {
     private Integer sortHelperDocstructs;
     private Integer sortHelperImages;
     private Integer sortHelperMetadata;
+    private Integer numberOfMetadata;
+    private Integer numberOfImages;
+    private Integer numberOfStructures;
     private String sortHelperStatus;
     private String baseType;
+    private String lastEditingUser;
+    private Date processingBeginLastTask;
+    private Date processingEndLastTask;
+    private Integer correctionCommentStatus;
+    private boolean hasComments;
 
     /**
      * Get project.
@@ -212,6 +222,28 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setProgressOpen(Double progressOpen) {
         this.progressOpen = progressOpen;
+    }
+
+    /**
+     * Return a string representing the combined task status for a process.
+     * 
+     * <p>It consists of 3-digit percentage numbers (e.g. 000, 025, 100) 
+     * for each task status (DONE, INWORK, OPEN, LOCKED). For example, the status
+     * "000000025075" means that 25% of tasks are open, and 75% of tasks are locked.</p>
+     * 
+     * @return the process task progress as string
+     */
+    public String getProgressCombined() {
+        return progressCombined;
+    }
+
+    /**
+     * Sets the string representing the combined task status of a process.
+     * 
+     * @param progressCombined the task progress string
+     */
+    public void setProgressCombined(String progressCombined) {
+        this.progressCombined = progressCombined;
     }
 
     /**
@@ -399,5 +431,152 @@ public class ProcessDTO extends BaseTemplateDTO {
      */
     public void setBaseType(String baseType) {
         this.baseType = baseType;
+    }
+
+    /**
+     * Get numberOfMetadata .
+     *
+     * @return value of numberOfMetadata
+     */
+    public Integer getNumberOfMetadata() {
+        return numberOfMetadata;
+    }
+
+    /**
+     * Set numberOfMetadata.
+     *
+     * @param numberOfMetadata as Integer
+     */
+    public void setNumberOfMetadata(Integer numberOfMetadata) {
+        this.numberOfMetadata = numberOfMetadata;
+    }
+
+    /**
+     * Get numberOfImages.
+     *
+     * @return value of numberOfImages
+     */
+    public Integer getNumberOfImages() {
+        return numberOfImages;
+    }
+
+    /**
+     * Set numberOfImages.
+     *
+     * @param numberOfImages as Integer
+     */
+    public void setNumberOfImages(Integer numberOfImages) {
+        this.numberOfImages = numberOfImages;
+    }
+
+    /**
+     * Get numberOfStructures.
+     *
+     * @return value of numberOfStructures
+     */
+    public Integer getNumberOfStructures() {
+        return numberOfStructures;
+    }
+
+    /**
+     * Set numberOfStructures.
+     *
+     * @param numberOfStructures as Integer
+     */
+    public void setNumberOfStructures(Integer numberOfStructures) {
+        this.numberOfStructures = numberOfStructures;
+    }
+
+    /**
+     * Returns the user name of the user that was last handling a task of this process.
+     *
+     * @return name of last user handling task
+     */
+    public String getLastEditingUser() {
+        return this.lastEditingUser;
+    }
+
+    /**
+     * Sets the user name of the user that was last handling a task of this process.
+     *
+     * @param lastEditingUser
+     *            as String
+     */
+    public void setLastEditingUser(String lastEditingUser) {
+        this.lastEditingUser = lastEditingUser;
+    }
+
+    /**
+     * Get date of begin of last processing task.
+     *
+     * @return date of begin of last processing task
+     */
+    public Date getProcessingBeginLastTask() {
+        return this.processingBeginLastTask;
+    }
+
+    /**
+     * Set date of begin of last processing task.
+     *
+     * @param processingBeginLastTask
+     *            as Date
+     */
+    public void setProcessingBeginLastTask(Date processingBeginLastTask) {
+        this.processingBeginLastTask = processingBeginLastTask;
+    }
+
+    /**
+     * Get date of end of last processing task.
+     *
+     * @return date of end of last processing task
+     */
+    public Date getProcessingEndLastTask() {
+        return this.processingEndLastTask;
+    }
+
+    /**
+     * Set date of end of last processing task.
+     *
+     * @param processingEndLastTask
+     *            as Date
+     */
+    public void setProcessingEndLastTask(Date processingEndLastTask) {
+        this.processingEndLastTask = processingEndLastTask;
+    }
+
+    /**
+     * Get the correction comment status, see CorrectionComments enum, as int value.
+     * 
+     * @return the correction comment status as integer
+     */
+    public Integer getCorrectionCommentStatus() {
+        return this.correctionCommentStatus;
+    }
+
+    /**
+     * Set the correction comment status as int value.
+     * 
+     * @param status the status as integer
+     */
+    public void setCorrectionCommentStatus(Integer status) {
+        this.correctionCommentStatus = status;
+    }
+
+    /**
+     * Get hasComments. Value is true when the process has any comments.
+     *
+     * @return value of hasComments
+     */
+    public boolean hasComments() {
+        return hasComments;
+    }
+
+    /**
+     * Set hasComments. Value should be set to true when the process has any comments.
+     *
+     * @param hasComments as boolean
+     */
+    public void setHasComments(boolean hasComments) {
+        this.hasComments = hasComments;
     }
 }

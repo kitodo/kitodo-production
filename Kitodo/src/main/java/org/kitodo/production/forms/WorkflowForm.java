@@ -40,6 +40,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -49,7 +51,10 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.DataEditorSettingService;
+import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.production.workflow.model.Reader;
 
@@ -59,8 +64,11 @@ public class WorkflowForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(WorkflowForm.class);
     private Workflow workflow = new Workflow();
+
+    private final transient DataEditorSettingService dataEditorSettingService = ServiceManager.getDataEditorSettingService();
     private final transient FileService fileService = ServiceManager.getFileService();
     private String svgDiagram;
+    private boolean dataEditorSettingsDefined = false;
     private String xmlDiagram;
     private WorkflowStatus workflowStatus;
     private static final String BPMN_EXTENSION = ".bpmn20.xml";
@@ -141,6 +149,9 @@ public class WorkflowForm extends BaseForm {
             if (saveFiles()) {
                 this.workflow.setStatus(this.workflowStatus);
                 saveWorkflow();
+                if (!this.workflow.getTemplates().isEmpty()) {
+                    updateTemplateTasks();
+                }
                 if (migration) {
                     migration = false;
                     return MIGRATION_FORM_PATH + "&workflowId=" + workflow.getId();
@@ -149,7 +160,7 @@ public class WorkflowForm extends BaseForm {
             } else {
                 return this.stayOnCurrentPage;
             }
-        } catch (IOException e) {
+        } catch (IOException | DAOException | DataException e) {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
@@ -157,6 +168,37 @@ public class WorkflowForm extends BaseForm {
                 e);
             return this.stayOnCurrentPage;
         }
+    }
+
+    /**
+     * Update the tasks of the templates associated with the current workflow and delete associated
+     * editor settings.
+     */
+    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
+        Converter converter = new Converter(this.workflow.getTitle());
+        for (Template workflowTemplate : this.workflow.getTemplates()) {
+            List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
+            if (!templateTasks.isEmpty()) {
+                if (this.dataEditorSettingsDefined) {
+                    for (Task templateTask : templateTasks) {
+                        this.dataEditorSettingService.removeFromDatabaseByTaskId(templateTask.getId());
+                    }
+                }
+                workflowTemplate.getTasks().clear();
+                TemplateService templateService = ServiceManager.getTemplateService();
+                converter.convertWorkflowToTemplate(workflowTemplate);
+                templateService.save(workflowTemplate, true);
+                new WorkflowControllerService().activateNextTasks(workflowTemplate.getTasks());
+            }
+        }
+    }
+
+    /**
+     * Check if the workflow has associated data editor settings.
+     * @return value of dataEditorSettingsDefined
+     */
+    public boolean hasWorkflowDataEditorSettingsDefined() {
+        return this.dataEditorSettingsDefined;
     }
 
     /**
@@ -176,7 +218,7 @@ public class WorkflowForm extends BaseForm {
             return MIGRATION_FORM_PATH;
         }
 
-        return "projects?keepPagination=true";
+        return "projects?keepPagination=true&faces-redirect=true";
     }
 
     /**
@@ -371,6 +413,7 @@ public class WorkflowForm extends BaseForm {
                 setWorkflow(workflow);
                 setWorkflowStatus(workflow.getStatus());
                 readXMLDiagram();
+                this.dataEditorSettingsDefined = this.dataEditorSettingService.areDataEditorSettingsDefinedForWorkflow(workflow);
             }
             setSaveDisabled(false);
         } catch (DAOException e) {

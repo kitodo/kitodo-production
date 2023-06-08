@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2022-06-15T09:03:26.553+02:00" LASTMODDATE="2022-06-15T09:05:58.951+02:00">
+        <mets:metsDocumentID>12879</mets:metsDocumentID>
+    </mets:metsHdr>
+    <mets:dmdSec ID="uuid-c32202b2-b172-3aa9-886c-c0589c7a46f4">
+        <mets:mdWrap>
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="ValueMetadata">findMeInOutput</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec/>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="uuid-211fce55-cc78-498f-b289-b7bd5cce8ae6"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="uuid-268e7b3d-ae37-4d0d-8428-97e85eb67ba4" DMDID="uuid-c32202b2-b172-3aa9-886c-c0589c7a46f4" TYPE="case"/>
+    </mets:structMap>
+    <mets:structLink/>
+</mets:mets>

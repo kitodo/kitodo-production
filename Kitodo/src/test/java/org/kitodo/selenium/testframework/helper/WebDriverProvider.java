@@ -20,7 +20,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.codehaus.plexus.archiver.UnArchiver;
@@ -33,9 +33,7 @@ public class WebDriverProvider {
     private static final Logger logger = LogManager.getLogger(WebDriverProvider.class);
 
     // https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
-    // Please don't rely on the LATEST_RELEASE file without a version suffix.
-    // It exists for backward compatibility only, and will be removed in the near future.
-    private static final String CHROME_DRIVER_LATEST_RELEASE_URL = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE_101";
+    private static final String CHROME_DRIVER_LATEST_RELEASE_URL = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE";
 
     private static UnArchiver zipUnArchiver = new ZipUnArchiver();
     private static UnArchiver tarGZipUnArchiver = new TarGZipUnArchiver();

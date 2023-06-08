@@ -16,12 +16,15 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
@@ -31,8 +34,14 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.OCRWorkflow;
@@ -46,6 +55,7 @@ import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -77,8 +87,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
 
     private RulesetManagementInterface rulesetManagement;
-    private final List<Locale.LanguageRange> priorityList = ServiceManager.getUserService()
-            .getCurrentMetadataLanguage();
+    private final List<Locale.LanguageRange> priorityList;
     private final String acquisitionStage = "create";
     private Project project;
     private Template template;
@@ -88,8 +97,17 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private String referringView = "";
     private int progress;
     private TempProcess currentProcess;
-
+    private Boolean rulesetConfigurationForOpacImportComplete = null;
+    private String defaultConfigurationType;
     static final int TITLE_RECORD_LINK_TAB_INDEX = 1;
+
+    public CreateProcessForm() {
+        priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
+    }
+
+    CreateProcessForm(List<Locale.LanguageRange> priorityList) {
+        this.priorityList = priorityList;
+    }
 
     /**
      * Returns the ruleset management to access the ruleset.
@@ -303,10 +321,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Create the process and save the metadata.
      */
     public String createNewProcess() {
-        if (!canCreateProcess()) {
-            return this.stayOnCurrentPage;
-        }
         try {
+            if (!canCreateProcess()) {
+                return this.stayOnCurrentPage;
+            }
             createProcessHierarchy();
             if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
                 PrimeFaces.current().executeScript("PF('sticky-notifications').renderMessage({'summary':'"
@@ -335,10 +353,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return path to reload current view
      */
     public String createNewProcessAndContinue() {
-        if (!canCreateProcess()) {
-            return this.stayOnCurrentPage;
+        String destination = createNewProcess();
+        if (!destination.equals(processListPath)) {
+            return destination;
         }
-        createNewProcess();
         Process parentProcess = titleRecordLinkTab.getTitleRecordProcess();
         return FacesContext.getCurrentInstance().getExternalContext().getRequestServletPath()
                 + "?referrer=" + referringView
@@ -348,14 +366,45 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 + "&faces-redirect=true";
     }
 
-    private boolean canCreateProcess() {
-        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())
-                && (Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
-                        || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty())) {
-            Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
-            return false;
+    private boolean canCreateProcess() throws IOException {
+        if (Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+            if ((Objects.isNull(titleRecordLinkTab.getSelectedInsertionPosition())
+                    || titleRecordLinkTab.getSelectedInsertionPosition().isEmpty())) {
+                Helper.setErrorMessage("createProcessForm.createNewProcess.noInsertionPositionSelected");
+                return false;
+            }
+            String forbiddenParentType = parentTypeIfForbidden();
+            if (Objects.nonNull(forbiddenParentType)) {
+                Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+                    processDataTab.getDocType(), forbiddenParentType));
+                return false;
+            }
         }
         return true;
+    }
+
+    private String parentTypeIfForbidden() throws IOException {
+        URI metadataFileUri = ServiceManager.getProcessService()
+                .getMetadataFileUri(titleRecordLinkTab.getTitleRecordProcess());
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFileUri);
+        List<String> indices = Arrays.asList(titleRecordLinkTab.getSelectedInsertionPosition()
+                .split(Pattern.quote(MetadataEditor.INSERTION_POSITION_SEPARATOR)));
+        LogicalDivision logicalDivision = workpiece.getLogicalStructure();
+        for (int index = 0; index < indices.size(); index++) {
+            if (index < indices.size() - 1) {
+                logicalDivision = logicalDivision.getChildren().get(Integer.parseInt(indices.get(index)));
+            } else {
+                String parentType = logicalDivision.getType();
+                StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType,
+                    acquisitionStage, priorityList);
+                if (divisionView.getAllowedSubstructuralElements().containsKey(processDataTab.getDocType())) {
+                    return null;
+                } else {
+                    return parentType;
+                }
+            }
+        }
+        return "";
     }
 
     /**
@@ -374,17 +423,23 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         try {
             boolean generated = processGenerator.generateProcess(templateId, projectId);
             if (generated) {
+                Workpiece workpiece = new Workpiece();
                 processes = new LinkedList<>(Collections.singletonList(new TempProcess(
-                        processGenerator.getGeneratedProcess(), new Workpiece())));
+                        processGenerator.getGeneratedProcess(), workpiece)));
                 currentProcess = processes.get(0);
                 project = processGenerator.getProject();
                 template = processGenerator.getTemplate();
                 updateRulesetAndDocType(getMainProcess().getRuleset());
-                processDataTab.prepare();
+                if (Objects.nonNull(project) && Objects.nonNull(project.getDefaultImportConfiguration())) {
+                    setDefaultImportConfiguration(project.getDefaultImportConfiguration());
+                } else {
+                    defaultConfigurationType = null;
+                }
                 if (Objects.nonNull(parentId) && parentId != 0) {
                     ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
-                    Map<String, String> allowedSubstructuralElements = ServiceManager.getRulesetService()
-                            .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()))
+                    RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
+                            .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
+                    Map<String, String> allowedSubstructuralElements = rulesetManagement
                             .getStructuralElementView(parentProcess.getBaseType(), "", priorityList)
                             .getAllowedSubstructuralElements();
                     List<SelectItem> docTypes = allowedSubstructuralElements.entrySet()
@@ -393,11 +448,60 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
+                    if (Objects.nonNull(project.getDefaultChildProcessImportConfiguration())) {
+                        setDefaultImportConfiguration(project.getDefaultChildProcessImportConfiguration());
+                    } else {
+                        defaultConfigurationType = null;
+                    }
+                    if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
+                        updateRulesetAndDocType(getMainProcess().getRuleset());
+                    }
                 }
+                processDataTab.prepare();
+                showDefaultImportConfigurationDialog();
             }
         } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    private void showDefaultImportConfigurationDialog() {
+        if (ImportConfigurationType.OPAC_SEARCH.name().equals(defaultConfigurationType)) {
+            checkRulesetConfiguration();
+        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(defaultConfigurationType)) {
+            PrimeFaces.current().executeScript("PF('fileUploadDialog').show()");
+        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(defaultConfigurationType)) {
+            PrimeFaces.current().executeScript("PF('searchEditDialog').show()");
+        }
+    }
+
+    private void setDefaultImportConfiguration(ImportConfiguration importConfiguration) {
+        defaultConfigurationType = importConfiguration.getConfigurationType();
+        if (ImportConfigurationType.OPAC_SEARCH.name().equals(importConfiguration.getConfigurationType())) {
+            catalogImportDialog.getHitModel().setImportConfiguration(importConfiguration);
+            PrimeFaces.current().ajax().update("catalogSearchDialog");
+        } else if (ImportConfigurationType.PROCESS_TEMPLATE.name().equals(importConfiguration.getConfigurationType())) {
+            searchDialog.setOriginalProcess(importConfiguration.getDefaultTemplateProcess());
+            PrimeFaces.current().ajax().update("searchEditDialog");
+        } else if (ImportConfigurationType.FILE_UPLOAD.name().equals(importConfiguration.getConfigurationType())) {
+            fileUploadDialog.setImportConfiguration(importConfiguration);
+            PrimeFaces.current().ajax().update("fileUploadDialog");
+        }
+    }
+
+    static boolean setChildCount(Process parent, RulesetManagementInterface ruleset, Workpiece workpiece) throws IOException {
+        Collection<String> childCountKeys = ruleset.getFunctionalKeys(FunctionalMetadata.CHILD_COUND);
+        if (childCountKeys.isEmpty()) {
+            return false;
+        }
+        String childCount = Integer.toString(parent.getChildren().size() + 1);
+        for (String childCountKey : childCountKeys) {
+            MetadataEntry entry = new MetadataEntry();
+            entry.setKey(childCountKey);
+            entry.setValue(childCount);
+            workpiece.getLogicalStructure().getMetadata().add(entry);
+        }
+        return true;
     }
 
     /**
@@ -511,7 +615,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             if (Objects.nonNull(tempProcess.getMetadataNodes())) {
                 try {
                     tempProcess.getProcessMetadata().preserve();
-                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList);
+                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
                 } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
                     throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
                 } catch (RulesetNotFoundException e) {
@@ -612,7 +716,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     @Override
     public boolean canBeDeleted(ProcessDetail processDetail) {
-        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOccurs()
                 || (!processDetail.isRequired() && !this.rulesetManagement.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
@@ -664,13 +768,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @return ID metadata
      */
     public String getCatalogId(TempProcess tempProcess) {
-        if (Objects.nonNull(tempProcess)
-                && Objects.nonNull(tempProcess.getMetadataNodes())
-                && tempProcess.getMetadataNodes().getLength() > 0) {
-            return tempProcess.getMetadataNodes().item(0).getFirstChild().getTextContent();
-        } else {
-            return " - ";
+        if (Objects.nonNull(tempProcess)) {
+            return tempProcess.getCatalogId(rulesetManagement.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER));
         }
+        return " - ";
     }
 
     /**
@@ -707,5 +808,41 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public void setCurrentProcess(TempProcess currentProcess) {
         this.currentProcess = currentProcess;
+    }
+
+    /**
+     * Check whether ruleset configuration is complete for OPAC import, e.g. if functional metadata of type
+     * 'recordIdentifier' has been configured for all document types in this ruleset.
+     * If configuration is complete, the import dialog is shown. Otherwise, a warning dialog is shown to inform the user
+     * about missing ruleset configurations.
+     */
+    public void checkRulesetConfiguration() {
+        if (Objects.isNull(rulesetConfigurationForOpacImportComplete)) {
+            rulesetConfigurationForOpacImportComplete = ServiceManager.getImportService()
+                    .isRecordIdentifierMetadataConfigured(rulesetManagement);
+        }
+        if (rulesetConfigurationForOpacImportComplete) {
+            PrimeFaces.current().executeScript("PF('catalogSearchDialog').show();");
+        } else {
+            PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
+        }
+    }
+
+    /**
+     * Get defaultConfigurationType.
+     *
+     * @return value of defaultConfigurationType
+     */
+    public String getDefaultConfigurationType() {
+        return defaultConfigurationType;
+    }
+
+    /**
+     * Returns the details of the missing record identifier error.
+     *
+     * @return the details as a list of error description
+     */
+    public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
+        return ServiceManager.getImportService().getDetailsOfRecordIdentifierMissingError();
     }
 }

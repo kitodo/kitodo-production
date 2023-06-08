@@ -35,11 +35,7 @@ function registerRowToggleEvents(event) {
 PrimeFaces.widget.DataTable.prototype.updateData = (function () {
     let cachedFunction = PrimeFaces.widget.DataTable.prototype.updateData;
     return function () {
-        let reselectAll = (typeof this.selection !== "undefined" && this.selection[0] === '@all');
         let result = cachedFunction.apply(this, arguments);
-        if (reselectAll) {
-            this.selectAllRows();
-        }
         return result;
     };
 })();
@@ -53,10 +49,18 @@ $(document).on("click", ".allSelectable .ui-chkbox-all .ui-chkbox-box", function
     table.unselectAllRows();
 });
 
-$(document).on("click", ".allSelectable .ui-chkbox .ui-chkbox-box", function () {
-    let tableId = $(this).closest(".allSelectable").attr('id').split(":").at(-1);
-    let table = new PF(tableId);
-    if (typeof table.selection !== "undefined" && table.selection[0] === '@all') {
-        table.unselectAllRows();
-    }
+$(window).on("load", function () {
+    $.ready.then(function () {
+        if (typeof PF('processesTable').selection !== "undefined" && (PF('processesTable').selection[0] === '@all' || PF('processesTable').selection.length === PF('processesTable').cfg.paginator.rowCount )) {
+            PF('processesTable').selectAllRows();
+            PF('processesTable').selection=new Array("@all");
+            $(PF('processesTable').selectionHolder).val('@all');
+            let excludedIds = $('#excludedProcessIds').children();
+            for(let i = 0; i < excludedIds.length; i++) {
+                let processId = excludedIds.get(i).textContent;
+                PF('processesTable').unselectRow($('tr[data-rk="' + processId + '"]'), true);
+            }
+
+        }
+    });
 });

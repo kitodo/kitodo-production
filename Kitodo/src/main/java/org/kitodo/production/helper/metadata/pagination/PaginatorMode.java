@@ -111,6 +111,7 @@ public enum PaginatorMode {
      */
     private static final Map<Integer, PaginatorMode> codeMap = new HashMap<>(
             (int) Math.ceil(values().length / .75));
+
     static {
         for (PaginatorMode member : PaginatorMode.values()) {
             codeMap.put(member.code, member);

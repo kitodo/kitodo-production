@@ -22,6 +22,8 @@
               id="searchEditDialog"
               width="578"
               modal="true"
+              visible="#{CreateProcessForm.defaultConfigurationType eq 'PROCESS_TEMPLATE'}"
+              appendTo="@(body)"
               resizable="false">
         <h3>#{msgs.processTemplate}</h3>
         <h:form id="searchEditForm">
@@ -34,7 +36,7 @@
                         <p:outputLabel for="processSelect" value="#{msgs.selectFromExistingProcesses}"/>
                         <p:selectOneMenu id="processSelect" value="#{CreateProcessForm.searchDialog.originalProcess}"
                                          converter="#{processConverter}">
-                            <f:selectItem  itemValue="#{null}" itemLabel="-- #{msgs.selectProcess} --" noSelectionOption="true"/>
+                            <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectProcess} --" noSelectionOption="true"/>
                             <f:selectItems value="#{CreateProcessForm.searchDialog.processesForChoiceList}"
                                            var="process"
                                            itemLabel="#{process.title}"

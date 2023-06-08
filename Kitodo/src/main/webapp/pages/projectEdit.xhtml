@@ -26,17 +26,15 @@
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
         <h:outputScript name="js/toggleLock.js" target="body"/>
-        <script>
-            window.onload = function () {
-                checkForm('editForm')
-            };
-        </script>
         <h3 id="headerText">
             <h:outputText value="#{msgs.editProject} (#{ProjectForm.project.title})"
+                          styleClass="shortable"
                           rendered="#{ProjectForm.project.id ne null}"/>
             <h:outputText value="#{msgs.newProject}"
+                          styleClass="shortable"
                           rendered="#{ProjectForm.project.id eq null and empty ProjectForm.project.title}"/>
             <h:outputText value="#{msgs.duplicateProject}"
+                          styleClass="shortable"
                           rendered="#{ProjectForm.project.id eq null and not empty ProjectForm.project.title}"/>
         </h3>
         <p:commandButton
@@ -69,6 +67,10 @@
                          update="notifications"/>
     </ui:define>
 
+    <ui:define name="messages">
+        <p:messages id="error-messages" showIcon="false" closable="true"/>
+    </ui:define>
+
     <ui:define name="pageTabView">
         <p:tabView id="projectTabView" activeIndex="#{ProjectForm.editActiveTabIndex}">
             <p:ajax event="tabChange" listener="#{ProjectForm.onEditTabChange}"/>
@@ -83,6 +85,9 @@
             </p:tab>
             <p:tab title="#{msgs.templates}" id="templates">
                 <ui:include src="/WEB-INF/templates/includes/projectEdit/templateList.xhtml"/>
+            </p:tab>
+            <p:tab title="#{msgs['importConfig.configurations']}" id="importConfigurations">
+                <ui:include src="/WEB-INF/templates/includes/projectEdit/defaultImportConfiguration.xhtml"/>
             </p:tab>
         </p:tabView>
     </ui:define>

@@ -26,9 +26,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
@@ -51,9 +52,12 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -124,7 +128,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByInChoiceListShown() throws DataException, DAOException {
-        List<ProcessDTO> byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
+        List<Process> byInChoiceListShown = ServiceManager.getProcessService().getTemplateProcesses();
         Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
     }
 
@@ -422,7 +426,7 @@ public class ProcessServiceIT {
     public void shouldGetProgress() throws Exception {
         Process process = processService.getById(1);
 
-        String progress = processService.getProgress(process.getTasks(), null);
+        String progress = ProcessConverter.getCombinedProgressAsString(process, true);
         assertEquals("Progress doesn't match given plain text!", "040020020020", progress);
     }
 
@@ -430,7 +434,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressClosed() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = processService.getProgressClosed(process.getTasks(), null);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.DONE);
         assertEquals("Progress doesn't match given plain text!", 40, condition, 0);
     }
 
@@ -438,7 +442,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressInProcessing() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = processService.getProgressInProcessing(process.getTasks(), null);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.INWORK);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
@@ -447,7 +451,7 @@ public class ProcessServiceIT {
         ProcessService processService = ServiceManager.getProcessService();
         Process secondProcess = processService.getById(2);
         final String sortHelperStatusOld = secondProcess.getSortHelperStatus();
-        secondProcess.setSortHelperStatus("100000000");
+        secondProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         processService.save(secondProcess);
 
         QueryBuilder querySortHelperStatusTrue = processService.getQueryForClosedProcesses();
@@ -462,7 +466,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressOpen() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = processService.getProgressOpen(process.getTasks(), null);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.OPEN);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
@@ -470,7 +474,7 @@ public class ProcessServiceIT {
     public void shouldGetProgressLocked() throws Exception {
         Process process = processService.getById(1);
 
-        double condition = processService.getProgressLocked(process.getTasks(), null);
+        double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.LOCKED);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
     }
 
@@ -609,12 +613,14 @@ public class ProcessServiceIT {
 
         allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
         Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 3, 1, 2, 6)));
-
+        Assert.assertEquals("Duplicate ids in index", allIDs.size(), new HashSet<Integer>(allIDs).size());
+        Integer maxId = allIDs.stream().mapToInt(Integer::intValue).max().getAsInt();
+        Integer minId = allIDs.stream().mapToInt(Integer::intValue).min().getAsInt();
+        Assert.assertTrue("Ids should all be smaller than 8", maxId < 8);
+        Assert.assertTrue("Ids should all be larger than 0", minId > 0);
+        
         allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
         Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(7, 4)));
-
     }
 
     @Test

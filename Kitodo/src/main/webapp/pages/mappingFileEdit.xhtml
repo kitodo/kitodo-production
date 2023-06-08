@@ -1,0 +1,189 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/baseEditView.xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <!--@elvariable id="id" type="java.lang.Integer"-->
+    <f:metadata>
+        <f:viewParam name="id"/>
+        <f:viewAction action="#{mappingFileEditView.load(id)}"/>
+    </f:metadata>
+
+    <!--@elvariable id="isEditMode" type="boolean"-->
+    <ui:param name="isEditMode"
+              value="#{mappingFileEditView.mappingFile.id ne null and SecurityAccessController.hasAuthorityToEditMappingFile()}"/>
+    <!--@elvariable id="isCreateMode" type="boolean"-->
+    <ui:param name="isCreateMode"
+              value="#{mappingFileEditView.mappingFile.id eq null and SecurityAccessController.hasAuthorityToAddMappingFile()}"/>
+    <!--@elvariable id="isViewMode" type="boolean"-->
+    <ui:param name="isViewMode"
+              value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewMappingFile()}"/>
+
+    <ui:define name="contentHeader">
+        <h:outputScript name="js/save.js" target="body" />
+        <h3 id="headerText">
+            <h:outputText value="#{msgs['mappingFile.mode.create']}" rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs['mappingFile.mode.edit']} (#{mappingFileEditView.mappingFile.title})" rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs['mappingFile.mode.view']} (#{mappingFileEditView.mappingFile.title})" rendered="#{isViewMode}"/>
+        </h3>
+
+        <p:button id="cancel" value="#{msgs.cancel}"
+                  onclick="setConfirmUnload(false);"
+                  outcome="projects?keepPagination=true"
+                  icon="fa fa-times fa-lg"
+                  iconPos="right"
+                  styleClass="secondary"/>
+        <p:commandButton id="save"
+                         value="#{msgs.save}"
+                         action="#{mappingFileEditView.save}"
+                         icon="fa fa-floppy-o fa-lg"
+                         iconPos="right"
+                         rendered="#{isEditMode || isCreateMode}"
+                         disabled="#{mappingFileEditView.saveDisabled}"
+                         onclick="setConfirmUnload(false);"
+                         onsuccess="PF('notifications').renderMessage({
+                            'summary':'#{msgs.configurationSaving}',
+                            'detail':'#{msgs.youWillBeRedirected}',
+                            'severity':'info'});"/>
+        <p:commandButton id="saveButtonToggler"
+                         actionListener="#{mappingFileEditView.setSaveDisabled(false)}"
+                         update="save"
+                         style="display:none;"/>
+    </ui:define>
+
+    <ui:define name="pageTabView">
+        <p:tabView id="mappingFileTabView">
+            <p:tab id="detailsTab"
+                   title="#{msgs.details}">
+                <p:panelGrid id="mappingFile-grid"
+                             columns="2"
+                             layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="title"
+                                           value="#{msgs.title} *"/>
+                            <p:inputText id="title"
+                                         styleClass="input-with-button input"
+                                         value="#{mappingFileEditView.mappingFile.title}"
+                                         placeholder="#{msgs.title}"
+                                         disabled="#{isViewMode}"
+                                         required="#{not empty param['editForm:save']}"/>
+                            <p:commandButton id="titleHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="titleHelp"
+                                       value="#{msgs['tooltip.mappingFile.title']}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="file"
+                                           value="#{msgs.file}"/>
+                            <p:selectOneMenu id="file"
+                                             value="#{mappingFileEditView.mappingFile.file}"
+                                             disabled="#{isViewMode}"
+                                             styleClass="input-with-button input">
+                                <f:selectItems value="#{mappingFileEditView.filenames}"
+                                               var="mappingFile"
+                                               itemValue="#{mappingFile}"
+                                               itemLabel="#{mappingFile}"/>
+                                <p:ajax event="change"
+                                        oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
+                            <p:commandButton id="fileHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="fileHelp"
+                                       value="#{msgs['tooltip.mappingfile.file']}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="prestructuredImport"
+                                           value="#{msgs['importConfig.field.prestructuredImport']}"/>
+                            <p:selectBooleanCheckbox id="prestructuredImport"
+                                                     styleClass="switch input-with-button"
+                                                     value="#{mappingFileEditView.mappingFile.prestructuredImport}"
+                                                     disabled="#{isViewMode}">
+                                <p:ajax event="change"
+                                        oncomplete="toggleSave()"/>
+                            </p:selectBooleanCheckbox>
+                            <p:commandButton id="prestructuredImportHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="prestructuredImportHelp"
+                                       value="#{msgs['tooltip.mappingFile.prestructuredImport']}"/>
+                        </div>
+                    </p:row>
+                    <p:row>
+                        <div>
+                            <p:outputLabel for="inputFormat"
+                                           value="#{msgs['mappingFile.inputFormat']}"/>
+                            <p:selectOneMenu id="inputFormat"
+                                             value="#{mappingFileEditView.mappingFile.inputMetadataFormat}"
+                                             disabled="#{isViewMode}"
+                                             styleClass="input-with-button input">
+                                <f:selectItems value="#{mappingFileEditView.metadataFormats}"
+                                               var="mappingFile"
+                                               itemValue="#{mappingFile}"
+                                               itemLabel="#{mappingFile}"/>
+                                <p:ajax event="change"
+                                        oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
+                            <p:commandButton id="inputFormatHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="inputFormatHelp"
+                                       value="#{msgs['tooltip.mappingFile.inputFormat']}"/>
+                        </div>
+                        <div>
+                            <p:outputLabel for="outputFormat"
+                                           value="#{msgs['mappingFile.outputFormat']}"/>
+                            <p:selectOneMenu id="outputFormat"
+                                             value="#{mappingFileEditView.mappingFile.outputMetadataFormat}"
+                                             disabled="#{isViewMode}"
+                                             styleClass="input-with-button input">
+                                <f:selectItems value="#{mappingFileEditView.metadataFormats}"
+                                               var="mappingFile"
+                                               itemValue="#{mappingFile}"
+                                               itemLabel="#{mappingFile}"/>
+                                <p:ajax event="change"
+                                        oncomplete="toggleSave()"/>
+                            </p:selectOneMenu>
+                            <p:commandButton id="outputFormatHelp"
+                                             type="button"
+                                             styleClass="help-button"
+                                             icon="fa fa-lg fa-question-circle-o"/>
+                            <p:tooltip for="outputFormatHelp"
+                                       value="#{msgs['tooltip.mappingFile.outputFormat']}"/>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </p:tab>
+        </p:tabView>
+    </ui:define>
+
+    <ui:define name="breadcrumbs">
+        <p:menuitem value="#{msgs.desktop}" url="desktop.jsf" icon="fa fa-home"/>
+        <p:menuitem value="#{msgs.projects}" url="projects.jsf" icon="fa fa-archive"/>
+        <p:menuitem value="#{msgs['mappingFile.mode.edit']}" rendered="#{isEditMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['mappingFile.mode.create']}" rendered="#{isCreateMode}" icon="fa fa-cogs"/>
+        <p:menuitem value="#{msgs['mappingFile.mode.view']}" rendered="#{isViewMode}" icon="fa fa-cogs"/>
+    </ui:define>
+
+</ui:composition>

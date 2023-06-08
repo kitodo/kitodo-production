@@ -215,7 +215,7 @@ function updateMap(imageDimensions, imagePath) {
 
 function addListener(element) {
     element.on("load", function () {
-        if (kitodo.map) {
+        if (kitodo.map && $("#map .ol-viewport").length) {
             updateMap([element.width(), element.height()], element[0].src);
         } else {
             initializeMap([element.width(), element.height()], element[0].src);
@@ -226,9 +226,11 @@ function addListener(element) {
 function initializeImage() {
     resetNorth();
     hideCanvas();
-    let image = $("#imagePreviewForm\\:mediaViewData");
-    addListener(image);
-    image[0].src = image[0].src.replace(/&uuid=[a-z0-9]+/i, "") + "&uuid=" + random(8);
+    let image = $("#imagePreviewForm\\:mediaPreviewGraphicImage");
+    if (image.length > 0) {
+        addListener(image);
+        image[0].src = image[0].src.replace(/&uuid=[a-z0-9]+/i, "") + "&uuid=" + random(8);
+    }
 }
 
 function changeToMapView() {

@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -29,7 +30,7 @@ import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandInterface;
@@ -49,6 +50,7 @@ public class FileManagement implements FileManagementInterface {
 
     private final CommandInterface commandService = new KitodoServiceLoader<CommandInterface>(CommandInterface.class)
             .loadModule();
+
     @Override
     public URI create(URI parentFolderUri, String name, boolean file) throws IOException {
         if (file) {
@@ -78,13 +80,13 @@ public class FileManagement implements FileManagementInterface {
     @Override
     public OutputStream write(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return Files.newOutputStream(Paths.get(uri));
+        return Files.newOutputStream(Paths.get(URLDecoder.decode(Paths.get(uri).toString(), StandardCharsets.UTF_8)));
     }
 
     @Override
     public InputStream read(URI uri) throws IOException {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
-        return uri.toURL().openStream();
+        return new File(URLDecoder.decode(Paths.get(uri).toString(), StandardCharsets.UTF_8)).toURI().toURL().openStream();
     }
 
     @Override
@@ -156,6 +158,10 @@ public class FileManagement implements FileManagementInterface {
             return null;
         }
 
+        if (isDirectory(uri)) {
+            return renameDirectory(uri, newName);
+        }
+
         String substring = uri.toString().substring(0, uri.toString().lastIndexOf('/') + 1);
         if (newName.contains("/")) {
             newName = newName.substring(newName.lastIndexOf('/') + 1);
@@ -176,6 +182,22 @@ public class FileManagement implements FileManagementInterface {
         }
 
         return performRename(mappedFileURI, mappedNewFileURI);
+    }
+
+    private URI renameDirectory(URI directoryPath, String newDirectoryName) throws IOException {
+        File newDirectory = new File(KitodoConfig.getKitodoDataDirectory() + newDirectoryName);
+        File oldDirectory = new File(KitodoConfig.getKitodoDataDirectory() + directoryPath);
+
+        if (!oldDirectory.equals(newDirectory)) {
+            boolean success = oldDirectory.renameTo(newDirectory);
+            if (success) {
+                return newDirectory.toURI();
+            } else {
+                throw new IOException("Unable to rename directory '" + directoryPath + "'!");
+            }
+        } else {
+            return newDirectory.toURI();
+        }
     }
 
     private URI performRename(URI mappedFileURI, URI mappedNewFileURI) throws IOException {

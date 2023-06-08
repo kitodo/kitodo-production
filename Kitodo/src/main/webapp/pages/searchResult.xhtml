@@ -20,7 +20,8 @@
 
     <ui:define name="contentHeader">
         <h3 id="headerText">
-            <h:outputText value="#{msgs.searchResultFor} #{SearchResultForm.searchQuery}"/>
+            <h:outputText value="#{msgs.searchResultFor} #{SearchResultForm.searchQuery}"
+                          styleClass="shortable"/>
         </h3>
     </ui:define>
     <ui:define name="pageTabView">
@@ -42,7 +43,8 @@
                                  rows="#{LoginForm.loggedUser.tableSize}"
                                  paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {NextPageLink} {LastPageLink}"
                                  currentPageReportTemplate="#{msgs.currentPageReportTemplate}"
-                                 paginatorPosition="bottom">
+                                 paginatorPosition="bottom"
+                                 multiViewState="true">
                         <p:ajax event="rowToggle"
                                 oncomplete="registerRowToggleEvents();" />
 
@@ -70,16 +72,19 @@
                         <p:column id="titleColumn"
                                   headerText="#{msgs.processTitle}"
                                   filterBy="#{process.title}"
+                                  sortBy="#{process.title}"
                                   rendered="#{ProcessForm.showColumn('process.title')}">
                             <h:outputText value="#{process.title}"/>
                         </p:column>
                         <p:column id="progressColumn"
-                                  styleClass="progressColumn"
+                                  styleClass="progressColumn genericSortIcon"
                                   headerText="#{msgs.status}"
+                                  sortBy="#{process.progressCombined}"
                                   rendered="#{ProcessForm.showColumn('process.state')}">
                             <ui:include src="/WEB-INF/templates/includes/processes/progressColumn.xhtml"/>
                         </p:column>
                         <p:column headerText="#{msgs.project}"
+                                  sortBy="#{process.project.title}"
                                   rendered="#{ProcessForm.showColumn('process.project')}">
                             <h:outputText value="#{process.project.title}"/>
                         </p:column>
@@ -102,7 +107,10 @@
                                                      value="#{ProcessForm.getAllParentProcesses(process.id)}"
                                                      rendered="#{process.getParentID() ne 0}">
                                             <p:column>
-                                                <h:outputText value="#{parent.getTitle()}"/>
+                                                <h:outputText value="#{parent.getTitle()} "
+                                                              title="#{parent.getTitle()}"/>
+                                                <p:commandLink value="#{msgs.show}"
+                                                               action="#{ProcessForm.changeFilter('id:'.concat(parent.getId()))}"/>
                                             </p:column>
                                             <p:column styleClass="actionsColumn">
                                                 <h:link outcome="processEdit"
@@ -121,13 +129,18 @@
                                                     <f:param name="referer" value="processes"/>
                                                     <f:param name="id" value="#{parent.id}"/>
                                                 </h:link>
-                                                <h:commandLink action="#{DataEditorForm.open(parent.id, 'processes')}"
-                                                               styleClass="action"
-                                                               title="#{msgs.metadataEdit}"
-                                                               rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
-                                                    <f:actionListener binding="#{CommentForm.setProcessById(parent.id)}"/>
-                                                    <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
-                                                </h:commandLink>
+                                                <h:panelGroup styleClass="action"
+                                                              title="#{MetadataLock.isLocked(parent.id) ? msgs['blocked'].concat(MetadataLock.getLockUser(parent.id).fullName) : msgs['metadataEdit']}">
+                                                    <h:link id="editMetadata"
+                                                            outcome="metadataEditor"
+                                                            disabled="#{MetadataLock.isLocked(parent.id)}"
+                                                            styleClass="#{MetadataLock.isLocked(parent.id) ? 'ui-state-disabled' : ''}"
+                                                            rendered="#{SecurityAccessController.hasAuthorityToOpenMetadataEditor()}">
+                                                        <h:outputText><i class="fa fa-list-alt fa-lg"/></h:outputText>
+                                                        <f:param name="id" value="#{parent.id}"/>
+                                                        <f:param name="referer" value="processes"/>
+                                                    </h:link>
+                                                </h:panelGroup>
                                             </p:column>
                                         </p:dataTable>
                                         <h:outputText value="#{msgs.none}"

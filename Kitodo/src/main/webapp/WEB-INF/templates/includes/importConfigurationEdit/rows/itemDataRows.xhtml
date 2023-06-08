@@ -1,0 +1,109 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:row>
+            <div>
+                <p:outputLabel for="itemFieldXPath" value="#{msgs['importConfig.field.itemField.xPath']}"/>
+                <p:inputText id="itemFieldXPath" styleClass="input-with-button"
+                             validator="XPathValidator"
+                             value="#{importConfigurationEditView.importConfiguration.itemFieldXpath}"
+                             placeholder="#{msgs['importConfig.field.itemField.xPath']}"
+                             disabled="#{isViewMode}">
+                    <p:ajax event="change"
+                            update="editForm:importConfigurationTabView:itemFieldXPathSignatureSubPath
+                                                editForm:importConfigurationTabView:itemFieldXPathOwnerSubPath
+                                                editForm:importConfigurationTabView:itemFieldXPathSignatureMetadata
+                                                editForm:importConfigurationTabView:itemFieldXPathOwnerMetadata"/>
+                </p:inputText>
+                <p:commandButton id="itemFieldXPathHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="itemFieldXPathHelpButton"
+                           value="#{msgs['tooltip.importConfig.itemFieldXPathHelp']}"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="itemFieldXPathOwnerSubPath" value="#{msgs['importConfig.field.itemField.ownerSubpath']}"/>
+                <p:inputText id="itemFieldXPathOwnerSubPath" styleClass="input-with-button"
+                             validator="XPathValidator"
+                             value="#{importConfigurationEditView.importConfiguration.itemFieldOwnerSubPath}"
+                             placeholder="#{msgs['importConfig.field.itemField.ownerSubpath']}"
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="itemFieldXPathOwnerSubPathHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="itemFieldXPathOwnerSubPathHelpButton"
+                           value="#{msgs['tooltip.importConfig.itemFieldXPathOwnerHelp']}"/>
+            </div>
+
+            <div>
+                <p:outputLabel for="itemFieldXPathSignatureSubPath" value="#{msgs['importConfig.field.itemField.signatureSubpath']}"/>
+                <p:inputText id="itemFieldXPathSignatureSubPath" styleClass="input-with-button"
+                             validator="XPathValidator"
+                             value="#{importConfigurationEditView.importConfiguration.itemFieldSignatureSubPath}"
+                             placeholder="#{msgs['importConfig.field.itemField.signatureSubpath']}"
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="itemFieldXPathSignatureSubPathHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="itemFieldXPathSignatureSubPathHelpButton"
+                           value="#{msgs['tooltip.importConfig.itemFieldXPathSignatureHelp']}"/>
+            </div>
+        </p:row>
+
+        <p:row id="itemFieldMetadata">
+            <h:panelGroup layout="block"
+                          class="ui-panelgrid-cell cell-dummy"/>
+            <div>
+                <p:outputLabel for="itemFieldXPathOwnerMetadata" value="#{msgs['importConfig.field.itemField.ownerMetadata']}"/>
+                <p:inputText id="itemFieldXPathOwnerMetadata" styleClass="input-with-button"
+                             validator="XPathValidator"
+                             value="#{importConfigurationEditView.importConfiguration.itemFieldOwnerMetadata}"
+                             placeholder="#{msgs['importConfig.field.itemField.ownerSubpath']}"
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="itemFieldXPathOwnerMetadataHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="itemFieldXPathOwnerMetadataHelpButton"
+                           value="#{msgs['tooltip.importConfig.itemFieldOwnerMetadataHelp']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="itemFieldXPathSignatureMetadata" value="#{msgs['importConfig.field.itemField.signatureMetadata']}"/>
+                <p:inputText id="itemFieldXPathSignatureMetadata" styleClass="input-with-button"
+                             validator="XPathValidator"
+                             value="#{importConfigurationEditView.importConfiguration.itemFieldSignatureMetadata}"
+                             placeholder="#{msgs['importConfig.field.itemField.signatureMetadata']}"
+                             disabled="#{isViewMode or empty importConfigurationEditView.importConfiguration.itemFieldXpath}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="itemFieldXPathSignatureMetadataHelpButton" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="itemFieldXPathSignatureMetadataHelpButton"
+                           value="#{msgs['tooltip.importConfig.itemFieldSignatureMetadataHelp']}"/>
+            </div>
+        </p:row>
+    </f:view>
+</ui:composition>

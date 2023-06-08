@@ -24,21 +24,21 @@
                 <p:panelGrid columns="1" layout="grid">
                     <p:row>
                         <div>
-                            <p:commandButton id="createPaginationButton"
-                                             action="#{DataEditorForm.paginationPanel.createPagination()}"
-                                             value="#{msgs.paginationRead}"
+                            <p:commandButton id="updateMediaReferencesButton"
+                                             action="#{DataEditorForm.paginationPanel.updateMediaReferences()}"
+                                             process="@this"
+                                             value="#{msgs.updateFileReferences}"
                                              rendered="#{SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                              icon="fa fa-magic fa-lg"
                                              iconPos="right"
                                              styleClass="secondary"
-                                             style="margin: 0;"
                                              update="paginationForm:paginationSelection,structureTreeForm,galleryWrapperPanel"
                                              immediate="true"/>
                         </div>
                         <div>
                             <p:selectManyMenu id="paginationSelection"
                                               value="#{DataEditorForm.paginationPanel.paginationSelectionSelectedItems}"
-                                              required="true"
+                                              required="#{not empty param['paginationForm:apply']}"
                                               requiredMessage="#{msgs.paginationNoPagesSelected}"
                                               disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
                                               filter="true"
@@ -48,7 +48,7 @@
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
                                 <p:ajax event="change"
                                         oncomplete="changeToMapView();scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
-                                        update="galleryHeadingWrapper,imagePreviewForm:mediaViewData,metadataAccordion:logicalMetadataWrapperPanel"/>
+                                        update="galleryHeadingWrapper,imagePreviewForm:mediaDetail,metadataAccordion:logicalMetadataWrapperPanel"/>
                             </p:selectManyMenu>
                         </div>
                         <div>
@@ -220,7 +220,7 @@
                                  onclick="window.pagesScrollPosition = $('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop();
                                           PF('notifications').renderMessage({'summary':'#{msgs.paginationSaving}','severity':'info'});$('loadingScreen').show()"
                                  oncomplete="$('#paginationForm\\:paginationSelection .ui-selectlistbox-listcontainer').scrollTop(pagesScrollPosition);"
-                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), imagePreviewForm:thumbnailWrapper, metadataAccordion:logicalMetadataWrapperPanel"
+                                 update="notifications, paginationForm:paginationSelection, @(.ui-tree), @(.thumbnail-overlay), metadataAccordion:logicalMetadataWrapperPanel"
                                  value="#{msgs.apply}"/>
                 <p:commandButton id="cancel"
                                  value="#{msgs.cancel}"

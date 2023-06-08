@@ -1,0 +1,194 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:panelGrid columns="2"
+                     layout="grid">
+            <p:row>
+                <div>
+                    <p:outputLabel for="interfaceType" value="#{msgs['importConfig.field.interfaceType']} *"/>
+                    <p:selectOneMenu id="interfaceType" styleClass="input-with-button"
+                                     required="#{not empty param['editForm:save']}"
+                                     value="#{importConfigurationEditView.importConfiguration.interfaceType}">
+                        <f:selectItem itemValue="#{null}"
+                                      itemLabel="-- #{msgs['importConfig.selectInterfaceType']} --"
+                                      noSelectionOption="true"/>
+                        <f:selectItems value="#{importConfigurationEditView.interfaceTypes}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"
+                                update="editForm:importConfigurationTabView"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="interfaceTypeHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="interfaceTypeHelp"
+                               value="#{msgs['tooltip.importConfig.interfaceTypeHelp']}"/>
+                </div>
+                <div>
+                    <p:outputLabel for="queryDelimiter" value="#{msgs['importConfig.field.queryDelimiter']}" />
+                    <p:inputText id="queryDelimiter" styleClass="input-with-button input"
+                                 value="#{importConfigurationEditView.importConfiguration.queryDelimiter}"
+                                 placeholder="#{msgs['importConfig.field.queryDelimiter']}"
+                                 disabled="#{isViewMode}">
+                        <p:ajax event="change"
+                                oncomplete="toggleSave();"/>
+                    </p:inputText>
+                    <p:commandButton id="queryDelimiterHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="queryDelimiterHelp"
+                               value="#{msgs['tooltip.importConfig.queryDelimiterHelp']}"/>
+                </div>
+                <div>
+                    <p:outputLabel for="prestructuredImport" value="#{msgs['importConfig.field.prestructuredImport']}" />
+                    <p:selectBooleanCheckbox id="prestructuredImport" styleClass="switch input-with-button"
+                                             value="#{importConfigurationEditView.importConfiguration.prestructuredImport}"
+                                             disabled="#{isViewMode}">
+                        <p:ajax event="change" oncomplete="toggleSave()"/>
+                    </p:selectBooleanCheckbox>
+                    <p:commandButton id="prestructuredImportHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="prestructuredImportHelp"
+                               value="#{msgs['tooltip.importConfig.prestructuredImportHelp']}"/>
+                </div>
+            </p:row>
+            <p:row>
+                <div>
+                    <p:outputLabel for="url" value="#{msgs['importConfig.field.url']}"/>
+                    <p:panelGrid id="url" columns="4" styleClass="input-with-button">
+                        <p:selectOneMenu id="scheme"
+                                         styleClass="input url-part"
+                                         value="#{importConfigurationEditView.importConfiguration.scheme}"
+                                         disabled="#{isViewMode}" required="#{not empty param['editForm:save']}">
+                            <f:selectItems value="#{importConfigurationEditView.schemes}"/>
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave()"/>
+                        </p:selectOneMenu>
+                        <p:inputText id="host"
+                                     styleClass="input url-part"
+                                     value="#{importConfigurationEditView.importConfiguration.host}"
+                                     placeholder="#{msgs['importConfig.field.host']}"
+                                     disabled="#{isViewMode}"
+                                     required="#{not empty param['editForm:save']}">
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave();"/>
+                        </p:inputText>
+                        <p:inputText id="port"
+                                     styleClass="input url-part"
+                                     value="#{importConfigurationEditView.importConfiguration.port}"
+                                     placeholder="#{msgs['importConfig.field.port']}"
+                                     disabled="#{isViewMode}">
+                            <p:keyFilter mask="int"/>
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave();"/>
+                        </p:inputText>
+                        <p:inputText id="path"
+                                     styleClass="input url-part"
+                                     value="#{importConfigurationEditView.importConfiguration.path}"
+                                     placeholder="#{msgs['importConfig.field.path']}"
+                                     validator="AbsolutePathValidator"
+                                     disabled="#{isViewMode}">
+                            <p:ajax event="change"
+                                    oncomplete="toggleSave();"/>
+                        </p:inputText>
+                    </p:panelGrid>
+                    <p:commandButton id="urlHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="urlHelp"
+                               value="#{msgs['tooltip.importConfig.urlHelp']}"/>
+                </div>
+            </p:row>
+        </p:panelGrid>
+
+        <!-- SRU or OAI specific settings -->
+        <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                 importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+            <h:panelGroup layout="block"
+                          styleClass="horizontal-separator"/>
+            <p:panelGrid columns="2"
+                         layout="grid">
+                <ui:include src="rows/interfaceUrlParameters.xhtml"/>
+            </p:panelGrid>
+        </ui:fragment>
+
+        <!-- FTP specific settings -->
+        <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'FTP'}">
+            <h:panelGroup layout="block"
+                          styleClass="horizontal-separator"/>
+            <p:panelGrid columns="2"
+                         layout="grid"
+                         id="credentials">
+                <ui:include src="rows/loginDataRows.xhtml"/>
+            </p:panelGrid>
+        </ui:fragment>
+
+        <!-- CUSTOM interface settings -->
+        <ui:fragment rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}">
+            <h:panelGroup layout="block"
+                          styleClass="horizontal-separator"/>
+            <p:panelGrid columns="2"
+                         layout="grid">
+                <ui:include src="rows/urlParameterRows.xhtml"/>
+            </p:panelGrid>
+        </ui:fragment>
+
+        <h:panelGroup layout="block"
+                      styleClass="horizontal-separator"/>
+
+        <ui:fragment rendered="#{not empty importConfigurationEditView.importConfiguration.interfaceType}">
+            <p:panelGrid columns="2"
+                         layout="grid">
+                <ui:include src="rows/formatRow.xhtml"/>
+            </p:panelGrid>
+        </ui:fragment>
+
+        <ui:fragment rendered="#{not empty importConfigurationEditView.importConfiguration.interfaceType
+                                 and importConfigurationEditView.importConfiguration.interfaceType ne 'FTP'}">
+            <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}"
+                          styleClass="horizontal-separator"/>
+
+            <p:panelGrid columns="2"
+                         rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}"
+                         layout="grid">
+                <ui:include src="rows/hierarchyRows.xhtml"/>
+            </p:panelGrid>
+
+            <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                     importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}"
+                          styleClass="horizontal-separator"/>
+
+            <p:panelGrid columns="2"
+                         rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                     importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM'}"
+                         layout="grid">
+                <ui:include src="rows/searchFieldRows.xhtml"/>
+            </p:panelGrid>
+
+            <h:panelGroup layout="block"
+                          styleClass="horizontal-separator"/>
+
+            <p:panelGrid columns="2"
+                         layout="grid">
+                <ui:include src="rows/itemDataRows.xhtml"/>
+            </p:panelGrid>
+
+        </ui:fragment>
+
+    </f:view>
+</ui:composition>

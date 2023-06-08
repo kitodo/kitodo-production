@@ -24,9 +24,10 @@ import java.util.stream.Collectors;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.ImportException;
@@ -49,7 +50,7 @@ public class MassImportForm extends BaseForm {
     private int projectId;
     private int templateId;
     private String templateTitle;
-    private String selectedCatalog;
+    private ImportConfiguration importConfiguration;
     private UploadedFile file;
     private String csvSeparator = ";";
     private String previousCsvSeparator = null;
@@ -60,6 +61,7 @@ public class MassImportForm extends BaseForm {
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
     private HashMap<String, String> importSuccessMap = new HashMap<>();
     private Integer progress = 0;
+    private Boolean rulesetConfigurationForOpacImportComplete = null;
 
     /**
      * Prepare mass import.
@@ -73,9 +75,21 @@ public class MassImportForm extends BaseForm {
         try {
             Template template = ServiceManager.getTemplateService().getById(templateId);
             templateTitle = template.getTitle();
-            addMetadataDialog.setRulesetManagement(ServiceManager.getRulesetService().openRuleset(template.getRuleset()));
+            RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(template.getRuleset());
+            addMetadataDialog.setRulesetManagement(ruleset);
+            checkRecordIdentifierConfigured(ruleset);
         } catch (DAOException | IOException e) {
             Helper.setErrorMessage(e);
+        }
+    }
+
+    private void checkRecordIdentifierConfigured(RulesetManagementInterface ruleset) {
+        if (Objects.isNull(rulesetConfigurationForOpacImportComplete)) {
+            rulesetConfigurationForOpacImportComplete = ServiceManager.getImportService()
+                    .isRecordIdentifierMetadataConfigured(ruleset);
+        }
+        if (!rulesetConfigurationForOpacImportComplete) {
+            PrimeFaces.current().executeScript("PF('recordIdentifierMissingDialog').show();");
         }
     }
 
@@ -165,7 +179,8 @@ public class MassImportForm extends BaseForm {
         PrimeFaces.current().ajax().update("massImportProgressDialog");
         for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
             try {
-                importService.importProcess(entry.getKey(), projectId, templateId, selectedCatalog, entry.getValue());
+                importService.importProcess(entry.getKey(), projectId, templateId, importConfiguration,
+                        entry.getValue());
                 importSuccessMap.put(entry.getKey(), null);
             } catch (ImportException e) {
                 importSuccessMap.put(entry.getKey(), e.getLocalizedMessage());
@@ -226,22 +241,22 @@ public class MassImportForm extends BaseForm {
     }
 
     /**
-     * Get selectedCatalog.
+     * Get importConfiguration.
      *
-     * @return value of selectedCatalog
+     * @return value of importConfiguration
      */
-    public String getSelectedCatalog() {
-        return StringUtils.isBlank(selectedCatalog) ? null : selectedCatalog;
+    public ImportConfiguration getImportConfigurationId() {
+        return importConfiguration;
     }
 
     /**
-     * Set selectedCatalog.
+     * Set importConfiguration.
      *
-     * @param selectedCatalog
-     *            as java.lang.String
+     * @param importConfiguration
+     *            as ImportConfiguration
      */
-    public void setSelectedCatalog(String selectedCatalog) {
-        this.selectedCatalog = selectedCatalog;
+    public void setImportConfigurationId(ImportConfiguration importConfiguration) {
+        this.importConfiguration = importConfiguration;
     }
 
     /**
@@ -418,5 +433,14 @@ public class MassImportForm extends BaseForm {
      */
     public int getNumberOfProcessesRecords() {
         return importSuccessMap.size();
+    }
+
+    /**
+     * Get rulesetConfigurationForOpacImportComplete.
+     *
+     * @return value of rulesetConfigurationForOpacImportComplete
+     */
+    public Boolean getRulesetConfigurationForOpacImportComplete() {
+        return rulesetConfigurationForOpacImportComplete;
     }
 }

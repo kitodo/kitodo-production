@@ -84,6 +84,7 @@
                     <div>
                         <p:commandButton action="#{CalendarForm.addIssue(block)}"
                                          value="#{msgs['calendar.issue.add']}"
+                                         id="addIssue"
                                          icon="fa fa-plus"
                                          styleClass="callto"
                                          iconPos="right"
@@ -189,7 +190,7 @@
                             value="#{CalendarForm.getMetadataSummary(block)}">
                     <p:dataViewListItem>
                         <h:outputText styleClass="label"
-                                      value="#{CalendarForm.getMetadataTranslation(metadata.key.metadataID)}
+                                      value="#{metadata.key.label}
                                              #{msgs.metadataWithValue}
                                              '#{CalendarForm.getMetadataValue(metadata.key)}'
                                              #{msgs['calendar.metadata.firstAppearance']}

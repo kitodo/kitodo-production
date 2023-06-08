@@ -287,11 +287,11 @@ public class MetadataValidation implements MetadataValidationInterface {
                 for (Metadata metadata : metadataViewWithValues.getValue()) {
                     if (metadata instanceof MetadataGroup) {
                         ValidationResult validationResult = checkForMandatoryQuantitiesOfTheMetadataRecursive(
-                            ((MetadataGroup) metadata).getGroup(),
+                            ((MetadataGroup) metadata).getMetadata(),
                             (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                             translations);
-                        if (validationResult.getState().equals(State.WARNING)) {
-                            warning = true;
+                        if (validationResult.getState().equals(State.ERROR)) {
+                            error = true;
                         }
                         messages.addAll(validationResult.getResultMessages());
                     } else {
@@ -327,7 +327,7 @@ public class MetadataValidation implements MetadataValidationInterface {
         return checkForDetailsInTheMetadata( // start recursion
             containedMetadata, containingMetadataView, location, translations, new LinkedList<>());
     }
-    
+
     private static ValidationResult checkForDetailsInTheMetadata(
             Collection<Metadata> containedMetadata, ComplexMetadataViewInterface containingMetadataView,
             String location, Map<String, String> translations, LinkedList<Map<MetadataEntry, Boolean>> surroundingMetadata) {
@@ -355,7 +355,7 @@ public class MetadataValidation implements MetadataValidationInterface {
                 } else if (metadata instanceof MetadataGroup
                         && metadataView instanceof ComplexMetadataViewInterface) {
                     ValidationResult validationResult = checkForDetailsInTheMetadata( // recursive
-                        ((MetadataGroup) metadata).getGroup(),
+                        ((MetadataGroup) metadata).getMetadata(),
                         (ComplexMetadataViewInterface) metadataView, location + metadataView.getLabel() + " - ",
                         translations, surroundingMetadata);
                     if (validationResult.getState().equals(State.ERROR)) {

@@ -47,7 +47,6 @@ public class CatalogImportIT {
     private static final String PARENT_RECORD_PATH = "src/test/resources/importRecords/importParentRecord.xml";
     private static final String CHILD_RECORD_ID = "1";
     private static final String PARENT_RECORD_ID = "2";
-    private static final String OPAC_NAME = "Kalliope";
     private static final int PROJECT_ID = 1;
     private static final int TEMPLATE_ID = 1;
     private static final int IMPORT_DEPTH = 2;
@@ -57,6 +56,8 @@ public class CatalogImportIT {
         setupServer();
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
@@ -71,7 +72,7 @@ public class CatalogImportIT {
     @Test
     public void shouldImportProcessHierarchy() throws Exception {
         LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(CHILD_RECORD_ID,
-                OPAC_NAME, PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH,
+                MockDatabase.getKalliopeImportConfiguration(), PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH,
                 Collections.singleton("CatalogIDPredecessorPeriodical"));
         Assert.assertEquals(IMPORT_DEPTH, processes.size());
     }

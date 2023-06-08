@@ -45,16 +45,19 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body"/>
-        <script>
-            window.onload = function () {
-                checkForm('editForm')
-            };
-        </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.createNewWorkflow}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.duplicateWorkflow}" rendered="#{isDuplicateMode}"/>
-            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.createNewWorkflow}"
+                          styleClass="shortable"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.duplicateWorkflow}"
+                          styleClass="shortable"
+                          rendered="#{isDuplicateMode}"/>
+            <h:outputText value="#{msgs.editWorkflow} (#{WorkflowForm.workflow.title})"
+                          styleClass="shortable"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewWorkflow} (#{WorkflowForm.workflow.title})"
+                          styleClass="shortable"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton value="#{isViewMode ? msgs.close : msgs.cancel}"
                   action="#{WorkflowForm.cancel()}"
@@ -77,7 +80,11 @@
                               'summary':'#{msgs.workflowSaving}',
                               'detail':'#{msgs.youWillBeRedirected}',
                               'severity':'info'});"
-                         disabled="#{WorkflowForm.saveDisabled}"/>
+                         disabled="#{WorkflowForm.saveDisabled}">
+            <p:confirm header="#{msgs.confirmDelete}" message="#{msgs.confirmUpdateWorkflow}"
+                       disabled="#{not WorkflowForm.hasWorkflowDataEditorSettingsDefined()}"
+                       icon="ui-icon-alert"/>
+        </p:commandButton>
     </ui:define>
 
     <ui:define name="pageTabView">

@@ -29,7 +29,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.SystemUtils;
+import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -43,7 +43,7 @@ import org.kitodo.config.KitodoConfig;
 
 public class FileManagementTest {
 
-    private static FileManagement fileManagement = new FileManagement();
+    private static final FileManagement fileManagement = new FileManagement();
 
     private static final String FILE_TEST = "fileTest";
     private static final String DIRECTORY_SIZE = "directorySize";
@@ -148,6 +148,20 @@ public class FileManagementTest {
         URI newUri = URI.create("fileTest/newName.xml");
         Assert.assertFalse(fileManagement.fileExist(oldUri));
         assertTrue(fileManagement.fileExist(newUri));
+    }
+
+    @Test
+    public void shouldSkipRenamingDirectory() throws Exception {
+        String directoryName = "testDir";
+        URI resource = fileManagement.create(URI.create(""), directoryName, false);
+        assumeTrue(fileManagement.isDirectory(resource));
+        URI expectedUri = new File(KitodoConfig.getKitodoDataDirectory() + resource).toURI();
+        assertEquals("Renaming directory to the identical name should return identical URI", expectedUri,
+                fileManagement.rename(resource, directoryName));
+        String directoryWithTrailingSlash = directoryName + "/";
+        assertEquals("Renaming directory to the identical name with trailing slash should return identical URI",
+                expectedUri, fileManagement.rename(resource, directoryWithTrailingSlash));
+        fileManagement.delete(resource);
     }
 
     @Test

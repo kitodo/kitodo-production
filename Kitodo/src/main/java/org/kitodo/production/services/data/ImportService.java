@@ -19,15 +19,16 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -38,21 +39,21 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
-import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
-import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.externaldatamanagement.DataImport;
 import org.kitodo.api.externaldatamanagement.ExternalDataImportInterface;
+import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.schemaconverter.DataRecord;
@@ -62,16 +63,21 @@ import org.kitodo.api.schemaconverter.MetadataFormat;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigProject;
-import org.kitodo.config.OPACConfig;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.UrlParameter;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.DoctypeMissingException;
@@ -81,6 +87,7 @@ import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
@@ -89,6 +96,7 @@ import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.forms.createprocess.ProcessSelectMetadata;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -107,6 +115,7 @@ import org.xml.sax.SAXParseException;
 public class ImportService {
 
     private static final Logger logger = LogManager.getLogger(ImportService.class);
+    public static final String ACQUISITION_STAGE_CREATE = "create";
 
     private static volatile ImportService instance = null;
     private static ExternalDataImportInterface importModule;
@@ -116,10 +125,8 @@ public class ImportService {
     private ProcessGenerator processGenerator;
     private static final String REPLACE_ME = "REPLACE_ME";
     // default value for identifierMetadata if no OPAC specific metadata has been configured in kitodo_opac.xml
-    private static String identifierMetadata = "CatalogIDDigital";
     private static final String PARENT_XPATH = "//kitodo:metadata[@name='" + REPLACE_ME + "']";
     private static final String PARENTHESIS_TRIM_MODE = "parenthesis";
-    private String trimMode = "";
     private LinkedList<ExemplarRecord> exemplarRecords;
 
     private static final String PERSON = "Person";
@@ -132,12 +139,21 @@ public class ImportService {
     private static final String VOLUME = "Volume";
     private static final String MULTI_VOLUME_WORK = "MultiVolumeWork";
 
-    private String tiffDefinition;
+    private static Collection<RecordIdentifierMissingDetail> recordIdentifierMissingDetails = new ArrayList<>();
+    private String tiffDefinition = "";
     private boolean usingTemplates;
 
     private TempProcess parentTempProcess;
 
     private static final String CATALOG_IDENTIFIER = "CatalogIDDigital";
+
+    private static final String SRU_OPERATION = "operation";
+    private static final String SRU_SEARCH_RETRIEVE = "searchRetrieve";
+    private static final String SRU_VERSION = "version";
+    private static final String SRU_RECORD_SCHEMA = "recordSchema";
+    private static final String OAI_VERB = "verb";
+    private static final String OAI_GET_RECORD = "GetRecord";
+    private static final String OAI_METADATA_PREFIX = "metadataPrefix";
 
     /**
      * Return singleton variable of type ImportService.
@@ -158,44 +174,23 @@ public class ImportService {
         return localReference;
     }
 
-    private void loadOpacConfiguration(String catalogName) {
-        try {
-            OPACConfig.getOPACConfiguration(catalogName);
-            try {
-                trimMode = OPACConfig.getParentIDTrimMode(catalogName);
-            } catch (NoSuchElementException e) {
-                logger.debug(e.getLocalizedMessage());
-            }
-            try {
-                String idMetadata = OPACConfig.getIdentifierMetadata(catalogName);
-                if (StringUtils.isNotBlank(idMetadata)) {
-                    identifierMetadata = idMetadata;
-                }
-            } catch (NoSuchElementException e) {
-                logger.debug(e.getLocalizedMessage());
-            }
-        } catch (IllegalArgumentException e) {
-            logger.error(e.getLocalizedMessage());
-            throw new IllegalArgumentException("Error: OPAC '" + catalogName + "' is not supported!");
-        }
-    }
-
     /**
      * Load ExternalDataImportInterface implementation with KitodoServiceLoader and perform given query string
      * with loaded module.
      *
      * @param searchField field to query
      * @param searchTerm  given search term
-     * @param catalogName catalog to search
+     * @param importConfiguration ImportConfiguration to use
      * @param start index of first record returned
      * @param rows number of records returned
      * @return search result
      */
-    public SearchResult performSearch(String searchField, String searchTerm, String catalogName, int start, int rows) {
+    public SearchResult performSearch(String searchField, String searchTerm, ImportConfiguration importConfiguration,
+                                      int start, int rows) {
         importModule = initializeImportModule();
-        loadOpacConfiguration(catalogName);
-        searchTerm = getSearchTermWithDelimiter(searchTerm, catalogName);
-        return importModule.search(catalogName, searchField, searchTerm, start, rows);
+        searchTerm = getSearchTermWithDelimiter(searchTerm, importConfiguration);
+        return importModule.search(createDataImportFromImportConfiguration(importConfiguration), searchField,
+                searchTerm, start, rows);
     }
 
     private ExternalDataImportInterface initializeImportModule() {
@@ -205,59 +200,88 @@ public class ImportService {
     }
 
     /**
-     * Load search fields of catalog with given name 'opac' from library catalog configuration file and return them as a list
-     * of Strings.
+     * Load search fields from provided ImportConfiguration and return them as a list of Strings.
      *
-     * @param opac name of catalog whose search fields are loaded
+     * @param importConfiguration ImportConfiguration to use
      * @return list containing search fields
      */
-    public List<String> getAvailableSearchFields(String opac) {
+    public List<String> getAvailableSearchFields(ImportConfiguration importConfiguration) {
         try {
-            // FTP server do not support query parameters but only use the filename for OPAC search!
-            if (SearchInterfaceType.FTP.equals(OPACConfig.getInterfaceType(opac))) {
+            if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
+                // FTP server do not support query parameters but only use the filename for OPAC search!
                 return Collections.singletonList(Helper.getTranslation("filename"));
+            } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+                // OAI PMH interfaces do not support query parameters but only use the ID of the record to retrieve it!
+                return Collections.singletonList(Helper.getTranslation("recordId"));
             } else {
                 List<String> fields = new ArrayList<>();
-                HierarchicalConfiguration searchFields = OPACConfig.getSearchFields(opac);
+                List<SearchField> searchFields = importConfiguration.getSearchFields();
 
                 if (Objects.nonNull(searchFields)) {
-                    for (HierarchicalConfiguration searchField : searchFields.configurationsAt("searchField")) {
-                        if ("true".equals(searchField.getString("[@hide]"))) {
+                    for (SearchField searchField : searchFields) {
+                        if (!searchField.isDisplayed()) {
                             continue;
                         }
-                        fields.add(searchField.getString("[@label]"));
+                        fields.add(searchField.getLabel());
                     }
                 }
                 return fields;
             }
         } catch (IllegalArgumentException e) {
             logger.error(e.getLocalizedMessage());
-            throw new IllegalArgumentException("Error: OPAC '" + opac + "' is not supported!");
+            throw new IllegalArgumentException("Error retrieving search fields from ImportConfiguration '"
+                    + importConfiguration.getTitle() + "': " + e.getMessage());
         }
     }
 
     /**
-     * Get first default search field for catalog 'opac'.
+     * Retrieve default search field label of given ImportConfiguration.
      *
-     * @param opac catalog name
-     * @return name of default search field
+     * @param importConfiguration ImportConfiguration
+     * @return label of default search field
      */
-    public String getDefaultSearchField(String opac) {
-        if (SearchInterfaceType.FTP.equals(OPACConfig.getInterfaceType(opac))) {
+    public static String getDefaultSearchField(ImportConfiguration importConfiguration) {
+        if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
             return Helper.getTranslation("filename");
-        } else {
-            return OPACConfig.getDefaultSearchField(opac);
+        } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+            return Helper.getTranslation("recordId");
+        } else if (Objects.nonNull(importConfiguration.getDefaultSearchField())) {
+            return importConfiguration.getDefaultSearchField().getLabel();
+        } else if (!importConfiguration.getSearchFields().isEmpty()) {
+            return importConfiguration.getSearchFields().get(0).getLabel();
         }
+        return "";
     }
 
     /**
-     * Get default import depth for catalog 'opac.
-     *
-     * @param opac catalog name
-     * @return default import depth of catalog 'opac'
+     * Check and return whether to skip hit list for given ImportConfiguration and search field or not.
+     * Hit list is skipped either if SearchInterfaceType of given ImportConfiguration does not support
+     * hit lists (e.g. OAI interfaces in their current implementation) or if the provided search field
+     * equals the ID search field of the given ImportConfiguration.
+     * @param configuration ImportConfiguration to check
+     * @param field value of SearchField to check
+     * @return whether to skip hit list or not
      */
-    public int getDefaultImportDepth(String opac) {
-        int depth = OPACConfig.getDefaultImportDepth(opac);
+    public static boolean skipHitlist(ImportConfiguration configuration, String field) {
+        if (SearchInterfaceType.FTP.name().equals(configuration.getInterfaceType())) {
+            return false;
+        }
+        else if (SearchInterfaceType.OAI.name().equals(configuration.getInterfaceType())
+                || field.equals(configuration.getIdSearchField().getLabel())) {
+            return true;
+        }
+        return (Objects.isNull(configuration.getMetadataRecordIdXPath())
+                || Objects.isNull(configuration.getMetadataRecordTitleXPath()));
+    }
+
+    /**
+     * Get default import depth for given import configuration.
+     *
+     * @param importConfiguration ImportConfiguration
+     * @return default import depth of given import configuration
+     */
+    public int getDefaultImportDepth(ImportConfiguration importConfiguration) {
+        int depth = importConfiguration.getDefaultImportDepth();
         if (depth < 0 || depth > 5) {
             return 2;
         } else {
@@ -265,35 +289,14 @@ public class ImportService {
         }
     }
 
-    /**
-     * Load catalog names from library catalog configuration file and return them as a list of Strings.
-     *
-     * @return list of catalog names
-     */
-    public List<String> getAvailableCatalogs() {
-        try {
-            return OPACConfig.getCatalogs();
-        } catch (IllegalArgumentException e) {
-            logger.error(e.getLocalizedMessage());
-            throw new IllegalArgumentException("Error: no supported OPACs found in configuration file!");
-        }
-    }
-
-    /**
-     * Get first default catalog configured in 'kitodo_opac.xml'.
-     *
-     * @return name of first default catalog or empty String no default catalog is configured.
-     */
-    public String getDefaultCatalog() {
-        return OPACConfig.getDefaultCatalog();
-    }
-
-    private LinkedList<ExemplarRecord> extractExemplarRecords(DataRecord record, String opac) throws XPathExpressionException,
+    private LinkedList<ExemplarRecord> extractExemplarRecords(DataRecord record,
+                                                              ImportConfiguration importConfiguration)
+            throws XPathExpressionException,
             ParserConfigurationException, SAXException, IOException {
         LinkedList<ExemplarRecord> exemplarRecords = new LinkedList<>();
-        String exemplarXPath = OPACConfig.getExemplarFieldXPath(opac);
-        String ownerXPath = OPACConfig.getExemplarFieldOwnerXPath(opac);
-        String signatureXPath = OPACConfig.getExemplarFieldSignatureXPath(opac);
+        String exemplarXPath = importConfiguration.getItemFieldXpath();
+        String ownerXPath = importConfiguration.getItemFieldOwnerSubPath();
+        String signatureXPath = importConfiguration.getItemFieldSignatureSubPath();
 
         if (!StringUtils.isBlank(exemplarXPath) && !StringUtils.isBlank(ownerXPath)
                 && !StringUtils.isBlank(signatureXPath) && record.getOriginalData() instanceof String) {
@@ -336,10 +339,8 @@ public class ImportService {
         KitodoServiceLoader<SchemaConverterInterface> loader =
                 new KitodoServiceLoader<>(SchemaConverterInterface.class);
         List<SchemaConverterInterface> converterModules = loader.loadModules().stream()
-                .filter(c -> c.supportsSourceMetadataFormat(record.getMetadataFormat())
-                        && c.supportsSourceFileFormat(record.getFileFormat())
-                        && c.supportsTargetMetadataFormat(MetadataFormat.KITODO)
-                        && c.supportsTargetFileFormat(FileFormat.XML))
+                .filter(converter -> converter.supportsSourceFileFormat(record.getFileFormat())
+                        && converter.supportsTargetFileFormat(FileFormat.XML))
                 .collect(Collectors.toList());
         if (converterModules.isEmpty()) {
             throw new UnsupportedFormatException("No SchemaConverter found that supports '"
@@ -375,9 +376,11 @@ public class ImportService {
      * Get the parent ID from the document.
      * @param document Document to parse
      * @param higherLevelIdentifier the given identifier
+     * @param trimMode trim mode for parent id
      * @return parent ID
      */
-    public String getParentID(Document document, String higherLevelIdentifier) throws XPathExpressionException {
+    public String getParentID(Document document, String higherLevelIdentifier, String trimMode)
+        throws XPathExpressionException {
         XPath parentIDXpath = XPathFactory.newInstance().newXPath();
         parentIDXpath.setNamespaceContext(new KitodoNamespaceContext());
         NodeList nodeList = (NodeList) parentIDXpath.compile(PARENT_XPATH.replace(REPLACE_ME, higherLevelIdentifier))
@@ -401,7 +404,8 @@ public class ImportService {
      * @param projectID the project to use
      * @return a temporary process
      */
-    public TempProcess createTempProcessFromDocument(String opac, Document document, int templateID, int projectID)
+    public TempProcess createTempProcessFromDocument(ImportConfiguration importConfiguration, Document document,
+                                                     int templateID, int projectID)
             throws ProcessGenerationException, IOException, TransformerException, InvalidMetadataValueException,
             NoSuchMetadataFieldException {
         Process process = null;
@@ -413,7 +417,8 @@ public class ImportService {
             process = processGenerator.getGeneratedProcess();
         }
         TempProcess tempProcess;
-        if (OPACConfig.isPrestructuredImport(opac)) {
+
+        if (importConfiguration.getPrestructuredImport()) {
             // logical structure is created by import XSLT file!
             Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(document);
             tempProcess = new TempProcess(process, workpiece);
@@ -424,30 +429,18 @@ public class ImportService {
         } else {
             throw new ProcessGenerationException("Ruleset missing!");
         }
-        addTitleAndTiffHeaderDataToTempProcess(tempProcess);
         return tempProcess;
     }
 
-    private void addTitleAndTiffHeaderDataToTempProcess(TempProcess tempProcess) throws IOException,
-            InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException {
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService()
-                .openRuleset(tempProcess.getProcess().getRuleset());
-        String acquisitionStage = "create";
-        List<Locale.LanguageRange> priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
-        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
-                acquisitionStage, priorityList);
-        createProcessTitle(tempProcess, managementInterface, acquisitionStage, priorityList, processDetails);
-    }
-
-    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses, String opac,
-                                                  int projectID, int templateID, boolean isParentInRecord,
-                                                  String parentIdMetadata)
+    private String importProcessAndReturnParentID(String recordId, LinkedList<TempProcess> allProcesses,
+                                                  ImportConfiguration importConfiguration, int projectID,
+                                                  int templateID, boolean isParentInRecord, String parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, TransformerException,
             InvalidMetadataValueException, NoSuchMetadataFieldException {
 
-        Document internalDocument = importDocument(opac, recordId, allProcesses.isEmpty(), isParentInRecord);
-        TempProcess tempProcess = createTempProcessFromDocument(opac, internalDocument, templateID, projectID);
+        Document internalDocument = importDocument(importConfiguration, recordId, allProcesses.isEmpty(), isParentInRecord);
+        TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, internalDocument, templateID, projectID);
 
         // Workaround for classifying MultiVolumeWorks with insufficient information
         if (!allProcesses.isEmpty()) {
@@ -461,24 +454,22 @@ public class ImportService {
                 }
             }
         }
-
         allProcesses.add(tempProcess);
-
         if (!isParentInRecord && StringUtils.isNotBlank(parentIdMetadata)) {
-            return getParentID(internalDocument, parentIdMetadata);
+            return getParentID(internalDocument, parentIdMetadata,importConfiguration.getParentElementTrimMode());
         }
         return null;
     }
 
     /**
      * Returns the searchTerm with configured Delimiter.
-     * @param searchTerm the searchterm to add delimiters.
-     * @param catalog the catalog to check
+     * @param searchTerm the search term to add delimiters.
+     * @param importConfiguration the ImportConfiguration to use
      * @return searchTermWithDelimiter
      */
-    public String getSearchTermWithDelimiter(String searchTerm, String catalog) {
+    public String getSearchTermWithDelimiter(String searchTerm, ImportConfiguration importConfiguration) {
         String searchTermWithDelimiter = searchTerm;
-        String queryDelimiter = OPACConfig.getQueryDelimiter(catalog);
+        String queryDelimiter = importConfiguration.getQueryDelimiter();
         if (Objects.nonNull(queryDelimiter)) {
             searchTermWithDelimiter = queryDelimiter + searchTermWithDelimiter + queryDelimiter;
         }
@@ -492,15 +483,16 @@ public class ImportService {
      * Return the list of processes as a LinkedList of TempProcess.
      *
      * @param recordId identifier of the process to import
-     * @param opac the name of the catalog from which the record is imported
+     * @param importConfiguration ImportConfiguration used to import the record
      * @param projectId the ID of the project for which a process is created
      * @param templateId the ID of the template from which a process is created
      * @param importDepth the number of hierarchical processes that will be imported from the catalog
      * @param parentIdMetadata names of Metadata types holding parent IDs of structure elements in internal format
      * @return List of TempProcess
      */
-    public LinkedList<TempProcess> importProcessHierarchy(String recordId, String opac, int projectId, int templateId,
-                                                          int importDepth, Collection<String> parentIdMetadata)
+    public LinkedList<TempProcess> importProcessHierarchy(String recordId, ImportConfiguration importConfiguration,
+                                                          int projectId, int templateId, int importDepth,
+                                                          Collection<String> parentIdMetadata)
             throws IOException, ProcessGenerationException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException,
             TransformerException, InvalidMetadataValueException, NoSuchMetadataFieldException {
@@ -517,35 +509,46 @@ public class ImportService {
             parentMetadataKey = parentIdMetadata.toArray()[0].toString();
         }
 
-        String parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId, false, parentMetadataKey);
+        String parentID = importProcessAndReturnParentID(recordId, processes, importConfiguration, projectId,
+                templateId, false, parentMetadataKey);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         if (Objects.isNull(template.getRuleset())) {
             throw new ProcessGenerationException("Ruleset of template " + template.getId() + " is null!");
         }
-        importParents(recordId, opac, projectId, templateId, importDepth, processes, parentID, template,
+        importParents(recordId, importConfiguration, projectId, templateId, importDepth, processes, parentID, template,
                 parentMetadataKey);
+
+        ListIterator<TempProcess> processesIterator = processes.listIterator();
+        while (processesIterator.hasNext()) {
+            int fromIndex = processesIterator.nextIndex() + 1;
+            List<TempProcess> parents = new ArrayList<>();
+            if (fromIndex < processes.size()) {
+                parents = processes.subList(fromIndex, processes.size());
+            }
+            ProcessHelper.generateAtstslFields(processesIterator.next(), parents, ACQUISITION_STAGE_CREATE, false);
+        }
+
         return processes;
     }
 
-    private void importParents(String recordId, String opac, int projectId, int templateId, int importDepth,
-            LinkedList<TempProcess> processes, String parentID, Template template, String parentIdMetadata)
+    private void importParents(String recordId, ImportConfiguration importConfiguration, int projectId, int templateId,
+                               int importDepth, LinkedList<TempProcess> processes, String parentID, Template template,
+                               String parentIdMetadata)
             throws ProcessGenerationException, IOException, XPathExpressionException, ParserConfigurationException,
             NoRecordFoundException, UnsupportedFormatException, URISyntaxException, SAXException, DAOException,
             InvalidMetadataValueException, NoSuchMetadataFieldException {
         int level = 1;
         this.parentTempProcess = null;
         while (Objects.nonNull(parentID) && level < importDepth) {
-            HashMap<String, String> parentIDMetadata = new HashMap<>();
-            parentIDMetadata.put(identifierMetadata, parentID);
             try {
-                Process parentProcess = loadParentProcess(parentIDMetadata, template.getRuleset().getId(), projectId);
+                Process parentProcess = loadParentProcess(template.getRuleset(), projectId, parentID);
                 if (Objects.isNull(parentProcess)) {
-                    if (OPACConfig.isParentInRecord(opac)) {
-                        parentID = importProcessAndReturnParentID(recordId, processes, opac, projectId, templateId,
-                            true, parentIdMetadata);
+                    if (Objects.nonNull(importConfiguration.getParentMappingFile())) {
+                        parentID = importProcessAndReturnParentID(recordId, processes, importConfiguration, projectId,
+                                templateId, true, parentIdMetadata);
                     } else {
-                        parentID = importProcessAndReturnParentID(parentID, processes, opac, projectId, templateId,
-                            false, parentIdMetadata);
+                        parentID = importProcessAndReturnParentID(parentID, processes, importConfiguration, projectId,
+                                templateId, false, parentIdMetadata);
                     }
                     level++;
                 } else {
@@ -566,22 +569,20 @@ public class ImportService {
         // always try to find a parent for last imported process (e.g. level ==
         // importDepth) in the database!
         if (Objects.nonNull(parentID) && level == importDepth) {
-            checkForParent(parentID, template.getRuleset().getId(), projectId);
+            checkForParent(parentID, template.getRuleset(), projectId);
         }
     }
 
     /**
      * Check if there already is a parent process in Database.
      */
-    public void checkForParent(String parentID, int rulesetID, int projectID) throws DAOException, IOException,
-            ProcessGenerationException {
+    public void checkForParent(String parentID, Ruleset ruleset, int projectID)
+            throws DAOException, IOException, ProcessGenerationException {
         if (Objects.isNull(parentID)) {
             this.parentTempProcess = null;
             return;
         }
-        HashMap<String, String> parentIDMetadata = new HashMap<>();
-        parentIDMetadata.put(identifierMetadata, parentID);
-        Process parentProcess = loadParentProcess(parentIDMetadata, rulesetID, projectID);
+        Process parentProcess = loadParentProcess(ruleset, projectID, parentID);
         if (Objects.nonNull(parentProcess)) {
             logger.info("Linking last imported process to parent process with ID {} in database!", parentID);
             URI workpieceUri = ServiceManager.getProcessService().getMetadataFileUri(parentProcess);
@@ -592,33 +593,34 @@ public class ImportService {
         this.parentTempProcess = null;
     }
 
-    private List<DataRecord> searchChildRecords(String opac, String parentId, int numberOfRows) {
-        String parenIDSearchField = OPACConfig.getParentIDElement(opac);
+    private List<DataRecord> searchChildRecords(ImportConfiguration config, String parentId, int numberOfRows) {
+        SearchField parenIDSearchField = config.getParentSearchField();
         if (Objects.isNull(parenIDSearchField)) {
-            throw new ConfigException("Unable to find parent ID search field for catalog '" + opac + "'!");
+            throw new ConfigException("Unable to find parent ID search field for catalog '" + config.getTitle() + "'!");
         }
-        return importModule.getMultipleFullRecordsFromQuery(opac, parenIDSearchField, parentId, numberOfRows);
+        return importModule.getMultipleFullRecordsFromQuery(createDataImportFromImportConfiguration(config),
+                parenIDSearchField.getLabel(), parentId, numberOfRows);
     }
 
     /**
      * Get number of child records of record with ID 'parentId' from catalog 'opac'.
      *
-     * @param opac name of the catalog
+     * @param importConfiguration ImportConfiguration to use
      * @param parentId ID of the parent record
      * @return number of child records
      */
-    public int getNumberOfChildren(String opac, String parentId) {
-        loadOpacConfiguration(opac);
-        String parenIDSearchField = OPACConfig.getParentIDElement(opac);
-        if (Objects.isNull(parenIDSearchField)) {
-            throw new ConfigException("Unable to find parent ID search field for catalog '" + opac + "'!");
+    public int getNumberOfChildren(ImportConfiguration importConfiguration, String parentId) {
+        SearchField parentIDSearchField = importConfiguration.getParentSearchField();
+        if (Objects.isNull(parentIDSearchField)) {
+            throw new ConfigException("Unable to find parent ID search field for catalog '"
+                    + importConfiguration.getTitle() + "'!");
         }
-        SearchResult searchResult = performSearch(parenIDSearchField, parentId, opac, 0, 0);
+        SearchResult searchResult = performSearch(parentIDSearchField.getLabel(), parentId, importConfiguration, 0, 0);
         if (Objects.nonNull(searchResult)) {
             return searchResult.getNumberOfHits();
         } else {
             Helper.setErrorMessage("Error retrieving number of children for record with ID " + parentId + " from OPAC "
-                    + opac + "!");
+                    + importConfiguration.getTitle() + "!");
             return 0;
         }
     }
@@ -627,65 +629,71 @@ public class ImportService {
      * Search child records of record with ID 'elementID' from catalog 'opac', transform them into a list of
      * 'TempProcess' and return the list.
      *
-     * @param opac name of catalog
+     * @param importConfiguration ImportConfiguration to use
      * @param elementID ID of record for which child records are retrieved
      * @param projectId ID of project for which processes are created
      * @param templateId ID of template with which processes are created
      * @param rows number of child records to retrieve from catalog
+     * @param parentProcesses parent processes of the children
      * @return list of TempProcesses containing the retrieved child records.
      */
-    public LinkedList<TempProcess> getChildProcesses(String opac, String elementID, int projectId, int templateId,
-                                                     int rows)
+    public LinkedList<TempProcess> getChildProcesses(ImportConfiguration importConfiguration, String elementID,
+                                                     int projectId, int templateId, int rows, List<TempProcess> parentProcesses)
             throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
             NoRecordFoundException, IOException, ProcessGenerationException, TransformerException,
             InvalidMetadataValueException, NoSuchMetadataFieldException {
-        loadOpacConfiguration(opac);
         importModule = initializeImportModule();
-        List<DataRecord> childRecords = searchChildRecords(opac, elementID, rows);
+        List<DataRecord> childRecords = searchChildRecords(importConfiguration, elementID, rows);
         LinkedList<TempProcess> childProcesses = new LinkedList<>();
         if (!childRecords.isEmpty()) {
             SchemaConverterInterface converter = getSchemaConverter(childRecords.get(0));
-            List<File> mappingFiles = getMappingFiles(opac);
+            List<File> mappingFiles = getMappingFiles(importConfiguration);
             for (DataRecord childRecord : childRecords) {
                 DataRecord internalRecord = converter.convert(childRecord, MetadataFormat.KITODO, FileFormat.XML, mappingFiles);
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
-                childProcesses.add(createTempProcessFromDocument(opac, childDocument, templateId, projectId));
+                TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, childDocument,
+                        templateId, projectId);
+                ProcessHelper.generateAtstslFields(tempProcess, parentProcesses, ACQUISITION_STAGE_CREATE, false);
+                childProcesses.add(tempProcess);
             }
+
             // TODO: sort child processes (by what? catalog ID? Signature?)
             return childProcesses;
         } else {
             throw new NoRecordFoundException("No child records found for data record with ID '" + elementID
-                    + "' in OPAC '" + opac + "'!");
+                    + "' in OPAC '" + importConfiguration.getTitle() + "'!");
         }
     }
 
-    private Document importDocument(String opac, String identifier, boolean extractExemplars, boolean isParentInRecord)
+    private Document importDocument(ImportConfiguration importConfiguration, String identifier,
+                                    boolean extractExemplars, boolean isParentInRecord)
             throws NoRecordFoundException, UnsupportedFormatException, URISyntaxException, IOException,
-            XPathExpressionException, ParserConfigurationException, SAXException {
+            XPathExpressionException, ParserConfigurationException, SAXException, ProcessGenerationException {
         // ################ IMPORT #################
         importModule = initializeImportModule();
-        DataRecord dataRecord = importModule.getFullRecordById(opac, identifier);
-
+        DataRecord dataRecord = importModule.getFullRecordById(
+                createDataImportFromImportConfiguration(importConfiguration),
+                getSearchTermWithDelimiter(identifier, importConfiguration));
         if (extractExemplars) {
-            exemplarRecords = extractExemplarRecords(dataRecord, opac);
+            exemplarRecords = extractExemplarRecords(dataRecord, importConfiguration);
         }
-
-        return convertDataRecordToInternal(dataRecord, opac, isParentInRecord);
+        return convertDataRecordToInternal(dataRecord, importConfiguration, isParentInRecord);
     }
 
     /**
      * Converts a given dataRecord to an internal document.
      * @param dataRecord the dataRecord to convert.
-     * @param opac the opac to use (for configuration)
+     * @param importConfiguration the import configuration to use
      * @param isParentInRecord if parentRecord is in childRecord
      * @return the converted Document
      */
-    public Document convertDataRecordToInternal(DataRecord dataRecord, String opac, boolean isParentInRecord)
+    public Document convertDataRecordToInternal(DataRecord dataRecord, ImportConfiguration importConfiguration,
+                                                boolean isParentInRecord)
             throws UnsupportedFormatException, URISyntaxException, IOException, ParserConfigurationException,
-            SAXException {
+            SAXException, XPathExpressionException, ProcessGenerationException {
         SchemaConverterInterface converter = getSchemaConverter(dataRecord);
 
-        List<File> mappingFiles = getMappingFiles(opac, isParentInRecord);
+        List<File> mappingFiles = getMappingFiles(importConfiguration, isParentInRecord);
 
         // transform dataRecord to Kitodo internal format using appropriate SchemaConverter!
         File debugFolder = ConfigCore.getKitodoDebugDirectory();
@@ -704,7 +712,30 @@ public class ImportService {
                     + internalRecord.getOriginalData().getClass().getName() + "' found!");
         }
 
-        return XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
+        Document resultDocument = null;
+        try {
+            resultDocument = XMLUtils.parseXMLString((String) internalRecord.getOriginalData());
+        } catch (SAXParseException e) {
+            String interfaceName = importConfiguration.getInterfaceType();
+            if (Arrays.stream(SearchInterfaceType.values()).anyMatch(sit -> sit.name().equals(interfaceName))) {
+                SearchInterfaceType searchInterfaceType = SearchInterfaceType.valueOf(interfaceName);
+                String errorMessageXpath = searchInterfaceType.getErrorMessageXpath();
+                if (Objects.nonNull(errorMessageXpath) && dataRecord.getOriginalData() instanceof String) {
+                    Element originalDocument = XMLUtils.parseXMLString((String) dataRecord.getOriginalData()).getDocumentElement();
+                    String errorMessage = XPathFactory.newInstance().newXPath().evaluate(errorMessageXpath, originalDocument);
+                    if (StringUtils.isNotBlank(errorMessage)) {
+                        errorMessage = interfaceName.toUpperCase() + " error: '" + errorMessage + "'";
+                        throw new CatalogException(errorMessage);
+                    }
+                }
+            } else {
+                throw e;
+            }
+        }
+        if (Objects.isNull(resultDocument)) {
+            throw new ProcessGenerationException(Helper.getTranslation("importError.emptyDocument"));
+        }
+        return resultDocument;
     }
 
     private NodeList extractMetadataNodeList(Document document) throws ProcessGenerationException {
@@ -716,15 +747,17 @@ public class ImportService {
         return kitodoNode.getChildNodes();
     }
 
-    private List<File> getMappingFiles(String opac, boolean forParentInRecord) throws URISyntaxException {
+    private List<File> getMappingFiles(ImportConfiguration importConfiguration, boolean forParentInRecord)
+            throws URISyntaxException {
         List<File> mappingFiles = new ArrayList<>();
 
         List<String> mappingFileNames;
         try {
             if (forParentInRecord) {
-                mappingFileNames = Collections.singletonList(OPACConfig.getXsltMappingFileForParentInRecord(opac));
+                mappingFileNames = Collections.singletonList(importConfiguration.getParentMappingFile().getFile());
             } else {
-                mappingFileNames = OPACConfig.getXsltMappingFiles(opac);
+                mappingFileNames = importConfiguration.getMappingFiles().stream().map(MappingFile::getFile)
+                        .collect(Collectors.toList());
             }
             for (String mappingFileName : mappingFileNames) {
                 URI xsltFile = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_XSLT)).toUri()
@@ -737,48 +770,8 @@ public class ImportService {
         return mappingFiles;
     }
 
-    private List<File> getMappingFiles(String opac) throws URISyntaxException {
-        return getMappingFiles(opac, false);
-    }
-
-    /**
-     * Converts DOM node list of Kitodo metadata elements to metadata objects.
-     *
-     * @param nodes
-     *            node list to convert to metadata
-     * @param domain
-     *            domain of metadata
-     * @return metadata from node list
-     */
-    public static List<Metadata> importMetadata(NodeList nodes, MdSec domain) {
-        List<Metadata> allMetadata = new ArrayList<>();
-        for (int index = 0; index < nodes.getLength(); index++) {
-            Node node = nodes.item(index);
-            if (!(node instanceof Element)) {
-                continue;
-            }
-            Element element = (Element) node;
-            Metadata metadata;
-            switch (element.getLocalName()) {
-                case "metadata":
-                    MetadataEntry entry = new MetadataEntry();
-                    entry.setValue(element.getTextContent());
-                    metadata = entry;
-                    break;
-                case "metadataGroup": {
-                    MetadataGroup group = new MetadataGroup();
-                    group.setGroup(importMetadata(element.getChildNodes(), null));
-                    metadata = group;
-                    break;
-                }
-                default:
-                    continue;
-            }
-            metadata.setKey(element.getAttribute("name"));
-            metadata.setDomain(domain);
-            allMetadata.add(metadata);
-        }
-        return allMetadata;
+    private List<File> getMappingFiles(ImportConfiguration importConfiguration) throws URISyntaxException {
+        return getMappingFiles(importConfiguration, false);
     }
 
     /**
@@ -890,6 +883,15 @@ public class ImportService {
     }
 
     /**
+     * Returns details about the missing record identifiers.
+     * 
+     * @return details about the missing record identifiers
+     */
+    public Collection<RecordIdentifierMissingDetail> getRecordIdentifierMissingDetails() {
+        return recordIdentifierMissingDetails;
+    }
+
+    /**
      * Get tiffDefinition.
      *
      * @return value of tifDefinition
@@ -911,16 +913,16 @@ public class ImportService {
      * Set selected exemplar record data.
      * @param exemplarRecord
      *          selected exemplar record
-     * @param opac
-     *          selected catalog
+     * @param importConfiguration
+     *          ImportConfiguration
      * @param metadata
      *          list of metadata fields
      * @throws ParameterNotFoundException if a parameter required for exemplar record extraction is missing
      */
-    public static void setSelectedExemplarRecord(ExemplarRecord exemplarRecord, String opac,
+    public static void setSelectedExemplarRecord(ExemplarRecord exemplarRecord, ImportConfiguration importConfiguration,
                                                  List<ProcessDetail> metadata)  throws ParameterNotFoundException {
-        String ownerMetadataName = OPACConfig.getExemplarFieldOwnerMetadata(opac);
-        String signatureMetadataName = OPACConfig.getExemplarFieldSignatureMetadata(opac);
+        String ownerMetadataName = importConfiguration.getItemFieldOwnerMetadata();
+        String signatureMetadataName = importConfiguration.getItemFieldSignatureMetadata();
         if (StringUtils.isBlank(ownerMetadataName)) {
             throw new ParameterNotFoundException("ownerMetadata");
         } else if (StringUtils.isBlank(signatureMetadataName)) {
@@ -944,109 +946,44 @@ public class ImportService {
         return parentTempProcess;
     }
 
-    private Process loadParentProcess(HashMap<String, String> parentIDMetadata, int rulesetId, int projectId)
-            throws ProcessGenerationException, DAOException {
+    private Process loadParentProcess(Ruleset ruleset, int projectId, String parentId)
+            throws ProcessGenerationException, DAOException, IOException {
+
         Process parentProcess = null;
-        try {
-            for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
-                    throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                            + process.getId() + " is null!");
-                }
-                if (process.getProject().getId() == projectId
-                        && process.getRuleset().getId().equals(rulesetId)) {
-                    parentProcess = process;
-                    break;
+        for (String identifierMetadata : getFunctionalMetadata(ruleset, FunctionalMetadata.RECORD_IDENTIFIER)) {
+            if (Objects.isNull(parentProcess)) {
+                HashMap<String, String> parentIDMetadata = new HashMap<>();
+                parentIDMetadata.put(identifierMetadata, parentId);
+                try {
+                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
+                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                            throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
+                                    + process.getId() + " is null!");
+                        }
+                        if (process.getProject().getId() == projectId
+                                && process.getRuleset().getId().equals(ruleset.getId())) {
+                            parentProcess = process;
+                            break;
+                        }
+                    }
+                } catch (DataException e) {
+                    logger.error(e.getLocalizedMessage());
                 }
             }
-        } catch (DataException e) {
-            logger.error(e.getLocalizedMessage());
         }
         return parentProcess;
     }
 
     /**
-     * Check and return whether 'parentElement' has been configured for OPAC with name 'catalogName'.
+     * Check and return whether the "parentIdSearchField" is configured in the current ImportConfiguration.
      *
-     * @param catalogName name of the OPAC to check
-     * @return whether 'parentElement has been configured or not
+     * @param importConfiguration name of the OPAC to check
+     * @return whether "parentIdSearchField" is configured for current ImportConfiguration
      * @throws ConfigException thrown if configuration for OPAC 'catalogName' could not be found
      */
-    public boolean isParentElementConfigured(String catalogName) throws ConfigException {
-        loadOpacConfiguration(catalogName);
-        return Objects.nonNull(OPACConfig.getParentIDElement(catalogName));
-    }
-
-    /**
-     * Create and return a List of ProcessDetail objects for the given TempProcess 'tempProcess'.
-     *
-     * @param tempProcess the TempProcess for which the List of ProcessDetail objects is created
-     * @param managementInterface RulesetManagementInterface used to create the metadata of the process
-     * @param acquisitionStage String containing the acquisitionStage
-     * @param priorityList List of LanguageRange objects used as priority list
-     * @return List of ProcessDetail objects
-     * @throws InvalidMetadataValueException thrown if TempProcess contains invalid metadata
-     * @throws NoSuchMetadataFieldException thrown if TempProcess contains undefined metadata
-     */
-    public static List<ProcessDetail> transformToProcessDetails(TempProcess tempProcess,
-                                                         RulesetManagementInterface managementInterface,
-                                                         String acquisitionStage,
-                                                         List<Locale.LanguageRange> priorityList)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
-                managementInterface, acquisitionStage, priorityList);
-        metadata.preserve();
-        return metadata.getRows();
-    }
-
-    /**
-     * Create a process title for the given TempProcess using the provided parameters.
-     *
-     * @param tempProcess the TempProcess for which the TifHeader is created
-     * @param rulesetManagementInterface RulesetManagementInterface used to create TifHeader
-     * @param acquisitionStage String containing name of acquisitionStage
-     * @param priorityList List of LanguageRange objects used as priority list
-     * @param processDetails List of ProcessDetail objects containing the metadata of the process
-     * @throws ProcessGenerationException thrown if generating the Process title or the TifHeader fails
-     */
-    public static void createProcessTitle(TempProcess tempProcess,
-                                          RulesetManagementInterface rulesetManagementInterface,
-                                          String acquisitionStage, List<Locale.LanguageRange> priorityList,
-                                          List<ProcessDetail> processDetails)
-            throws ProcessGenerationException {
-        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
-        StructuralElementViewInterface docTypeView = rulesetManagementInterface
-                .getStructuralElementView(docType, acquisitionStage, priorityList);
-        String processTitle = docTypeView.getProcessTitle().orElse("");
-        String atstsl = ProcessService.generateProcessTitle(processDetails,
-                processTitle, tempProcess.getProcess());
-        tempProcess.setTiffHeaderDocumentName(tempProcess.getProcess().getTitle());
-        String tiffDefinition = ServiceManager.getImportService().getTiffDefinition();
-        if (Objects.nonNull(tiffDefinition)) {
-            tempProcess.setTiffHeaderImageDescription(ProcessService.generateTiffHeader(processDetails, atstsl,
-                    tiffDefinition, docType));
-        }
-    }
-
-    /**
-     * Create and return an instance of 'ProcessFieldedMetadata' for the given LogicalDivision 'structure',
-     * RulesetManagementInterface 'managementInterface', acquisition stage String 'stage' and List of LanguageRange
-     * 'priorityList'.
-     *
-     * @param structure LogicalDivision for which to create a ProcessFieldedMetadata
-     * @param managementInterface RulesetManagementInterface used to create ProcessFieldedMetadata
-     * @param stage String containing acquisition stage used to create ProcessFieldedMetadata
-     * @param priorityList List of LanguageRange objects used to create ProcessFieldedMetadata
-     * @return the created ProcessFieldedMetadata
-     */
-    public static ProcessFieldedMetadata initializeProcessDetails(LogicalDivision structure,
-                                                                  RulesetManagementInterface managementInterface,
-                                                                  String stage,
-                                                                  List<Locale.LanguageRange> priorityList) {
-        StructuralElementViewInterface divisionView = managementInterface.getStructuralElementView(structure.getType(),
-                stage, priorityList);
-        return new ProcessFieldedMetadata(structure, divisionView);
+    public boolean isParentIdSearchFieldConfigured(ImportConfiguration importConfiguration) throws ConfigException {
+        return Objects.nonNull(importConfiguration.getParentSearchField());
     }
 
     /**
@@ -1100,7 +1037,7 @@ public class ImportService {
                 logger.error("Child process {} is null => Skip!", childProcesses.indexOf(tempProcess) + 1);
                 continue;
             }
-            processTempProcess(tempProcess, managementInterface, acquisitionStage, priorityList);
+            processTempProcess(tempProcess, managementInterface, acquisitionStage, priorityList, null);
             Process childProcess = tempProcess.getProcess();
             ServiceManager.getProcessService().save(childProcess, true);
             ProcessService.setParentRelations(mainProcess, childProcess);
@@ -1110,15 +1047,22 @@ public class ImportService {
     /**
      * Add workpiece and template properties to given Process 'process'.
      *
-     * @param process Process to which properties are added
-     * @param template Template of process
-     * @param processDetails metadata of process
-     * @param docType String containing document type
-     * @param imageDescription String containing image description
+     * @param tempProcess
+     *         TempProcess that will be processed
+     * @param template
+     *         Template of process
+     * @param processDetails
+     *         metadata of process
+     * @param docType
+     *         String containing document type
+     * @param imageDescription
+     *         String containing image description
      */
-    public static void addProperties(Process process, Template template, List<ProcessDetail> processDetails,
-                                     String docType, String imageDescription) {
+    public static void addProperties(TempProcess tempProcess, Template template, List<ProcessDetail> processDetails,
+            String docType, String imageDescription) {
+        Process process = tempProcess.getProcess();
         addMetadataProperties(processDetails, process);
+        ProcessGenerator.addPropertyForWorkpiece(process, "TSL/ATS", tempProcess.getAtstsl());
         ProcessGenerator.addPropertyForWorkpiece(process, "DocType", docType);
         ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderImagedescription", imageDescription);
         ProcessGenerator.addPropertyForWorkpiece(process, "TifHeaderDocumentname", process.getTitle());
@@ -1192,18 +1136,28 @@ public class ImportService {
      * @throws ProcessGenerationException thrown if process title could not be generated
      */
     public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface managementInterface,
-                                          String acquisitionStage, List<Locale.LanguageRange> priorityList)
+            String acquisitionStage, List<Locale.LanguageRange> priorityList, TempProcess parentTempProcess)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
+
+        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
+                acquisitionStage, priorityList);
+        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
+
+        List<TempProcess> parentTempProcesses = new ArrayList<>();
+        if (Objects.nonNull(parentTempProcess)) {
+            parentTempProcesses.add(parentTempProcess);
+        }
+        ProcessHelper.generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType,
+                managementInterface, acquisitionStage, priorityList);
+
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
         }
-        List<ProcessDetail> processDetails = transformToProcessDetails(tempProcess, managementInterface,
-                acquisitionStage, priorityList);
-        String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
+
         Process process = tempProcess.getProcess();
         process.setSortHelperImages(tempProcess.getGuessedImages());
-        addProperties(tempProcess.getProcess(), tempProcess.getProcess().getTemplate(), processDetails, docType,
+        addProperties(tempProcess, tempProcess.getProcess().getTemplate(), processDetails, docType,
                 tempProcess.getProcess().getTitle());
         ProcessService.checkTasks(process, docType);
         updateTasks(process);
@@ -1214,31 +1168,32 @@ public class ImportService {
      * @param ppn the ppn to import
      * @param projectId the projectId
      * @param templateId the templateId
-     * @param selectedCatalog the selected catalog to import from
+     * @param importConfiguration the selected import configuration
      * @param presetMetadata Map containing preset metadata with keys as metadata keys and values as metadata values
      * @return the importedProcess
      */
-    public Process importProcess(String ppn, int projectId, int templateId, String selectedCatalog,
+    public Process importProcess(String ppn, int projectId, int templateId, ImportConfiguration importConfiguration,
                                  Map<String, String> presetMetadata) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         TempProcess tempProcess;
         Template template;
         try {
             template = ServiceManager.getTemplateService().getById(templateId);
-            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
-            List<Locale.LanguageRange> priorityList = Locale.LanguageRange
-                    .parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             String parentMetadataKey = "";
-            List<String> higherLevelIdentifiers = new ArrayList<>(getHigherLevelIdentifierMetadata(template.getRuleset()));
+            List<String> higherLevelIdentifiers = new ArrayList<>(
+                    getHigherLevelIdentifierMetadata(template.getRuleset()));
             if (!higherLevelIdentifiers.isEmpty()) {
                 parentMetadataKey = higherLevelIdentifiers.get(0);
             }
-            String parentId = importProcessAndReturnParentID(ppn, processList, selectedCatalog, projectId, templateId,
-                    false, parentMetadataKey);
+            final String parentId = importProcessAndReturnParentID(ppn, processList, importConfiguration, projectId,
+                    templateId, false, parentMetadataKey);
+            setParentProcess(parentId, projectId, template);
             tempProcess = processList.get(0);
-            processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
-                    "create", priorityList);
+            String metadataLanguage = ServiceManager.getUserService().getCurrentUser().getMetadataLanguage();
             tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(createMetadata(presetMetadata));
+            processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
+                    "create", Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage),
+                    parentTempProcess);
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
             if (StringUtils.isBlank(title)) {
@@ -1255,43 +1210,46 @@ public class ImportService {
                     .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()));
             tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
             ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
-            linkToParent(parentId, projectId, template, tempProcess);
+            linkToParent(tempProcess);
             ServiceManager.getProcessService().save(tempProcess.getProcess());
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | DataException | CommandException | TransformerException e) {
+                | DataException | CommandException | TransformerException | CatalogException e) {
             logger.error(e);
             throw new ImportException(e.getLocalizedMessage());
         }
         return tempProcess.getProcess();
     }
 
-    private void linkToParent(String parentId, int projectId, Template template, TempProcess tempProcess)
-            throws DAOException, ProcessGenerationException, IOException {
-        if (StringUtils.isNotBlank(parentId)) {
-            parentTempProcess = null;
-            checkForParent(parentId, template.getRuleset().getId(), projectId);
-            if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
-                URI parentProcessUri = ServiceManager.getProcessService()
-                        .getMetadataFileUri(parentTempProcess.getProcess());
-                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentProcessUri);
-                if (Objects.isNull(workpiece)) {
-                    throw new ProcessGenerationException("Workpiece of parent process is null!");
-                }
-                MetadataEditor.addLink(workpiece.getLogicalStructure(), tempProcess.getProcess().getId());
-                try (OutputStream outputStream = ServiceManager.getFileService().write(parentProcessUri)) {
-                    ServiceManager.getMetsService().save(workpiece, outputStream);
-                }
-                ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
+    private void linkToParent(TempProcess tempProcess) throws DAOException, ProcessGenerationException, IOException {
+        if (Objects.nonNull(parentTempProcess) && Objects.nonNull(parentTempProcess.getProcess())) {
+            URI parentProcessUri = ServiceManager.getProcessService()
+                    .getMetadataFileUri(parentTempProcess.getProcess());
+            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(parentProcessUri);
+            if (Objects.isNull(workpiece)) {
+                throw new ProcessGenerationException("Workpiece of parent process is null!");
             }
+            MetadataEditor.addLink(workpiece.getLogicalStructure(), tempProcess.getProcess().getId());
+            try (OutputStream outputStream = ServiceManager.getFileService().write(parentProcessUri)) {
+                ServiceManager.getMetsService().save(workpiece, outputStream);
+            }
+            ProcessService.setParentRelations(parentTempProcess.getProcess(), tempProcess.getProcess());
+        }
+    }
+
+    private void setParentProcess(String parentId, int projectId, Template template)
+            throws DAOException, IOException, ProcessGenerationException {
+        parentTempProcess = null;
+        if (StringUtils.isNotBlank(parentId)) {
+            checkForParent(parentId, template.getRuleset(), projectId);
         }
     }
 
     private static Collection<String> getFunctionalMetadata(Ruleset ruleset, FunctionalMetadata metadata)
             throws IOException {
-        RulesetManagementInterface rulesetManagement
-                = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
+                .getRulesetManagement();
         String rulesetDir = ConfigCore.getParameter(ParameterCore.DIR_RULESETS);
         String rulesetPath = Paths.get(rulesetDir, ruleset.getFile()).toString();
         rulesetManagement.load(new File(rulesetPath));
@@ -1328,5 +1286,111 @@ public class ImportService {
      */
     public static Collection<String> getHigherLevelIdentifierMetadata(Ruleset ruleset) throws IOException {
         return getFunctionalMetadata(ruleset, FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
+    }
+
+    private DataImport createDataImportFromImportConfiguration(ImportConfiguration importConfiguration) {
+        String configType = importConfiguration.getConfigurationType();
+        if (!ImportConfigurationType.OPAC_SEARCH.name().equals(configType)) {
+            throw new ConfigException("Configuration error: given import configuration '"
+                    + importConfiguration.getTitle() + "' is of type '" + configType
+                    + "' (OPAC_SEARCH expected instead)!");
+        }
+        DataImport dataImport = new DataImport();
+        dataImport.setTitle(importConfiguration.getTitle());
+        dataImport.setSearchInterfaceType(SearchInterfaceType.valueOf(importConfiguration.getInterfaceType()));
+        dataImport.setReturnFormat(FileFormat.valueOf(importConfiguration.getReturnFormat()));
+        dataImport.setMetadataFormat(MetadataFormat.valueOf(importConfiguration.getMetadataFormat()));
+        dataImport.setScheme(importConfiguration.getScheme());
+        dataImport.setHost(importConfiguration.getHost());
+        dataImport.setPath(importConfiguration.getPath());
+        if (Objects.nonNull(importConfiguration.getPort())) {
+            dataImport.setPort(importConfiguration.getPort());
+        }
+        dataImport.setIdPrefix(importConfiguration.getIdPrefix());
+        dataImport.setUsername(importConfiguration.getUsername());
+        dataImport.setPassword(importConfiguration.getPassword());
+        dataImport.setAnonymousAccess(importConfiguration.isAnonymousAccess());
+        if (Objects.nonNull(importConfiguration.getIdSearchField())) {
+            dataImport.setIdParameter(importConfiguration.getIdSearchField().getValue());
+        }
+        HashMap<String, String> searchFields = new HashMap<>();
+        for (SearchField searchField : importConfiguration.getSearchFields()) {
+            searchFields.put(searchField.getLabel(), searchField.getValue());
+        }
+        dataImport.setSearchFields(searchFields);
+        dataImport.setUrlParameters(getUrlParameters(importConfiguration));
+        dataImport.setRecordIdXPath(importConfiguration.getMetadataRecordIdXPath());
+        dataImport.setRecordTitleXPath(importConfiguration.getMetadataRecordTitleXPath());
+        return dataImport;
+    }
+
+    private HashMap<String, String> getUrlParameters(ImportConfiguration importConfiguration) {
+        HashMap<String, String> urlParameters = new HashMap<>();
+        if (SearchInterfaceType.SRU.name().equals(importConfiguration.getInterfaceType())) {
+            urlParameters.put(SRU_OPERATION, SRU_SEARCH_RETRIEVE);
+            if (Objects.isNull(importConfiguration.getSruVersion())
+                    || Objects.isNull(importConfiguration.getSruRecordSchema())) {
+                throw new ConfigException("Either SRU version or SRU record schema is null!");
+            }
+            urlParameters.put(SRU_VERSION, importConfiguration.getSruVersion());
+            urlParameters.put(SRU_RECORD_SCHEMA, importConfiguration.getSruRecordSchema());
+        }
+        if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
+            urlParameters.put(OAI_VERB, OAI_GET_RECORD);
+            if (Objects.isNull(importConfiguration.getOaiMetadataPrefix())) {
+                throw new ConfigException("OAI metadata prefix is null!");
+            }
+            urlParameters.put(OAI_METADATA_PREFIX, importConfiguration.getOaiMetadataPrefix());
+        }
+        if (SearchInterfaceType.CUSTOM.name().equals(importConfiguration.getInterfaceType())) {
+            for (UrlParameter parameter : importConfiguration.getUrlParameters()) {
+                urlParameters.put(parameter.getParameterKey(), parameter.getParameterValue());
+            }
+        }
+        return urlParameters;
+    }
+
+    /**
+     * Check and return whether the functional metadata 'recordIdentifier' is configured for all top level doc struct
+     * types in the given RulesetManagementInterface or not.
+     * @param rulesetManagementInterface RulesetManagementInterface to use
+     * @return whether 'recordIdentifier' is set for all doc struct types
+     */
+    public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagementInterface) {
+        User user = ServiceManager.getUserService().getCurrentUser();
+        String metadataLanguage = user.getMetadataLanguage();
+        List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
+                ? Locale.ENGLISH.getCountry() : metadataLanguage);
+        Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
+        Collection<String> recordIdentifierMetadata = rulesetManagementInterface
+                .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
+        String recordIdentifierLabels = recordIdentifierMetadata.stream()
+                .map(key -> rulesetManagementInterface.getTranslationForKey(key, languages).orElse(key))
+                .collect(Collectors.joining(", "));
+        recordIdentifierMissingDetails.clear();
+        boolean isConfigured = true;
+        for (Map.Entry<String, String> division : structuralElements.entrySet()) {
+            StructuralElementViewInterface divisionView = rulesetManagementInterface
+                    .getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
+            List<String> allowedMetadataKeys = divisionView.getAllowedMetadata().stream()
+                    .map(MetadataViewInterface::getId).collect(Collectors.toList());
+            allowedMetadataKeys.retainAll(recordIdentifierMetadata);
+            if (allowedMetadataKeys.isEmpty()) {
+                recordIdentifierMissingDetails.add(
+                    new RecordIdentifierMissingDetail(division.getValue(), recordIdentifierLabels, divisionView.getAllowedMetadata())
+                );
+                isConfigured = false;
+            }
+        }
+        return isConfigured;
+    }
+
+    /**
+     * Returns the details of the missing record identifier error.
+     * 
+     * @return the details as a list of error description
+     */
+    public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
+        return recordIdentifierMissingDetails;
     }
 }

@@ -1,0 +1,41 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <!--@elvariable id="isViewMode" type="boolean"-->
+        <p:row>
+            <div>
+                <p:outputLabel for="parentElementTrimMode" value="#{msgs['importConfig.field.parentElementTrimMode']}" />
+                <p:selectOneMenu id="parentElementTrimMode"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.importConfiguration.parentElementTrimMode}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.selectTrimMode']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.parentElementTrimModes}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="parentElementTrimModeHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentElementTrimModeHelp"
+                           value="#{msgs['tooltip.importConfig.parentElementTrimModeHelp']}"/>
+            </div>
+        </p:row>
+
+    </f:view>
+</ui:composition>

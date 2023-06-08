@@ -17,8 +17,10 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.StringWriter;
+import java.nio.file.Files;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.PostConstruct;
 import javax.faces.application.FacesMessage;
@@ -37,8 +39,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -114,18 +114,16 @@ public class XMLEditor implements Serializable {
      *            name of the configuration to be loaded
      */
     public void loadXMLConfiguration(String configurationFile) {
-        try (StringWriter stringWriter = new StringWriter()) {
+        try {
             currentConfigurationFile = configurationFile;
             this.configurationFile = KitodoConfigFile.getByName(configurationFile);
-            XMLConfiguration currentConfiguration = new XMLConfiguration(this.configurationFile.getAbsolutePath());
-            currentConfiguration.save(stringWriter);
-            this.xmlConfigurationString = stringWriter.toString();
-        } catch (ConfigurationException e) {
+            try (Stream<String> lines = Files.lines(this.configurationFile.getFile().toPath())) {
+                this.xmlConfigurationString = lines.collect(Collectors.joining("\n"));
+            }
+        } catch (IOException e) {
             String errorMessage = "ERROR: Unable to load configuration file '" + configurationFile + "'.";
             logger.error("{} {}", errorMessage, e.getMessage());
             this.xmlConfigurationString = errorMessage;
-        } catch (IOException e) {
-            logger.error(e.getMessage());
         }
     }
 

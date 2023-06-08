@@ -24,33 +24,31 @@
 
     <ui:define name="contentHeader">
         <h3 id="headerText" class="calendar-heading">
-            <h:outputText value="#{msgs.calendar}"/>
+            <h:outputText styleClass="shortable"
+                          value="#{msgs.calendar}"/>
         </h3>
                 
         <p:button value="#{msgs.cancel}"
+                  id="cancel"
                   outcome="#{CalendarForm.getReferer()}"
                   onclick="setConfirmUnload(false)"
                   icon="fa fa-times fa-lg"
                   iconPos="right"
                   styleClass="secondary"/>
 
-        <!-- TODO disabled for now, because file is not transferred in uploadFileDialog.xhtml -->
         <p:commandButton value="#{msgs['calendar.upload']}"
                          onclick="PF('uploadFileDialog').show()"
                          icon="fa fa-upload fa-lg"
                          iconPos="right"
                          type="button"
-                         rendered="false"
                          styleClass="secondary"/>
 
         <p:commandButton value="#{msgs.fileDownload}"
                   icon="fa fa-download fa-lg"
                   iconPos="right"
-                  type="button"
                   ajax="false"
-                  rendered="false"
+                  onclick="setConfirmUnload(false);"
                   styleClass="secondary">
-            <!-- TODO disabled for now, because method is never called -->
             <p:fileDownload value="#{CalendarForm.download()}"/>
         </p:commandButton>
 

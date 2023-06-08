@@ -72,7 +72,8 @@
             "fields": {
               "keyword": {
                 "type": "keyword",
-                "ignore_above": 256
+                "ignore_above": 256,
+                "normalizer": "lowercase"
               }
             }
           }
@@ -172,6 +173,15 @@
           }
         }
       },
+      "numberOfMetadata": {
+        "type": "long"
+      },
+      "numberOfImages": {
+        "type": "long"
+      },
+      "numberOfStructures": {
+        "type": "long"
+      },
       "project": {
         "properties": {
           "id": {
@@ -185,7 +195,8 @@
             "fields": {
               "keyword": {
                 "type": "keyword",
-                "ignore_above": 256
+                "ignore_above": 256,
+                "normalizer": "lowercase"
               }
             }
           },
@@ -253,6 +264,37 @@
         },
         "fielddata": true
       },
+      "lastEditingUser": {
+        "type": "keyword"
+      },
+      "processingBeginLastTask": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "ignore_malformed": true
+      },
+      "processingEndLastTask": {
+        "type": "date",
+        "format": "yyyy-MM-dd HH:mm:ss",
+        "ignore_malformed": true
+      },
+      "correctionCommentStatus": {
+        "type": "byte"
+      },
+      "progressClosed": {
+        "type": "double"
+      },
+      "progressInProcessing": {
+        "type": "double"
+      },
+      "progressOpen": {
+        "type": "double"
+      },
+      "progressLocked": {
+        "type": "double"
+      },
+      "progressCombined": {
+        "type": "keyword"
+      },
       "tasks": {
         "properties": {
           "id": {
@@ -304,7 +346,8 @@
         "fields": {
           "keyword": {
             "type": "keyword",
-            "ignore_above": 256
+            "ignore_above": 256,
+            "normalizer": "lowercase"
           },
           "raw": {
             "type": "text",

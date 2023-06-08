@@ -22,6 +22,8 @@
               id="fileUpload"
               width="578"
               modal="true"
+              visible="#{CreateProcessForm.defaultConfigurationType eq 'FILE_UPLOAD'}"
+              appendTo="@(body)"
               resizable="false">
         <h3>#{msgs['newProcess.fileUpload.heading']}</h3>
         <h:form id="fileUploadForm">
@@ -29,24 +31,33 @@
                 <p:row>
                     <div>
                         <p:outputLabel for="catalogueSelectMenu"
-                                       value="#{msgs['newProcess.catalogueSearch.catalogue']}"/>
+                                       value="#{msgs['importConfig.configuration']}"/>
                         <p:selectOneMenu id="catalogueSelectMenu"
                                          autoWidth="false"
                                          required="#{not empty param['catalogSearchForm:performCatalogSearch']}"
                                          immediate="true"
-                                         value="#{CreateProcessForm.fileUploadDialog.selectedCatalog}">
+                                         value="#{CreateProcessForm.fileUploadDialog.importConfiguration}"
+                                         converter="#{importConfigurationConverter}">
                             <f:selectItem itemValue="#{null}" itemLabel="-- #{msgs.selectCatalog} --" noSelectionOption="true"/>
-                            <f:selectItems value="#{CreateProcessForm.fileUploadDialog.catalogs}" var="step" itemLabel="#{step}"
-                                           itemValue="#{step}"/>
+                            <f:selectItems value="#{CreateProcessForm.fileUploadDialog.importConfigurations}"
+                                           var="importconfig"
+                                           itemLabel="#{importconfig.title}"
+                                           itemValue="#{importconfig}"/>
                             <p:ajax update="fileUploadForm"/>
                         </p:selectOneMenu>
                     </div>
                 </p:row>
             </p:panelGrid>
-            <p:panelGrid>
+            <p:panelGrid rendered="#{CreateProcessForm.fileUploadDialog.importConfiguration ne null}">
                 <p:row>
                     <div>
-                        <p:fileUpload rendered="#{CreateProcessForm.fileUploadDialog.selectedCatalog ne null}"
+                        <p:outputLabel for="additionalImport" value="#{msgs['newProcess.catalogueSearch.additionalImport']}"/>
+                        <p:selectBooleanCheckbox id="additionalImport" styleClass="switch input" value="#{CreateProcessForm.fileUploadDialog.additionalImport}" >
+                            <p:ajax event="change" update="fileUploadForm" />
+                        </p:selectBooleanCheckbox>
+                    </div>
+                    <div>
+                        <p:fileUpload rendered="#{CreateProcessForm.fileUploadDialog.importConfiguration ne null}"
                                       listener="#{CreateProcessForm.fileUploadDialog.handleFileUpload}"
                                       allowTypes="/(\.|\/)(xml)$/"
                                       skinSimple="true"

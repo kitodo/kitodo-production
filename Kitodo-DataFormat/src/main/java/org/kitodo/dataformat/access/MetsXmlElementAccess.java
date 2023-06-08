@@ -110,23 +110,30 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      */
     private MetsXmlElementAccess(Mets mets) {
         this();
-        MetsHdr metsHdr = mets.getMetsHdr();
-        if (Objects.nonNull(metsHdr)) {
-            GregorianCalendar gregorianCalendar;
-            if (Objects.nonNull(metsHdr.getCREATEDATE())) {
-                gregorianCalendar = metsHdr.getCREATEDATE().toGregorianCalendar();
-            } else {
-                gregorianCalendar = new GregorianCalendar();
-            }
-            workpiece.setCreationDate(gregorianCalendar);
-            for (Agent agent : metsHdr.getAgent()) {
-                workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
-            }
-            MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
-            if (Objects.nonNull(metsDocumentID)) {
-                workpiece.setId(metsDocumentID.getValue());
+        initialize(mets);
+    }
+
+    private void initialize(Mets mets) {
+        setWorkpieceFromMetsHeader(mets);
+        Map<String, FileXmlElementAccess> divIDsToPhysicalDivisions = getReferenceDivIdsToPhysicalDivisions(mets);
+        if (mets.getStructLink() == null) {
+            mets.setStructLink(new StructLink());
+        }
+        Map<String, List<FileXmlElementAccess>> physicalDivisionsMap = new HashMap<>();
+        for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
+            if (smLinkOrSmLinkGrp instanceof SmLink) {
+                SmLink smLink = (SmLink) smLinkOrSmLinkGrp;
+                physicalDivisionsMap.computeIfAbsent(smLink.getFrom(), any -> new LinkedList<>());
+                physicalDivisionsMap.get(smLink.getFrom()).add(divIDsToPhysicalDivisions.get(smLink.getTo()));
             }
         }
+        workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
+                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1))
+                .collect(Collectors.toList())
+                .iterator().next());
+    }
+
+    private Map<String, FileXmlElementAccess> getReferenceDivIdsToPhysicalDivisions(Mets mets) {
         FileSec fileSec = mets.getFileSec();
         Map<String, MediaVariant> useXmlAttributeAccess = fileSec != null
                 ? fileSec.getFileGrp().parallelStream().filter(fileGrp -> !fileGrp.getFile().isEmpty())
@@ -150,21 +157,27 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 div, mets, useXmlAttributeAccess, physicalDivision, divIDsToPhysicalDivisions, fileUseByFileCache
             );
         }
-        if (mets.getStructLink() == null) {
-            mets.setStructLink(new StructLink());
-        }
-        Map<String, List<FileXmlElementAccess>> physicalDivisionsMap = new HashMap<>();
-        for (Object smLinkOrSmLinkGrp : mets.getStructLink().getSmLinkOrSmLinkGrp()) {
-            if (smLinkOrSmLinkGrp instanceof SmLink) {
-                SmLink smLink = (SmLink) smLinkOrSmLinkGrp;
-                physicalDivisionsMap.computeIfAbsent(smLink.getFrom(), any -> new LinkedList<>());
-                physicalDivisionsMap.get(smLink.getFrom()).add(divIDsToPhysicalDivisions.get(smLink.getTo()));
+        return divIDsToPhysicalDivisions;
+    }
+
+    private void setWorkpieceFromMetsHeader(Mets mets) {
+        MetsHdr metsHdr = mets.getMetsHdr();
+        if (Objects.nonNull(metsHdr)) {
+            GregorianCalendar gregorianCalendar;
+            if (Objects.nonNull(metsHdr.getCREATEDATE())) {
+                gregorianCalendar = metsHdr.getCREATEDATE().toGregorianCalendar();
+            } else {
+                gregorianCalendar = new GregorianCalendar();
+            }
+            workpiece.setCreationDate(gregorianCalendar);
+            for (Agent agent : metsHdr.getAgent()) {
+                workpiece.getEditHistory().add(new AgentXmlElementAccess(agent).getProcessingNote());
+            }
+            MetsDocumentID metsDocumentID = metsHdr.getMetsDocumentID();
+            if (Objects.nonNull(metsDocumentID)) {
+                workpiece.setId(metsDocumentID.getValue());
             }
         }
-        workpiece.setLogicalStructure(getStructMapsStreamByType(mets, "LOGICAL")
-                .map(structMap -> new DivXmlElementAccess(structMap.getDiv(), mets, physicalDivisionsMap, 1))
-                .collect(Collectors.toList())
-                .iterator().next());
     }
 
     private void readMediaUnitsTreeRecursive(DivType div, Mets mets, Map<String, MediaVariant> useXmlAttributeAccess,
@@ -326,7 +339,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      * @param mediaFilesToIDFiles
      *            In this map, for each physical division, the corresponding XML file
      *            element is added, so that it can be used for linking later.
-     * @return
+     * @return an object of type FileSec
      */
     private FileSec generateFileSec(Map<URI, FileType> mediaFilesToIDFiles) {
         FileSec fileSec = new FileSec();

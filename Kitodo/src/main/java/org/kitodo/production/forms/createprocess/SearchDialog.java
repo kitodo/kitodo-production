@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -25,8 +25,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -65,19 +63,12 @@ public class SearchDialog {
      * @return list of SelectItem objects
      */
     public List<Process> getProcessesForChoiceList() {
-        List<Process> processes = new ArrayList<>();
-        List<ProcessDTO> byInChoiceListShown;
         try {
-            byInChoiceListShown = ServiceManager.getProcessService().findByInChoiceListShown(true, true);
-            for (ProcessDTO processDTO : byInChoiceListShown) {
-                processes.add(ServiceManager.getProcessService().getById(processDTO.getId()));
-            }
+            return ServiceManager.getProcessService().getTemplateProcesses();
         } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(CreateProcessForm.ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular()},
-                    logger, e);
+            Helper.setErrorMessage(e);
+            return new ArrayList<>();
         }
-
-        return processes;
     }
 
     /**

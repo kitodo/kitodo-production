@@ -13,7 +13,9 @@ package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import org.awaitility.core.ConditionTimeoutException;
 import org.kitodo.selenium.testframework.Browser;
@@ -26,7 +28,6 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
 
     private static final String TAB_VIEW = EDIT_FORM + ":processFromTemplateTabView";
     private static final String OPAC_SEARCH_FORM = "catalogSearchForm";
-    private static final String CSS_SELECTOR_DROPDOWN_TRIGGER =  ".ui-selectonemenu-trigger";
 
     @SuppressWarnings("unused")
     @FindBy(id = TAB_VIEW)
@@ -121,6 +122,22 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     /**
+     * Get 'Search' button.
+     * @return 'Search' button as WebElement.
+     */
+    public WebElement getSearchButton() {
+        return Browser.getDriver().findElementById(OPAC_SEARCH_FORM + ":performCatalogSearch");
+    }
+
+    /**
+     * Get template process menu.
+     * @return template process menu
+     */
+    public WebElement getTemplateProcessMenu() {
+        return Browser.getDriver().findElementById("searchEditForm:processSelect_input");
+    }
+
+    /**
      * Select GBV catalog.
      * @throws InterruptedException when thread is interrupted
      */
@@ -130,13 +147,24 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         Thread.sleep(Browser.getDelayAfterCatalogSelection());
     }
 
+    /**
+     * Get list of ImportConfiguration titles.
+     * @return list of ImportConfiguration titles
+     */
+    public List<String> getImportConfigurationsTitles() {
+        clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
+        WebElement selectMenuItems = Browser.getDriver().findElement(By.id("catalogSearchForm:catalogueSelectMenu_items"));
+        return selectMenuItems.findElements(By.className("ui-selectonemenu-list-item"))
+                .stream().map(WebElement::getText).collect(Collectors.toList());
+    }
+
     public String createProcess() throws Exception {
         clickElement(cancelCatalogSearchButton);
         await("Wait for OPAC search dialog to disappear").pollDelay(150, TimeUnit.MILLISECONDS)
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_2")));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_3")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
@@ -167,7 +195,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_2")));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_3")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
@@ -205,7 +233,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
                 .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)).isEnabled());
         clickElement(docTypeSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_0")));
+        clickElement(Browser.getDriver().findElement(By.id(docTypeSelect.getAttribute("id") + "_1")));
         await("Page ready").pollDelay(150, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> isDisplayed.test(processFromTemplateTabView));
 
@@ -256,6 +284,13 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         String generatedTitle = processTitleInput.getAttribute("value");
         save();
         return generatedTitle;
+    }
+
+    /**
+     * Enter test value into search term field.
+     */
+    public void enterTestSearchValue() {
+        searchTermInput.sendKeys("12345");
     }
 
     public ProcessesPage save() throws IllegalAccessException, InstantiationException {

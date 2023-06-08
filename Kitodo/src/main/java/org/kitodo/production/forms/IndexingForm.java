@@ -141,8 +141,8 @@ public class IndexingForm {
         indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
         try {
-            ServiceManager.getIndexingService().startIndexing(type, pollingChannel);
-        } catch (DataException | CustomResponseException e) {
+            ServiceManager.getIndexingService().startIndexing(pollingChannel, type);
+        } catch (IllegalStateException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -156,7 +156,11 @@ public class IndexingForm {
     public void callIndexingRemaining(ObjectType type) {
         indexingStartedTime = LocalDateTime.now();
         indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        ServiceManager.getIndexingService().startIndexingRemaining(type, pollingChannel);
+        try {
+            ServiceManager.getIndexingService().startIndexingRemaining(pollingChannel, type);
+        } catch (IllegalStateException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -363,5 +367,12 @@ public class IndexingForm {
         } catch (DataException | DAOException e) {
             Helper.setErrorMessage(e.getMessage());
         }
+    }
+
+    /**
+     * Cancel indexing upon user request.
+     */
+    public void cancelIndexing() {
+        ServiceManager.getIndexingService().cancelIndexing();
     }
 }

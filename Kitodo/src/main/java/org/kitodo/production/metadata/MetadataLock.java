@@ -20,7 +20,7 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.inject.Named;
 
 import org.kitodo.data.database.beans.User;
-import org.kitodo.production.forms.UserForm;
+import org.kitodo.production.services.ServiceManager;
 
 /**
  * Bean for locking the metadata.
@@ -28,7 +28,7 @@ import org.kitodo.production.forms.UserForm;
 @Named("MetadataLock")
 @ApplicationScoped
 public class MetadataLock implements Serializable {
-    private static ConcurrentHashMap<Integer, User> locks = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<Integer, User> locks = new ConcurrentHashMap<>();
 
     /**
      * Unlock metadata of a particular process again.
@@ -54,7 +54,7 @@ public class MetadataLock implements Serializable {
             return false;
         } else {
             /* if it is in the hash map, the user must be checked */
-            return UserForm.checkUserLoggedIn(user);
+            return !user.equals(ServiceManager.getUserService().getCurrentUser());
         }
     }
 

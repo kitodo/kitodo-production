@@ -17,17 +17,8 @@ import java.io.InputStream;
 import java.io.InvalidClassException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
 import javax.xml.XMLConstants;
@@ -44,55 +35,33 @@ import javax.xml.transform.sax.TransformerHandler;
 import javax.xml.transform.stream.StreamResult;
 import javax.xml.transform.stream.StreamSource;
 
-import org.apache.commons.io.FileUtils;
+import net.sf.saxon.TransformerFactoryImpl;
+
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
-import org.kitodo.api.schemaconverter.MetadataFormatConversion;
 import org.kitodo.api.schemaconverter.SchemaConverterInterface;
-import org.kitodo.config.KitodoConfig;
 import org.kitodo.exceptions.ConfigException;
 import org.xml.sax.InputSource;
 
 public class XMLSchemaConverter implements SchemaConverterInterface {
-
-    /*
-    Map of supported source metadata formats.
-    Each value contains a list of paths to XSLT files to transform the source format to internal Kitodo format.
-    The order of XSLT file paths will determine the order of execution.
-     */
-    private static Map<MetadataFormat, List<MetadataFormatConversion>> supportedSourceMetadataFormats = new HashMap<>();
-
-    static {
-        supportedSourceMetadataFormats.put(MetadataFormat.MODS, Collections.singletonList(MetadataFormatConversion.MODS_2_KITODO));
-        supportedSourceMetadataFormats.put(MetadataFormat.MARC, Arrays.asList(
-                MetadataFormatConversion.MARC_2_MODS, MetadataFormatConversion.MODS_2_KITODO));
-        supportedSourceMetadataFormats.put(MetadataFormat.PICA, Collections.singletonList(MetadataFormatConversion.PICA_2_KITODO));
-        System.setProperty("javax.xml.transform.TransformerFactory", "net.sf.saxon.TransformerFactoryImpl");
-    }
-
-    private static MetadataFormat supportedTargetMetadataFormat = MetadataFormat.KITODO;
-    private static FileFormat supportedSourceFileFormat = FileFormat.XML;
-    private static FileFormat supportedTargetFileFormat = FileFormat.XML;
+    private static final FileFormat supportedSourceFileFormat = FileFormat.XML;
+    private static final FileFormat supportedTargetFileFormat = FileFormat.XML;
 
     /**
      * Converts a given DataRecord to the given MetadataFormat 'targetMetadataFormat' and FileFormat 'targetFileFormat'.
      *
      * @param record DataRecord to be converted
-     * @param targetMetadataFormat MetadataFormat to which the given DataRecord is converted
      * @param targetFileFormat FileFormat to which the given DataRecord is converted
      * @param mappingFiles list of mapping files; if empty, the schema converter module uses a default mapping
      * @return The result of the conversion as a DataRecord.
      */
     @Override
     public DataRecord convert(DataRecord record, MetadataFormat targetMetadataFormat, FileFormat targetFileFormat,
-                              List<File> mappingFiles) throws IOException, URISyntaxException {
-        if (!(supportsSourceMetadataFormat(record.getMetadataFormat())
-                && supportsSourceFileFormat(record.getFileFormat())
-                && supportsTargetMetadataFormat(targetMetadataFormat)
-                && supportsTargetFileFormat(targetFileFormat))) {
-            throw new UnknownFormatConversionException("Unable to convert from " + record.getMetadataFormat() + "/"
-                    + record.getFileFormat() + " to " + targetMetadataFormat + "/" + targetFileFormat + "!");
+                              List<File> mappingFiles) throws IOException {
+        if (!(supportsSourceFileFormat(record.getFileFormat()) && supportsTargetFileFormat(targetFileFormat))) {
+            throw new UnknownFormatConversionException("Unable to convert from " + record.getFileFormat()
+                    + " to " + targetFileFormat + "!");
         }
 
         if (record.getOriginalData() instanceof String) {
@@ -100,18 +69,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             String conversionResult;
 
             if (mappingFiles.isEmpty()) {
-                List<MetadataFormatConversion> xslFiles = supportedSourceMetadataFormats.get(record.getMetadataFormat());
-                URI xsltDir = Paths.get(KitodoConfig.getParameter("directory.xslt")).toUri();
-                for (MetadataFormatConversion metadataFormatConversion : xslFiles) {
-                    URI xsltFile = xsltDir.resolve(new URI(metadataFormatConversion.getFileName()));
-                    if (!new File(xsltFile).exists() && Objects.nonNull(metadataFormatConversion.getSource())) {
-                        downloadXSLTFile(new URL(metadataFormatConversion.getSource()), xsltFile);
-                    }
-
-                    try (InputStream fileStream = Files.newInputStream(Paths.get(xsltFile))) {
-                        xmlString = transformXmlByXslt(xmlString, fileStream);
-                    }
-                }
+                throw new ConfigException("No mapping files found!");
             } else {
                 for (File mappingFile : mappingFiles) {
                     try (InputStream fileStream = Files.newInputStream(mappingFile.toPath())) {
@@ -130,16 +88,6 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             throw new InvalidClassException("OriginalData of DataRecord should be instance of class 'String', is '"
                     + record.getOriginalData().getClass().getName() + "' instead!");
         }
-    }
-
-    @Override
-    public boolean supportsTargetMetadataFormat(MetadataFormat format) {
-        return supportedTargetMetadataFormat.equals(format);
-    }
-
-    @Override
-    public boolean supportsSourceMetadataFormat(MetadataFormat format) {
-        return supportedSourceMetadataFormats.containsKey(format);
     }
 
     @Override
@@ -162,7 +110,7 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
         factory.setNamespaceAware(true);
         try {
             StringWriter stringWriter = new StringWriter();
-            TransformerFactory transformerFactory = TransformerFactory.newInstance();
+            TransformerFactory transformerFactory = new TransformerFactoryImpl();
             transformerFactory.setURIResolver((href, base) -> new StreamSource(href.replace("http:", "https:")));
             System.setProperty("http.agent", "Chrome");
             Transformer xsltTransformer = transformerFactory.newTransformer(new StreamSource(stylesheetFile));
@@ -175,12 +123,6 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
             return stringWriter.toString();
         } catch (TransformerException e) {
             throw new ConfigException("Error in transforming the response to internal format: " + e.getMessage(), e);
-        }
-    }
-
-    private void downloadXSLTFile(URL source, URI target) throws IOException {
-        if (Objects.nonNull(source) && Objects.nonNull(target)) {
-            FileUtils.copyURLToFile(source, new File(target));
         }
     }
 }

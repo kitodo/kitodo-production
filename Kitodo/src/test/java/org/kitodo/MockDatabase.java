@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -28,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -52,6 +54,11 @@ import org.elasticsearch.transport.Netty4Plugin;
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
+import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
+import org.kitodo.api.schemaconverter.FileFormat;
+import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -60,16 +67,20 @@ import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.data.database.beans.ListColumn;
+import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.LinkingMode;
@@ -85,6 +96,7 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
@@ -109,6 +121,10 @@ public class MockDatabase {
     private static final Logger logger = LogManager.getLogger(MockDatabase.class);
     private static Server tcpServer;
     private static HashMap<String, Integer> removableObjectIDs;
+    private static final int CUSTOM_CONFIGURATION_ID = 4;
+    public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
+    public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
+    public static final String META_XML = "/meta.xml";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -193,6 +209,7 @@ public class MockDatabase {
         insertTasks();
         insertDataForParallelTasks();
         insertDataForScriptParallelTasks();
+        insertDataEditorSettings();
     }
 
     public static void insertRolesFull() throws DAOException {
@@ -365,6 +382,20 @@ public class MockDatabase {
         authorities.add(new Authority("deleteRuleset" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("addRuleset" + CLIENT_ASSIGNABLE));
 
+        // ImportConfigurations
+        authorities.add(new Authority("addImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewImportConfiguration" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllImportConfigurations" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteImportConfiguration" + CLIENT_ASSIGNABLE));
+
+        // MappingFiles
+        authorities.add(new Authority("addMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("editMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewMappingFile" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("viewAllMappingFiles" + CLIENT_ASSIGNABLE));
+        authorities.add(new Authority("deleteMappingFile" + CLIENT_ASSIGNABLE));
+
         // Process
         authorities.add(new Authority("viewProcess" + CLIENT_ASSIGNABLE));
         authorities.add(new Authority("viewAllProcesses" + CLIENT_ASSIGNABLE));
@@ -431,8 +462,10 @@ public class MockDatabase {
         listColumns.add(new ListColumn("task.state"));
 
         listColumns.add(new ListColumn("process.title"));
-        listColumns.add(new ListColumn("process.status"));
+        listColumns.add(new ListColumn("process.state"));
         listColumns.add(new ListColumn("process.project"));
+        listColumns.add(new ListColumn("process.duration"));
+        listColumns.add(new ListColumn("process.lastEditingUser"));
 
         listColumns.add(new ListColumn("user.username"));
         listColumns.add(new ListColumn("user.location"));
@@ -586,9 +619,72 @@ public class MockDatabase {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
-        thirdProcess.setSortHelperStatus("100000000");
+        thirdProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         thirdProcess.setProject(projectTwo);
         ServiceManager.getProcessService().save(thirdProcess);
+    }
+
+    /**
+     * The folders up to and including number 9 in the metadata folder are
+     * already in use, so here we insert placeholder processes so that the
+     * newspaper’s overall process gets the number 10.
+     * @param startId ID of first placeholder process to add
+     * @param endId ID of last placeholder process to add
+     */
+    public static void insertPlaceholderProcesses(int startId, int endId) throws DataException {
+        for (int processNumber = startId; processNumber <= endId; processNumber++) {
+            Process nthProcess = new Process();
+            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
+            ServiceManager.getProcessService().save(nthProcess);
+        }
+    }
+
+    /**
+     * Insert process of type 'MultiVolumeWork' used to test creation of subordinate process of type 'Volume'.
+     * @throws DAOException when retrieving project or ruleset from database fails
+     * @throws DataException when saving new process object fails
+     */
+    public static int insertMultiVolumeWork() throws DAOException, DataException {
+        Process multiVolumeWork = new Process();
+        multiVolumeWork.setBaseType("MultiVolumeWork");
+        multiVolumeWork.setTitle("Multi volume work test process");
+        Project project = ServiceManager.getProjectService().getById(1);
+        multiVolumeWork.setProject(project);
+        multiVolumeWork.setTemplate(project.getTemplates().get(0));
+        multiVolumeWork.setRuleset(ServiceManager.getRulesetService().getById(1));
+        ServiceManager.getProcessService().save(multiVolumeWork);
+        return multiVolumeWork.getId();
+    }
+
+    /**
+     * Create template process of type 'Volume' and corresponding template process import configuration.
+     * @throws DAOException when loading required objects from database fails
+     * @throws DataException when saving process or import configuration fails
+     */
+    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException, DataException {
+
+        // create template process
+        Project firstProject = ServiceManager.getProjectService().getById(1);
+        Process templateProcess = new Process();
+        templateProcess.setBaseType("Volume");
+        templateProcess.setTitle("Test volume");
+        templateProcess.setProject(firstProject);
+        templateProcess.setTemplate(firstProject.getTemplates().get(0));
+        templateProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
+        templateProcess.setInChoiceListShown(true);
+        ServiceManager.getProcessService().save(templateProcess);
+
+        // create import configuration for template process
+        Process newProcess = ServiceManager.getProcessService().getById(12);
+        ImportConfiguration templateProcessConfiguration = new ImportConfiguration();
+        templateProcessConfiguration.setConfigurationType(ImportConfigurationType.PROCESS_TEMPLATE.name());
+        templateProcessConfiguration.setDefaultTemplateProcess(newProcess);
+        ServiceManager.getImportConfigurationService().saveToDatabase(templateProcessConfiguration);
+        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().countDatabaseRows());
+        ImportConfiguration savedConfig = ServiceManager.getImportConfigurationService().getById(numberOfConfigs);
+        firstProject.setDefaultChildProcessImportConfiguration(savedConfig);
+        ServiceManager.getProjectService().save(firstProject);
+        ServiceManager.getImportService().setUsingTemplates(true);
     }
 
     public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
@@ -619,8 +715,7 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(seventhProcess);
     }
 
-    public static void removeProcessesForHierarchyTests() throws DAOException, DataException {
-
+    public static void removeProcessesForHierarchyTests() throws DataException {
         ServiceManager.getProcessService().remove(5);
         ServiceManager.getProcessService().remove(6);
         ServiceManager.getProcessService().remove(7);
@@ -636,16 +731,7 @@ public class MockDatabase {
         fivthRuleset.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getRulesetService().save(fivthRuleset);
 
-        /*
-         * The folders up to and including number 9 in the metadata folder are
-         * already in use, so here we insert placeholder processes so that the
-         * newspaper’s overall process gets the number 10.
-         */
-        for (int processNumber = 4; processNumber <= 9; processNumber++) {
-            Process nthProcess = new Process();
-            nthProcess.setTitle("Placeholder process number ".concat(Integer.toString(processNumber)));
-            ServiceManager.getProcessService().save(nthProcess);
-        }
+        insertPlaceholderProcesses(4, 9);
 
         Process tenthProcess = new Process();
         tenthProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -841,7 +927,6 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        firstProject.getUsers().add(sixthUser);
         firstProject.setClient(client);
         ServiceManager.getProjectService().save(firstProject);
 
@@ -854,12 +939,14 @@ public class MockDatabase {
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
         secondProject.getUsers().add(firstUser);
+        secondProject.getUsers().add(sixthUser);
         secondProject.setClient(client);
         ServiceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
+        sixthUser.getProjects().add(secondProject);
         ServiceManager.getUserService().saveToDatabase(firstUser);
         ServiceManager.getProjectService().saveToIndex(secondProject, true);
 
@@ -938,6 +1025,14 @@ public class MockDatabase {
         fifthFolder.setCreateFolder(true);
         fifthFolder.setLinkingMode(LinkingMode.ALL);
 
+        Folder sixthFolder = new Folder();
+        sixthFolder.setFileGroup("LOCAL");
+        sixthFolder.setMimeType("image/tiff");
+        sixthFolder.setPath("images/(processtitle)_media");
+        sixthFolder.setCopyFolder(false);
+        sixthFolder.setCreateFolder(true);
+        sixthFolder.setLinkingMode(LinkingMode.NO);
+
         firstFolder.setProject(project);
         project.getFolders().add(firstFolder);
 
@@ -952,6 +1047,123 @@ public class MockDatabase {
 
         fifthFolder.setProject(project);
         project.getFolders().add(fifthFolder);
+
+        sixthFolder.setProject(project);
+        project.getFolders().add(sixthFolder);
+
+        project.setMediaView(secondFolder);
+        ServiceManager.getProjectService().save(project);
+    }
+
+    /**
+     * Insert dummy process into database.
+     * @param dummyProcessId id used in dummy process title
+     * @return database ID of created dummy process
+     * @throws DAOException when loading test project fails
+     * @throws DataException when saving dummy process fails
+     */
+    public static int insertDummyProcess(int dummyProcessId) throws DAOException, DataException {
+        Project firstProject = ServiceManager.getProjectService().getById(2);
+        Template template = firstProject.getTemplates().get(0);
+        Process dummyProcess = new Process();
+        dummyProcess.setTitle("Dummy_process_" + dummyProcessId);
+        dummyProcess.setProject(firstProject);
+        dummyProcess.setTemplate(template);
+        dummyProcess.setRuleset(template.getRuleset());
+        dummyProcess.setDocket(template.getDocket());
+        ServiceManager.getProcessService().save(dummyProcess);
+        return dummyProcess.getId();
+    }
+
+    /**
+     * Add test process for media references update test to second project.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(MEDIA_REFERENCES_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for metadata lock test to second project.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(METADATA_LOCK_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Insert test process for media reference updates into database.
+     * @return database ID of created test process
+     * @throws DAOException when loading test project fails
+     * @throws DataException when saving test process fails
+     */
+    private static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DataException {
+        Project projectTwo = ServiceManager.getProjectService().getById(2);
+        Template template = projectTwo.getTemplates().get(0);
+        Process mediaReferencesProcess = new Process();
+        mediaReferencesProcess.setTitle(processTitle);
+        mediaReferencesProcess.setProject(projectTwo);
+        mediaReferencesProcess.setTemplate(template);
+        mediaReferencesProcess.setRuleset(template.getRuleset());
+        mediaReferencesProcess.setDocket(template.getDocket());
+        ServiceManager.getProcessService().save(mediaReferencesProcess);
+        return mediaReferencesProcess.getId();
+    }
+
+    /**
+     * Insert folders into database and add them to second test project.
+     * @throws DAOException when loading project or template fails
+     * @throws DataException when saving project or template fails
+     */
+    public static void insertFoldersForSecondProject() throws DAOException, DataException {
+        Project project = ServiceManager.getProjectService().getById(2);
+
+        Template template = ServiceManager.getTemplateService().getById(1);
+        project.getTemplates().add(template);
+        template.getProjects().add(project);
+        ServiceManager.getTemplateService().save(template);
+
+        Folder detailViewsFolder = new Folder();
+        detailViewsFolder.setFileGroup("DEFAULT");
+        detailViewsFolder.setUrlStructure("https://www.example.com/content/$(meta.CatalogIDDigital)/images/default/");
+        detailViewsFolder.setMimeType("image/png");
+        detailViewsFolder.setPath("images/default");
+        detailViewsFolder.setCopyFolder(true);
+        detailViewsFolder.setCreateFolder(true);
+        detailViewsFolder.setDerivative(1.0);
+        detailViewsFolder.setLinkingMode(LinkingMode.ALL);
+        detailViewsFolder.setProject(project);
+        project.getFolders().add(detailViewsFolder);
+        project.setMediaView(detailViewsFolder);
+
+        Folder thumbnailsFolder = new Folder();
+        thumbnailsFolder.setFileGroup("THUMBS");
+        thumbnailsFolder.setUrlStructure("https://www.example.com/content/$(meta.CatalogIDDigital)/images/thumbs/");
+        thumbnailsFolder.setMimeType("image/png");
+        thumbnailsFolder.setPath("images/thumbs");
+        thumbnailsFolder.setCopyFolder(true);
+        thumbnailsFolder.setCreateFolder(true);
+        thumbnailsFolder.setImageSize(150);
+        thumbnailsFolder.setLinkingMode(LinkingMode.ALL);
+        thumbnailsFolder.setProject(project);
+        project.getFolders().add(thumbnailsFolder);
+        project.setPreview(thumbnailsFolder);
+
+        Folder scansFolder = new Folder();
+        scansFolder.setFileGroup("SOURCE");
+        scansFolder.setUrlStructure("https://www.example.com/content/$(meta.CatalogIDDigital)/images/scans/");
+        scansFolder.setMimeType("image/tiff");
+        scansFolder.setPath("images/scans");
+        scansFolder.setCopyFolder(false);
+        scansFolder.setCreateFolder(true);
+        scansFolder.setLinkingMode(LinkingMode.NO);
+        scansFolder.setProject(project);
+        project.getFolders().add(scansFolder);
+        project.setGeneratorSource(scansFolder);
 
         ServiceManager.getProjectService().save(project);
     }
@@ -1316,7 +1528,7 @@ public class MockDatabase {
         List<Authority> userMetadataAuthorities = new ArrayList<>();
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewAllProcesses" + CLIENT_ASSIGNABLE));
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessImages" + CLIENT_ASSIGNABLE));
-        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewProcessMetaData" + CLIENT_ASSIGNABLE));
+        userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("editProcessMetaData" + CLIENT_ASSIGNABLE));
         sixthRole.setAuthorities(userMetadataAuthorities);
 
         ServiceManager.getRoleService().saveToDatabase(sixthRole);
@@ -1403,6 +1615,157 @@ public class MockDatabase {
         thirdWorkflow.setStatus(WorkflowStatus.DRAFT);
         thirdWorkflow.setClient(ServiceManager.getClientService().getById(2));
         ServiceManager.getWorkflowService().save(thirdWorkflow);
+    }
+
+    public static void insertMappingFiles() throws DAOException {
+        // add MODS to Kitodo mapping file
+        MappingFile mappingFileModsToKitodo = new MappingFile();
+        mappingFileModsToKitodo.setFile("mods2kitodo.xsl");
+        mappingFileModsToKitodo.setTitle("MODS to Kitodo mapping");
+        mappingFileModsToKitodo.setInputMetadataFormat(MetadataFormat.MODS.name());
+        mappingFileModsToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        ServiceManager.getMappingFileService().saveToDatabase(mappingFileModsToKitodo);
+
+        // add PICA to Kitodo mapping file
+        MappingFile mappingFilePicaToKitodo = new MappingFile();
+        mappingFilePicaToKitodo.setFile("pica2kitodo.xsl");
+        mappingFilePicaToKitodo.setTitle("PICA to Kitodo mapping");
+        mappingFilePicaToKitodo.setInputMetadataFormat(MetadataFormat.PICA.name());
+        mappingFilePicaToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
+        ServiceManager.getMappingFileService().saveToDatabase(mappingFilePicaToKitodo);
+    }
+
+    public static void insertImportConfigurations() throws DAOException, DataException {
+
+        // add GBV import configuration, including id and default search fields
+        ImportConfiguration gbvConfiguration = new ImportConfiguration();
+        gbvConfiguration.setTitle("GBV");
+        gbvConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
+        gbvConfiguration.setSruVersion("1.2");
+        gbvConfiguration.setSruRecordSchema("mods");
+
+        SearchField ppnField = new SearchField();
+        ppnField.setValue("pica.ppn");
+        ppnField.setLabel("PPN");
+        ppnField.setDisplayed(true);
+        ppnField.setImportConfiguration(gbvConfiguration);
+
+        gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
+        gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
+        gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
+        ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
+
+        // add Kalliope import configuration, including id search field
+        ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
+        kalliopeConfiguration.setTitle("Kalliope");
+        kalliopeConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        kalliopeConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
+        kalliopeConfiguration.setSruVersion("1.2");
+        kalliopeConfiguration.setSruRecordSchema("mods");
+        kalliopeConfiguration.setHost("localhost");
+        kalliopeConfiguration.setScheme("http");
+        kalliopeConfiguration.setPath("/sru");
+        kalliopeConfiguration.setPort(8888);
+        kalliopeConfiguration.setPrestructuredImport(false);
+        kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
+        kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
+        kalliopeConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
+                .getById(1)));
+
+        SearchField idSearchFieldKalliope = new SearchField();
+        idSearchFieldKalliope.setValue("ead.id");
+        idSearchFieldKalliope.setLabel("Identifier");
+        idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
+
+        kalliopeConfiguration.setSearchFields(Collections.singletonList(idSearchFieldKalliope));
+        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+
+        kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
+        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+
+        // add K10Plus import configuration, including id search field
+        ImportConfiguration k10plusConfiguration = new ImportConfiguration();
+        k10plusConfiguration.setTitle("K10Plus");
+        k10plusConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        k10plusConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
+        k10plusConfiguration.setSruVersion("1.1");
+        k10plusConfiguration.setSruRecordSchema("picaxml");
+        k10plusConfiguration.setHost("localhost");
+        k10plusConfiguration.setScheme("http");
+        k10plusConfiguration.setPath("/sru");
+        k10plusConfiguration.setPort(8888);
+        k10plusConfiguration.setPrestructuredImport(false);
+        k10plusConfiguration.setReturnFormat(FileFormat.XML.name());
+        k10plusConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
+        k10plusConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
+                .getById(2)));
+
+        SearchField idSearchFieldK10Plus = new SearchField();
+        idSearchFieldK10Plus.setValue("pica.ppn");
+        idSearchFieldK10Plus.setLabel("PPN");
+        idSearchFieldK10Plus.setImportConfiguration(k10plusConfiguration);
+
+        k10plusConfiguration.setSearchFields(Collections.singletonList(idSearchFieldK10Plus));
+        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+
+        k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
+        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+
+        for (Project project : ServiceManager.getProjectService().getAll()) {
+            project.setDefaultImportConfiguration(k10plusConfiguration);
+            ServiceManager.getProjectService().save(project);
+        }
+    }
+
+    /**
+     * Create an ImportConfiguration with configuration type `OPAC_SEARCH` and search interface type `CUSTOM` and
+     * add custom URL parameters.
+     * @throws DAOException when saving ImportConfiguration to database fails
+     */
+    public static void insertImportconfigurationWithCustomUrlParameters() throws DAOException {
+        // add CUSTOM import configuration with URL parameters
+        ImportConfiguration customConfiguration = new ImportConfiguration();
+        customConfiguration.setTitle("Custom");
+        customConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
+        customConfiguration.setInterfaceType(SearchInterfaceType.CUSTOM.name());
+
+        customConfiguration.setMappingFiles(Collections.singletonList(ServiceManager.getMappingFileService()
+                .getById(2)));
+
+        customConfiguration.setHost("localhost");
+        customConfiguration.setScheme("http");
+        customConfiguration.setPath("/custom");
+        customConfiguration.setPort(8888);
+        customConfiguration.setPrestructuredImport(false);
+        customConfiguration.setReturnFormat(FileFormat.XML.name());
+        customConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
+
+        SearchField idField = new SearchField();
+        idField.setValue("id");
+        idField.setLabel("Identifier");
+        idField.setDisplayed(true);
+        idField.setImportConfiguration(customConfiguration);
+
+        customConfiguration.setSearchFields(Collections.singletonList(idField));
+        customConfiguration.setIdSearchField(customConfiguration.getSearchFields().get(0));
+        customConfiguration.setDefaultSearchField(customConfiguration.getSearchFields().get(0));
+
+        // add URL parameters
+        UrlParameter firstParameter = new UrlParameter();
+        firstParameter.setParameterKey("firstKey");
+        firstParameter.setParameterValue("firstValue");
+        firstParameter.setImportConfiguration(customConfiguration);
+        UrlParameter secondParameter = new UrlParameter();
+        secondParameter.setParameterKey("secondKey");
+        secondParameter.setParameterValue("secondValue");
+        secondParameter.setImportConfiguration(customConfiguration);
+        List<UrlParameter> urlParameters = new LinkedList<>();
+        urlParameters.add(firstParameter);
+        urlParameters.add(secondParameter);
+        customConfiguration.setUrlParameters(urlParameters);
+
+        ServiceManager.getImportConfigurationService().saveToDatabase(customConfiguration);
     }
 
     private static void insertDataForParallelTasks() throws DAOException, DataException, IOException, WorkflowException {
@@ -1578,7 +1941,7 @@ public class MockDatabase {
 
         Set<String> tables = new HashSet<>();
         String query = "SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES  where TABLE_SCHEMA='PUBLIC'";
-        List tableResult = session.createNativeQuery(query).getResultList();
+        List<?> tableResult = session.createNativeQuery(query).getResultList();
         for (Object table : tableResult) {
             tables.add((String) table);
         }
@@ -1589,7 +1952,7 @@ public class MockDatabase {
 
         Set<String> sequences = new HashSet<>();
         query = "SELECT SEQUENCE_NAME FROM INFORMATION_SCHEMA.SEQUENCES WHERE SEQUENCE_SCHEMA='PUBLIC'";
-        List sequencesResult = session.createNativeQuery(query).getResultList();
+        List<?> sequencesResult = session.createNativeQuery(query).getResultList();
         for (Object test : sequencesResult) {
             sequences.add((String) test);
         }
@@ -1656,4 +2019,79 @@ public class MockDatabase {
         return removableObjectIDs;
     }
 
+    /**
+     * Return Kalliope ImportConfiguration.
+     *
+     * @return Kalliope ImportConfiguration
+     * @throws DAOException thrown if Kalliope ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getKalliopeImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(2);
+    }
+
+    /**
+     * Return K10Plus ImportConfiguration
+     *
+     * @return K10Plus ImportConfiguration
+     * @throws DAOException thrown if K10Plus ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getK10PlusImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(3);
+    }
+
+    /**
+     * Return Custom type ImportConfiguration.
+     * @return Custom type ImportConfiguration
+     * @throws DAOException thrown when Custom type ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getCustomTypeImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(CUSTOM_CONFIGURATION_ID);
+    }
+
+    /**
+     * Add process with title 'processTitle' to MockDatabase.
+     *
+     * @param processTitle title of process
+     * @param projectId ID of project to add to new process
+     * @param templateId ID of template to add to new process
+     * @return new process
+     * @throws DAOException when retrieving entities from database fails
+     * @throws DataException when saving new process to database fails
+     */
+    public static Process addProcess(String processTitle, int projectId, int templateId)
+            throws DAOException, DataException {
+        Project projectOne = ServiceManager.getProjectService().getById(projectId);
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        LocalDate localDate = LocalDate.of(2023, 1, 3);
+        Process process = new Process();
+        process.setTitle(processTitle);
+        process.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
+        process.setSortHelperImages(30);
+        process.setDocket(template.getDocket());
+        process.setProject(projectOne);
+        process.setRuleset(template.getRuleset());
+        process.setTemplate(template);
+        ServiceManager.getProcessService().save(process);
+        return process;
+    }
+
+    /**
+     * Copy test metadata xml file with provided 'filename' to process directory of process with provided ID
+     * 'processId'. Creates directory if it does not exist.
+     * @param processId process ID
+     * @param filename filename of metadata file
+     * @throws IOException when subdirectory cannot be created or metadata file cannot be copied
+     */
+    public static void copyTestMetadataFile(int processId, String filename) throws IOException {
+        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
+                .toUri();
+        URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
+                + META_XML).toUri();
+        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
+        if (!ServiceManager.getFileService().isDirectory(processDir)) {
+            ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
+                    String.valueOf(processId));
+        }
+        ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
+    }
 }

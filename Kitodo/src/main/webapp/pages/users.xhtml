@@ -33,44 +33,11 @@
 
     <ui:define name="contentHeader">
         <h3>#{msgs.users}</h3>
+        <!-- Filters -->
         <h:panelGroup id="filterMenuWrapper">
-            <h:form id="filterMenu"
-                    rendered="#{UserForm.activeTabIndex eq 0}">
-                <h:panelGroup layout="block"
-                              styleClass="ui-inputgroup">
-                    <p:inputText id="filterfield"
-                                 value="#{UserForm.filter}"
-                                 placeholder="#{msgs.filter}">
-                        <p:ajax event="change"
-                                onstart="PF('usersTable').getPaginator().setPage(0);"
-                                update="usersTabView:usersTable sticky-notifications"/>
-                    </p:inputText>
-                    <p:commandButton id="filterMenuTrigger" icon="fa fa-chevron-down"/>
-                    <p:overlayPanel for="filterMenuTrigger" my="right top" at="right bottom">
-                        <ul>
-                            <li>
-                                <p:commandButton id="addFilter"
-                                                 action="#{UserForm.addFilterToUser}"
-                                                 icon="fa fa-floppy-o fa-lg"
-                                                 value="#{msgs.addFilter}" update="@form"/>
-                            </li>
-                            <ui:repeat value="#{ProcessForm.userFilters}" var="filter">
-                                <li>
-                                    <p:commandLink value="#{filter}"
-                                                   action="#{UserForm.changeFilter(filter)}"
-                                                   title="#{filter}"/>
-                                    <p:commandLink title="#{msgs.removeFilter}"
-                                                   action="#{UserForm.removeFilterFromUser(filter)}"
-                                                   styleClass="filter-delete plain"
-                                                   update="@form">
-                                        <i class="fa fa-trash-o fa-lg"/>
-                                    </p:commandLink>
-                                </li>
-                            </ui:repeat>
-                        </ul>
-                    </p:overlayPanel>
-                </h:panelGroup>
-            </h:form>
+            <p:outputPanel rendered="#{UserForm.activeTabIndex eq 0}">
+                <ui:include src="/WEB-INF/templates/includes/users/filterMenu.xhtml"/>
+            </p:outputPanel>
         </h:panelGroup>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">

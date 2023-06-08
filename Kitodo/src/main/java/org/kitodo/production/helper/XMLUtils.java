@@ -29,6 +29,9 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathExpressionException;
+import javax.xml.xpath.XPathFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -164,4 +167,16 @@ public class XMLUtils {
         return builder.parse(new InputSource(new ByteArrayInputStream(xmlString.getBytes(StandardCharsets.UTF_8))));
     }
 
+    /**
+     * Compile given String "xpathString" and check whether it contains a valid XPath (e.g. if the syntax is correct)
+     * Throws an exception if syntax is incorrect. Can be used to validate XPaths.
+     *
+     * @param xpathString String to be checked for correct XPath syntax
+     * @throws XPathExpressionException if provided String does not contain valid XPath syntax
+     */
+    public static void validateXPathSyntax(String xpathString) throws XPathExpressionException {
+        XPathFactory factory = XPathFactory.newInstance();
+        XPath xpath = factory.newXPath();
+        xpath.compile(xpathString);
+    }
 }

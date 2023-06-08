@@ -56,12 +56,15 @@
 
             <p:column id="processIdColumn"
                       rendered="#{CurrentTaskForm.showColumn('task.processId')}"
+                      styleClass="numeric"
+                      sortBy="#{item.processForTask.id}"
                       headerText="#{msgs.processId}">
                 <h:outputText title="#{item.process.id}"
                               value="#{item.process.id}"/>
             </p:column>
 
             <p:column headerText="#{msgs.process}"
+                      sortBy="#{item.processForTask.title}"
                       rendered="#{CurrentTaskForm.showColumn('task.process')}">
                 <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.editProcess}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
@@ -73,6 +76,8 @@
             </p:column>
 
             <p:column headerText="#{msgs.status}"
+                      sortBy="#{item.processingStatus}"
+                      styleClass="genericSortIcon"
                       rendered="#{CurrentTaskForm.showColumn('task.state')}">
                 <h:panelGroup class="task-status"
                               title="#{item.processingStatusTitle}"
@@ -86,31 +91,46 @@
 
             <p:column id="processingUserColumn"
                       headerText="#{msgs.lastEditingUser}"
-                      rendered="#{CurrentTaskForm.showColumn('task.lastProcessingUser')}">
+                      sortBy="#{item.processingUser.name}"
+                      rendered="#{CurrentTaskForm.showColumn('task.lastEditingUser')}">
                 <h:outputText value="#{item.processingUser ne null ? item.processingUser.fullName : ''}"
                               title="#{item.processingUser ne null ? item.processingUser.fullName : ''}"/>
             </p:column>
             <p:column id="processingBeginColumn"
                       headerText="#{msgs.processingBegin}"
+                      styleClass="numeric"
+                      sortBy="#{item.processingBegin}"
                       rendered="#{CurrentTaskForm.showColumn('task.processingBegin')}">
                 <h:outputText value="#{item.processingBegin}"
                               title="#{item.processingBegin}"/>
             </p:column>
             <p:column id="processingEndColumn"
                       headerText="#{msgs.processingEnd}"
+                      styleClass="numeric"
+                      sortBy="#{item.processingEnd}"
                       rendered="#{CurrentTaskForm.showColumn('task.processingEnd')}">
                 <h:outputText value="#{item.processingEnd}"
                               title="#{item.processingEnd}"/>
             </p:column>
 
-            <p:column styleClass="correction-column"
+            <p:column styleClass="comment-column genericSortIcon"
                       width="85"
-                      rendered="#{CurrentTaskForm.showColumn('task.correctionMessage')}"
-                      headerText="#{msgs.correction}">
-                <h:outputText value="#{msgs.correctionK}"
-                              title="#{CurrentTaskForm.getCorrectionMessages(item)}"
-                              styleClass="correction-marker #{CurrentTaskForm.hasCorrectionComment(item) eq 1 ? 'corrected' : ''}"
-                              rendered="#{CurrentTaskForm.hasCorrectionComment(item) gt 0}"/>
+                      rendered="#{CurrentTaskForm.showColumn('task.comments')}"
+                      sortBy="#{item.correctionCommentStatus}"
+                      headerText="#{msgs.comments}">
+                <h:panelGroup id="commentIcon">
+                    <h:panelGroup styleClass="fa fa-comment"
+                                  rendered="#{item.getProcess().hasComments() and item.correctionCommentStatus eq 0}"/>
+                    <h:outputText value="#{msgs.correctionK}"
+                                  styleClass="correction-marker #{item.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{item.correctionCommentStatus gt 0}"/>
+                </h:panelGroup>
+                <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true">
+                    <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
+                        <ui:param name="comments" value="#{commentTooltipView.getComments(item)}"/>
+                    </ui:include>
+                </p:tooltip>
+
             </p:column>
 
             <!-- columns for tasks that have been configured in kitodo config file! -->
@@ -123,12 +143,15 @@
             </p:columns>
 
             <p:column headerText="#{msgs.project}"
+                      sortBy="#{item.projectForTask.title.keyword}"
                       rendered="#{CurrentTaskForm.showColumn('task.project')}">
                 <h:outputText title="#{item.process.project.title}"
                               value="#{item.process.project.title}"/>
             </p:column>
 
             <p:column headerText="#{msgs.duration} (#{msgs.process})"
+                      styleClass="numeric"
+                      sortBy="#{item.process.creationDate}"
                       rendered="#{CurrentTaskForm.showColumn('task.duration')}">
                 <h:outputText value="#{CurrentTaskForm.getProcessDuration(item)}"/>
             </p:column>
@@ -258,9 +281,10 @@
 
     <div id="dropDownMenus">
         <h:form id="filterForm"
+                styleClass="filter-form"
                 style="display: inline-block;">
             <p:selectCheckboxMenu id="taskFilters"
-                                  panelStyleClass="task-filter-panel"
+                                  panelStyleClass="filter-panel"
                                   value="#{CurrentTaskForm.selectedTaskFilters}"
                                   styleClass="secondary"
                                   label="#{msgs.filter}">
@@ -276,7 +300,7 @@
         <h:form id="statusForm"
                 style="display: inline-block;">
             <p:selectCheckboxMenu id="taskStatus"
-                                  panelStyleClass="task-filter-panel"
+                                  panelStyleClass="filter-panel"
                                   value="#{CurrentTaskForm.selectedTaskStatus}"
                                   styleClass="secondary"
                                   label="#{msgs.processingStatus}">

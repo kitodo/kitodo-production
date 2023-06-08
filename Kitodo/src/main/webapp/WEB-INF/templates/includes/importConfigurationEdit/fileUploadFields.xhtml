@@ -1,0 +1,83 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <p:panelGrid columns="2"
+                     layout="grid">
+            <p:row>
+                <div>
+                    <p:outputLabel for="uploadFileFormat" value="#{msgs['importConfig.fileupload.fileformat']} *"/>
+                    <p:selectOneMenu id="uploadFileFormat"
+                                     styleClass="input-with-button"
+                                     required="#{not empty param['editForm:save']}"
+                                     value="#{importConfigurationEditView.importConfiguration.returnFormat}">
+                        <f:selectItems value="#{importConfigurationEditView.fileFormats}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"
+                                update="editForm:importConfigurationTabView"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="uploadFileFormatHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="uploadFileFormatHelp"
+                               value="#{msgs['tooltip.importConfig.uploadFileFormatHelp']}"/>
+                </div>
+            </p:row>
+            <p:row>
+                <div>
+                    <p:outputLabel for="uploadMetadataFormat" value="#{msgs['importConfig.fileupload.metadataformat']} *"/>
+                    <p:selectOneMenu id="uploadMetadataFormat"
+                                     styleClass="input-with-button"
+                                     required="#{not empty param['editForm:save']}"
+                                     value="#{importConfigurationEditView.importConfiguration.metadataFormat}">
+                        <f:selectItems value="#{importConfigurationEditView.metadataFormats}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="uploadMetadataFormatHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="uploadMetadataFormatHelp"
+                               value="#{msgs['tooltip.importConfig.uploadMetadataFormatHelp']}"/>
+                </div>
+            </p:row>
+            <p:row>
+                <div>
+                    <p:outputLabel for="uploadParentMappingFile" value="#{msgs['importConfig.fileupload.parentMappingFile']}"/>
+                    <p:selectOneMenu id="uploadParentMappingFile"
+                                     styleClass="input-with-button"
+                                     validator="ParentMappingValidator"
+                                     converter="#{mappingFileConverter}"
+                                     value="#{importConfigurationEditView.importConfiguration.parentMappingFile}">
+                        <f:selectItem itemValue="#{null}"
+                                      itemLabel="-- #{msgs['importConfig.fileupload.selectParentMappingFile']} --"
+                                      noSelectionOption="true"/>
+                        <f:selectItems value="#{importConfigurationEditView.mappingFiles}"
+                                       var="mappingFile"
+                                       itemLabel="#{mappingFile.title} (#{mappingFile.inputMetadataFormat} &#8594; #{mappingFile.outputMetadataFormat})"
+                                       itemValue="#{mappingFile}"/>
+                        <p:ajax event="change"
+                                update="editForm:importConfigurationTabView"
+                                oncomplete="toggleSave()"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="uploadParentMappingFileHelp" type="button"
+                                     styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="uploadParentMappingFileHelp"
+                               value="#{msgs['tooltip.importConfig.parentMappingFileHelp']}"/>
+                </div>
+            </p:row>
+        </p:panelGrid>
+    </f:view>
+</ui:composition>

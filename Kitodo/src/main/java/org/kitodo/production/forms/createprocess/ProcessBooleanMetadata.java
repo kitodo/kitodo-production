@@ -18,6 +18,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -47,7 +48,11 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
      */
     ProcessBooleanMetadata(ProcessFieldedMetadata container, SimpleMetadataViewInterface settings, MetadataEntry data) {
         super(container, settings, settings.getLabel());
-        this.active = Objects.nonNull(data) || settings.getBooleanDefaultValue();
+        if (Objects.isNull(data)) {
+            this.active = settings.getBooleanDefaultValue();
+        } else {
+            this.active = StringUtils.isNotBlank(data.getValue());
+        }
     }
 
     private ProcessBooleanMetadata(ProcessBooleanMetadata template) {

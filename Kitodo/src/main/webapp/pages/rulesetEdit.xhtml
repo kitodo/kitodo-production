@@ -34,13 +34,16 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
-        <script>
-            window.onload = function () {checkForm('editForm')};
-        </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.createNewRuleset}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.editRuleset} (#{RulesetForm.ruleset.title})" rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewRuleset} (#{RulesetForm.ruleset.title})" rendered="#{isViewMode}"/>
+            <h:outputText value="#{msgs.createNewRuleset}"
+                          styleClass="shortable"
+                          rendered="#{isCreateMode}"/>
+            <h:outputText value="#{msgs.editRuleset} (#{RulesetForm.ruleset.title})"
+                          styleClass="shortable"
+                          rendered="#{isEditMode}"/>
+            <h:outputText value="#{msgs.viewRuleset} (#{RulesetForm.ruleset.title})"
+                          styleClass="shortable"
+                          rendered="#{isViewMode}"/>
         </h3>
         <p:button value="#{msgs.cancel}"
                   outcome="projects?keepPagination=true"

@@ -20,6 +20,7 @@ import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.production.helper.DateUtils;
 
 /**
@@ -100,7 +101,7 @@ public class CourseToGerman {
         appendDate(result, block.getLastAppearance());
         result.append(" regelmäßig ");
 
-        result.append(iterateOverIssues(block, result));
+        iterateOverIssues(block, result);
         return result.toString();
     }
 
@@ -124,8 +125,10 @@ public class CourseToGerman {
                     }
                 }
             }
-            result.append(" als ");
-            result.append(issue.getHeading());
+            if (!StringUtils.isBlank(issue.getHeading())) {
+                result.append(" als ");
+                result.append(issue.getHeading());
+            }
             if (issueIndex < currentIssuesSize - 2) {
                 result.append(", ");
             }
@@ -224,34 +227,43 @@ public class CourseToGerman {
                 buffer.append(MONTH_NAMES[current.getMonthValue()]);
             }
 
-            if (!DateUtils.sameYear(current, next)) {
-                buffer.append(' ');
-                buffer.append(current.getYear());
-                if (next != null) {
-                    if (!DateUtils.sameYear(next, orderedDates.last())) {
-                        buffer.append(", ");
-                    } else {
-                        buffer.append(" und ebenfalls ");
-                        if (!signum) {
-                            buffer.append("nicht ");
-                        }
-                    }
-                    lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, next.getYear());
-                }
-            } else if (next != null) {
-                if (nextInSameMonth && nextBothInSameMonth
-                        || !nextInSameMonth && next.getMonthValue() != lastMonthOfYear) {
-                    buffer.append(", ");
-                } else {
-                    buffer.append(" und ");
-                }
-            }
+            lastMonthOfYear = handleLastMonthOfYear(buffer, signum, orderedDates, current, next,
+                    nextInSameMonth, nextBothInSameMonth, lastMonthOfYear);
 
             previousYear = current.getYear();
             current = next;
             next = overNext;
             overNext = datesIterator.hasNext() ? datesIterator.next() : null;
         } while (current != null);
+    }
+
+    private static int handleLastMonthOfYear(
+        StringBuilder buffer, boolean signum, TreeSet<LocalDate> orderedDates,
+        LocalDate current, LocalDate next, boolean nextInSameMonth, boolean nextBothInSameMonth, int lastMonthOfYear) {
+
+        if (!DateUtils.sameYear(current, next)) {
+            buffer.append(' ');
+            buffer.append(current.getYear());
+            if (next != null) {
+                if (!DateUtils.sameYear(next, orderedDates.last())) {
+                    buffer.append(", ");
+                } else {
+                    buffer.append(" und ebenfalls ");
+                    if (!signum) {
+                        buffer.append("nicht ");
+                    }
+                }
+                lastMonthOfYear = DateUtils.lastMonthForYear(orderedDates, next.getYear());
+            }
+        } else if (next != null) {
+            if (nextInSameMonth && nextBothInSameMonth
+                    || !nextInSameMonth && next.getMonthValue() != lastMonthOfYear) {
+                buffer.append(", ");
+            } else {
+                buffer.append(" und ");
+            }
+        }
+        return lastMonthOfYear;
     }
 
     /**

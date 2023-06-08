@@ -1,0 +1,162 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <p:row>
+            <div>
+                <p:outputLabel for="searchFieldTable" value="#{msgs['importConfig.searchFields']}"/>
+                <p:dataTable id="searchFieldTable"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.searchFields}"
+                             var="field">
+                    <p:column id="fieldLabel"
+                              headerText="Label">
+                        <h:outputText value="#{field.label}"
+                                      title="#{field.label}"/>
+                    </p:column>
+                    <p:column id="fieldValue"
+                              headerText="#{msgs.value}">
+                        <h:outputText value="#{field.value}"
+                                      title="#{field.value}"/>
+                    </p:column>
+                    <p:column id="fieldHidden"
+                              headerText="#{msgs.visible}">
+                        <h:outputText title="#{field.displayed}">
+                            <ui:fragment rendered="#{field.displayed}">
+                                <i class="fa fa-check-square-o fa-lg checkbox-checked"/>
+                            </ui:fragment>
+                            <ui:fragment rendered="#{not field.displayed}">
+                                <i class="fa fa-minus-square-o fa-lg checkbox-unchecked"/>
+                            </ui:fragment>
+                        </h:outputText>
+                    </p:column>
+                    <p:column id="actionColumn" styleClass="actionsColumn">
+                        <p:commandLink id="editSearchField"
+                                       styleClass="action"
+                                       process="@this"
+                                       update="editSearchFieldDialog"
+                                       oncomplete="PF('editSearchFieldDialog').show();">
+                            <h:outputText><i class="fa fa-pencil-square-o fa-lg"/></h:outputText>
+                            <f:setPropertyActionListener target="#{updateSearchFieldDialogView.searchField}"
+                                                         value="#{field}"/>
+                        </p:commandLink>
+                        <p:commandLink id="removeSearchField"
+                                       styleClass="action"
+                                       action="#{importConfigurationEditView.removeSearchField(field)}"
+                                       update="editForm:importConfigurationTabView:searchFieldTable
+                                                           editForm:importConfigurationTabView:defaultSearchField
+                                                           editForm:importConfigurationTabView:idSearchField
+                                                           editForm:importConfigurationTabView:parentIdSearchField
+                                                           editForm:importConfigurationTabView:addSearchField"
+                                       oncomplete="toggleSave()">
+                            <h:outputText><i class="fa fa-trash-o fa-lg"/></h:outputText>
+                        </p:commandLink>
+                    </p:column>
+                </p:dataTable>
+                <p:commandButton id="searchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="searchFieldHelp"
+                           value="#{msgs['tooltip.importConfig.searchFieldHelp']}"/>
+                <h:panelGroup id="addSearchField"
+                              title="#{(importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0) ? msgs['importConfig.custom.idSearchOnly'] : msgs['importConfig.addSearchField']}">
+                    <p:commandButton icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     action="#{addSearchFieldDialogView.init()}"
+                                     disabled="#{importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM' and importConfigurationEditView.importConfiguration.searchFields.size() > 0}"
+                                     process="@this"
+                                     update="addSearchFieldDialog"
+                                     oncomplete="PF('addSearchFieldDialog').show()"/>
+                </h:panelGroup>
+            </div>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="idSearchField"
+                               value="#{msgs['importConfig.searchFields.idSearchField']} *"/>
+                <p:selectOneMenu id="idSearchField"
+                                 required="#{not empty param['editForm:save'] and
+                                             (importConfigurationEditView.importConfiguration.interfaceType eq 'SRU' or
+                                              importConfigurationEditView.importConfiguration.interfaceType eq 'CUSTOM')}"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.idSearchField}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.searchFields.selectIdSearchField']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                    <p:ajax event="change"
+                            update="editForm:importConfigurationTabView:idParameterPrefix"
+                            oncomplete="toggleSave();"/>
+                </p:selectOneMenu>
+                <p:commandButton id="idSearchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="idSearchFieldHelp"
+                           value="#{msgs['tooltip.importConfig.idSearchFieldHelp']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="idParameterPrefix"
+                               value="#{msgs['importConfig.searchFields.idPrefix']}"/>
+                <p:inputText id="idParameterPrefix"
+                             styleClass="input-with-button"
+                             value="#{importConfigurationEditView.importConfiguration.idPrefix}"
+                             disabled="#{importConfigurationEditView.idSearchField eq null}">
+                    <p:ajax event="change"
+                            oncomplete="toggleSave();"/>
+                </p:inputText>
+                <p:commandButton id="idParameterPrefixHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="idParameterPrefixHelp"
+                           value="#{msgs['tooltip.importConfig.idParameterPrefixHelp']}"/>
+            </div>
+            <div>
+                <p:outputLabel for="defaultSearchField" value="#{msgs['importConfig.searchFields.defaultField']}"/>
+                <p:selectOneMenu id="defaultSearchField"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.defaultSearchField}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.searchFields.selectDefaultField']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="defaultSearchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="defaultSearchFieldHelp"
+                           value="#{msgs['tooltip.importConfig.defaultSearchFieldHelp']}"/>
+            </div>
+            <h:panelGroup layout="block"
+                          rendered="#{importConfigurationEditView.importConfiguration.interfaceType ne 'CUSTOM'}">
+                <p:outputLabel for="parentIdSearchField" value="#{msgs['importConfig.searchFields.parentIdField']}"/>
+                <p:selectOneMenu id="parentIdSearchField"
+                                 styleClass="input-with-button"
+                                 value="#{importConfigurationEditView.parentIdSearchField}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['importConfig.searchFields.selectParentIdField']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{importConfigurationEditView.searchFields}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+                <p:commandButton id="parentIdSearchFieldHelp" type="button"
+                                 styleClass="help-button" icon="fa fa-lg fa-question-circle-o"/>
+                <p:tooltip for="parentIdSearchFieldHelp"
+                           value="#{msgs['tooltip.importConfig.parentIdSearchFieldHelp']}"/>
+            </h:panelGroup>
+        </p:row>
+    </f:view>
+</ui:composition>

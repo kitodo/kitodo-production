@@ -19,7 +19,7 @@
 
     <groupId>org.kitodo</groupId>
     <artifactId>kitodo-production</artifactId>
-    <version>3.4.4-SNAPSHOT</version>
+    <version>3.6.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -30,7 +30,7 @@
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
-        <kitodo.version>3.4.4-SNAPSHOT</kitodo.version>
+        <kitodo.version>3.6.0-SNAPSHOT</kitodo.version>
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <main.basedir>${project.basedir}</main.basedir>
         <phase.prop>none</phase.prop>
@@ -40,47 +40,45 @@
         <maven.compiler.target>11</maven.compiler.target>
         <maven.compiler.debug>true</maven.compiler.debug>
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
-        <maxAllowedViolations>1</maxAllowedViolations>
+        <maxAllowedViolations>0</maxAllowedViolations>
         <tomcat.baseversion>9</tomcat.baseversion>
-        <tomcat.version>9.0.63</tomcat.version>
+        <tomcat.version>9.0.65</tomcat.version>
         <awaitility.version>4.0.1</awaitility.version>
         <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
-        <commons-net.version>3.8.0</commons-net.version>
+        <commons-net.version>3.9.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
-        <hibernate.version>5.6.9.Final</hibernate.version>
+        <hibernate.version>5.6.10.Final</hibernate.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jhove.version>1.20.1</jhove.version>
         <myfaces.version>2.3.10</myfaces.version>
-        <mysql.version>8.0.29</mysql.version>
+        <mysql.version>8.0.31</mysql.version>
         <poi.version>5.2.2</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
-        <log4j.version>2.17.2</log4j.version>
-        <junit.version>5.5.2</junit.version>
-        <elasticsearch.version>7.17.4</elasticsearch.version>
+        <log4j.version>2.19.0</log4j.version>
+        <junit.version>5.9.2</junit.version>
+        <elasticsearch.version>7.17.10</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
         <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
         <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
-        <mockito.version>2.0.2-beta</mockito.version>
+        <mockito.version>5.0.0</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.1</spring.security.version>
+        <spring.security.version>5.7.5</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.5</mariadb-java-client.version>
+        <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
-
-        <powermock.version>1.7.4</powermock.version>
     </properties>
 
     <repositories>
@@ -211,12 +209,6 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.mail</groupId>
-                <artifactId>mail</artifactId>
-                <version>1.4.7</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
                 <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
                 <version>1.2</version>
@@ -244,11 +236,6 @@ from system library in Java 11+ -->
                 <version>${jaxen.version}</version>
             </dependency>
             <dependency>
-                <groupId>jdom</groupId>
-                <artifactId>jdom</artifactId>
-                <version>1.1</version>
-            </dependency>
-            <dependency>
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>${mysql.version}</version>
@@ -274,24 +261,17 @@ from system library in Java 11+ -->
                 <groupId>net.sf.saxon</groupId>
                 <artifactId>Saxon-HE</artifactId>
                 <version>${saxon.version}</version>
-                <scope>runtime</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
-                <version>5.17.1</version>
+                <version>5.17.2</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.slf4j</groupId>
                         <artifactId>slf4j-api</artifactId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-email</artifactId>
-                <version>1.5</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
@@ -522,7 +502,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.2.3.Final</version>
+                <version>6.2.4.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -548,7 +528,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
-                <version>20190722</version>
+                <version>20230227</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
@@ -599,14 +579,14 @@ from system library in Java 11+ -->
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
-                <artifactId>mockito-all</artifactId>
+                <artifactId>mockito-core</artifactId>
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.omnifaces</groupId>
                 <artifactId>omnifaces</artifactId>
-                <version>2.7.18</version>
+                <version>3.13.3</version>
             </dependency>
             <dependency>
                 <groupId>org.openpreservation.jhove</groupId>
@@ -626,19 +606,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.passay</groupId>
                 <artifactId>passay</artifactId>
-                <version>1.6.1</version>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-module-junit4</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
-                <version>${powermock.version}</version>
-                <scope>test</scope>
+                <version>1.6.2</version>
             </dependency>
             <dependency>
                 <groupId>org.primefaces.extensions</groupId>
@@ -905,12 +873,12 @@ from system library in Java 11+ -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.1.2</version>
                         <dependencies>
                             <dependency>
                                 <groupId>com.puppycrawl.tools</groupId>
                                 <artifactId>checkstyle</artifactId>
-                                <version>8.29</version>
+                                <version>10.3.2</version>
                             </dependency>
                         </dependencies>
                         <executions>

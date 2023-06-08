@@ -20,11 +20,13 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
@@ -68,8 +70,9 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname)|"
-                + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)))\\)");
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath)|"
+                + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
+                + "(?:(filename|basename|relativepath))))\\)");
 
     /**
      * The map is filled with replacement instructions that are required for
@@ -143,6 +146,21 @@ public class VariableReplacer {
      * @return string with variables replaced
      */
     public String replace(String stringWithVariables) {
+        return replaceWithFilename(stringWithVariables,null);
+    }
+    
+    /**
+     * Replace variables withing a string. Like an ant, run through the variables
+     * and fetch them from the digital document. Filename variables are replaced using the filename parameter.
+     * 
+     * @param stringWithVariables
+     *             string with placeholders
+     * @param filename
+     *             filename for replacement
+     *
+     * @return string with replaced placeholders
+     */
+    public String replaceWithFilename(String stringWithVariables, String filename) {
         if (Objects.isNull(stringWithVariables)) {
             return "";
         }
@@ -157,7 +175,7 @@ public class VariableReplacer {
                 replacedStringBuffer = new StringBuffer();
                 stringChanged = true;
             }
-            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder));
+            variableFinder.appendReplacement(replacedStringBuffer, determineReplacement(variableFinder, filename));
         }
         if (stringChanged) {
             variableFinder.appendTail(replacedStringBuffer);
@@ -192,21 +210,16 @@ public class VariableReplacer {
     /**
      * This method is called in the replacement loop to determine the
      * replacement value for a revealed variable.
-     *
-     * @param variableFinder
-     *            the data structure of the matcher, from which the various
-     *            match groups of the regular expression are read
-     * @return the replacement value, if determinable. If the variable is
-     *         invalid, the string found is returned and no replacement takes
-     *         place. If the variable cannot be replaced because the requested
-     *         data cannot be accessed, the empty string is returned.
      */
-    private String determineReplacement(Matcher variableFinder) {
+    private String determineReplacement(Matcher variableFinder, String filename) {
         if (Objects.nonNull(variableFinder.group(2))) {
             return determineReplacementForInternalValue(variableFinder);
         }
         if (Objects.nonNull(variableFinder.group(3))) {
             return determineReplacementForMetadata(variableFinder);
+        }
+        if (Objects.nonNull(variableFinder.group(6)) && Objects.nonNull(filename)) {
+            return determineReplacementForFilePlaceholder(variableFinder, filename);
         }
         return variableFinder.group();
     }
@@ -228,6 +241,9 @@ public class VariableReplacer {
                 return determineReplacementForStepid(variableFinder);
             case "stepname":
                 return determineReplacementForStepname(variableFinder);
+            case "generatorsource" :
+            case "generatorsourcepath":
+                return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
@@ -301,6 +317,32 @@ public class VariableReplacer {
         return variableFinder.group(1) + task.getTitle();
     }
 
+    private String determineReplacementForGeneratorSource(Matcher variableFinder, String match) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(" + match + ")\": no process given");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getProject())) {
+            logger.warn("Cannot replace \"(" + match + ")\": process has no project assigned");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getProject().getGeneratorSource())) {
+            logger.warn("Cannot replace \"(" + match + ")\": process has no generator source assigned");
+            return variableFinder.group(1);
+        }
+
+        //Since image paths may contain variables themselves, use recursion
+        String generatorSource = replace(String.valueOf(process.getProject().getGeneratorSource().getPath()));
+        String replacedString = variableFinder.group(1);
+        if (match.equals("generatorsource")) {
+            replacedString += generatorSource;    
+        }
+        else if (match.equals("generatorsourcepath")) {
+            replacedString += KitodoConfig.getKitodoDataDirectory() + process.getId() + "/" + generatorSource;
+        }
+        return replacedString;
+    }
+
     /**
      * If a value is to be determined from the metadata, it is determined here.
      */
@@ -367,5 +409,37 @@ public class VariableReplacer {
             return failureResult;
         }
         return value;
+    }
+
+    /**
+    * Checks whether a string contains file variables.
+     * 
+     * @param stringWithVariables
+     *             string to be checked for file variables
+     * @return true if string contains file variables
+     */
+    public boolean containsFiles(String stringWithVariables) {
+        if (Objects.isNull(stringWithVariables)) {
+            return false;
+        }
+        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)")
+                | stringWithVariables.contains("(relativepath)");
+    }
+
+    /**
+     * If a filename is to be determined, it is determined here.
+     */
+    private String determineReplacementForFilePlaceholder(Matcher variableFinder, String filename) {
+        switch (variableFinder.group(6)) {
+            case "filename":
+                return variableFinder.group(1) + FilenameUtils.getName(filename);
+            case "basename":
+                return variableFinder.group(1) + FilenameUtils.getBaseName(filename);
+            case "relativepath":
+                return variableFinder.group(1) + filename;
+            default:
+                logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
+                return variableFinder.group();
+        }
     }
 }

@@ -1,0 +1,50 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+    <f:view>
+        <p:panelGrid columns="2" layout="grid">
+            <p:row>
+                <div>
+                    <p:outputLabel for="defaultProcessTemplate"
+                                   value="#{msgs['importConfig.templateprocess.defaultTemplateProcess']}"/>
+                    <p:selectOneMenu id="defaultProcessTemplate"
+                                     converter="#{processConverter}"
+                                     styleClass="input-with-button"
+                                     value="#{importConfigurationEditView.importConfiguration.defaultTemplateProcess}">
+                        <f:selectItem itemValue="#{null}"
+                                      itemLabel="-- #{msgs['importConfig.templateprocess.selectDefaultTemplateProcess']} --"
+                                      noSelectionOption="true"/>
+                        <f:selectItems value="#{importConfigurationEditView.templateProcesses}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"
+                                update="editForm:importConfigurationTabView"/>
+                    </p:selectOneMenu>
+                    <p:commandButton id="defaultProcessTemplateHelp"
+                                     type="button"
+                                     styleClass="help-button"
+                                     icon="fa fa-lg fa-question-circle-o"/>
+                    <p:tooltip for="defaultProcessTemplateHelp"
+                               value="#{msgs['tooltip.importConfig.defaultTemplateProcessHelp']}"/>
+                </div>
+            </p:row>
+        </p:panelGrid>
+
+        <h:panelGroup layout="block"
+                      styleClass="horizontal-separator"/>
+    </f:view>
+</ui:composition>

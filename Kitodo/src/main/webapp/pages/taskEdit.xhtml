@@ -25,13 +25,12 @@
 
     <ui:define name="contentHeader">
         <h:outputScript name="js/save.js" target="body" />
-        <script>
-            window.onload = function () {checkForm('editForm')};
-        </script>
         <h3 id="headerText">
-            <h:outputText value="#{msgs.addTask}" rendered="#{empty ProcessForm.task.title}"/>
+            <h:outputText value="#{msgs.addTask}"
+                          styleClass="shortable"
+                          rendered="#{empty ProcessForm.task.title}"/>
             <h:outputText value="#{msgs.taskDetails} (#{ProcessForm.task.title})"
-                          rendered="#{not empty ProcessForm.task.title}"/>
+                          styleClass="shortable" rendered="#{not empty ProcessForm.task.title}"/>
         </h3>
         <p:button id="cancel" value="#{msgs.cancel}"
                   outcome="#{ProcessForm.taskEditReferer}"

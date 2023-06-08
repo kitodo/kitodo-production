@@ -17,18 +17,20 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.context.FacesContext;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPathExpressionException;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.api.schemaconverter.ExemplarRecord;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.ConfigException;
@@ -61,6 +63,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     private boolean importChildren = false;
     private int numberOfChildren = 0;
     private String opacErrorMessage = "";
+    private boolean additionalImport = false;
 
     /**
      * Standard constructor.
@@ -84,11 +87,11 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      * @return list of search fields
      */
     public List<String> getSearchFields() {
-        if (this.hitModel.getSelectedCatalog().isEmpty()) {
+        if (Objects.isNull(hitModel.getImportConfiguration())) {
             return new LinkedList<>();
         } else {
             try {
-                return ServiceManager.getImportService().getAvailableSearchFields(this.hitModel.getSelectedCatalog());
+                return ServiceManager.getImportService().getAvailableSearchFields(hitModel.getImportConfiguration());
             } catch (IllegalArgumentException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 return new LinkedList<>();
@@ -100,25 +103,31 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      * Call search method of ImportService.
      */
     public void search() {
-        List<?> hits;
         try {
-            hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+            if (skipHitList(hitModel.getImportConfiguration(), hitModel.getSelectedField())) {
+                getRecordById(hitModel.getSearchTerm());
+            } else {
+                List<?> hits = hitModel.load(0, 10, null, SortOrder.ASCENDING, Collections.EMPTY_MAP);
+                if (hits.size() == 1) {
+                    getRecordById(((SingleHit) hits.get(0)).getIdentifier());
+                } else {
+                    try {
+                        ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
+                        PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
+                    } catch (IllegalArgumentException e) {
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                    }
+                }
+            }
         } catch (CatalogException e) {
             this.opacErrorMessage = e.getMessage();
             PrimeFaces.current().ajax().update("opacErrorDialog");
             PrimeFaces.current().executeScript("PF('opacErrorDialog').show();");
-            return;
         }
-        if (hits.size() == 1) {
-            getRecordById(((SingleHit) hits.get(0)).getIdentifier());
-        } else {
-            try {
-                ((DataTable) FacesContext.getCurrentInstance().getViewRoot().findComponent(HITSTABLE_NAME)).reset();
-                PrimeFaces.current().executeScript("PF('hitlistDialog').show()");
-            } catch (IllegalArgumentException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
-        }
+    }
+
+    private boolean skipHitList(ImportConfiguration importConfiguration, String searchField) {
+        return ImportService.skipHitlist(importConfiguration, searchField);
     }
 
     /**
@@ -130,9 +139,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         return this.hitModel.getHits();
     }
 
-    @Override
-    void showRecord() {
-        super.showRecord();
+    void showExemplarRecord() {
+        Ajax.update(FORM_CLIENTID);
         // if more than one exemplar record was found, display a selection dialog to the user
         LinkedList<ExemplarRecord> exemplarRecords = ServiceManager.getImportService().getExemplarRecords();
         if (exemplarRecords.size() == 1) {
@@ -140,6 +148,19 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         } else if (exemplarRecords.size() > 1) {
             PrimeFaces.current().executeScript("PF('exemplarRecordsDialog').show();");
         }
+    }
+
+    @Override
+    public List<ImportConfiguration> getImportConfigurations() {
+        if (Objects.isNull(importConfigurations)) {
+            try {
+                importConfigurations = ServiceManager.getImportConfigurationService().getAllOpacSearchConfigurations();
+            } catch (IllegalArgumentException | DAOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                importConfigurations = new LinkedList<>();
+            }
+        }
+        return importConfigurations;
     }
 
     /**
@@ -152,48 +173,63 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         } else {
             try {
                 createProcessForm.setChildProcesses(new LinkedList<>());
-                createProcessForm.setProcesses(new LinkedList<>());
                 int projectId = this.createProcessForm.getProject().getId();
                 int templateId = this.createProcessForm.getTemplate().getId();
-                String opac = this.hitModel.getSelectedCatalog();
+                ImportConfiguration importConfiguration = this.hitModel.getImportConfiguration();
+
+                // import current and ancestors
+                LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
+                        currentRecordId, importConfiguration, projectId, templateId, hitModel.getImportDepth(),
+                        createProcessForm.getRulesetManagement().getFunctionalKeys(
+                                FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
                 // import children
                 if (this.importChildren) {
-                    try {
-                        this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
-                                opac, this.currentRecordId, projectId, templateId, numberOfChildren));
-                    } catch (NoRecordFoundException e) {
-                        this.createProcessForm.setChildProcesses(new LinkedList<>());
-                        showGrowlMessage("Import error", e.getLocalizedMessage());
-                    }
-                }
-                // import ancestors
-                LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(
-                        this.currentRecordId, opac, projectId, templateId, this.hitModel.getImportDepth(),
-                        this.createProcessForm.getRulesetManagement().getFunctionalKeys(
-                                FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
-
-                this.createProcessForm.setProcesses(processes);
-                this.createProcessForm.fillCreateProcessForm(processes.getFirst());
-
-                String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
-                String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
-                        String.valueOf(processes.size()), opac);
-                showGrowlMessage(summary, detail);
-
-                if (this.importChildren) {
-                    summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
-                    detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
-                            String.valueOf(this.createProcessForm.getChildProcesses().size()));
-                    showGrowlMessage(summary, detail);
+                    importChildren(projectId, templateId, importConfiguration, processes);
                 }
 
-                showRecord();
+                if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
+                    extendsMetadataTableOfMetadataTab(processes);
+                } else {
+                    createProcessForm.setProcesses(processes);
+                    TempProcess currentTempProcess = processes.getFirst();
+                    attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
+                    createProcessForm.fillCreateProcessForm(currentTempProcess);
+                    showMessageAndRecord(importConfiguration, processes);
+                }
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
                     | ParserConfigurationException | UnsupportedFormatException | SAXException | DAOException
                     | ConfigException | TransformerException | NoRecordFoundException | InvalidMetadataValueException
                     | NoSuchMetadataFieldException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+                throw new CatalogException(e.getLocalizedMessage());
             }
+        }
+    }
+
+    private void showMessageAndRecord(ImportConfiguration importConfiguration, LinkedList<TempProcess> processes) {
+        String summary = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulSummary");
+        String detail = Helper.getTranslation("newProcess.catalogueSearch.importSuccessfulDetail",
+                String.valueOf(processes.size()), importConfiguration.getTitle());
+        showGrowlMessage(summary, detail);
+
+        if (this.importChildren) {
+            summary = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulSummary");
+            detail = Helper.getTranslation("newProcess.catalogueSearch.loadingChildrenSuccessfulDetail",
+                    String.valueOf(this.createProcessForm.getChildProcesses().size()));
+            showGrowlMessage(summary, detail);
+        }
+        showExemplarRecord();
+    }
+
+    private void importChildren(int projectId, int templateId, ImportConfiguration importConfiguration, List<TempProcess> parentProcesses)
+            throws SAXException, UnsupportedFormatException, URISyntaxException, ParserConfigurationException,
+            IOException, ProcessGenerationException, TransformerException, InvalidMetadataValueException,
+            NoSuchMetadataFieldException {
+        try {
+            this.createProcessForm.setChildProcesses(ServiceManager.getImportService().getChildProcesses(
+                    importConfiguration, this.currentRecordId, projectId, templateId, numberOfChildren, parentProcesses));
+        } catch (NoRecordFoundException e) {
+            this.createProcessForm.setChildProcesses(new LinkedList<>());
+            showGrowlMessage("Import error", e.getLocalizedMessage());
         }
     }
 
@@ -202,7 +238,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         try {
             if (this.importChildren) {
                 this.numberOfChildren = ServiceManager.getImportService().getNumberOfChildren(
-                        this.hitModel.getSelectedCatalog(), this.currentRecordId);
+                        this.hitModel.getImportConfiguration(), this.currentRecordId);
             }
             if (this.importChildren && this.numberOfChildren > NUMBER_OF_CHILDREN_WARNING_THRESHOLD) {
                 Ajax.update("manyChildrenWarningDialog");
@@ -258,7 +294,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
      */
     public void setSelectedExemplarRecord(ExemplarRecord selectedExemplarRecord) {
         try {
-            ImportService.setSelectedExemplarRecord(selectedExemplarRecord, this.hitModel.getSelectedCatalog(),
+            ImportService.setSelectedExemplarRecord(selectedExemplarRecord, this.hitModel.getImportConfiguration(),
                     this.createProcessForm.getProcessMetadata().getProcessDetailsElements());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.exemplarRecordSelectedDetail",
@@ -267,18 +303,19 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
             Ajax.update(FORM_CLIENTID);
         } catch (ParameterNotFoundException e) {
             Helper.setErrorMessage("newProcess.catalogueSearch.exemplarRecordParameterNotFoundError",
-                    new Object[] {e.getMessage(), this.hitModel.getSelectedCatalog() });
+                    new Object[] {e.getMessage(), this.hitModel.getImportConfiguration().getTitle() });
         }
     }
 
     /**
-     * Check and return whether the "parentElement" is configured in kitodo_opac.xml for the currently selected OPAC.
+     * Check and return whether the "parentIdSearchField" is configured in the current ImportConfiguration.
      *
-     * @return whether "parentElement" is configured for current OPAC
+     * @return whether "parentIdSearchField" is configured for current ImportConfiguration
      */
-    public boolean isParentElementConfigured() {
+    public boolean isParentIdSearchFieldConfigured() {
         try {
-            return ServiceManager.getImportService().isParentElementConfigured(this.hitModel.getSelectedCatalog());
+            return Objects.nonNull(this.hitModel.getImportConfiguration()) && ServiceManager.getImportService()
+                    .isParentIdSearchFieldConfigured(this.hitModel.getImportConfiguration());
         } catch (ConfigException e) {
             return false;
         }
@@ -302,4 +339,25 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
         return Helper.getTranslation("newProcess.catalogueSearch.manyChildrenWarning",
             String.valueOf(this.numberOfChildren));
     }
+
+
+    /**
+     * Checks the additional import.
+     *
+     * @return true if is additional import
+     */
+    public boolean isAdditionalImport() {
+        return additionalImport;
+    }
+
+    /**
+     * Set additional import.
+     *
+     * @param additionalImport
+     *            the value if is additional import
+     */
+    public void setAdditionalImport(boolean additionalImport) {
+        this.additionalImport = additionalImport;
+    }
+
 }

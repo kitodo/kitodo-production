@@ -25,6 +25,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessMetadata;
 import org.kitodo.production.services.data.ImportService;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 /**
@@ -38,6 +39,8 @@ public class TempProcess {
 
     private NodeList metadataNodes;
 
+    private String atstsl;
+
     private String tiffHeaderDocumentName;
 
     private String tiffHeaderImageDescription;
@@ -45,6 +48,7 @@ public class TempProcess {
     private int guessedImages;
 
     private final ProcessMetadata processMetadata;
+    private String catalogId = "";
 
     /**
      * Constructor that creates an instance of TempProcess with the given Process
@@ -74,7 +78,7 @@ public class TempProcess {
         this.workpiece.getLogicalStructure().setType(docType);
         if (nodeList.getLength() != 0) {
             this.workpiece.getLogicalStructure().getMetadata().addAll(
-                    ImportService.importMetadata(this.metadataNodes, MdSec.DMD_SEC));
+                    ProcessHelper.convertMetadata(this.metadataNodes, MdSec.DMD_SEC));
         }
         this.processMetadata = new ProcessMetadata();
     }
@@ -214,5 +218,48 @@ public class TempProcess {
                 }
             }
         }
+    }
+
+    /**
+     * Get atstsl.
+     *
+     * @return value of atstsl
+     */
+    public String getAtstsl() {
+        return atstsl;
+    }
+
+    /**
+     * Set atstsl.
+     *
+     * @param atstsl as string
+     */
+    public void setAtstsl(String atstsl) {
+        this.atstsl = atstsl;
+    }
+
+    /**
+     * Get catalog ID of this temp process.
+     *
+     * @param identifierMetadataKeys Collection of metadata keys of identifier metadata
+     * @return catalog ID
+     */
+    public String getCatalogId(Collection<String> identifierMetadataKeys) {
+        for (String identifierMetadata : identifierMetadataKeys) {
+            if (catalogId.isEmpty() && Objects.nonNull(metadataNodes) && metadataNodes.getLength() > 0) {
+                for (int i = 0; i < metadataNodes.getLength(); i++) {
+                    Node item = metadataNodes.item(i);
+                    Node name = item.getAttributes().getNamedItem("name");
+                    if (Objects.nonNull(name) && name.getTextContent().equals(identifierMetadata)) {
+                        catalogId = item.getTextContent();
+                        break;
+                    }
+                }
+            }
+        }
+        if (catalogId.isEmpty()) {
+            catalogId = " - ";
+        }
+        return catalogId;
     }
 }

@@ -198,7 +198,7 @@ public class DivXmlElementAccess extends LogicalDivision {
      * @param mdSec
      *            metadata section to be read
      *
-     * @return
+     * @return a collection of type Metadata
      */
     static final Collection<Metadata> readMetadata(MdSecType mdSecType, MdSec mdSec) {
         Collection<Metadata> metadata = new HashSet<>();
