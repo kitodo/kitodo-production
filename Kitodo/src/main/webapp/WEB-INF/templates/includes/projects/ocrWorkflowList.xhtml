@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
 
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.OCRWorkflow"-->
-    <p:dataTable id="ocrWorkflowsTable"
+    <p:dataTable id="configurationTable"
                  value="#{OCRWorkflowListView.ocrWorkflows}"
                  var="item"
                  styleClass="default-layout"
@@ -71,7 +71,7 @@
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteOCRWorkflow()}"
-                               update="ocrWorkflowsTable">
+                               update="configurationTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{OCRWorkflowEditView.formatString('confirmDeleteOCRWorkflow', item.title)}"
