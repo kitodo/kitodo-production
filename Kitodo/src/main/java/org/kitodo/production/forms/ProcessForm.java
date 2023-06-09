@@ -34,14 +34,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.*;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -872,6 +866,15 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public List<Project> getProjects() {
         return ServiceManager.getProjectService().getAllForSelectedClient();
+    }
+
+    /**
+     * Get list of workflows for select list.
+     *
+     * @return list of workflows
+     */
+    public List<OCRWorkflow> getOCRWorkflows() {
+        return ServiceManager.getOCRWorkflowService().getAvailableOCRWorkflows();
     }
 
     /**

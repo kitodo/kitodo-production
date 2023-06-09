@@ -63,6 +63,10 @@ public class Process extends BaseTemplateBean {
     private Docket docket;
 
     @ManyToOne
+    @JoinColumn(name = "ocr_workflow_id", foreignKey = @ForeignKey(name = "FK_process_ocr_workflow_id"))
+    private OCRWorkflow ocrWorkflow;
+
+    @ManyToOne
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
     private Project project;
 
@@ -287,6 +291,25 @@ public class Process extends BaseTemplateBean {
 
     public void setDocket(Docket docket) {
         this.docket = docket;
+    }
+
+    /**
+     * Get ocr workflow.
+     *
+     * @return value of ocr workflow
+     */
+    public OCRWorkflow getOcrWorkflow() {
+        return ocrWorkflow;
+    }
+
+    /**
+     * Set ocr workflow.
+     *
+     * @param ocrWorkflow
+     *            as Workflow object
+     */
+    public void setOcrWorkflow(OCRWorkflow ocrWorkflow) {
+        this.ocrWorkflow = ocrWorkflow;
     }
 
     /**

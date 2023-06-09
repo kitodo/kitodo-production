@@ -46,6 +46,12 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
+
+            <div>
+                <p:outputLabel for="processTemplate" value="#{msgs.processTemplate}"/>
+                <p:inputText id="processTemplate" value="#{ProcessForm.process.template.title}" class="input"
+                             disabled="true" readonly="true"/>
+            </div>
         </p:row>
 
         <p:row>
@@ -77,6 +83,21 @@
                                    var="docket"
                                    itemValue="#{docket}"
                                    itemLabel="#{docket.title}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div>
+                <p:outputLabel for="ocrWorkflow" value="#{msgs.ocrWorkflow}"/>
+                <p:selectOneMenu id="ocrWorkflow" value="#{ProcessForm.process.ocrWorkflow}"
+                                 converter="#{oCRWorkflowConverter}"
+                                 disabled="#{isViewMode}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['processConfig.useProcessTemplateOCRWorkflow']} --"/>
+                    <f:selectItems value="#{ProcessForm.OCRWorkflows}"
+                                   var="ocrWorkflow"
+                                   itemValue="#{ocrWorkflow}"
+                                   itemLabel="#{ocrWorkflow.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
