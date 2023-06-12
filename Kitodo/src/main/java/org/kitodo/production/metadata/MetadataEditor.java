@@ -329,8 +329,8 @@ public class MetadataEditor {
                     List<Integer> siblingOrderValues = Stream.concat(logicalDivision.getChildren().stream()
                             .map(Division::getOrder), Stream.of(structureOrder)).sorted().collect(Collectors.toList());
 
-                    // new order must be set at correction location between existing siblings
-                    logicalDivision.getChildren().add(siblingOrderValues.indexOf(structureOrder), newStructure);
+                    // new order must be set at correct location between existing siblings
+                    logicalDivision.getChildren().add(siblingOrderValues.lastIndexOf(structureOrder), newStructure);
                 }
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
