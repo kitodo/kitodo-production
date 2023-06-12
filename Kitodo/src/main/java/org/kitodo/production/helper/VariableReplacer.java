@@ -289,7 +289,7 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
 
-        if(Objects.nonNull(process.getOcrWorkflow())) {
+        if (Objects.nonNull(process.getOcrWorkflow())) {
             return variableFinder.group(1) + process.getOcrWorkflow().getFile();
         }
 
@@ -298,7 +298,7 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
 
-        if(Objects.isNull(process.getTemplate().getOcrWorkflow())) {
+        if (Objects.isNull(process.getTemplate().getOcrWorkflow())) {
             logger.warn("Cannot replace \"(ocrworkfow)\": template has no ocrworkfow assigned");
             return variableFinder.group(1);
         }
