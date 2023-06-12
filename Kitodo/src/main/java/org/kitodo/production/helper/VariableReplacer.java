@@ -70,7 +70,7 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath)|"
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrworkflow)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
                 + "(?:(filename|basename|relativepath))))\\)");
 
@@ -244,6 +244,8 @@ public class VariableReplacer {
             case "generatorsource" :
             case "generatorsourcepath":
                 return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
+            case "ocrworkflow":
+                return determineReplacementForOcrWorkflow(variableFinder);
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
@@ -279,6 +281,28 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
         return variableFinder.group(1) + process.getId().toString();
+    }
+
+    private String determineReplacementForOcrWorkflow(Matcher variableFinder) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(ocrworkfow)\": no process given");
+            return variableFinder.group(1);
+        }
+
+        if(Objects.nonNull(process.getOcrWorkflow())) {
+            return variableFinder.group(1) + process.getOcrWorkflow().getFile();
+        }
+
+        if (Objects.isNull(process.getTemplate())) {
+            logger.warn("Cannot replace \"(ocrworkfow)\": process has no template assigned");
+            return variableFinder.group(1);
+        }
+
+        if(Objects.isNull(process.getTemplate().getOcrWorkflow())) {
+            logger.warn("Cannot replace \"(ocrworkfow)\": template has no ocrworkfow assigned");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + process.getTemplate().getOcrWorkflow().getFile();
     }
 
     private String determineReplacementForProcesstitle(Matcher variableFinder) {
