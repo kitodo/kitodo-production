@@ -26,7 +26,7 @@
                   resizable="false"
                   showHeader="false"
                   styleClass="editDialog">
-            <h:form>
+            <h:form id="subfolderForm">
                 <h3>#{empty ProjectForm.myFolder.path ? msgs['editFolderDialog.caption.add'] : msgs['editFolderDialog.caption.edit']}</h3>
                 <h:panelGroup layout="block"
                               styleClass="dialogFieldWrapper">
@@ -108,12 +108,14 @@
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.EXISTING']}"
                                                   itemValue="EXISTING"/>
                                     <f:selectItem itemLabel="#{msgs['editFolderDialog.linkingMode.NO']}" itemValue="NO"/>
+                                    <p:ajax update="subfolderForm:fileGroup subfolderForm:urlStructure"/>
                                 </p:selectOneMenu>
                             </p:column>
                             <p:column style="width:50%">
                                 <p:outputLabel for="fileGroup" value="#{msgs['editFolderDialog.fileGroup']}"/>
                                 <p:selectOneMenu id="fileGroup" value="#{ProjectForm.myFolder.fileGroup}" effect="fold"
-                                                 editable="#{ProjectForm.myFolder.id == null}">
+                                                 editable="#{ProjectForm.myFolder.id == null}"
+                                                 disabled="#{ProjectForm.myFolder.linkingMode eq 'NO'}">
                                     <f:selectItems value="#{ProjectForm.myFolder.fileGroups}"/>
                                 </p:selectOneMenu>
                             </p:column>
@@ -122,6 +124,7 @@
                             <p:column colspan="2">
                                 <p:outputLabel for="urlStructure" value="#{msgs['editFolderDialog.urlStructure']}"/>
                                 <p:inputText id="urlStructure" value="#{ProjectForm.myFolder.urlStructure}"
+                                             disabled="#{ProjectForm.myFolder.linkingMode eq 'NO'}"
                                              styleClass="input editDialog"/>
                             </p:column>
                         </p:row>
