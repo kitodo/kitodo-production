@@ -555,24 +555,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
-        copyOCRWorkflowFileToProcessDataDirectory();
         ServiceManager.getProcessService().save(getMainProcess(), true);
-    }
-
-    private void copyOCRWorkflowFileToProcessDataDirectory() throws IOException {
-        Template template = getMainProcess().getTemplate();
-        if (Objects.nonNull(template)) {
-            OCRWorkflow ocrWorkflow = template.getOcrWorkflow();
-            if (Objects.nonNull(ocrWorkflow) && Objects.nonNull(ocrWorkflow.getFile())) {
-                URI source = Paths.get(
-                        ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS) + getMainProcess().getTemplate()
-                                .getOcrWorkflow().getFile()).toUri();
-                URI target = Paths.get(ConfigCore.getKitodoDataDirectory(),
-                        ServiceManager.getProcessService().getProcessDataDirectory(getMainProcess()).getPath(),
-                        "ocr_workflow.sh").toUri();
-                ServiceManager.getFileService().copyFile(source, target);
-            }
-        }
     }
 
     /**
