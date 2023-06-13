@@ -372,7 +372,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             String forbiddenParentType = parentTypeIfForbidden();
             if (Objects.nonNull(forbiddenParentType)) {
                 Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
-                    processDataTab.getDocType(), forbiddenParentType));
+                        processDataTab.getDocType(), forbiddenParentType));
                 return false;
             }
         }
@@ -392,7 +392,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             } else {
                 String parentType = logicalDivision.getType();
                 StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(parentType,
-                    acquisitionStage, priorityList);
+                        acquisitionStage, priorityList);
                 if (divisionView.getAllowedSubstructuralElements().containsKey(processDataTab.getDocType())) {
                     return null;
                 } else {
@@ -537,12 +537,12 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
         if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
-                titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
+                    titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
             ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),
-                processes.get(0).getProcess());
+                    processes.get(0).getProcess());
             String summary = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessSummary");
             String detail = Helper.getTranslation("newProcess.catalogueSearch.linkedToExistingProcessDetail",
-                titleRecordLinkTab.getTitleRecordProcess().getTitle());
+                    titleRecordLinkTab.getTitleRecordProcess().getTitle());
             catalogImportDialog.showGrowlMessage(summary, detail);
         } else {
             // add links between consecutive processes in list
