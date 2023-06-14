@@ -382,7 +382,7 @@ public class PaginationPanel {
     public void show() {
         paginationSelectionSelectedItems = new ArrayList<>();
         paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
-        selectPaginationModeSelectedItem = null;
+        selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;
