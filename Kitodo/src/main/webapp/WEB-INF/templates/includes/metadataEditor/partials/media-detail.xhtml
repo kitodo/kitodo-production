@@ -16,7 +16,8 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <h:panelGroup id="mediaDetail" layout="block">
         <ui:param name="selectedGalleryMediaContent"
@@ -36,6 +37,8 @@
                 <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
                 <f:param name="krsc" value="true"/>
             </p:media>
+
+            <h:outputScript a:type="module" name="js/media_detail_audio.js" />
         </ui:fragment>
 
         <ui:fragment
