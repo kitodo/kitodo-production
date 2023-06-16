@@ -67,6 +67,17 @@
                              icon="fa fa-check fa-lg"
                              iconPos="right"
                              styleClass="secondary"/>
+            <p:commandButton id="renameMedia"
+                             widgetVar="renameMedia"
+                             rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
+                             value="#{msgs['dataEditor.renameMedia']}"
+                             onclick="deactivateButtons();"
+                             oncomplete="activateButtons();setHeight();"
+                             action="#{DataEditorForm.renameMediaFiles()}"
+                             icon="fa fa-files-o fa-lg"
+                             iconPos="right"
+                             styleClass="secondary"
+                             update="logicalTree paginationForm:paginationWrapperPanel @(.thumbnail-container)"/>
             <p:commandButton id="save"
                              widgetVar="save"
                              action="#{DataEditorForm.save}"

@@ -63,11 +63,16 @@
                 </p:calendar>
             </div>
             <div>
-               <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
-                <p:selectBooleanCheckbox id="projectIsActive" styleClass="switch input" value="#{ProjectForm.project.active}"
-                                         disabled="#{ProjectForm.locked}">
+                <p:outputLabel for="filenamelength" value="#{msgs.filenameLengthForRenaming}" />
+                <p:inputNumber id="filenamelength"
+                               minValue="1"
+                               decimalPlaces="0"
+                               class="input"
+                               value="#{ProjectForm.project.filenameLength}"
+                               disabled="#{ProjectForm.locked}">
+                    <p:ajax event="blur"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
-                </p:selectBooleanCheckbox>
+                </p:inputNumber>
             </div>
 
             <ui:fragment rendered="#{ProjectForm.copyTemplates}">
@@ -79,6 +84,15 @@
                     </p:selectBooleanCheckbox>
                 </div>
             </ui:fragment>
+        </p:row>
+        <p:row>
+            <div>
+                <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
+                <p:selectBooleanCheckbox id="projectIsActive" styleClass="switch input" value="#{ProjectForm.project.active}"
+                                         disabled="#{ProjectForm.locked}">
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectBooleanCheckbox>
+            </div>
         </p:row>
     </p:panelGrid>
 </ui:composition>

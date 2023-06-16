@@ -51,9 +51,11 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_IMAGES_DIR = "images";
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
+    private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
+    private static int renamingMediaProcessId = -1;
 
     private static List<Integer> dummyProcessIds = new LinkedList<>();
     private static final String PARENT_PROCESS_TITLE = "Parent process";
@@ -65,6 +67,8 @@ public class MetadataST extends BaseTestSelenium {
     private static List<Integer> processHierarchyTestProcessIds = new LinkedList<>();
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
+    private static final String FIRST_STRUCTURE_TREE_NODE_LABEL = "1 : -";
+    private static final String SECOND_STRUCTURE_TREE_NODE_LABEL = "2 : -";
 
     private static void prepareMediaReferenceProcess() throws DAOException, DataException, IOException {
         insertDummyProcesses();
@@ -85,6 +89,12 @@ public class MetadataST extends BaseTestSelenium {
         updateChildProcessIdsInParentProcessMetadataFile();
     }
 
+    private static void prepareMediaRenamingProcess() throws DAOException, DataException, IOException {
+        insertDummyProcesses();
+        insertTestProcessForRenamingMediaFiles();
+        copyTestFilesForRenamingMediaFiles();
+    }
+
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
@@ -97,6 +107,7 @@ public class MetadataST extends BaseTestSelenium {
         prepareMetadataLockProcess();
         prepareMediaReferenceProcess();
         prepareProcessHierarchyProcesses();
+        prepareMediaRenamingProcess();
     }
 
     /**
@@ -142,14 +153,14 @@ public class MetadataST extends BaseTestSelenium {
         Assert.assertTrue("Wrong initial order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
         Assert.assertTrue("Wrong initial order of linked child processes",
-                Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
+                Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(SECOND_CHILD_PROCESS_TITLE));
         Pages.getMetadataEditorPage().changeOrderOfLinkedChildProcesses();
         Pages.getMetadataEditorPage().saveAndExit();
         Pages.getProcessesPage().goTo().editParentProcessMetadata();
         Assert.assertTrue("Wrong resulting order of linked child processes",
                 Pages.getMetadataEditorPage().getNameOfFirstLinkedChildProcess().endsWith(SECOND_CHILD_PROCESS_TITLE));
         Assert.assertTrue("Wrong resulting order of linked child processes",
-                Pages.getMetadataEditorPage().getNameOfSecondLinkedChildProcess().endsWith(FIRST_CHILD_PROCESS_TITLE));
+                Pages.getMetadataEditorPage().getSecondRootElementChildLabel().endsWith(FIRST_CHILD_PROCESS_TITLE));
     }
 
     /**
@@ -211,6 +222,25 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Verifies that renaming media files shows 'renaming successful' dialog and renames files correctly according to
+     * their corresponding physical divisions ORDER attribute.
+     * @throws Exception when page navigation fails
+     */
+    @Test
+    public void renameMediaFilesTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        assertEquals("Second child node in structure tree has wrong label BEFORE renaming media files",
+                FIRST_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel());
+        Pages.getMetadataEditorPage().renameMedia();
+        assertTrue("'Renaming media files was successful' dialog is not visible", Pages.getMetadataEditorPage()
+                .isRenamingMediaFilesDialogVisible());
+        Pages.getMetadataEditorPage().acknowledgeRenamingMediaFiles();
+        assertEquals("Second child node in structure tree has wrong label AFTER renaming media files",
+                SECOND_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel());
+    }
+
+    /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */
@@ -238,6 +268,7 @@ public class MetadataST extends BaseTestSelenium {
         }
         ProcessService.deleteProcess(mediaReferencesProcessId);
         ProcessService.deleteProcess(metadataLockProcessId);
+        ProcessService.deleteProcess(renamingMediaProcessId);
     }
 
     private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {
@@ -251,6 +282,10 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void insertTestProcessForMetadataLockTest() throws DAOException, DataException {
         metadataLockProcessId = MockDatabase.insertTestProcessForMetadataLockTestIntoSecondProject();
+    }
+
+    private static void insertTestProcessForRenamingMediaFiles() throws DAOException, DataException {
+        renamingMediaProcessId = MockDatabase.insertTestProcessForRenamingMediaTestIntoSecondProject();
     }
 
     /**
@@ -298,13 +333,21 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     private static void copyTestFilesForMediaReferences() throws IOException {
+        copyTestFiles(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
+    }
+
+    private static void copyTestFilesForRenamingMediaFiles() throws IOException {
+        copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
+    }
+
+    private static void copyTestFiles(int processId, String filename) throws IOException {
         // copy test meta xml
-        MockDatabase.copyTestMetadataFile(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
-        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(mediaReferencesProcessId))
+        MockDatabase.copyTestMetadataFile(processId, filename);
+        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
                 .toUri();
         // copy test images
         URI testImagesUri = Paths.get(ConfigCore.getKitodoDataDirectory(), TEST_IMAGES_DIR).toUri();
-        URI targetImages = Paths.get(ConfigCore.getKitodoDataDirectory(), mediaReferencesProcessId
+        URI targetImages = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
                 + "/images/").toUri();
         try {
             if (!ServiceManager.getFileService().isDirectory(targetImages)) {

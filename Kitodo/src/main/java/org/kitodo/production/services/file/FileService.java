@@ -34,6 +34,8 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -92,6 +94,9 @@ public class FileService {
     private static final String ARABIC_DEFAULT_VALUE = "1";
     private static final String ROMAN_DEFAULT_VALUE = "I";
     private static final String UNCOUNTED_DEFAULT_VALUE = " - ";
+    private static final String TEMP_EXTENSION = ".tmp";
+
+    private static final String SLASH = "/";
 
 
     /**
@@ -1432,9 +1437,8 @@ public class FileService {
      * @param process Process
      * @param generatorSource Folder
      * @return whether given URI points to empty directory or not
-     * @throws IOException thrown if listing contents of given URI is not possible
      */
-    public static boolean hasImages(Process process, Folder generatorSource) throws IOException, DAOException {
+    public static boolean hasImages(Process process, Folder generatorSource) {
         if (Objects.nonNull(generatorSource)) {
             Subfolder sourceFolder = new Subfolder(process, generatorSource);
             return !sourceFolder.listContents().isEmpty();
@@ -1449,5 +1453,81 @@ public class FileService {
      */
     public MetadataImageComparator getMetadataImageComparator() {
         return metadataImageComparator;
+    }
+
+    /**
+     * Rename media files of current process according to their corresponding media units order attribute.
+     *
+     * @param process Process object for which media files are renamed.
+     * @param workpiece Workpiece object of process
+     * @return Map containing media files original filenames as keys and new filenames as values
+     * @throws IOException when renaming files fails
+     * @throws URISyntaxException when creating URI for new filenames fails
+     */
+    public DualHashBidiMap<URI, URI> renameMediaFiles(Process process, Workpiece workpiece) throws IOException, URISyntaxException {
+        DualHashBidiMap<URI, URI> filenameMapping = new DualHashBidiMap<>();
+        int filenameLength = process.getProject().getFilenameLength();
+        URI processDataUri = ServiceManager.getProcessService().getProcessDataDirectory(process);
+
+        if (!processDataUri.toString().endsWith(SLASH)) {
+            processDataUri = URI.create(processDataUri + SLASH);
+        }
+
+        // first, rename all files to new filenames plus "tmp" extension to avoid filename collisions
+        for (PhysicalDivision page : workpiece.getAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES)) {
+            String newFilename = StringUtils.leftPad(String.valueOf(page.getOrder()), filenameLength, '0');
+            for (Entry<MediaVariant, URI> variantURIEntry : page.getMediaFiles().entrySet()) {
+                URI fileUri = processDataUri.resolve(variantURIEntry.getValue());
+                String newFilepath = newFilename + "." + FilenameUtils.getExtension(fileUri.getPath()) + TEMP_EXTENSION;
+                // skip files that already have the correct target name
+                if (!newFilename.equals(FilenameUtils.getBaseName(variantURIEntry.getValue().toString()))) {
+                    URI tmpUri = fileManagementModule.rename(fileUri, processDataUri + newFilepath);
+                    filenameMapping.put(fileUri, tmpUri);
+                    URI targetUri = new URI(StringUtils.removeStart(StringUtils.removeEnd(tmpUri.toString(),
+                            TEMP_EXTENSION), process.getId() + SLASH));
+                    page.getMediaFiles().put(variantURIEntry.getKey(), targetUri);
+                }
+            }
+        }
+
+        // then remove "tmp" extension from all filenames
+        for (Entry<URI, URI> renamingEntry : filenameMapping.entrySet()) {
+            URI tempFilename = renamingEntry.getValue();
+            String newFilepath = StringUtils.removeEnd(tempFilename.toString(), TEMP_EXTENSION);
+            filenameMapping.put(renamingEntry.getKey(), fileManagementModule.rename(tempFilename, newFilepath));
+        }
+        return filenameMapping;
+    }
+
+    /**
+     * Revert renaming of media files when the user leaves the metadata editor without saving. This method uses a
+     * provided map object to rename media files identified by the map entries values to the corresponding map entries
+     * keys.
+     *
+     * @param filenameMappings Bidirectional map containing original filenames as keys and new filenames as values.
+     * @param workpiece Workpiece of current process
+     */
+    public void revertRenaming(BidiMap<URI, URI> filenameMappings, Workpiece workpiece) {
+        // revert media variant URIs for all media files in workpiece to previous, original values
+        for (PhysicalDivision physicalDivision : workpiece
+                .getAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES)) {
+            for (Entry<MediaVariant, URI> mediaVariantURIEntry : physicalDivision.getMediaFiles().entrySet()) {
+                physicalDivision.getMediaFiles().put(mediaVariantURIEntry.getKey(),
+                        filenameMappings.get(mediaVariantURIEntry.getValue()));
+            }
+        }
+        // revert filenames of media files to previous, original values
+        try {
+            List<URI> tempUris = new LinkedList<>();
+            for (Entry<URI, URI> mapping : filenameMappings.entrySet()) {
+                tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()
+                        + TEMP_EXTENSION));
+            }
+            for (URI tempUri : tempUris) {
+                fileManagementModule.rename(tempUri, StringUtils.removeEnd(tempUri.toString(), TEMP_EXTENSION));
+            }
+        } catch (IOException e) {
+            logger.error(e);
+        }
     }
 }

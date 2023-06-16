@@ -1068,4 +1068,13 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToRunKitodoScripts() {
         return hasAnyAuthorityForClient("runKitodoScript");
     }
+
+    /**
+     * Check if the current user has the permission to rename media files.
+     *
+     * @return true if the current user has the permission to rename media files.
+     */
+    public boolean hasAuthorityToRenameMediaFiles() {
+        return hasAnyAuthorityForClient("renameMedia");
+    }
 }

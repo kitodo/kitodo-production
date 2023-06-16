@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -201,6 +203,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     @Inject
     private MediaProvider mediaProvider;
     private boolean mediaUpdated = false;
+
+    private DualHashBidiMap<URI, URI> filenameMapping = new DualHashBidiMap<>();
+
+    private String renamingError = "";
 
     /**
      * Public constructor.
@@ -382,6 +388,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void close() {
         deleteNotSavedUploadedMedia();
         unsavedDeletedMedia.clear();
+        ServiceManager.getFileService().revertRenaming(filenameMapping.inverseBidiMap(), workpiece);
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -488,6 +495,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         try {
             metadataPanel.preserve();
             structurePanel.preserve();
+            // reset "image filename renaming map" so nothing is reverted after saving!
+            filenameMapping = new DualHashBidiMap<>();
             ServiceManager.getProcessService().updateChildrenFromLogicalStructure(process, workpiece.getLogicalStructure());
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
@@ -1099,5 +1108,45 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void setMediaUpdated(boolean mediaUpdated) {
         this.mediaUpdated = mediaUpdated;
+    }
+
+    /**
+     * Rename media files of current process according to their corresponding physical divisions ORDER attribute.
+     */
+    public void renameMediaFiles() {
+        renamingError = "";
+        try {
+            filenameMapping = ServiceManager.getFileService().renameMediaFiles(process, workpiece);
+        } catch (IOException | URISyntaxException e) {
+            renamingError = e.getMessage();
+        }
+        showPanels();
+        if (StringUtils.isBlank(renamingError)) {
+            PrimeFaces.current().executeScript("PF('renamingMediaSuccessDialog').show();");
+        } else {
+            PrimeFaces.current().executeScript("PF('renamingMediaErrorDialog').show();");
+        }
+    }
+
+    /**
+     * Get renamingError.
+     * @return renamingError
+     */
+    public String getRenamingError() {
+        return renamingError;
+    }
+
+    /**
+     * Get number of renamed images as size of filename mapping.
+     * @return number of renamed images
+     */
+    public int getNumberOfRenamedImages() {
+        return filenameMapping.size();
+    }
+
+    private void showPanels() {
+        galleryPanel.show();
+        paginationPanel.show();
+        structurePanel.show();
     }
 }
