@@ -16,12 +16,6 @@ let audios = document.querySelectorAll('audio.mediaPreviewItem');
 let audio = audios[0];
 audio.src = audio.currentSrc;
 
-let waveTools = document.createElement("div");
-waveTools.setAttribute("id", "wave-tools");
-waveTools.style.width = "90%";
-waveTools.innerHTML = "<label>Zoom: <input type=\"range\" min=\"10\" max=\"1000\" value=\"0\"></label><label><input type=\"checkbox\" checked=\"\" value=\"autoCenter\"> Auto center</label>";
-audio.parentNode.insertBefore(waveTools, audio);
-
 let waveContainer = document.createElement("div");
 waveContainer.setAttribute("id", "wave-container");
 waveContainer.onclick = function(){wavesurfer.playPause()}
@@ -35,11 +29,11 @@ const wavesurfer = WaveSurfer.create({
     progressColor: "#ff4e00",
     cursorColor: "#ffffff",
     media: audio,
-    minPxPerSec: 10,
+    minPxPerSec: 0,
 });
 
 wavesurfer.once('decode', () => {
-    let waveToolsContainer = document.getElementById(waveTools.getAttribute("id"))
+    let waveToolsContainer = document.getElementById("waveTools")
     const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]')
 
     waveToolsSlider.addEventListener('input', (e) => {

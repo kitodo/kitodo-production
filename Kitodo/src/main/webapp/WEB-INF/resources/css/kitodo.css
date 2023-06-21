@@ -3025,12 +3025,31 @@ Column content
     align-items: center;
     justify-content: center;
     flex-direction: column;
-    gap: 16px;
+    gap: 24px;
 }
 
 #imagePreviewForm\:mediaDetail .mediaPreviewItem {
     max-height: 100%;
 }
+
+#imagePreviewForm\:mediaDetail  #waveTools{
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--trans-blue);
+    border-radius: 3px;
+}
+
+#imagePreviewForm\:mediaDetail  #waveTools > div > button:first-child {
+    margin-left: 0px;
+}
+
+#imagePreviewForm\:mediaDetail  #waveTools > div > button {
+    margin-left: 10px;
+}
+
 
 #imagePreviewForm .mediaListIconItem {
     height: 100%;
