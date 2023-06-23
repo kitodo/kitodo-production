@@ -348,7 +348,10 @@ public class WorkflowControllerService {
     /**
      * Unified method for report problem .
      *
-     * @param comment as Comment object
+     * @param comment
+     *         as Comment object
+     * @param taskEditType
+     *         of task change
      */
     public void reportProblem(Comment comment, TaskEditType taskEditType) throws DataException {
         Task currentTask = comment.getCurrentTask();
@@ -356,7 +359,8 @@ public class WorkflowControllerService {
             this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
         }
         Date date = new Date();
-        currentTask.setProcessingStatus(TaskStatus.LOCKED);
+        currentTask.setProcessingStatus(
+                Objects.nonNull(comment.getCorrectionTask()) ? TaskStatus.LOCKED : TaskStatus.INWORK);
         currentTask.setEditType(taskEditType);
         currentTask.setProcessingTime(date);
         taskService.replaceProcessingUser(currentTask, getCurrentUser());

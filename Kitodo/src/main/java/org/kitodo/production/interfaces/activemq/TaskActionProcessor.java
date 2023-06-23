@@ -82,11 +82,13 @@ public class TaskActionProcessor extends ActiveMQProcessor {
             }
 
             processAction(mapMessageObjectReader, taskAction, currentTask);
-            ServiceManager.getProcessService().saveToIndex(currentTask.getProcess(), true);
 
-            for (Task task : currentTask.getProcess().getTasks()) {
-                // update tasks in elastic search index, which includes correction comment status
-                taskService.saveToIndex(task, true);
+            if (mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID)) {
+                for (Task task : currentTask.getProcess().getTasks()) {
+                    taskService.saveToIndex(task, true);
+                }
+            } else {
+                taskService.saveToIndex(currentTask, true);
             }
         } catch (DataException | DAOException | CustomResponseException | IOException e) {
             throw new ProcessorException(e);
@@ -109,18 +111,20 @@ public class TaskActionProcessor extends ActiveMQProcessor {
                 actionProcess(currentTask, currentUser);
                 break;
             case ERROR_OPEN:
-                if (!TaskStatus.OPEN.equals(currentTask.getProcessingStatus()) && !TaskStatus.INWORK.equals(
-                        currentTask.getProcessingStatus())) {
-                    throw new ProcessorException("Status of task is not OPEN or INWORK.");
+                if (!TaskStatus.INWORK.equals(currentTask.getProcessingStatus())) {
+                    throw new ProcessorException("Status of task is not INWORK.");
                 }
                 if (!mapMessageObjectReader.hasField(KEY_MESSAGE)) {
                     throw new ProcessorException("Message field of task action ERROR_OPEN is required.");
                 }
-                actionErrorOpen(mapMessageObjectReader, currentTask, comment);
+                actionErrorOpen(mapMessageObjectReader, comment);
                 break;
             case ERROR_CLOSE:
-                if (!TaskStatus.LOCKED.equals(currentTask.getProcessingStatus())) {
-                    throw new ProcessorException("Status of task is not LOCKED.");
+                if ((!mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID) && !TaskStatus.INWORK.equals(
+                        currentTask.getProcessingStatus())) || (mapMessageObjectReader.hasField(
+                        KEY_CORRECTION_TASK_ID) && !TaskStatus.LOCKED.equals(currentTask.getProcessingStatus()))) {
+                    throw new ProcessorException(
+                            "Status of task is not INWORK if there is a no corrected task ID or LOCKED if there is a corrected task ID.");
                 }
                 actionErrorClose(mapMessageObjectReader, currentTask, currentUser);
                 break;
@@ -149,7 +153,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         return comment;
     }
 
-    private void actionErrorOpen(MapMessageObjectReader mapMessageObjectReader, Task currentTask, Comment comment)
+    private void actionErrorOpen(MapMessageObjectReader mapMessageObjectReader, Comment comment)
             throws ProcessorException, JMSException, DAOException, DataException {
         if (mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID)) {
             Integer correctionTaskId = mapMessageObjectReader.getMandatoryInteger(KEY_CORRECTION_TASK_ID);
@@ -200,13 +204,16 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(currentTask);
         Optional<Comment> optionalComment;
         optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(
-                        currentTaskComment.getType()) && !currentTaskComment.isCorrected() && ((Objects.isNull(
-                        correctionTaskId) && Objects.isNull(currentTaskComment.getCorrectionTask())) || (Objects.nonNull(
-                        correctionTaskId) && correctionTaskId.equals(currentTaskComment.getCorrectionTask().getId()))))
-                .findFirst();
+                currentTaskComment.getType()) && !currentTaskComment.isCorrected() && isEqualCorrectionTask(
+                correctionTaskId, currentTaskComment.getCorrectionTask())).findFirst();
         if (optionalComment.isPresent()) {
             workflowControllerService.solveProblem(optionalComment.get(), TaskEditType.QUEUE);
         }
+    }
+
+    private static boolean isEqualCorrectionTask(Integer correctionTaskId, Task correctionTask) {
+        return (Objects.isNull(correctionTaskId) && Objects.isNull(correctionTask)) || (Objects.nonNull(
+                correctionTaskId) && correctionTaskId.equals(correctionTask.getId()));
     }
 
 }

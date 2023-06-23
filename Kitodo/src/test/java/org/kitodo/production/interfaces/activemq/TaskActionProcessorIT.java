@@ -128,18 +128,11 @@ public class TaskActionProcessorIT {
      */
     @Test
     public void testActionErrorOpen() throws Exception {
-        Task openTask = taskService.getById(9);
-        assertEquals("Task '" + openTask.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
-                openTask.getProcessingStatus());
-        processAction(openTask, TaskAction.ERROR_OPEN);
-        assertEquals("Task '" + openTask.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
-                taskService.getById(openTask.getId()).getProcessingStatus());
-
         Task inWorkTask = taskService.getById(8);
         assertEquals("Task '" + inWorkTask.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
                 inWorkTask.getProcessingStatus());
         processAction(inWorkTask, TaskAction.ERROR_OPEN);
-        assertEquals("Task '" + inWorkTask.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
+        assertEquals("Task '" + inWorkTask.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
                 taskService.getById(inWorkTask.getId()).getProcessingStatus());
     }
 
@@ -151,9 +144,9 @@ public class TaskActionProcessorIT {
      */
     @Test
     public void testActionErrorOpenWithCorrectionTask() throws Exception {
-        Task task = taskService.getById(9);
+        Task task = taskService.getById(8);
         Task correctionTask = taskService.getById(6);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
                 task.getProcessingStatus());
         processAction(task, TaskAction.ERROR_OPEN, correctionTask.getId(), 1);
         assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
@@ -169,9 +162,9 @@ public class TaskActionProcessorIT {
      *         if something goes wrong
      */
     @Test(expected = ProcessorException.class)
-    public void testActionErrorOpenWithoutTaskStatusOpenOrInWork() throws Exception {
-        Task task = taskService.getById(10);
-        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
+    public void testActionErrorOpenWithoutTaskStatusInWork() throws Exception {
+        Task task = taskService.getById(9);
+        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
                 task.getProcessingStatus());
         processAction(task, TaskAction.ERROR_OPEN);
     }
@@ -196,8 +189,8 @@ public class TaskActionProcessorIT {
      */
     @Test
     public void testActionErrorClose() throws Exception {
-        Task task = taskService.getById(10);
-        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
+        Task task = taskService.getById(8);
+        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
                 task.getProcessingStatus());
         processAction(task, TaskAction.ERROR_CLOSE);
         assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
@@ -212,9 +205,9 @@ public class TaskActionProcessorIT {
      */
     @Test
     public void testActionErrorCloseWithCorrectionTask() throws Exception {
-        Task task = taskService.getById(9);
+        Task task = taskService.getById(8);
         Task correctionTask = taskService.getById(6);
-        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
+        assertEquals("Task '" + task.getTitle() + "' status should be INWORK!", TaskStatus.INWORK,
                 task.getProcessingStatus());
 
         processAction(task, TaskAction.ERROR_OPEN, correctionTask.getId(), 1);
@@ -237,7 +230,7 @@ public class TaskActionProcessorIT {
      *         if something goes wrong
      */
     @Test(expected = ProcessorException.class)
-    public void testActionErrorCloseWithoutTaskStatusLocked() throws Exception {
+    public void testActionErrorCloseWithoutTaskStatusInWork() throws Exception {
         Task task = taskService.getById(9);
         assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
                 task.getProcessingStatus());
@@ -252,10 +245,11 @@ public class TaskActionProcessorIT {
      */
     @Test
     public void testActionComment() throws Exception {
-        Task task = taskService.getById(10);
-        assertEquals("Task '" + task.getTitle() + "' status should be LOCKED!", TaskStatus.LOCKED,
+        Task task = taskService.getById(9);
+        assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
                 task.getProcessingStatus());
-        processAction(task, TaskAction.ERROR_CLOSE);
+        processAction(task, TaskAction.COMMENT, null, 1);
+        processAction(task, TaskAction.COMMENT, null, 2);
         assertEquals("Task '" + task.getTitle() + "' status should be OPEN!", TaskStatus.OPEN,
                 taskService.getById(task.getId()).getProcessingStatus());
     }
