@@ -18,12 +18,12 @@ public enum TaskAction {
     COMMENT,
 
     /**
-     * Lock a task and add an error comment when task status is OPEN or INWORK.
+     * Add an error comment when task status is INWORK and set the task status to LOCKED if the correction id is set.
      */
     ERROR_OPEN,
 
     /**
-     * Set task status of locked task to OPEN.
+     * Set task status of LOCKED (if correction id is set) or INWORK (if correction id is not set) task to OPEN.
      */
     ERROR_CLOSE,
 
