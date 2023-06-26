@@ -10,13 +10,13 @@
 --
 
 -- Add authorities to manage ocr workflows
-INSERT IGNORE INTO authority (title) VALUES ('addOCRWorkflow_clientAssignable');
-INSERT IGNORE INTO authority (title) VALUES ('editOCRWorkflow_clientAssignable');
-INSERT IGNORE INTO authority (title) VALUES ('deleteOCRWorkflow_clientAssignable');
-INSERT IGNORE INTO authority (title) VALUES ('viewOCRWorkflow_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('addOcrdWorkflow_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('editOcrdWorkflow_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('deleteOcrdWorkflow_clientAssignable');
+INSERT IGNORE INTO authority (title) VALUES ('viewOcrdWorkflow_clientAssignable');
 
--- Add table "ocrworkflow"
-CREATE TABLE IF NOT EXISTS ocrworkflow (
+-- Add table "ocrdworkflow"
+CREATE TABLE IF NOT EXISTS ocrdworkflow (
     id INT(10) NOT NULL AUTO_INCREMENT,
     title varchar(255) NOT NULL,
     file varchar(255) NOT NULL,
@@ -25,16 +25,16 @@ CREATE TABLE IF NOT EXISTS ocrworkflow (
 ) DEFAULT CHARACTER SET = utf8mb4
   COLLATE utf8mb4_unicode_ci;
 
--- Add column related to ocr workflow to process table
-ALTER TABLE process ADD ocr_workflow_id INT(11) DEFAULT NULL;
+-- Add column related to OCR-D workflow to process table
+ALTER TABLE process ADD ocrd_workflow_id INT(11) DEFAULT NULL;
 
 -- Add foreign key
-ALTER TABLE process add constraint `FK_process_ocr_workflow_id`
-    foreign key (ocr_workflow_id) REFERENCES ocrworkflow(id);
+ALTER TABLE process add constraint `FK_process_ocrd_workflow_id`
+    foreign key (ocrd_workflow_id) REFERENCES ocrdworkflow(id);
 
--- Add column related to ocr workflow to template table
-ALTER TABLE template ADD ocr_workflow_id INT(11) DEFAULT NULL;
+-- Add column related to OCR-D workflow to template table
+ALTER TABLE template ADD ocrd_workflow_id INT(11) DEFAULT NULL;
 
 -- Add foreign key
-ALTER TABLE template add constraint `FK_template_ocr_workflow_id`
-    foreign key (ocr_workflow_id) REFERENCES ocrworkflow(id);
+ALTER TABLE template add constraint `FK_template_ocrd_workflow_id`
+    foreign key (ocrd_workflow_id) REFERENCES ocrdworkflow(id);

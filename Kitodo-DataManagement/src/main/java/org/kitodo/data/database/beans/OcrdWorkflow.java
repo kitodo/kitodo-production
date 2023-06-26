@@ -21,7 +21,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ocrworkflow")
+@Table(name = "ocrdworkflow")
 public class OcrdWorkflow extends BaseBean {
 
     @Column(name = "title")
@@ -31,7 +31,7 @@ public class OcrdWorkflow extends BaseBean {
     private String file;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocrworkflow_client_id"))
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocrdworkflow_client_id"))
     private Client client;
 
     public String getTitle() {
