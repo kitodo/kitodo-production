@@ -182,7 +182,7 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Set ocrd workflow.
+     * Set OCR-D workflow.
      *
      * @param ocrdWorkflow
      *            as Workflow object
