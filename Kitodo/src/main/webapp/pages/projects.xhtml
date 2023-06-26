@@ -79,9 +79,9 @@
                 <p:menuitem value="#{msgs['mappingFile.new']}" action="#{MappingFileListView.newMappingFile()}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddMappingFile()}"
                             id="newMappingFileButton" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newOCRWorkflow}" action="#{OCRWorkflowListView.newOCRWorkflow()}" immediate="true"
+                <p:menuitem value="#{msgs.newOcrdWorkflow}" action="#{OcrdWorkflowListView.newOcrdWorkflow()}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"
-                            id="newOCRWorkflowButton" icon="fa fa-plus"/>
+                            id="newOcrdWorkflowButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>

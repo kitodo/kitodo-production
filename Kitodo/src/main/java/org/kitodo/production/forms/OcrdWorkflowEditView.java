@@ -79,13 +79,13 @@ public class OcrdWorkflowEditView extends BaseForm {
     }
 
     /**
-     * Get list of ocr workflow filenames.
+     * Get list of OCR-D workflow filenames.
      *
-     * @return list of ocr workflow filenames
+     * @return list of OCR-D workflow filenames
      */
-    public List<Path> getOCRWorkflowFilenames() {
-        try (Stream<Path> ocrWorkflowPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCRD_WORKFLOWS)))) {
-            return ocrWorkflowPaths.filter(f -> f.toString().endsWith(".sh"))
+    public List<Path> getOcrdWorkflowFilenames() {
+        try (Stream<Path> ocrdWorkflowPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCRD_WORKFLOWS)))) {
+            return ocrdWorkflowPaths.filter(f -> f.toString().endsWith(".sh"))
                     .map(Path::getFileName).sorted().collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCRD_WORKFLOW.getTranslationPlural() },
@@ -95,20 +95,20 @@ public class OcrdWorkflowEditView extends BaseForm {
     }
 
     /**
-     * Get importConfiguration.
+     * Get OCR-D workflow.
      *
-     * @return value of importConfiguration
+     * @return value of OCR-D workflow
      */
-    public OcrdWorkflow getOcrWorkflow() {
+    public OcrdWorkflow getOcrdWorkflow() {
         return ocrdWorkflow;
     }
 
     /**
-     * Set ocrWorkflow.
+     * Set OCR-D workflow.
      *
-     * @param ocrdWorkflow as org.kitodo.data.database.beans.OCRWorkflow
+     * @param ocrdWorkflow as org.kitodo.data.database.beans.OcrdWorkflow
      */
-    public void setOcrWorkflow(OcrdWorkflow ocrdWorkflow) {
+    public void setOcrdWorkflow(OcrdWorkflow ocrdWorkflow) {
         this.ocrdWorkflow = ocrdWorkflow;
     }
 

@@ -12,13 +12,12 @@
 package org.kitodo.production.dto;
 
 /**
- * OCR workflow DTO object.
+ * Ocrd workflow DTO object.
  */
-public class OCRWorkflowDTO extends BaseDTO {
+public class OcrdWorkflowDTO extends BaseDTO {
 
     private String file;
     private String title;
-    private Boolean active = true;
     private ClientDTO client;
 
     /**
@@ -57,25 +56,6 @@ public class OCRWorkflowDTO extends BaseDTO {
      */
     public void setTitle(String title) {
         this.title = title;
-    }
-
-    /**
-     * Check if ocr workflow is active.
-     *
-     * @return whether ocr workflow is active or not
-     */
-    public Boolean isActive() {
-        return this.active;
-    }
-
-    /**
-     * Set if ocr workflow is active.
-     *
-     * @param active
-     *            whether ocr workflow is active or not
-     */
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
     /**

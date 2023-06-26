@@ -19,10 +19,10 @@
 
     <!--@elvariable id="item" type="org.kitodo.data.database.beans.OCRWorkflow"-->
     <p:dataTable id="ocrdWorkflowTable"
-                 value="#{OCRWorkflowListView.ocrWorkflows}"
+                 value="#{OcrdWorkflowListView.ocrWorkflows}"
                  var="item"
                  styleClass="default-layout"
-                 first="#{OCRWorkflowListView.firstRow}"
+                 first="#{OcrdWorkflowListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -48,33 +48,33 @@
                   width="70"
                   styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewOCRWorkflow"
-                        outcome="ocrWorkflowEdit"
+                <h:link id="viewOcrdWorkflow"
+                        outcome="ocrdWorkflowEdit"
                         styleClass="action"
                         title="#{msgs.view}"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow() and not SecurityAccessController.hasAuthorityToEditOCRWorkflow()}">
+                        rendered="#{SecurityAccessController.hasAuthorityToViewOcrdWorkflow() and not SecurityAccessController.hasAuthorityToEditOcrdWorkflow()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
-                <h:link id="editOCRWorkflow"
-                        outcome="ocrWorkflowEdit"
+                <h:link id="editOcrdWorkflow"
+                        outcome="ocrdWorkflowEdit"
                         styleClass="action"
                         title="#{msgs.edit}"
-                        rendered="#{SecurityAccessController.hasAuthorityToEditOCRWorkflow()}">
+                        rendered="#{SecurityAccessController.hasAuthorityToEditOcrdWorkflow()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
                 <p:commandLink id="deleteOcrdWorkflow"
-                               action="#{OCRWorkflowListView.deleteById(item.id)}"
+                               action="#{OcrdWorkflowListView.deleteById(item.id)}"
                                styleClass="action"
                                title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteOCRWorkflow()}"
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteOcrdWorkflow()}"
                                update="ocrdWorkflowTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{OCRWorkflowEditView.formatString('confirmDeleteOCRWorkflow', item.title)}"
+                               message="#{OcrdWorkflowEditView.formatString('confirmDeleteOcrdWorkflow', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>
