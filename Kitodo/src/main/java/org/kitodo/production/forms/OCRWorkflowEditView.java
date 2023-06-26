@@ -41,8 +41,6 @@ public class OCRWorkflowEditView extends BaseForm {
     private static final Logger logger = LogManager.getLogger(OCRWorkflowEditView.class);
     private OCRWorkflow ocrWorkflow = new OCRWorkflow();
 
-    private final String ocrWorkflowEditPath = MessageFormat.format(REDIRECT_PATH, "ocrWorkflowEdit");
-
 
     /**
      * Load import configuration by ID.

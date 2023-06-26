@@ -11,23 +11,15 @@
 
 package org.kitodo.production.forms;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.OCRWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
@@ -37,9 +29,9 @@ import org.kitodo.production.services.ServiceManager;
 @Named("OCRWorkflowListView")
 @SessionScoped
 public class OCRWorkflowListView extends BaseForm {
-    private OCRWorkflow ocrWorkflow;
+
     private static final Logger logger = LogManager.getLogger(OCRWorkflowListView.class);
-    private final String ocrWorkflowEditPath = MessageFormat.format(REDIRECT_PATH, "ocrWorkflowEdit");
+    private final String ocrWorkflowCreatePath = MessageFormat.format(REDIRECT_PATH, "ocrWorkflowEdit");
 
 
     /**
@@ -59,7 +51,7 @@ public class OCRWorkflowListView extends BaseForm {
 
 
     public String newOCRWorkflow() {
-        return ocrWorkflowEditPath;
+        return ocrWorkflowCreatePath;
     }
 
     /**
