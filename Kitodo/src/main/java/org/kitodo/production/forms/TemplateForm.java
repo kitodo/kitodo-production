@@ -26,14 +26,8 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.OCRWorkflow;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.OcrdWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
@@ -280,8 +274,8 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return list of workflows
      */
-    public List<OCRWorkflow> getOCRWorkflows() {
-        return ServiceManager.getOCRWorkflowService().getAvailableOCRWorkflows();
+    public List<OcrdWorkflow> getOCRWorkflows() {
+        return ServiceManager.getOcrdWorkflowService().getAvailableOcrdWorkflows();
     }
 
     /**

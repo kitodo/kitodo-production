@@ -1074,7 +1074,7 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to add the ocr workflow
      */
-    public boolean hasAuthorityToAddOCRWorkflow() {
+    public boolean hasAuthorityToAddOcrdWorkflow() {
         return hasAuthorityForClient("addOCRWorkflow");
     }
 
@@ -1083,7 +1083,7 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to edit the ocr workflow
      */
-    public boolean hasAuthorityToEditOCRWorkflow() {
+    public boolean hasAuthorityToEditOcrdWorkflow() {
         return hasAuthorityForClient("editOCRWorkflow");
     }
 
@@ -1092,7 +1092,7 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to delete the ocr workflow
      */
-    public boolean hasAuthorityToDeleteOCRWorkflow() {
+    public boolean hasAuthorityToDeleteOcrdWorkflow() {
         return hasAuthorityForClient("deleteOCRWorkflow");
     }
 
@@ -1101,7 +1101,7 @@ public class SecurityAccessService extends SecurityAccess {
      *
      * @return true if the current user has the authority to view the ocr workflow
      */
-    public boolean hasAuthorityToViewOCRWorkflow() {
+    public boolean hasAuthorityToViewOcrdWorkflow() {
         return hasAuthorityForClient("viewOCRWorkflow");
     }
 }

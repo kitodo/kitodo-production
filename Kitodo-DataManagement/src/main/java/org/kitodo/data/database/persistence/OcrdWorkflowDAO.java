@@ -15,38 +15,38 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import org.kitodo.data.database.beans.OCRWorkflow;
+import org.kitodo.data.database.beans.OcrdWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 
-public class OCRWorkflowDAO extends BaseDAO<OCRWorkflow> {
+public class OcrdWorkflowDAO extends BaseDAO<OcrdWorkflow> {
 
     @Override
-    public OCRWorkflow getById(Integer id) throws DAOException {
-        OCRWorkflow ocrWorkflow = retrieveObject(OCRWorkflow.class, id);
-        if (Objects.isNull(ocrWorkflow)) {
+    public OcrdWorkflow getById(Integer id) throws DAOException {
+        OcrdWorkflow ocrdWorkflow = retrieveObject(OcrdWorkflow.class, id);
+        if (Objects.isNull(ocrdWorkflow)) {
             throw new DAOException("Object cannot be found in database");
         }
-        return ocrWorkflow;
+        return ocrdWorkflow;
     }
 
     @Override
-    public List<OCRWorkflow> getAll() throws DAOException {
-        return retrieveAllObjects(OCRWorkflow.class);
+    public List<OcrdWorkflow> getAll() throws DAOException {
+        return retrieveAllObjects(OcrdWorkflow.class);
     }
 
     @Override
-    public List<OCRWorkflow> getAll(int offset, int size) throws DAOException {
+    public List<OcrdWorkflow> getAll(int offset, int size) throws DAOException {
         return retrieveObjects("FROM OCRWorkflow ORDER BY id ASC", offset, size);
     }
 
     @Override
-    public List<OCRWorkflow> getAllNotIndexed(int offset, int size) throws DAOException {
+    public List<OcrdWorkflow> getAllNotIndexed(int offset, int size) throws DAOException {
         throw new UnsupportedOperationException();
     }
 
     @Override
     public void remove(Integer ocrWorkflowId) throws DAOException {
-        removeObject(OCRWorkflow.class, ocrWorkflowId);
+        removeObject(OcrdWorkflow.class, ocrWorkflowId);
     }
 
     /**
@@ -57,7 +57,7 @@ public class OCRWorkflowDAO extends BaseDAO<OCRWorkflow> {
      *            id of client to which searched ocr workflows should be assigned
      * @return list of available ocr workflow objects
      */
-    public List<OCRWorkflow> getAvailableOCRWorkflows(int clientId) {
+    public List<OcrdWorkflow> getAvailableOcrdWorkflows(int clientId) {
         return getByQuery(
                 "SELECT w FROM OCRWorkflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
                 Collections.singletonMap("clientId", clientId));

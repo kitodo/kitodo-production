@@ -120,9 +120,9 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
             </p:tab>
-            <p:tab title="OCR Workflows" id="ocrWorkflowTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToViewOCRWorkflow()}">
-                <ui:include src="/WEB-INF/templates/includes/projects/ocrWorkflowList.xhtml"/>
+            <p:tab title="OCR-D Workflows" id="ocrdWorkflowTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewOcrdWorkflow()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/ocrdWorkflowList.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>

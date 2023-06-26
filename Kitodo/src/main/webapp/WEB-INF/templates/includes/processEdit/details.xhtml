@@ -88,16 +88,16 @@
             </div>
 
             <div>
-                <p:outputLabel for="ocrWorkflow" value="#{msgs.ocrWorkflow}"/>
-                <p:selectOneMenu id="ocrWorkflow" value="#{ProcessForm.process.ocrWorkflow}"
+                <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
+                <p:selectOneMenu id="ocrdWorkflow" value="#{ProcessForm.process.ocrdWorkflow}"
                                  converter="#{oCRWorkflowConverter}"
                                  disabled="#{isViewMode}">
                     <f:selectItem itemValue="#{null}"
                                   itemLabel="-- #{msgs['processConfig.useProcessTemplateOCRWorkflow']} --"/>
                     <f:selectItems value="#{ProcessForm.OCRWorkflows}"
-                                   var="ocrWorkflow"
-                                   itemValue="#{ocrWorkflow}"
-                                   itemLabel="#{ocrWorkflow.title}"/>
+                                   var="ocrdWorkflow"
+                                   itemValue="#{ocrdWorkflow}"
+                                   itemLabel="#{ocrdWorkflow.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>

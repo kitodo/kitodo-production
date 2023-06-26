@@ -20,50 +20,50 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.OCRWorkflow;
+import org.kitodo.data.database.beans.OcrdWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
-@Named("OCRWorkflowListView")
+@Named("OcrdWorkflowListView")
 @SessionScoped
-public class OCRWorkflowListView extends BaseForm {
+public class OcrdWorkflowListView extends BaseForm {
 
-    private static final Logger logger = LogManager.getLogger(OCRWorkflowListView.class);
-    private final String ocrWorkflowCreatePath = MessageFormat.format(REDIRECT_PATH, "ocrWorkflowEdit");
+    private static final Logger logger = LogManager.getLogger(OcrdWorkflowListView.class);
+    private final String ocrdWorkflowCreatePath = MessageFormat.format(REDIRECT_PATH, "ocrdWorkflowEdit");
 
 
     /**
-     * Get ocr workflows.
+     * Get ocrd workflows.
      *
-     * @return list of ocr workflows.
+     * @return list of ocrd workflows.
      */
-    public List<OCRWorkflow> getOcrWorkflows() {
+    public List<OcrdWorkflow> getOcrdWorkflows() {
         try {
-            return ServiceManager.getOCRWorkflowService().getAll();
+            return ServiceManager.getOcrdWorkflowService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY,
-                    new Object[] { ObjectType.OCR_WORKFLOW.getTranslationPlural() }, logger, e);
+                    new Object[] { ObjectType.OCRD_WORKFLOW.getTranslationPlural() }, logger, e);
             return new ArrayList<>();
         }
     }
 
 
-    public String newOCRWorkflow() {
-        return ocrWorkflowCreatePath;
+    public String newOcrdWorkflow() {
+        return ocrdWorkflowCreatePath;
     }
 
     /**
-     * Delete ocr workflow identified by ID.
+     * Delete ocrd workflow identified by ID.
      *
-     * @param id ID of ocr workflow to delete
+     * @param id ID of ocrd workflow to delete
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getOCRWorkflowService().removeFromDatabase(id);
+            ServiceManager.getOcrdWorkflowService().removeFromDatabase(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.OCR_WORKFLOW.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.OCRD_WORKFLOW.getTranslationSingular() }, logger, e);
         }
     }
 

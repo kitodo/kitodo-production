@@ -70,7 +70,7 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrworkflow)|"
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrdworkflow)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
                 + "(?:(filename|basename|relativepath))))\\)");
 
@@ -244,7 +244,7 @@ public class VariableReplacer {
             case "generatorsource" :
             case "generatorsourcepath":
                 return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
-            case "ocrworkflow":
+            case "ocrdworkflow":
                 return determineReplacementForOcrWorkflow(variableFinder);
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
@@ -285,24 +285,24 @@ public class VariableReplacer {
 
     private String determineReplacementForOcrWorkflow(Matcher variableFinder) {
         if (Objects.isNull(process)) {
-            logger.warn("Cannot replace \"(ocrworkfow)\": no process given");
+            logger.warn("Cannot replace \"(ocrdworkfow)\": no process given");
             return variableFinder.group(1);
         }
 
-        if (Objects.nonNull(process.getOcrWorkflow())) {
-            return variableFinder.group(1) + process.getOcrWorkflow().getFile();
+        if (Objects.nonNull(process.getOcrdWorkflow())) {
+            return variableFinder.group(1) + process.getOcrdWorkflow().getFile();
         }
 
         if (Objects.isNull(process.getTemplate())) {
-            logger.warn("Cannot replace \"(ocrworkfow)\": process has no template assigned");
+            logger.warn("Cannot replace \"(ocrdworkfow)\": process has no template assigned");
             return variableFinder.group(1);
         }
 
-        if (Objects.isNull(process.getTemplate().getOcrWorkflow())) {
-            logger.warn("Cannot replace \"(ocrworkfow)\": template has no ocrworkfow assigned");
+        if (Objects.isNull(process.getTemplate().getOcrdWorkflow())) {
+            logger.warn("Cannot replace \"(ocrdworkfow)\": template has no ocrdworkfow assigned");
             return variableFinder.group(1);
         }
-        return variableFinder.group(1) + process.getTemplate().getOcrWorkflow().getFile();
+        return variableFinder.group(1) + process.getTemplate().getOcrdWorkflow().getFile();
     }
 
     private String determineReplacementForProcesstitle(Matcher variableFinder) {

@@ -24,10 +24,10 @@
 
     <!--@elvariable id="isEditMode" type="boolean"-->
     <ui:param name="isEditMode"
-              value="#{OCRWorkflowEditView.ocrWorkflow.id ne null and SecurityAccessController.hasAuthorityToEditOCRWorkflow()}"/>
+              value="#{OCRWorkflowEditView.ocrdWorkflow.id ne null and SecurityAccessController.hasAuthorityToEditOCRWorkflow()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{OCRWorkflowEditView.ocrWorkflow.id eq null and SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"/>
+              value="#{OCRWorkflowEditView.ocrdWorkflow.id eq null and SecurityAccessController.hasAuthorityToAddOCRWorkflow()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewOCRWorkflow()}"/>
@@ -36,9 +36,9 @@
         <h:outputScript name="js/save.js" target="body"/>
         <h3 id="headerText">
             <h:outputText value="#{msgs.createNewOCRWorkflow}" rendered="#{isCreateMode}"/>
-            <h:outputText value="#{msgs.editOCRWorkflow} (#{OCRWorkflowEditView.ocrWorkflow.title})"
+            <h:outputText value="#{msgs.editOCRWorkflow} (#{OCRWorkflowEditView.ocrdWorkflow.title})"
                           rendered="#{isEditMode}"/>
-            <h:outputText value="#{msgs.viewOCRWorkflow} (#{OCRWorkflowEditView.ocrWorkflow.title})"
+            <h:outputText value="#{msgs.viewOCRWorkflow} (#{OCRWorkflowEditView.ocrdWorkflow.title})"
                           rendered="#{isViewMode}"/>
         </h3>
         <p:commandButton id="save"
@@ -65,19 +65,19 @@
 
     <ui:define name="pageTabView">
         <p:tabView id="ocrWorkflowView">
-            <p:tab id="ocrWorkflowTab" title="#{msgs.details}">
+            <p:tab id="ocrdWorkflowTab" title="#{msgs.details}">
                 <p:panelGrid columns="2" layout="grid">
                     <p:row>
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title" class="input" placeholder="#{msgs.title}"
-                                         value="#{OCRWorkflowEditView.ocrWorkflow.title}" disabled="#{isViewMode}"
+                                         value="#{OCRWorkflowEditView.ocrdWorkflow.title}" disabled="#{isViewMode}"
                                          required="#{empty param['editForm:saveButtonToggler']}"/>
                         </div>
                         <div>
                             <p:outputLabel for="file" value="#{msgs.file}"/>
                             <p:selectOneMenu id="file"
-                                             value="#{OCRWorkflowEditView.ocrWorkflow.file}"
+                                             value="#{OCRWorkflowEditView.ocrdWorkflow.file}"
                                              disabled="#{isViewMode}" >
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{OCRWorkflowEditView.OCRWorkflowFilenames}" var="ocrWorkflowFile"

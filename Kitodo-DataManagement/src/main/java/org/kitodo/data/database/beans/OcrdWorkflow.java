@@ -22,7 +22,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ocrworkflow")
-public class OCRWorkflow extends BaseBean {
+public class OcrdWorkflow extends BaseBean {
 
     @Column(name = "title")
     private String title;
@@ -76,9 +76,9 @@ public class OCRWorkflow extends BaseBean {
             return true;
         }
 
-        if (object instanceof OCRWorkflow) {
-            OCRWorkflow ocrWorkflow = (OCRWorkflow) object;
-            return Objects.equals(this.getId(), ocrWorkflow.getId());
+        if (object instanceof OcrdWorkflow) {
+            OcrdWorkflow ocrdWorkflow = (OcrdWorkflow) object;
+            return Objects.equals(this.getId(), ocrdWorkflow.getId());
         }
 
         return false;

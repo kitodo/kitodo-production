@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -28,18 +27,18 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.OCRWorkflow;
+import org.kitodo.data.database.beans.OcrdWorkflow;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
-@Named("OCRWorkflowEditView")
+@Named("OcrdWorkflowEditView")
 @SessionScoped
-public class OCRWorkflowEditView extends BaseForm {
+public class OcrdWorkflowEditView extends BaseForm {
 
-    private static final Logger logger = LogManager.getLogger(OCRWorkflowEditView.class);
-    private OCRWorkflow ocrWorkflow = new OCRWorkflow();
+    private static final Logger logger = LogManager.getLogger(OcrdWorkflowEditView.class);
+    private OcrdWorkflow ocrdWorkflow = new OcrdWorkflow();
 
 
     /**
@@ -51,14 +50,14 @@ public class OCRWorkflowEditView extends BaseForm {
     public void load(int id) {
         try {
             if (id > 0) {
-                ocrWorkflow = ServiceManager.getOCRWorkflowService().getById(id);
+                ocrdWorkflow = ServiceManager.getOcrdWorkflowService().getById(id);
             } else {
-                ocrWorkflow = new OCRWorkflow();
+                ocrdWorkflow = new OcrdWorkflow();
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] { ObjectType.OCR_WORKFLOW.getTranslationSingular(), id }, logger, e);
+                    new Object[] {ObjectType.OCRD_WORKFLOW.getTranslationSingular(), id }, logger, e);
         }
     }
 
@@ -69,12 +68,12 @@ public class OCRWorkflowEditView extends BaseForm {
      */
     public String save() {
         try {
-            ocrWorkflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
-            ServiceManager.getOCRWorkflowService().saveToDatabase(ocrWorkflow);
+            ocrdWorkflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
+            ServiceManager.getOcrdWorkflowService().saveToDatabase(ocrdWorkflow);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING,
-                    new Object[] {ObjectType.OCR_WORKFLOW.getTranslationSingular()}, logger, e);
+                    new Object[] {ObjectType.OCRD_WORKFLOW.getTranslationSingular()}, logger, e);
             return this.stayOnCurrentPage;
         }
     }
@@ -85,11 +84,11 @@ public class OCRWorkflowEditView extends BaseForm {
      * @return list of ocr workflow filenames
      */
     public List<Path> getOCRWorkflowFilenames() {
-        try (Stream<Path> ocrWorkflowPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_WORKFLOWS)))) {
+        try (Stream<Path> ocrWorkflowPaths = Files.walk(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCRD_WORKFLOWS)))) {
             return ocrWorkflowPaths.filter(f -> f.toString().endsWith(".sh"))
                     .map(Path::getFileName).sorted().collect(Collectors.toList());
         } catch (IOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCR_WORKFLOW.getTranslationPlural() },
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCRD_WORKFLOW.getTranslationPlural() },
                     logger, e);
             return new ArrayList<>();
         }
@@ -100,17 +99,17 @@ public class OCRWorkflowEditView extends BaseForm {
      *
      * @return value of importConfiguration
      */
-    public OCRWorkflow getOcrWorkflow() {
-        return ocrWorkflow;
+    public OcrdWorkflow getOcrWorkflow() {
+        return ocrdWorkflow;
     }
 
     /**
      * Set ocrWorkflow.
      *
-     * @param ocrWorkflow as org.kitodo.data.database.beans.OCRWorkflow
+     * @param ocrdWorkflow as org.kitodo.data.database.beans.OCRWorkflow
      */
-    public void setOcrWorkflow(OCRWorkflow ocrWorkflow) {
-        this.ocrWorkflow = ocrWorkflow;
+    public void setOcrWorkflow(OcrdWorkflow ocrdWorkflow) {
+        this.ocrdWorkflow = ocrdWorkflow;
     }
 
 

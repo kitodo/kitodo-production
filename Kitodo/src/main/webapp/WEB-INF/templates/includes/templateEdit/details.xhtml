@@ -96,15 +96,15 @@
             </div>
 
             <div>
-                <p:outputLabel for="ocrWorkflow" value="#{msgs.ocrWorkflow}"/>
-                <p:selectOneMenu id="ocrWorkflow" value="#{TemplateForm.template.ocrWorkflow}"
-                                 title="#{TemplateForm.template.ocrWorkflow}" disabled="#{isViewMode}"
+                <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
+                <p:selectOneMenu id="ocrdWorkflow" value="#{TemplateForm.template.ocrdWorkflow}"
+                                 title="#{TemplateForm.template.ocrdWorkflow}" disabled="#{isViewMode}"
                                  converter="#{oCRWorkflowConverter}"
                                  required="#{not empty param['editForm:save']}">
                     <f:selectItems value="#{TemplateForm.OCRWorkflows}"
-                                   var="ocrWorkflow"
-                                   itemValue="#{ocrWorkflow}"
-                                   itemLabel="#{ocrWorkflow.title}"/>
+                                   var="ocrdWorkflow"
+                                   itemValue="#{ocrdWorkflow}"
+                                   itemLabel="#{ocrdWorkflow.title}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
