@@ -90,11 +90,11 @@
             <div>
                 <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
                 <p:selectOneMenu id="ocrdWorkflow" value="#{ProcessForm.process.ocrdWorkflow}"
-                                 converter="#{oCRWorkflowConverter}"
+                                 converter="#{ocrdWorkflowConverter}"
                                  disabled="#{isViewMode}">
                     <f:selectItem itemValue="#{null}"
-                                  itemLabel="-- #{msgs['processConfig.useProcessTemplateOCRWorkflow']} --"/>
-                    <f:selectItems value="#{ProcessForm.OCRWorkflows}"
+                                  itemLabel="-- #{msgs['processConfig.useProcessTemplateOcrdWorkflow']} --"/>
+                    <f:selectItems value="#{ProcessForm.OcrdWorkflows}"
                                    var="ocrdWorkflow"
                                    itemValue="#{ocrdWorkflow}"
                                    itemLabel="#{ocrdWorkflow.title}"/>

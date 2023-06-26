@@ -9,7 +9,7 @@
 -- GPL3-License.txt file that was distributed with this source code.
 --
 
--- Add authorities to manage ocr workflows
+-- Add authorities to manage OCR-D workflows
 INSERT IGNORE INTO authority (title) VALUES ('addOcrdWorkflow_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('editOcrdWorkflow_clientAssignable');
 INSERT IGNORE INTO authority (title) VALUES ('deleteOcrdWorkflow_clientAssignable');

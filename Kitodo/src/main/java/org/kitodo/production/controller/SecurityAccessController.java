@@ -1083,36 +1083,36 @@ public class SecurityAccessController {
     }
 
     /**
-     * Check if the current user has the authority to add ocrd workflow.
+     * Check if the current user has the authority to add OCR-D workflow.
      *
-     * @return true if the current user has the authority to add ocrd workflow.
+     * @return true if the current user has the authority to add OCR-D workflow.
      */
     public boolean hasAuthorityToAddOcrdWorkflow() {
         return securityAccessService.hasAuthorityToAddOcrdWorkflow();
     }
 
     /**
-     * Check if the current user has the authority to edit ocrd workflow.
+     * Check if the current user has the authority to edit OCR-D workflow.
      *
-     * @return true if the current user has the authority to edit ocrd workflow.
+     * @return true if the current user has the authority to edit OCR-D workflow.
      */
     public boolean hasAuthorityToEditOcrdWorkflow() {
         return securityAccessService.hasAuthorityToEditOcrdWorkflow();
     }
 
     /**
-     * Check if the current user has the authority to delete ocrd workflow.
+     * Check if the current user has the authority to delete OCR-D workflow.
      *
-     * @return true if the current user has the authority to delete ocrd workflow.
+     * @return true if the current user has the authority to delete OCR-D workflow.
      */
     public boolean hasAuthorityToDeleteOcrdWorkflow() {
         return securityAccessService.hasAuthorityToDeleteOcrdWorkflow();
     }
 
     /**
-     * Check if the current user has the authority to view ocrd workflow.
+     * Check if the current user has the authority to view OCR-D workflow.
      *
-     * @return true if the current user has the authority to view ocrd workflow.
+     * @return true if the current user has the authority to view OCR-D workflow.
      */
     public boolean hasAuthorityToViewOcrdWorkflow() {
         return securityAccessService.hasAuthorityToViewOcrdWorkflow();

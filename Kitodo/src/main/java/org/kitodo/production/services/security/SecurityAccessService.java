@@ -1070,38 +1070,38 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
-     * Checks if the current user has the authority to add the ocr workflow.
+     * Checks if the current user has the authority to add the OCR-D workflow.
      *
-     * @return true if the current user has the authority to add the ocr workflow
+     * @return true if the current user has the authority to add the OCR-D workflow
      */
     public boolean hasAuthorityToAddOcrdWorkflow() {
-        return hasAuthorityForClient("addOCRWorkflow");
+        return hasAuthorityForClient("addOcrdWorkflow");
     }
 
     /**
-     * Checks if the current user has the authority to edit the ocr workflow.
+     * Checks if the current user has the authority to edit the OCR-D workflow.
      *
-     * @return true if the current user has the authority to edit the ocr workflow
+     * @return true if the current user has the authority to edit the OCR-D workflow
      */
     public boolean hasAuthorityToEditOcrdWorkflow() {
-        return hasAuthorityForClient("editOCRWorkflow");
+        return hasAuthorityForClient("editOcrdWorkflow");
     }
 
     /**
-     * Checks if the current user has the authority to delete the ocr workflow.
+     * Checks if the current user has the authority to delete the OCR-D workflow.
      *
-     * @return true if the current user has the authority to delete the ocr workflow
+     * @return true if the current user has the authority to delete the OCR-D workflow
      */
     public boolean hasAuthorityToDeleteOcrdWorkflow() {
-        return hasAuthorityForClient("deleteOCRWorkflow");
+        return hasAuthorityForClient("deleteOcrdWorkflow");
     }
 
     /**
-     * Checks if the current user has the authority to view the ocr workflow.
+     * Checks if the current user has the authority to view the OCR-D workflow.
      *
-     * @return true if the current user has the authority to view the ocr workflow
+     * @return true if the current user has the authority to view the OCR-D workflow
      */
     public boolean hasAuthorityToViewOcrdWorkflow() {
-        return hasAuthorityForClient("viewOCRWorkflow");
+        return hasAuthorityForClient("viewOcrdWorkflow");
     }
 }

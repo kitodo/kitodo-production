@@ -27,7 +27,7 @@
               value="#{OcrdWorkflowEditView.ocrdWorkflow.id ne null and SecurityAccessController.hasAuthorityToEditOcrdWorkflow()}"/>
     <!--@elvariable id="isCreateMode" type="boolean"-->
     <ui:param name="isCreateMode"
-              value="#{OCRWorkflowEditView.ocrdWorkflow.id eq null and SecurityAccessController.hasAuthorityToAddOcrdWorkflow()}"/>
+              value="#{OcrdWorkflowEditView.ocrdWorkflow.id eq null and SecurityAccessController.hasAuthorityToAddOcrdWorkflow()}"/>
     <!--@elvariable id="isViewMode" type="boolean"-->
     <ui:param name="isViewMode"
               value="#{not isEditMode and not isCreateMode and SecurityAccessController.hasAuthorityToViewOcrdWorkflow()}"/>

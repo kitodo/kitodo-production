@@ -35,9 +35,9 @@ public class OcrdWorkflowListView extends BaseForm {
 
 
     /**
-     * Get ocrd workflows.
+     * Get OCR-D workflows.
      *
-     * @return list of ocrd workflows.
+     * @return list of OCR-D workflows.
      */
     public List<OcrdWorkflow> getOcrdWorkflows() {
         try {
@@ -55,9 +55,9 @@ public class OcrdWorkflowListView extends BaseForm {
     }
 
     /**
-     * Delete ocrd workflow identified by ID.
+     * Delete OCR-D workflow identified by ID.
      *
-     * @param id ID of ocrd workflow to delete
+     * @param id ID of OCR-D workflow to delete
      */
     public void deleteById(int id) {
         try {

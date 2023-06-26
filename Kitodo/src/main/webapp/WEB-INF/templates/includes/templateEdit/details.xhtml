@@ -99,9 +99,9 @@
                 <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
                 <p:selectOneMenu id="ocrdWorkflow" value="#{TemplateForm.template.ocrdWorkflow}"
                                  title="#{TemplateForm.template.ocrdWorkflow}" disabled="#{isViewMode}"
-                                 converter="#{oCRWorkflowConverter}"
+                                 converter="#{OcrdWorkflowConverter}"
                                  required="#{not empty param['editForm:save']}">
-                    <f:selectItems value="#{TemplateForm.OCRWorkflows}"
+                    <f:selectItems value="#{TemplateForm.OcrdWorkflows}"
                                    var="ocrdWorkflow"
                                    itemValue="#{ocrdWorkflow}"
                                    itemLabel="#{ocrdWorkflow.title}"/>

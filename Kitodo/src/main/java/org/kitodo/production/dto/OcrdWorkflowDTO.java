@@ -12,7 +12,7 @@
 package org.kitodo.production.dto;
 
 /**
- * Ocrd workflow DTO object.
+ * OCR-D workflow DTO object.
  */
 public class OcrdWorkflowDTO extends BaseDTO {
 

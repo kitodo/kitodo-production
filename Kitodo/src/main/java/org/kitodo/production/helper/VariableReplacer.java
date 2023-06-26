@@ -245,7 +245,7 @@ public class VariableReplacer {
             case "generatorsourcepath":
                 return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
             case "ocrdworkflow":
-                return determineReplacementForOcrWorkflow(variableFinder);
+                return determineReplacementForOcrdWorkflow(variableFinder);
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
@@ -283,7 +283,7 @@ public class VariableReplacer {
         return variableFinder.group(1) + process.getId().toString();
     }
 
-    private String determineReplacementForOcrWorkflow(Matcher variableFinder) {
+    private String determineReplacementForOcrdWorkflow(Matcher variableFinder) {
         if (Objects.isNull(process)) {
             logger.warn("Cannot replace \"(ocrdworkfow)\": no process given");
             return variableFinder.group(1);

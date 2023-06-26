@@ -35,9 +35,9 @@ public class OcrdWorkflowService extends SearchDatabaseService<OcrdWorkflow, Ocr
     }
 
     /**
-     * Return singleton variable of type OCRWorkflowService.
+     * Return singleton variable of type OcrdWorkflowService.
      *
-     * @return unique instance of OCRWorkflowService
+     * @return unique instance of OcrdWorkflowService
      */
     public static OcrdWorkflowService getInstance() {
         OcrdWorkflowService localReference = instance;
@@ -70,10 +70,10 @@ public class OcrdWorkflowService extends SearchDatabaseService<OcrdWorkflow, Ocr
     }
 
     /**
-     * Get available ocr workflows - available means that ocr workflow has status active
+     * Get available OCR-D workflows - available means that OCR-D workflows has status active
      * and is assigned to selected session client.
      *
-     * @return list of available OCRWorkflow objects
+     * @return list of available OcrdWorkflow objects
      */
     public List<OcrdWorkflow> getAvailableOcrdWorkflows() {
         return dao.getAvailableOcrdWorkflows(ServiceManager.getUserService().getSessionClientId());

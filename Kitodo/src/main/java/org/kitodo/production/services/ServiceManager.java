@@ -538,10 +538,10 @@ public class ServiceManager {
     }
 
     /**
-     * Initialize OCRWorkflowService if it is not yet initialized and next return
+     * Initialize OcrdWorkflowService if it is not yet initialized and next return
      * it.
      *
-     * @return OCRWorkflowService object
+     * @return OcrdWorkflowService object
      */
     public static OcrdWorkflowService getOcrdWorkflowService() {
         initializeOcrdWorkflowService();
