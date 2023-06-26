@@ -30,9 +30,6 @@ public class OCRWorkflow extends BaseBean {
     @Column(name = "file")
     private String file;
 
-    @Column(name = "active")
-    private Boolean active = true;
-
     @ManyToOne
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocrworkflow_client_id"))
     private Client client;
@@ -51,27 +48,6 @@ public class OCRWorkflow extends BaseBean {
 
     public void setFile(String file) {
         this.file = file;
-    }
-
-    /**
-     * Check if ocr workflow is active.
-     *
-     * @return true or false
-     */
-    public Boolean isActive() {
-        if (Objects.isNull(this.active)) {
-            this.active = true;
-        }
-        return this.active;
-    }
-
-    /**
-     * Set ocr workflow as active.
-     *
-     * @param active as boolean
-     */
-    public void setActive(boolean active) {
-        this.active = active;
     }
 
 
@@ -110,6 +86,6 @@ public class OCRWorkflow extends BaseBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(title, file, active);
+        return Objects.hash(title, file);
     }
 }
