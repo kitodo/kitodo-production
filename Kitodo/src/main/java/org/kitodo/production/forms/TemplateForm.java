@@ -274,7 +274,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return list of workflows
      */
-    public List<OcrdWorkflow> getOCRWorkflows() {
+    public List<OcrdWorkflow> getOcrdWorkflows() {
         return ServiceManager.getOcrdWorkflowService().getAvailableOcrdWorkflows();
     }
 

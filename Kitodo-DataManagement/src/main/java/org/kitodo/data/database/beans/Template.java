@@ -173,9 +173,9 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get ocrd workflow.
+     * Get OCR-D workflow.
      *
-     * @return value of ocr workflow
+     * @return value of OCR-D workflow
      */
     public OcrdWorkflow getOcrdWorkflow() {
         return ocrdWorkflow;

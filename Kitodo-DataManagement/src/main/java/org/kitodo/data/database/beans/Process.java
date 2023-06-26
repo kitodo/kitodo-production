@@ -294,16 +294,16 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Get ocrd workflow.
+     * Get OCR-D workflow.
      *
-     * @return value of ocrd workflow
+     * @return value of OCR-D workflow
      */
     public OcrdWorkflow getOcrdWorkflow() {
         return ocrdWorkflow;
     }
 
     /**
-     * Set ocrd workflow.
+     * Set OCR-D workflow.
      *
      * @param ocrdWorkflow
      *            as Workflow object

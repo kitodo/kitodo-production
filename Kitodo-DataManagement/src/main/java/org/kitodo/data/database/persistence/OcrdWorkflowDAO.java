@@ -36,7 +36,7 @@ public class OcrdWorkflowDAO extends BaseDAO<OcrdWorkflow> {
 
     @Override
     public List<OcrdWorkflow> getAll(int offset, int size) throws DAOException {
-        return retrieveObjects("FROM OCRWorkflow ORDER BY id ASC", offset, size);
+        return retrieveObjects("FROM OcrdWorkflow ORDER BY id ASC", offset, size);
     }
 
     @Override
@@ -45,21 +45,21 @@ public class OcrdWorkflowDAO extends BaseDAO<OcrdWorkflow> {
     }
 
     @Override
-    public void remove(Integer ocrWorkflowId) throws DAOException {
-        removeObject(OcrdWorkflow.class, ocrWorkflowId);
+    public void remove(Integer ocrdWorkflowId) throws DAOException {
+        removeObject(OcrdWorkflow.class, ocrdWorkflowId);
     }
 
     /**
-     * Get available ocr workflows - available means that ocr workflow has status active and is
+     * Get available OCR-D workflows - available means that OCR-D workflow has status active and is
      * assigned to client with given id.
      *
      * @param clientId
-     *            id of client to which searched ocr workflows should be assigned
-     * @return list of available ocr workflow objects
+     *            id of client to which searched OCR-D workflows should be assigned
+     * @return list of available OCR-D workflow objects
      */
     public List<OcrdWorkflow> getAvailableOcrdWorkflows(int clientId) {
         return getByQuery(
-                "SELECT w FROM OCRWorkflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
+                "SELECT w FROM OcrdWorkflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
                 Collections.singletonMap("clientId", clientId));
     }
 
