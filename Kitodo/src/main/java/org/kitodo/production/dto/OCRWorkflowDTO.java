@@ -60,19 +60,19 @@ public class OCRWorkflowDTO extends BaseDTO {
     }
 
     /**
-     * Check if ruleset is active.
+     * Check if ocr workflow is active.
      *
-     * @return whether ruleset is active or not
+     * @return whether ocr workflow is active or not
      */
     public Boolean isActive() {
         return this.active;
     }
 
     /**
-     * Set if ruleset is active.
+     * Set if ocr workflow is active.
      *
      * @param active
-     *            whether ruleset is active or not
+     *            whether ocr workflow is active or not
      */
     public void setActive(boolean active) {
         this.active = active;

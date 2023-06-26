@@ -66,7 +66,7 @@ public class OCRWorkflow extends BaseBean {
     }
 
     /**
-     * Set ruleset as active.
+     * Set ocr workflow as active.
      *
      * @param active as boolean
      */
@@ -101,8 +101,8 @@ public class OCRWorkflow extends BaseBean {
         }
 
         if (object instanceof OCRWorkflow) {
-            OCRWorkflow ruleset = (OCRWorkflow) object;
-            return Objects.equals(this.getId(), ruleset.getId());
+            OCRWorkflow ocrWorkflow = (OCRWorkflow) object;
+            return Objects.equals(this.getId(), ocrWorkflow.getId());
         }
 
         return false;

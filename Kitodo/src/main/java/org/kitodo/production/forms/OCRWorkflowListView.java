@@ -43,9 +43,9 @@ public class OCRWorkflowListView extends BaseForm {
 
 
     /**
-     * Get import configurations.
+     * Get ocr workflows.
      *
-     * @return import configurations
+     * @return list of ocr workflows.
      */
     public List<OCRWorkflow> getOcrWorkflows() {
         try {

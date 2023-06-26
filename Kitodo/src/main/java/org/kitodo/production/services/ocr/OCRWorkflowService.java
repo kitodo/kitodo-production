@@ -35,9 +35,9 @@ public class OCRWorkflowService extends SearchDatabaseService<OCRWorkflow, OCRWo
     }
 
     /**
-     * Return singleton variable of type OCRDWorkflowService.
+     * Return singleton variable of type OCRWorkflowService.
      *
-     * @return unique instance of OCRDWorkflowService
+     * @return unique instance of OCRWorkflowService
      */
     public static OCRWorkflowService getInstance() {
         OCRWorkflowService localReference = instance;
