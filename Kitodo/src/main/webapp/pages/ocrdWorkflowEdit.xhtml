@@ -80,7 +80,7 @@
                                              value="#{OcrdWorkflowEditView.ocrdWorkflow.file}"
                                              disabled="#{isViewMode}" >
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                                <f:selectItems value="#{OcrdWorkflowEditView.OcrdWorkflowFilenames}" var="ocrdWorkflowFile"
+                                <f:selectItems value="#{OcrdWorkflowEditView.ocrdWorkflowFilenames}" var="ocrdWorkflowFile"
                                                itemValue="#{ocrdWorkflowFile}"
                                                itemLabel="#{ocrdWorkflowFile}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
