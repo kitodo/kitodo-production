@@ -71,7 +71,7 @@
                                styleClass="action"
                                title="#{msgs.delete}"
                                rendered="#{SecurityAccessController.hasAuthorityToDeleteOcrProfile()}"
-                               update="ocrProfileTable">
+                               update="ocrProfilesTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
                                message="#{OcrProfileEditView.formatString('confirmDeleteOcrProfile', item.title)}"

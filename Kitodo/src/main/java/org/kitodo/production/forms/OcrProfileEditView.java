@@ -85,7 +85,8 @@ public class OcrProfileEditView extends BaseForm {
     public List<Path> getFilenames() {
         try (Stream<Path> ocrProfilePaths = Files.walk(
                 Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_PROFILES)))) {
-            return ocrProfilePaths.map(Path::getFileName).sorted().collect(Collectors.toList());
+            return ocrProfilePaths.filter(Files::isRegularFile).map(Path::getFileName).sorted()
+                    .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCR_PROFILE.getTranslationPlural()},
                     logger, e);

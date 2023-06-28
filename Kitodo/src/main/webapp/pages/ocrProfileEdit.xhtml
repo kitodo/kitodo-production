@@ -80,7 +80,7 @@
                                              value="#{OcrProfileEditView.ocrProfile.file}"
                                              disabled="#{isViewMode}" >
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
-                                <f:selectItems value="#{OcrProfileEditView.ocrProfileFilenames}" var="ocrProfileFile"
+                                <f:selectItems value="#{OcrProfileEditView.filenames}" var="ocrProfileFile"
                                                itemValue="#{ocrProfileFile}"
                                                itemLabel="#{ocrProfileFile}"/>
                                 <p:ajax event="change" oncomplete="toggleSave()"/>
