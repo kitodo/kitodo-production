@@ -299,7 +299,7 @@ public class VariableReplacer {
         }
 
         if (Objects.isNull(process.getTemplate().getOcrProfile())) {
-            logger.warn("Cannot replace \"(ocrprofile)\": template has no ocrprofile assigned");
+            logger.warn("Cannot replace \"(ocrprofile)\": template has no OCR profile assigned");
             return variableFinder.group(1);
         }
         return variableFinder.group(1) + process.getTemplate().getOcrProfile().getFile();

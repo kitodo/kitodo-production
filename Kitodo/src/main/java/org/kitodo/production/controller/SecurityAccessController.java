@@ -1083,36 +1083,36 @@ public class SecurityAccessController {
     }
 
     /**
-     * Check if the current user has the authority to add ocr profile.
+     * Check if the current user has the authority to add OCR profile.
      *
-     * @return true if the current user has the authority to add ocr profile.
+     * @return true if the current user has the authority to add OCR profile.
      */
     public boolean hasAuthorityToAddOcrProfile() {
         return securityAccessService.hasAuthorityToAddOcrProfile();
     }
 
     /**
-     * Check if the current user has the authority to edit ocr profile.
+     * Check if the current user has the authority to edit OCR profile.
      *
-     * @return true if the current user has the authority to edit ocr profile.
+     * @return true if the current user has the authority to edit OCR profile.
      */
     public boolean hasAuthorityToEditOcrProfile() {
         return securityAccessService.hasAuthorityToEditOcrProfile();
     }
 
     /**
-     * Check if the current user has the authority to delete ocr profile.
+     * Check if the current user has the authority to delete OCR profile.
      *
-     * @return true if the current user has the authority to delete ocr profile.
+     * @return true if the current user has the authority to delete OCR profile.
      */
     public boolean hasAuthorityToDeleteOcrProfile() {
         return securityAccessService.hasAuthorityToDeleteOcrProfile();
     }
 
     /**
-     * Check if the current user has the authority to view ocr profile.
+     * Check if the current user has the authority to view OCR profile.
      *
-     * @return true if the current user has the authority to view ocr profile.
+     * @return true if the current user has the authority to view OCR profile.
      */
     public boolean hasAuthorityToViewOcrProfile() {
         return securityAccessService.hasAuthorityToViewOcrProfile();

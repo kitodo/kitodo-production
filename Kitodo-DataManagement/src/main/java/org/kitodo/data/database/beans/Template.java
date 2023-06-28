@@ -173,19 +173,19 @@ public class Template extends BaseTemplateBean {
     }
 
     /**
-     * Get OCR-D workflow.
+     * Get OCR profile.
      *
-     * @return value of OCR-D workflow
+     * @return value of OCR profile
      */
     public OcrProfile getOcrProfile() {
         return ocrProfile;
     }
 
     /**
-     * Set OCR-D profile.
+     * Set OCR profile.
      *
      * @param ocrProfile
-     *            as profile object
+     *         as profile object
      */
     public void setOcrProfile(OcrProfile ocrProfile) {
         this.ocrProfile = ocrProfile;

@@ -35,9 +35,9 @@ public class OcrProfileListView extends BaseForm {
 
 
     /**
-     * Get ocr profile.
+     * Get OCR profile.
      *
-     * @return list of ocr profiles.
+     * @return list of OCR profiles.
      */
     public List<OcrProfile> getOcrProfile() {
         try {
@@ -55,9 +55,9 @@ public class OcrProfileListView extends BaseForm {
     }
 
     /**
-     * Delete ocr profile identified by ID.
+     * Delete OCR profile identified by ID.
      *
-     * @param id ID of ocr profile to delete
+     * @param id ID of OCR profile to delete
      */
     public void deleteById(int id) {
         try {

@@ -50,7 +50,7 @@ public enum ParameterCore implements ParameterInterface {
      * Absolute path to the directory that the OCR-D workflow files will be
      * read from. It must be terminated by a directory separator ("/").
      */
-    DIR_OCR_PROFILES(new Parameter<UndefinedParameter>("directory.ocr.workflows")),
+    DIR_OCR_PROFILES(new Parameter<UndefinedParameter>("directory.ocr.profiles")),
 
     /**
      * Absolute path to the directory that XSLT files are stored in which are used

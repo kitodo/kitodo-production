@@ -50,11 +50,11 @@ public class OcrProfileDAO extends BaseDAO<OcrProfile> {
     }
 
     /**
-     * Get available ocr profile - available means that ocr profile is assigned to client with given id.
+     * Get available OCR profile - available means that OCR profile is assigned to client with given id.
      *
      * @param clientId
-     *         id of client to which searched ocr profiles should be assigned
-     * @return list of available ocr profiles objects
+     *         id of client to which searched OCR profiles should be assigned
+     * @return list of available OCR profiles objects
      */
     public List<OcrProfile> getAvailableOcrProfiles(int clientId) {
         return getByQuery("SELECT w FROM OcrProfile AS w INNER JOIN w.client AS c WITH c.id = :clientId",

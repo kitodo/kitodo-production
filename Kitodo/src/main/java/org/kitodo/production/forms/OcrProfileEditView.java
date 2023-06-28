@@ -41,10 +41,10 @@ public class OcrProfileEditView extends BaseForm {
     private OcrProfile ocrProfile = new OcrProfile();
 
     /**
-     * Load ocr profile by ID.
+     * Load OCR profile by ID.
      *
      * @param id
-     *         ID of ocr profile to load
+     *         ID of OCR profile to load
      */
     public void load(int id) {
         try {
@@ -61,7 +61,7 @@ public class OcrProfileEditView extends BaseForm {
     }
 
     /**
-     * Save ocr profile
+     * Save OCR profile
      *
      * @return page or empty String
      */
@@ -78,9 +78,9 @@ public class OcrProfileEditView extends BaseForm {
     }
 
     /**
-     * Get list of ocr profile filenames.
+     * Get list of OCR profile filenames.
      *
-     * @return list of ocr profile filenames
+     * @return list of OCR profile filenames
      */
     public List<Path> getFilenames() {
         try (Stream<Path> ocrProfilePaths = Files.walk(
@@ -94,16 +94,16 @@ public class OcrProfileEditView extends BaseForm {
     }
 
     /**
-     * Get ocr profile.
+     * Get OCR profile.
      *
-     * @return value of ocr profile
+     * @return value of OCR profile
      */
     public OcrProfile getOcrProfile() {
         return ocrProfile;
     }
 
     /**
-     * Set ocr profile.
+     * Set OCR profile.
      *
      * @param ocrProfile as org.kitodo.data.database.beans.OcrProfile
      */

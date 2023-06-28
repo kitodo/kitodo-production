@@ -276,9 +276,9 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Get list of ocr profiles for select list.
+     * Get list of OCR profiles for select list.
      *
-     * @return list of ocr profiles
+     * @return list of OCR profiles
      */
     public List<OcrProfile> getOcrProfiles() {
         return ServiceManager.getOcrProfileService().getAvailableOcrProfiles();
