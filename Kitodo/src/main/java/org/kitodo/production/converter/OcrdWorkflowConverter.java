@@ -19,16 +19,16 @@ import javax.inject.Named;
 import org.kitodo.production.services.ServiceManager;
 
 @Named
-public class OcrdWorkflowConverter extends BeanConverter implements Converter {
+public class OcrProfileConverter extends BeanConverter implements Converter {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        return getAsObject(ServiceManager.getOcrdWorkflowService(), value);
+        return getAsObject(ServiceManager.getOcrProfileService(), value);
     }
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        return getAsString(value, "ocrdWorkflow");
+        return getAsString(value, "ocrProfile");
     }
 
 }

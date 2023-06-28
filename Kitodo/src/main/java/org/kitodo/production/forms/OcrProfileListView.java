@@ -20,50 +20,50 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.OcrdWorkflow;
+import org.kitodo.data.database.beans.OcrProfile;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
-@Named("OcrdWorkflowListView")
+@Named("OcrProfileListView")
 @SessionScoped
-public class OcrdWorkflowListView extends BaseForm {
+public class OcrProfileListView extends BaseForm {
 
-    private static final Logger logger = LogManager.getLogger(OcrdWorkflowListView.class);
-    private final String ocrdWorkflowCreatePath = MessageFormat.format(REDIRECT_PATH, "ocrdWorkflowEdit");
+    private static final Logger logger = LogManager.getLogger(OcrProfileListView.class);
+    private final String ocrProfileCreatePath = MessageFormat.format(REDIRECT_PATH, "ocrProfileEdit");
 
 
     /**
-     * Get OCR-D workflows.
+     * Get ocr profile.
      *
-     * @return list of OCR-D workflows.
+     * @return list of ocr profiles.
      */
-    public List<OcrdWorkflow> getOcrdWorkflows() {
+    public List<OcrProfile> getOcrProfile() {
         try {
-            return ServiceManager.getOcrdWorkflowService().getAll();
+            return ServiceManager.getOcrProfileService().getAll();
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY,
-                    new Object[] { ObjectType.OCRD_WORKFLOW.getTranslationPlural() }, logger, e);
+                    new Object[] { ObjectType.OCR_PROFILE.getTranslationPlural() }, logger, e);
             return new ArrayList<>();
         }
     }
 
 
-    public String newOcrdWorkflow() {
-        return ocrdWorkflowCreatePath;
+    public String newOcrProfile() {
+        return ocrProfileCreatePath;
     }
 
     /**
-     * Delete OCR-D workflow identified by ID.
+     * Delete ocr profile identified by ID.
      *
-     * @param id ID of OCR-D workflow to delete
+     * @param id ID of ocr profile to delete
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getOcrdWorkflowService().removeFromDatabase(id);
+            ServiceManager.getOcrProfileService().removeFromDatabase(id);
         } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.OCRD_WORKFLOW.getTranslationSingular() }, logger, e);
+            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.OCR_PROFILE.getTranslationSingular() }, logger, e);
         }
     }
 

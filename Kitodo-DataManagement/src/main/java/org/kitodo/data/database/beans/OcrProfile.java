@@ -21,8 +21,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "ocrdworkflow")
-public class OcrdWorkflow extends BaseBean {
+@Table(name = "ocrprofile")
+public class OcrProfile extends BaseBean {
 
     @Column(name = "title")
     private String title;
@@ -31,7 +31,7 @@ public class OcrdWorkflow extends BaseBean {
     private String file;
 
     @ManyToOne
-    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocrdworkflow_client_id"))
+    @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ocrprofile_client_id"))
     private Client client;
 
     public String getTitle() {
@@ -76,9 +76,9 @@ public class OcrdWorkflow extends BaseBean {
             return true;
         }
 
-        if (object instanceof OcrdWorkflow) {
-            OcrdWorkflow ocrdWorkflow = (OcrdWorkflow) object;
-            return Objects.equals(this.getId(), ocrdWorkflow.getId());
+        if (object instanceof OcrProfile) {
+            OcrProfile ocrProfile = (OcrProfile) object;
+            return Objects.equals(this.getId(), ocrProfile.getId());
         }
 
         return false;

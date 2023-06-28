@@ -53,8 +53,8 @@ public class Template extends BaseTemplateBean {
     private Workflow workflow;
 
     @ManyToOne
-    @JoinColumn(name = "ocrd_workflow_id", foreignKey = @ForeignKey(name = "FK_template_ocrd_workflow_id"))
-    private OcrdWorkflow ocrdWorkflow;
+    @JoinColumn(name = "ocr_profile_id", foreignKey = @ForeignKey(name = "FK_template_ocr_profile_id"))
+    private OcrProfile ocrProfile;
 
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
@@ -177,18 +177,18 @@ public class Template extends BaseTemplateBean {
      *
      * @return value of OCR-D workflow
      */
-    public OcrdWorkflow getOcrdWorkflow() {
-        return ocrdWorkflow;
+    public OcrProfile getOcrProfile() {
+        return ocrProfile;
     }
 
     /**
-     * Set OCR-D workflow.
+     * Set OCR-D profile.
      *
-     * @param ocrdWorkflow
-     *            as Workflow object
+     * @param ocrProfile
+     *            as profile object
      */
-    public void setOcrdWorkflow(OcrdWorkflow ocrdWorkflow) {
-        this.ocrdWorkflow = ocrdWorkflow;
+    public void setOcrProfile(OcrProfile ocrProfile) {
+        this.ocrProfile = ocrProfile;
     }
 
     /**

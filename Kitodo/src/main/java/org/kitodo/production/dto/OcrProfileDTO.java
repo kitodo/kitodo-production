@@ -12,9 +12,9 @@
 package org.kitodo.production.dto;
 
 /**
- * OCR-D workflow DTO object.
+ * OCR profile DTO object.
  */
-public class OcrdWorkflowDTO extends BaseDTO {
+public class OcrProfileDTO extends BaseDTO {
 
     private String file;
     private String title;

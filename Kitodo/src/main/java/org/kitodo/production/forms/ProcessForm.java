@@ -34,15 +34,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.OcrdWorkflow;
+import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.OcrProfile;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -876,12 +870,12 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Get list of OCR-D workflows for select list.
+     * Get list of OCR profiles for select list.
      *
-     * @return list of OCR-D workflows
+     * @return list of OCR profiles
      */
-    public List<OcrdWorkflow> getOcrdWorkflows() {
-        return ServiceManager.getOcrdWorkflowService().getAvailableOcrdWorkflows();
+    public List<OcrProfile> getOcrProfiles() {
+        return ServiceManager.getOcrProfileService().getAvailableOcrProfiles();
     }
 
     /**

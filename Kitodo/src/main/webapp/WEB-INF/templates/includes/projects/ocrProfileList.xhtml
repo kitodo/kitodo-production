@@ -17,12 +17,12 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:p="http://primefaces.org/ui">
 
-    <!--@elvariable id="item" type="org.kitodo.data.database.beans.OcrdWorkflow"-->
-    <p:dataTable id="ocrdWorkflowTable"
-                 value="#{OcrdWorkflowListView.ocrdWorkflows}"
+    <!--@elvariable id="item" type="org.kitodo.data.database.beans.OcrProfile"-->
+    <p:dataTable id="ocrProfilesTable"
+                 value="#{OcrProfileListView.ocrProfile}"
                  var="item"
                  styleClass="default-layout"
-                 first="#{OcrdWorkflowListView.firstRow}"
+                 first="#{OcrProfileListView.firstRow}"
                  lazy="true"
                  paginator="true"
                  resizableColumns="true"
@@ -48,33 +48,33 @@
                   width="70"
                   styleClass="actionsColumn">
             <h:form id="actionForm">
-                <h:link id="viewOcrdWorkflow"
-                        outcome="ocrdWorkflowEdit"
+                <h:link id="viewOcrProfile"
+                        outcome="ocrProfileEdit"
                         styleClass="action"
                         title="#{msgs.view}"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewOcrdWorkflow() and not SecurityAccessController.hasAuthorityToEditOcrdWorkflow()}">
+                        rendered="#{SecurityAccessController.hasAuthorityToViewOcrProfile() and not SecurityAccessController.hasAuthorityToEditOcrProfile()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-eye fa-lg"/>
                 </h:link>
 
-                <h:link id="editOcrdWorkflow"
-                        outcome="ocrdWorkflowEdit"
+                <h:link id="editOcrProfile"
+                        outcome="ocrProfileEdit"
                         styleClass="action"
                         title="#{msgs.edit}"
-                        rendered="#{SecurityAccessController.hasAuthorityToEditOcrdWorkflow()}">
+                        rendered="#{SecurityAccessController.hasAuthorityToEditOcrProfile()}">
                     <f:param name="id" value="#{item.id}"/>
                     <i class="fa fa-pencil-square-o fa-lg"/>
                 </h:link>
 
-                <p:commandLink id="deleteOcrdWorkflow"
-                               action="#{OcrdWorkflowListView.deleteById(item.id)}"
+                <p:commandLink id="deleteOcrProfile"
+                               action="#{OcrProfileView.deleteById(item.id)}"
                                styleClass="action"
                                title="#{msgs.delete}"
-                               rendered="#{SecurityAccessController.hasAuthorityToDeleteOcrdWorkflow()}"
-                               update="ocrdWorkflowTable">
+                               rendered="#{SecurityAccessController.hasAuthorityToDeleteOcrProfile()}"
+                               update="ocrProfileTable">
                     <h:outputText><i class="fa fa-trash-o"/></h:outputText>
                     <p:confirm header="#{msgs.confirmDelete}"
-                               message="#{OcrdWorkflowEditView.formatString('confirmDeleteOcrdWorkflow', item.title)}"
+                               message="#{OcrProfileEditView.formatString('confirmDeleteOcrProfile', item.title)}"
                                icon="ui-icon-alert"/>
                 </p:commandLink>
             </h:form>

@@ -1083,38 +1083,38 @@ public class SecurityAccessController {
     }
 
     /**
-     * Check if the current user has the authority to add OCR-D workflow.
+     * Check if the current user has the authority to add ocr profile.
      *
-     * @return true if the current user has the authority to add OCR-D workflow.
+     * @return true if the current user has the authority to add ocr profile.
      */
-    public boolean hasAuthorityToAddOcrdWorkflow() {
-        return securityAccessService.hasAuthorityToAddOcrdWorkflow();
+    public boolean hasAuthorityToAddOcrProfile() {
+        return securityAccessService.hasAuthorityToAddOcrProfile();
     }
 
     /**
-     * Check if the current user has the authority to edit OCR-D workflow.
+     * Check if the current user has the authority to edit ocr profile.
      *
-     * @return true if the current user has the authority to edit OCR-D workflow.
+     * @return true if the current user has the authority to edit ocr profile.
      */
-    public boolean hasAuthorityToEditOcrdWorkflow() {
-        return securityAccessService.hasAuthorityToEditOcrdWorkflow();
+    public boolean hasAuthorityToEditOcrProfile() {
+        return securityAccessService.hasAuthorityToEditOcrProfile();
     }
 
     /**
-     * Check if the current user has the authority to delete OCR-D workflow.
+     * Check if the current user has the authority to delete ocr profile.
      *
-     * @return true if the current user has the authority to delete OCR-D workflow.
+     * @return true if the current user has the authority to delete ocr profile.
      */
-    public boolean hasAuthorityToDeleteOcrdWorkflow() {
-        return securityAccessService.hasAuthorityToDeleteOcrdWorkflow();
+    public boolean hasAuthorityToDeleteOcrProfile() {
+        return securityAccessService.hasAuthorityToDeleteOcrProfile();
     }
 
     /**
-     * Check if the current user has the authority to view OCR-D workflow.
+     * Check if the current user has the authority to view ocr profile.
      *
-     * @return true if the current user has the authority to view OCR-D workflow.
+     * @return true if the current user has the authority to view ocr profile.
      */
-    public boolean hasAuthorityToViewOcrdWorkflow() {
-        return securityAccessService.hasAuthorityToViewOcrdWorkflow();
+    public boolean hasAuthorityToViewOcrProfile() {
+        return securityAccessService.hasAuthorityToViewOcrProfile();
     }
 }

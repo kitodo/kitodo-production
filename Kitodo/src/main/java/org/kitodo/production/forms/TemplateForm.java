@@ -27,7 +27,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.OcrdWorkflow;
+import org.kitodo.data.database.beans.OcrProfile;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
@@ -276,12 +276,12 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
-     * Get list of OCR-D workflows for select list.
+     * Get list of ocr profiles for select list.
      *
-     * @return list of OCR-D workflows
+     * @return list of ocr profiles
      */
-    public List<OcrdWorkflow> getOcrdWorkflows() {
-        return ServiceManager.getOcrdWorkflowService().getAvailableOcrdWorkflows();
+    public List<OcrProfile> getOcrProfiles() {
+        return ServiceManager.getOcrProfileService().getAvailableOcrProfiles();
     }
 
     /**

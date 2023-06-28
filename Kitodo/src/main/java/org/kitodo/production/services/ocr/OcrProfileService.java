@@ -9,43 +9,43 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.services.ocrd;
+package org.kitodo.production.services.ocr;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.kitodo.data.database.beans.OcrdWorkflow;
+import org.kitodo.data.database.beans.OcrProfile;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.database.persistence.OcrdWorkflowDAO;
+import org.kitodo.data.database.persistence.OcrProfileDAO;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class OcrdWorkflowService extends SearchDatabaseService<OcrdWorkflow, OcrdWorkflowDAO> {
+public class OcrProfileService extends SearchDatabaseService<OcrProfile, OcrProfileDAO> {
 
-    private static volatile OcrdWorkflowService instance = null;
+    private static volatile OcrProfileService instance = null;
 
     /**
      * Constructor necessary to use searcher in child classes.
      */
-    private OcrdWorkflowService() {
-        super(new OcrdWorkflowDAO());
+    private OcrProfileService() {
+        super(new OcrProfileDAO());
     }
 
     /**
-     * Return singleton variable of type OcrdWorkflowService.
+     * Return singleton variable of type OcrProfileService.
      *
-     * @return unique instance of OcrdWorkflowService
+     * @return unique instance of OcrProfileService
      */
-    public static OcrdWorkflowService getInstance() {
-        OcrdWorkflowService localReference = instance;
+    public static OcrProfileService getInstance() {
+        OcrProfileService localReference = instance;
         if (Objects.isNull(localReference)) {
-            synchronized (OcrdWorkflowService.class) {
+            synchronized (OcrProfileService.class) {
                 localReference = instance;
                 if (Objects.isNull(localReference)) {
-                    localReference = new OcrdWorkflowService();
+                    localReference = new OcrProfileService();
                     instance = localReference;
                 }
             }
@@ -70,13 +70,12 @@ public class OcrdWorkflowService extends SearchDatabaseService<OcrdWorkflow, Ocr
     }
 
     /**
-     * Get available OCR-D workflows - available means that OCR-D workflows has status active
-     * and is assigned to selected session client.
+     * Get available OCR profiles - available means that OCR profile is assigned to selected session client.
      *
-     * @return list of available OcrdWorkflow objects
+     * @return list of available OcrProfile objects
      */
-    public List<OcrdWorkflow> getAvailableOcrdWorkflows() {
-        return dao.getAvailableOcrdWorkflows(ServiceManager.getUserService().getSessionClientId());
+    public List<OcrProfile> getAvailableOcrProfiles() {
+        return dao.getAvailableOcrProfiles(ServiceManager.getUserService().getSessionClientId());
     }
 
 }

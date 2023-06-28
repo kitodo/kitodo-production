@@ -79,9 +79,9 @@
                 <p:menuitem value="#{msgs['mappingFile.new']}" action="#{MappingFileListView.newMappingFile()}" immediate="true"
                             rendered="#{SecurityAccessController.hasAuthorityToAddMappingFile()}"
                             id="newMappingFileButton" icon="fa fa-plus"/>
-                <p:menuitem value="#{msgs.newOcrdWorkflow}" action="#{OcrdWorkflowListView.newOcrdWorkflow()}" immediate="true"
-                            rendered="#{SecurityAccessController.hasAuthorityToAddOcrdWorkflow()}"
-                            id="newOcrdWorkflowButton" icon="fa fa-plus"/>
+                <p:menuitem value="#{msgs.newOcrProfile}" action="#{OcrProfileListView.newOcrProfile()}" immediate="true"
+                            rendered="#{SecurityAccessController.hasAuthorityToAddOcrProfile()}"
+                            id="newOcrProfileButton" icon="fa fa-plus"/>
             </p:menuButton>
         </h:form>
     </ui:define>
@@ -120,9 +120,9 @@
                    rendered="#{SecurityAccessController.hasAuthorityToViewMappingFileList()}">
                 <ui:include src="/WEB-INF/templates/includes/projects/mappingFiles.xhtml"/>
             </p:tab>
-            <p:tab title="OCR-D Workflows" id="ocrdWorkflowTab"
-                   rendered="#{SecurityAccessController.hasAuthorityToViewOcrdWorkflow()}">
-                <ui:include src="/WEB-INF/templates/includes/projects/ocrdWorkflowList.xhtml"/>
+            <p:tab title="OCR Profiles" id="ocrProfilesTab"
+                   rendered="#{SecurityAccessController.hasAuthorityToViewOcrProfile()}">
+                <ui:include src="/WEB-INF/templates/includes/projects/ocrProfileList.xhtml"/>
             </p:tab>
         </p:tabView>
         <p:ajaxStatus onstart="$('#loadingScreen').show()" oncomplete="$('#loadingScreen').hide()"/>
