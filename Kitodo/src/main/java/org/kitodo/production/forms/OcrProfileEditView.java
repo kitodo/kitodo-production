@@ -61,7 +61,7 @@ public class OcrProfileEditView extends BaseForm {
     }
 
     /**
-     * Save OCR profile
+     * Save OCR profile.
      *
      * @return page or empty String
      */
