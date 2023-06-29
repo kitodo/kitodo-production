@@ -70,7 +70,7 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrprofile)|"
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrprofilefilename)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
                 + "(?:(filename|basename|relativepath))))\\)");
 
@@ -244,8 +244,8 @@ public class VariableReplacer {
             case "generatorsource" :
             case "generatorsourcepath":
                 return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
-            case "ocrprofile":
-                return determineReplacementForOcrProfile(variableFinder);
+            case "ocrprofilefilename":
+                return determineReplacementForOcrProfileFilename(variableFinder);
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
@@ -283,9 +283,9 @@ public class VariableReplacer {
         return variableFinder.group(1) + process.getId().toString();
     }
 
-    private String determineReplacementForOcrProfile(Matcher variableFinder) {
+    private String determineReplacementForOcrProfileFilename(Matcher variableFinder) {
         if (Objects.isNull(process)) {
-            logger.warn("Cannot replace \"(ocrprofile)\": no process given");
+            logger.warn("Cannot replace \"(ocrprofilefilename)\": no process given");
             return variableFinder.group(1);
         }
 
@@ -294,12 +294,12 @@ public class VariableReplacer {
         }
 
         if (Objects.isNull(process.getTemplate())) {
-            logger.warn("Cannot replace \"(ocrprofile)\": process has no template assigned");
+            logger.warn("Cannot replace \"(ocrprofilefilename)\": process has no template assigned");
             return variableFinder.group(1);
         }
 
         if (Objects.isNull(process.getTemplate().getOcrProfile())) {
-            logger.warn("Cannot replace \"(ocrprofile)\": template has no OCR profile assigned");
+            logger.warn("Cannot replace \"(ocrprofilefilename)\": template has no OCR profile assigned");
             return variableFinder.group(1);
         }
         return variableFinder.group(1) + process.getTemplate().getOcrProfile().getFile();
