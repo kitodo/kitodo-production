@@ -70,7 +70,8 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrprofilefilename)|"
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|"
+                + "generatorsource|generatorsourcepath|ocrprofilefilename)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
                 + "(?:(filename|basename|relativepath))))\\)");
 
