@@ -99,7 +99,7 @@
                 <p:outputLabel for="ocrProfile" value="#{msgs.ocrProfile}"/>
                 <p:selectOneMenu id="ocrProfile" value="#{TemplateForm.template.ocrProfile}"
                                  title="#{TemplateForm.template.ocrProfile}" disabled="#{isViewMode}"
-                                 converter="#{ocrProfileConverter}"
+                                 converter="#{OcrProfileConverter}"
                                  required="#{not empty param['editForm:save']}">
                     <f:selectItems value="#{TemplateForm.ocrProfiles}"
                                    var="ocrProfile"

@@ -90,7 +90,7 @@
             <div>
                 <p:outputLabel for="ocrProfile" value="#{msgs.ocrProfile}"/>
                 <p:selectOneMenu id="ocrProfile" value="#{ProcessForm.process.ocrProfile}"
-                                 converter="#{ocrProfileConverter}"
+                                 converter="#{OcrProfileConverter}"
                                  disabled="#{isViewMode}">
                     <f:selectItem itemValue="#{null}"
                                   itemLabel="-- #{msgs['processConfig.useProcessTemplateOcrProfile']} --"/>
