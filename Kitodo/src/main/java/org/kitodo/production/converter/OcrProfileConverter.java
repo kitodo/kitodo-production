@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.kitodo.production.services.ServiceManager;
 
-@Named
+@Named("OcrProfileConverter")
 public class OcrProfileConverter extends BeanConverter implements Converter {
 
     @Override
