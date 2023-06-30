@@ -23,6 +23,7 @@ import java.util.stream.Stream;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -78,14 +79,17 @@ public class OcrProfileEditView extends BaseForm {
     }
 
     /**
-     * Get list of OCR profile filenames.
+     * Get list of OCR profile files.
+     *
+     * The files are relative paths to the ocr profiles directory.
      *
      * @return list of OCR profile filenames
      */
-    public List<Path> getFilenames() {
-        try (Stream<Path> ocrProfilePaths = Files.walk(
-                Paths.get(ConfigCore.getParameter(ParameterCore.DIR_OCR_PROFILES)))) {
-            return ocrProfilePaths.filter(Files::isRegularFile).map(Path::getFileName).sorted()
+    public List<String> getFiles() {
+        String ocrProfilesDirectory = ConfigCore.getParameter(ParameterCore.DIR_OCR_PROFILES);
+        try (Stream<Path> ocrProfilePaths = Files.walk(Paths.get(ocrProfilesDirectory))) {
+            return ocrProfilePaths.filter(Files::isRegularFile).map(Path::toAbsolutePath)
+                    .map(path -> path.toString().replace(ocrProfilesDirectory, StringUtils.EMPTY)).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCR_PROFILE.getTranslationPlural()},

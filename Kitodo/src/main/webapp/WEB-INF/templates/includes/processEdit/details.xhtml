@@ -14,6 +14,7 @@
 <ui:composition
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui"
+        xmlns:jsf="http://xmlns.jcp.org/jsf"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="isViewMode" type="boolean"-->
     <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
@@ -47,7 +48,7 @@
                 </p:selectOneMenu>
             </div>
 
-            <div>
+            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToEditOcrProfile()}" >
                 <p:outputLabel for="processTemplate" value="#{msgs.processTemplate}"/>
                 <p:inputText id="processTemplate" value="#{ProcessForm.process.template.title}" class="input"
                              disabled="true" readonly="true"/>
@@ -87,7 +88,7 @@
                 </p:selectOneMenu>
             </div>
 
-            <div>
+            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToEditOcrProfile()}">
                 <p:outputLabel for="ocrProfile" value="#{msgs.ocrProfile}"/>
                 <p:selectOneMenu id="ocrProfile" value="#{ProcessForm.process.ocrProfile}"
                                  converter="#{OcrProfileConverter}"
