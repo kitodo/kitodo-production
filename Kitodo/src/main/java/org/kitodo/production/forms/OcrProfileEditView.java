@@ -80,9 +80,9 @@ public class OcrProfileEditView extends BaseForm {
 
     /**
      * Get list of OCR profile files.
-     *
+     * <p>
      * The files are relative paths to the ocr profiles directory.
-     *
+     * </p>
      * @return list of OCR profile filenames
      */
     public List<String> getFiles() {
