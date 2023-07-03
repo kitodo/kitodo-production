@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
@@ -24,7 +25,6 @@ import java.util.stream.Stream;
 import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -90,7 +90,7 @@ public class OcrProfileEditView extends BaseForm {
         String ocrProfilesDirectory = ConfigCore.getParameter(ParameterCore.DIR_OCR_PROFILES);
         try (Stream<Path> ocrProfilePaths = Files.walk(Paths.get(ocrProfilesDirectory), FileVisitOption.FOLLOW_LINKS)) {
             return ocrProfilePaths.filter(Files::isRegularFile).map(Path::toAbsolutePath)
-                    .map(path -> path.toString().replace(ocrProfilesDirectory, StringUtils.EMPTY)).sorted()
+                    .map(path -> path.toString().replace(ocrProfilesDirectory, File.separator)).sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.OCR_PROFILE.getTranslationPlural()},
