@@ -12,6 +12,7 @@
 package org.kitodo.production.forms;
 
 import java.io.IOException;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -87,7 +88,7 @@ public class OcrProfileEditView extends BaseForm {
      */
     public List<String> getFiles() {
         String ocrProfilesDirectory = ConfigCore.getParameter(ParameterCore.DIR_OCR_PROFILES);
-        try (Stream<Path> ocrProfilePaths = Files.walk(Paths.get(ocrProfilesDirectory))) {
+        try (Stream<Path> ocrProfilePaths = Files.walk(Paths.get(ocrProfilesDirectory), FileVisitOption.FOLLOW_LINKS)) {
             return ocrProfilePaths.filter(Files::isRegularFile).map(Path::toAbsolutePath)
                     .map(path -> path.toString().replace(ocrProfilesDirectory, StringUtils.EMPTY)).sorted()
                     .collect(Collectors.toList());
