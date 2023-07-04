@@ -70,8 +70,8 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|"
-                + "generatorsource|generatorsourcepath|ocrprofilefile)|"
+                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|projectdmsexportpath|"
+                + "stepid|stepname|generatorsource|generatorsourcepath|ocrprofilefile)|"
                 + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
                 + "(?:(filename|basename|relativepath))))\\)");
 
@@ -238,6 +238,8 @@ public class VariableReplacer {
                 return determineReplacementForProcesstitle(variableFinder);
             case "projectid":
                 return determineReplacementForProjectid(variableFinder);
+            case "projectdmsexportpath":
+                return determineReplacementForProjectDmsExportPath(variableFinder);
             case "stepid":
                 return determineReplacementForStepid(variableFinder);
             case "stepname":
@@ -324,6 +326,18 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
         return variableFinder.group(1) + String.valueOf(process.getProject().getId());
+    }
+
+    private String determineReplacementForProjectDmsExportPath(Matcher variableFinder) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(projectdmsexportpath)\": no process given");
+            return variableFinder.group(1);
+        }
+        if (Objects.isNull(process.getProject())) {
+            logger.warn("Cannot replace \"(projectdmsexportpath)\": process has no project assigned");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + process.getProject().getDmsImportRootPath();
     }
 
     private String determineReplacementForStepid(Matcher variableFinder) {
