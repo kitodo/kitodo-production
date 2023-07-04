@@ -2296,19 +2296,19 @@ form#metadata div label,
     text-align: center;
 }
 
-#newCommentDialog .ui-dialog-content {
+#newCommentDialog .ui-dialog-content, #editCommentDialog .ui-dialog-content {
     padding: var(--default-double-size);
 }
 
-#newCommentDialog .ui-dialog-titlebar {
+#newCommentDialog .ui-dialog-titlebar, #editCommentDialog .ui-dialog-titlebar {
     display: none;
 }
 
-#newCommentForm h3 {
+#newCommentForm h3, #editCommentForm h3 {
     padding: 0;
 }
 
-#newCommentForm\:newCommentTextArea {
+#newCommentForm\:newCommentTextArea, #editCommentForm\:editCommentTextArea {
     width: 100%;
     margin-bottom: 32px;
     height: calc(var(--default-double-size) * 3);
