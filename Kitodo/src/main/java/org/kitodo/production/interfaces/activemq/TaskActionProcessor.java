@@ -80,17 +80,8 @@ public class TaskActionProcessor extends ActiveMQProcessor {
             if (Objects.isNull(currentTask)) {
                 throw new ProcessorException("Task with id " + taskId + " not found.");
             }
-
             processAction(mapMessageObjectReader, taskAction, currentTask);
-
-            if (mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID)) {
-                for (Task task : currentTask.getProcess().getTasks()) {
-                    taskService.saveToIndex(task, true);
-                }
-            } else {
-                taskService.saveToIndex(currentTask, true);
-            }
-        } catch (DataException | DAOException | CustomResponseException | IOException e) {
+        } catch (DataException | DAOException | IOException e) {
             throw new ProcessorException(e);
         }
     }
@@ -172,10 +163,8 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         currentTask.setEditType(TaskEditType.QUEUE);
         currentTask.setProcessingTime(new Date());
         taskService.replaceProcessingUser(currentTask, currentUser);
-        if (Objects.isNull(currentTask.getProcessingBegin())) {
-            currentTask.setProcessingBegin(new Date());
-            taskService.save(currentTask);
-        }
+        currentTask.setProcessingBegin(new Date());
+        taskService.save(currentTask);
     }
 
     private void actionErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask, User currentUser)
