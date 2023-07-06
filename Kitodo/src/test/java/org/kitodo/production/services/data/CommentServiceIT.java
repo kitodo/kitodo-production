@@ -35,7 +35,9 @@ public class CommentServiceIT {
 
     /**
      * Prepare tests by inserting dummy processes into database.
-     * @throws Exception when saving of dummy or test processes fails.
+     * 
+     * @throws Exception
+     *             when saving of dummy or test processes fails.
      */
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -44,19 +46,17 @@ public class CommentServiceIT {
         MockDatabase.setUpAwaitility();
     }
 
-    
-
     /**
      * Clean up database after tests.
-     * @throws Exception when cleaning up database fails.
+     * 
+     * @throws Exception
+     *             when cleaning up database fails.
      */
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
-
-    
 
     /**
      * Tests wether comment is correctly saved and removed from database.
