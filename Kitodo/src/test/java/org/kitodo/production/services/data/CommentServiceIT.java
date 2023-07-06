@@ -60,10 +60,12 @@ public class CommentServiceIT {
 
     /**
      * Tests wether comment is correctly saved and removed from database.
-     * @throws Exception when saving or deleting comment fails.
+     * 
+     * @throws Exception
+     *             when saving or deleting comment fails.
      */
     @Test
-    public void shouldSaveAndRemoveInfoComment() throws Exception
+    public void shouldSaveAndRemoveInfoComment() throws Exception {
         Process process = processService.getById(1);
         Comment comment = new Comment();
 
@@ -75,7 +77,7 @@ public class CommentServiceIT {
         commentService.saveToDatabase(comment);
         Comment newComment = commentService.getAll().get(0);
         assertEquals("Comment was not found in database!", newComment.getMessage(), "TEST_MESSAGE");
-      
+
         commentService.removeComment(newComment);
         List<Comment> comments = commentService.getAll();
         assertEquals("Comments were found in database!", comments.size(), 0);
