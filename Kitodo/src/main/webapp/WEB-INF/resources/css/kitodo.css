@@ -920,6 +920,13 @@ label.ui-outputlabel[for] {
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-data {
     padding-right: var(--group-margin);
+    overflow-x: hidden;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-data:hover {
+    overflow-x: scroll;
 }
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-empty-message {
