@@ -25,15 +25,18 @@ import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
-import org.kitodo.production.services.ServiceManager;
-
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.production.services.ServiceManager;
 
 public class CommentServiceIT {
 
     private static final CommentService commentService = ServiceManager.getCommentService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
+    /**
+     * Prepare tests by inserting dummy processes into database.
+     * @throws Exception when saving of dummy or test processes fails.
+     */
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
@@ -41,12 +44,24 @@ public class CommentServiceIT {
         MockDatabase.setUpAwaitility();
     }
 
+    
+
+    /**
+     * Clean up database after tests.
+     * @throws Exception when cleaning up database fails.
+     */
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
+    
+
+    /**
+     * Tests wether comment is correctly saved and removed from database.
+     * @throws Exception when saving or deleting comment fails.
+     */
     @Test
     public void shouldSaveAndRemoveInfoComment() throws Exception {
         
