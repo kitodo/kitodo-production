@@ -63,8 +63,7 @@ public class CommentServiceIT {
      * @throws Exception when saving or deleting comment fails.
      */
     @Test
-    public void shouldSaveAndRemoveInfoComment() throws Exception {
-        
+    public void shouldSaveAndRemoveInfoComment() throws Exception
         Process process = processService.getById(1);
         Comment comment = new Comment();
 
