@@ -69,7 +69,8 @@ public class CommentForm extends BaseForm {
         try {
             ServiceManager.getCommentService().removeComment(comment);
         } catch (DAOException e) {
-            e.printStackTrace();
+            Helper.setErrorMessage(ERROR_DELETING, new Object[]{ObjectType.COMMENT.getTranslationSingular()},
+                    logger, e);
         }
     }
 
