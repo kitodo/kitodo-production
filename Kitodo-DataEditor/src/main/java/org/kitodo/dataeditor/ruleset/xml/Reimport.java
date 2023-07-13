@@ -20,7 +20,7 @@ import org.apache.commons.lang3.ArrayUtils;
  * This class is a backing bean for the XML attribute reimport in the ruleset.
  * With it, JAXB can map the attribute to an enum.
  */
-@XmlEnum(String.class)
+@XmlEnum()
 public enum Reimport {
     /**
      * The metadata should be added.
