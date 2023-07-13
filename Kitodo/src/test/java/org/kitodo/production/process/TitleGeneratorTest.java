@@ -106,7 +106,8 @@ public class TitleGeneratorTest {
         rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
         StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
                 "Monograph", "", Locale.LanguageRange.parse("en"));
-        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(workpiece.getLogicalStructure(), monograph);
+        ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(workpiece.getLogicalStructure(), monograph,
+                rulesetManagementInterface);
         for (ProcessDetail detail : processDetails.getRows()) {
             switch (detail.getMetadataID()) {
                 case "TitleDocMain":

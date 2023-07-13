@@ -178,7 +178,7 @@ public class MetadataPanel implements Serializable {
     private ProcessFieldedMetadata createProcessFieldedMetadata(Division<?> structure) {
         StructuralElementViewInterface divisionView = dataEditorForm.getRulesetManagement().getStructuralElementView(
             structure.getType(), dataEditorForm.getAcquisitionStage(), dataEditorForm.getPriorityList());
-        return new ProcessFieldedMetadata(structure, divisionView);
+        return new ProcessFieldedMetadata(structure, divisionView, dataEditorForm.getRulesetManagement());
     }
 
     /**

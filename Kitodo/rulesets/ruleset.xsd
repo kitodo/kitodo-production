@@ -269,6 +269,26 @@
         <xs:attribute use="required" type="xs:string" name="value"/>
     </xs:complexType>
 
+    <xs:simpleType name="Reimport">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The attribute "reimport" indicates how the metadata entry should behave when imported repeatedly:
+
+                'add' adds the newly imported metadata entry to the existing entries.
+
+                'replace' replaces an existing metadata entry with the new value. (This is the default case.)
+                    Note that metadata, for which there is no value, is kept and not deleted.
+
+                'keep' keeps the first existing value and discards the additionally imported value.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="add"/>
+            <xs:enumeration value="replace"/>
+            <xs:enumeration value="keep"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="RestrictivePermit">
         <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -347,6 +367,7 @@
         <xs:attribute type="xs:boolean" name="editable" default="true"/>
         <xs:attribute type="xs:boolean" name="excluded" default="false"/>
         <xs:attribute type="xs:boolean" name="multiline" default="false"/>
+        <xs:attribute type="ruleset:Reimport" name="reimport" default="replace"/>
     </xs:complexType>
 
     <xs:complexType name="SubdivisionByDateElement">
@@ -405,7 +426,7 @@
     <xs:simpleType name="Unspecified">
         <xs:annotation>
             <xs:documentation xml:lang="en">
-                The attribute "unspecified" inicates whether the divisions, keys or options not mentioned in a
+                The attribute "unspecified" indicates whether the divisions, keys or options not mentioned in a
                 &lt;restriction&gt; or &lt;permit&gt; are 'forbidden' and may not be offered, or whether they are
                 'unrestricted', and are to be arranged afterwards to explicitly named entries. The latter allows the
                 few regularly used entries of a large set of values, for example a namespace, to be placed at the top

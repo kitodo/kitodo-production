@@ -49,9 +49,13 @@
                 URI; if the type is specified, this applies. If a namespace has been specified, Production looks for an
                 XML file in the same directory whose file name is the same as the last segment of the namespace URI
                 and, if it finds it, makes the namespace elements available as a selection list.
+                
+                The attribute "minDigits" can be used with type="integer" to define a minimum number of digits, which
+                will save the value with leading zeroes, if it has less digits.
             </xs:documentation>
         </xs:annotation>
         <xs:attribute type="ruleset:Type" name="type"/>
+        <xs:attribute type="xs:positiveInteger" name="minDigits" default="1"/>
         <xs:attribute type="xs:anyURI" name="namespace"/>
     </xs:complexType>
 
@@ -265,6 +269,22 @@
         <xs:attribute use="required" type="xs:string" name="value"/>
     </xs:complexType>
 
+    <xs:simpleType name="Reimport">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                The attribute "reimport" indicates how the metadata entry should behave when imported repeatedly:
+                'add' adds the newly imported metadata entry to the existing entries.
+                'replace' replaces an existing metadata entry with the new value. (This is the default case.)
+                'keep' keeps the first existing value and discards the additionally imported value.
+            </xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="add"/>
+            <xs:enumeration value="replace"/>
+            <xs:enumeration value="keep"/>
+        </xs:restriction>
+    </xs:simpleType>
+
     <xs:complexType name="RestrictivePermit">
         <xs:annotation>
             <xs:documentation xml:lang="en">
@@ -297,7 +317,8 @@
             <xs:documentation xml:lang="en">
                 A &lt;ruleset&gt; technically describes the description of digital objects in structure and the
                 assignment of metadata. The assumed default language of &lt;label&gt;s without the "lang" attribute is
-                English, unless another language is specified as default with the "lang" attribute here. Section
+                English, unless another language is specified as default with the "lang" attribute here.
+                &lt;include&gt;s allow to preload embedded ruleset files. Section
                 &lt;declaration&gt; defines the possible &lt;division&gt;s and metadata &lt;key&gt;s. In section
                 &lt;restriction&gt;, the possible combinations of the former can be restricted. In section
                 &lt;editing&gt;, settings for displaying the input fields in the metadata editor can be made.
@@ -305,6 +326,7 @@
         </xs:annotation>
         <xs:complexType>
             <xs:sequence>
+                <xs:element name="include" minOccurs="0" maxOccurs="unbounded" type="xs:string"/>
                 <xs:element name="declaration" minOccurs="1" maxOccurs="1" type="ruleset:DeclarationElement"/>
                 <xs:element name="correlation" minOccurs="0" maxOccurs="1">
                     <xs:complexType>
@@ -341,6 +363,7 @@
         <xs:attribute type="xs:boolean" name="editable" default="true"/>
         <xs:attribute type="xs:boolean" name="excluded" default="false"/>
         <xs:attribute type="xs:boolean" name="multiline" default="false"/>
+        <xs:attribute type="ruleset:Reimport" name="reimport" default="replace"/>
     </xs:complexType>
 
     <xs:complexType name="SubdivisionByDateElement">
@@ -399,7 +422,7 @@
     <xs:simpleType name="Unspecified">
         <xs:annotation>
             <xs:documentation xml:lang="en">
-                The attribute "unspecified" inicates whether the divisions, keys or options not mentioned in a
+                The attribute "unspecified" indicates whether the divisions, keys or options not mentioned in a
                 &lt;restriction&gt; or &lt;permit&gt; are 'forbidden' and may not be offered, or whether they are
                 'unrestricted', and are to be arranged afterwards to explicitly named entries. The latter allows the
                 few regularly used entries of a large set of values, for example a namespace, to be placed at the top
@@ -419,6 +442,8 @@
                 A key can have the following automated uses in the application:
 
                 'authorLastName' The value is used as the author's last name to form the author-title key.
+
+                'childCount' will set the (1-based) child number, when creating child documents.
 
                 'dataSource' Internal identifier of the data source in order to be able to update the imported
                     metadata entries from the data source later.
@@ -442,6 +467,7 @@
                     <xs:simpleType>
                         <xs:restriction base="xs:token">
                             <xs:enumeration value="authorLastName"/>
+                            <xs:enumeration value="childCount"/>
                             <xs:enumeration value="dataSource"/>
                             <xs:enumeration value="displaySummary"/>
                             <xs:enumeration value="higherlevelIdentifier"/>

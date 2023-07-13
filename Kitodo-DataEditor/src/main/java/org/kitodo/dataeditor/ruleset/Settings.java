@@ -17,10 +17,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.kitodo.dataeditor.ruleset.xml.Reimport;
 import org.kitodo.dataeditor.ruleset.xml.Setting;
 
 /**
@@ -42,6 +44,24 @@ public class Settings {
     public Settings(Collection<Setting> baseSettings) {
         this.currentSettings = baseSettings.parallelStream()
                 .collect(Collectors.toMap(Setting::getKey, Function.identity()));
+    }
+
+    /**
+     * Returns the reimport setting for a key.
+     *
+     * @param keyId
+     *            key for which the query is
+     * @return reimport setting
+     */
+    Reimport getReimport(String keyId) {
+        Setting settingForKey = currentSettings.get(keyId);
+        if (Objects.nonNull(settingForKey)) {
+            Reimport reimport = settingForKey.getReimport();
+            if (Objects.nonNull(reimport)) {
+                return reimport;
+            }
+        }
+        return Reimport.REPLACE;
     }
 
     /**
@@ -157,6 +177,7 @@ public class Settings {
                     merged.setEditable(other.getEditable() != null ? other.getEditable() : current.getEditable());
                     merged.setExcluded(other.getExcluded() != null ? other.getExcluded() : current.getExcluded());
                     merged.setMultiline(other.getMultiline() != null ? other.getMultiline() : current.getMultiline());
+                    merged.setReimport(other.getReimport() != null ? other.getReimport() : current.getReimport());
                     merged.setSettings(merge(current.getSettings(), other.getSettings()));
                     mergedSettings.add(merged);
                 } else {
