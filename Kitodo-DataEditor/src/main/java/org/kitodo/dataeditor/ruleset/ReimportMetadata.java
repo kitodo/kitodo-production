@@ -35,7 +35,7 @@ class ReimportMetadata implements Supplier<Collection<Metadata>> {
     private Reimport reimport;
 
     // metadata fetched on reimport
-    private Collection<Metadata> updateEntries;
+    private final Collection<Metadata> updateEntries;
 
     // the maximum amount of metadata applicable here for this key
     private int maxOccurs;
