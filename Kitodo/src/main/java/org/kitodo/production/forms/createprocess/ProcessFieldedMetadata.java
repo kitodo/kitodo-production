@@ -145,7 +145,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             throws InvalidMetadataValueException, NoSuchMetadataFieldException {
 
         preserve();
-        int count = rulesetService.updateMetadata(division.getType() ,metadata, "create", potentialMetadataItems);
+        int count = rulesetService.updateMetadata(division.getType(), metadata, "create", potentialMetadataItems);
         buildTreeNodeAndCreateMetadataTable();
         return count;
     }
