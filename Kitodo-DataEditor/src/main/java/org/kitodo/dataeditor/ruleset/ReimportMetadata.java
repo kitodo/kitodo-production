@@ -29,7 +29,7 @@ class ReimportMetadata implements Supplier<Collection<Metadata>> {
     private final String key;
 
     // existing metadata for this key before reimport
-    private Collection<Metadata> currentEntries;
+    private final Collection<Metadata> currentEntries;
 
     // configured reimport behavior
     private Reimport reimport;
