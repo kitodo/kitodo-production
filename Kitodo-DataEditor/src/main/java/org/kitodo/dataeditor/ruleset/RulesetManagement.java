@@ -52,7 +52,10 @@ public class RulesetManagement implements RulesetManagementInterface {
     private static final Logger logger = LogManager.getLogger(RulesetManagement.class);
 
     /**
-     * Language used internally in places where language does not matter.
+     * English, the only language understood by the System user. This value is
+     * passed when a method requests a language of the user in order to display
+     * labels in this language, but the labels are not required from the result
+     * and the language passed is therefore irrelevant at this point.
      */
     private static final List<LanguageRange> ENGLISH = LanguageRange.parse("en");
 
