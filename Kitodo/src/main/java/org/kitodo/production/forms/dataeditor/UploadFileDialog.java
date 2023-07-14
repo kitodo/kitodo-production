@@ -15,9 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URI;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -361,6 +358,7 @@ public class UploadFileDialog {
             PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
                     + Helper.getTranslation("mediaUploaded", event.getFile().getFileName())
                     + "','severity':'info'});");
+            dataEditor.getStructurePanel().changePhysicalOrderFields();
         }
     }
 
