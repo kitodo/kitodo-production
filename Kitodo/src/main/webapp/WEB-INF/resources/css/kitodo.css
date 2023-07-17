@@ -2315,23 +2315,16 @@ form#metadata div label,
 }
 
 #uploadFileDialog {
-    padding: 20px;
     max-height: 550px;
 }
 
 #uploadFileDialog_content {
     box-sizing: border-box;
-    overflow: visible;
-    padding: 0;
 }
 
 #uploadFileDialog .ui-fileupload-buttonbar {
     float: none;
     text-align: right;
-}
-
-#uploadFileDialog .dialogButtonWrapper {
-    margin-bottom: 10px;
 }
 
 #uploadFileDialogForm\:progressBar .ui-progressbar-value {
@@ -2353,6 +2346,23 @@ form#metadata div label,
 #uploadFileDialogForm\:uploadFileGrid_content{
     height: 90%;
 }
+
+.ui-fileupload-buttonbar {
+    margin-bottom: var(--default-full-size);
+}
+
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content,
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files {
+    color: var(--blue);
+    width: 100%;
+}
+
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content,
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files,
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files div {
+    margin: 0;
+}
+
 
 #metadataAccordion\:metadata .ui-treetable-indent,
 #metadataAccordion\:metadata .ui-treetable-toggler {

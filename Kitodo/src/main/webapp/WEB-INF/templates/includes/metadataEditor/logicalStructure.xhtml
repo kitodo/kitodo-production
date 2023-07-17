@@ -199,7 +199,7 @@
             <p:menuitem value="#{msgs.uploadMedia}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
                         rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
-                        icon="fa fa-download fa-sm"
+                        icon="fa fa-upload fa-sm"
                         styleClass="plain"
                         update="uploadFileDialog"
                         disabled="#{readOnly}"
