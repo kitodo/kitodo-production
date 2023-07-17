@@ -179,7 +179,7 @@ public class CommentForm extends BaseForm {
     /**
      * Saves the edited comment to database.
      */
-    public String saveEditedComment() {
+    public void saveEditedComment() {
         if (Objects.nonNull(this.editedComment) && this.editedComment.getType().equals(CommentType.INFO)) {
             try {
                 ServiceManager.getCommentService().saveToDatabase(this.editedComment);
@@ -188,7 +188,6 @@ public class CommentForm extends BaseForm {
             }
         }
         this.editedComment = null;
-        return null;
     }
 
     /**
