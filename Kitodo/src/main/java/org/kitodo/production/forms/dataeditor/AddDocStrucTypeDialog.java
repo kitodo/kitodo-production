@@ -136,8 +136,6 @@ public class AddDocStrucTypeDialog {
             dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
         }
         try {
-            dataEditor.getStructurePanel().preserve();
-            dataEditor.refreshStructurePanel();
             dataEditor.getPaginationPanel().show();
         } catch (UnknownTreeNodeDataException e) {
             Helper.setErrorMessage(e.getMessage());
