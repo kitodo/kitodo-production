@@ -672,7 +672,7 @@ public class MetadataEditor {
      *             and the value is different from either {@code label} or
      *             {@code orderlabel}.
      */
-    public static void writeMetadataEntry(LogicalDivision division,
+    public static void writeMetadataEntry(Division<?> division,
             SimpleMetadataViewInterface simpleMetadataView, String value) {
 
         Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);
