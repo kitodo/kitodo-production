@@ -229,6 +229,17 @@ public class KitodoScriptService {
             case "searchForMedia":
                 searchForMedia(processes);
                 break;
+            case "importProcesses":
+                String indir = parameters.get("indir");
+                String template = parameters.get("template");
+                String errors = parameters.get("errors");
+                try {
+                    TaskManager.addTask(new ImportProcesses(indir, template, errors));
+                    Helper.setMessage("kitodoScript.importProcesses.executesInTaskManager");
+                } catch (IllegalArgumentException e) {
+                    Helper.setErrorMessage(e.getMessage());
+                }
+                break;
             default:
                 Helper.setErrorMessage("Unknown action",
                     " - use: 'action:addRole, action:setTaskProperty, action:setStepStatus, "
