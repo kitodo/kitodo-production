@@ -1,34 +1,136 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
 package org.kitodo.production.services.command;
 
+// base Java
+import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.TreeSet;
+import java.util.stream.Collectors;
 
+// open source code
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.KitodoConfig;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.InvalidImagesException;
+import org.kitodo.exceptions.MediaNotFoundException;
+import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.TemplateService;
 
 public final class ImportProcesses extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ImportProcesses.class);
 
+    private final ProjectService projectService = ServiceManager.getProjectService();
     private final TemplateService templateService = ServiceManager.getTemplateService();
 
     private final Path importRootPath;
+    private final Project project;
     private final Template templateForProcesses;
     private final Path errorPath;
+    private final Map<String, ImportingProcess> importingProcesses;
+    private int numberOfImportingProcesses;
+    private int progress = 0;
+    private int totalActions = 1;
+    private Iterator<ImportingProcess> importingProcessesIterator;
+    private ImportingProcess currentlyImporting;
+    private int numberOfActions = 0;
+    private int nextAction = 0;
+    private RulesetManagementInterface ruleset;
+    private final boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
 
-    public ImportProcesses(String indir, String template, String errors) throws IllegalArgumentException {
+    /**
+     * <b>Constructor.</b><!-- --> Creates a {@code ProcessesImport}
+     * long-running task.
+     * 
+     * @param indir
+     *            input by the user for the source root directory. Can
+     *            [invalidly] be {@code null} if the user has not specified it.
+     * @param project
+     *            input by the user for the project ID. Can [invalidly] be
+     *            {@code null} if the user has not specified it.
+     * @param template
+     *            input by the for the process template ID. Can [invalidly] be
+     *            {@code null} if the user has not specified it.
+     * @param errors
+     *            input by the user for the source root directory. Can [validly]
+     *            be {@code null} if the user has not specified it.
+     * @throws IllegalArgumentException
+     *             if the user hasn't specified all the necessary parameters, or
+     *             if the parameters have unusable values. Exception message is
+     *             a message key that must be resolved via message properties.
+     */
+    public ImportProcesses(String indir, String project, String template, String errors) throws IOException {
         super(indir);
         this.importRootPath = checkIndir(indir);
+        this.project = checkProject(project);
         this.templateForProcesses = checkTemplate(template);
         this.errorPath = checkErros(errors);
+        this.importingProcesses = Files.walk(this.importRootPath).filter(Files::isDirectory)
+                .collect(Collectors.toMap(path -> path.getFileName().toString(), ImportingProcess::new));
+        this.numberOfImportingProcesses = importingProcesses.size();
     }
 
+    /**
+     * <b>Clone constructor.</b><!-- --> Creates a copy of the object. But
+     * because the object is a terminated thread, it makes a new thread that can
+     * be started again.
+     */
+    private ImportProcesses(ImportProcesses source) {
+        super(source);
+        this.importRootPath = source.importRootPath;
+        this.project = source.project;
+        this.templateForProcesses = source.templateForProcesses;
+        this.errorPath = source.errorPath;
+        this.importingProcesses = source.importingProcesses;
+        this.numberOfImportingProcesses = source.numberOfImportingProcesses;
+        this.progress = source.progress;
+        this.totalActions = source.totalActions;
+        this.importingProcessesIterator = source.importingProcessesIterator;
+        this.currentlyImporting = source.currentlyImporting;
+        this.numberOfActions = source.numberOfActions;
+        this.nextAction = source.nextAction;
+        this.ruleset = source.ruleset;
+    }
+
+    /**
+     * Checks whether the {@code indir} parameter is specified and valid. If
+     * not, a corresponding error message is thrown as an exception. (This is
+     * picked up above and will be translated and displayed to the user.) The
+     * {@code indir} directory must be specified, it must exist, and the Tomcat
+     * must have permission to get the directory listing (execution permission).
+     * 
+     * @param indir
+     *            directory entered by the user. Can be {@code null} if the
+     *            parameter is not specified
+     * @return a Path object to the root directory for bulk import
+     */
     private final Path checkIndir(String indir) {
         if (Objects.isNull(indir)) {
             throw new IllegalArgumentException("kitodoScript.importProcesses.indir.isNull");
@@ -43,6 +145,46 @@ public final class ImportProcesses extends EmptyTask {
         return importRoot;
     }
 
+    /**
+     * Checks whether the parameter {@code project} is specified and valid. If
+     * not, a corresponding error message is thrown as an exception. (This is
+     * picked up above and will be translated and displayed to the user.) The
+     * project must be specified, it must be syntactically valid (a positive
+     * integer), and a project with that ID must exist.
+     * 
+     * @param project
+     *            user-entered project number. Can be {@code null} if the
+     *            parameter is not specified
+     * @return the project object from the database
+     */
+    private final Project checkProject(String project) {
+        if (Objects.isNull(project)) {
+            throw new IllegalArgumentException("kitodoScript.importProcesses.project.isNull");
+        }
+        if (!project.matches("[\\d]+")) {
+            throw new IllegalArgumentException("kitodoScript.importProcesses.project.isNoProjectID");
+        }
+        Integer projectInteger = Integer.valueOf(project);
+        try {
+            return projectService.getById(projectInteger);
+        } catch (DAOException e) {
+            logger.catching(e);
+            throw new IllegalArgumentException("kitodoScript.importProcesses.project.noProjectWithID");
+        }
+    }
+
+    /**
+     * Checks whether the parameter {@code template} is specified and valid. If
+     * not, a corresponding error message is thrown as an exception. (This is
+     * picked up above and will be translated and displayed to the user.) The
+     * production template must be specified, its ID must be syntactically valid
+     * (a positive integer), and a production template with that ID must exist.
+     * 
+     * @param project
+     *            user-entered production template number. Can be {@code null}
+     *            if the parameter is not specified
+     * @return the production template object from the database
+     */
     private final Template checkTemplate(String template) {
         if (Objects.isNull(template)) {
             throw new IllegalArgumentException("kitodoScript.importProcesses.template.isNull");
@@ -59,6 +201,19 @@ public final class ImportProcesses extends EmptyTask {
         }
     }
 
+    /**
+     * Checks whether the parameter {@code errors} is specified and—if so—is
+     * valid. If not, a corresponding error message is thrown as an exception.
+     * (This is picked up above and will be translated and displayed to the
+     * user.) The errors directory is optional, but if provided, it must exist
+     * and be writable by Tomcat.
+     * 
+     * @param errors
+     *            Path to directory for errors. May be {@code null} if not
+     *            specified
+     * @return a Path object to the errors directory, or {@code null} if not
+     *         specified
+     */
     private final Path checkErros(String errors) {
         if (Objects.isNull(errors)) {
             return null;
@@ -71,5 +226,70 @@ public final class ImportProcesses extends EmptyTask {
             throw new IllegalArgumentException("kitodoScript.importProcesses.errors.cannotWrite");
         }
         return errorDir;
+    }
+
+    /*
+     * The method is used by the Task Manager to spawn a new thread for this
+     * task, if the previous thread was prematurely stopped. (A thread cannot
+     * be continued under Java, a new thread object must be required.)
+     */
+    @Override
+    public ImportProcesses replace() {
+        return new ImportProcesses(this);
+    }
+
+    /*
+     * The thread's runner method. This does the real work. Each importing
+     * processes are always driven to individual work steps again and again,
+     * after which the method returns to increase the progress and allow the
+     * task to be stopped. This is complicated, but gives the task additional
+     * flexibility to control.
+     */
+    @Override
+    public void run() {
+        try {
+            Path processesPath = Paths.get(KitodoConfig.getKitodoDataDirectory());
+            while (progress < totalActions) {
+                // first part: initialize
+                if (progress == 0) {
+                    ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+                    ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
+                        templateForProcesses.getRuleset().getFile()).toString()));
+                    totalActions = importingProcesses.entrySet().parallelStream().map(Entry::getValue)
+                            .mapToInt(ImportingProcess::numberOfActions).sum();
+                    importingProcessesIterator = importingProcesses.values().iterator();
+                }
+                // second part: validate
+                else if (progress <= numberOfImportingProcesses) {
+                    importingProcessesIterator.next().validate(ruleset, strictValidation, importingProcesses);
+                    // in last iteration, re-initialize iterator
+                    if (progress == numberOfImportingProcesses) {
+                        importingProcessesIterator = new TreeSet<>(importingProcesses.values()).iterator();
+                    }
+                }
+                // third part: copy files and create database entry
+                else {
+                    if (nextAction == numberOfActions) {
+                        currentlyImporting = importingProcessesIterator.next();
+                        nextAction = 0;
+                        currentlyImporting.setCopyToRoot(currentlyImporting.isCorrect() ? processesPath : errorPath);
+                        numberOfActions = currentlyImporting.numberOfActions();
+                    }
+                    currentlyImporting.executeAction(nextAction);
+                    nextAction++;
+                }
+                // update progress in Task Manager
+                progress++;
+                super.setProgress(100d * progress / totalActions);
+                if (super.isInterrupted()) {
+                    return;
+                }
+            }
+            // error barrier
+        } catch (IOException | DAOException | DataException | ProcessGenerationException | MediaNotFoundException
+                | InvalidImagesException | RuntimeException exception) {
+            Helper.setErrorMessage(exception.getLocalizedMessage(), logger, exception);
+            super.setException(exception);
+        }
     }
 }
