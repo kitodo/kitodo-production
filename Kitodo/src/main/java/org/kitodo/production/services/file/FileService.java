@@ -1456,22 +1456,27 @@ public class FileService {
     }
 
     /**
-     * Rename media files of current process according to their corresponding media units order attribute.
+     * Rename media files of current process according to their corresponding media units order attribute. Given Map
+     * "filenameMapping" is altered via side effect and does not need to be returned. Instead, the number of acutally
+     * changed filenames is returned to the calling method.
      *
      * @param process Process object for which media files are renamed.
      * @param workpiece Workpiece object of process
-     * @return Map containing media files original filenames as keys and new filenames as values
+     * @param filenameMapping Bidirectional map containing current filename mapping; empty until first renaming
+     * @return number of renamed media files
      * @throws IOException when renaming files fails
      * @throws URISyntaxException when creating URI for new filenames fails
      */
-    public DualHashBidiMap<URI, URI> renameMediaFiles(Process process, Workpiece workpiece) throws IOException, URISyntaxException {
-        DualHashBidiMap<URI, URI> filenameMapping = new DualHashBidiMap<>();
+    public int renameMediaFiles(Process process, Workpiece workpiece, DualHashBidiMap<URI, URI> filenameMapping)
+            throws IOException, URISyntaxException {
         int filenameLength = process.getProject().getFilenameLength();
         URI processDataUri = ServiceManager.getProcessService().getProcessDataDirectory(process);
 
         if (!processDataUri.toString().endsWith(SLASH)) {
             processDataUri = URI.create(processDataUri + SLASH);
         }
+
+        int numberOfRenamedMedia = 0;
 
         // first, rename all files to new filenames plus "tmp" extension to avoid filename collisions
         for (PhysicalDivision page : workpiece.getAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES)) {
@@ -1482,10 +1487,17 @@ public class FileService {
                 // skip files that already have the correct target name
                 if (!newFilename.equals(FilenameUtils.getBaseName(variantURIEntry.getValue().toString()))) {
                     URI tmpUri = fileManagementModule.rename(fileUri, processDataUri + newFilepath);
-                    filenameMapping.put(fileUri, tmpUri);
+                    if (filenameMapping.containsValue(fileUri)) {
+                        // update existing mapping of files that are renamed multiple times
+                        filenameMapping.replace(filenameMapping.getKey(fileUri), tmpUri);
+                    } else {
+                        // add new mapping otherwise
+                        filenameMapping.put(fileUri, tmpUri);
+                    }
                     URI targetUri = new URI(StringUtils.removeStart(StringUtils.removeEnd(tmpUri.toString(),
                             TEMP_EXTENSION), process.getId() + SLASH));
                     page.getMediaFiles().put(variantURIEntry.getKey(), targetUri);
+                    numberOfRenamedMedia++;
                 }
             }
         }
@@ -1493,10 +1505,14 @@ public class FileService {
         // then remove "tmp" extension from all filenames
         for (Entry<URI, URI> renamingEntry : filenameMapping.entrySet()) {
             URI tempFilename = renamingEntry.getValue();
-            String newFilepath = StringUtils.removeEnd(tempFilename.toString(), TEMP_EXTENSION);
-            filenameMapping.put(renamingEntry.getKey(), fileManagementModule.rename(tempFilename, newFilepath));
+            String tempFilenameString = tempFilename.toString();
+            // skip filename mappings from last renaming round that have not been renamed again
+            if (tempFilenameString.endsWith(TEMP_EXTENSION)) {
+                String newFilepath = StringUtils.removeEnd(tempFilename.toString(), TEMP_EXTENSION);
+                filenameMapping.put(renamingEntry.getKey(), fileManagementModule.rename(tempFilename, newFilepath));
+            }
         }
-        return filenameMapping;
+        return numberOfRenamedMedia;
     }
 
     /**
@@ -1529,5 +1545,23 @@ public class FileService {
         } catch (IOException e) {
             logger.error(e);
         }
+    }
+
+    /**
+     * Remove given map entry with whose value URI ends with given URI "unsavedMediaUri" from map
+     * and return updated map.
+     * @param unsavedMediaUri URI for which corresponding map entry is removed
+     * @param mappingMap bidirectional map from URIs to URIs
+     * @return updated bidirectional map
+     */
+    public DualHashBidiMap<URI, URI> removeUnsavedUploadMediaUriFromFileMapping(URI unsavedMediaUri,
+                                                                                 DualHashBidiMap<URI, URI> mappingMap) {
+        DualHashBidiMap<URI, URI> updatedMap = new DualHashBidiMap<>();
+        for (Map.Entry<URI, URI> mapEntry : mappingMap.entrySet()) {
+            if (!mapEntry.getValue().toString().endsWith(unsavedMediaUri.toString())) {
+                updatedMap.put(mapEntry.getKey(), mapEntry.getValue());
+            }
+        }
+        return updatedMap;
     }
 }

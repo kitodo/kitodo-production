@@ -206,6 +206,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private DualHashBidiMap<URI, URI> filenameMapping = new DualHashBidiMap<>();
 
+    private int numberOfNewMappings = 0;
+
     private String renamingError = "";
 
     /**
@@ -438,6 +440,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();
         for (PhysicalDivision mediaUnit : this.unsavedUploadedMedia) {
             for (URI fileURI : mediaUnit.getMediaFiles().values()) {
+                this.filenameMapping = ServiceManager.getFileService()
+                        .removeUnsavedUploadMediaUriFromFileMapping(fileURI, this.filenameMapping);
                 try {
                     ServiceManager.getFileService().delete(uri.resolve(fileURI));
                 } catch (IOException e) {
@@ -1116,7 +1120,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void renameMediaFiles() {
         renamingError = "";
         try {
-            filenameMapping = ServiceManager.getFileService().renameMediaFiles(process, workpiece);
+            numberOfNewMappings = ServiceManager.getFileService().renameMediaFiles(process, workpiece, filenameMapping);
         } catch (IOException | URISyntaxException e) {
             renamingError = e.getMessage();
         }
@@ -1137,11 +1141,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Get number of renamed images as size of filename mapping.
-     * @return number of renamed images
+     * Return renaming success message containing number of renamed media files and configured sub-folders.
+     * @return renaming success message
      */
-    public int getNumberOfRenamedImages() {
-        return filenameMapping.size();
+    public String getRenamingSuccessMessage() {
+        return Helper.getTranslation("dataEditor.renamingMediaText", String.valueOf(numberOfNewMappings),
+                String.valueOf(process.getProject().getFolders().size()));
     }
 
     private void showPanels() {
