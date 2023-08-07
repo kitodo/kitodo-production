@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:m="http://meta.kitodo.org/v1/">
+<dmdSec ID="metadata"><mdWrap><xmlData><m:kitodo>
+
+<m:metadata name="DocumentNumber">0003</m:metadata>
+<m:metadata name="LciwlbRgciäsztßwl">li cloblwl Shbal</m:metadata>
+
+</m:kitodo></xmlData></mdWrap></dmdSec>
+
+<structMap TYPE="LOGICAL"><div DMDID="metadata" TYPE="budget"/>
+</structMap><structLink/></mets>

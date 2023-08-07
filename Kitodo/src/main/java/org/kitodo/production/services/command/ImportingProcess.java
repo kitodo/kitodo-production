@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +36,12 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 // open source code
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -73,7 +76,7 @@ import org.kitodo.production.services.validation.MetadataValidationService;
  * error information text file is written. Furthermore, a special treatment
  * represents the handling of child processes.
  */
-final class ImportingProcess implements Comparable<ImportingProcess> {
+final class ImportingProcess {
     private static final Logger logger = LogManager.getLogger(ImportingProcess.class);
 
     // Constants
@@ -94,16 +97,18 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
 
     // Input directories and files
     private Path sourceDir;
+    final String directoryName;
     private List<Path> filesAndDirectories = new ArrayList<>();
     private int numberOfFileSystemItems;
     private Iterator<Path> filesAndDirectoriesIterator;
 
     // Process hierarchy
     private ImportingProcess parent;
-    private List<ImportingProcess> children;
+    private final List<ImportingProcess> children = new ArrayList<>();
 
     // Errors
-    private List<String> errors;
+    private Set<String> sharedErroneousProcesses = null;
+    final List<String> errors = new ArrayList<>();
 
     // database process
     private Project project;
@@ -119,6 +124,8 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
 
     private Map<String, ImportingProcess> importingProcesses;
 
+    
+
     /**
      * <b>Constructor.</b><!-- --> Creates a new Importing Process.
      * 
@@ -127,6 +134,7 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      */
     ImportingProcess(Path sourceDir) {
         this.sourceDir = sourceDir;
+        this.directoryName = sourceDir.getFileName().toString();
         try {
             Files.walk(sourceDir).forEach(entry -> {
                 if (entry.equals(sourceDir)) {
@@ -154,7 +162,12 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      * @return sum of actions needed
      */
     int numberOfActions() {
-        return numberOfFileSystemItems + 3;
+        int result = numberOfFileSystemItems + 3;
+        if (logger.isTraceEnabled()) {
+            logger.trace("Import folder {}: {} actions required. List: {}", this.directoryName,
+                result, filesAndDirectories.stream().map(Objects::toString).collect(Collectors.joining(", ")));
+        }
+        return result;
     }
 
     /**
@@ -175,18 +188,21 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
             Map<String, ImportingProcess> importingProcesses) throws IOException, DAOException {
 
         this.importingProcesses = importingProcesses;
-        logger.info("Starting to validate " + sourceDir.toString());
+        logger.info("Starting to validate " + this.directoryName);
         Path metaFilePath = sourceDir.resolve(META_FILE_NAME);
         Workpiece workpiece = metsService.loadWorkpiece(metaFilePath.toUri());
         validateMetsFile(ruleset, strictValidation, workpiece);
         validateChildren(workpiece.getLogicalStructure());
+        if(!errors.isEmpty()) {
+            getSharedErroneousProcesses().add(this.directoryName);
+        }
 
         // determine data for process object
-        title = formProcessTitle(ruleset, workpiece);
         baseType = workpiece.getLogicalStructure().getType();
+        title = formProcessTitle(ruleset, workpiece);
 
         logger.info(
-            "Validation of " + sourceDir.getFileName().toString() + (errors.isEmpty() ? " completed without errors"
+            "Validation of " + this.directoryName + (errors.isEmpty() ? " completed without errors"
                     : " completed with errors:" + lineSeparator() + String.join(lineSeparator(), errors)));
     }
 
@@ -203,13 +219,14 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      */
     private void validateMetsFile(RulesetManagementInterface ruleset, boolean strictValidation, Workpiece workpiece)
             throws DAOException {
-        ValidationResult validationResult = metadataValidationService.validate(workpiece, ruleset);
+        ValidationResult validationResult = metadataValidationService.validate(workpiece, ruleset, false);
         State state = validationResult.getState();
         if (State.ERROR.equals(state) || (strictValidation && !State.SUCCESS.equals(state))) {
             errors.add(Helper.getTranslation("dataEditor.validation.state.error").concat(":"));
             for (String resultMessage : validationResult.getResultMessages()) {
                 errors.add(" - ".concat(resultMessage));
             }
+            logger.info(String.join(System.lineSeparator(), errors));
         }
     }
 
@@ -225,9 +242,9 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
         Set<String> linkedChildren = searchLinkedProcesses(logicalStructure).keySet();
         List<String> problemChildren = linkedChildren.parallelStream().filter(not(importingProcesses::containsKey))
                 .collect(toList());
-        String errorMessage = Helper.getTranslation("kitodoScript.importProcesses.missingChildren",
-            sourceDir.getFileName().toString(), String.join(", ", problemChildren));
         if (!problemChildren.isEmpty()) {
+            String errorMessage = Helper.getTranslation("kitodoScript.importProcesses.missingChildren",
+                this.directoryName, String.join(", ", problemChildren));
             this.errors.add(errorMessage);
         }
         for (String linkedChild : linkedChildren) {
@@ -235,9 +252,6 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
             if (Objects.nonNull(importingChild)) {
                 this.children.add(importingChild);
                 importingChild.parent = this;
-                if (!problemChildren.isEmpty()) {
-                    importingChild.errors.add(errorMessage);
-                }
             }
         }
     }
@@ -335,20 +349,39 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      * @return whether the process is correct
      */
     boolean isCorrect() {
-        return errors.isEmpty();
+        getSharedErroneousProcesses();
+        if(!errors.isEmpty()) {
+            sharedErroneousProcesses.add(this.directoryName);
+        }
+        return sharedErroneousProcesses.isEmpty();
+    }
+
+    private Set<String> getSharedErroneousProcesses() {
+        if (Objects.isNull(sharedErroneousProcesses)) {
+            setSharedErroneousProcesses(
+                Objects.isNull(parent) ? new HashSet<>() : parent.getSharedErroneousProcesses());
+        }
+        return sharedErroneousProcesses;
+    }
+
+    private void setSharedErroneousProcesses(Set<String> sharedErroneousProcesses) {
+        this.sharedErroneousProcesses = sharedErroneousProcesses;
+        for (ImportingProcess importingChild : children) {
+            importingChild.setSharedErroneousProcesses(sharedErroneousProcesses);
+        }
     }
 
     // === PROCESSING ===
 
     /**
-     * This must be used to specify where the process should be copied to. It
-     * can be {@code null} in case of a validation error, then the faulty
-     * process is not copied anywhere.
+     * Creates the directory where the process should be copied to. It can be
+     * {@code null} in case of a validation error, then the faulty process is
+     * not copied anywhere.
      * 
      * @param copyToRoot
      *            copy target
      */
-    void setCopyToRoot(Path copyToRoot) {
+    void setOutputRoot(Path copyToRoot) throws IOException {
         this.copyToRoot = copyToRoot;
     }
 
@@ -379,10 +412,10 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
             MediaNotFoundException, InvalidImagesException {
 
         assert action >= 0 && action <= numberOfFileSystemItems + 1
-                : "action out of range: " + action + " [0 .. " + (numberOfFileSystemItems + 1) + "]";
+                : "action out of range: " + action + " [0.." + (numberOfFileSystemItems + 1) + "]";
         if (isCorrect()) {
             executeActionForCorrectProcess(action);
-        } else if (Objects.nonNull(outputDir)) {
+        } else if (Objects.nonNull(copyToRoot)) {
             executeActionForErroreousProcess(action);
         }
     }
@@ -412,12 +445,19 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
         } else if (action == 1) {
             createBaseDirectory(processId.toString());
             filesAndDirectoriesIterator = filesAndDirectories.iterator();
-        } else if (action <= numberOfFileSystemItems) {
+        } else if (action <= numberOfFileSystemItems + 1) {
             Path relativeItemToCopy = filesAndDirectoriesIterator.next();
             if (relativeItemToCopy.toString().equals(META_FILE_NAME)) {
+                if(filesAndDirectoriesIterator.hasNext()) {
                 relativeItemToCopy = filesAndDirectoriesIterator.next();
+                } else {
+                    Process process = processService.getById(processId);
+                    copyAndAdjustMetsFile(process);
+                    processService.save(process);
+                }
+            } else {
+                copyDirectoryOrFile(relativeItemToCopy);
             }
-            copyDirectoryOrFile(relativeItemToCopy);
         } else {
             Process process = processService.getById(processId);
             copyAndAdjustMetsFile(process);
@@ -450,7 +490,7 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      *            the newly created process
      */
     private void copyAndAdjustMetsFile(Process process)
-            throws IOException, InvalidImagesException, MediaNotFoundException {
+            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException, DataException {
 
         Workpiece workpiece = metsService.loadWorkpiece(sourceDir.resolve(META_FILE_NAME).toUri());
         workpiece.setId(processId.toString());
@@ -460,11 +500,19 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
             link.setLoctype("Kitodo.Production");
             ImportingProcess importedChildProcess = importingProcesses.get(linkedChild.getKey());
             link.setUri(processService.getProcessURI(importedChildProcess.processId));
+            addLinkInDatabase(process, importedChildProcess.processId);
         }
         fileService.searchForMedia(process, workpiece);
         Path outputMetsFile = outputDir.resolve(META_FILE_NAME);
         metsService.saveWorkpiece(workpiece, outputMetsFile.toUri());
         logger.info("Wrote METS file " + outputMetsFile);
+    }
+
+    private void addLinkInDatabase(Process parent, Integer childProcessId) throws DAOException, DataException {
+        Process child = processService.getById(childProcessId);
+        child.setParent(parent);
+        parent.getChildren().add(child);
+        processService.save(child);
     }
 
     /**
@@ -480,27 +528,21 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      */
     private void executeActionForErroreousProcess(int action) throws IOException {
         if (action == 0) {
-            createBaseDirectory(sourceDir.getFileName().toString());
+            createBaseDirectory(this.directoryName);
         } else if (action == 1) {
             String nameOfErrorFile = Helper.getTranslation("errors").concat(".txt");
             Path errorFile = outputDir.resolve(nameOfErrorFile);
-            Files.write(errorFile, errors, StandardCharsets.UTF_8);
+            if (errors.isEmpty()) {
+                String message = Helper.getTranslation("kitodoScript.importProcesses.brokenRelatedProcess",
+                    String.join(", ", sharedErroneousProcesses));
+                Files.writeString(errorFile, message, StandardCharsets.UTF_8);
+            } else {
+                Files.write(errorFile, errors, StandardCharsets.UTF_8);
+            }
             logger.info("Wrote errors file " + errorFile);
         } else {
             copyDirectoryOrFile(filesAndDirectories.get(action - 2));
         }
-    }
-
-    // === SORTABILITY ===
-
-    /*
-     * Used by TreeSet to sort child processes before parent processes. Child
-     * processes must be imported first, so that when importing the parent,
-     * their IDs are already known.
-     */
-    @Override
-    public int compareTo(ImportingProcess other) {
-        return this.childDepth() - other.childDepth();
     }
 
     /**
@@ -508,7 +550,7 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      * 
      * @return number of levels of children below
      */
-    private int childDepth() {
+    int childDepth() {
         if (children.isEmpty()) {
             return 0;
         } else {
@@ -527,7 +569,7 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
      */
     private void createBaseDirectory(String directoryName) throws IOException {
         outputDir = copyToRoot.resolve(directoryName);
-        Files.createDirectory(outputDir);
+        Files.createDirectories(outputDir);
         logger.info("Created process directory " + outputDir);
     }
 
@@ -542,12 +584,25 @@ final class ImportingProcess implements Comparable<ImportingProcess> {
         Path sourceItem = sourceDir.resolve(relativeItem);
         Path destinationItem = outputDir.resolve(relativeItem);
         if (Files.isDirectory(sourceItem)) {
-            Files.createDirectory(destinationItem);
+            Files.createDirectories(destinationItem);
             logger.info("Created directory " + destinationItem);
         } else {
             Files.copy(sourceItem, destinationItem, StandardCopyOption.REPLACE_EXISTING,
                 StandardCopyOption.COPY_ATTRIBUTES, LinkOption.NOFOLLOW_LINKS);
             logger.info("Copied " + sourceItem + " as " + destinationItem);
         }
+    }
+
+    void setProject(Project project) {
+        this.project = project;
+    }
+
+    void setTemplate(Template template) {
+        this.template = template;
+    }
+
+    @Override
+    public String toString() {
+        return "Importing process " + sourceDir;
     }
 }

@@ -489,6 +489,9 @@ public class Helper {
     private static String appendUnusedInsertions(String message, String... insertions) {
         StringBuilder messageBuilder = new StringBuilder(message);
         for (String insertion : insertions) {
+            if (Objects.isNull(insertion)) {
+                continue;
+            }
             String separator = ": ";
             if (!messageBuilder.toString().contains(insertion)) {
                 messageBuilder.append(separator).append(insertion);
