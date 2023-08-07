@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ../../../../rulesets/ruleset.xsd"
+>
+    <!-- metadata definition -->
+    <declaration>
+        <!-- parent -->
+        <division id="case" processTitle="CRNumber+'_'+CaseNumber">
+            <label>Case</label>
+        </division>
+
+        <!-- children -->
+        <division id="assignment" processTitle="+'_'+DocumentNumber">
+            <label>Assignment</label>
+        </division>
+        <division id="budget" processTitle="+'_'+DocumentNumber">
+            <label>Budget</label>
+        </division>
+
+        <!-- metadata -->
+        <key id="Address">
+            <label>Address</label>
+            <key id="StreetName">
+                <label>Street</label>
+            </key>
+            <key id="HouseNumber">
+                <label>House no.</label>
+            </key>
+            <key id="Additions">
+                <label>House number supplement</label>
+            </key>
+        </key>
+        <key id="CaseNumber">
+            <label>Case no.</label>
+            <codomain type="integer"/>
+            <pattern>[1-9]\d*</pattern>
+        </key>
+        <key id="CRNumber">
+            <label>Area code</label>
+            <codomain type="integer"/>
+            <pattern>[1-9]\d{0,4}</pattern>
+        </key>
+        <key id="DocumentNumber">
+            <label>Document no.</label>
+            <pattern>\d{4}</pattern>
+        </key>
+        <key id="DocumentNameFree">
+            <label>Document name</label>
+        </key>
+        <key id="DocumentDate">
+            <label>Date</label>
+        </key>
+    </declaration>
+
+    <!-- metadata validation -->
+    <correlation>
+        <!-- valid grouped metadata -->
+        <restriction key="Address">
+            <permit key="StreetName" minOccurs="1" maxOccurs="1"/>
+            <permit key="HouseNumber" minOccurs="1" maxOccurs="1"/>
+            <permit key="Additions" maxOccurs="1"/>
+        </restriction>
+
+        <!-- valid parent -->
+        <restriction division="case" unspecified="forbidden">
+            <permit division="assignment"/>
+            <permit division="budget"/>
+            <permit key="CRNumber" minOccurs="1" maxOccurs="1"/>
+            <permit key="CaseNumber" minOccurs="1" maxOccurs="1"/>
+            <permit key="Description1" minOccurs="1" maxOccurs="1"/>
+            <permit key="Address"/>
+        </restriction>
+
+        <!-- valid children -->
+        <restriction division="assignment" unspecified="forbidden">
+            <permit key="DocumentNumber" minOccurs="1" maxOccurs="1"/>
+            <permit key="DocumentNameFree" minOccurs="1" maxOccurs="1"/>
+            <permit key="DocumentDate" minOccurs="1" maxOccurs="1"/>
+        </restriction>
+
+        <restriction division="budget" unspecified="forbidden">
+            <permit key="DocumentNumber" minOccurs="1" maxOccurs="1"/>
+            <permit key="DocumentNameFree" minOccurs="1" maxOccurs="1"/>
+            <permit key="DocumentDate" minOccurs="1" maxOccurs="1"/>
+        </restriction>
+    </correlation>
+</ruleset>

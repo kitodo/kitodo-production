@@ -17,10 +17,13 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.function.Predicate;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
@@ -47,6 +50,11 @@ import org.kitodo.production.services.data.TemplateService;
 public final class ImportProcesses extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ImportProcesses.class);
 
+    // number of actions required for initialization
+    private static final int INIT_ACTIONS_COUNT = 1;
+    // number of actions required for validation
+    private static final int VALIDATION_ACTIONS_COUNT = 1;
+
     private final ProjectService projectService = ServiceManager.getProjectService();
     private final TemplateService templateService = ServiceManager.getTemplateService();
 
@@ -54,16 +62,19 @@ public final class ImportProcesses extends EmptyTask {
     private final Project project;
     private final Template templateForProcesses;
     private final Path errorPath;
-    private final Map<String, ImportingProcess> importingProcesses;
+    private final TreeMap<String, ImportingProcess> importingProcesses;
     private int numberOfImportingProcesses;
-    private int progress = 0;
-    private int totalActions = 1;
+    private int step = 0;
+    int totalActions = 1;
     private Iterator<ImportingProcess> importingProcessesIterator;
-    private ImportingProcess currentlyImporting;
-    private int numberOfActions = 0;
+    ImportingProcess currentlyImporting;
+    private int numberOfRemainingActions = 0;
     private int nextAction = 0;
     private RulesetManagementInterface ruleset;
     private final boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
+    int part = 0;
+
+    ImportingProcess validatingImportingProcess;
 
     /**
      * <b>Constructor.</b><!-- --> Creates a {@code ProcessesImport}
@@ -92,8 +103,11 @@ public final class ImportProcesses extends EmptyTask {
         this.project = checkProject(project);
         this.templateForProcesses = checkTemplate(template);
         this.errorPath = checkErros(errors);
-        this.importingProcesses = Files.walk(this.importRootPath).filter(Files::isDirectory)
-                .collect(Collectors.toMap(path -> path.getFileName().toString(), ImportingProcess::new));
+        this.importingProcesses = Files.walk(this.importRootPath, 1)
+                .filter(Files::isDirectory)
+                .filter(Predicate.not(this.importRootPath::equals))
+                .collect(Collectors.toMap(path -> path.getFileName().toString(), ImportingProcess::new,
+                    (existing, replacing) -> replacing, TreeMap::new));
         this.numberOfImportingProcesses = importingProcesses.size();
     }
 
@@ -110,11 +124,11 @@ public final class ImportProcesses extends EmptyTask {
         this.errorPath = source.errorPath;
         this.importingProcesses = source.importingProcesses;
         this.numberOfImportingProcesses = source.numberOfImportingProcesses;
-        this.progress = source.progress;
+        this.step = source.step;
         this.totalActions = source.totalActions;
         this.importingProcessesIterator = source.importingProcessesIterator;
         this.currentlyImporting = source.currentlyImporting;
-        this.numberOfActions = source.numberOfActions;
+        this.numberOfRemainingActions = source.numberOfRemainingActions;
         this.nextAction = source.nextAction;
         this.ruleset = source.ruleset;
     }
@@ -248,39 +262,9 @@ public final class ImportProcesses extends EmptyTask {
     @Override
     public void run() {
         try {
-            Path processesPath = Paths.get(KitodoConfig.getKitodoDataDirectory());
-            while (progress < totalActions) {
-                // first part: initialize
-                if (progress == 0) {
-                    ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-                    ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
-                        templateForProcesses.getRuleset().getFile()).toString()));
-                    totalActions = importingProcesses.entrySet().parallelStream().map(Entry::getValue)
-                            .mapToInt(ImportingProcess::numberOfActions).sum();
-                    importingProcessesIterator = importingProcesses.values().iterator();
-                }
-                // second part: validate
-                else if (progress <= numberOfImportingProcesses) {
-                    importingProcessesIterator.next().validate(ruleset, strictValidation, importingProcesses);
-                    // in last iteration, re-initialize iterator
-                    if (progress == numberOfImportingProcesses) {
-                        importingProcessesIterator = new TreeSet<>(importingProcesses.values()).iterator();
-                    }
-                }
-                // third part: copy files and create database entry
-                else {
-                    if (nextAction == numberOfActions) {
-                        currentlyImporting = importingProcessesIterator.next();
-                        nextAction = 0;
-                        currentlyImporting.setCopyToRoot(currentlyImporting.isCorrect() ? processesPath : errorPath);
-                        numberOfActions = currentlyImporting.numberOfActions();
-                    }
-                    currentlyImporting.executeAction(nextAction);
-                    nextAction++;
-                }
-                // update progress in Task Manager
-                progress++;
-                super.setProgress(100d * progress / totalActions);
+            while (step < totalActions) {
+                run(step++);
+                super.setProgress(100d * step / totalActions);
                 if (super.isInterrupted()) {
                     return;
                 }
@@ -291,5 +275,64 @@ public final class ImportProcesses extends EmptyTask {
             Helper.setErrorMessage(exception.getLocalizedMessage(), logger, exception);
             super.setException(exception);
         }
+    }
+
+    void run(int setStep) throws IOException, DAOException, DataException, ProcessGenerationException,
+            MediaNotFoundException, InvalidImagesException {
+
+        step = setStep;
+        Path processesPath = Paths.get(KitodoConfig.getKitodoDataDirectory());
+        if (step == 0) {
+            initialize();
+            part = 1;
+        } else if (step <= numberOfImportingProcesses) {
+            validate();
+            part = 2;
+        } else {
+            copyFilesAndCreateDatabaseEntry(step, processesPath);
+            part = 3;
+        }
+    }
+
+    private void initialize() throws IOException {
+        super.setWorkDetail(importRootPath.toString());
+        ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        ruleset.load(new File(Paths.get(ConfigCore.getParameter(ParameterCore.DIR_RULESETS),
+            templateForProcesses.getRuleset().getFile()).toString()));
+        totalActions = importingProcesses.entrySet().parallelStream().map(Entry::getValue)
+                .mapToInt(ImportingProcess::numberOfActions).sum() + INIT_ACTIONS_COUNT;
+        importingProcessesIterator = importingProcesses.values().iterator();
+    }
+
+    private void validate() throws IOException, DAOException {
+        validatingImportingProcess = importingProcessesIterator.next();
+        super.setWorkDetail(validatingImportingProcess.directoryName);
+        validatingImportingProcess.validate(ruleset, strictValidation, importingProcesses);
+        // in last iteration, re-initialize iterator
+        if (step == numberOfImportingProcesses) {
+            /* Children must be imported before their parents, so
+             * that when the parents are imported, the process ID of
+             * the children is already known and can be written down
+             * in the METS file. */
+            TreeSet<ImportingProcess> childrenFirst = new TreeSet<ImportingProcess>(
+                    Comparator.comparingInt(ImportingProcess::childDepth).thenComparing(ImportingProcess::toString));
+            childrenFirst.addAll(importingProcesses.values());
+            importingProcessesIterator = childrenFirst.iterator();
+        }
+    }
+
+    private void copyFilesAndCreateDatabaseEntry(int step, Path processesPath) throws IOException, DAOException, DataException,
+            ProcessGenerationException, MediaNotFoundException, InvalidImagesException {
+        if (nextAction == numberOfRemainingActions && step < totalActions - 1) {
+            currentlyImporting = importingProcessesIterator.next();
+            currentlyImporting.setProject(project);
+            currentlyImporting.setTemplate(templateForProcesses);
+            nextAction = 0;
+            currentlyImporting.setOutputRoot(currentlyImporting.isCorrect() ? processesPath : errorPath);
+            numberOfRemainingActions = currentlyImporting.numberOfActions() - VALIDATION_ACTIONS_COUNT;
+        }
+        super.setWorkDetail(currentlyImporting.directoryName);
+        currentlyImporting.executeAction(nextAction);
+        nextAction++;
     }
 }

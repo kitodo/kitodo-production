@@ -175,11 +175,31 @@ public class MetadataValidationService {
      */
     public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset)
             throws DAOException {
+        return validate(workpiece, ruleset, true);
+    }
+
+    /**
+     * Validates a workpiece based on a rule set.
+     *
+     * @param workpiece
+     *            METS file
+     * @param ruleset
+     *            Ruleset file
+     * @param strict
+     *            whether to validate document ID and presence of images
+     * @return the validation result
+     * @throws DataException
+     *             if an error occurs while reading from the search engine
+     */
+    public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset, boolean strict)
+            throws DAOException {
 
         Collection<ValidationResult> results = new ArrayList<>();
-        results.add(checkTheIdentifier(workpiece));
+        if (strict) {
+            results.add(checkTheIdentifier(workpiece));
+        }
         results.add(metadataValidation.validate(workpiece, ruleset, getMetadataLanguage(),
-            getTranslations()));
+            getTranslations(), strict));
         return merge(results);
     }
 

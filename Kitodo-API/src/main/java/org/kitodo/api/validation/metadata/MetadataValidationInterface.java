@@ -67,8 +67,10 @@ public interface MetadataValidationInterface extends ValidationInterface {
      *            {@code metadataNotEnoughElements},
      *            {@code metadataNotOneElement}, and
      *            {@code metadataStructureWithoutMedia}.
+     * @param checkMedia
+     *            whether to check for missing or unlinked media
      * @return A validation result.
      */
     ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset,
-            List<LanguageRange> metadataLanguage, Map<String, String> translations);
+            List<LanguageRange> metadataLanguage, Map<String, String> translations, boolean checkMedia);
 }
