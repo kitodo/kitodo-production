@@ -115,6 +115,13 @@ public class ProjectServiceIT {
     }
 
     @Test
+    public void shouldGetClientProjectsSortedByTitle() {
+        List<Project> projects = projectService.getAllForSelectedClient();
+        assertEquals("First project", projects.get(0).getTitle());
+        assertEquals("Second project", projects.get(1).getTitle());
+    }
+
+    @Test
     public void shouldGetAllProjectsInGivenRange() throws Exception {
         List<Project> projects = projectService.getAll(2, 10);
         assertEquals("Not all projects were found in database!", 1, projects.size());
