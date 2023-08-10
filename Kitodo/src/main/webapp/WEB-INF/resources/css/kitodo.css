@@ -589,6 +589,7 @@ td.actionsColumn {
 
 .ui-datatable tbody td.actionsColumn {
     padding-right: calc(var(--default-full-size) - 10px);
+    position: relative;
 }
 
 #desktopGrid .ui-datatable-scrollable-header-box {
