@@ -502,6 +502,7 @@ Breadcrumb menu
     text-decoration: none;
     text-indent: 0;
     width: var(--input-height);
+    white-space: nowrap;
 }
 
 .breadcrumb-menu ul li .ui-menuitem-text,
@@ -514,6 +515,12 @@ Breadcrumb menu
 .breadcrumb-menu ul li .ui-menuitem-text {
     padding: 0 4px;
     text-overflow: ellipsis;
+}
+
+.breadcrumb-menu ul li:first-child:not(:hover) .ui-menuitem-text {
+    padding: 0;
+    width: 0;
+    opacity: 0;
 }
 
 .breadcrumb-menu ul li:not(:first-child) {
@@ -552,8 +559,11 @@ Breadcrumb menu
     padding: 0 var(--default-half-size);
 }
 
+.breadcrumb-menu ul li,
+.breadcrumb-menu ul li .ui-menuitem-link,
+.breadcrumb-menu ul li .ui-menuitem-icon,
 .breadcrumb-menu ul li .ui-menuitem-text,
-.breadcrumb-menu ul li:hover .ui-menuitem-text {
+.breadcrumb-menu ul li:not(:first-child)::before {
     transition: .3s;
 }
 
@@ -2258,9 +2268,10 @@ form#metadata div label,
 }
 
 #commentsBox\:newButton {
-    position: absolute;
     bottom: 16px;
+    box-shadow: var(--second-level-shadow);
     left: 8px;
+    position: absolute;
 }
 
 #commentsBox\:comments > tbody > tr.ui-widget-content:first-child > td.ui-panelgrid-cell {
@@ -2272,8 +2283,11 @@ form#metadata div label,
 }
 
 #commentsBox\:commentsGrid {
-    margin-bottom: 50px;
     overflow-y: scroll;
+}
+
+#commentsBox\:commentsGrid table {
+    margin-bottom: 70px;
 }
 
 #commentsBox\:commentsGrid_head {
@@ -2766,8 +2780,7 @@ Column content
     margin-top: 5px;
     height: 100%;
     box-sizing: border-box;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 #paginationPanel {
@@ -2930,12 +2943,12 @@ Column content
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-datepicker-trigger {
     background: var(--pure-white);
-    border: solid var(--default-border-width) var(--light-blue);
+    border: solid var(--default-border-width) var(--blue);
     margin: 0 3px 0 0;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-datepicker-trigger::before {
-    color: var(--light-blue);
+    color: var(--blue);
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-calendar.read-only .ui-datepicker-trigger {

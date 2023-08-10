@@ -200,13 +200,13 @@ label.ui-state-error {
 .ui-selectcheckboxmenu.secondary .ui-selectcheckboxmenu-label,
 .ui-splitbutton.secondary .ui-button {
     background: var(--pure-white);
-    border: solid var(--default-border-width) var(--light-blue);
-    color: var(--light-blue);
+    border: solid var(--default-border-width) var(--blue);
+    color: var(--blue);
 }
 
 .ui-button.secondary .ui-icon,
 .ui-widget-content .ui-button.secondary .ui-icon {
-    color: var(--light-blue);
+    color: var(--blue);
 }
 
 .ui-button.secondary.ui-state-hover,
@@ -854,10 +854,10 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
 
 .ui-selectcheckboxmenu .ui-selectcheckboxmenu-trigger {
     background: var(--pure-white);
-    border: solid var(--default-border-width) var(--light-blue);
+    border: solid var(--default-border-width) var(--blue);
     border-left: none;
     box-sizing: border-box;
-    color: var(--light-blue);
+    color: var(--blue);
     width: auto;
 }
 
