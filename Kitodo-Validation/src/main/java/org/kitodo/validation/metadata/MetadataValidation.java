@@ -118,7 +118,7 @@ public class MetadataValidation implements MetadataValidationInterface {
 
         Collection<ValidationResult> results = new ArrayList<>();
 
-        if(checkMedia) {
+        if (checkMedia) {
             results.add(checkForStructuresWithoutMedia(workpiece, translations));
             results.add(checkForUnlinkedMedia(workpiece, translations));
         }
