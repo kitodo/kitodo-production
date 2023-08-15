@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 // open source code
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -103,6 +102,7 @@ final class ImportingProcess {
     private Iterator<Path> filesAndDirectoriesIterator;
 
     // Process hierarchy
+    private Map<String, ImportingProcess> importingProcesses;
     private ImportingProcess parent;
     private final List<ImportingProcess> children = new ArrayList<>();
 
@@ -113,18 +113,15 @@ final class ImportingProcess {
     // database process
     private Project project;
     private Template template;
-    private Integer processId;
     private String processTitleRule;
     private String title;
     private String baseType;
+    private Integer processId;
 
     // Output directories
     private Path copyToRoot;
     private Path outputDir;
 
-    private Map<String, ImportingProcess> importingProcesses;
-
-    
 
     /**
      * <b>Constructor.</b><!-- --> Creates a new Importing Process.
