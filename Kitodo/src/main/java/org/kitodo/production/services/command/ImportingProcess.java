@@ -12,9 +12,9 @@
 package org.kitodo.production.services.command;
 
 // static functions used
+import static java.lang.System.lineSeparator;
 import static java.util.function.Predicate.not;
 import static java.util.stream.Collectors.toList;
-import static java.lang.System.lineSeparator;
 
 // base Java
 import java.io.IOException;
@@ -122,7 +122,6 @@ final class ImportingProcess {
     private Path copyToRoot;
     private Path outputDir;
 
-
     /**
      * <b>Constructor.</b><!-- --> Creates a new Importing Process.
      * 
@@ -161,8 +160,8 @@ final class ImportingProcess {
     int numberOfActions() {
         int result = numberOfFileSystemItems + 3;
         if (logger.isTraceEnabled()) {
-            logger.trace("Import folder {}: {} actions required. List: {}", this.directoryName,
-                result, filesAndDirectories.stream().map(Objects::toString).collect(Collectors.joining(", ")));
+            logger.trace("Import folder {}: {} actions required. List: {}", this.directoryName, result,
+                filesAndDirectories.stream().map(Objects::toString).collect(Collectors.joining(", ")));
         }
         return result;
     }
@@ -190,7 +189,7 @@ final class ImportingProcess {
         Workpiece workpiece = metsService.loadWorkpiece(metaFilePath.toUri());
         validateMetsFile(ruleset, strictValidation, workpiece);
         validateChildren(workpiece.getLogicalStructure());
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             getSharedErroneousProcesses().add(this.directoryName);
         }
 
@@ -198,9 +197,8 @@ final class ImportingProcess {
         baseType = workpiece.getLogicalStructure().getType();
         title = formProcessTitle(ruleset, workpiece);
 
-        logger.info(
-            "Validation of " + this.directoryName + (errors.isEmpty() ? " completed without errors"
-                    : " completed with errors:" + lineSeparator() + String.join(lineSeparator(), errors)));
+        logger.info("Validation of " + this.directoryName + (errors.isEmpty() ? " completed without errors"
+                : " completed with errors:" + lineSeparator() + String.join(lineSeparator(), errors)));
     }
 
     /**
@@ -273,7 +271,7 @@ final class ImportingProcess {
                 result.put(name, division);
             }
         } else {
-            for(LogicalDivision child:division.getChildren()) {
+            for (LogicalDivision child : division.getChildren()) {
                 result.putAll(searchLinkedProcesses(child));
             }
         }
@@ -347,7 +345,7 @@ final class ImportingProcess {
      */
     boolean isCorrect() {
         getSharedErroneousProcesses();
-        if(!errors.isEmpty()) {
+        if (!errors.isEmpty()) {
             sharedErroneousProcesses.add(this.directoryName);
         }
         return sharedErroneousProcesses.isEmpty();
@@ -445,8 +443,8 @@ final class ImportingProcess {
         } else if (action <= numberOfFileSystemItems + 1) {
             Path relativeItemToCopy = filesAndDirectoriesIterator.next();
             if (relativeItemToCopy.toString().equals(META_FILE_NAME)) {
-                if(filesAndDirectoriesIterator.hasNext()) {
-                relativeItemToCopy = filesAndDirectoriesIterator.next();
+                if (filesAndDirectoriesIterator.hasNext()) {
+                    relativeItemToCopy = filesAndDirectoriesIterator.next();
                 } else {
                     Process process = processService.getById(processId);
                     copyAndAdjustMetsFile(process);
