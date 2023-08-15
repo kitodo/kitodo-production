@@ -266,8 +266,9 @@ final class ImportingProcess {
             if (Objects.nonNull(division.getLink())) {
                 String name = division.getLink().getUri().toString();
                 int firstEqualsSign = name.indexOf('=');
-                if (firstEqualsSign > -1)
+                if (firstEqualsSign > -1) {
                     name = name.substring(firstEqualsSign + 1);
+                }
                 result.put(name, division);
             }
         } else {
