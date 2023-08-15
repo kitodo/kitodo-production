@@ -206,15 +206,15 @@ public class Rule {
         return result;
     }
 
-    private static void getConditionalPermits(ConditionsMapInterface conditionsMapInterface,
+    private static void getConditionalPermits(ConditionsMapInterface conditionsMap,
             Map<String, Optional<MetadataEntry>> metadataCache, List<Map<MetadataEntry, Boolean>> metadata,
             Collection<RestrictivePermit> result) {
 
-        for (String conditionKey : conditionsMapInterface.getConditionKeys()) {
+        for (String conditionKey : conditionsMap.getConditionKeys()) {
             Optional<MetadataEntry> possibleMetadata = metadataCache.computeIfAbsent(conditionKey,
                 key -> getMetadataEntryForKey(key, metadata));
             if (possibleMetadata.isPresent()) {
-                Condition condition = conditionsMapInterface.getCondition(conditionKey, possibleMetadata.get().getValue());
+                Condition condition = conditionsMap.getCondition(conditionKey, possibleMetadata.get().getValue());
                 if (Objects.nonNull(condition)) {
                     result.addAll(condition.getPermits());
                     getConditionalPermits(condition, metadataCache, metadata, result); // recursive

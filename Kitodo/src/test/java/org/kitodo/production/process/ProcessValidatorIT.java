@@ -110,9 +110,9 @@ public class ProcessValidatorIT {
     private List<ProcessDetail> createProcessDetailsList() throws IOException {
         Workpiece workpiece = new Workpiece();
         workpiece.getLogicalStructure().setType("Monograph");
-        RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        rulesetManagementInterface.load(new File("src/test/resources/rulesets/monograph.xml"));
-        StructuralElementViewInterface monograph = rulesetManagementInterface.getStructuralElementView(
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService().getRulesetManagement();
+        rulesetManagement.load(new File("src/test/resources/rulesets/monograph.xml"));
+        StructuralElementViewInterface monograph = rulesetManagement.getStructuralElementView(
                 "Monograph", "", Locale.LanguageRange.parse("en"));
         ProcessFieldedMetadata processDetails = new ProcessFieldedMetadata(workpiece.getLogicalStructure(), monograph,
                 rulesetManagementInterface);

@@ -224,17 +224,17 @@ public class MetadataEditor {
      *            inserted
      * @param position
      *            relative insertion position
-     * @param metadataViewInterface
-     *            interface of the metadata to be added
+     * @param metadataView
+     *            view on the metadata to be added
      * @param metadataValue
      *            value of the first metadata entry
      */
     public static void addMultipleStructuresWithMetadata(int number, String type, Workpiece workpiece, LogicalDivision structure,
-            InsertionPosition position, MetadataViewInterface metadataViewInterface, String metadataValue) {
+            InsertionPosition position, MetadataViewInterface metadataView, String metadataValue) {
 
-        String metadataKey = metadataViewInterface.getId();
+        String metadataKey = metadataView.getId();
         
-        if (metadataViewInterface.isComplex()) {
+        if (metadataView.isComplex()) {
             addMultipleStructuresWithMetadataGroup(number, type, workpiece, structure, position, metadataKey);
         } else {
             addMultipleStructuresWithMetadataEntry(number, type, workpiece, structure, position, metadataKey, metadataValue);
