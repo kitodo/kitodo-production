@@ -1010,6 +1010,9 @@ function activateButtons() {
     PF('save').enable();
     PF('validate').enable();
     PF('close').enable();
+    if ($('#buttonForm\\:renameMedia').length > 0) {
+        PF('renameMedia').enable();
+    }
 }
 
 function deactivateButtons() {
@@ -1017,6 +1020,9 @@ function deactivateButtons() {
     PF('save').disable();
     PF('validate').disable();
     PF('close').disable();
+    if ($('#buttonForm\\:renameMedia').length > 0) {
+        PF('renameMedia').disable();
+    }
 }
 
 $(function () {

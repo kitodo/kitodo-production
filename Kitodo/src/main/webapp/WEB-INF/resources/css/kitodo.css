@@ -2358,6 +2358,11 @@ form#metadata div label,
     margin-bottom: var(--default-full-size);
 }
 
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content {
+    max-height: 120px;
+    overflow-y: scroll;
+}
+
 .ui-dialog .ui-panelgrid-cell div.ui-fileupload-content,
 .ui-dialog .ui-panelgrid-cell div.ui-fileupload-files {
     color: var(--blue);

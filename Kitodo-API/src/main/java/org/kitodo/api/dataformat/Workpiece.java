@@ -12,6 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -187,9 +188,20 @@ public class Workpiece {
      * @return all physical divisions with type "page", sorted by their {@code order}
      */
     public List<PhysicalDivision> getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted() {
+        return getAllPhysicalDivisionChildrenFilteredByTypes(Collections.singletonList(PhysicalDivision.TYPE_PAGE));
+    }
+
+    /**
+     * Returns all child physical divisions of the physical division of the workpiece with any of the types in the
+     * provided list "types".
+     *
+     * @param types list of types
+     * @return child physical division of given types
+     */
+    public List<PhysicalDivision> getAllPhysicalDivisionChildrenFilteredByTypes(List<String> types) {
         return physicalStructure.getChildren().stream()
                 .flatMap(Workpiece::treeStream)
-                .filter(division -> Objects.equals(division.getType(), PhysicalDivision.TYPE_PAGE))
+                .filter(physicalDivisionToCheck -> types.contains(physicalDivisionToCheck.getType()))
                 .sorted(Comparator.comparing(PhysicalDivision::getOrder)).collect(Collectors.toUnmodifiableList());
     }
 
