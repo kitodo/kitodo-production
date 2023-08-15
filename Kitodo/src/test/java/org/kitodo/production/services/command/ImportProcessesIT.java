@@ -19,6 +19,8 @@ import static org.junit.Assert.assertTrue;
 
 // base Java
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -344,7 +346,9 @@ public class ImportProcessesIT {
                 (long) ServiceManager.getProcessService().countDatabaseRows());
             assertEquals("Should not import 6 processes,", 6, ERRORS_DIR_PATH.toFile().list().length);
         } catch (Exception e) {
-            logger.error(e);
+            StringWriter sw = new StringWriter();
+            e.printStackTrace(new PrintWriter(sw));
+            logger.error(sw.toString());
         }
     }
 }
