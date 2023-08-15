@@ -441,7 +441,7 @@ final class ImportingProcess {
         } else if (action == 1) {
             createBaseDirectory(processId.toString());
             filesAndDirectoriesIterator = filesAndDirectories.iterator();
-        } else if (action <= numberOfFileSystemItems + 1) {
+        } else if (filesAndDirectoriesIterator.hasNext()) {
             Path relativeItemToCopy = filesAndDirectoriesIterator.next();
             if (relativeItemToCopy.toString().equals(META_FILE_NAME)) {
                 if (filesAndDirectoriesIterator.hasNext()) {
