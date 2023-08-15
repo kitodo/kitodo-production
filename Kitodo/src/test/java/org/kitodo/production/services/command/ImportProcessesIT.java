@@ -349,6 +349,7 @@ public class ImportProcessesIT {
             StringWriter sw = new StringWriter();
             e.printStackTrace(new PrintWriter(sw));
             logger.error(sw.toString());
+            throw e;
         }
     }
 }
