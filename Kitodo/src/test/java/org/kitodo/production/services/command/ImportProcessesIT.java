@@ -11,11 +11,13 @@
 
 package org.kitodo.production.services.command;
 
+// abbreviations
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+// base Java
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -25,10 +27,11 @@ import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+// open source code
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
@@ -45,14 +48,14 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 
+// test support
 import test.TreeDeleter;
 
 public class ImportProcessesIT {
-    private static final Logger logger = LogManager.getLogger(ImportProcessesIT.class);
-
     private static final Path ERRORS_DIR_PATH = Paths.get("src/test/resources/errors");
 
-    private static String fourMeta, fiveMeta, sixMeta;
+    // keep and restore original meta.xml files
+    private String fourMeta, fiveMeta, sixMeta;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -109,8 +112,8 @@ public class ImportProcessesIT {
         Files.createDirectories(ERRORS_DIR_PATH);
     }
 
-    @BeforeClass
-    public static void keepMetaXmlFiles() throws Exception {
+    @Before
+    public void keepMetaXmlFiles() throws Exception {
         fourMeta = Files.readString(Paths.get("src/test/resources/metadata/4/meta.xml"), UTF_8);
         fiveMeta = Files.readString(Paths.get("src/test/resources/metadata/5/meta.xml"), UTF_8);
         sixMeta = Files.readString(Paths.get("src/test/resources/metadata/6/meta.xml"), UTF_8);
@@ -123,8 +126,8 @@ public class ImportProcessesIT {
         TreeDeleter.delete(ERRORS_DIR_PATH);
     }
 
-    @BeforeClass
-    public static void restoreMetaXmlFiles() throws Exception {
+    @After
+    public void restoreMetaXmlFiles() throws Exception {
         Files.writeString(Paths.get("src/test/resources/metadata/4/meta.xml"), fourMeta, UTF_8);
         Files.writeString(Paths.get("src/test/resources/metadata/5/meta.xml"), fiveMeta, UTF_8);
         Files.writeString(Paths.get("src/test/resources/metadata/6/meta.xml"), sixMeta, UTF_8);
@@ -152,7 +155,6 @@ public class ImportProcessesIT {
 
         // initialize
         underTest.run(0);
-        assertEquals("should have initialized", 1, underTest.part);
         assertEquals("should require 43 actions", 43, underTest.totalActions);
 
         // validate: correct processes
@@ -217,7 +219,6 @@ public class ImportProcessesIT {
         assertTrue("should have validated without errors", p4_valid_butChildIsNot.errors.isEmpty());
 
         underTest.run(9);
-        assertEquals("should have validated", 2, underTest.part);
         assertEquals("should have validated p4c1_not-valid", "p4c1_not-valid",
             underTest.validatingImportingProcess.directoryName);
         ImportingProcess p4c1_notValid = underTest.validatingImportingProcess;
@@ -230,7 +231,6 @@ public class ImportProcessesIT {
 
         // p1c1_valid (OK)
         underTest.run(10);
-        assertEquals("should be copying files and creating database entries", 3, underTest.part);
         assertEquals("should have created 1st process,", processesBefore + 1,
             (long) ServiceManager.getProcessService().countDatabaseRows());
         underTest.run(11);

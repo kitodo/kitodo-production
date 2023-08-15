@@ -19,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.function.Predicate;
 import java.util.Objects;
@@ -47,6 +46,10 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.TemplateService;
 
+
+/**
+ * Long-running task importing processes into Production.
+ */
 public final class ImportProcesses extends EmptyTask {
     private static final Logger logger = LogManager.getLogger(ImportProcesses.class);
 
@@ -55,26 +58,31 @@ public final class ImportProcesses extends EmptyTask {
     // number of actions required for validation
     private static final int VALIDATION_ACTIONS_COUNT = 1;
 
+    // services required
     private final ProjectService projectService = ServiceManager.getProjectService();
     private final TemplateService templateService = ServiceManager.getTemplateService();
 
+    // global system configuration
+    private final boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
+
+    // data
     private final Path importRootPath;
     private final Project project;
     private final Template templateForProcesses;
+    private RulesetManagementInterface ruleset;
     private final Path errorPath;
     private final TreeMap<String, ImportingProcess> importingProcesses;
-    private int numberOfImportingProcesses;
+    private final int numberOfImportingProcesses;
+
+    // thread execution
     private int step = 0;
     int totalActions = 1;
     private Iterator<ImportingProcess> importingProcessesIterator;
-    ImportingProcess currentlyImporting;
-    private int numberOfRemainingActions = 0;
-    private int nextAction = 0;
-    private RulesetManagementInterface ruleset;
-    private final boolean strictValidation = ConfigCore.getBooleanParameter(ParameterCore.VALIDATION_FAIL_ON_WARNING);
-    int part = 0;
-
     ImportingProcess validatingImportingProcess;
+    private ImportingProcess currentlyImporting;
+    private int nextAction = 0;
+    private int numberOfRemainingActions = 0;
+
 
     /**
      * <b>Constructor.</b><!-- --> Creates a {@code ProcessesImport}
@@ -121,16 +129,18 @@ public final class ImportProcesses extends EmptyTask {
         this.importRootPath = source.importRootPath;
         this.project = source.project;
         this.templateForProcesses = source.templateForProcesses;
+        this.ruleset = source.ruleset;
         this.errorPath = source.errorPath;
         this.importingProcesses = source.importingProcesses;
         this.numberOfImportingProcesses = source.numberOfImportingProcesses;
+
         this.step = source.step;
         this.totalActions = source.totalActions;
         this.importingProcessesIterator = source.importingProcessesIterator;
+        this.validatingImportingProcess = source.validatingImportingProcess;;
         this.currentlyImporting = source.currentlyImporting;
-        this.numberOfRemainingActions = source.numberOfRemainingActions;
         this.nextAction = source.nextAction;
-        this.ruleset = source.ruleset;
+        this.numberOfRemainingActions = source.numberOfRemainingActions;
     }
 
     /**
@@ -284,13 +294,10 @@ public final class ImportProcesses extends EmptyTask {
         Path processesPath = Paths.get(KitodoConfig.getKitodoDataDirectory());
         if (step == 0) {
             initialize();
-            part = 1;
         } else if (step <= numberOfImportingProcesses) {
             validate();
-            part = 2;
         } else {
             copyFilesAndCreateDatabaseEntry(step, processesPath);
-            part = 3;
         }
     }
 
