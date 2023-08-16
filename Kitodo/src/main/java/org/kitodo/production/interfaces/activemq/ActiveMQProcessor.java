@@ -27,6 +27,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.Guard;
 import org.kitodo.exceptions.ProcessorException;
 import org.kitodo.production.enums.ReportLevel;
 import org.kitodo.production.helper.Helper;
@@ -159,13 +160,8 @@ public abstract class ActiveMQProcessor implements MessageListener {
     }
 
     private MapMessageObjectReader getMessageFromObjectReader(Message arg) {
-        MapMessageObjectReader message;
-        if (arg instanceof MapMessage) {
-            message = new MapMessageObjectReader((MapMessage) arg);
-        } else {
-            throw new IllegalArgumentException("Incompatible types.");
-        }
-        return message;
+        MapMessage mapMessage = Guard.canCast("arg", arg, MapMessage.class);
+        return new MapMessageObjectReader(mapMessage);
     }
 
     /**
