@@ -24,6 +24,7 @@ import javax.jms.MapMessage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.Guard;
 
 public class MapMessageObjectReader {
 
@@ -40,9 +41,7 @@ public class MapMessageObjectReader {
      *            MapMessage object
      */
     public MapMessageObjectReader(MapMessage message) {
-        if (Objects.isNull(message)) {
-            throw new IllegalArgumentException("MapMessageObjectReader: null argument in constructor.");
-        }
+        Guard.isNotNull("message", message);
         this.ticket = message;
     }
 

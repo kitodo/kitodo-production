@@ -27,6 +27,7 @@ import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterImageManagement;
+import org.kitodo.exceptions.Guard;
 
 /**
  * An ImageManagementInterface implementation using ImageMagick.
@@ -62,13 +63,8 @@ public class ImageManagement implements ImageManagementInterface {
      */
     @Override
     public Image changeDpi(URI sourceUri, int dpi) throws IOException {
-        if (!new File(sourceUri).exists()) {
-            throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
-        }
-        if (dpi <= 0) {
-            throw new IllegalArgumentException("dpi must be > 0, but was " + dpi);
-        }
-
+        fileExists(sourceUri);
+        Guard.isPositive("dpi", dpi);
         return summarize("dpiChangedImage-", RAW_IMAGE_FORMAT, sourceUri, lambda -> lambda.resizeToDpi(dpi),
             "Resizing {} as {} to {} DPI", dpi);
     }
@@ -83,7 +79,9 @@ public class ImageManagement implements ImageManagementInterface {
     @Override
     public boolean createDerivative(URI sourceUri, double factor, URI resultUri, ImageFileFormat format)
             throws IOException {
-        validateParameters(sourceUri, factor);
+
+        fileExists(sourceUri);
+        Guard.isPositive("factor", factor);
         if (resultUri == null) {
             throw new NullPointerException("resultUri must not be null");
         }
@@ -99,18 +97,15 @@ public class ImageManagement implements ImageManagementInterface {
     /**
      * {@inheritDoc}
      *
+
      * @see org.kitodo.api.imagemanagement.ImageManagementInterface#getSizedWebImage(java.net.URI,
      *      int)
      */
     @Override
     public Image getSizedWebImage(URI sourceUri, int width) throws IOException {
 
-        if (!new File(sourceUri).exists()) {
-            throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
-        }
-        if (width <= 0) {
-            throw new IllegalArgumentException("width must be > 0, but was " + width);
-        }
+        fileExists(sourceUri);
+        Guard.isPositive("width", width);
 
         return summarize("sizedWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resizeToWidth(width),
             "Generating sized web image from {} as {}, width {} px", width);
@@ -167,15 +162,9 @@ public class ImageManagement implements ImageManagementInterface {
         }
     }
 
-    private void validateParameters(URI sourceUri, double factor) throws FileNotFoundException {
+    private void fileExists(URI sourceUri) throws FileNotFoundException {
         if (!new File(sourceUri).exists()) {
             throw new FileNotFoundException("sourceUri must exist: " + sourceUri.getRawPath());
-        }
-        if (Double.isNaN(factor)) {
-            throw new IllegalArgumentException("factor must be a number, but was " + factor);
-        }
-        if (factor <= 0.0) {
-            throw new IllegalArgumentException("factor must be > 0.0, but was " + factor);
         }
     }
 }

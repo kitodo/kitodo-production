@@ -19,6 +19,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.exceptions.Guard;
 import org.kitodo.production.helper.Helper;
 
 /**
@@ -463,9 +464,7 @@ public class EmptyTask extends Thread {
      *            the tasks progress
      */
     public void setProgress(int progress) {
-        if (progress < 0 || progress > 100) {
-            throw new IllegalArgumentException("Progress out of range: " + progress);
-        }
+        Guard.isInRange("progress", progress, 0, 100);
         this.progress = progress;
     }
 
