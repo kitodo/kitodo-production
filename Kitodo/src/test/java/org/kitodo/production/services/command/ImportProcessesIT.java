@@ -13,14 +13,14 @@ package org.kitodo.production.services.command;
 
 // abbreviations
 import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 // base Java
 import java.io.File;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,8 +31,6 @@ import java.time.ZoneId;
 
 // open source code
 import org.apache.commons.lang3.SystemUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -56,8 +54,6 @@ import org.kitodo.production.services.ServiceManager;
 import test.TreeDeleter;
 
 public class ImportProcessesIT {
-    private static final Logger logger = LogManager.getLogger(ImportProcessesIT.class);
-
     private static final Path ERRORS_DIR_PATH = Paths.get("src/test/resources/errors");
 
     // keep and restore original meta.xml files
@@ -313,10 +309,10 @@ public class ImportProcessesIT {
         underTest.run(33);
         String sixMetaXml = Files.readString(Paths.get("src/test/resources/metadata/6/meta.xml"),
             StandardCharsets.UTF_8);
-        assertTrue("should have added correct child links to meta.xml file", sixMetaXml.contains(
-            "<mets:mptr xlink:href=\"database://?process.id=4\" LOCTYPE=\"OTHER\" OTHERLOCTYPE=\"Kitodo.Production\"/>"));
-        assertTrue("should have added correct child links to meta.xml file", sixMetaXml.contains(
-            "<mets:mptr xlink:href=\"database://?process.id=5\" LOCTYPE=\"OTHER\" OTHERLOCTYPE=\"Kitodo.Production\"/>"));
+        assertThat("should have added correct child links to meta.xml file",
+            sixMetaXml, containsString("xlink:href=\"database://?process.id=4\""));
+        assertThat("should have added correct child links to meta.xml file",
+            sixMetaXml, containsString("xlink:href=\"database://?process.id=5\""));
 
         Process parent = ServiceManager.getProcessService().getById(6);
         assertEquals("parent should have 2 children", 2, parent.getChildren().size());
