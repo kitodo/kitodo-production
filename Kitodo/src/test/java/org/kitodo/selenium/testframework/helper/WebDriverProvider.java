@@ -15,11 +15,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -28,15 +30,30 @@ import org.codehaus.plexus.archiver.tar.TarGZipUnArchiver;
 import org.codehaus.plexus.archiver.zip.ZipUnArchiver;
 import org.kitodo.ExecutionPermission;
 
+import javax.json.Json;
+import javax.json.JsonObject;
+import javax.json.JsonReader;
+
 public class WebDriverProvider {
 
     private static final Logger logger = LogManager.getLogger(WebDriverProvider.class);
 
-    // https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
-    private static final String CHROME_DRIVER_LATEST_RELEASE_URL = "https://chromedriver.storage.googleapis.com/LATEST_RELEASE";
-
-    private static UnArchiver zipUnArchiver = new ZipUnArchiver();
-    private static UnArchiver tarGZipUnArchiver = new TarGZipUnArchiver();
+    // https://chromedriver.chromium.org/downloads
+    private static final String CHROME_DRIVER_LAST_GOOD_VERSIONS_URL
+            = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json";
+    private static final String CHROME_FOR_TESTING_URL = "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/";
+    public static final String CHROME_DRIVER = "chromedriver";
+    private static final String CHROME_DRIVER_MAC_PREFIX = "mac-x64";
+    private static final String CHROME_DRIVER_WIN_PREFIX = "win32";
+    private static final String CHROME_DRIVER_LINUX_PREFIX = "linux64";
+    public static final String CHROME_DRIVER_MAC_SUBDIR = CHROME_DRIVER + "-" + CHROME_DRIVER_MAC_PREFIX;
+    public static final String CHROME_DRIVER_WIN_SUBDIR = CHROME_DRIVER + "-" +  CHROME_DRIVER_WIN_PREFIX;
+    public static final String CHROME_DRIVER_LINUX_SUBDIR = CHROME_DRIVER + "-" +  CHROME_DRIVER_LINUX_PREFIX;
+    private static final String ZIP = ".zip";
+    public static final String EXE = ".exe";
+    private static final String ZIP_FILE = CHROME_DRIVER + ZIP;
+    private static final UnArchiver zipUnArchiver = new ZipUnArchiver();
+    private static final UnArchiver tarGZipUnArchiver = new TarGZipUnArchiver();
 
     /**
      * Downloads Geckodriver, extracts archive file and set system property
@@ -105,35 +122,34 @@ public class WebDriverProvider {
      */
     public static void provideChromeDriver(String downloadFolder, String extractFolder)
             throws IOException {
-
         String chromeDriverVersion = fetchLatestStableChromeDriverVersion();
-
-        String chromeDriverUrl = "https://chromedriver.storage.googleapis.com/" + chromeDriverVersion + "/";
-        String chromeDriverFileName;
+        String chromeDriverUrl = CHROME_FOR_TESTING_URL + chromeDriverVersion + "/";
+        String driverFilename = CHROME_DRIVER;
+        File chromeDriverFile;
         if (SystemUtils.IS_OS_WINDOWS) {
-            chromeDriverFileName = "chromedriver.exe";
-            File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_win32.zip"), chromeDriverZipFile);
-            extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
-
+            driverFilename = driverFilename + EXE;
+            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_WIN_SUBDIR + "/" + ZIP_FILE);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + "/"
+                    + CHROME_DRIVER_WIN_SUBDIR + ZIP), chromeDriverZipFile);
+            chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
+                    CHROME_DRIVER_WIN_SUBDIR);
         } else if (SystemUtils.IS_OS_MAC_OSX) {
-            chromeDriverFileName = "chromedriver";
-            File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_mac64.zip"), chromeDriverZipFile);
+            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_MAC_SUBDIR + "/" + ZIP_FILE);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_MAC_PREFIX + "/"
+                    + CHROME_DRIVER_MAC_SUBDIR + ZIP), chromeDriverZipFile);
             File theDir = new File(extractFolder);
             if (!theDir.exists()) {
                 theDir.mkdir();
             }
-            extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
-
+            chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
+                    CHROME_DRIVER_MAC_SUBDIR);
         } else {
-            chromeDriverFileName = "chromedriver";
-            File chromeDriverZipFile = new File(downloadFolder + "chromedriver.zip");
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + "chromedriver_linux64.zip"), chromeDriverZipFile);
-            extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder));
+            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_LINUX_SUBDIR + "/" + ZIP_FILE);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_LINUX_PREFIX + "/"
+                    + CHROME_DRIVER_LINUX_SUBDIR + ZIP), chromeDriverZipFile);
+            chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
+                    CHROME_DRIVER_LINUX_SUBDIR);
         }
-        File chromeDriverFile = new File(extractFolder, chromeDriverFileName);
-
         if (chromeDriverFile.exists()) {
             if (!SystemUtils.IS_OS_WINDOWS) {
                 ExecutionPermission.setExecutePermission(chromeDriverFile);
@@ -147,6 +163,13 @@ public class WebDriverProvider {
         } else {
             logger.error("Chromedriver file not found");
         }
+    }
+
+    private static File extractZipFileToFolder(File zipFile, File destinationFolder, String chromeDriverFilename,
+                                               String chromeDriverVersion) {
+        extractZipFileToFolder(zipFile, destinationFolder);
+        return new File(destinationFolder.toURI().resolve(chromeDriverVersion + File.separator)
+                .resolve(chromeDriverFilename));
     }
 
     private static void extractZipFileToFolder(File zipFile, File destinationFolder) {
@@ -168,24 +191,19 @@ public class WebDriverProvider {
     }
 
     private static String fetchLatestStableChromeDriverVersion() {
-
         String version = "";
         try {
-
-            URL url = new URL(CHROME_DRIVER_LATEST_RELEASE_URL);
+            URL url = new URL(CHROME_DRIVER_LAST_GOOD_VERSIONS_URL);
             URLConnection urlConnection = url.openConnection();
-
             BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-
-            StringBuilder content = new StringBuilder();
-            content.append(bufferedReader.readLine());
-
+            String content = bufferedReader.readLine();
+            JsonReader jsonReader = Json.createReader(new StringReader(content));
+            JsonObject jsonObject = jsonReader.readObject();
+            version = jsonObject.get("channels").asJsonObject().get("Stable").asJsonObject().get("version").toString();
+            version = StringUtils.strip(version, "\"");
             bufferedReader.close();
-
-            version = content.toString();
-
+            jsonReader.close();
             logger.info("Latest Chrome Driver Release found: {}", version);
-
         } catch (MalformedURLException exception) {
             logger.error("URL for fetching Chrome Release is malformed.");
         } catch (IOException exception) {
