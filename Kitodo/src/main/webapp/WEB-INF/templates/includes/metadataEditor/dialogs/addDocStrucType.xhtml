@@ -143,23 +143,23 @@
 
                             <!-- show order of first and last preselected media if present -->
                             <p:row rendered="#{viewsSelected}">
-                                <c:set var="firstPhysicalDivision"
-                                       value="#{selectedViews[0].physicalDivision}"/>
-                                <c:set var="lastPhysicalDivision"
-                                       value="#{selectedViews[selectedViews.size() - 1].physicalDivision}"/>
+                                <c:set var="firstView"
+                                       value="#{selectedViews[0]}"/>
+                                <c:set var="lastView"
+                                       value="#{selectedViews[selectedViews.size() - 1]}"/>
                                 <p:row>
                                     <p:outputLabel for="firstMedia"
                                                    value="#{msgs.firstPage}: "/>
                                     <p:inputText id="firstMedia"
                                                  disabled="#{true}"
                                                  class="input"
-                                                 value="#{firstPhysicalDivision.order} : #{firstPhysicalDivision.orderlabel}"/>
+                                                 value="#{DataEditorForm.structurePanel.buildViewLabel(firstView)}"/>
                                     <p:outputLabel for="lastMedia"
                                                    value="#{msgs.lastPage}: "/>
                                     <p:inputText id="lastMedia"
                                                  disabled="#{true}"
                                                  class="input"
-                                                 value="#{lastPhysicalDivision.order} : #{lastPhysicalDivision.orderlabel}"/>
+                                                 value="#{DataEditorForm.structurePanel.buildViewLabel(lastView)}"/>
                                 </p:row>
                             </p:row>
                         </p:panelGrid>
