@@ -122,19 +122,19 @@ public class WebDriverProvider {
     public static void provideChromeDriver(String downloadFolder, String extractFolder)
             throws IOException {
         String chromeDriverVersion = fetchLatestStableChromeDriverVersion();
-        String chromeDriverUrl = CHROME_FOR_TESTING_URL + chromeDriverVersion + "/";
+        String chromeDriverUrl = CHROME_FOR_TESTING_URL + chromeDriverVersion + File.separator;
         String driverFilename = CHROME_DRIVER;
         File chromeDriverFile;
         if (SystemUtils.IS_OS_WINDOWS) {
             driverFilename = driverFilename + EXE;
-            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_WIN_SUBDIR + "/" + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + "/"
+            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_WIN_SUBDIR + File.separator + ZIP_FILE);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_WIN_PREFIX + File.separator
                     + CHROME_DRIVER_WIN_SUBDIR + ZIP), chromeDriverZipFile);
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_WIN_SUBDIR);
         } else if (SystemUtils.IS_OS_MAC_OSX) {
-            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_MAC_SUBDIR + "/" + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_MAC_PREFIX + "/"
+            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_MAC_SUBDIR + File.separator + ZIP_FILE);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_MAC_PREFIX + File.separator
                     + CHROME_DRIVER_MAC_SUBDIR + ZIP), chromeDriverZipFile);
             File theDir = new File(extractFolder);
             if (!theDir.exists()) {
@@ -145,8 +145,8 @@ public class WebDriverProvider {
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_MAC_SUBDIR);
         } else {
-            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_LINUX_SUBDIR + "/" + ZIP_FILE);
-            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_LINUX_PREFIX + "/"
+            File chromeDriverZipFile = new File(downloadFolder + CHROME_DRIVER_LINUX_SUBDIR + File.separator + ZIP_FILE);
+            FileUtils.copyURLToFile(new URL(chromeDriverUrl + CHROME_DRIVER_LINUX_PREFIX + File.separator
                     + CHROME_DRIVER_LINUX_SUBDIR + ZIP), chromeDriverZipFile);
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_LINUX_SUBDIR);
