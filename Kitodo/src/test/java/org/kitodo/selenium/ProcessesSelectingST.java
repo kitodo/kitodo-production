@@ -13,17 +13,10 @@ package org.kitodo.selenium;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
