@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 
 import javax.json.Json;
 import javax.json.JsonObject;
@@ -83,8 +82,8 @@ public class WebDriverProvider {
             FileUtils.copyURLToFile(new URL(geckoDriverUrl + "geckodriver-v" + geckoDriverVersion + "-macos.tar.gz"),
                     geckoDriverTarFile);
             File theDir = new File(extractFolder);
-            if (!theDir.exists()) {
-                theDir.mkdir();
+            if (!theDir.mkdir()) {
+                logger.error("Unable to create directory '" + theDir.getPath() + "'!");
             }
             extractTarFileToFolder(geckoDriverTarFile, theDir);
         } else {
@@ -139,7 +138,9 @@ public class WebDriverProvider {
                     + CHROME_DRIVER_MAC_SUBDIR + ZIP), chromeDriverZipFile);
             File theDir = new File(extractFolder);
             if (!theDir.exists()) {
-                theDir.mkdir();
+                if (!theDir.mkdir()) {
+                    logger.error("Unable to create directory '" + theDir.getPath() + "'!");
+                }
             }
             chromeDriverFile = extractZipFileToFolder(chromeDriverZipFile, new File(extractFolder), driverFilename,
                     CHROME_DRIVER_MAC_SUBDIR);
@@ -194,16 +195,16 @@ public class WebDriverProvider {
         String version = "";
         try {
             URL url = new URL(CHROME_DRIVER_LAST_GOOD_VERSIONS_URL);
-            URLConnection urlConnection = url.openConnection();
-            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-            String content = bufferedReader.readLine();
-            JsonReader jsonReader = Json.createReader(new StringReader(content));
-            JsonObject jsonObject = jsonReader.readObject();
-            version = jsonObject.get("channels").asJsonObject().get("Stable").asJsonObject().get("version").toString();
-            version = StringUtils.strip(version, "\"");
-            bufferedReader.close();
-            jsonReader.close();
-            logger.info("Latest Chrome Driver Release found: {}", version);
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(url.openStream()))) {
+                String content = bufferedReader.readLine();
+                JsonReader jsonReader = Json.createReader(new StringReader(content));
+                JsonObject jsonObject = jsonReader.readObject();
+                version = jsonObject.get("channels").asJsonObject().get("Stable").asJsonObject().get("version")
+                        .toString();
+                version = StringUtils.strip(version, "\"");
+                jsonReader.close();
+                logger.info("Latest Chrome Driver Release found: {}", version);
+            }
         } catch (MalformedURLException exception) {
             logger.error("URL for fetching Chrome Release is malformed.");
         } catch (IOException exception) {
