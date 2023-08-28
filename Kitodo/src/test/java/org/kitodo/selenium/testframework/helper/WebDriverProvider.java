@@ -169,7 +169,7 @@ public class WebDriverProvider {
     private static File extractZipFileToFolder(File zipFile, File destinationFolder, String chromeDriverFilename,
                                                String chromeDriverVersion) {
         extractZipFileToFolder(zipFile, destinationFolder);
-        return new File(destinationFolder.toURI().resolve(chromeDriverVersion + File.separator)
+        return new File(destinationFolder.toURI().resolve(chromeDriverVersion + '/')
                 .resolve(chromeDriverFilename));
     }
 
