@@ -81,11 +81,7 @@ public class Browser {
     }
 
     private static void provideChromeDriver() throws IOException {
-        String driverFileName = "chromedriver";
-        if (SystemUtils.IS_OS_WINDOWS) {
-            driverFileName = driverFileName.concat(".exe");
-        }
-        File driverFile = new File(DRIVER_DIR + driverFileName);
+        File driverFile = getDriverFile();
 
         if (!driverFile.exists()) {
             logger.debug("{} does not exist, providing chrome driver now", driverFile.getAbsolutePath());
@@ -104,6 +100,18 @@ public class Browser {
         options.setExperimentalOption("prefs", chromePrefs);
 
         webDriver = new ChromeDriver(service, options);
+    }
+
+    private static File getDriverFile() {
+        String driver = WebDriverProvider.CHROME_DRIVER;
+        if (SystemUtils.IS_OS_WINDOWS) {
+            driver = WebDriverProvider.CHROME_DRIVER_WIN_SUBDIR + "/" + driver.concat(WebDriverProvider.EXE);
+        } else if (SystemUtils.IS_OS_MAC_OSX) {
+            driver = WebDriverProvider.CHROME_DRIVER_MAC_SUBDIR + "/" + driver;
+        } else {
+            driver = WebDriverProvider.CHROME_DRIVER_LINUX_SUBDIR + "/" + driver;
+        }
+        return new File(DRIVER_DIR + driver);
     }
 
     private static void provideGeckoDriver() throws IOException {
