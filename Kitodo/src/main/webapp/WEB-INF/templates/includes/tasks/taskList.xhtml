@@ -64,7 +64,7 @@
             </p:column>
 
             <p:column headerText="#{msgs.process}"
-                      sortBy="#{item.processForTask.title}"
+                      sortBy="#{item.processForTask.title.keyword}"
                       rendered="#{CurrentTaskForm.showColumn('task.process')}">
                 <h:link id="editProcess" outcome="/pages/processEdit" title="#{msgs.editProcess}"
                         rendered="#{SecurityAccessController.hasAuthorityToEditProcess()}">
@@ -91,7 +91,7 @@
 
             <p:column id="processingUserColumn"
                       headerText="#{msgs.lastEditingUser}"
-                      sortBy="#{item.processingUser.name}"
+                      sortBy="#{item.processingUser.name.keyword}"
                       rendered="#{CurrentTaskForm.showColumn('task.lastEditingUser')}">
                 <h:outputText value="#{item.processingUser ne null ? item.processingUser.fullName : ''}"
                               title="#{item.processingUser ne null ? item.processingUser.fullName : ''}"/>
