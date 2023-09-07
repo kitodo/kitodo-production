@@ -1042,26 +1042,28 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
                 String parameterValue = filterComponents[1].trim();
                 if (declaredFields.contains(parameterName)) {
                     // class contains parameter as column
-                    if (Objects.equals(baseClass.getDeclaredField(parameterName).getType().getSuperclass(),
-                            Number.class)) {
-                        filterMap.put(parameterName, Integer.parseInt(parameterValue));
-                    } else {
-                        filterMap.put(parameterName, parameterValue);
-                    }
+                    filterMap.put(parameterName, parseFilterValue(baseClass.getDeclaredField(parameterName).getType(),
+                            parameterValue));
                 } else {
                     // otherwise check if parent class contains parameter as column
                     if (Objects.nonNull(baseClass.getSuperclass())) {
-                        Field field = baseClass.getSuperclass().getDeclaredField(parameterName);
-                        if (Objects.equals(field.getType().getSuperclass(), Number.class)) {
-                            filterMap.put(parameterName, Integer.parseInt(parameterValue));
-                        } else {
-                            filterMap.put(parameterName, parameterValue);
-                        }
+                        filterMap.put(parameterName, parseFilterValue(baseClass.getSuperclass()
+                                .getDeclaredField(parameterName).getType(), parameterValue));
                     }
                 }
             }
         }
         return filterMap;
+    }
+
+    private Object parseFilterValue(Class<?> clazz, String parameterValue) {
+        if (Objects.equals(clazz.getSuperclass(), Number.class)) {
+            return Integer.parseInt(parameterValue);
+        } else if (Objects.equals(clazz, boolean.class)) {
+            return Boolean.parseBoolean(parameterValue);
+        } else {
+            return parameterValue;
+        }
     }
 
     /**
