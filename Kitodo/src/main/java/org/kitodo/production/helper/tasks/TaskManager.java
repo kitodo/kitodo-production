@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
@@ -32,6 +34,7 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * {@link org.kitodo.production.forms.TaskManagerForm}.
  */
 public class TaskManager {
+    private static final Logger logger = LogManager.getLogger(TaskManager.class);
 
     /**
      * The field singletonInstance holds the singleton instance of the
@@ -113,7 +116,13 @@ public class TaskManager {
      * @return a copy of the task list
      */
     public static List<EmptyTask> getTaskList() {
-        return new ArrayList<>(singleton().taskList);
+        do {
+            try {
+                return new ArrayList<>(singleton().taskList);
+            } catch (ArrayIndexOutOfBoundsException listModifiedByAnotherThreadWhileIterating) {
+                logger.catching(listModifiedByAnotherThreadWhileIterating);
+            }
+        } while (true);
     }
 
     /**
@@ -147,6 +156,7 @@ public class TaskManager {
             try {
                 singleton().taskList.removeIf(emptyTask -> emptyTask.getState().equals(Thread.State.TERMINATED));
             } catch (ConcurrentModificationException listModifiedByAnotherThreadWhileIterating) {
+                logger.catching(listModifiedByAnotherThreadWhileIterating);
                 redo = true;
             }
         } while (redo);
