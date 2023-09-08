@@ -27,12 +27,12 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
-import org.kitodo.production.services.data.ProjectService;
 import org.kitodo.production.services.data.RoleService;
 import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.TabChangeEvent;
@@ -397,7 +397,12 @@ public class BaseForm implements Serializable {
      * @return String containing project titles
      */
     public String getProjectTitles(List<Project> projects) {
-        return ProjectService.getProjectTitles(projects);
+        try {
+            return ServiceManager.getProjectService().getProjectTitles(projects);
+        } catch (DataException e) {
+            Helper.setErrorMessage(e);
+            return "";
+        }
     }
 
     /**
