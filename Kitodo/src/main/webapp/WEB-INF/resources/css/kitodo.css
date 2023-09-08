@@ -1713,6 +1713,11 @@ Import form
     color: var(--pure-white);
 }
 
+#recordIdentifierMissingDialog .select-note {
+    max-height: 480px;
+    overflow-y: auto;
+}
+
 .error-item {
     margin-top: var(--default-half-size);
 }
