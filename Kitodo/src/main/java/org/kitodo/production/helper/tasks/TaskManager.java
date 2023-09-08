@@ -22,6 +22,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
@@ -32,6 +34,7 @@ import org.kitodo.production.helper.tasks.EmptyTask.Behaviour;
  * {@link org.kitodo.production.forms.TaskManagerForm}.
  */
 public class TaskManager {
+    private static final Logger logger = LogManager.getLogger(TaskManager.class);
 
     /**
      * The field singletonInstance holds the singleton instance of the
@@ -72,7 +75,10 @@ public class TaskManager {
      *            task to add
      */
     public static void addTask(EmptyTask task) {
-        singleton().taskList.addLast(task);
+        LinkedList<EmptyTask> tasks = singleton().taskList;
+        synchronized(tasks) {
+            tasks.addLast(task);
+        }
     }
 
     /**
@@ -91,12 +97,15 @@ public class TaskManager {
      */
     static void addTaskIfMissing(EmptyTask task) {
         LinkedList<EmptyTask> tasks = singleton().taskList;
-        if (!tasks.contains(task)) {
-            int pos = lastIndexOf(TaskState.WORKING) + 1;
-            try {
-                tasks.add(pos, task);
-            } catch (IndexOutOfBoundsException e) {
-                tasks.addLast(task);
+        synchronized(tasks) {
+            if (!tasks.contains(task)) {
+                int pos = lastIndexOf(TaskState.WORKING) + 1;
+                try {
+                    tasks.add(pos, task);
+                } catch (IndexOutOfBoundsException e) {
+                    logger.catching(e);
+                    tasks.addLast(task);
+                }
             }
         }
     }
@@ -113,7 +122,10 @@ public class TaskManager {
      * @return a copy of the task list
      */
     public static List<EmptyTask> getTaskList() {
-        return new ArrayList<>(singleton().taskList);
+        LinkedList<EmptyTask> tasks = singleton().taskList;
+        synchronized(tasks) {
+            return new ArrayList<>(tasks);
+        }
     }
 
     /**
@@ -127,10 +139,13 @@ public class TaskManager {
     private static int lastIndexOf(TaskState state) {
         int lastIndex = -1;
         int pos = -1;
-        for (EmptyTask task : singleton().taskList) {
-            pos++;
-            if (task.getTaskState().equals(state)) {
-                lastIndex = pos;
+        LinkedList<EmptyTask> tasks = singleton().taskList;
+        synchronized (tasks) {
+            for (EmptyTask task : tasks) {
+                pos++;
+                if (task.getTaskState().equals(state)) {
+                    lastIndex = pos;
+                }
             }
         }
         return lastIndex;
@@ -145,8 +160,12 @@ public class TaskManager {
         do {
             redo = false;
             try {
-                singleton().taskList.removeIf(emptyTask -> emptyTask.getState().equals(Thread.State.TERMINATED));
+                LinkedList<EmptyTask> tasks = singleton().taskList;
+                synchronized (tasks) {
+                    tasks.removeIf(emptyTask -> emptyTask.getState().equals(Thread.State.TERMINATED));
+                }
             } catch (ConcurrentModificationException listModifiedByAnotherThreadWhileIterating) {
+                logger.catching(listModifiedByAnotherThreadWhileIterating);
                 redo = true;
             }
         } while (redo);
@@ -160,10 +179,12 @@ public class TaskManager {
      *            task to move forwards
      */
     public static void runEarlier(EmptyTask task) {
-        TaskManager theManager = singleton();
-        int index = theManager.taskList.indexOf(task);
-        if (index > 0) {
-            Collections.swap(theManager.taskList, index - 1, index);
+        LinkedList<EmptyTask> tasks = singleton().taskList;
+        synchronized (tasks) {
+            int index = tasks.indexOf(task);
+            if (index > 0) {
+                Collections.swap(tasks, index - 1, index);
+            }
         }
     }
 
@@ -175,10 +196,12 @@ public class TaskManager {
      *            task to move backwards
      */
     public static void runLater(EmptyTask task) {
-        TaskManager theManager = singleton();
-        int index = theManager.taskList.indexOf(task);
-        if (index > -1 && index + 1 < theManager.taskList.size()) {
-            Collections.swap(theManager.taskList, index, index + 1);
+        LinkedList<EmptyTask> tasks = singleton().taskList;
+        synchronized (tasks) {
+            int index = tasks.indexOf(task);
+            if (index > -1 && index + 1 < tasks.size()) {
+                Collections.swap(tasks, index, index + 1);
+            }
         }
     }
 
@@ -215,16 +238,20 @@ public class TaskManager {
         do {
             redo = false;
             try {
-                Iterator<EmptyTask> inspector = singleton().taskList.iterator();
-                while (inspector.hasNext()) {
-                    EmptyTask task = inspector.next();
-                    if (task.isAlive()) {
-                        task.interrupt(Behaviour.DELETE_IMMEDIATELY);
-                    } else {
-                        inspector.remove();
+                LinkedList<EmptyTask> tasks = singleton().taskList;
+                synchronized (tasks) {
+                    Iterator<EmptyTask> inspector = tasks.iterator();
+                    while (inspector.hasNext()) {
+                        EmptyTask task = inspector.next();
+                        if (task.isAlive()) {
+                            task.interrupt(Behaviour.DELETE_IMMEDIATELY);
+                        } else {
+                            inspector.remove();
+                        }
                     }
                 }
             } catch (ConcurrentModificationException listModifiedByAnotherThreadWhileIterating) {
+                logger.catching(listModifiedByAnotherThreadWhileIterating);
                 redo = true;
             }
         } while (redo);
