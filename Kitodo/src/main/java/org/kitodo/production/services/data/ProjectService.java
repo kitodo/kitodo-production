@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -353,12 +355,12 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     public String getProjectTitles(List<Project> projects) throws DataException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
                 && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
-            return projects.stream().map(Project::getTitle).collect(Collectors.joining());
+            return projects.stream().map(Project::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
         } else {
             List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(ProjectDTO::getId)
                     .collect(Collectors.toList());
             return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
-                    .collect(Collectors.joining(", "));
+                    .collect(Collectors.joining(COMMA_DELIMITER));
         }
     }
 
@@ -369,7 +371,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      */
     public static void delete(int projectID) throws DAOException, DataException, ProjectDeletionException {
         Project project = ServiceManager.getProjectService().getById(projectID);
-        if (project.getProcesses().size() > 0) {
+        if (!project.getProcesses().isEmpty()) {
             throw new ProjectDeletionException("cannotDeleteProject");
         }
         for (User user : project.getUsers()) {
