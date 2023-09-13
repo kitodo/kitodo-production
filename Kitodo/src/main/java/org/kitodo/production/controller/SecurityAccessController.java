@@ -727,15 +727,6 @@ public class SecurityAccessController {
     }
 
     /**
-     * Check if current user has authority to view index page.
-     *
-     * @return true if user has authority to 'viewIndex' page.
-     */
-    public boolean hasAuthorityToViewIndexPage() {
-        return securityAccessService.hasAuthorityToViewIndexPage();
-    }
-
-    /**
      * Check if current user has authority to view task manager page.
      *
      * @return true if user has authority to 'viewTaskManager' page.

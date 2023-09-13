@@ -359,14 +359,7 @@ public class IndexingForm {
      * Update the view.
      */
     public void updateView() {
-        try {
-            if (ServiceManager.getIndexingService().isIndexCorrupted()) {
-                Helper.setErrorMessage("indexOutOfDate");
-            }
-            Ajax.update("@all");
-        } catch (DataException | DAOException e) {
-            Helper.setErrorMessage(e.getMessage());
-        }
+        Ajax.update("@all");
     }
 
     /**
