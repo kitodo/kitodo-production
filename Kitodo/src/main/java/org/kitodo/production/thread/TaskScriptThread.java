@@ -80,6 +80,7 @@ public class TaskScriptThread extends EmptyTask {
                 logger.error("Data Exception occurred", e);
             }
         }
+        super.setProgress(100);
     }
 
     /**

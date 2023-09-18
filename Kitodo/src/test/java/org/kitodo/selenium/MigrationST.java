@@ -35,6 +35,9 @@ import org.kitodo.selenium.testframework.pages.SystemPage;
 import org.kitodo.selenium.testframework.pages.WorkflowEditPage;
 
 public class MigrationST extends BaseTestSelenium {
+
+    private String randomWorkflowName;
+
     @Before
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
@@ -44,9 +47,13 @@ public class MigrationST extends BaseTestSelenium {
     public void logout() throws Exception {
         FileService fileService = ServiceManager.getFileService();
         String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
-        URI svgDiagramURI = new File(diagramDirectory + "FinishedClosedProgressOpenLocked.svg").toURI();
-        URI xmlDiagramURI = new File(diagramDirectory + "FinishedClosedProgressOpenLocked.bpmn20.xml").toURI();
+        // remove XML and SVG files of migration workflow
+        URI svgDiagramURI = new File(diagramDirectory + "migrationWorkflow.svg").toURI();
+        URI xmlDiagramURI = new File(diagramDirectory + "migrationWorkflow.bpmn20.xml").toURI();
         fileService.delete(svgDiagramURI);
+        fileService.delete(xmlDiagramURI);
+        // remove XML file of workflow with randomly generated name
+        xmlDiagramURI = new File(diagramDirectory + randomWorkflowName + ".bpmn20.xml").toURI();
         fileService.delete(xmlDiagramURI);
         Pages.getTopNavigation().logout();
     }
@@ -63,6 +70,7 @@ public class MigrationST extends BaseTestSelenium {
         systemPage.selectProjects();
         assertEquals("Finished, Closed, Progress, Open, Locked", systemPage.getAggregatedTasks(2));
         WorkflowEditPage workflowEditPage = systemPage.createNewWorkflow();
+        randomWorkflowName = workflowEditPage.getWorkflowTitle();
         workflowEditPage.changeWorkflowStatusToActive();
         assertTrue(workflowEditPage.getWorkflowTitle().contains("ChangeME"));
         workflowEditPage.changeWorkflowTitle("migrationWorkflow");

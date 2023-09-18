@@ -80,28 +80,28 @@ public class ProcessHelperIT {
         process.setProject(ServiceManager.getProjectService().getById(1));
         process.setRuleset(ServiceManager.getRulesetService().getById(1));
         TempProcess tempProcess = new TempProcess(process, new Workpiece());
-        RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetService()
+        RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
                 .openRuleset(tempProcess.getProcess().getRuleset());
 
-        testGenerationOfAtstslByCurrentTempProcess(tempProcess, rulesetManagementInterface);
+        testGenerationOfAtstslByCurrentTempProcess(tempProcess, rulesetManagement);
 
-        testForceRegenerationOfAtstsl(tempProcess, rulesetManagementInterface);
+        testForceRegenerationOfAtstsl(tempProcess, rulesetManagement);
 
-        testForceRegenerationByTempProcessParents(tempProcess, rulesetManagementInterface);
+        testForceRegenerationByTempProcessParents(tempProcess, rulesetManagement);
 
-        testForceRegenerationByParentProcess(tempProcess, rulesetManagementInterface);
+        testForceRegenerationByParentProcess(tempProcess, rulesetManagement);
     }
 
     private void testForceRegenerationByParentProcess(TempProcess tempProcess,
-            RulesetManagementInterface rulesetManagementInterface) throws ProcessGenerationException, DAOException {
+            RulesetManagementInterface rulesetManagement) throws ProcessGenerationException, DAOException {
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagementInterface, ACQUISITION_STAGE_CREATE, priorityList,
+                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList,
                 ServiceManager.getProcessService().getById(2), true);
         assertEquals("Secopr", tempProcess.getAtstsl());
     }
 
     private void testForceRegenerationByTempProcessParents(TempProcess tempProcess,
-            RulesetManagementInterface rulesetManagementInterface) throws DAOException, ProcessGenerationException {
+            RulesetManagementInterface rulesetManagement) throws DAOException, ProcessGenerationException {
         TempProcess tempProcessParent = new TempProcess(ServiceManager.getProcessService().getById(2), new Workpiece());
         tempProcess.getProcessMetadata().setProcessDetails(new ProcessFieldedMetadata() {
             {
@@ -110,23 +110,23 @@ public class ProcessHelperIT {
             }
         });
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                Collections.singletonList(tempProcessParent), DOCTYPE, rulesetManagementInterface,
+                Collections.singletonList(tempProcessParent), DOCTYPE, rulesetManagement,
                 ACQUISITION_STAGE_CREATE, priorityList, null, true);
         assertEquals("Secopr", tempProcess.getAtstsl());
     }
 
     private void testForceRegenerationOfAtstsl(TempProcess tempProcess,
-            RulesetManagementInterface rulesetManagementInterface) throws ProcessGenerationException {
+            RulesetManagementInterface rulesetManagement) throws ProcessGenerationException {
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagementInterface, ACQUISITION_STAGE_CREATE, priorityList, null, false);
+                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList, null, false);
         assertEquals("test", tempProcess.getAtstsl());
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagementInterface, ACQUISITION_STAGE_CREATE, priorityList, null, true);
+                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList, null, true);
         assertEquals("test2", tempProcess.getAtstsl());
     }
 
     private void testGenerationOfAtstslByCurrentTempProcess(TempProcess tempProcess,
-            RulesetManagementInterface rulesetManagementInterface) throws ProcessGenerationException {
+            RulesetManagementInterface rulesetManagement) throws ProcessGenerationException {
         tempProcess.getProcessMetadata().setProcessDetails(new ProcessFieldedMetadata() {
             {
                 treeNode.getChildren()
@@ -135,7 +135,7 @@ public class ProcessHelperIT {
         });
         assertNull(tempProcess.getAtstsl());
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
-                null, DOCTYPE, rulesetManagementInterface, ACQUISITION_STAGE_CREATE, priorityList, null, false);
+                null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList, null, false);
         assertEquals("test", tempProcess.getAtstsl());
         tempProcess.getProcessMetadata().setProcessDetails(new ProcessFieldedMetadata() {
             {

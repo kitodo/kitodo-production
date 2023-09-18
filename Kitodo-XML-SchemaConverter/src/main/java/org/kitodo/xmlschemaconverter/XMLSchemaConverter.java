@@ -19,6 +19,7 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.file.Files;
 import java.util.List;
+import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
 import javax.xml.XMLConstants;
@@ -37,6 +38,7 @@ import javax.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
 
+import org.apache.commons.io.ByteOrderMark;
 import org.kitodo.api.schemaconverter.DataRecord;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
@@ -118,11 +120,24 @@ public class XMLSchemaConverter implements SchemaConverterInterface {
                     = ((SAXTransformerFactory) SAXTransformerFactory.newInstance()).newTransformerHandler();
             handler.setResult(new StreamResult(stringWriter));
             Result saxResult = new SAXResult(handler);
+            xmlString = removeBom(xmlString);
             SAXSource saxSource = new SAXSource(new InputSource(new StringReader(xmlString)));
             xsltTransformer.transform(saxSource, saxResult);
             return stringWriter.toString();
         } catch (TransformerException e) {
             throw new ConfigException("Error in transforming the response to internal format: " + e.getMessage(), e);
         }
+    }
+
+    /**
+     * Remove potential BOM character because XML parser do not handle it properly.
+     * @param xmlStringWithBom String with potential BOM character
+     * @return xml String without BOM character
+     */
+    private String removeBom(String xmlStringWithBom) {
+        if (Objects.equals(xmlStringWithBom.charAt(0), ByteOrderMark.UTF_BOM)) {
+            return xmlStringWithBom.substring(1);
+        }
+        return xmlStringWithBom;
     }
 }

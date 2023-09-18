@@ -19,7 +19,7 @@
 
     <groupId>org.kitodo</groupId>
     <artifactId>kitodo-production</artifactId>
-    <version>3.6.0-SNAPSHOT</version>
+    <version>3.6.0</version>
     <packaging>pom</packaging>
 
     <organization>
@@ -30,7 +30,7 @@
     <url>https://github.com/kitodo/kitodo-production</url>
 
     <properties>
-        <kitodo.version>3.6.0-SNAPSHOT</kitodo.version>
+        <kitodo.version>3.6.0</kitodo.version>
         <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
         <main.basedir>${project.basedir}</main.basedir>
         <phase.prop>none</phase.prop>
@@ -50,7 +50,8 @@
         <commons-io.version>2.11.0</commons-io.version>
         <commons-lang3.version>3.12.0</commons-lang3.version>
         <commons-net.version>3.9.0</commons-net.version>
-        <org.apache.xmlgraphics.version>2.3</org.apache.xmlgraphics.version>
+        <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
+        <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
         <hibernate.version>5.6.10.Final</hibernate.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
@@ -73,7 +74,7 @@
         <mockito.version>5.0.0</mockito.version>
         <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.5</spring.security.version>
+        <spring.security.version>5.7.10</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
@@ -361,6 +362,17 @@ from system library in Java 11+ -->
             </dependency>
             <dependency>
                 <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>xmlgraphics-commons</artifactId>
+                <version>${org.apache.xmlgraphics.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>*</groupId>
+                        <artifactId>*</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>fop</artifactId>
                 <version>${org.apache.xmlgraphics.version}</version>
                 <exclusions>
@@ -385,15 +397,14 @@ from system library in Java 11+ -->
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.apache.xmlgraphics</groupId>
-                <artifactId>xmlgraphics-commons</artifactId>
-                <version>${org.apache.xmlgraphics.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>*</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.apache.avalon.framework</groupId>
+                <artifactId>avalon-framework-api</artifactId>
+                <version>${org.apache.avalon.framework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.avalon.framework</groupId>
+                <artifactId>avalon-framework-impl</artifactId>
+                <version>${org.apache.avalon.framework.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.awaitility</groupId>
@@ -419,7 +430,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.1.0</version>
+                <version>4.8.0</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>

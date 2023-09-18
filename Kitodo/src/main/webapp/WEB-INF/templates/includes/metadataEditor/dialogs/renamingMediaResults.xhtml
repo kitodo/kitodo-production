@@ -1,0 +1,95 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="renamingMediaSuccessDialog"
+              widgetVar="renamingMediaSuccessDialog"
+              width="480px"
+              resizable="false"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+
+        <h:form id="renamingMediaResultForm">
+
+            <p:panelGrid columns="1"
+                         layout="grid">
+                <p:row>
+                    <h3>#{msgs['dataEditor.renamingMediaComplete']}</h3>
+                    <h:panelGroup layout="block"
+                                  styleClass="select-note ui-messages-info not-scrollable dialogFieldWrapper">
+                        <div>
+                            <h:outputText value="#{DataEditorForm.renamingSuccessMessage}"/>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="okSuccess"
+                                         onclick="PF('renamingMediaSuccessDialog').hide();"
+                                         type="button"
+                                         value="#{msgs.ok}"
+                                         icon="fa fa-check"
+                                         iconPos="right"
+                                         styleClass="primary right"/>
+                    </h:panelGroup>
+
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+
+    </p:dialog>
+
+    <p:dialog id="renamingMediaErrorDialog"
+              widgetVar="renamingMediaErrorDialog"
+              width="480px"
+              resizable="false"
+              showHeader="false"
+              dynamic="true"
+              modal="true">
+
+        <h:form id="renamingImagesErrorForm">
+
+            <p:panelGrid columns="1"
+                         layout="grid">
+                <p:row>
+                    <h3>#{msgs['dataEditor.renamingMediaError']}</h3>
+                    <h:panelGroup layout="block"
+                                  styleClass="select-note ui-messages-error not-scrollable dialogFieldWrapper">
+                        <div>
+                            <h:outputText value="#{DataEditorForm.renamingError}"/>
+                        </div>
+                    </h:panelGroup>
+
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="okError"
+                                         onclick="PF('renamingMediaErrorDialog').hide();"
+                                         type="button"
+                                         value="#{msgs.ok}"
+                                         icon="fa fa-check"
+                                         iconPos="right"
+                                         styleClass="primary right"/>
+                    </h:panelGroup>
+
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+
+    </p:dialog>
+
+</ui:composition>

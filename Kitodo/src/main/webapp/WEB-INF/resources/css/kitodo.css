@@ -502,6 +502,7 @@ Breadcrumb menu
     text-decoration: none;
     text-indent: 0;
     width: var(--input-height);
+    white-space: nowrap;
 }
 
 .breadcrumb-menu ul li .ui-menuitem-text,
@@ -514,6 +515,12 @@ Breadcrumb menu
 .breadcrumb-menu ul li .ui-menuitem-text {
     padding: 0 4px;
     text-overflow: ellipsis;
+}
+
+.breadcrumb-menu ul li:first-child:not(:hover) .ui-menuitem-text {
+    padding: 0;
+    width: 0;
+    opacity: 0;
 }
 
 .breadcrumb-menu ul li:not(:first-child) {
@@ -552,8 +559,11 @@ Breadcrumb menu
     padding: 0 var(--default-half-size);
 }
 
+.breadcrumb-menu ul li,
+.breadcrumb-menu ul li .ui-menuitem-link,
+.breadcrumb-menu ul li .ui-menuitem-icon,
 .breadcrumb-menu ul li .ui-menuitem-text,
-.breadcrumb-menu ul li:hover .ui-menuitem-text {
+.breadcrumb-menu ul li:not(:first-child)::before {
     transition: .3s;
 }
 
@@ -589,6 +599,7 @@ td.actionsColumn {
 
 .ui-datatable tbody td.actionsColumn {
     padding-right: calc(var(--default-full-size) - 10px);
+    position: relative;
 }
 
 #desktopGrid .ui-datatable-scrollable-header-box {
@@ -920,6 +931,13 @@ label.ui-outputlabel[for] {
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-data {
     padding-right: var(--group-margin);
+    overflow-x: hidden;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+#parsedFiltersForm\:parsedFilters .ui-datalist-data:hover {
+    overflow-x: scroll;
 }
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-empty-message {
@@ -1695,6 +1713,11 @@ Import form
     color: var(--pure-white);
 }
 
+#recordIdentifierMissingDialog .select-note {
+    max-height: 480px;
+    overflow-y: auto;
+}
+
 .error-item {
     margin-top: var(--default-half-size);
 }
@@ -2250,9 +2273,10 @@ form#metadata div label,
 }
 
 #commentsBox\:newButton {
-    position: absolute;
     bottom: 16px;
+    box-shadow: var(--second-level-shadow);
     left: 8px;
+    position: absolute;
 }
 
 #commentsBox\:comments > tbody > tr.ui-widget-content:first-child > td.ui-panelgrid-cell {
@@ -2264,8 +2288,11 @@ form#metadata div label,
 }
 
 #commentsBox\:commentsGrid {
-    margin-bottom: 50px;
     overflow-y: scroll;
+}
+
+#commentsBox\:commentsGrid table {
+    margin-bottom: 70px;
 }
 
 #commentsBox\:commentsGrid_head {
@@ -2315,23 +2342,16 @@ form#metadata div label,
 }
 
 #uploadFileDialog {
-    padding: 20px;
     max-height: 550px;
 }
 
 #uploadFileDialog_content {
     box-sizing: border-box;
-    overflow: visible;
-    padding: 0;
 }
 
 #uploadFileDialog .ui-fileupload-buttonbar {
     float: none;
     text-align: right;
-}
-
-#uploadFileDialog .dialogButtonWrapper {
-    margin-bottom: 10px;
 }
 
 #uploadFileDialogForm\:progressBar .ui-progressbar-value {
@@ -2353,6 +2373,28 @@ form#metadata div label,
 #uploadFileDialogForm\:uploadFileGrid_content{
     height: 90%;
 }
+
+.ui-fileupload-buttonbar {
+    margin-bottom: var(--default-full-size);
+}
+
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content {
+    max-height: 120px;
+    overflow-y: scroll;
+}
+
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content,
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files {
+    color: var(--blue);
+    width: 100%;
+}
+
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-content,
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files,
+.ui-dialog .ui-panelgrid-cell div.ui-fileupload-files div {
+    margin: 0;
+}
+
 
 #metadataAccordion\:metadata .ui-treetable-indent,
 #metadataAccordion\:metadata .ui-treetable-toggler {
@@ -2743,8 +2785,7 @@ Column content
     margin-top: 5px;
     height: 100%;
     box-sizing: border-box;
-    overflow-y: scroll;
-    overflow-x: hidden;
+    overflow: hidden;
 }
 
 #paginationPanel {
@@ -2907,12 +2948,12 @@ Column content
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-datepicker-trigger {
     background: var(--pure-white);
-    border: solid var(--default-border-width) var(--light-blue);
+    border: solid var(--default-border-width) var(--blue);
     margin: 0 3px 0 0;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-calendar .ui-datepicker-trigger::before {
-    color: var(--light-blue);
+    color: var(--blue);
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-calendar.read-only .ui-datepicker-trigger {
@@ -3186,7 +3227,10 @@ Column content
 }
 
 #imagePreviewForm\:thumbnailWrapper .thumbnail-parent {
-    display: inline-block;
+    display: block;
+    margin-bottom: var(--group-margin);
+    margin-left: auto;
+    margin-right: auto;
 }
 
 #thumbnailStripeScrollableContent a {

@@ -224,17 +224,17 @@ public class MetadataEditor {
      *            inserted
      * @param position
      *            relative insertion position
-     * @param metadataViewInterface
-     *            interface of the metadata to be added
+     * @param metadataView
+     *            view on the metadata to be added
      * @param metadataValue
      *            value of the first metadata entry
      */
     public static void addMultipleStructuresWithMetadata(int number, String type, Workpiece workpiece, LogicalDivision structure,
-            InsertionPosition position, MetadataViewInterface metadataViewInterface, String metadataValue) {
+            InsertionPosition position, MetadataViewInterface metadataView, String metadataValue) {
 
-        String metadataKey = metadataViewInterface.getId();
+        String metadataKey = metadataView.getId();
         
-        if (metadataViewInterface.isComplex()) {
+        if (metadataView.isComplex()) {
             addMultipleStructuresWithMetadataGroup(number, type, workpiece, structure, position, metadataKey);
         } else {
             addMultipleStructuresWithMetadataEntry(number, type, workpiece, structure, position, metadataKey, metadataValue);
@@ -329,8 +329,8 @@ public class MetadataEditor {
                     List<Integer> siblingOrderValues = Stream.concat(logicalDivision.getChildren().stream()
                             .map(Division::getOrder), Stream.of(structureOrder)).sorted().collect(Collectors.toList());
 
-                    // new order must be set at correction location between existing siblings
-                    logicalDivision.getChildren().add(siblingOrderValues.indexOf(structureOrder), newStructure);
+                    // new order must be set at correct location between existing siblings
+                    logicalDivision.getChildren().add(siblingOrderValues.lastIndexOf(structureOrder), newStructure);
                 }
                 break;
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
@@ -672,7 +672,7 @@ public class MetadataEditor {
      *             and the value is different from either {@code label} or
      *             {@code orderlabel}.
      */
-    public static void writeMetadataEntry(LogicalDivision division,
+    public static void writeMetadataEntry(Division<?> division,
             SimpleMetadataViewInterface simpleMetadataView, String value) {
 
         Domain domain = simpleMetadataView.getDomain().orElse(Domain.DESCRIPTION);

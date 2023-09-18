@@ -43,6 +43,7 @@ import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WebDav;
@@ -263,8 +264,8 @@ public class WorkflowControllerService {
         if (!process.getChildren().isEmpty()) {
             boolean allChildrenClosed = true;
             for (Process child : process.getChildren()) {
-                allChildrenClosed &= "100000000".equals(child.getSortHelperStatus())
-                        || "100000000000".equals(child.getSortHelperStatus());
+                allChildrenClosed &= ProcessState.COMPLETED20.getValue().equals(child.getSortHelperStatus())
+                        || ProcessState.COMPLETED.getValue().equals(child.getSortHelperStatus());
             }
             return allChildrenClosed;
         }
@@ -455,7 +456,7 @@ public class WorkflowControllerService {
 
     private void closeParent(Process process) throws DataException {
         if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
-            process.getParent().setSortHelperStatus("100000000");
+            process.getParent().setSortHelperStatus(ProcessState.COMPLETED.getValue());
             ServiceManager.getProcessService().save(process.getParent());
             closeParent(process.getParent());
         }

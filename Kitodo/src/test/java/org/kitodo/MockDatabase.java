@@ -96,6 +96,7 @@ import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
@@ -123,6 +124,7 @@ public class MockDatabase {
     private static final int CUSTOM_CONFIGURATION_ID = 4;
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
+    public static final String MEDIA_RENAMING_TEST_PROCESS_TITLE = "Rename media";
     public static final String META_XML = "/meta.xml";
 
     public static void startDatabaseServer() throws SQLException {
@@ -429,6 +431,10 @@ public class MockDatabase {
         // Database statistics
         authorities.add(new Authority("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
 
+        // Rename media files
+        authorities.add(new Authority("renameMedia" + GLOBAL_ASSIGNABLE));
+        authorities.add(new Authority("renameMedia" + CLIENT_ASSIGNABLE));
+
         for (Authority authority : authorities) {
             ServiceManager.getAuthorityService().saveToDatabase(authority);
         }
@@ -618,7 +624,7 @@ public class MockDatabase {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Process thirdProcess = new Process();
         thirdProcess.setTitle("DBConnectionTest");
-        thirdProcess.setSortHelperStatus("100000000");
+        thirdProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         thirdProcess.setProject(projectTwo);
         ServiceManager.getProcessService().save(thirdProcess);
     }
@@ -913,7 +919,7 @@ public class MockDatabase {
         User secondUser = ServiceManager.getUserService().getById(2);
         User sixthUser = ServiceManager.getUserService().getById(6);
 
-        Client client = ServiceManager.getClientService().getById(1);
+        Client firstClient = ServiceManager.getClientService().getById(1);
 
         Project firstProject = new Project();
         firstProject.setTitle("First project");
@@ -926,7 +932,7 @@ public class MockDatabase {
         firstProject.setMetsRightsOwner("Test Owner");
         firstProject.getUsers().add(firstUser);
         firstProject.getUsers().add(secondUser);
-        firstProject.setClient(client);
+        firstProject.setClient(firstClient);
         ServiceManager.getProjectService().save(firstProject);
 
         Project secondProject = new Project();
@@ -937,9 +943,10 @@ public class MockDatabase {
         secondProject.setEndDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProject.setNumberOfPages(80);
         secondProject.setNumberOfVolumes(4);
+        secondProject.setFilenameLength(4);
         secondProject.getUsers().add(firstUser);
         secondProject.getUsers().add(sixthUser);
-        secondProject.setClient(client);
+        secondProject.setClient(firstClient);
         ServiceManager.getProjectService().save(secondProject);
 
         firstUser.getProjects().add(firstProject);
@@ -1092,6 +1099,16 @@ public class MockDatabase {
      */
     public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException, DataException {
         return insertTestProcessIntoSecondProject(METADATA_LOCK_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for renaming media files.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForRenamingMediaTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(MEDIA_RENAMING_TEST_PROCESS_TITLE);
     }
 
     /**
@@ -1381,6 +1398,7 @@ public class MockDatabase {
         Role withoutAuthoritiesRole = ServiceManager.getRoleService().getById(5);
         Role metadataRole = ServiceManager.getRoleService().getById(6);
         Role databaseRole = ServiceManager.getRoleService().getById(7);
+        Role renameMediaRole = ServiceManager.getRoleService().getById(8);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1395,6 +1413,7 @@ public class MockDatabase {
         firstUser.getRoles().add(adminRole);
         firstUser.getRoles().add(generalRole);
         firstUser.getRoles().add(databaseRole);
+        firstUser.getRoles().add(renameMediaRole);
         firstUser.getClients().add(firstClient);
         ServiceManager.getUserService().saveToDatabase(firstUser);
 
@@ -1542,6 +1561,15 @@ public class MockDatabase {
         databaseStatisticsRole.setAuthorities(databaseStatisticAuthorities);
 
         ServiceManager.getRoleService().saveToDatabase(databaseStatisticsRole);
+
+        // insert media renaming role
+        Role renameMediaRole = new Role();
+        renameMediaRole.setTitle("Rename process media files");
+        renameMediaRole.setClient(client);
+        renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + GLOBAL_ASSIGNABLE)));
+        renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + CLIENT_ASSIGNABLE)));
+
+        ServiceManager.getRoleService().saveToDatabase(renameMediaRole);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {

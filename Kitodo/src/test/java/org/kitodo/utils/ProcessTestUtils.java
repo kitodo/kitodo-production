@@ -42,9 +42,9 @@ public class ProcessTestUtils {
     }
 
     private static SimpleMetadataViewInterface getSimpleMetadataView(String metadataId) {
-        SimpleMetadataViewInterface simpleMetadataViewInterface = mock(SimpleMetadataViewInterface.class);
-        when(simpleMetadataViewInterface.getId()).thenReturn(metadataId);
-        return simpleMetadataViewInterface;
+        SimpleMetadataViewInterface simpleMetadataView = mock(SimpleMetadataViewInterface.class);
+        when(simpleMetadataView.getId()).thenReturn(metadataId);
+        return simpleMetadataView;
     }
 
 }
