@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-import WaveSurfer from 'https://unpkg.com/wavesurfer.js@beta'
+import WaveSurfer from './libs/wavesurfer/wavesurfer.esm.js.jsf'
 
 let audios = document.querySelectorAll('audio.mediaPreviewItem');
 
@@ -54,6 +54,3 @@ wavesurfer.once('decode', () => {
 wavesurfer.on("error", function (e) {
     console.warn(e);
 });
-
-// Load audio from URL
-//wavesurfer.load(audio);
