@@ -207,6 +207,12 @@
         <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectOneMenu>
 
+    <p:outputLabel for="audioMediaViewWaveform" value="#{msgs['folderUse.audioMediaViewWaveform']}"
+                   rendered="#{ProjectForm.hasAudioFolder()}" styleClass="la-folder-use" />
+    <p:selectBooleanCheckbox id="audioMediaViewWaveform" styleClass="switch input so-folder-use"
+                             value="#{ProjectForm.audioMediaViewWaveform}" disabled="#{ProjectForm.locked}"
+                             rendered="#{ProjectForm.hasAudioFolder()}">
+    </p:selectBooleanCheckbox>
 
     <!-- folder for video preview -->
     <p:outputLabel for="videoPreview" value="#{msgs['folderUse.videoPreview']}" styleClass="la-folder-use"
