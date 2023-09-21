@@ -3966,6 +3966,16 @@ footer {
     max-width: 300px;
 }
 
+.loader {
+    width: 30px;
+    height: 30px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+}
+
 /*----------------------------------------------------------------------
 min 700px
 ----------------------------------------------------------------------*/

@@ -228,6 +228,13 @@ public class GalleryPanel {
         }
     }
 
+    /**
+     * Check if audio media view waveform is activated in project.
+     */
+    public boolean isAudioMediaViewWaveform() {
+        return dataEditor.getProcess().getProject().isAudioMediaViewWaveform();
+    }
+
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
         Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);

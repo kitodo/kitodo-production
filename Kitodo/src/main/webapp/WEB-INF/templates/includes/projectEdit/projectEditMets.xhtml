@@ -212,6 +212,7 @@
     <p:selectBooleanCheckbox id="audioMediaViewWaveform" styleClass="switch input so-folder-use"
                              value="#{ProjectForm.audioMediaViewWaveform}" disabled="#{ProjectForm.locked}"
                              rendered="#{ProjectForm.hasAudioFolder()}">
+        <p:ajax event="change" oncomplete="toggleSave()"/>
     </p:selectBooleanCheckbox>
 
     <!-- folder for video preview -->

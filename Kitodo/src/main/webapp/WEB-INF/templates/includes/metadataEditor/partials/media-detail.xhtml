@@ -26,28 +26,30 @@
         <ui:fragment
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
 
-            <div id="waveTools" >
-                <div>
-                    <label>Zoom: <input type="range" min="0" max="1000" value="0"/></label>
+            <p:outputPanel rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}">
+                <div id="waveTools" >
+                    <div>
+                        <label>Zoom: <input type="range" min="0" max="1000" value="0"/></label>
+                    </div>
+                    <div>
+                        <label>Auto Center: <input type="checkbox" checked="" value="autoCenter"/></label>
+                    </div>
+                    <div>
+                        <p:commandButton title="5 Sekunden zurückspringen"
+                                         icon="fa fa-angle-double-left"
+                                         styleClass="secondary"/>
+                        <p:commandButton title="1 Sekunde zurückspringen"
+                                         icon="fa fa-angle-left"
+                                         styleClass="secondary"/>
+                        <p:commandButton title="1 Sekunde zurückspringen"
+                                         icon="fa fa-angle-right"
+                                         styleClass="secondary"/>
+                        <p:commandButton title="5 Sekunden zurückspringen"
+                                         icon="fa fa-angle-double-right"
+                                         styleClass="secondary"/>
+                    </div>
                 </div>
-                <div>
-                    <label>Auto Center: <input type="checkbox" checked="" value="autoCenter"/></label>
-                </div>
-                <div>
-                    <p:commandButton title="5 Sekunden zurückspringen"
-                                     icon="fa fa-angle-double-left"
-                                     styleClass="secondary"/>
-                    <p:commandButton title="1 Sekunde zurückspringen"
-                                     icon="fa fa-angle-left"
-                                     styleClass="secondary"/>
-                    <p:commandButton title="1 Sekunde zurückspringen"
-                                     icon="fa fa-angle-right"
-                                     styleClass="secondary"/>
-                    <p:commandButton title="5 Sekunden zurückspringen"
-                                     icon="fa fa-angle-double-right"
-                                     styleClass="secondary"/>
-                </div>
-            </div>
+            </p:outputPanel>
 
             <p:media styleClass="mediaPreviewItem" value="#{mediaProvider.mediaView}"
                      player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
@@ -61,8 +63,10 @@
                 <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
                 <f:param name="krsc" value="true"/>
             </p:media>
-            <h:outputScript a:type="module" name="js/libs/wavesurfer/wavesurfer.esm.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}" />
-            <h:outputScript a:type="module" name="js/media_detail_audio.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio')}" />
+
+            <h:outputScript a:type="module" name="js/libs/wavesurfer/wavesurfer.esm.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}"  />
+            <h:outputScript a:type="module" name="js/media_detail_audio.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}" />
+
         </ui:fragment>
 
         <ui:fragment

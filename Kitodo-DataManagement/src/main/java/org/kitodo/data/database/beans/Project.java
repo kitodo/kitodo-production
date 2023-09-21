@@ -141,8 +141,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @JoinColumn(name = "mediaView_audio_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_audio_folder_id"))
     private Folder audioMediaView;
 
+    /**
+     * Field to define the status of the audio media view waveform.
+     */
     @Column(name = "mediaView_audio_waveform")
-    private Boolean audioMediaViewWaveform = true;
+    private Boolean audioMediaViewWaveform = false;
 
     /**
      * Folder with media to use for the video preview.
@@ -555,10 +558,20 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.audioMediaView = audioMediaView;
     }
 
+    /**
+     * Get the status of the audio media view waveform.
+     *
+     * @return True if is active
+     */
     public boolean isAudioMediaViewWaveform() {
         return audioMediaViewWaveform;
     }
 
+    /**
+     * Set the status of the audio media view waveform.
+     *
+     * @param audioMediaViewWaveform True if is active
+     */
     public void setAudioMediaViewWaveform(boolean audioMediaViewWaveform) {
         this.audioMediaViewWaveform = audioMediaViewWaveform;
     }

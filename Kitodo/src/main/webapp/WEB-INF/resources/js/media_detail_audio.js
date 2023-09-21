@@ -16,10 +16,16 @@ let audios = document.querySelectorAll('audio.mediaPreviewItem');
 let audio = audios[0];
 audio.src = audio.currentSrc;
 
+let loader = document.createElement("div");
+loader.innerHTML = '<i class="fa fa-spinner fa-spin"/>'
+loader.classList.add('loader')
+audio.parentNode.insertBefore(loader, audio);
+
 let waveContainer = document.createElement("div");
 waveContainer.setAttribute("id", "wave-container");
 waveContainer.onclick = function(){wavesurfer.playPause()}
 waveContainer.style.width = "90%";
+waveContainer.style.display = "none";
 audio.parentNode.insertBefore(waveContainer, audio);
 
 const wavesurfer = WaveSurfer.create({
@@ -30,6 +36,11 @@ const wavesurfer = WaveSurfer.create({
     cursorColor: "#ffffff",
     media: audio,
     minPxPerSec: 0,
+});
+
+wavesurfer.on("ready", function () {
+    waveContainer.style.display = "block";
+    loader.style.display = "none";
 });
 
 wavesurfer.once('decode', () => {
@@ -54,3 +65,4 @@ wavesurfer.once('decode', () => {
 wavesurfer.on("error", function (e) {
     console.warn(e);
 });
+
