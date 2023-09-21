@@ -24,7 +24,8 @@
               dynamic="true"
               widgetVar="editCommentDialog">
         <h:body>
-            <h:form id="editCommentForm">
+            <h:form id="editCommentForm"
+                    rendered="#{CommentForm.getEditedComment() ne null}">
             <h3>#{msgs.commentEdit}</h3>
                 <p:outputLabel value="Text"
                                for="editCommentTextArea"/>
