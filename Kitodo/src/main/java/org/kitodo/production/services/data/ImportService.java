@@ -1028,7 +1028,7 @@ public class ImportService {
      * @throws ProcessGenerationException thrown if process title cannot be created
      */
     public static void processProcessChildren(Process mainProcess, LinkedList<TempProcess> childProcesses,
-                                              RulesetManagementInterface managementInterface, String acquisitionStage,
+                                              RulesetManagementInterface rulesetManagement, String acquisitionStage,
                                               List<Locale.LanguageRange> priorityList)
             throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             ProcessGenerationException, IOException {
@@ -1037,7 +1037,7 @@ public class ImportService {
                 logger.error("Child process {} is null => Skip!", childProcesses.indexOf(tempProcess) + 1);
                 continue;
             }
-            processTempProcess(tempProcess, managementInterface, acquisitionStage, priorityList, null);
+            processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
             Process childProcess = tempProcess.getProcess();
             ServiceManager.getProcessService().save(childProcess, true);
             ProcessService.setParentRelations(mainProcess, childProcess);
@@ -1128,19 +1128,19 @@ public class ImportService {
      * updating the process' tasks.
      *
      * @param tempProcess TempProcess that will be processed
-     * @param managementInterface RulesetManagementInterface to create metadata and tiff header
+     * @param rulesetManagement Ruleset management to create metadata and TIFF header
      * @param acquisitionStage String containing the acquisition stage
      * @param priorityList List of LanguageRange objects
      * @throws InvalidMetadataValueException thrown if the process contains invalid metadata
      * @throws NoSuchMetadataFieldException thrown if the process contains undefined metadata
      * @throws ProcessGenerationException thrown if process title could not be generated
      */
-    public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface managementInterface,
+    public static void processTempProcess(TempProcess tempProcess, RulesetManagementInterface rulesetManagement,
             String acquisitionStage, List<Locale.LanguageRange> priorityList, TempProcess parentTempProcess)
             throws InvalidMetadataValueException, NoSuchMetadataFieldException, ProcessGenerationException,
             IOException {
 
-        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
+        List<ProcessDetail> processDetails = ProcessHelper.transformToProcessDetails(tempProcess, rulesetManagement,
                 acquisitionStage, priorityList);
         String docType = tempProcess.getWorkpiece().getLogicalStructure().getType();
 
@@ -1149,7 +1149,7 @@ public class ImportService {
             parentTempProcesses.add(parentTempProcess);
         }
         ProcessHelper.generateAtstslFields(tempProcess, processDetails, parentTempProcesses, docType,
-                managementInterface, acquisitionStage, priorityList);
+                rulesetManagement, acquisitionStage, priorityList);
 
         if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
             throw new ProcessGenerationException("Unable to create process");
@@ -1353,24 +1353,24 @@ public class ImportService {
     /**
      * Check and return whether the functional metadata 'recordIdentifier' is configured for all top level doc struct
      * types in the given RulesetManagementInterface or not.
-     * @param rulesetManagementInterface RulesetManagementInterface to use
+     * @param rulesetManagement Ruleset management to use
      * @return whether 'recordIdentifier' is set for all doc struct types
      */
-    public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagementInterface) {
+    public boolean isRecordIdentifierMetadataConfigured(RulesetManagementInterface rulesetManagement) {
         User user = ServiceManager.getUserService().getCurrentUser();
         String metadataLanguage = user.getMetadataLanguage();
         List<Locale.LanguageRange> languages = Locale.LanguageRange.parse(metadataLanguage.isEmpty()
                 ? Locale.ENGLISH.getCountry() : metadataLanguage);
-        Map<String, String> structuralElements = rulesetManagementInterface.getStructuralElements(languages);
-        Collection<String> recordIdentifierMetadata = rulesetManagementInterface
+        Map<String, String> structuralElements = rulesetManagement.getStructuralElements(languages);
+        Collection<String> recordIdentifierMetadata = rulesetManagement
                 .getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER);
         String recordIdentifierLabels = recordIdentifierMetadata.stream()
-                .map(key -> rulesetManagementInterface.getTranslationForKey(key, languages).orElse(key))
+                .map(key -> rulesetManagement.getTranslationForKey(key, languages).orElse(key))
                 .collect(Collectors.joining(", "));
         recordIdentifierMissingDetails.clear();
         boolean isConfigured = true;
         for (Map.Entry<String, String> division : structuralElements.entrySet()) {
-            StructuralElementViewInterface divisionView = rulesetManagementInterface
+            StructuralElementViewInterface divisionView = rulesetManagement
                     .getStructuralElementView(division.getKey(), ACQUISITION_STAGE_CREATE, languages);
             List<String> allowedMetadataKeys = divisionView.getAllowedMetadata().stream()
                     .map(MetadataViewInterface::getId).collect(Collectors.toList());

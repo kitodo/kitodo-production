@@ -84,6 +84,7 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
     }
 
     public void changeWorkflowTitle(String workflowTitle) {
+        fileInput.clear();
         fileInput.sendKeys(workflowTitle);
     }
 }

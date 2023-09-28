@@ -272,7 +272,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
                 result.append('−');
             }
             result.append(" (");
-            result.append(Helper.getTranslation("numProzesse", Integer.toString(batch.getProcesses().size())));
+            result.append(Helper.getTranslation("numProcesses", Integer.toString(batch.getProcesses().size())));
         } catch (RuntimeException unexpected) {
             result.setLength(0);
             result.append(Objects.nonNull(batch.getTitle()) ? batch.getTitle() : batch.getId());

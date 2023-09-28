@@ -157,6 +157,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private Folder videoMediaView;
 
     /**
+     * Filename length for renaming media files of processes in this project.
+     */
+    @Column(name = "filename_length")
+    private Integer filenameLength;
+
+    /**
      * Constructor.
      */
     public Project() {
@@ -619,6 +625,25 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public void setDefaultChildProcessImportConfiguration(ImportConfiguration defaultChildProcessImportConfiguration) {
         this.defaultChildProcessImportConfiguration = defaultChildProcessImportConfiguration;
+    }
+
+    /**
+     * Get filename length.
+     * @return filename length
+     */
+    public Integer getFilenameLength() {
+        if (Objects.isNull(filenameLength)) {
+            filenameLength = 8;
+        }
+        return filenameLength;
+    }
+
+    /**
+     * Set filename length.
+     * @param filenameLength as Integer
+     */
+    public void setFilenameLength(Integer filenameLength) {
+        this.filenameLength = filenameLength;
     }
 
     @Override

@@ -54,6 +54,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "buttonForm:saveExit")
     private WebElement saveAndExitButton;
 
+    @FindBy(id = "buttonForm:renameMedia")
+    private WebElement renameMediaButton;
+
     @FindBy(id = "logicalTree:0")
     private WebElement logicalTree;
 
@@ -61,13 +64,19 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     private WebElement firstChildProcess;
 
     @FindBy(id = "logicalTree:0_1")
-    private WebElement secondChildProcess;
+    private WebElement secondChildNode;
 
     @FindBy(id = "expandAllButton")
     private WebElement expandAllButton;
 
     @FindBy(id = "collapseAllButton")
     private WebElement collapseAllButton;
+
+    @FindBy(id = "renamingMediaSuccessDialog")
+    private WebElement renamingMediaSuccessDialog;
+
+    @FindBy(id = "renamingMediaResultForm:okSuccess")
+    private WebElement okButtonRenameMediaFiles;
 
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
@@ -122,6 +131,21 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     }
 
     /**
+     * Check and return whether information dialog about renamed media files is displayed or not.
+     * @return whether information dialog about renamed media files is displayed or not
+     */
+    public boolean isRenamingMediaFilesDialogVisible() {
+        return renamingMediaSuccessDialog.isDisplayed();
+    }
+
+    /**
+     * Acknowledge media files being successfully renamed dialog by clicking "OK" button on corresponding popup dialog.
+     */
+    public void acknowledgeRenamingMediaFiles() {
+        okButtonRenameMediaFiles.click();
+    }
+
+    /**
      * Close Metadata editor to release metadata lock.
      */
     public void closeEditor() {
@@ -136,15 +160,24 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     }
 
     /**
+     * Click "rename media" button.
+     */
+    public void renameMedia() {
+        renameMediaButton.click();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(this::isRenamingMediaFilesDialogVisible);
+    }
+
+    /**
      * Change order of child processes in metadata editor by moving the second child process before
      * the first child process via drag and drop.
      */
     public void changeOrderOfLinkedChildProcesses() {
-        secondChildProcess.click();
+        secondChildNode.click();
         WebDriver webDriver = Browser.getDriver();
         Actions moveAction = new Actions(webDriver);
         WebElement dropArea = logicalTree.findElement(By.className("ui-tree-droppoint"));
-        moveAction.dragAndDrop(secondChildProcess, dropArea).build().perform();
+        moveAction.dragAndDrop(secondChildNode, dropArea).build().perform();
     }
 
     public ProcessesPage saveAndExit() throws InstantiationException, IllegalAccessException {
@@ -156,10 +189,13 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         return firstChildProcess.getText();
     }
 
-    public String getNameOfSecondLinkedChildProcess() {
-        return secondChildProcess.getText();
+    /**
+     * Get label of second child tree node of structure tree root node.
+     * @return label of second child tree node of structure tree root node
+     */
+    public String getSecondRootElementChildLabel() {
+        return secondChildNode.getText();
     }
-
     /**
      * Click "expand all" button in structure panel of metadata editor.
      */

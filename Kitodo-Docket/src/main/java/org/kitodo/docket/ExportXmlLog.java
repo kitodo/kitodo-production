@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -350,7 +351,7 @@ public class ExportXmlLog implements Consumer<OutputStream> {
             HashMap<String, String> names = getNamespacesFromConfig();
             Namespace[] namespaces = new Namespace[names.size()];
             int index = 0;
-            for (var entries = names.entrySet().iterator(); entries.hasNext(); index++) {
+            for (Iterator<Entry<String, String>> entries = names.entrySet().iterator(); entries.hasNext(); index++) {
                 Entry<String, String> entry = entries.next();
                 namespaces[index] = Namespace.getNamespace(entry.getKey(), entry.getValue());
             }

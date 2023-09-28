@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<ruleset xmlns="http://names.kitodo.org/ruleset/v2"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://names.kitodo.org/ruleset/v2 ruleset.xsd">
+    <declaration>
+        <division id="division">
+            <label>A division</label>
+        </division>
+
+        <!-- simple tests -->
+        <key id="metadataToReplaceByDefault">
+            <label>Metadata to replace by default</label>
+        </key>
+
+        <key id="metadataToReplaceExplicitly">
+            <label>Metadata to replace explicitly</label>
+        </key>
+
+        <key id="metadataToAdd">
+            <label>Metadata to add</label>
+        </key>
+
+        <key id="metadataToAddWithLimit">
+            <label>Metadata to add with limit</label>
+        </key>
+
+        <key id="metadataThatIsNew">
+            <label>Metadata that is new</label>
+        </key>
+
+        <key id="metadataToKeep">
+            <label>Metadata to keep</label>
+        </key>
+
+        <!-- test acquisition stages -->
+        <key id="metadataToAddDuringCreationAndKeepLater">
+            <label>Metadata to add during creation and keep later</label>
+        </key>
+
+        <key id="metadataToKeepExceptInEditing">
+            <label>Metadata to keep, except in editing</label>
+        </key>
+    </declaration>
+
+    <correlation>
+        <restriction division="division" unspecified="unrestricted">
+            <permit key="metadataToAddWithLimit" maxOccurs="2"/>
+        </restriction>
+    </correlation>
+
+    <editing>
+        <setting key="metadataToAdd" reimport="add" />
+        <setting key="metadataToAddWithLimit" reimport="add" />
+        <setting key="metadataToReplaceExplicitly" reimport="replace" />
+        <setting key="metadataToKeep" reimport="keep" />
+
+        <!-- test acquisition stages -->
+        <setting key="metadataToAddDuringCreationAndKeepLater" reimport="keep" />
+        <setting key="metadataToKeepExceptInEditing" reimport="keep" />
+        
+        <acquisitionStage name="create">
+            <setting key="metadataToAddDuringCreationAndKeepLater" reimport="add" />
+        </acquisitionStage>
+
+        <acquisitionStage name="edit">
+            <setting key="metadataToKeepExceptInEditing" reimport="replace" />
+        </acquisitionStage>
+    </editing>
+</ruleset>
