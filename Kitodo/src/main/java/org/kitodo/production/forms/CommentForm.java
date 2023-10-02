@@ -27,6 +27,7 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
@@ -159,7 +160,7 @@ public class CommentForm extends BaseForm {
      */
     private void reportProblem(Comment comment) {
         try {
-            this.workflowControllerService.reportProblem(comment);
+            this.workflowControllerService.reportProblem(comment, TaskEditType.MANUAL_SINGLE);
         } catch (DataException e) {
             Helper.setErrorMessage("reportingProblem", logger, e);
         }
@@ -225,11 +226,11 @@ public class CommentForm extends BaseForm {
      */
     public String solveProblem(Comment comment) {
         try {
-            this.workflowControllerService.solveProblem(comment);
+            this.workflowControllerService.solveProblem(comment, TaskEditType.MANUAL_SINGLE);
         } catch (DataException | DAOException | IOException e) {
             Helper.setErrorMessage("SolveProblem", logger, e);
         }
-        refreshProcess(this.currentTask.getProcess());
+        refreshProcess(comment.getCurrentTask().getProcess());
         return MessageFormat.format(REDIRECT_PATH, "tasks");
     }
 
@@ -239,13 +240,33 @@ public class CommentForm extends BaseForm {
     public String solveProblemForAllBatchProcesses(Comment comment) {
         for (Task task : batchHelper.getSteps()) {
             for (Comment processComment : ServiceManager.getCommentService().getAllCommentsByProcess(task.getProcess())) {
-                if (!processComment.isCorrected()
-                        && processComment.getCorrectionTask().getTitle().equals(comment.getCorrectionTask().getTitle())) {
+                if (!processComment.isCorrected() && verifyCorrectionTasks(comment.getCorrectionTask(),
+                        processComment.getCorrectionTask())) {
                     solveProblem(processComment);
                 }
             }
         }
         return MessageFormat.format(REDIRECT_PATH, "tasks");
+    }
+
+    /**
+     * Verify whether both correction tasks are null or share identical titles.
+     *
+     * @param commentCorrectionTask
+     *         The comment correction task
+     * @param processCommentCorrectionTask
+     *         The process comment correction task
+     * @return True if they are null or have equal titles
+     */
+    private static boolean verifyCorrectionTasks(Task commentCorrectionTask, Task processCommentCorrectionTask) {
+        if (Objects.isNull(commentCorrectionTask) && Objects.isNull(processCommentCorrectionTask)) {
+            return true;
+        } else if (Objects.isNull(commentCorrectionTask) && Objects.nonNull(
+                processCommentCorrectionTask) || Objects.nonNull(commentCorrectionTask) && Objects.isNull(
+                processCommentCorrectionTask)) {
+            return false;
+        }
+        return processCommentCorrectionTask.getTitle().equals(commentCorrectionTask.getTitle());
     }
 
     /**

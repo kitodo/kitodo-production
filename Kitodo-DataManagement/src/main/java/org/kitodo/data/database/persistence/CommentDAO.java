@@ -16,6 +16,7 @@ import java.util.List;
 
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class CommentDAO extends BaseDAO<Comment> {
@@ -52,6 +53,18 @@ public class CommentDAO extends BaseDAO<Comment> {
     public List<Comment> getAllByProcess(Process process) {
         return getByQuery("FROM Comment WHERE process_id = :processId ORDER BY id ASC",
                 Collections.singletonMap("processId", process.getId()));
+    }
+
+    /**
+     * Get all comments by task ordered by id ascending.
+     *
+     * @param task
+     *         The current task to get the comments for
+     * @return List of comments
+     */
+    public List<Comment> getAllByTask(Task task) {
+        return getByQuery("FROM Comment WHERE currentTask_id = :taskId ORDER BY id ASC",
+                Collections.singletonMap("taskId", task.getId()));
     }
 
     /**
