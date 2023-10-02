@@ -240,13 +240,33 @@ public class CommentForm extends BaseForm {
     public String solveProblemForAllBatchProcesses(Comment comment) {
         for (Task task : batchHelper.getSteps()) {
             for (Comment processComment : ServiceManager.getCommentService().getAllCommentsByProcess(task.getProcess())) {
-                if (!processComment.isCorrected()
-                        && processComment.getCorrectionTask().getTitle().equals(comment.getCorrectionTask().getTitle())) {
+                if (!processComment.isCorrected() && verifyCorrectionTasks(comment.getCorrectionTask(),
+                        processComment.getCorrectionTask())) {
                     solveProblem(processComment);
                 }
             }
         }
         return MessageFormat.format(REDIRECT_PATH, "tasks");
+    }
+
+    /**
+     * Verify whether both correction tasks are null or share identical titles.
+     *
+     * @param commentCorrectionTask
+     *         The comment correction task
+     * @param processCommentCorrectionTask
+     *         The process comment correction task
+     * @return True if they are null or have equal titles
+     */
+    private static boolean verifyCorrectionTasks(Task commentCorrectionTask, Task processCommentCorrectionTask) {
+        if (Objects.isNull(commentCorrectionTask) && Objects.isNull(processCommentCorrectionTask)) {
+            return true;
+        } else if (Objects.isNull(commentCorrectionTask) && Objects.nonNull(
+                processCommentCorrectionTask) || Objects.nonNull(commentCorrectionTask) && Objects.isNull(
+                processCommentCorrectionTask)) {
+            return false;
+        }
+        return processCommentCorrectionTask.getTitle().equals(commentCorrectionTask.getTitle());
     }
 
     /**
