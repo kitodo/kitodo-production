@@ -29,24 +29,28 @@
             <p:outputPanel rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}">
                 <div id="waveTools" >
                     <div>
-                        <label>Zoom: <input type="range" min="0" max="1000" value="0"/></label>
+                        <label>Zoom: <input type="range" min="0" max="250" value="0"/></label>
                     </div>
                     <div>
                         <label>Auto Center: <input type="checkbox" checked="" value="autoCenter"/></label>
                     </div>
                     <div>
-                        <p:commandButton title="5 Sekunden zurückspringen"
+                        <p:commandButton title="#{msgs.audioWaveformJumpBackFiveSeconds}"
                                          icon="fa fa-angle-double-left"
-                                         styleClass="secondary"/>
-                        <p:commandButton title="1 Sekunde zurückspringen"
+                                         styleClass="audio-waveform-jump-button secondary"
+                                         a:data-audio-waveform-jump-seconds="-5"/>
+                        <p:commandButton title="#{msgs.audioWaveformJumpBackOneSecond}"
                                          icon="fa fa-angle-left"
-                                         styleClass="secondary"/>
-                        <p:commandButton title="1 Sekunde zurückspringen"
+                                         styleClass="audio-waveform-jump-button secondary"
+                                         a:data-audio-waveform-jump-seconds="-1"/>
+                        <p:commandButton title="#{msgs.audioWaveformJumpForwardOneSecond}"
                                          icon="fa fa-angle-right"
-                                         styleClass="secondary"/>
-                        <p:commandButton title="5 Sekunden zurückspringen"
+                                         styleClass="audio-waveform-jump-button secondary"
+                                         a:data-audio-waveform-jump-seconds="1"/>
+                        <p:commandButton title="#{msgs.audioWaveformJumpForwardFiveSeconds}"
                                          icon="fa fa-angle-double-right"
-                                         styleClass="secondary"/>
+                                         styleClass="audio-waveform-jump-button secondary"
+                                         a:data-audio-waveform-jump-seconds="5"/>
                     </div>
                 </div>
             </p:outputPanel>
@@ -65,7 +69,7 @@
             </p:media>
 
             <h:outputScript a:type="module" name="js/libs/wavesurfer/wavesurfer.esm.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}"  />
-            <h:outputScript a:type="module" name="js/media_detail_audio.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}" />
+            <h:outputScript a:type="module" name="js/media_detail_audio_waveform.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}" />
 
         </ui:fragment>
 

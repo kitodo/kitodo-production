@@ -252,3 +252,7 @@ $('#thirdColumnWrapper').on('resize', function () {
 $(document).ready(function () {
     initializeImage();
 });
+
+document.addEventListener("metadataEditor.gallery.mediaView.updateEventName", function (event) {
+    initializeImage();
+});
