@@ -268,7 +268,9 @@ body.first-visit #portal-header {
     color: inherit;
 }
 
-#header-nav li:hover a {
+#dashboard-menu:hover,
+#user-menu:hover {
+    background: transparent;
     color: var(--carbon-blue);
 }
 
