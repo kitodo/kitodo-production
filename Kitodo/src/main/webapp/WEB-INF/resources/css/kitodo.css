@@ -3073,7 +3073,7 @@ Column content
     max-height: 100%;
 }
 
-#imagePreviewForm\:mediaDetail  #waveTools{
+#imagePreviewForm\:mediaDetail #audioWaveformTools{
     display: flex;
     gap: 30px;
     justify-content: center;
@@ -3083,11 +3083,11 @@ Column content
     border-radius: 3px;
 }
 
-#imagePreviewForm\:mediaDetail  #waveTools > div > button:first-child {
+#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button:first-child {
     margin-left: 0px;
 }
 
-#imagePreviewForm\:mediaDetail  #waveTools > div > button {
+#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button {
     margin-left: 10px;
 }
 

@@ -84,7 +84,7 @@ class AudioWaveform {
             waveContainer.style.display = "block";
             self.#loader.style.display = "none";
 
-            let waveToolsContainer = document.getElementById("waveTools")
+            let waveToolsContainer = document.getElementById("audioWaveformTools")
             const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]')
 
             waveToolsSlider.addEventListener('input', (e) => {
@@ -99,11 +99,11 @@ class AudioWaveform {
                     })
                 }
             })
-            const jumpButtons = document.getElementsByClassName("audio-waveform-jump-button");
+            const jumpButtons = document.getElementsByClassName("audio-waveform-tools-jump-button");
             Array.from(jumpButtons).forEach(function (jumpButton) {
                 jumpButton.addEventListener('click', function (event) {
                     event.stopPropagation();
-                    let jumpSeconds = parseInt(this.getAttribute("data-audio-waveform-jump-seconds"));
+                    let jumpSeconds = parseInt(this.getAttribute("data-audio-waveform-tools-jump-seconds"));
                     self.#wavesurfer.setTime(self.#wavesurfer.getCurrentTime() + jumpSeconds)
                 });
             });

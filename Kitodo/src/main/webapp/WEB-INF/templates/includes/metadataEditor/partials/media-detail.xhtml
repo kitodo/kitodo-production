@@ -27,30 +27,30 @@
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
 
             <p:outputPanel rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}">
-                <div id="waveTools" >
+                <div id="audioWaveformTools" >
                     <div>
-                        <label>Zoom: <input type="range" min="0" max="250" value="0"/></label>
+                        <label><h:outputText value="#{msgs.audioWaveformToolsZoom}"/>: <input type="range" min="0" max="250" value="0"/></label>
                     </div>
                     <div>
-                        <label>Auto Center: <input type="checkbox" checked="" value="autoCenter"/></label>
+                        <label><h:outputText value="#{msgs.audioWaveformToolsCenteredCursor}"/>: <input type="checkbox" checked="" value="autoCenter"/></label>
                     </div>
                     <div>
-                        <p:commandButton title="#{msgs.audioWaveformJumpBackFiveSeconds}"
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpBackFiveSeconds}"
                                          icon="fa fa-angle-double-left"
-                                         styleClass="audio-waveform-jump-button secondary"
-                                         a:data-audio-waveform-jump-seconds="-5"/>
-                        <p:commandButton title="#{msgs.audioWaveformJumpBackOneSecond}"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="-5"/>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpBackOneSecond}"
                                          icon="fa fa-angle-left"
-                                         styleClass="audio-waveform-jump-button secondary"
-                                         a:data-audio-waveform-jump-seconds="-1"/>
-                        <p:commandButton title="#{msgs.audioWaveformJumpForwardOneSecond}"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="-1"/>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpForwardOneSecond}"
                                          icon="fa fa-angle-right"
-                                         styleClass="audio-waveform-jump-button secondary"
-                                         a:data-audio-waveform-jump-seconds="1"/>
-                        <p:commandButton title="#{msgs.audioWaveformJumpForwardFiveSeconds}"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="1"/>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpForwardFiveSeconds}"
                                          icon="fa fa-angle-double-right"
-                                         styleClass="audio-waveform-jump-button secondary"
-                                         a:data-audio-waveform-jump-seconds="5"/>
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="5"/>
                     </div>
                 </div>
             </p:outputPanel>
