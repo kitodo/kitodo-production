@@ -393,8 +393,17 @@ public class VariableReplacer {
         switch (metadataLevel) {
             case ALL:
                 List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
-                String allFirstchildValue = allChildren.isEmpty() ? null
-                        : MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+                String allFirstchildValue = null;
+                if (!allChildren.isEmpty()) {
+                    allFirstchildValue = MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+                    if (Objects.isNull(allFirstchildValue)) {
+                        List<LogicalDivision> firstChildChildren = allChildren.get(0).getChildren();
+                        if (!firstChildChildren.isEmpty()) {
+                            allFirstchildValue = MetadataEditor.getMetadataValue(firstChildChildren.get(0), variableFinder.group(5));
+                        }
+                    }
+                }
+
                 if (Objects.nonNull(allFirstchildValue)) {
                     return allFirstchildValue;
                 }

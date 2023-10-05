@@ -15,15 +15,18 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.net.URI;
 
 import org.junit.Test;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
+import org.kitodo.production.services.ServiceManager;
 
 public class VariableReplacerTest {
 
@@ -179,6 +182,39 @@ public class VariableReplacerTest {
         assertEquals("String was replaced incorrectly!", expected, replaced);
     }
 
+    @Test
+    public void shouldReturnMetadataOfNewspaperIssue() throws IOException  {
+        Process process = prepareProcess(2, "variableReplacer/newspaperIssue");
+        Workpiece workpiece = ServiceManager.getProcessService().readMetadataFile(process).getWorkpiece();
+        VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
+
+        String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
+        String expected = "-language ger -scriptType Antiqua";
+        assertEquals("String should contain expected metadata!", expected, replaced);
+    }
+
+    @Test
+    public void shouldReturnMetadataOfPeriodialVolume() throws IOException  {
+        Process process = prepareProcess(2, "variableReplacer/periodicalVolume");
+        Workpiece workpiece = ServiceManager.getProcessService().readMetadataFile(process).getWorkpiece();
+        VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
+
+        String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
+        String expected = "-language ger -scriptType Fraktur";
+        assertEquals("String should contain expected metadata!", expected, replaced);
+    }
+
+    @Test
+    public void shouldReturnMetadataOfMonograph() throws IOException  {
+        Process process = prepareProcess(2, "variableReplacer/monograph");
+        Workpiece workpiece = ServiceManager.getProcessService().readMetadataFile(process).getWorkpiece();
+        VariableReplacer variableReplacer = new VariableReplacer(workpiece, process, null);
+
+        String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
+        // missing meta data element will be replaced by emtpy string and a warning message appear in the log
+        String expected = "-language  -scriptType keine_OCR";
+        assertEquals("String should contain expected metadata!", expected, replaced);
+    }
 
     private Process prepareProcess(int processId, String processFolder) {
         Process process = new Process();

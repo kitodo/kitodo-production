@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2023-10-05T09:31:19.619+02:00" LASTMODDATE="2023-10-05T09:39:45.551+02:00">
+        <mets:metsDocumentID>761701</mets:metsDocumentID>
+    </mets:metsHdr>
+    <mets:dmdSec ID="uuid-0c7cc09b-db59-32d1-ae04-98d848ed2e54">
+        <mets:mdWrap>
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="DocLanguage">ger</kitodo:metadata>
+                    <kitodo:metadata name="CurrentNo">1829</kitodo:metadata>
+                    <kitodo:metadata name="docType">Periodical</kitodo:metadata>
+                    <kitodo:metadata name="slub_script">Fraktur</kitodo:metadata>
+                    <kitodo:metadata name="PublicationYearSorting">1828</kitodo:metadata>
+                    <kitodo:metadata name="slub_ownerDigi">SLUB Dresden</kitodo:metadata>
+                    <kitodo:metadata name="CurrentNoSorting">18290000</kitodo:metadata>
+                    <kitodo:metadata name="slub_ownerOrig">SLUB Dresden</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMain">Königl. Sächs. gnädigst privileg. Pirnaischer Haus- und Landwirthschafts-Calender</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec/>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="uuid-439342a2-66b7-4545-a3fa-dcf41653e51d"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="uuid-95c027f4-4e75-4506-bbfd-1e48550cdfde" DMDID="uuid-0c7cc09b-db59-32d1-ae04-98d848ed2e54" TYPE="PeriodicalVolume" ORDERLABEL="Königl. Sächs. gnädigst privileg. Pirnaischer Haus- und Landwirthschafts-Calender" LABEL="Königl. Sächs. gnädigst privileg. Pirnaischer Haus- und Landwirthschafts-Calender"/>
+    </mets:structMap>
+    <mets:structLink/>
+</mets:mets>
