@@ -1461,15 +1461,25 @@ Popup dialogs
 }
 
 #loadingScreen {
+    animation: overlay-delayed .3s .5s forwards;
     position: fixed;
     width: 100vw;
     height: 100vh;
-    background: rgba(255,255,255,.5);
+    background: rgba(255,255,255,0);
     top: 0;
     left: 0;
     z-index: 3;
     line-height: 100vh;
     text-align: center;
+}
+
+@keyframes overlay-delayed {
+    from {
+        background: rgba(255,255,255,0);
+    }
+    to {
+        background: rgba(255,255,255,.5);
+    }
 }
 
 #loadingScreen i.fa-spinner {
