@@ -25,28 +25,33 @@ class AudioWaveform {
     init() {
         let self = this
         this.#audioElement = document.querySelector('audio.mediaPreviewItem')
-        if (this.#audioElement.getAttribute("data-audio-waveform") != "initialized") {
+        if (this.#audioElement && this.#audioElement.getAttribute("data-audio-waveform") != "initialized") {
             this.#audioElement.setAttribute("data-audio-waveform", "initialized")
 
-            this.#audioElement && this.#audioElement.addEventListener("canplay", () => {
-               clearTimeout(this.#buildTimeout );
-               self.#buildTimeout = setTimeout(function() {
-                    self.#build();
-               }, 500)
-            }, {once: true});
-
+            // add a loader to visualize loading process
             this.#loader = document.createElement("div");
             this.#loader.innerHTML = '<i class="fa fa-spinner fa-spin"/>'
             this.#loader.classList.add('loader')
             this.#audioElement.parentNode.insertBefore(this.#loader, this.#audioElement);
+
+            // when the user agent can play the media
+            this.#audioElement && this.#audioElement.addEventListener("canplay", () => {
+                // Prevent browser crashes during audio decoding when multiple rapid clicks, such as double-clicking, occur.
+                clearTimeout(this.#buildTimeout);
+               self.#buildTimeout = setTimeout(function() {
+                    self.#build();
+               }, 500)
+            }, {once: true});
 
         }
     }
 
     #build() {
         let self = this
+        // wavesurfer uses the 'src' attribute of the audio element, and we add this attribute based on the browser's current source selection
         this.#audioElement.src = this.#audioElement.currentSrc;
 
+        // get the media id from the source parameter
         const urlParams = new URLSearchParams(this.#audioElement.src);
         let mediaId = urlParams.get('mediaId')
 
@@ -70,15 +75,12 @@ class AudioWaveform {
             peaks: this.#peaksCache[mediaId]
         });
 
-        console.log("add ready handler");
-
-        // cache peaks after when audio has been decoded
         this.#wavesurfer.on("decode", function () {
+            // cache peaks after when audio has been decoded
             self.#peaksCache[mediaId] = self.#wavesurfer.getDecodedData().getChannelData(0)
         });
 
         this.#wavesurfer.on("ready", function () {
-            console.log("run ready handler");
             waveContainer.style.display = "block";
             self.#loader.style.display = "none";
 
@@ -114,10 +116,8 @@ class AudioWaveform {
 
 }
 
-console.log("first initialisation");
 const audioWaveform= new AudioWaveform()
 
 document.addEventListener("kitodo-metadataditor-mediaview-update", function () {
-    console.log("update media view");
     audioWaveform.init();
 });

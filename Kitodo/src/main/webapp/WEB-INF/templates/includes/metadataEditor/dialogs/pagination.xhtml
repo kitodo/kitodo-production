@@ -47,7 +47,7 @@
                                               showCheckbox="true">
                                 <f:selectItems value="#{DataEditorForm.paginationPanel.paginationSelectionItems}"/>
                                 <p:ajax event="change"
-                                        oncomplete="changeToMapView();scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
+                                        oncomplete="changeToMapView();metadataEditor.gallery.mediaView.update();scrollToSelectedThumbnail();scrollToSelectedTreeNode();"
                                         update="galleryHeadingWrapper,imagePreviewForm:mediaDetail,metadataAccordion:logicalMetadataWrapperPanel"/>
                             </p:selectManyMenu>
                         </div>
