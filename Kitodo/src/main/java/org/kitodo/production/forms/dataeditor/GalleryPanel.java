@@ -836,7 +836,8 @@ public class GalleryPanel {
 
         String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
-            PrimeFaces.current().executeScript("checkScrollPosition();initializeImage();metadataEditor.gallery.mediaView.update();" + scrollScripts);
+            PrimeFaces.current().executeScript(
+                    "checkScrollPosition();initializeImage();metadataEditor.gallery.mediaView.update();" + scrollScripts);
         } else {
             PrimeFaces.current().executeScript(scrollScripts);
         }
