@@ -436,7 +436,6 @@ metadataEditor.gallery = {
     mediaView: {
         updateEventName : "kitodo-metadataditor-mediaview-update",
         update(){
-            console.log((new Error()).stack.split("\n")[2].trim().split(" ")[1])
             document.dispatchEvent(new Event(this.updateEventName));
         }
     },

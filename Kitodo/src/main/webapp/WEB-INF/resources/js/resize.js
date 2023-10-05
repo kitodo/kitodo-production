@@ -522,6 +522,7 @@ function updateMetadataEditorView(showMetadataColumn) {
     }
     expandThirdColumn();
     scrollToSelectedThumbnail();
+    initializeImage();
     metadataEditor.gallery.mediaView.update();
     scrollToSelectedTreeNode();
     scrollToSelectedPaginationRow();
