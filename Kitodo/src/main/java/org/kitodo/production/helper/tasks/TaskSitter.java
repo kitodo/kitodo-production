@@ -161,7 +161,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
                     ChronoUnit.MINUTES);
             Duration failedMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_FAILED_MINS,
                     ChronoUnit.MINUTES);
-    
+
             ListIterator<EmptyTask> position = taskList.listIterator();
             EmptyTask task;
             try {
@@ -172,15 +172,15 @@ public class TaskSitter implements Runnable, ServletContextListener {
             } catch (ConcurrentModificationException e) {
                 return;
             }
-    
+
             while (finishedThreads.size() > successfulMaxCount && (task = finishedThreads.pollFirst()) != null) {
                 taskList.remove(task);
             }
-    
+
             while (failedThreads.size() > failedMaxCount && (task = failedThreads.pollFirst()) != null) {
                 taskList.remove(task);
             }
-    
+
             while (launchableThreads.size() > availableClearance) {
                 launchableThreads.removeLast();
             }
