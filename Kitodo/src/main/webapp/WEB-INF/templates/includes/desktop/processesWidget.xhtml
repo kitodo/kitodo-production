@@ -39,8 +39,8 @@
                   width="85"
                   headerText="#{msgs.comments}">
             <h:panelGroup id="commentIcon">
-                <h:panelGroup styleClass="fa fa-comment
-                    #{DesktopForm.hasCorrectionTask(process.id) gt 0 ? 'fa-exclamation-circle' : 'fa-comment'}
+                <h:panelGroup styleClass="fa
+                    #{DesktopForm.hasCorrectionTask(process.id) gt 0 ? 'fa-exclamation-circle correction' : 'fa-comment'}
                     #{DesktopForm.hasCorrectionTask(process.id) eq 1 ? 'corrected' : ''}"
                               rendered="#{process.hasComments()}"/>
             </h:panelGroup>
