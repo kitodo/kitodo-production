@@ -76,7 +76,7 @@ public class TaskManager {
      */
     public static void addTask(EmptyTask task) {
         LinkedList<EmptyTask> tasks = singleton().taskList;
-        synchronized(tasks) {
+        synchronized (tasks) {
             tasks.addLast(task);
         }
     }
@@ -97,7 +97,7 @@ public class TaskManager {
      */
     static void addTaskIfMissing(EmptyTask task) {
         LinkedList<EmptyTask> tasks = singleton().taskList;
-        synchronized(tasks) {
+        synchronized (tasks) {
             if (!tasks.contains(task)) {
                 int pos = lastIndexOf(TaskState.WORKING) + 1;
                 try {
@@ -123,7 +123,7 @@ public class TaskManager {
      */
     public static List<EmptyTask> getTaskList() {
         LinkedList<EmptyTask> tasks = singleton().taskList;
-        synchronized(tasks) {
+        synchronized (tasks) {
             return new ArrayList<>(tasks);
         }
     }
