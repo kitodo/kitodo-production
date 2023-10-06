@@ -172,7 +172,9 @@
                                                itemLabel="#{HelperForm.getTranslated(scope.value)}"/>
                             </p:selectOneMenu>
                         </div>
-                        <div>
+                        <h:panelGroup layout="block"
+                                      id="selectPaginationModeWrapper"
+                                      rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'ADVANCED'}">
                             <p:outputLabel value="#{msgs.counting}:"
                                            for="selectPaginationMode"/>
                             <p:selectOneMenu
@@ -196,16 +198,18 @@
                                 <f:attribute name="illustratedSelectItems"
                                              value="#{DataEditorForm.paginationPanel.selectPaginationModeItems}"/>
                             </p:selectOneMenu>
-                        </div>
-                        <div>
-                            <p:outputLabel for="fictitiousCheckbox"
-                                           value="#{msgs.paginationFictitious}"/>
-                            <p:selectBooleanCheckbox id="fictitiousCheckbox"
-                                                     disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
-                                                     styleClass="input switch"
-                                                     style="margin-bottom: 0;"
-                                                     value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
-                        </div>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block"
+                                      id="fictitiousCheckBoxWrapper"
+                                      rendered="#{DataEditorForm.paginationPanel.paginationTypeSelectSelectedItem ne 'ADVANCED'}">
+                                <p:outputLabel for="fictitiousCheckbox"
+                                               value="#{msgs.paginationFictitious}"/>
+                                <p:selectBooleanCheckbox id="fictitiousCheckbox"
+                                                         disabled="#{not SecurityAccessController.hasAuthorityToEditProcessPagination()}"
+                                                         styleClass="input switch"
+                                                         style="margin-bottom: 0;"
+                                                         value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
+                        </h:panelGroup>
                     </p:row>
                 </p:panelGrid>
             </p:panel>
