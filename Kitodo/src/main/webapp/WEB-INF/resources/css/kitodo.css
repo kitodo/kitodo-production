@@ -3084,7 +3084,7 @@ Column content
 }
 
 #imagePreviewForm\:mediaDetail #audioWaveformTools > div > button:first-child {
-    margin-left: 0px;
+    margin-left: 0;
 }
 
 #imagePreviewForm\:mediaDetail #audioWaveformTools > div > button {

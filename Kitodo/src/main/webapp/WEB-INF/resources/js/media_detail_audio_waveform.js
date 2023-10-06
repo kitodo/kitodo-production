@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-import WaveSurfer from './libs/wavesurfer/wavesurfer.esm.js.jsf'
+import WaveSurfer from './libs/wavesurfer/wavesurfer.esm.js.jsf';
 
 class AudioWaveform {
     #audioElement;
@@ -23,15 +23,15 @@ class AudioWaveform {
     }
 
     init() {
-        let self = this
-        this.#audioElement = document.querySelector('audio.mediaPreviewItem')
-        if (this.#audioElement && this.#audioElement.getAttribute("data-audio-waveform") != "initialized") {
-            this.#audioElement.setAttribute("data-audio-waveform", "initialized")
+        let self = this;
+        this.#audioElement = document.querySelector('audio.mediaPreviewItem');
+        if (this.#audioElement && this.#audioElement.getAttribute("data-audio-waveform") !== "initialized") {
+            this.#audioElement.setAttribute("data-audio-waveform", "initialized");
 
             // add a loader to visualize loading process
             this.#loader = document.createElement("div");
-            this.#loader.innerHTML = '<i class="fa fa-spinner fa-spin"/>'
-            this.#loader.classList.add('loader')
+            this.#loader.innerHTML = '<i class="fa fa-spinner fa-spin"/>';
+            this.#loader.classList.add('loader');
             this.#audioElement.parentNode.insertBefore(this.#loader, this.#audioElement);
 
             // when the user agent can play the media
@@ -40,7 +40,7 @@ class AudioWaveform {
                 clearTimeout(this.#buildTimeout);
                self.#buildTimeout = setTimeout(function() {
                     self.#build();
-               }, 500)
+               }, 500);
             }, {once: true});
 
         }
@@ -53,13 +53,13 @@ class AudioWaveform {
 
         // get the media id from the source parameter
         const urlParams = new URLSearchParams(this.#audioElement.src);
-        let mediaId = urlParams.get('mediaId')
+        let mediaId = urlParams.get('mediaId');
 
         let waveContainer = document.createElement("div");
         waveContainer.setAttribute("id", "wave-container");
         waveContainer.onclick = function () {
-            self.#wavesurfer.playPause()
-        }
+            self.#wavesurfer.playPause();
+        };
         waveContainer.style.width = "90%";
         waveContainer.style.display = "none";
         this.#audioElement.parentNode.insertBefore(waveContainer, this.#audioElement);
@@ -77,20 +77,20 @@ class AudioWaveform {
 
         this.#wavesurfer.on("decode", function () {
             // cache peaks after when audio has been decoded
-            self.#peaksCache[mediaId] = self.#wavesurfer.getDecodedData().getChannelData(0)
+            self.#peaksCache[mediaId] = self.#wavesurfer.getDecodedData().getChannelData(0);
         });
 
         this.#wavesurfer.on("ready", function () {
             waveContainer.style.display = "block";
             self.#loader.style.display = "none";
 
-            let waveToolsContainer = document.getElementById("audioWaveformTools")
-            const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]')
+            let waveToolsContainer = document.getElementById("audioWaveformTools");
+            const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]');
 
             waveToolsSlider.addEventListener('input', (e) => {
-                const minPxPerSec = e.target.valueAsNumber
-                self.#wavesurfer.zoom(minPxPerSec)
-            })
+                const minPxPerSec = e.target.valueAsNumber;
+                self.#wavesurfer.zoom(minPxPerSec);
+            });
 
             waveToolsContainer.querySelectorAll('input[type="checkbox"]').forEach((input) => {
                 input.onchange = (e) => {
@@ -104,19 +104,15 @@ class AudioWaveform {
                 jumpButton.addEventListener('click', function (event) {
                     event.stopPropagation();
                     let jumpSeconds = parseInt(this.getAttribute("data-audio-waveform-tools-jump-seconds"));
-                    self.#wavesurfer.setTime(self.#wavesurfer.getCurrentTime() + jumpSeconds)
+                    self.#wavesurfer.setTime(self.#wavesurfer.getCurrentTime() + jumpSeconds);
                 });
             });
-        });
-
-        this.#wavesurfer.on("error", function (e) {
-            console.error(e);
         });
     }
 
 }
 
-const audioWaveform= new AudioWaveform()
+const audioWaveform= new AudioWaveform();
 
 document.addEventListener("kitodo-metadataditor-mediaview-update", function () {
     audioWaveform.init();
