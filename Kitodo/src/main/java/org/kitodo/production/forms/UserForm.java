@@ -646,7 +646,7 @@ public class UserForm extends BaseForm {
      * authentication is active also on ldap server.
      */
     public void changePasswordForCurrentUser() {
-        if (isOldPasswordInvalid()) {
+        if (ServiceManager.getUserService().isOldPasswordInvalid(userObject, oldPassword)) {
             Helper.setErrorMessage("passwordsDontMatchOld");
         } else {
             try {
@@ -671,13 +671,6 @@ public class UserForm extends BaseForm {
                 Helper.setErrorMessage("ldap error", logger, e);
             }
         }
-    }
-
-    private boolean isOldPasswordInvalid() {
-        if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
-            return !Objects.equals(this.oldPassword, passwordEncoder.decrypt(this.userObject.getPassword()));
-        }
-        return false;
     }
 
     /**

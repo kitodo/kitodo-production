@@ -48,6 +48,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
@@ -504,5 +505,24 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      */
     public String getShortcuts(int userId) throws DAOException {
         return getById(userId).getShortcuts();
+    }
+
+    /**
+     * Check whether given 'oldPassword' matches current password of given 'user'.
+     * @param user User whose password is checked
+     * @param oldPassword password to check
+     * @return whether given 'oldPassword' matches given users current password
+     */
+    public boolean isOldPasswordInvalid(User user, String oldPassword) {
+        if (!ServiceManager.getSecurityAccessService().hasAuthorityToEditUser()) {
+            if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()
+                    && Objects.nonNull(user.getLdapGroup())) {
+                return ServiceManager.getLdapServerService().isUserPasswordCorrect(user, oldPassword);
+            }
+            else {
+                return !Objects.equals(oldPassword, passwordEncoder.decrypt(user.getPassword()));
+            }
+        }
+        return false;
     }
 }
