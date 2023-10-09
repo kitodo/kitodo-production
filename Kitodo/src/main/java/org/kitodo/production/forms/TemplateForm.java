@@ -24,6 +24,7 @@ import javax.enterprise.context.SessionScoped;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Docket;
@@ -272,6 +273,34 @@ public class TemplateForm extends TemplateBaseForm {
      */
     public List<Workflow> getWorkflows() {
         return ServiceManager.getWorkflowService().getAvailableWorkflows();
+    }
+
+    /**
+     * Get list of OCR-D workflows for select list.
+     *
+     * @return list of OCR-D workflows
+     */
+    public List<Pair> getOcrdWorkflows() {
+        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflows();
+    }
+
+    /**
+     * Get the OCR-D workflow.
+     *
+     * @return Immutable key value pair
+     */
+    public Pair getOcrdWorkflow() {
+        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(template.getOcrdWorkflowId());
+    }
+
+    /**
+     * Set the OCR-D workflow.
+     *
+     * @param ocrdWorkflow
+     *         The immutable key value pair
+     */
+    public void setOcrdWorkflow(Pair ocrdWorkflow) {
+        template.setOcrdWorkflowId(ocrdWorkflow.getKey().toString());
     }
 
     /**
