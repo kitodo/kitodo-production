@@ -648,27 +648,28 @@ public class UserForm extends BaseForm {
     public void changePasswordForCurrentUser() {
         if (isOldPasswordInvalid()) {
             Helper.setErrorMessage("passwordsDontMatchOld");
-        }
-        try {
-            Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
-            if (passwordViolations.isEmpty()) {
-                if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()
-                        && Objects.nonNull(userObject.getLdapGroup())) {
-                    ServiceManager.getLdapServerService().changeUserPassword(userObject, passwordToEncrypt);
-                } else {
+        } else {
+            try {
+                Set<ConstraintViolation<KitodoPassword>> passwordViolations = getPasswordViolations();
+                if (passwordViolations.isEmpty()) {
+                    if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()
+                            && Objects.nonNull(userObject.getLdapGroup())) {
+                        ServiceManager.getLdapServerService().changeUserPassword(userObject, passwordToEncrypt);
+                    }
+                    // NOTE: password has to be changed in database in any case because of a bug in LdapServerService
                     userService.changeUserPassword(userObject, this.passwordToEncrypt);
+                    Helper.setMessage("passwordChanged");
+                    PrimeFaces.current().executeScript("PF('resetPasswordDialog').hide();");
+                } else {
+                    for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
+                        Helper.setErrorMessage(passwordViolation.getMessage());
+                    }
                 }
-                Helper.setMessage("passwordChanged");
-                PrimeFaces.current().executeScript("PF('resetPasswordDialog').hide();");
-            } else {
-                for (ConstraintViolation<KitodoPassword> passwordViolation : passwordViolations) {
-                    Helper.setErrorMessage(passwordViolation.getMessage());
-                }
+            } catch (DAOException e) {
+                Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.USER.getTranslationSingular()}, logger, e);
+            } catch (NoSuchAlgorithmException e) {
+                Helper.setErrorMessage("ldap error", logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
-        } catch (NoSuchAlgorithmException e) {
-            Helper.setErrorMessage("ldap error", logger, e);
         }
     }
 
