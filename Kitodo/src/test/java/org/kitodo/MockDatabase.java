@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 import java.sql.Date;
@@ -58,7 +57,6 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
-import org.kitodo.config.ConfigCore;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
@@ -125,7 +123,6 @@ public class MockDatabase {
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
     public static final String MEDIA_RENAMING_TEST_PROCESS_TITLE = "Rename media";
-    public static final String META_XML = "/meta.xml";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -1117,7 +1114,7 @@ public class MockDatabase {
      * @throws DAOException when loading test project fails
      * @throws DataException when saving test process fails
      */
-    private static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DataException {
+    public static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DataException {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Template template = projectTwo.getTemplates().get(0);
         Process mediaReferencesProcess = new Process();
@@ -2100,25 +2097,5 @@ public class MockDatabase {
         process.setTemplate(template);
         ServiceManager.getProcessService().save(process);
         return process;
-    }
-
-    /**
-     * Copy test metadata xml file with provided 'filename' to process directory of process with provided ID
-     * 'processId'. Creates directory if it does not exist.
-     * @param processId process ID
-     * @param filename filename of metadata file
-     * @throws IOException when subdirectory cannot be created or metadata file cannot be copied
-     */
-    public static void copyTestMetadataFile(int processId, String filename) throws IOException {
-        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
-                .toUri();
-        URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
-                + META_XML).toUri();
-        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
-        if (!ServiceManager.getFileService().isDirectory(processDir)) {
-            ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
-                    String.valueOf(processId));
-        }
-        ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
     }
 }
