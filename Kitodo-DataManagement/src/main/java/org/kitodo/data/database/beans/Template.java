@@ -185,7 +185,7 @@ public class Template extends BaseTemplateBean {
      * Set the OCR-D workflow identifier.
      *
      * @param ocrdWorkflowId
-     *         as profile object
+     *         The identifier of the OCR-D workflow
      */
     public void setOcrdWorkflowId(String ocrdWorkflowId) {
         this.ocrdWorkflowId = ocrdWorkflowId;

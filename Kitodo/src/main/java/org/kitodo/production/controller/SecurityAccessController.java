@@ -223,6 +223,15 @@ public class SecurityAccessController {
     }
 
     /**
+     * Check if the current user has the authority to add OCR profile.
+     *
+     * @return true if the current user has the authority to add OCR profile.
+     */
+    public boolean hasAuthorityToAssignOcrdWorkflow() {
+        return securityAccessService.hasAuthorityToAssignOcrdWorkflow();
+    }
+
+    /**
      * Check if the current user has the authority to delete the batch.
      *
      * @return true if the current user has the authority to delete the batch

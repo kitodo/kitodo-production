@@ -12,5 +12,6 @@
 -- Add authority to assign OCR-D workflow in template or process details
 INSERT IGNORE INTO authority (title) VALUES ('assignOcrdWorkflow_clientAssignable');
 
--- Add column of OCR-D workflow identifier
+-- Add columns of OCR-D workflow identifier
+ALTER TABLE process ADD ocrd_workflow_id varchar(255) DEFAULT NULL;
 ALTER TABLE template ADD ocrd_workflow_id varchar(255) DEFAULT NULL;

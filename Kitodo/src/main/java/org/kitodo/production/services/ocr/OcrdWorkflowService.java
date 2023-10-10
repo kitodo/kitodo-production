@@ -14,14 +14,25 @@ package org.kitodo.production.services.ocr;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.kitodo.production.services.ServiceManager;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.FileVisitOption;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class OcrdWorkflowService {
 
+    private static final Logger logger = LogManager.getLogger(OcrdWorkflowService.class);
     private static volatile OcrdWorkflowService instance = null;
 
     /**
@@ -44,21 +55,41 @@ public class OcrdWorkflowService {
     }
 
     /**
-     * Get OCR-D workflows - available means that ...
+     * Get list of OCR-D workflows from directory.
+     * <p>
+     * The files are relative paths to the ocr profiles directory.
+     * </p>
      *
-     * @return list of OCR-D workflows objects
+     * @return list of OCR-D workflows
      */
     public List<Pair> getOcrdWorkflows() {
-        List workflows = new ArrayList();
-        workflows.add(new ImmutablePair<>("1", "One"));
-        workflows.add(new ImmutablePair<>("2", "Two"));
-        workflows.add(new ImmutablePair<>("3", "Tree"));
-        return workflows;
+        String ocrdWorkflowsDirectoryConfig = ConfigCore.getParameterOrDefaultValue(ParameterCore.OCRD_WORKFLOWS_DIR);
+        if (StringUtils.isNotEmpty(ocrdWorkflowsDirectoryConfig)) {
+            Path ocrdWorkflowsDirectory = Path.of(ocrdWorkflowsDirectoryConfig);
+            if (Files.isDirectory(ocrdWorkflowsDirectory)) {
+                try (Stream<Path> ocrProfilePaths = Files.walk(ocrdWorkflowsDirectory, FileVisitOption.FOLLOW_LINKS)) {
+                    return ocrProfilePaths.filter(Files::isRegularFile).map(Path::toAbsolutePath)
+                            .map(path -> path.toString().replace(ocrdWorkflowsDirectoryConfig, File.separator)).sorted()
+                            .map(path -> ImmutablePair.of(path, Path.of(path).getFileName()))
+                            .collect(Collectors.toList());
+                } catch (IOException e) {
+                    logger.error(e.getMessage(), e);
+                }
+            }
+        }
+        return new ArrayList<>();
     }
 
+    /**
+     * Get an OCR-D workflow by identifier.
+     *
+     * @param ocrdWorkflowId
+     * @return
+     */
     public Pair getOcrdWorkflow(String ocrdWorkflowId) {
         if (StringUtils.isNotEmpty(ocrdWorkflowId)) {
-            return getOcrdWorkflows().stream().filter(pair -> pair.getKey().equals(ocrdWorkflowId)).findFirst().get();
+            return getOcrdWorkflows().stream().filter(pair -> pair.getKey().equals(ocrdWorkflowId)).findFirst()
+                    .orElse(null);
         }
         return null;
     }

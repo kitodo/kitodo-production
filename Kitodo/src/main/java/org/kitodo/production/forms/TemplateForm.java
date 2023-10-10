@@ -300,7 +300,11 @@ public class TemplateForm extends TemplateBaseForm {
      *         The immutable key value pair
      */
     public void setOcrdWorkflow(Pair ocrdWorkflow) {
-        template.setOcrdWorkflowId(ocrdWorkflow.getKey().toString());
+        String ocrdWorkflowId = StringUtils.EMPTY;
+        if(Objects.nonNull(ocrdWorkflow)) {
+            ocrdWorkflowId = ocrdWorkflow.getKey().toString();
+        }
+        template.setOcrdWorkflowId(ocrdWorkflowId);
     }
 
     /**

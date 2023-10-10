@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:jsf="http://xmlns.jcp.org/jsf"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="isViewMode" type="boolean"-->
@@ -46,6 +47,12 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
+
+            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
+                <p:outputLabel for="processTemplate" value="#{msgs.processTemplate}"/>
+                <p:inputText id="processTemplate" value="#{ProcessForm.process.template.title}" class="input"
+                             disabled="true" readonly="true"/>
+            </div>
         </p:row>
 
         <p:row>
@@ -77,6 +84,22 @@
                                    var="docket"
                                    itemValue="#{docket}"
                                    itemLabel="#{docket.title}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+
+            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
+                <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
+                <p:selectOneMenu id="ocrdWorkflow" value="#{ProcessForm.ocrdWorkflow}"
+                                 disabled="#{isViewMode}"
+                                 converter="#{ocrdWorkflowConverter}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="-- #{msgs['processConfig.useProcessTemplateOcrdWorkflow']} --"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{ProcessForm.ocrdWorkflows}"
+                                   var="ocrdWorkflow"
+                                   itemValue="#{ocrdWorkflow}"
+                                   itemLabel="#{ocrdWorkflow.value}"/>
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
