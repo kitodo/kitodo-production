@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -64,11 +66,14 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.thread.RenameMediaThread;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.kitodo.utils.MediaUtil;
 
@@ -1525,6 +1530,52 @@ public class FileService {
     }
 
     /**
+     * Check whether too many processes are selected for media renaming and return corresponding error message.
+     * @param numberOfProcesses number of processes for media renaming
+     * @return error message if too many processes are selected; otherwise return empty string
+     */
+    public String tooManyProcessesSelectedForMediaRenaming(int numberOfProcesses) {
+        int limit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING);
+        if (0 < limit && limit < numberOfProcesses) {
+            return Helper.getTranslation("tooManyProcessesSelectedForMediaRenaming", String.valueOf(limit),
+                    String.valueOf(numberOfProcesses));
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Rename media files of given processes.
+     * @param processes Processes whose media is renamed
+     */
+    public void renameMedia(List<Process> processes) {
+        processes = lockAndSortProcessesForRenaming(processes);
+        TaskManager.addTask(new RenameMediaThread(processes));
+    }
+
+    private List<Process> lockAndSortProcessesForRenaming(List<Process> processes) {
+        processes.sort(Comparator.comparing(Process::getId));
+        List<Integer> lockedProcesses = new LinkedList<>();
+        for (Process process : processes) {
+            int processId = process.getId();
+            if (MetadataLock.isLocked(processId)) {
+                lockedProcesses.add(processId);
+                if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ANONYMIZE)) {
+                    logger.error("Unable to lock process " + processId + " for media renaming because it is currently "
+                            + "being worked on by another user");
+                } else {
+                    User currentUser = MetadataLock.getLockUser(processId);
+                    logger.error("Unable to lock process " + processId + " for media renaming because it is currently "
+                            + "being worked on by another user (" + currentUser.getFullName() + ")");
+                }
+            } else {
+                MetadataLock.setLocked(processId, ServiceManager.getUserService().getCurrentUser());
+            }
+        }
+        return processes.stream().filter(p -> !lockedProcesses.contains(p.getId())).collect(Collectors.toList());
+    }
+
+    /**
      * Revert renaming of media files when the user leaves the metadata editor without saving. This method uses a
      * provided map object to rename media files identified by the map entries values to the corresponding map entries
      * keys.
@@ -1534,6 +1585,7 @@ public class FileService {
      */
     public void revertRenaming(BidiMap<URI, URI> filenameMappings, Workpiece workpiece) {
         // revert media variant URIs for all media files in workpiece to previous, original values
+        logger.info("Reverting to original media filenames of process " + workpiece.getId());
         for (PhysicalDivision physicalDivision : workpiece
                 .getAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES)) {
             for (Entry<MediaVariant, URI> mediaVariantURIEntry : physicalDivision.getMediaFiles().entrySet()) {
@@ -1545,8 +1597,14 @@ public class FileService {
         try {
             List<URI> tempUris = new LinkedList<>();
             for (Entry<URI, URI> mapping : filenameMappings.entrySet()) {
-                tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()
-                        + TEMP_EXTENSION));
+                if (mapping.getKey().toString().endsWith(TEMP_EXTENSION)) {
+                    // if current URI has '.tmp' extension, directly revert to original name (without '.tmp' extension)
+                    tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()));
+                } else {
+                    // rename to new filename with '.tmp' extension otherwise
+                    tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()
+                            + TEMP_EXTENSION));
+                }
             }
             for (URI tempUri : tempUris) {
                 fileManagementModule.rename(tempUri, StringUtils.removeEnd(tempUri.toString(), TEMP_EXTENSION));

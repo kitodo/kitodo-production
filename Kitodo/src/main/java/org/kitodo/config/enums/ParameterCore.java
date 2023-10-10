@@ -639,8 +639,12 @@ public enum ParameterCore implements ParameterInterface {
      * Secret is used to encrypt or decrypt LDAP manager passwords which are stored in the database in encrypted form.
      * Once the secret value is set, it should not be changed since encrypted data can no longer be decrypted.
      */
-    SECURITY_SECRET_LDAPMANAGERPASSWORD(new Parameter<>("security.secret.ldapManagerPassword", ""));
+    SECURITY_SECRET_LDAPMANAGERPASSWORD(new Parameter<>("security.secret.ldapManagerPassword", "")),
 
+    /* Optional parameter can be used to limit the number of processes for which media renaming can be conducted as a
+     * list function. Values different from positive integers are interpreted as "unlimited".
+     */
+    MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING(new Parameter<>("maxNumberOfProcessesForMediaRenaming", -1));
 
     private final Parameter<?> parameter;
 
