@@ -101,7 +101,7 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
      * 
      * @param comment to be removed.
      */
-    public static void removeComment(Comment comment) throws DAOException {
+    public void removeComment(Comment comment) throws DAOException {
         comment.getProcess().getComments().remove(comment);
         ServiceManager.getCommentService().removeFromDatabase(comment);
     }
