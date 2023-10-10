@@ -655,9 +655,9 @@ public class UserForm extends BaseForm {
                     if (DynamicAuthenticationProvider.getInstance().isLdapAuthentication()
                             && Objects.nonNull(userObject.getLdapGroup())) {
                         ServiceManager.getLdapServerService().changeUserPassword(userObject, passwordToEncrypt);
-                    } else {
-                        userService.changeUserPassword(userObject, this.passwordToEncrypt);
                     }
+                    // NOTE: password has to be changed in database in any case because of a bug in LdapServerService
+                    userService.changeUserPassword(userObject, this.passwordToEncrypt);
                     Helper.setMessage("passwordChanged");
                     PrimeFaces.current().executeScript("PF('resetPasswordDialog').hide();");
                 } else {
