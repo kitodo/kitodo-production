@@ -14,7 +14,9 @@ package org.kitodo.production.forms.createprocess;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -85,7 +87,8 @@ public class SelectProjectDialogView implements Serializable {
     public List<Project> getTemplateProjects() {
         try {
             Template template = ServiceManager.getTemplateService().getById(this.templateDTO.getId());
-            return template.getProjects();
+            return template.getProjects().stream().sorted(Comparator.comparing(Project::getTitle))
+                    .collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(),
                     this.templateDTO.getId()}, logger, e);
