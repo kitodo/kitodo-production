@@ -22,7 +22,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.production.services.ServiceManager;
 
