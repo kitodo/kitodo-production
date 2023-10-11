@@ -25,7 +25,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 
-
 public class VariableReplacerTest {
 
     int projectId = 12;
