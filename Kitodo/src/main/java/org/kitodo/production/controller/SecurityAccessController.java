@@ -223,9 +223,9 @@ public class SecurityAccessController {
     }
 
     /**
-     * Check if the current user has the authority to add OCR profile.
+     * Check if the current user has the authority to add OCR-D workflow.
      *
-     * @return true if the current user has the authority to add OCR profile.
+     * @return true if the current user has the authority to add OCR-D workflow.
      */
     public boolean hasAuthorityToAssignOcrdWorkflow() {
         return securityAccessService.hasAuthorityToAssignOcrdWorkflow();
