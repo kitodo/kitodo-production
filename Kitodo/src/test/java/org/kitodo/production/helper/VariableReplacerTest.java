@@ -19,8 +19,12 @@ import java.net.URI;
 
 import org.junit.Test;
 import org.kitodo.config.KitodoConfig;
-import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Template;
+
 
 public class VariableReplacerTest {
 
@@ -193,8 +197,8 @@ public class VariableReplacerTest {
         project.setId(projectId);
         process.setProject(project);
         scansFolder.setProject(project);
-        project.setGeneratorSource(scansFolder);
         project.getFolders().add(scansFolder);
+        project.setGeneratorSource(scansFolder);
 
         return process;
     }
