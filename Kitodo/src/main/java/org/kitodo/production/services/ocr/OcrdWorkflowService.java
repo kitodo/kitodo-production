@@ -68,9 +68,8 @@ public class OcrdWorkflowService {
             Path ocrdWorkflowsDirectory = Path.of(ocrdWorkflowsDirectoryConfig);
             if (Files.isDirectory(ocrdWorkflowsDirectory)) {
                 try (Stream<Path> ocrProfilePaths = Files.walk(ocrdWorkflowsDirectory, FileVisitOption.FOLLOW_LINKS)) {
-                    return ocrProfilePaths.filter(Files::isRegularFile).map(Path::toAbsolutePath)
-                            .map(path -> path.toString().replace(ocrdWorkflowsDirectoryConfig, File.separator)).sorted()
-                            .map(path -> ImmutablePair.of(path, Path.of(path).getFileName()))
+                    return ocrProfilePaths.filter(Files::isRegularFile).map(Path::toAbsolutePath).sorted()
+                            .map(path -> getImmutablePairFromPath(path, ocrdWorkflowsDirectory))
                             .collect(Collectors.toList());
                 } catch (IOException e) {
                     logger.error(e.getMessage(), e);
@@ -78,6 +77,13 @@ public class OcrdWorkflowService {
             }
         }
         return new ArrayList<>();
+    }
+
+    private static Pair getImmutablePairFromPath(Path filePath, Path ocrdWorkflowsDirectory) {
+        String path = filePath.toString();
+        path = path.replace(ocrdWorkflowsDirectory.toString(), StringUtils.EMPTY);
+        path = StringUtils.removeStart(path, "/");
+        return ImmutablePair.of(path, path);
     }
 
     /**
