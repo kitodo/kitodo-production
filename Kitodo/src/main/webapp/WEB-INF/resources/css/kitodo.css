@@ -2984,6 +2984,10 @@ Column content
     text-indent: unset;
 }
 
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter {
+    padding-right: 26px;
+}
+
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
     display: inline-table;
 }
