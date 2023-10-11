@@ -82,6 +82,10 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
         return Objects.isNull(settings) || settings.isEditable();
     }
 
+    public boolean isFilterable() {
+        return Objects.isNull(settings) || settings.isFilterable();
+    }
+
     @Override
     public boolean isUndefined() {
         return Objects.isNull(settings) || settings.isUndefined();

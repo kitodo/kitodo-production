@@ -2966,8 +2966,22 @@ Column content
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-inputfield.ui-selectmanymenu.read-only,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio.read-only {
     max-width: unset;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search {
+    top: 8px;
+    right: 6px;
+    text-indent: unset;
+    background: none;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search::after {
+    font-family: FontAwesome;
+    content: "\f002";
+    text-indent: unset;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {

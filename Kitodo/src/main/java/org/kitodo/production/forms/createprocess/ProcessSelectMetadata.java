@@ -12,12 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.function.BiConsumer;
 
@@ -109,6 +104,10 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
             default:
                 return "";
         }
+    }
+
+    public boolean isFilterable() {
+        return Objects.isNull(settings) || settings.isFilterable();
     }
 
     /**

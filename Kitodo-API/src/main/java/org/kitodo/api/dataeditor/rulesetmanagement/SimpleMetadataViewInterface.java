@@ -118,6 +118,13 @@ public interface SimpleMetadataViewInterface extends MetadataViewInterface {
     boolean isEditable();
 
     /**
+     * Returns whether values under this key can be filtered in this view.
+     *
+     * @return whether values can be filtered
+     */
+    boolean isFilterable();
+
+    /**
      * Returns whether the value corresponds to the value range. The value range
      * can be determined in various ways. Integers or dates must parse, it may
      * be that the value must be in a list or is checked against a regular
