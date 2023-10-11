@@ -71,8 +71,9 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-            "(\\$?)\\((?:(prefs|processid|processtitle|projectid|" + "stepid|stepname|generatorsource|generatorsourcepath|ocrdworkflowid)|" + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|" + "(?:(filename|basename|relativepath))))\\)");
-
+            "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrdworkflowid)|"
+                    + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
+                    + "(?:(filename|basename|relativepath))))\\)");
     /**
      * The map is filled with replacement instructions that are required for
      * backwards compatibility with version 2.

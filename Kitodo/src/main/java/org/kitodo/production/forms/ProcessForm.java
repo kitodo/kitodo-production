@@ -902,7 +902,7 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setOcrdWorkflow(Pair ocrdWorkflow) {
         String ocrdWorkflowId = StringUtils.EMPTY;
-        if(Objects.nonNull(ocrdWorkflow)) {
+        if (Objects.nonNull(ocrdWorkflow)) {
             ocrdWorkflowId = ocrdWorkflow.getKey().toString();
         }
         process.setOcrdWorkflowId(ocrdWorkflowId);

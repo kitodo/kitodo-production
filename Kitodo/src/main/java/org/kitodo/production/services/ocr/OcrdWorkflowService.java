@@ -11,14 +11,6 @@
 
 package org.kitodo.production.services.ocr;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.config.ConfigCore;
-import org.kitodo.config.enums.ParameterCore;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileVisitOption;
@@ -29,6 +21,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 
 public class OcrdWorkflowService {
 
@@ -83,8 +83,8 @@ public class OcrdWorkflowService {
     /**
      * Get an OCR-D workflow by identifier.
      *
-     * @param ocrdWorkflowId
-     * @return
+     * @param ocrdWorkflowId The OCR-D workflow identifier
+     * @return The OCR-D workflow
      */
     public Pair getOcrdWorkflow(String ocrdWorkflowId) {
         if (StringUtils.isNotEmpty(ocrdWorkflowId)) {
