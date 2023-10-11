@@ -298,7 +298,7 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
 
-        if (StringUtils.isNotEmpty(process.getTemplate().getOcrdWorkflowId())) {
+        if (StringUtils.isEmpty(process.getTemplate().getOcrdWorkflowId())) {
             logger.warn("Cannot replace \"(ocrdworkflowid)\": template has no OCR-D workflow assigned");
             return variableFinder.group(1);
         }
