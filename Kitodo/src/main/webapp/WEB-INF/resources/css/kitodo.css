@@ -1804,15 +1804,8 @@ Mass import
     color: var(--medium-gray);
 }
 
-.correction-marker {
-    color: var(--focused-orange);
-    font-size: var(--input-height);
-    font-weight: bold;
-}
-
 .correction {
     color: var(--focused-orange);
-    font-weight: bold;
 }
 
 .corrected {
@@ -2299,6 +2292,10 @@ form#metadata div label,
 
 #commentsBox\:commentsGrid_head {
     display: none;
+}
+
+.comment-correction {
+    margin-right: var(--group-margin);
 }
 
 .comment-author {
@@ -3931,7 +3928,7 @@ footer {
     width: 1em;
 }
 
-.ui-tooltip.comments .icon .correction-marker {
+.ui-tooltip.comments .icon .correction {
     font-size: inherit;
 }
 
