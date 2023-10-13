@@ -19,7 +19,7 @@
     <p:panel id="commentWrapperPanel" styleClass="wrapperPanel">
         <h:form id="commentsBox">
             <!-- Existing comments -->
-            <p:dataTable id="commentsGrid" value="#{CommentForm.getAllComments()}" var="item">
+            <p:dataTable id="commentsGrid" value="#{CommentForm.getAllComments()}" var="item" rowIndexVar="rowIdx">
                 <p:column style="width: 100%;">
                     <p:outputLabel value="#{msgs.correctionK} "
                                    styleClass="#{(item.corrected) ? 'correction corrected' : 'correction'}"
@@ -42,6 +42,28 @@
                             immediate="true"
                             title="#{msgs['dataEditor.comment.markCorrectionCommentAsSolved']}"
                             action="#{CommentForm.solveProblem(item)}">
+                    </p:commandButton>
+                    <p:commandButton id="editButton"
+                           action="#{CommentForm.setEditedComment(item)}"
+                           oncomplete="PF('editCommentDialog').show()"
+                           icon="fa fa-edit"
+                           styleClass="secondary right"
+                           title="#{msgs.commentEdit}"
+                           rendered="#{item.type ne 'ERROR' and rowIdx == 0}"
+                           disabled="#{item.author.id != LoginForm.loggedUser.id}"
+                           immediate="true"
+                           update=":editCommentForm">
+                        <p:resetInput target=":editCommentForm"/>
+                    </p:commandButton>
+                    <p:commandButton
+                            rendered="#{item.type ne 'ERROR' and rowIdx == 0}"
+                            disabled="#{item.author.id != LoginForm.loggedUser.id}"
+                            icon="fa fa-trash"
+                            update="#{request.requestURI.contains('metadataEditor') ? 'commentsBox:commentsGrid commentsNumberWrapper' : 'tasksTabView:commentsBox:commentsGrid tasksTabView:commentsNumberWrapper'}"
+                            styleClass="secondary right"
+                            immediate="true"
+                            title="#{msgs.commentDelete}"
+                            action="#{CommentForm.removeComment(item)}">
                     </p:commandButton>
                 </p:column>
             </p:dataTable>
