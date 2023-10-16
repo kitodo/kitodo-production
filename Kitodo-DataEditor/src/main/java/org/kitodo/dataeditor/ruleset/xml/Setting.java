@@ -124,6 +124,14 @@ public class Setting {
         return excluded;
     }
 
+    /**
+     * Returns the value “filterable” if one is set. This getter returns
+     * {@code null} if the attribute was not entered. This is needed, for
+     * example, when merging attributes. If only the simple value (with default,
+     * if no value was specified) is needed, use {@link #isFilterable()}.
+     *
+     * @return the value “filterable”, if set, else {@code null}
+     */
     public Boolean getFilterable() {
         return filterable;
     }
@@ -189,6 +197,12 @@ public class Setting {
         return editable != null ? editable : true;
     }
 
+    /**
+     * Returns the “filterable” value or otherwise the default value if the
+     * attribute is not set.
+     *
+     * @return the “filterable” value or its default value
+     */
     public boolean isFilterable() {
         return filterable != null ? filterable : false;
     }
@@ -235,7 +249,13 @@ public class Setting {
         this.editable = editable;
     }
 
-
+    /**
+     * This sets the “filterable” value. If you set the value to {@code null}, no
+     * attribute is written.
+     *
+     * @param filterable
+     *            “filterable” value to set
+     */
     public void setFilterable(Boolean filterable) {
         this.filterable = filterable;
     }

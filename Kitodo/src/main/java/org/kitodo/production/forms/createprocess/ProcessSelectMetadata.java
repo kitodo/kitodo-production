@@ -12,8 +12,14 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 import javax.faces.model.SelectItem;
@@ -106,6 +112,11 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
         }
     }
 
+    /**
+     * Returns if the field may be filterable.
+     *
+     * @return whether the field is filterable
+     */
     public boolean isFilterable() {
         return Objects.isNull(settings) || settings.isFilterable();
     }
