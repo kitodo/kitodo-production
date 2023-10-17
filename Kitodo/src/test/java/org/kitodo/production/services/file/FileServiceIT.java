@@ -11,9 +11,11 @@
 
 package org.kitodo.production.services.file;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -82,6 +84,27 @@ public class FileServiceIT {
                 .createDirectories(URI.create("several/directories/can/be/created/with/trailing/"));
         assertTrue(ServiceManager.getFileService().isDirectory(URI.create(SEVERAL)));
         cleanUp();
+    }
+
+    @Test
+    public void testMetadataImageComparator() {
+        MetadataImageComparator metadataImageComparator = ServiceManager.getFileService().getMetadataImageComparator();
+
+        assertEquals(metadataImageComparator.compare("filename2", "filename1"),1);
+
+        assertEquals(metadataImageComparator.compare("0000001", "0000002"),-1);
+
+        assertEquals(metadataImageComparator.compare("file.name.01", "file.name.02"),-1);
+
+        assertEquals(metadataImageComparator.compare(
+                new File("filename_01.tif").toURI(), new File("filename_02.tif").toURI()),-1);
+
+        assertEquals(metadataImageComparator.compare(
+                new File("0000001.tif").toURI(), new File("0000002.tif").toURI()),-1);
+
+        assertEquals(metadataImageComparator.compare(
+                new File("file.name.01.tif").toURI(), new File("file.name.02.tif").toURI()),-1);
+
     }
 
     private void cleanUp() throws IOException {

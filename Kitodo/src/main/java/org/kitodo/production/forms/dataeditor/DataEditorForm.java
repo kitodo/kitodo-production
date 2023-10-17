@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -34,6 +35,7 @@ import javax.faces.model.SelectItem;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -202,6 +204,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private MediaProvider mediaProvider;
     private boolean mediaUpdated = false;
 
+    private DualHashBidiMap<URI, URI> filenameMapping = new DualHashBidiMap<>();
+
+    private int numberOfNewMappings = 0;
+
+    private String renamingError = "";
+
     /**
      * Public constructor.
      */
@@ -333,7 +341,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
         }
-        setNumberOfScans(workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES));
         return ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
@@ -354,6 +361,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         paginationPanel.show();
 
         editPagesDialog.prepare();
+        updateNumberOfScans();
 
         if (logger.isTraceEnabled()) {
             logger.trace("Initializing editor beans took {} ms",
@@ -382,6 +390,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void close() {
         deleteNotSavedUploadedMedia();
         unsavedDeletedMedia.clear();
+        ServiceManager.getFileService().revertRenaming(filenameMapping.inverseBidiMap(), workpiece);
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -431,6 +440,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 ServiceManager.getProcessService().getProcessDataDirectory(this.process).getPath()).toUri();
         for (PhysicalDivision mediaUnit : this.unsavedUploadedMedia) {
             for (URI fileURI : mediaUnit.getMediaFiles().values()) {
+                this.filenameMapping = ServiceManager.getFileService()
+                        .removeUnsavedUploadMediaUriFromFileMapping(fileURI, this.filenameMapping);
                 try {
                     ServiceManager.getFileService().delete(uri.resolve(fileURI));
                 } catch (IOException e) {
@@ -488,6 +499,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         try {
             metadataPanel.preserve();
             structurePanel.preserve();
+            // reset "image filename renaming map" so nothing is reverted after saving!
+            filenameMapping = new DualHashBidiMap<>();
             ServiceManager.getProcessService().updateChildrenFromLogicalStructure(process, workpiece.getLogicalStructure());
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
@@ -550,6 +563,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void deletePhysicalDivision() {
         structurePanel.deleteSelectedPhysicalDivision();
+        updateNumberOfScans();
     }
 
     @Override
@@ -936,7 +950,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     @Override
     public boolean canBeDeleted(ProcessDetail processDetail) {
-        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOccurs()
                 || (!processDetail.isRequired() && !this.ruleset.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
@@ -1003,11 +1017,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     /**
      * Sets numberOfScans.
      *
-     * @param numberOfScans value of numberOfScans
      */
-    public void setNumberOfScans(int numberOfScans) {
-        this.numberOfScans = numberOfScans;
+    public void updateNumberOfScans() {
+        this.numberOfScans = workpiece.getNumberOfAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES);
     }
+
 
     /**
      * Save current metadata editor layout.
@@ -1106,5 +1120,46 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void setMediaUpdated(boolean mediaUpdated) {
         this.mediaUpdated = mediaUpdated;
+    }
+
+    /**
+     * Rename media files of current process according to their corresponding physical divisions ORDER attribute.
+     */
+    public void renameMediaFiles() {
+        renamingError = "";
+        try {
+            numberOfNewMappings = ServiceManager.getFileService().renameMediaFiles(process, workpiece, filenameMapping);
+        } catch (IOException | URISyntaxException e) {
+            renamingError = e.getMessage();
+        }
+        showPanels();
+        if (StringUtils.isBlank(renamingError)) {
+            PrimeFaces.current().executeScript("PF('renamingMediaSuccessDialog').show();");
+        } else {
+            PrimeFaces.current().executeScript("PF('renamingMediaErrorDialog').show();");
+        }
+    }
+
+    /**
+     * Get renamingError.
+     * @return renamingError
+     */
+    public String getRenamingError() {
+        return renamingError;
+    }
+
+    /**
+     * Return renaming success message containing number of renamed media files and configured sub-folders.
+     * @return renaming success message
+     */
+    public String getRenamingSuccessMessage() {
+        return Helper.getTranslation("dataEditor.renamingMediaText", String.valueOf(numberOfNewMappings),
+                String.valueOf(process.getProject().getFolders().size()));
+    }
+
+    private void showPanels() {
+        galleryPanel.show();
+        paginationPanel.show();
+        structurePanel.show();
     }
 }

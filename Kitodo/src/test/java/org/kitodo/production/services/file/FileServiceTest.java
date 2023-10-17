@@ -47,8 +47,10 @@ import org.kitodo.production.services.ServiceManager;
 
 public class FileServiceTest {
 
-    private static FileService fileService = new FileService();
+    private static final FileService fileService = new FileService();
     private static final Logger logger = LogManager.getLogger(FileServiceTest.class);
+    private static final String OLD_DIRECTORY_NAME = "oldDirectoryName";
+    private static final String NEW_DIRECTORY_NAME = "newDirectoryName";
 
     @BeforeClass
     public static void setUp() throws IOException {
@@ -142,6 +144,16 @@ public class FileServiceTest {
         URI newUri = URI.create("fileServiceTest/newName.xml");
         assertFalse(fileService.fileExist(oldUri));
         assertTrue(fileService.fileExist(newUri));
+    }
+
+    @Test
+    public void testRenameDirectory() throws Exception {
+        URI oldDirUri = fileService.createDirectory(URI.create(""), OLD_DIRECTORY_NAME);
+        assertTrue(fileService.isDirectory(oldDirUri));
+        URI newDirUri = fileService.renameFile(oldDirUri, NEW_DIRECTORY_NAME);
+        assertTrue(fileService.isDirectory(newDirUri));
+        assertFalse(fileService.isDirectory(oldDirUri));
+        fileService.delete(newDirUri);
     }
 
     /**
@@ -428,6 +440,15 @@ public class FileServiceTest {
         String fileName = fileService.getFileName(existing);
 
         assertEquals("fileName", fileName);
+    }
+
+    @Test
+    public void testGetFileNameWithMultipleDots() throws IOException {
+        URI existing = fileService.createResource(URI.create("fileServiceTest"), "fileName.with.dots.xml");
+
+        String fileName = fileService.getFileName(existing);
+
+        assertEquals("fileName.with.dots", fileName);
     }
 
     @Test

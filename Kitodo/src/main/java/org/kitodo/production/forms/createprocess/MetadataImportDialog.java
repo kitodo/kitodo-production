@@ -80,9 +80,14 @@ public abstract class MetadataImportDialog {
             }
         }
 
-        if (StringUtils.isBlank(tempProcess.getAtstsl()) && Objects.nonNull(parentTempProcess)) {
-            ProcessHelper.generateAtstslFields(tempProcess, Collections.singletonList(parentTempProcess),
-                    ImportService.ACQUISITION_STAGE_CREATE, true);
+        if (StringUtils.isBlank(tempProcess.getAtstsl())) {
+            if (Objects.nonNull(parentTempProcess)) {
+                ProcessHelper.generateAtstslFields(tempProcess, Collections.singletonList(parentTempProcess),
+                        ImportService.ACQUISITION_STAGE_CREATE, true);
+            } else {
+                ProcessHelper.generateAtstslFields(tempProcess, null,
+                        ImportService.ACQUISITION_STAGE_CREATE, true);
+            }
         }
     }
 
@@ -122,9 +127,11 @@ public abstract class MetadataImportDialog {
      * @param processes
      *            The linked list of TempProcess instances
      */
-    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes) {
+    void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+
         int countOfAddedMetadata = 0;
-        if (processes.size() > 0) {
+        if (!processes.isEmpty()) {
             TempProcess process = processes.getFirst();
             if (process.getMetadataNodes().getLength() > 0) {
                 if (createProcessForm.getProcessDataTab().getDocType()

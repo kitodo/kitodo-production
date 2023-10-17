@@ -144,7 +144,7 @@
                     <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                     <f:selectItems value="#{LdapGroupForm.ldapGroups}" var="ldapGroup"
                                    itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
-                    <p:ajax event="change" oncomplete="toggleSave()" update="@form"/>
+                    <p:ajax event="change" oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
                 </p:selectOneMenu>
             </div>
             <div>

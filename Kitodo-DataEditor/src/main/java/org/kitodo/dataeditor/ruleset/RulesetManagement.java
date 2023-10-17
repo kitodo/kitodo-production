@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale.LanguageRange;
 import java.util.Map;
@@ -27,8 +28,10 @@ import javax.xml.bind.JAXBException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.dataeditor.ruleset.xml.AcquisitionStage;
@@ -47,6 +50,14 @@ public class RulesetManagement implements RulesetManagementInterface {
      * A logger can be used to keep a log.
      */
     private static final Logger logger = LogManager.getLogger(RulesetManagement.class);
+
+    /**
+     * English, the only language understood by the System user. This value is
+     * passed when a method requests a language of the user in order to display
+     * labels in this language, but the labels are not required from the result
+     * and the language passed is therefore irrelevant at this point.
+     */
+    private static final List<LanguageRange> ENGLISH = LanguageRange.parse("en");
 
     /**
      * The ruleset.
@@ -321,5 +332,43 @@ public class RulesetManagement implements RulesetManagementInterface {
         return false;
     }
 
+    @Override
+    public int updateMetadata(String division, Collection<Metadata> currentMetadata, String acquisitionStage,
+            Collection<Metadata> updateMetadata) {
 
+        Settings settings = ruleset.getSettings(acquisitionStage);
+        Collection<MetadataViewInterface> allowedMetadata = getStructuralElementView(division, acquisitionStage,
+            ENGLISH).getAllowedMetadata();
+        Collection<ReimportMetadata> metadataForReimport = createListOfMetadataToMerge(currentMetadata, settings,
+            allowedMetadata, updateMetadata);
+
+        int sizeBefore = currentMetadata.size();
+        currentMetadata.clear();
+        for (ReimportMetadata metadataInReimport : metadataForReimport) {
+            currentMetadata.addAll(metadataInReimport.get());
+        }
+        return currentMetadata.size() - sizeBefore;
+    }
+
+    private Collection<ReimportMetadata> createListOfMetadataToMerge(Collection<Metadata> currentMetadata,
+            Settings settings, Collection<MetadataViewInterface> allowedMetadata, Collection<Metadata> updateMetadata) {
+        HashMap<String, ReimportMetadata> unifying = new HashMap<>();
+        for (Metadata metadata : currentMetadata) {
+            unifying.computeIfAbsent(metadata.getKey(), ReimportMetadata::new).addToCurrentEntries(metadata);
+        }
+        for (Metadata metadata : updateMetadata) {
+            unifying.computeIfAbsent(metadata.getKey(), ReimportMetadata::new).addToUpdateEntries(metadata);
+        }
+        Collection<ReimportMetadata> result = unifying.values();
+        for (ReimportMetadata entry : result) {
+            entry.setReimport(settings.getReimport(entry.getKey()));
+        }
+        for (MetadataViewInterface metadataView : allowedMetadata) {
+            ReimportMetadata metadataToMerge = unifying.get(metadataView.getId());
+            if (Objects.nonNull(metadataToMerge)) {
+                metadataToMerge.setMaxOccurs(metadataView.getMaxOccurs());
+            }
+        }
+        return result;
+    }
 }

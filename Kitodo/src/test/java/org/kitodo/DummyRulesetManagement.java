@@ -19,6 +19,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Map;
 import java.util.Optional;
 
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
@@ -75,6 +76,12 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
 
     @Override
     public boolean isAlwaysShowingForKey(String keyId) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public int updateMetadata(String division, Collection<Metadata> metadata, String acquisitionStage,
+            Collection<Metadata> updateItems) {
         throw new UnsupportedOperationException();
     }
 }

@@ -85,7 +85,7 @@ public class Process extends BaseTemplateBean {
     @OrderBy("ordering")
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)

@@ -43,6 +43,7 @@ import org.kitodo.data.database.enums.WorkflowConditionType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.WebDav;
@@ -263,8 +264,8 @@ public class WorkflowControllerService {
         if (!process.getChildren().isEmpty()) {
             boolean allChildrenClosed = true;
             for (Process child : process.getChildren()) {
-                allChildrenClosed &= child.getSortHelperStatus().equals("100000000")
-                        || child.getSortHelperStatus().equals("100000000000");
+                allChildrenClosed &= ProcessState.COMPLETED20.getValue().equals(child.getSortHelperStatus())
+                        || ProcessState.COMPLETED.getValue().equals(child.getSortHelperStatus());
             }
             return allChildrenClosed;
         }
@@ -347,28 +348,33 @@ public class WorkflowControllerService {
     /**
      * Unified method for report problem .
      *
-     * @param comment as Comment object
+     * @param comment
+     *         as Comment object
+     * @param taskEditType
+     *         of task change
      */
-    public void reportProblem(Comment comment) throws DataException {
+    public void reportProblem(Comment comment, TaskEditType taskEditType) throws DataException {
         Task currentTask = comment.getCurrentTask();
         if (currentTask.isTypeImagesRead() || currentTask.isTypeImagesWrite()) {
             this.webDav.uploadFromHome(getCurrentUser(), comment.getProcess());
         }
         Date date = new Date();
-        currentTask.setProcessingStatus(TaskStatus.LOCKED);
-        currentTask.setEditType(TaskEditType.MANUAL_SINGLE);
+        currentTask.setProcessingStatus(
+                Objects.nonNull(comment.getCorrectionTask()) ? TaskStatus.LOCKED : TaskStatus.INWORK);
+        currentTask.setEditType(taskEditType);
         currentTask.setProcessingTime(date);
         taskService.replaceProcessingUser(currentTask, getCurrentUser());
         currentTask.setProcessingBegin(null);
         taskService.save(currentTask);
 
-        Task correctionTask = comment.getCorrectionTask();
-        correctionTask.setProcessingStatus(TaskStatus.OPEN);
-        correctionTask.setProcessingEnd(null);
-        correctionTask.setCorrection(true);
-        taskService.save(correctionTask);
-
-        lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+        if (Objects.nonNull(comment.getCorrectionTask())) {
+            Task correctionTask = comment.getCorrectionTask();
+            correctionTask.setProcessingStatus(TaskStatus.OPEN);
+            correctionTask.setProcessingEnd(null);
+            correctionTask.setCorrection(true);
+            taskService.save(correctionTask);
+            lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+        }
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
 
@@ -376,12 +382,23 @@ public class WorkflowControllerService {
      * Unified method for solve problem.
      *
      * @param comment
-     *              as Comment object
+     *         as Comment object
      */
-    public void solveProblem(Comment comment) throws DataException, DAOException, IOException {
-        closeTaskByUser(comment.getCorrectionTask());
+    public void solveProblem(Comment comment, TaskEditType taskEditType)
+            throws DataException, DAOException, IOException {
+        if (Objects.nonNull(comment.getCorrectionTask())) {
+            closeTaskByUser(comment.getCorrectionTask());
+            comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
+        } else {
+            Task currentTask = comment.getCurrentTask();
+            currentTask.setProcessingStatus(TaskStatus.OPEN);
+            currentTask.setEditType(taskEditType);
+            currentTask.setProcessingTime(new Date());
+            currentTask.setProcessingBegin(null);
+            taskService.replaceProcessingUser(currentTask, getCurrentUser());
+            taskService.save(currentTask);
+        }
         comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
-        comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
         comment.setCorrected(Boolean.TRUE);
         comment.setCorrectionDate(new Date());
         try {
@@ -455,7 +472,7 @@ public class WorkflowControllerService {
 
     private void closeParent(Process process) throws DataException {
         if (Objects.nonNull(process.getParent()) && allChildrenClosed(process.getParent())) {
-            process.getParent().setSortHelperStatus("100000000");
+            process.getParent().setSortHelperStatus(ProcessState.COMPLETED.getValue());
             ServiceManager.getProcessService().save(process.getParent());
             closeParent(process.getParent());
         }

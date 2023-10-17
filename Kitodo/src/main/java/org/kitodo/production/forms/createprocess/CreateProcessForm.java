@@ -35,8 +35,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
+import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
@@ -51,6 +54,7 @@ import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
@@ -632,10 +636,39 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     private void saveTempProcessMetadata(TempProcess tempProcess) {
         try (OutputStream out = ServiceManager.getFileService()
                 .write(ServiceManager.getProcessService().getMetadataFileUri(tempProcess.getProcess()))) {
-            tempProcess.getWorkpiece().setId(tempProcess.getProcess().getId().toString());
-            ServiceManager.getMetsService().save(tempProcess.getWorkpiece(), out);
+            Workpiece workpiece = tempProcess.getWorkpiece();
+            workpiece.setId(tempProcess.getProcess().getId().toString());
+            if (Objects.nonNull(rulesetManagement)) {
+                setProcessTitleMetadata(workpiece);
+            }
+            ServiceManager.getMetsService().save(workpiece, out);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    private void setProcessTitleMetadata(Workpiece workpiece) {
+        Collection<String> keysForProcessTitle = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
+        if (!keysForProcessTitle.isEmpty()) {
+            String processTitle = currentProcess.getProcess().getTitle();
+            addAllowedMetadataRecursive(workpiece.getLogicalStructure(), keysForProcessTitle, processTitle);
+            addAllowedMetadataRecursive(workpiece.getPhysicalStructure(), keysForProcessTitle, processTitle);
+        }
+    }
+
+    private void addAllowedMetadataRecursive(Division<?> division, Collection<String> keys, String value) {
+        StructuralElementViewInterface divisionView = rulesetManagement.getStructuralElementView(division.getType(),
+            acquisitionStage, priorityList);
+        for (MetadataViewInterface metadataView : divisionView.getAllowedMetadata()) {
+            if (metadataView instanceof SimpleMetadataViewInterface && keys.contains(metadataView.getId())
+                    && division.getMetadata().parallelStream()
+                            .filter(metadata -> metadataView.getId().equals(metadata.getKey()))
+                            .count() < metadataView.getMaxOccurs()) {
+                MetadataEditor.writeMetadataEntry(division, (SimpleMetadataViewInterface) metadataView, value);
+            }
+        }
+        for (Division<?> child : division.getChildren()) {
+            addAllowedMetadataRecursive(child, keys, value);
         }
     }
 
@@ -703,7 +736,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
 
     @Override
     public boolean canBeDeleted(ProcessDetail processDetail) {
-        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOcc()
+        return processDetail.getOccurrences() > 1 && processDetail.getOccurrences() > processDetail.getMinOccurs()
                 || (!processDetail.isRequired() && !this.rulesetManagement.isAlwaysShowingForKey(processDetail.getMetadataID()));
     }
 
@@ -822,5 +855,14 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      */
     public String getDefaultConfigurationType() {
         return defaultConfigurationType;
+    }
+    
+    /**
+     * Returns the details of the missing record identifier error.
+     * 
+     * @return the details as a list of error description
+     */
+    public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
+        return ServiceManager.getImportService().getDetailsOfRecordIdentifierMissingError();
     }
 }

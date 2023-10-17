@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -137,7 +139,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     public Long countNotIndexedDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
     }
-    
+
     @Override
     public Long countResults(Map filters) throws DataException {
         return countDocuments(getProjectsForCurrentUserQuery());
@@ -150,8 +152,9 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
 
     @Override
     public List<Project> getAllForSelectedClient() {
-        return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+        return dao.getByQuery(
+                "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId ORDER BY title",
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override
@@ -224,14 +227,14 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
             templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
             templateDTOS.add(templateDTO);
         }
-        return templateDTOS;
+        return templateDTOS.stream().filter(TemplateDTO::isActive).collect(Collectors.toList());
     }
 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectDTO projectDTO) throws DataException {
         // TODO: not clear if project lists will need it
         projectDTO.setUsers(new ArrayList<>());
         projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-            ServiceManager.getTemplateService()));
+            ServiceManager.getTemplateService()).stream().filter(TemplateDTO::isActive).collect(Collectors.toList()));
     }
 
     /**
@@ -350,8 +353,16 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * @param projects list of roles
      * @return String containing project titles
      */
-    public static String getProjectTitles(List<Project> projects) {
-        return projects.stream().map(Project::getTitle).collect(Collectors.joining(", "));
+    public String getProjectTitles(List<Project> projects) throws DataException {
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
+                && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
+            return projects.stream().map(Project::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
+        } else {
+            List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(ProjectDTO::getId)
+                    .collect(Collectors.toList());
+            return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
+                    .collect(Collectors.joining(COMMA_DELIMITER));
+        }
     }
 
     /**
@@ -361,7 +372,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      */
     public static void delete(int projectID) throws DAOException, DataException, ProjectDeletionException {
         Project project = ServiceManager.getProjectService().getById(projectID);
-        if (project.getProcesses().size() > 0) {
+        if (!project.getProcesses().isEmpty()) {
             throw new ProjectDeletionException("cannotDeleteProject");
         }
         for (User user : project.getUsers()) {

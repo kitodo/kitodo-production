@@ -11,6 +11,8 @@
 
 package org.kitodo.imagemanagement;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -143,7 +145,7 @@ class FutureDerivative {
         commandLine.p_clone();
         operations.forEach(operation -> commandLine.addRawArgs(operation.getKey(), operation.getValue()));
         commandLine.write();
-        commandLine.addImage(outputFile);
+        commandLine.addImage(URLDecoder.decode("'" + outputFile + "'", StandardCharsets.UTF_8));
         commandLine.p_delete();
         commandLine.closeOperation();
     }

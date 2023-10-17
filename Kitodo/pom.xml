@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo-production</artifactId>
-        <version>3.6.0-SNAPSHOT</version>
+        <version>3.7.0-SNAPSHOT</version>
     </parent>
 
     <name>Kitodo - Core</name>
@@ -27,7 +27,7 @@
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
-        <maxAllowedViolations>4</maxAllowedViolations>
+        <maxAllowedViolations>3</maxAllowedViolations>
         <cargo.plugin.version>1.9.7</cargo.plugin.version>
         <jsf.projectStage>Production</jsf.projectStage>
         <myfaces.resourceMaxTimeExpires>604800000</myfaces.resourceMaxTimeExpires>
@@ -163,11 +163,19 @@
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>fop</artifactId>
+            <artifactId>xmlgraphics-commons</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.xmlgraphics</groupId>
-            <artifactId>xmlgraphics-commons</artifactId>
+            <artifactId>fop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avalon.framework</groupId>
+            <artifactId>avalon-framework-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.avalon.framework</groupId>
+            <artifactId>avalon-framework-impl</artifactId>
         </dependency>
         <dependency>
             <groupId>org.elasticsearch.client</groupId>

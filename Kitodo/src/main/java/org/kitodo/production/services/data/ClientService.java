@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -111,6 +113,11 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
      * @return String containing client names
      */
     public static String getClientNames(List<Client> clients) {
-        return clients.stream().map(Client::getName).collect(Collectors.joining(", "));
+        if (ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
+            return clients.stream().map(Client::getName).collect(Collectors.joining(COMMA_DELIMITER));
+        } else {
+            return clients.stream().filter(client -> ServiceManager.getUserService().getAuthenticatedUser().getClients()
+                    .contains(client)).map(Client::getName).collect(Collectors.joining(COMMA_DELIMITER));
+        }
     }
 }

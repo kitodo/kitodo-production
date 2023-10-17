@@ -1081,4 +1081,13 @@ public class SecurityAccessController {
     public boolean hasAuthorityToRunKitodoScripts() {
         return securityAccessService.hasAuthorityToRunKitodoScripts();
     }
+
+    /**
+     * Check if the current user has the permission to rename media files.
+     *
+     * @return true if the current user has the permission to rename media files.
+     */
+    public boolean hasAuthorityToRenameMediaFiles() {
+        return securityAccessService.hasAuthorityToRenameMediaFiles();
+    }
 }

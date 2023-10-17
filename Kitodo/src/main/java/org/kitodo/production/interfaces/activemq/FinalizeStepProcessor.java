@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ProcessorException;
 import org.kitodo.production.forms.CurrentTaskForm;
 import org.kitodo.production.services.ServiceManager;
 
@@ -44,32 +45,36 @@ public class FinalizeStepProcessor extends ActiveMQProcessor {
     }
 
     /**
-     * This is the main routine processing incoming tickets. It gets an
-     * CurrentTaskForm object, sets it to the appropriate step which is
-     * retrieved from the database, appends the message − if any − to the wiki
-     * field, and executes the form’s the step close function.
+     * This is the main routine processing incoming tickets. It gets an CurrentTaskForm object, sets it to the
+     * appropriate step which is retrieved from the database, appends the message − if any − to the wiki field, and
+     * executes the form’s the step close function.
      *
      * @param ticket
-     *            the incoming message
+     *         the incoming message
      */
     @Override
-    protected void process(MapMessageObjectReader ticket) throws DAOException, JMSException {
+    protected void process(MapMessageObjectReader ticket) throws ProcessorException, JMSException {
         CurrentTaskForm dialog = new CurrentTaskForm();
-        Integer stepID = ticket.getMandatoryInteger("id");
-        dialog.setCurrentTask(ServiceManager.getTaskService().getById(stepID));
-        if (ticket.hasField("properties")) {
-            updateProperties(dialog, ticket.getMapOfStringToString("properties"));
+        try {
+            Integer stepID = ticket.getMandatoryInteger("id");
+            dialog.setCurrentTask(ServiceManager.getTaskService().getById(stepID));
+
+            if (ticket.hasField("properties")) {
+                updateProperties(dialog, ticket.getMapOfStringToString("properties"));
+            }
+            if (ticket.hasField("message")) {
+                Comment comment = new Comment();
+                comment.setProcess(dialog.getCurrentTask().getProcess());
+                comment.setMessage(ticket.getString("message"));
+                comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
+                comment.setType(CommentType.INFO);
+                comment.setCreationDate(new Date());
+                ServiceManager.getCommentService().saveToDatabase(comment);
+            }
+            dialog.closeTaskByUser();
+        } catch (DAOException e) {
+            throw new ProcessorException(e);
         }
-        if (ticket.hasField("message")) {
-            Comment comment = new Comment();
-            comment.setProcess(dialog.getCurrentTask().getProcess());
-            comment.setAuthor(ServiceManager.getUserService().getCurrentUser());
-            comment.setMessage(ticket.getString("message"));
-            comment.setType(CommentType.INFO);
-            comment.setCreationDate(new Date());
-            ServiceManager.getCommentService().saveToDatabase(comment);
-        }
-        dialog.closeTaskByUser();
     }
 
     /**

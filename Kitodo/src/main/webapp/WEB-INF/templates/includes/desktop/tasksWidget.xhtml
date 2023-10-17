@@ -61,7 +61,7 @@
                                action="#{CurrentTaskForm.takeOverTask}"
                                styleClass="action"
                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
-                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}" icon="fa fa-bell-o">
+                               title="#{msgs.selfAssignTask}" icon="fa fa-bell-o">
                     <h:outputText><i class="fa fa-bell-o"/></h:outputText>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
@@ -70,7 +70,7 @@
                                action="#{CurrentTaskForm.editTask}"
                                styleClass="action"
                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
-                               title="#{msgs.inBearbeitungDurch}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
+                               title="#{msgs.assignedTo}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
                     <h:outputText><i class="fa fa-bell"/></h:outputText>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                     <f:param name="id" value="#{task.id}"/>
@@ -80,7 +80,7 @@
                                action="#{CurrentTaskForm.editTask}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
-                               title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
+                               title="#{msgs.assignedTo}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
@@ -90,7 +90,7 @@
                                action="#{CurrentTaskForm.takeOverBatchTasks}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'OPEN' and task.batchStep and task.batchAvailable}"
-                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                               title="#{msgs.selfAssignTask}">
                     <h:graphicImage value="/pages/images/buttons/admin3a.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
@@ -100,7 +100,7 @@
                                action="#{CurrentTaskForm.editBatchTasks}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and task.batchAvailable}"
-                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                               title="#{msgs.selfAssignTask}">
                     <h:graphicImage value="/pages/images/buttons/admin3.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>
@@ -110,7 +110,7 @@
                                action="#{CurrentTaskForm.editBatchTasks}"
                                styleClass="action"
                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and task.batchStep and task.batchAvailable}"
-                               title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
+                               title="#{msgs.assignedTo}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                     <h:graphicImage value="/pages/images/buttons/admin3c.gif" alt="edit"/>
                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                 </h:commandLink>

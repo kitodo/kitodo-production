@@ -35,6 +35,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
@@ -272,7 +273,7 @@ public class HierarchyMigrationTask extends EmptyTask {
         workpiece.setId(parentProcess.getId().toString());
         ServiceManager.getMetsService().saveWorkpiece(workpiece,parentMetadataFilePath);
         if (WorkflowControllerService.allChildrenClosed(parentProcess)) {
-            parentProcess.setSortHelperStatus("100000000");
+            parentProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
         }
     }
 

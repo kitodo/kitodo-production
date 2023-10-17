@@ -37,7 +37,7 @@
             <p:remoteCommand name="sendGallerySelect"
                              action="#{DataEditorForm.galleryPanel.select}"
                              update="galleryHeadingWrapper
-                                     imagePreviewForm:mediaDetailContainer
+                                     imagePreviewForm:mediaDetail
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
                                      metadataAccordion:logicalMetadataWrapperPanel"/>
@@ -230,7 +230,7 @@
                 <p:menuitem value="#{msgs.uploadMedia}"
                             action="#{DataEditorForm.uploadFileDialog.prepare}"
                             rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete()}"
-                            icon="fa fa-download fa-sm"
+                            icon="fa fa-upload fa-sm"
                             styleClass="plain"
                             update = "uploadFileDialog"
                             disabled="#{readOnly}"
@@ -272,7 +272,7 @@
                 <p:menuitem value="#{msgs.uploadMedia}"
                             action="#{DataEditorForm.uploadFileDialog.prepare}"
                             rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete()}"
-                            icon="fa fa-download fa-sm"
+                            icon="fa fa-upload fa-sm"
                             styleClass="plain"
                             update = "uploadFileDialog"
                             disabled="#{readOnly}"

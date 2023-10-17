@@ -20,73 +20,75 @@
     <p:dialog id="uploadFileDialog"
               widgetVar="uploadFileDialog"
               width="600"
-              height="550"
               closable="true"
               modal="true"
               resizable="false"
               showHeader="false"
               dynamic="true"
               appendTo="@(body)">
+        <h3>#{msgs.uploadMedia}</h3>
         <h:form id="uploadFileDialogForm" enctype="multipart/form-data">
             <p:remoteCommand name="generateMedia"
                              action="#{DataEditorForm.uploadFileDialog.generateNewUploadedMedia}"
                              update="uploadFileDialogForm:progressBar"/>
-            <p:panelGrid id="uploadFileGrid" columns="1" layout="grid" style="padding: 10px">
-                <p:row>
-                    <h3>#{msgs.uploadMedia}</h3>
-                    <div>
-                        <p:outputLabel value="#{msgs.position}"
-                                       for="physicalPosition"/>
-                        <p:selectOneMenu id="physicalPosition"
-                                         value="#{DataEditorForm.uploadFileDialog.selectedPosition}">
-                            <f:selectItems value="#{DataEditorForm.uploadFileDialog.possiblePositions}"/>
-                            <p:ajax event="blur"/>
-                        </p:selectOneMenu>
-                    </div>
-                    <div>
-                        <p:fileUpload id="ulpoadMedia"
-                                      widgetVar="uploadMedia"
-                                      value="#{DataEditorForm.uploadFileDialog.file}"
-                                      listener="#{DataEditorForm.uploadFileDialog.uploadMedia}"
-                                      oncomplete="handleLastFileUploadRequest(this);"
-                                      mode="advanced"
-                                      multiple="true"
-                                      dragDropSupport="false"
-                                      fileLimit="#{DataEditorForm.uploadFileDialog.fileLimit}"
-                                      sequential="true"
-                                      allowTypes="/(\.|\/)(#{DataEditorForm.uploadFileDialog.fileExtension})$/"
-                                      chooseIcon="fa fa-plus fa-lg"
-                                      label="#{msgs.choose}"
-                                      uploadIcon="fa fa-download fa-lg"
-                                      uploadLabel="#{msgs.upload}"
-                                      cancelIcon="fa fa-times fa-lg"
-                                      cancelLabel="#{msgs.cancel}"/>
-                    </div>
-                    <div id="progressDiv" style="display:none">
-                        <h:outputLabel for="progressBar">#{msgs.taskImageGeneratorThread}</h:outputLabel>
-                        <p:progressBar id="progressBar"
-                                       widgetVar="progressBar"
-                                       ajax="true"
-                                       value="#{DataEditorForm.uploadFileDialog.progress}"
-                                       labelTemplate="{value}%" global="false">
-                            <p:ajax event="complete"
-                                    listener="#{DataEditorForm.uploadFileDialog.updateWorkpiece()}"
-                                    oncomplete="PF('uploadFileDialog').hide();"
-                                    update="logicalTree,metadataAccordion:logicalMetadataWrapperPanel,paginationForm:paginationWrapperPanel,@(.pageList)"/>
-                        </p:progressBar>
-                    </div>
-                </p:row>
-                <p:row>
-                    <h:panelGroup styleClass="dialogButtonWrapper right">
-                        <p:commandButton value="#{msgs.close}"
-                                         widgetVar="closeButton"
-                                         onclick="PF('uploadFileDialog').hide();"
-                                         icon="fa fa-times fa-lg"
-                                         iconPos="right"
-                                         styleClass="secondary right"/>
-                    </h:panelGroup>
-                </p:row>
-            </p:panelGrid>
+            <h:panelGroup styleClass="not-scrollable dialogFieldWrapper"
+                          layout="block">
+                <p:panelGrid id="uploadFileGrid" columns="1" layout="grid">
+                    <p:row>
+                        <div>
+                            <p:outputLabel value="#{msgs.position}"
+                                           for="physicalPosition"/>
+                            <p:selectOneMenu id="physicalPosition"
+                                             value="#{DataEditorForm.uploadFileDialog.selectedPosition}">
+                                <f:selectItems value="#{DataEditorForm.uploadFileDialog.possiblePositions}"/>
+                                <p:ajax event="blur"/>
+                            </p:selectOneMenu>
+                        </div>
+                        <div>
+                            <p:fileUpload id="uploadMedia"
+                                          widgetVar="uploadMedia"
+                                          value="#{DataEditorForm.uploadFileDialog.file}"
+                                          listener="#{DataEditorForm.uploadFileDialog.uploadMedia}"
+                                          oncomplete="handleLastFileUploadRequest(this);"
+                                          mode="advanced"
+                                          multiple="true"
+                                          dragDropSupport="false"
+                                          fileLimit="#{DataEditorForm.uploadFileDialog.fileLimit}"
+                                          sequential="true"
+                                          allowTypes="/(\.|\/)(#{DataEditorForm.uploadFileDialog.fileExtension})$/"
+                                          chooseIcon="fa fa-plus fa-lg"
+                                          label="#{msgs.choose}"
+                                          uploadIcon="fa fa-upload fa-lg"
+                                          uploadLabel="#{msgs.upload}"
+                                          fileLimitMessage="#{msgs.uploadMediaFileLimit}"
+                                          cancelIcon="fa fa-times fa-lg"
+                                          cancelLabel="#{msgs.cancel}"/>
+                        </div>
+                        <div id="progressDiv" style="display:none">
+                            <h:outputLabel for="progressBar">#{msgs.taskImageGeneratorThread}</h:outputLabel>
+                            <p:progressBar id="progressBar"
+                                           widgetVar="progressBar"
+                                           ajax="true"
+                                           value="#{DataEditorForm.uploadFileDialog.progress}"
+                                           labelTemplate="{value}%" global="false">
+                                <p:ajax event="complete"
+                                        listener="#{DataEditorForm.uploadFileDialog.updateWorkpiece()}"
+                                        oncomplete="PF('uploadFileDialog').hide();"
+                                        update="numberOfScans,logicalTree,metadataAccordion:logicalMetadataWrapperPanel,paginationForm:paginationWrapperPanel,@(.pageList)"/>
+                            </p:progressBar>
+                        </div>
+                    </p:row>
+                </p:panelGrid>
+            </h:panelGroup>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper">
+                <p:commandButton value="#{msgs.close}"
+                                 widgetVar="closeButton"
+                                 onclick="PF('uploadFileDialog').hide();"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="secondary right"/>
+            </h:panelGroup>
             <script>
                 function handleLastFileUploadRequest(fileupload) {
                     if (fileupload.files.length === 0) {

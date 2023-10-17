@@ -112,11 +112,10 @@
                       rendered="#{ProcessForm.showColumn('process.comments')}"
                       headerText="#{msgs.comments}">
                 <h:panelGroup id="commentIcon">
-                    <h:panelGroup styleClass="fa fa-comment"
-                                  rendered="#{process.hasComments() and process.correctionCommentStatus eq 0}"/>
-                    <h:outputText value="#{msgs.correctionK}"
-                                  styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                                  rendered="#{process.correctionCommentStatus gt 0}"/>
+                    <h:panelGroup styleClass="fa
+                        #{process.correctionCommentStatus gt 0 ? 'fa-exclamation-circle correction' : 'fa-comment'}
+                        #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{process.hasComments()}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true" rendered="#{process.hasComments()}">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
@@ -224,7 +223,7 @@
                                                action="#{CurrentTaskForm.takeOverTask}"
                                                styleClass="action"
                                                rendered="#{(task.processingStatus == 'OPEN' and !task.batchStep) || (task.processingStatus == 'OPEN' and task.batchStep and !task.batchAvailable)}"
-                                               title="#{msgs.bearbeitungDiesesSchrittsUebernehmen}">
+                                               title="#{msgs.selfAssignTask}">
                                     <h:outputText><i class="fa fa-bell-o"/></h:outputText>
                                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                                 </h:commandLink>
@@ -233,7 +232,7 @@
                                                action="#{CurrentTaskForm.editTask}"
                                                styleClass="action"
                                                rendered="#{(task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and !task.batchStep) || (task.processingStatus == 'INWORK' and task.processingUser.id == LoginForm.loggedUser.id and task.batchStep and !task.batchAvailable)}"
-                                               title="#{msgs.inBearbeitungDurch}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
+                                               title="#{msgs.assignedTo}: #{task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName:''}">
                                     <h:outputText><i class="fa fa-bell"/></h:outputText>
                                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                                 </h:commandLink>
@@ -242,7 +241,7 @@
                                                action="#{CurrentTaskForm.editTask}"
                                                styleClass="action"
                                                rendered="#{task.processingStatus == 'INWORK' and task.processingUser.id != LoginForm.loggedUser.id and (!task.batchStep || !task.batchAvailable)}"
-                                               title="#{msgs.inBearbeitungDurch}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
+                                               title="#{msgs.assignedTo}: #{(task.processingUser!=null and task.processingUser.id!=0 ? task.processingUser.fullName : '')}">
                                     <h:outputText><i class="fa fa-bell-slash"/></h:outputText>
                                     <f:setPropertyActionListener value="#{task.id}" target="#{CurrentTaskForm.taskById}"/>
                                 </h:commandLink>

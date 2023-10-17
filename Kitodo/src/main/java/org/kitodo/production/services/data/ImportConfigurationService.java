@@ -139,8 +139,18 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
         return getAllImportConfigurations(ImportConfigurationType.FILE_UPLOAD);
     }
 
+    /**
+     * Load and return all ImportConfigurations sorted by title.
+     * @return list of all ImportConfigurations sorted by title
+     * @throws DAOException when ImportConfigurations could not be loaded
+     */
+    public List<ImportConfiguration> getAll() throws DAOException {
+        return super.getAll().stream().sorted(Comparator.comparing(ImportConfiguration::getTitle))
+                .collect(Collectors.toList());
+    }
+
     private List<ImportConfiguration> getAllImportConfigurations(ImportConfigurationType type) throws DAOException {
-        return getAll().stream()
+        return super.getAll().stream()
                 .filter(importConfiguration -> type.name()
                         .equals(importConfiguration.getConfigurationType()))
                 .sorted(Comparator.comparing(ImportConfiguration::getTitle))

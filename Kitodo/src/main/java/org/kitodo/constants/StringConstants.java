@@ -9,14 +9,10 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.api.ocr;
+package org.kitodo.constants;
 
-/**
- * Possible states after an ocr processing.
- */
-public enum State {
+public class StringConstants {
 
-    SUCCESS,
-    WARNING,
-    ERROR
+    public static String COMMA_DELIMITER = ", ";
+
 }

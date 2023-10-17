@@ -49,8 +49,8 @@
                         <h:commandLink id="releaseLock"
                                        rendered="#{(process.blockedUser != null) and (process.blockedUser.id == LoginForm.loggedUser.id)}"
                                        action="#{CurrentTaskForm.releaseLock}"
-                                       title="#{msgs.oderSperrungAufheben}">
-                            <h:outputText><i class="fa fa-lock"/> #{msgs.oderSperrungAufheben}</h:outputText>
+                                       title="#{msgs.orUnlockHere}">
+                            <h:outputText><i class="fa fa-lock"/> #{msgs.orUnlockHere}</h:outputText>
                         </h:commandLink>
                     </h:panelGroup>
 
@@ -124,7 +124,7 @@
                                    oncomplete="PF('newCommentDialog').show()"
                                    rendered="#{CommentForm.correctionCommentAllowed}"
                                    update=":newCommentForm">
-                        <h:outputText><i class="fa fa-commenting" /> #{msgs.correctionMessageWrite}</h:outputText>
+                        <h:outputText><i class="fa fa-exclamation-circle" /> #{msgs.correctionMessageWrite}</h:outputText>
                     </p:commandLink>
 
                     <!-- Edit Cancel-buttons -->

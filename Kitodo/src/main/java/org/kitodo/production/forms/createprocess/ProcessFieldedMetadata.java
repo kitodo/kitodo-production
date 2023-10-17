@@ -41,6 +41,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.InputType;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewWithValuesInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
@@ -94,6 +95,11 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     private ComplexMetadataViewInterface metadataView;
 
     /**
+     * To access the ruleset functions.
+     */
+    private RulesetManagementInterface rulesetService;
+
+    /**
      * The tree node that JSF has to display.
      */
     protected TreeNode treeNode;
@@ -110,16 +116,21 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     /**
-     * Creates a new root metadata group representing the metadata table
-     * content in the processMetadata.
+     * Creates a new root metadata group representing the metadata table content
+     * in the processMetadata.
      *
      * @param structure
      *            structure selected by the user
      * @param divisionView
      *            information about that structure from the rule set
+     * @param rulesetService
+     *            the ruleset used for displaying
      */
-    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView) {
+    public ProcessFieldedMetadata(Division<?> structure, StructuralElementViewInterface divisionView,
+            RulesetManagementInterface rulesetService) {
+
         this(null, structure, divisionView, null, null, structure.getMetadata());
+        this.rulesetService = rulesetService;
         buildTreeNodeAndCreateMetadataTable();
     }
 
@@ -130,56 +141,19 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      *            metadata to add if not exist
      * @return returns count of added metadata
      */
-    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems) {
-        Collection<Metadata> metadataToAdd = new ArrayList<>();
-        potentialMetadataItems.forEach( potentialMetadataItem -> {
-            if (metadata.stream().noneMatch(item -> item.getKey().equals(potentialMetadataItem.getKey()))) {
-                if (!(METADATA_KEY_LABEL.equals(potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(
-                        division.getLabel()) || METADATA_KEY_ORDERLABEL.equals(
-                        potentialMetadataItem.getKey()) && StringUtils.isNotEmpty(division.getOrderlabel()))) {
-                    metadataToAdd.add(potentialMetadataItem);
-                }
+    public int addMetadataIfNotExists(Collection<Metadata> potentialMetadataItems)
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
 
-            }
-        });
-        metadata.addAll(metadataToAdd);
-
-        TreeNode editedTreeNode = treeNode;
-
+        preserve();
+        int count = rulesetService.updateMetadata(division.getType(), metadata, "create", potentialMetadataItems);
         buildTreeNodeAndCreateMetadataTable();
-
-        overwriteTreeNodes(editedTreeNode.getChildren(), treeNode.getChildren());
-
-        return metadataToAdd.size();
+        return count;
     }
 
     private void buildTreeNodeAndCreateMetadataTable() {
         treeNode = new DefaultTreeNode();
         treeNode.setExpanded(true);
         createMetadataTable();
-    }
-
-    /**
-     * Overwrites the target list with source list of tree nodes based on the
-     * metadata id.
-     *
-     * @param source
-     *            The list of source tree nodes
-     * @param target
-     *            The list of target tree nodes
-     */
-    private static void overwriteTreeNodes(List<TreeNode> source, List<TreeNode> target) {
-        int index = 0;
-        for (TreeNode targetNode : target) {
-            ProcessDetail row = (ProcessDetail) targetNode.getData();
-            Optional<TreeNode> treeNodeOptional = source.stream().filter(
-                sourceNode -> ((ProcessDetail) sourceNode.getData()).getMetadataID().equals(row.getMetadataID()))
-                    .findFirst();
-            if (treeNodeOptional.isPresent()) {
-                target.set(index, treeNodeOptional.get());
-            }
-            index++;
-        }
     }
 
     /**
@@ -616,7 +590,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         } else {
             result.setMetadata(new HashSet<>(DataEditorService.getExistingMetadataRows(treeNode.getChildren())));
         }
-        return Collections.singletonList(result);
+        return result.getMetadata().isEmpty() ? Collections.emptyList() : Collections.singletonList(result);
     }
 
     /**
@@ -798,7 +772,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     @Override
-    public int getMinOcc() {
+    public int getMinOccurs() {
         return metadataView.getMinOccurs();
     }
 }

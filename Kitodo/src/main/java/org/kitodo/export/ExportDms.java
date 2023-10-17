@@ -35,6 +35,7 @@ import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
+import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
@@ -54,7 +55,6 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 
 public class ExportDms extends ExportMets {
     private static final Logger logger = LogManager.getLogger(ExportDms.class);
-    private static final String COMPLETED = "100000000000";
     private static final String EXPORT_DIR_DELETE = "errorDirectoryDeleting";
     private static final String ERROR_EXPORT = "errorExport";
 
@@ -111,12 +111,11 @@ public class ExportDms extends ExportMets {
         }
 
         boolean exportSuccessful = startExport(process, (URI) null);
-        if (exportSuccessful) {
-            if (Objects.nonNull(process.getParent())) {
-                startExport(process.getParent());
-            }
-        } else if (wasNotAlreadyExported) {
-            process.setExported(false);
+        if (Objects.nonNull(process.getParent())) {
+            startExport(process.getParent());
+        }
+        if (wasNotAlreadyExported) {
+            process.setExported(exportSuccessful);
             processService.save(process);
         }
         return exportSuccessful;
@@ -210,7 +209,8 @@ public class ExportDms extends ExportMets {
 
     private boolean exportCompletedChildren(List<Process> children) throws DataException {
         for (Process child:children) {
-            if (ProcessConverter.getCombinedProgressAsString(child, false).equals(COMPLETED) && !child.isExported()) {
+            if (ProcessConverter.getCombinedProgressAsString(child, false).equals(ProcessState.COMPLETED.getValue())
+                    && !child.isExported()) {
                 if (!startExport(child)) {
                     return false;
                 }

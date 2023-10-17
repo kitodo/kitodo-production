@@ -307,9 +307,9 @@ public class PaginationPanel {
                 "paginierung_seite.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "columnCount",
                 "paginierung_spalte.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "blattzaehlung",
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "sheetCounting",
                 "paginierung_blatt.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "blattzaehlungrectoverso",
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "sheetCountingRectoVerso",
                 "paginierung_blatt_rectoverso.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO, "pageCountRectoVerso",
                 "paginierung_seite_rectoverso.svg"));
@@ -319,8 +319,8 @@ public class PaginationPanel {
 
     private void prepareSelectPaginationScopeItems() {
         selectPaginationScopeItems = new HashMap<>(2);
-        selectPaginationScopeItems.put(Boolean.TRUE, "abDerErstenMarkiertenSeite");
-        selectPaginationScopeItems.put(Boolean.FALSE, "nurDieMarkiertenSeiten");
+        selectPaginationScopeItems.put(Boolean.TRUE, "fromFirstSelectedPage");
+        selectPaginationScopeItems.put(Boolean.FALSE, "onlySelectedPages");
     }
 
     /**
@@ -337,18 +337,23 @@ public class PaginationPanel {
             logger.info(e.getMessage());
         }
         List<Separator> pageSeparators = Separator.factory(ConfigCore.getParameter(ParameterCore.PAGE_SEPARATORS));
-        String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
+        try {
+            String initializer = paginationTypeSelectSelectedItem.format(selectPaginationModeSelectedItem.getValue(),
                 paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());
-        Paginator paginator = new Paginator(initializer);
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
-        if (selectPaginationScopeSelectedItem) {
-            for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
-                physicalDivisions.get(i).setOrderlabel(paginator.next());
+            Paginator paginator = new Paginator(initializer);
+            List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                    .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+            if (selectPaginationScopeSelectedItem) {
+                for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
+                    physicalDivisions.get(i).setOrderlabel(paginator.next());
+                }
+            } else {
+                for (int i : paginationSelectionSelectedItems) {
+                    physicalDivisions.get(i).setOrderlabel(paginator.next());
+                }
             }
-        } else {
-            for (int i : paginationSelectionSelectedItems) {
-                physicalDivisions.get(i).setOrderlabel(paginator.next());
-            }
+        } catch (NumberFormatException e) {
+            Helper.setErrorMessage("paginationFormatError", new Object[] { paginationStartValue });
         }
         paginationSelectionSelectedItems = new ArrayList<>();
         preparePaginationSelectionItems();
@@ -377,7 +382,7 @@ public class PaginationPanel {
     public void show() {
         paginationSelectionSelectedItems = new ArrayList<>();
         paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
-        selectPaginationModeSelectedItem = null;
+        selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;

@@ -1514,6 +1514,14 @@ public class StructurePanel implements Serializable {
                 }
             }
         }
+        /*
+            PhysicalDivisions assigned to multiple LogicalDivisions may lead to wrong order value. The order will be
+            incremented for each occurrence and not just the last one. The LogicalDivisions containing those
+            PhysicalDivisions must be set to the order value of their first PhysicalDivision.
+         */
+        if (!structure.getViews().isEmpty()) {
+            structure.setOrder(structure.getViews().getFirst().getPhysicalDivision().getOrder());
+        }
         return structure;
     }
 

@@ -136,8 +136,6 @@ public class AddDocStrucTypeDialog {
             dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
         }
         try {
-            dataEditor.getStructurePanel().preserve();
-            dataEditor.refreshStructurePanel();
             dataEditor.getPaginationPanel().show();
         } catch (UnknownTreeNodeDataException e) {
             Helper.setErrorMessage(e.getMessage());
@@ -152,11 +150,11 @@ public class AddDocStrucTypeDialog {
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
             if (selectedMetadata != "") {
-                MetadataViewInterface metadataViewInterface = getMetadataViewFromKey(
+                MetadataViewInterface metadataView = getMetadataViewFromKey(
                     docStructAddTypeSelectionSelectedItem, selectedMetadata);
                 MetadataEditor.addMultipleStructuresWithMetadata(elementsToAddSpinnerValue,
                     docStructAddTypeSelectionSelectedItem, dataEditor.getWorkpiece(), selectedStructure.get(),
-                    selectedDocStructPosition, metadataViewInterface, inputMetaDataValue);
+                    selectedDocStructPosition, metadataView, inputMetaDataValue);
             } else {
                 MetadataEditor.addMultipleStructures(elementsToAddSpinnerValue, docStructAddTypeSelectionSelectedItem,
                     dataEditor.getWorkpiece(), selectedStructure.get(), selectedDocStructPosition);
