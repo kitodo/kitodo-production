@@ -11,6 +11,9 @@
 
 package org.kitodo.api.dataformat;
 
+import org.apache.commons.io.FilenameUtils;
+import org.kitodo.api.dataformat.mets.KitodoUUID;
+
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,9 +23,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import org.apache.commons.io.FilenameUtils;
-import org.kitodo.api.dataformat.mets.KitodoUUID;
 
 /**
  * A tree-shaped description of the physical division of the digital representation of
@@ -41,7 +41,7 @@ import org.kitodo.api.dataformat.mets.KitodoUUID;
  * resolutions with equal image content, but also the photography of the side of
  * a record along with its digitized soundtrack.
  */
-public class PhysicalDivision extends Division<PhysicalDivision> {
+public class MediaPartialPhysicalDivision extends PhysicalDivision {
     // TODO: we probably need a way to configure PhysicalDivision types to be considered for renumbering/pagination!
     public static final String TYPE_PAGE = "page";
     public static final String TYPE_TRACK = "track";
@@ -69,7 +69,7 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
     /**
      * Creates a new PhysicalDivision.
      */
-    public PhysicalDivision() {
+    public MediaPartialPhysicalDivision() {
         logicalDivisions = new LinkedList<>();
     }
 
@@ -149,10 +149,10 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         if (!super.equals(o)) {
             return false;
         }
-        if (!(o instanceof PhysicalDivision)) {
+        if (!(o instanceof MediaPartialPhysicalDivision)) {
             return false;
         }
-        PhysicalDivision physicalDivision = (PhysicalDivision) o;
+        MediaPartialPhysicalDivision physicalDivision = (MediaPartialPhysicalDivision) o;
         return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartialViews,
                 physicalDivision.mediaPartialViews);
     }

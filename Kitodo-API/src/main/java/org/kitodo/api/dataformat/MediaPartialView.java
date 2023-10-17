@@ -11,13 +11,13 @@
 
 package org.kitodo.api.dataformat;
 
-public class MediaView extends View {
+public class MediaPartialView extends View {
 
     private String begin;
 
     private String extent;
 
-    public MediaView(String begin, String extent) {
+    public MediaPartialView(String begin, String extent) {
         this.begin = begin;
         this.extent = extent;
     }

@@ -18,18 +18,18 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaView;
+import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 
-public class MediaViewForm implements Serializable {
+public class MediaPartialViewForm implements Serializable {
     
     private final DataEditorForm dataEditor;
 
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
-    private Map.Entry<LogicalDivision, MediaView> mediaViewDivision;
+    private Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision;
     private String title;
     private String begin;
 
@@ -53,7 +53,7 @@ public class MediaViewForm implements Serializable {
         this.begin = begin;
     }
 
-    MediaViewForm(DataEditorForm dataEditor) {
+    MediaPartialViewForm(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
 
@@ -88,10 +88,10 @@ public class MediaViewForm implements Serializable {
                 physicalDivision.getMediaFiles().putAll(mediaSelection.getKey().getMediaFiles());
                 physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
 
-                MediaView mediaView = new MediaView(getBegin(),getExtent());
-                physicalDivision.addMediaView(mediaView);
-                mediaView.setPhysicalDivision(physicalDivision);
-                logicalDivision.getViews().add(mediaView);
+                MediaPartialView mediaPartialView = new MediaPartialView(getBegin(),getExtent());
+                physicalDivision.addMediaPartialView(mediaPartialView);
+                mediaPartialView.setPhysicalDivision(physicalDivision);
+                logicalDivision.getViews().add(mediaPartialView);
 
                 physicalDivision.getLogicalDivisions().add(logicalDivision);
 
@@ -114,7 +114,7 @@ public class MediaViewForm implements Serializable {
         this.mediaSelection = mediaSelection;
     }
 
-    public void setMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
+    public void setMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
         this.mediaViewDivision = mediaViewDivision;
     }
 

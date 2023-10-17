@@ -18,7 +18,7 @@ function addLeadingZeros(num, totalLength) {
     return String(num).padStart(totalLength, '0');
 }
 
-function mediaViewFormatTime( ms ) {
+function mediaPartialViewFormatTime( ms ) {
     let seconds = ms / 1000;
     let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
     seconds = seconds % 3600; // seconds remaining after extracting hours
@@ -85,10 +85,10 @@ metadataEditor.gallery = {
 
     mediaViews: {
         setBeginIfEmpty() {
-            let begin = document.getElementById("mediaViewForm:beginInput");
+            let begin = document.getElementById("mediaPartialViewForm:beginInput");
             if(!begin.value) {
                 let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000;
-                begin.value = mediaViewFormatTime(currentMilliseconds);
+                begin.value = mediaPartialViewFormatTime(currentMilliseconds);
             }
         }
     },

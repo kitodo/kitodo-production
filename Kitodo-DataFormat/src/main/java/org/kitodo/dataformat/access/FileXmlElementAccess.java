@@ -21,8 +21,8 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.MdSec;
+import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.MediaVariant;
-import org.kitodo.api.dataformat.MediaView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
@@ -69,7 +69,8 @@ public class FileXmlElementAccess {
         for (Fptr fptr : div.getFptr()) {
             Object fileId = fptr.getFILEID();
             if (Objects.nonNull(fptr.getArea())) {
-                physicalDivision.addMediaView(new MediaView(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
+                physicalDivision.addMediaPartialView(
+                        new MediaPartialView(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
                 fileId = fptr.getArea().getFILEID();
             }
             if (fileId instanceof FileType) {
@@ -153,16 +154,7 @@ public class FileXmlElementAccess {
             Object fileId = mediaFilesToIDFiles.get(use.getValue());
             if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && !physicalDivision.getMediaViews()
                     .isEmpty()) {
-                MediaView mediaView = physicalDivision.getMediaViews().get(0);
-                AreaType areaType = new AreaType();
-                areaType.setFILEID(fileId);
-                areaType.setBEGIN(mediaView.getBegin());
-                areaType.setBETYPE("TIME");
-                if (!mediaView.getExtent().isEmpty()) {
-                    areaType.setEXTENT(mediaView.getExtent());
-                    areaType.setEXTTYPE("TIME");
-                }
-                fptr.setArea(areaType);
+                fptr.setArea(getAreaType(fileId));
             } else {
                 fptr.setFILEID(fileId);
             }
@@ -184,5 +176,18 @@ public class FileXmlElementAccess {
             mets.getAmdSec().add(admSec);
         }
         return div;
+    }
+
+    private AreaType getAreaType(Object fileId) {
+        MediaPartialView mediaPartialView = physicalDivision.getMediaViews().get(0);
+        AreaType areaType = new AreaType();
+        areaType.setFILEID(fileId);
+        areaType.setBEGIN(mediaPartialView.getBegin());
+        areaType.setBETYPE("TIME");
+        if (Objects.nonNull(mediaPartialView.getExtent()) && !mediaPartialView.getExtent().isEmpty()) {
+            areaType.setEXTENT(mediaPartialView.getExtent());
+            areaType.setEXTTYPE("TIME");
+        }
+        return areaType;
     }
 }

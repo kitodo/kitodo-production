@@ -33,7 +33,7 @@ public enum FunctionalDivision {
      */
     CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent"),
 
-    MEDIA_VIEW("mediaView");
+    MEDIA_PARTIAL_VIEW("mediaPartialView");
 
     /**
      * With the logger, text can be written to a log file or to the console.

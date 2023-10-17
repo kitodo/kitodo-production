@@ -20,18 +20,18 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaView;
+import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 
-public class MediaViewsPanel implements Serializable {
+public class MediaPartialViewsPanel implements Serializable {
 
-    private MediaViewForm mediaViewForm;
+    private MediaPartialViewForm mediaPartialViewForm;
     private DataEditorForm dataEditor;
 
-    MediaViewsPanel(DataEditorForm dataEditor) {
+    MediaPartialViewsPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
-        mediaViewForm = new MediaViewForm(dataEditor);
+        mediaPartialViewForm = new MediaPartialViewForm(dataEditor);
     }
 
     /**
@@ -39,10 +39,10 @@ public class MediaViewsPanel implements Serializable {
      *
      * @return The media view divisions
      */
-    public Map<LogicalDivision, MediaView> getMediaViewDivisions() {
+    public Map<LogicalDivision, MediaPartialView> getMediaViewDivisions() {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
-        mediaViewForm.setMediaSelection(lastSelection);
-        Map<LogicalDivision, MediaView> mediaViewDivisions = new LinkedHashMap<>();
+        mediaPartialViewForm.setMediaSelection(lastSelection);
+        Map<LogicalDivision, MediaPartialView> mediaViewDivisions = new LinkedHashMap<>();
         List<LogicalDivision> logicalDivisions = lastSelection.getKey().getLogicalDivisions();
         for (LogicalDivision logicalDivision : logicalDivisions) {
             getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
@@ -50,13 +50,13 @@ public class MediaViewsPanel implements Serializable {
         return mediaViewDivisions;
     }
 
-    private static void getMediaViewDivisions(Map<LogicalDivision, MediaView> mediaViewDivisions,
+    private static void getMediaViewDivisions(Map<LogicalDivision, MediaPartialView> mediaViewDivisions,
             List<LogicalDivision> logicalDivisions) {
         for (LogicalDivision logicalDivision : logicalDivisions) {
             for (View view : logicalDivision.getViews()) {
                 if (PhysicalDivision.TYPE_TRACK.equals(
-                        view.getPhysicalDivision().getType()) && view instanceof MediaView) {
-                    mediaViewDivisions.put(logicalDivision, (MediaView) view);
+                        view.getPhysicalDivision().getType()) && view instanceof MediaPartialView) {
+                    mediaViewDivisions.put(logicalDivision, (MediaPartialView) view);
                 }
             }
             getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
@@ -68,7 +68,7 @@ public class MediaViewsPanel implements Serializable {
      *
      * @param mediaViewDivision to delete
      */
-    public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
+    public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
         LogicalDivision logicalDivision = mediaViewDivision.getKey();
         if (dataEditor.getStructurePanel()
                 .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
@@ -82,21 +82,21 @@ public class MediaViewsPanel implements Serializable {
      *
      * @param mediaViewDivision the media view division
      */
-    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaView> mediaViewDivision) {
-        mediaViewForm.setMediaViewDivision(mediaViewDivision);
-        mediaViewForm.setTitle(mediaViewDivision.getKey().getLabel());
-        mediaViewForm.setBegin(mediaViewDivision.getValue().getBegin());
+    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
+        mediaPartialViewForm.setMediaViewDivision(mediaViewDivision);
+        mediaPartialViewForm.setTitle(mediaViewDivision.getKey().getLabel());
+        mediaPartialViewForm.setBegin(mediaViewDivision.getValue().getBegin());
     }
 
     public boolean isEnabled() {
-        return getMediaViewTypes().size() > 0;
+        return getMediaPartialViewDivisions().size() > 0;
     }
 
-    public Collection<String> getMediaViewTypes() {
-        return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_VIEW);
+    public Collection<String> getMediaPartialViewDivisions() {
+        return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL_VIEW);
     }
 
-    public MediaViewForm getMediaViewForm() {
-        return mediaViewForm;
+    public MediaPartialViewForm getMediaPartialViewForm() {
+        return mediaPartialViewForm;
     }
 }
