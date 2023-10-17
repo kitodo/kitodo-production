@@ -45,8 +45,8 @@ public class AreaXmlElementAccess {
     AreaXmlElementAccess(FileXmlElementAccess fileXmlElementAccess) {
         if (PhysicalDivision.TYPE_TRACK.equals(
                 fileXmlElementAccess.getPhysicalDivision().getType()) && !fileXmlElementAccess.getPhysicalDivision()
-                .getMediaViews().isEmpty()) {
-            view = fileXmlElementAccess.getPhysicalDivision().getMediaViews().get(0);
+                .hasMediaPartialView()) {
+            view = fileXmlElementAccess.getPhysicalDivision().getMediaPartialView();
         } else {
             view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
         }

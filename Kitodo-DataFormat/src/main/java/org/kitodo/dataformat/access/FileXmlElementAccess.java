@@ -69,7 +69,7 @@ public class FileXmlElementAccess {
         for (Fptr fptr : div.getFptr()) {
             Object fileId = fptr.getFILEID();
             if (Objects.nonNull(fptr.getArea())) {
-                physicalDivision.addMediaPartialView(
+                physicalDivision.setMediaPartialView(
                         new MediaPartialView(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
                 fileId = fptr.getArea().getFILEID();
             }
@@ -116,7 +116,7 @@ public class FileXmlElementAccess {
             this.physicalDivision.setOrder(physicalDivision.getOrder());
             this.physicalDivision.setOrderlabel(physicalDivision.getOrderlabel());
             this.physicalDivision.setType(physicalDivision.getType());
-            this.physicalDivision.getMediaViews().addAll(physicalDivision.getMediaViews());
+            this.physicalDivision.setMediaPartialView(physicalDivision.getMediaPartialView());
         }
     }
 
@@ -152,8 +152,8 @@ public class FileXmlElementAccess {
         for (Entry<MediaVariant, URI> use : physicalDivision.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();
             Object fileId = mediaFilesToIDFiles.get(use.getValue());
-            if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && !physicalDivision.getMediaViews()
-                    .isEmpty()) {
+            if (PhysicalDivision.TYPE_TRACK.equals(
+                    physicalDivision.getType()) && physicalDivision.hasMediaPartialView()) {
                 fptr.setArea(getAreaType(fileId));
             } else {
                 fptr.setFILEID(fileId);
@@ -179,7 +179,7 @@ public class FileXmlElementAccess {
     }
 
     private AreaType getAreaType(Object fileId) {
-        MediaPartialView mediaPartialView = physicalDivision.getMediaViews().get(0);
+        MediaPartialView mediaPartialView = physicalDivision.getMediaPartialView();
         AreaType areaType = new AreaType();
         areaType.setFILEID(fileId);
         areaType.setBEGIN(mediaPartialView.getBegin());

@@ -33,7 +33,10 @@ public enum FunctionalDivision {
      */
     CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent"),
 
-    MEDIA_PARTIAL_VIEW("mediaPartialView");
+    /**
+     * Indicate the division for media partial usage.
+     */
+    MEDIA_PARTIAL("mediaPartial");
 
     /**
      * With the logger, text can be written to a log file or to the console.

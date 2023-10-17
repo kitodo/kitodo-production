@@ -12,7 +12,6 @@
 package org.kitodo.api.dataformat;
 
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -54,7 +53,7 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
 
-    private List<MediaPartialView> mediaPartialViews = new ArrayList<>();
+    private MediaPartialView mediaPartialView;
 
     /**
      * Saves the METS identifier for the division.
@@ -118,13 +117,17 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         return logicalDivisions;
     }
 
-    public void addMediaPartialView(MediaPartialView mediaPartialView) {
+    public void setMediaPartialView(MediaPartialView mediaPartialView) {
         mediaPartialView.setPhysicalDivision(this);
-        mediaPartialViews.add(mediaPartialView);
+        this.mediaPartialView = mediaPartialView;
     }
 
-    public List<MediaPartialView> getMediaViews() {
-        return mediaPartialViews;
+    public boolean hasMediaPartialView() {
+        return Objects.nonNull(mediaPartialView);
+    }
+
+    public MediaPartialView getMediaPartialView() {
+        return mediaPartialView;
     }
 
     @Override
@@ -153,8 +156,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
             return false;
         }
         PhysicalDivision physicalDivision = (PhysicalDivision) o;
-        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartialViews,
-                physicalDivision.mediaPartialViews);
+        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartialView,
+                physicalDivision.mediaPartialView);
     }
 
     @Override
@@ -162,7 +165,7 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
-        result = prime * result + ((mediaPartialViews == null) ? 0 : mediaPartialViews.hashCode());
+        result = prime * result + ((mediaPartialView == null) ? 0 : mediaPartialView.hashCode());
         return result;
     }
 }

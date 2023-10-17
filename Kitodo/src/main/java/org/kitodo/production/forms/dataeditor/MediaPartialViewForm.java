@@ -89,7 +89,7 @@ public class MediaPartialViewForm implements Serializable {
                 physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
 
                 MediaPartialView mediaPartialView = new MediaPartialView(getBegin(),getExtent());
-                physicalDivision.addMediaPartialView(mediaPartialView);
+                physicalDivision.setMediaPartialView(mediaPartialView);
                 mediaPartialView.setPhysicalDivision(physicalDivision);
                 logicalDivision.getViews().add(mediaPartialView);
 

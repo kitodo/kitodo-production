@@ -93,7 +93,7 @@ public class MediaPartialViewsPanel implements Serializable {
     }
 
     public Collection<String> getMediaPartialViewDivisions() {
-        return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL_VIEW);
+        return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
     }
 
     public MediaPartialViewForm getMediaPartialViewForm() {
