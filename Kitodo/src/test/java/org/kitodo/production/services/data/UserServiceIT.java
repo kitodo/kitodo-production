@@ -247,4 +247,16 @@ public class UserServiceIT {
         assertEquals("Returned authenticated user was wrong", "kowal", authenticatedUser.getLogin());
         SecurityTestUtils.cleanSecurityContext();
     }
+
+    @Test
+    public void returnCorrectUserIndependentOfLoginOrLdapLoginByLogin() {
+        User user = userService.getByLdapLoginOrLogin("verylast");
+        assertEquals("Returned user was wrong", "User, Very last", user.getFullName());
+    }
+
+    @Test
+    public void returnCorrectUserIndependentOfLoginOrLdapLoginByLdapLogin() {
+        User user = userService.getByLdapLoginOrLogin("doraLDP");
+        assertEquals("Returned user was wrong", "Dora, Anna", user.getFullName());
+    }
 }
