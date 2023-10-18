@@ -79,8 +79,10 @@
                                  icon="fa fa-pencil fa-lg"
                                  iconPos="right"
                                  immediate="true"
+                                 update=":changePasswordForm"
                                  styleClass="seoncdary"
                                  rendered="#{isConfigMode}">
+                    <p:resetInput target=":changePasswordForm"/>
                 </p:commandButton>
                 <p:commandButton onclick="PF('resetPasswordDialog').show()"
                                  id="resetPasswordButton"
@@ -89,7 +91,9 @@
                                  iconPos="right"
                                  immediate="true"
                                  styleClass="secondary"
+                                 update=":resetPasswordForm"
                                  rendered="#{isEditMode}">
+                    <p:resetInput target=":resetPasswordForm"/>
                 </p:commandButton>
             </div>
         </p:row>
