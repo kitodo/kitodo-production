@@ -14,6 +14,7 @@ package org.kitodo.docket;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.kitodo.api.docket.DocketData;
@@ -32,7 +33,7 @@ public class DocketDataGenerator {
         docketdata.setProcessName("ProcessTitle");
         docketdata.setProjectName("projectTitle");
         docketdata.setRulesetName("RulesetTitle");
-        docketdata.setComment("A comment");
+        docketdata.setComments(Collections.singletonList("A comment"));
 
         List<Property> templateProperties = new ArrayList<>();
         Property propertyForDocket = new Property();
