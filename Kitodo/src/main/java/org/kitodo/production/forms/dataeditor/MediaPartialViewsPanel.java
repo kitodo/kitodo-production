@@ -39,18 +39,18 @@ public class MediaPartialViewsPanel implements Serializable {
      *
      * @return The media view divisions
      */
-    public Map<LogicalDivision, MediaPartialView> getMediaViewDivisions() {
+    public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions() {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         mediaPartialViewForm.setMediaSelection(lastSelection);
         Map<LogicalDivision, MediaPartialView> mediaViewDivisions = new LinkedHashMap<>();
         List<LogicalDivision> logicalDivisions = lastSelection.getKey().getLogicalDivisions();
         for (LogicalDivision logicalDivision : logicalDivisions) {
-            getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
+            getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
         }
         return mediaViewDivisions;
     }
 
-    private static void getMediaViewDivisions(Map<LogicalDivision, MediaPartialView> mediaViewDivisions,
+    private static void getMediaPartialViewDivisions(Map<LogicalDivision, MediaPartialView> mediaViewDivisions,
             List<LogicalDivision> logicalDivisions) {
         for (LogicalDivision logicalDivision : logicalDivisions) {
             for (View view : logicalDivision.getViews()) {
@@ -59,7 +59,7 @@ public class MediaPartialViewsPanel implements Serializable {
                     mediaViewDivisions.put(logicalDivision, (MediaPartialView) view);
                 }
             }
-            getMediaViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
+            getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
         }
     }
 
@@ -89,10 +89,10 @@ public class MediaPartialViewsPanel implements Serializable {
     }
 
     public boolean isEnabled() {
-        return getMediaPartialViewDivisions().size() > 0;
+        return getMediaPartialDivisions().size() > 0;
     }
 
-    public Collection<String> getMediaPartialViewDivisions() {
+    public Collection<String> getMediaPartialDivisions() {
         return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
     }
 

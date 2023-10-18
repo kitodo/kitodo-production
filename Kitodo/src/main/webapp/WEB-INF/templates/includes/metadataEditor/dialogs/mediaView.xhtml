@@ -30,9 +30,9 @@
                     <h3>Track hinzufügen</h3>
                     <p:outputPanel styleClass="dialogFieldWrapper">
                         <p:outputPanel
-                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions.size() gt 1)?'':'hidden'}">
+                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions.size() gt 1)?'':'hidden'}">
                             <p:selectOneMenu value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.type}">
-                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions}"/>
+                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions}"/>
                             </p:selectOneMenu>
                         </p:outputPanel>
                         <p:outputPanel>
