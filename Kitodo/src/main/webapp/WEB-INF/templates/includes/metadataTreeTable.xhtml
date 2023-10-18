@@ -123,7 +123,8 @@
                                       disabled="#{not item.editable or readOnly}"
                                       required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                       showCheckbox="true"
-                                      filter="#{item.filterable}">
+                                      filter="#{item.filterable}"
+                                      filterMatchMode="contains">
                         <f:selectItems value="#{item.items}"/>
                         <p:ajax event="change"
                                 oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
@@ -141,7 +142,8 @@
                                      disabled="#{not item.editable or readOnly}"
                                      required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
                                      styleClass="#{readOnly ? 'read-only' : ''}"
-                                     filter="#{item.filterable}">
+                                     filter="#{item.filterable}"
+                                     filterMatchMode="contains">
                         <f:selectItem itemValue="#{null}"
                                       itemDisabled="#{item.required}"
                                       itemLabel="#{msgs.notSelected}"
