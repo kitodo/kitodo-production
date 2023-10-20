@@ -17,6 +17,7 @@ import java.util.List;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.MediaPartialView;
 
 /**
  * One media stripe in the structured gallery view.
@@ -31,6 +32,8 @@ public class GalleryStripe {
      * Medias in this stripe.
      */
     private final List<GalleryMediaContent> medias = new ArrayList<>();
+
+    private MediaPartialView mediaPartialView;
 
     /**
      * Structure this gallery stripe is related to.
@@ -114,5 +117,13 @@ public class GalleryStripe {
      */
     public String getLogicalTreeNodeId() {
         return logicalTreeNodeId;
+    }
+
+    public MediaPartialView getMediaPartialView() {
+        return mediaPartialView;
+    }
+
+    public void setMediaPartialView(MediaPartialView mediaPartialView) {
+        this.mediaPartialView = mediaPartialView;
     }
 }

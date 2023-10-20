@@ -471,9 +471,14 @@ public class GalleryPanel {
                 siblingWithViewsIdx += 1;
                 siblingWithoutViewsIdx += 1;
             } else {
+                if (view.getPhysicalDivision().hasMediaPartialView()) {
+                    galleryStripe.setMediaPartialView(view.getPhysicalDivision().getMediaPartialView());
+                }
+
                 // add view
                 for (GalleryMediaContent galleryMediaContent : medias) {
-                    if (Objects.equals(view.getPhysicalDivision(), galleryMediaContent.getView().getPhysicalDivision())) {
+                    if (Objects.equals(view.getPhysicalDivision(),
+                            galleryMediaContent.getView().getPhysicalDivision())) {
                         galleryStripe.getMedias().add(galleryMediaContent);
                         List<Integer> viewTreeNodeIdList = new ArrayList<>(treeNodeIdList);
                         viewTreeNodeIdList.add(siblingWithViewsIdx);

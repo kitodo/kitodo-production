@@ -27,11 +27,13 @@
         <h:form id="mediaPartialViewForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <h3>Track hinzufügen</h3>
+                    <h3>Media Partial hinzufügen</h3>
                     <p:outputPanel styleClass="dialogFieldWrapper">
+
                         <p:outputPanel
                                 styleClass="#{(DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions.size() gt 1)?'':'hidden'}">
-                            <p:selectOneMenu value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.type}">
+                            <p:outputLabel for="type" value="Typ"/>
+                            <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.type}">
                                 <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions}"/>
                             </p:selectOneMenu>
                         </p:outputPanel>

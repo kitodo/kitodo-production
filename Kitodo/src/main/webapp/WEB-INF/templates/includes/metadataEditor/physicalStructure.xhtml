@@ -80,6 +80,13 @@
                         a:data-order="#{physicalNode.order}"/>
                 <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
             </p:treeNode>
+            <p:treeNode type="#{StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE}"
+                        icon="ui-icon-media-partial">
+                <h:outputText
+                        value="#{physicalNode.label}"
+                        a:data-order="#{physicalNode.order}"/>
+                <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
+            </p:treeNode>
         </p:tree>
         <p:contextMenu for="physicalTree" id="contextMenuPhysicalTree" widgetVar="contextMenuPhysicalTree">
             <p:menuitem value="#{msgs.addElement}"

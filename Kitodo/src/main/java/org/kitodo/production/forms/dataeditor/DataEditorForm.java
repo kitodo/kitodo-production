@@ -22,6 +22,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +44,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -823,8 +825,16 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                         getSelectedMedia().clear();
                     }
                 } else if (structureTreeNode.getDataObject() instanceof View) {
-                    // Page selected in logical tree
                     View view = (View) structureTreeNode.getDataObject();
+
+                    if (view.getPhysicalDivision().hasMediaPartialView()) {
+                        View mediaView = getViewOfMediaFiles(structurePanel.getLogicalTree().getChildren(),
+                                view.getPhysicalDivision().getMediaFiles());
+                        if (Objects.nonNull(mediaView)) {
+                            view = mediaView;
+                        }
+                    }
+
                     metadataPanel.showPageInLogical(view.getPhysicalDivision());
                     if (updateGalleryAndPhysicalTree) {
                         updateGallery(view);
@@ -834,6 +844,28 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
         }
         paginationPanel.preparePaginationSelectionSelectedItems();
+    }
+
+    private View getViewOfMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaPartialViewMediaFiles) {
+        for (TreeNode treeNode : treeNodes) {
+            if (StructurePanel.VIEW_NODE_TYPE.equals(
+                    treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();
+                if (structureMediaTreeNode.getDataObject() instanceof View) {
+                    View view = (View) structureMediaTreeNode.getDataObject();
+                    if (view.getPhysicalDivision().getMediaFiles().equals(mediaPartialViewMediaFiles)) {
+                        return view;
+                    }
+                }
+            }
+            if (treeNode.getChildCount() > 0) {
+                View view = getViewOfMediaFiles(treeNode.getChildren(), mediaPartialViewMediaFiles);
+                if (Objects.nonNull(view)) {
+                    return view;
+                }
+            }
+        }
+        return null;
     }
 
     void switchPhysicalDivision() throws NoSuchMetadataFieldException {

@@ -12,17 +12,24 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
+import java.net.URI;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.production.services.dataeditor.DataEditorService;
+
+import javax.faces.model.SelectItem;
 
 public class MediaPartialViewsPanel implements Serializable {
 
@@ -42,24 +49,26 @@ public class MediaPartialViewsPanel implements Serializable {
     public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions() {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         mediaPartialViewForm.setMediaSelection(lastSelection);
-        Map<LogicalDivision, MediaPartialView> mediaViewDivisions = new LinkedHashMap<>();
+        Map<LogicalDivision, MediaPartialView> mediaPartialViewDivisions = new LinkedHashMap<>();
         List<LogicalDivision> logicalDivisions = lastSelection.getKey().getLogicalDivisions();
         for (LogicalDivision logicalDivision : logicalDivisions) {
-            getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
+            getMediaPartialViewDivisions(mediaPartialViewDivisions, logicalDivision.getChildren(),
+                    lastSelection.getLeft().getMediaFiles());
         }
-        return mediaViewDivisions;
+        return mediaPartialViewDivisions;
     }
 
     private static void getMediaPartialViewDivisions(Map<LogicalDivision, MediaPartialView> mediaViewDivisions,
-            List<LogicalDivision> logicalDivisions) {
+            List<LogicalDivision> logicalDivisions, Map<MediaVariant, URI> mediaFiles) {
         for (LogicalDivision logicalDivision : logicalDivisions) {
             for (View view : logicalDivision.getViews()) {
                 if (PhysicalDivision.TYPE_TRACK.equals(
-                        view.getPhysicalDivision().getType()) && view instanceof MediaPartialView) {
-                    mediaViewDivisions.put(logicalDivision, (MediaPartialView) view);
+                        view.getPhysicalDivision().getType()) && view.getPhysicalDivision()
+                        .hasMediaPartialView() && view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
+                    mediaViewDivisions.put(logicalDivision, view.getPhysicalDivision().getMediaPartialView());
                 }
             }
-            getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren());
+            getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren(), mediaFiles);
         }
     }
 
@@ -92,8 +101,16 @@ public class MediaPartialViewsPanel implements Serializable {
         return getMediaPartialDivisions().size() > 0;
     }
 
-    public Collection<String> getMediaPartialDivisions() {
-        return dataEditor.getRulesetManagement().getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
+    public List<SelectItem> getMediaPartialDivisions() {
+        List<SelectItem> getChildDivisions = DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement()
+                        .getStructuralElementView(
+                                dataEditor.getGalleryPanel().getLastSelection().getRight().getType(),
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
+                dataEditor.getProcess().getRuleset());
+        Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
+                .getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
+        return getChildDivisions.stream().filter(selectItem -> mediaPartialDivisionIds.contains(selectItem.getValue()))
+                .collect(Collectors.toList());
     }
 
     public MediaPartialViewForm getMediaPartialViewForm() {

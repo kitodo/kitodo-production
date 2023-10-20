@@ -466,14 +466,11 @@ public class AddDocStrucTypeDialog {
     }
 
     private void prepareDocStructAddTypeSelectionItemsForChildren() {
-        docStructAddTypeSelectionItemsForChildren = new ArrayList<>();
-        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-            dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
-            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
-            docStructAddTypeSelectionItemsForChildren.add(new SelectItem(entry.getKey(), entry.getValue()));
-        }
-        DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForChildren, dataEditor.getProcess().getRuleset());
+        docStructAddTypeSelectionItemsForChildren = DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement()
+                        .getStructuralElementView(
+                                dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
+                dataEditor.getProcess().getRuleset());
     }
 
     private void prepareDocStructAddTypeSelectionItemsForParent() {
@@ -490,19 +487,17 @@ public class AddDocStrucTypeDialog {
                     docStructAddTypeSelectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
-            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForParent, dataEditor.getProcess().getRuleset());
+            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForParent,
+                    dataEditor.getProcess().getRuleset());
         }
     }
 
     private void prepareDocStructAddTypeSelectionItemsForSiblings() {
         docStructAddTypeSelectionItemsForSiblings = new ArrayList<>();
         if (!parents.isEmpty()) {
-            StructuralElementViewInterface parentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-            for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
-                docStructAddTypeSelectionItemsForSiblings.add(new SelectItem(entry.getKey(), entry.getValue()));
-            }
-            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForSiblings, dataEditor.getProcess().getRuleset());
+            docStructAddTypeSelectionItemsForSiblings = DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement().getStructuralElementView(
+                    parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
+                    dataEditor.getProcess().getRuleset());
         }
     }
 

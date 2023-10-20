@@ -16,7 +16,8 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <h:panelGroup id="mediaDetail" layout="block">
         <ui:param name="selectedGalleryMediaContent"
@@ -48,7 +49,7 @@
                         var="mediaViewDivision"
                         type="ordered">
 
-                    <p:dataViewListItem>
+                    <p:dataViewListItem a:data-logicalTreeNodeId="#{stripe.logicalTreeNodeId}">
                         <h:panelGrid columns="2" layout="flex"
                                      columnClasses="metadata,actions"
                                      styleClass="mediaViewsDetail">

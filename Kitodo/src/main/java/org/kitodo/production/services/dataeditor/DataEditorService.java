@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -309,6 +310,16 @@ public class DataEditorService {
         return existingMetadataRows;
     }
 
+
+    public static List<SelectItem> getTypeSelectItem( StructuralElementViewInterface divisionView, Ruleset ruleset) {
+        List<SelectItem> selectItems = new ArrayList<>();
+        for (Map.Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
+            selectItems.add(new SelectItem(entry.getKey(), entry.getValue()));
+        }
+        sortMetadataList(selectItems, ruleset);
+        return selectItems;
+    }
+
     /**
      * Sort a metadata list alphabetically if the 'orderMetadataByRuleset' parameter of the ruleset not set as true.
      * @param itemList as a List of SelectItem
@@ -321,4 +332,5 @@ public class DataEditorService {
         }
         return itemList;
     }
+
 }

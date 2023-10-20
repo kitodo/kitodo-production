@@ -135,6 +135,12 @@
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
             </p:treeNode>
+            <p:treeNode type="#{StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE}"
+                        icon="ui-icon-media-partial">
+                <h:outputText value="#{empty logicalNode.label ? msgs['dataEditor.withoutType'] : logicalNode.label}"
+                              title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
+                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
+            </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
             <p:menuitem value="#{msgs.addElement}"
