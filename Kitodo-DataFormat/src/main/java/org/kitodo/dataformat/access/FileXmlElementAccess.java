@@ -33,6 +33,7 @@ import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
+import org.kitodo.utils.MediaUtil;
 
 public class FileXmlElementAccess {
 
@@ -154,8 +155,8 @@ public class FileXmlElementAccess {
         for (Entry<MediaVariant, URI> use : physicalDivision.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();
             Object fileId = mediaFilesToIDFiles.get(use.getValue());
-            if (PhysicalDivision.TYPE_TRACK.equals(
-                    physicalDivision.getType()) && physicalDivision.hasMediaPartialView()) {
+            if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
+                    use.getKey().getMimeType()) && physicalDivision.hasMediaPartialView()) {
                 fptr.setArea(getAreaType(fileId));
             } else {
                 fptr.setFILEID(fileId);

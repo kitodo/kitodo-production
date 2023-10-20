@@ -61,6 +61,7 @@ import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.file.BackupFileRotation;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.utils.MediaUtil;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
@@ -1305,14 +1306,23 @@ public class FileService {
      */
     private PhysicalDivision createPhysicalDivision(Map<Subfolder, URI> data) {
         PhysicalDivision physicalDivision = new PhysicalDivision();
+
         if (!data.entrySet().isEmpty()) {
             physicalDivision.setType(PhysicalDivision.TYPE_PAGE);
         }
+
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
+
+            if (!PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
+                    mediaVariant.getMimeType())) {
+                physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
+            }
+
             physicalDivision.getMediaFiles().put(mediaVariant, entry.getValue());
         }
+
         return physicalDivision;
     }
 

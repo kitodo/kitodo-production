@@ -471,11 +471,6 @@ public class GalleryPanel {
                 siblingWithViewsIdx += 1;
                 siblingWithoutViewsIdx += 1;
             } else {
-                if (view.getPhysicalDivision().hasMediaPartialView()) {
-                    galleryStripe.setMediaPartialView(view.getPhysicalDivision().getMediaPartialView());
-                }
-
-                // add view
                 for (GalleryMediaContent galleryMediaContent : medias) {
                     if (Objects.equals(view.getPhysicalDivision(),
                             galleryMediaContent.getView().getPhysicalDivision())) {

@@ -44,6 +44,7 @@ import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.utils.MediaUtil;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
@@ -217,7 +218,7 @@ public class UploadFileDialog {
         if (mimeType.contains("image")) {
             return PhysicalDivision.TYPE_PAGE;
         }
-        if (mimeType.contains("video") || mimeType.contains("audio")) {
+        if (MediaUtil.isAudioOrVideo(mimeType)) {
             return PhysicalDivision.TYPE_TRACK;
         }
         return PhysicalDivision.TYPE_OTHER;

@@ -24,6 +24,7 @@ import org.kitodo.dataeditor.MetsKitodoObjectFactory;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.StructMapType;
+import org.kitodo.utils.MediaUtil;
 
 public class PhysicalStructMapType extends StructMapType {
 
@@ -78,7 +79,7 @@ public class PhysicalStructMapType extends StructMapType {
     private String getPhysicalDivTypeByFileType(FileType file) {
         if (file.getMIMETYPE().contains("image")) {
             return PhysicalDivision.TYPE_PAGE;
-        } else if (file.getMIMETYPE().contains("video") || file.getMIMETYPE().contains("audio")) {
+        } else if (MediaUtil.isAudioOrVideo(file.getMIMETYPE())) {
             return PhysicalDivision.TYPE_TRACK;
         }
         return PhysicalDivision.TYPE_OTHER;
