@@ -11,7 +11,6 @@
 
 package org.kitodo.dataformat.access;
 
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 
 /**
@@ -43,13 +42,7 @@ public class AreaXmlElementAccess {
      *            physical division in view
      */
     AreaXmlElementAccess(FileXmlElementAccess fileXmlElementAccess) {
-        if (PhysicalDivision.TYPE_TRACK.equals(
-                fileXmlElementAccess.getPhysicalDivision().getType()) && !fileXmlElementAccess.getPhysicalDivision()
-                .hasMediaPartialView()) {
-            view = fileXmlElementAccess.getPhysicalDivision().getMediaPartialView();
-        } else {
-            view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
-        }
+        view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
     }
 
     View getView() {
