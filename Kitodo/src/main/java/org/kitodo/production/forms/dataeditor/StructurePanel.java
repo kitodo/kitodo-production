@@ -248,7 +248,7 @@ public class StructurePanel implements Serializable {
         }
         int i = 1;
         for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             physicalDivision.setOrder(i);
             i++;
         }

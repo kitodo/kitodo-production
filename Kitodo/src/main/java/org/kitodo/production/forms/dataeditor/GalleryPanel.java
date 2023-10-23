@@ -351,7 +351,7 @@ public class GalleryPanel {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
 
         mediaContentTypeVariants.clear();
         mediaContentTypePreviewFolder.clear();
@@ -395,7 +395,7 @@ public class GalleryPanel {
      */
     private void updateMedia() {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         medias = new ArrayList<>(physicalDivisions.size());
         dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
@@ -801,7 +801,7 @@ public class GalleryPanel {
     private void selectMedia(String physicalDivisionOrder, String stripeIndex, String selectionType) {
         PhysicalDivision selectedPhysicalDivision = null;
         for (PhysicalDivision physicalDivision : this.dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             if (Objects.equals(physicalDivision.getOrder(), Integer.parseInt(physicalDivisionOrder))) {
                 selectedPhysicalDivision = physicalDivision;
                 break;
