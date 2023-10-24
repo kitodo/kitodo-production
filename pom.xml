@@ -539,7 +539,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.json</groupId>
                 <artifactId>json</artifactId>
-                <version>20230227</version>
+                <version>20231013</version>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
