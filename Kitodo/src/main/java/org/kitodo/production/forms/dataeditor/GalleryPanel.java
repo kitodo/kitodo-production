@@ -49,8 +49,10 @@ import org.kitodo.production.enums.MediaContentType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
@@ -805,6 +807,14 @@ public class GalleryPanel {
             if (Objects.equals(physicalDivision.getOrder(), Integer.parseInt(physicalDivisionOrder))) {
                 selectedPhysicalDivision = physicalDivision;
                 break;
+            }
+        }
+
+        if (Objects.nonNull(selectedPhysicalDivision) && selectedPhysicalDivision.hasMediaPartialView()) {
+            View mediaView = DataEditorService.getViewOfMediaFiles(dataEditor.getStructurePanel().getLogicalTree().getChildren(),
+                    selectedPhysicalDivision.getMediaFiles());
+            if (Objects.nonNull(mediaView)) {
+                selectedPhysicalDivision = mediaView.getPhysicalDivision();
             }
         }
 

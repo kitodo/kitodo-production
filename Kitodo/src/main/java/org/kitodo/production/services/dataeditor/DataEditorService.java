@@ -38,6 +38,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -46,6 +47,7 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
+import org.kitodo.production.forms.dataeditor.StructurePanel;
 import org.kitodo.production.forms.dataeditor.StructureTreeNode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -331,6 +333,28 @@ public class DataEditorService {
             itemList.sort(Comparator.comparing(SelectItem::getLabel));
         }
         return itemList;
+    }
+
+    public static View getViewOfMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaPartialViewMediaFiles) {
+        for (TreeNode treeNode : treeNodes) {
+            if (StructurePanel.VIEW_NODE_TYPE.equals(
+                    treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();
+                if (structureMediaTreeNode.getDataObject() instanceof View) {
+                    View view = (View) structureMediaTreeNode.getDataObject();
+                    if (view.getPhysicalDivision().getMediaFiles().equals(mediaPartialViewMediaFiles)) {
+                        return view;
+                    }
+                }
+            }
+            if (treeNode.getChildCount() > 0) {
+                View view = getViewOfMediaFiles(treeNode.getChildren(), mediaPartialViewMediaFiles);
+                if (Objects.nonNull(view)) {
+                    return view;
+                }
+            }
+        }
+        return null;
     }
 
 }

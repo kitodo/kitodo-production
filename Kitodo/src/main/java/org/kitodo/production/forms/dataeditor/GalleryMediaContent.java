@@ -205,6 +205,11 @@ public class GalleryMediaContent {
         return Objects.nonNull(previewUri);
     }
 
+    public boolean isMediaPartial() {
+        return Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision()) && view.getPhysicalDivision()
+                .hasMediaPartialView();
+    }
+
     /**
      * Returns the type of gallery media content object.
      *

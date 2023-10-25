@@ -74,6 +74,7 @@
                 <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
                               rendered="#{media.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
+                <h:outputText rendered="#{media.mediaPartial}" styleClass="icon-media-partial"/>
                 <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
@@ -89,6 +90,10 @@
                         <i class="fa fa-file-image-o"/>
                     </h:panelGroup>
                 </p:outputPanel>
+                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                              rendered="#{media.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
+                <h:outputText rendered="#{media.mediaPartial}" styleClass="icon-media-partial"/>
                 <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 

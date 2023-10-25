@@ -830,13 +830,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 } else if (structureTreeNode.getDataObject() instanceof View) {
                     View view = (View) structureTreeNode.getDataObject();
 
-                    /*if (view.getPhysicalDivision().hasMediaPartialView()) {
-                        View mediaView = getViewOfMediaFiles(structurePanel.getLogicalTree().getChildren(),
+                    if (view.getPhysicalDivision().hasMediaPartialView()) {
+                        View mediaView = DataEditorService.getViewOfMediaFiles(structurePanel.getLogicalTree().getChildren(),
                                 view.getPhysicalDivision().getMediaFiles());
                         if (Objects.nonNull(mediaView)) {
                             view = mediaView;
                         }
-                    }*/
+                    }
 
                     metadataPanel.showPageInLogical(view.getPhysicalDivision());
                     if (updateGalleryAndPhysicalTree) {
@@ -849,27 +849,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         paginationPanel.preparePaginationSelectionSelectedItems();
     }
 
-    private View getViewOfMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaPartialViewMediaFiles) {
-        for (TreeNode treeNode : treeNodes) {
-            if (StructurePanel.VIEW_NODE_TYPE.equals(
-                    treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();
-                if (structureMediaTreeNode.getDataObject() instanceof View) {
-                    View view = (View) structureMediaTreeNode.getDataObject();
-                    if (view.getPhysicalDivision().getMediaFiles().equals(mediaPartialViewMediaFiles)) {
-                        return view;
-                    }
-                }
-            }
-            if (treeNode.getChildCount() > 0) {
-                View view = getViewOfMediaFiles(treeNode.getChildren(), mediaPartialViewMediaFiles);
-                if (Objects.nonNull(view)) {
-                    return view;
-                }
-            }
-        }
-        return null;
-    }
+
 
     void switchPhysicalDivision() throws NoSuchMetadataFieldException {
         try {
