@@ -38,6 +38,7 @@
                              action="#{DataEditorForm.galleryPanel.select}"
                              update="galleryHeadingWrapper
                                      imagePreviewForm:mediaDetail
+                                     imagePreviewForm:mediaPartialList
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
                                      metadataAccordion:logicalMetadataWrapperPanel"/>
@@ -170,6 +171,7 @@
                               a:onmousedown="metadataEditor.gallery.handleMouseDown(event)"
                               a:onmouseup="metadataEditor.gallery.handleMouseUp(event)">
                     <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail.xhtml"/>
+                    <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-partial-list.xhtml"/>
                     <h:panelGroup layout="block" id="thumbnailStripe">
                         <p:commandButton icon="fa fa-arrow-up fa-lg" id="scroll-up" styleClass="scroll-button scroll-up"/>
                         <div id="thumbnailStripeScrollableContent">

@@ -17,7 +17,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -46,15 +45,11 @@ public class MediaPartialViewsPanel implements Serializable {
      *
      * @return The media view divisions
      */
-    public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions() {
-        Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
+    public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions(Pair<PhysicalDivision, LogicalDivision> lastSelection) {
         mediaPartialViewForm.setMediaSelection(lastSelection);
         Map<LogicalDivision, MediaPartialView> mediaPartialViewDivisions = new LinkedHashMap<>();
-        List<LogicalDivision> logicalDivisions = lastSelection.getKey().getLogicalDivisions();
-        for (LogicalDivision logicalDivision : logicalDivisions) {
-            getMediaPartialViewDivisions(mediaPartialViewDivisions, logicalDivision.getChildren(),
-                    lastSelection.getLeft().getMediaFiles());
-        }
+        getMediaPartialViewDivisions(mediaPartialViewDivisions,  lastSelection.getKey().getLogicalDivisions(),
+                lastSelection.getLeft().getMediaFiles());
         return mediaPartialViewDivisions;
     }
 

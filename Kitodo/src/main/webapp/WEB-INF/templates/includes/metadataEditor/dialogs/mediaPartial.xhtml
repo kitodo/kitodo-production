@@ -61,7 +61,7 @@
                         <p:commandButton id="apply"
                                          action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.save}"
                                          oncomplete="PF('mediaViewDialog').hide();"
-                                         update="imagePreviewForm:mediaViewsListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                         update="imagePreviewForm:mediaPartialListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"

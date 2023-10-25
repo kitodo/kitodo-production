@@ -38,6 +38,7 @@
                                 expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
                             imagePreviewForm:mediaDetail
+                            imagePreviewForm:mediaPartialList
                             metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
@@ -47,6 +48,7 @@
                                 @(.thumbnail)
                                 galleryHeadingWrapper
                                 imagePreviewForm:mediaDetail
+                                imagePreviewForm:mediaPartialList
                                 contextMenuPhysicalTree
                                 logicalTree
                                 metadataAccordion:physicalMetadataWrapperPanel"/>

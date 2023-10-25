@@ -1,0 +1,76 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+    <h:panelGroup id="mediaPartialList" layout="block">
+
+        <ui:fragment>
+
+            <p:outputPanel id="mediaPartialListContainer">
+                <p:dataList
+                        styleClass="mediaViewsList"
+                        value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.getMediaPartialViewDivisions(DataEditorForm.galleryPanel.lastSelection)}"
+                        var="mediaViewDivision"
+                        type="ordered">
+
+                    <p:dataViewListItem>
+                        <h:panelGrid columns="2" layout="flex"
+                                     columnClasses="metadata,actions"
+                                     styleClass="mediaViewsDetail">
+                            <p:outputPanel>
+                                <h:panelGrid columns="2">
+                                    <h:outputText value="Title:"/>
+                                    <h:outputText value="#{mediaViewDivision.key.label}"/>
+                                    <h:outputText value="Begin:"/>
+                                    <h:outputText value="#{mediaViewDivision.value.begin}"/>
+                                    <h:outputText value="Extend:"/>
+                                    <h:outputText value="#{mediaViewDivision.value.extent}"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                            <p:outputPanel>
+                                <p:commandButton styleClass="editMediaView secondary"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaViewDivision)}"
+                                                 update="mediaViewDialog"
+                                                 icon="fa fa-pencil-square-o"
+                                                 oncomplete="PF('mediaViewDialog').show();"/>
+                                <p:commandButton styleClass="deleteMediaView secondary"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.deleteMediaViewDivision(mediaViewDivision)}"
+                                                 update="imagePreviewForm:mediaPartialListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                                 icon="fa fa-trash"/>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataViewListItem>
+
+                </p:dataList>
+                <h:panelGroup id="addMediaViewContainer">
+                    <p:commandButton id="addMediaView"
+                                     icon="fa fa-plus"
+                                     action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.clean}"
+                                     update="mediaViewDialog"
+                                     styleClass="secondary"
+                                     oncomplete="PF('mediaViewDialog').show();">
+                    </p:commandButton>
+                </h:panelGroup>
+            </p:outputPanel>
+        </ui:fragment>
+
+    </h:panelGroup>
+
+</ui:composition>

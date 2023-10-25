@@ -41,53 +41,6 @@
                 </p:media>
             </p:outputPanel>
 
-            <p:outputPanel id="mediaViewsListContainer"
-                           rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.enabled}">
-                <p:dataList
-                        styleClass="mediaViewsList"
-                        value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions}"
-                        var="mediaViewDivision"
-                        type="ordered">
-
-                    <p:dataViewListItem a:data-logicalTreeNodeId="#{stripe.logicalTreeNodeId}">
-                        <h:panelGrid columns="2" layout="flex"
-                                     columnClasses="metadata,actions"
-                                     styleClass="mediaViewsDetail">
-                            <p:outputPanel>
-                                <h:panelGrid columns="2" >
-                                    <h:outputText value="Title:"/>
-                                    <h:outputText value="#{mediaViewDivision.key.label}"/>
-                                    <h:outputText value="Begin:"/>
-                                    <h:outputText value="#{mediaViewDivision.value.begin}"/>
-                                    <h:outputText value="Extend:"/>
-                                    <h:outputText value="#{mediaViewDivision.value.extent}"/>
-                                </h:panelGrid>
-                            </p:outputPanel>
-                            <p:outputPanel>
-                                <p:commandButton styleClass="editMediaView secondary"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaViewDivision)}"
-                                                 update="mediaViewDialog"
-                                                 icon="fa fa-pencil-square-o"
-                                                 oncomplete="PF('mediaViewDialog').show();"/>
-                                <p:commandButton styleClass="deleteMediaView secondary"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.deleteMediaViewDivision(mediaViewDivision)}"
-                                                 update="imagePreviewForm:mediaViewsListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
-                                                 icon="fa fa-trash"/>
-                            </p:outputPanel>
-                        </h:panelGrid>
-                    </p:dataViewListItem>
-
-                </p:dataList>
-                <h:panelGroup id="addMediaViewContainer">
-                    <p:commandButton id="addMediaView"
-                                     icon="fa fa-plus"
-                                     action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.clean}"
-                                     update="mediaViewDialog"
-                                     styleClass="secondary"
-                                     oncomplete="PF('mediaViewDialog').show();">
-                    </p:commandButton>
-                </h:panelGroup>
-            </p:outputPanel>
         </ui:fragment>
 
         <ui:fragment

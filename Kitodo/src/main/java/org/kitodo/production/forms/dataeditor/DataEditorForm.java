@@ -789,6 +789,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public boolean isSelected(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
         if (Objects.nonNull(physicalDivision) && Objects.nonNull(logicalDivision)) {
+            if(physicalDivision.hasMediaPartialView()) {
+                return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0)));
+            }
             return selectedMedia.contains(new ImmutablePair<>(physicalDivision, logicalDivision));
         }
         return false;
@@ -827,13 +830,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 } else if (structureTreeNode.getDataObject() instanceof View) {
                     View view = (View) structureTreeNode.getDataObject();
 
-                    if (view.getPhysicalDivision().hasMediaPartialView()) {
+                    /*if (view.getPhysicalDivision().hasMediaPartialView()) {
                         View mediaView = getViewOfMediaFiles(structurePanel.getLogicalTree().getChildren(),
                                 view.getPhysicalDivision().getMediaFiles());
                         if (Objects.nonNull(mediaView)) {
                             view = mediaView;
                         }
-                    }
+                    }*/
 
                     metadataPanel.showPageInLogical(view.getPhysicalDivision());
                     if (updateGalleryAndPhysicalTree) {

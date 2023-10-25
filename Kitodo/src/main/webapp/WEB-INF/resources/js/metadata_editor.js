@@ -625,9 +625,9 @@ metadataEditor.logicalTree = {
      */
     onNodeClick(node, event) {
         let treeNodeId = node.attr("id").split(":")[1];
-        let isPage = node.hasClass("ui-treenode-leaf") 
-            && node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
-        if (isPage) {
+        let isMedia = node.hasClass("ui-treenode-leaf")
+            && node.find("> .ui-treenode-content > .ui-icon-document,> .ui-treenode-content > .ui-icon-media-partial").length > 0;
+        if (isMedia) {
             metadataEditor.gallery.stripes.resetSelectionStyle();
             metadataEditor.gallery.pages.markManyAsSelected([treeNodeId], treeNodeId);
             metadataEditor.pagination.markManyAsSelected([treeNodeId]);
@@ -702,8 +702,8 @@ metadataEditor.physicalTree = {
 
         // apply selection to other components of the metadata editor
         if (treeNodeId !== null) {
-            let isPage = node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
-            if (isPage) {
+            let isMedia = node.find("> .ui-treenode-content > .ui-icon-document,> .ui-treenode-content > .ui-icon-media-partial").length > 0;
+            if (isMedia) {
                 let stripeTreeNodeId = treeNodeId.slice(0, treeNodeId.lastIndexOf("_"));
                 metadataEditor.logicalTree.markNodeAsSelected(stripeTreeNodeId);
                 metadataEditor.pagination.markManyAsSelected([treeNodeId]);

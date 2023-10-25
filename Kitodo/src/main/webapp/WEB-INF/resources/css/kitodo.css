@@ -3069,35 +3069,35 @@ Column content
     width: 100%;
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsList li {
     border-top: 1px solid var(--cloudy-gray);
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsList li:first-child {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsList li:first-child {
     border: none;
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail {
     width: 100%;
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .metadata {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .metadata {
 
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .metadata td {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .metadata td {
     padding: 5px;
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .actions {
     width: 85px;
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions button {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .actions button {
     margin-left: 8px;
 }
 
-#imagePreviewForm\:mediaViewsListContainer .mediaViewsDetail .actions button:first-child {
+#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .actions button:first-child {
     margin-left: 0;
 }
 
@@ -3134,7 +3134,7 @@ Column content
     color: white;
 }
 
-#imagePreviewForm\:mediaViewsListContainer {
+#imagePreviewForm\:mediaPartialListContainer {
     height: 100%;
     overflow-y: scroll;
     background: var(--trans-blue);

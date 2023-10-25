@@ -917,8 +917,12 @@ public class GalleryPanel {
         }
 
         dataEditor.getSelectedMedia().clear();
-        dataEditor.getSelectedMedia().add(
-            new ImmutablePair<>(currentSelection.getView().getPhysicalDivision(), parentStripe.getStructure()));
+        LogicalDivision logicalDivision = parentStripe.getStructure();
+        PhysicalDivision physicalDivision = currentSelection.getView().getPhysicalDivision();
+        if(physicalDivision.hasMediaPartialView()) {
+            logicalDivision = physicalDivision.getLogicalDivisions().get(0);
+        }
+        dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivision, logicalDivision));
     }
 
     private void rangeSelect(GalleryMediaContent currentSelection, GalleryStripe parentStripe) {

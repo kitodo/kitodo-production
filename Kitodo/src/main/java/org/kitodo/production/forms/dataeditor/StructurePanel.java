@@ -1077,7 +1077,8 @@ public class StructurePanel implements Serializable {
         for (TreeNode currentTreeNode : treeNode.getChildren()) {
             if (treeNode.getData() instanceof StructureTreeNode
                     && Objects.nonNull(((StructureTreeNode) treeNode.getData()).getDataObject())
-                    && ((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
+                    && (((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
+                    || MEDIA_PARTIAL_VIEW_NODE_TYPE.equals(currentTreeNode.getType()))
                     && currentTreeNode.getData() instanceof StructureTreeNode
                     && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
                     && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getPhysicalDivision()

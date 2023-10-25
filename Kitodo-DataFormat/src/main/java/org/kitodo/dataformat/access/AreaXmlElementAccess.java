@@ -42,6 +42,10 @@ public class AreaXmlElementAccess {
      *            physical division in view
      */
     AreaXmlElementAccess(FileXmlElementAccess fileXmlElementAccess) {
+        if (fileXmlElementAccess.getPhysicalDivision().hasMediaPartialView()) {
+            view.setPhysicalDivision(
+                    fileXmlElementAccess.getPhysicalDivision().getMediaPartialView().getPhysicalDivision());
+        }
         view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
     }
 
