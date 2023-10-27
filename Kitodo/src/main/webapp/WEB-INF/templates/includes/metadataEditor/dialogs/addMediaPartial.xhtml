@@ -17,8 +17,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:p="http://primefaces.org/ui"
         xmlns:f="http://xmlns.jcp.org/jsf/core">
-    <p:dialog id="mediaViewDialog"
-              widgetVar="mediaViewDialog"
+    <p:dialog id="addMediaPartialDialog"
+              widgetVar="addMediaPartialDialog"
               resizable="false"
               showHeader="false"
               dynamic="true"
@@ -60,12 +60,12 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="apply"
                                          action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.save}"
-                                         oncomplete="PF('mediaViewDialog').hide();"
-                                         update="imagePreviewForm:mediaPartialListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                         oncomplete="PF('addMediaPartialDialog').hide();"
+                                         update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
-                                         onclick="PF('mediaViewDialog').hide();"
+                                         onclick="PF('addMediaPartialDialog').hide();"
                                          value="#{msgs.cancel}"
                                          icon="fa fa-times fa-lg"
                                          iconPos="right"

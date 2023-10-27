@@ -3069,35 +3069,35 @@ Column content
     width: 100%;
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsList li {
+#imagePreviewForm\:mediaPartialList .mediaViewsList li {
     border-top: 1px solid var(--cloudy-gray);
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsList li:first-child {
+#imagePreviewForm\:mediaPartialList .mediaViewsList li:first-child {
     border: none;
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail {
+#imagePreviewForm\:mediaPartialList .mediaViewsDetail {
     width: 100%;
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .metadata {
+#imagePreviewForm\:mediaPartialList .mediaViewsDetail .metadata {
 
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .metadata td {
+#imagePreviewForm\:mediaPartialList .mediaViewsDetail .metadata td {
     padding: 5px;
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .actions {
+#imagePreviewForm\:mediaPartialList .mediaViewsDetail .actions {
     width: 85px;
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .actions button {
+#imagePreviewForm\:mediaPartialList .mediaViewsDetail .actions button {
     margin-left: 8px;
 }
 
-#imagePreviewForm\:mediaPartialListContainer .mediaViewsDetail .actions button:first-child {
+#imagePreviewForm\:mediaPartialList .mediaViewsDetail .actions button:first-child {
     margin-left: 0;
 }
 
@@ -3134,7 +3134,13 @@ Column content
     color: white;
 }
 
-#imagePreviewForm\:mediaPartialListContainer {
+#imagePreviewForm\:mediaDetailMediaPartialsContainer {
+    position: relative;
+    min-width: 60px;
+    height: 100%;
+}
+
+#imagePreviewForm\:mediaPartialList {
     height: 100%;
     overflow-y: scroll;
     background: var(--trans-blue);
@@ -3142,12 +3148,12 @@ Column content
     min-width: 130px;
 }
 
-#imagePreviewForm\:addMediaView {
+#imagePreviewForm\:addMediaPartial{
+    left: 10px;
+    position: absolute;
+    bottom: 10px;
     border-radius: var(--default-border-radius);
     box-shadow: var(--second-level-shadow);
-    margin-left: 10px;
-    bottom: 22px;
-    position: absolute;
 }
 
 #map {

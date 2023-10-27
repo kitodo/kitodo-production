@@ -19,15 +19,16 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
-    <h:panelGroup id="mediaPartialList" layout="block">
+    <h:panelGroup id="mediaDetailMediaPartialsContainer" layout="block"
+                  rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.enabled}">
 
         <ui:fragment>
-
-            <p:outputPanel id="mediaPartialListContainer">
+            <p:outputPanel id="mediaPartialList"
+                           rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions.size() > 0}">
                 <p:dataList
                         styleClass="mediaViewsList"
-                        value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.getMediaPartialViewDivisions(DataEditorForm.galleryPanel.lastSelection)}"
-                        var="mediaViewDivision"
+                        value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions}"
+                        var="mediaPartialDivision"
                         type="ordered">
 
                     <p:dataViewListItem>
@@ -37,38 +38,37 @@
                             <p:outputPanel>
                                 <h:panelGrid columns="2">
                                     <h:outputText value="Title:"/>
-                                    <h:outputText value="#{mediaViewDivision.key.label}"/>
+                                    <h:outputText value="#{mediaPartialDivision.key.label}"/>
                                     <h:outputText value="Begin:"/>
-                                    <h:outputText value="#{mediaViewDivision.value.begin}"/>
+                                    <h:outputText value="#{mediaPartialDivision.value.begin}"/>
                                     <h:outputText value="Extend:"/>
-                                    <h:outputText value="#{mediaViewDivision.value.extent}"/>
+                                    <h:outputText value="#{mediaPartialDivision.value.extent}"/>
                                 </h:panelGrid>
                             </p:outputPanel>
                             <p:outputPanel>
                                 <p:commandButton styleClass="editMediaView secondary"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaViewDivision)}"
-                                                 update="mediaViewDialog"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaPartialDivision)}"
+                                                 update="addMediaPartialDialog"
                                                  icon="fa fa-pencil-square-o"
-                                                 oncomplete="PF('mediaViewDialog').show();"/>
+                                                 oncomplete="PF('addMediaPartialDialog').show();"/>
                                 <p:commandButton styleClass="deleteMediaView secondary"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.deleteMediaViewDivision(mediaViewDivision)}"
-                                                 update="imagePreviewForm:mediaPartialListContainer,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.deleteMediaViewDivision(mediaPartialDivision)}"
+                                                 update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                                  icon="fa fa-trash"/>
                             </p:outputPanel>
                         </h:panelGrid>
                     </p:dataViewListItem>
-
                 </p:dataList>
-                <h:panelGroup id="addMediaViewContainer">
-                    <p:commandButton id="addMediaView"
-                                     icon="fa fa-plus"
-                                     action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.clean}"
-                                     update="mediaViewDialog"
-                                     styleClass="secondary"
-                                     oncomplete="PF('mediaViewDialog').show();">
-                    </p:commandButton>
-                </h:panelGroup>
             </p:outputPanel>
+
+            <p:commandButton id="addMediaPartial"
+                             icon="fa fa-plus"
+                             action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.clean}"
+                             update="addMediaPartialDialog"
+                             styleClass="secondary"
+                             oncomplete="PF('addMediaPartialDialog').show();">
+            </p:commandButton>
+
         </ui:fragment>
 
     </h:panelGroup>

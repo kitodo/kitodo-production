@@ -13,10 +13,12 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,11 +47,15 @@ public class MediaPartialViewsPanel implements Serializable {
      *
      * @return The media view divisions
      */
-    public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions(Pair<PhysicalDivision, LogicalDivision> lastSelection) {
-        mediaPartialViewForm.setMediaSelection(lastSelection);
+    public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         Map<LogicalDivision, MediaPartialView> mediaPartialViewDivisions = new LinkedHashMap<>();
-        getMediaPartialViewDivisions(mediaPartialViewDivisions,  lastSelection.getKey().getLogicalDivisions(),
-                lastSelection.getLeft().getMediaFiles());
+        if (Objects.nonNull(lastSelection)) {
+            mediaPartialViewForm.setMediaSelection(lastSelection);
+            getMediaPartialViewDivisions(mediaPartialViewDivisions, lastSelection.getKey().getLogicalDivisions(),
+                    lastSelection.getLeft().getMediaFiles());
+
+        }
         return mediaPartialViewDivisions;
     }
 
@@ -97,15 +103,19 @@ public class MediaPartialViewsPanel implements Serializable {
     }
 
     public List<SelectItem> getMediaPartialDivisions() {
-        List<SelectItem> getChildDivisions = DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement()
-                        .getStructuralElementView(
-                                dataEditor.getGalleryPanel().getLastSelection().getRight().getType(),
-                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
-                dataEditor.getProcess().getRuleset());
-        Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
-                .getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
-        return getChildDivisions.stream().filter(selectItem -> mediaPartialDivisionIds.contains(selectItem.getValue()))
-                .collect(Collectors.toList());
+        List<SelectItem> getChildDivisions = new ArrayList<>();
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
+        if (Objects.nonNull(lastSelection)) {
+            getChildDivisions.addAll(DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement()
+                    .getStructuralElementView(lastSelection.getRight().getType(), dataEditor.getAcquisitionStage(),
+                            dataEditor.getPriorityList()), dataEditor.getProcess().getRuleset()));
+            Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
+                    .getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
+            getChildDivisions = getChildDivisions.stream()
+                    .filter(selectItem -> mediaPartialDivisionIds.contains(selectItem.getValue()))
+                    .collect(Collectors.toList());
+        }
+        return getChildDivisions;
     }
 
     public MediaPartialViewForm getMediaPartialViewForm() {

@@ -51,8 +51,8 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
-import org.primefaces.model.TreeNode;
 
 /**
  * Backing bean for the gallery panel of the metadata editor.
@@ -991,6 +991,22 @@ public class GalleryPanel {
      */
     public String getCachingUUID() {
         return cachingUUID;
+    }
+
+    public boolean hasMediaViewMimeTypePrefix(String mimeTypePrefix) {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.nonNull(lastSelection)) {
+            String mediaViewMimeType = getGalleryMediaContent(lastSelection.getKey()).getMediaViewMimeType();
+            switch (mimeTypePrefix) {
+                case MediaUtil.MIME_TYPE_AUDIO_PREFIX:
+                    return MediaUtil.isAudio(mediaViewMimeType);
+                case MediaUtil.MIME_TYPE_VIDEO_PREFIX:
+                    return MediaUtil.isVideo(mediaViewMimeType);
+                case MediaUtil.MIME_TYPE_IMAGE_PREFIX:
+                    return MediaUtil.isImage(mediaViewMimeType);
+            }
+        }
+        return false;
     }
 
     public MediaPartialViewsPanel getMediaPartialViewsPanel() {

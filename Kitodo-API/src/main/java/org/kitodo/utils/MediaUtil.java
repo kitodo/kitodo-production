@@ -14,7 +14,7 @@ package org.kitodo.utils;
 public class MediaUtil {
 
     public static final String MIME_TYPE_AUDIO_PREFIX = "audio";
-
+    public static final String MIME_TYPE_IMAGE_PREFIX = "image";
     public static final String MIME_TYPE_VIDEO_PREFIX = "video";
 
     /**
@@ -30,6 +30,10 @@ public class MediaUtil {
 
     public static boolean isAudio(String mimeType) {
         return mimeType.startsWith(MIME_TYPE_AUDIO_PREFIX);
+    }
+
+    public static boolean isImage(String mimeType) {
+        return mimeType.startsWith(MIME_TYPE_IMAGE_PREFIX);
     }
 
     public static boolean isVideo(String mimeType) {
