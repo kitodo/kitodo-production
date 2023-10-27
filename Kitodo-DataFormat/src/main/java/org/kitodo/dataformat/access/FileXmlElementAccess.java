@@ -117,7 +117,7 @@ public class FileXmlElementAccess {
             this.physicalDivision.setOrder(physicalDivision.getOrder());
             this.physicalDivision.setOrderlabel(physicalDivision.getOrderlabel());
             this.physicalDivision.setType(physicalDivision.getType());
-            if(physicalDivision.hasMediaPartialView()) {
+            if (physicalDivision.hasMediaPartialView()) {
                 this.physicalDivision.setMediaPartialView(physicalDivision.getMediaPartialView());
             }
         }

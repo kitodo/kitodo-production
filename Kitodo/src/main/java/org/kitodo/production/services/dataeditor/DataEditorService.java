@@ -312,8 +312,17 @@ public class DataEditorService {
         return existingMetadataRows;
     }
 
-
-    public static List<SelectItem> getTypeSelectItem( StructuralElementViewInterface divisionView, Ruleset ruleset) {
+    /**
+     * Get allowed substructural elements as sorted list of select items.
+     *
+     * @param divisionView
+     *         The division View
+     * @param ruleset
+     *         The ruleset
+     * @return Sorted list of select items
+     */
+    public static List<SelectItem> getAllowedSubstructuralElementsAsSortedListOfSelectItems(
+            StructuralElementViewInterface divisionView, Ruleset ruleset) {
         List<SelectItem> selectItems = new ArrayList<>();
         for (Map.Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
             selectItems.add(new SelectItem(entry.getKey(), entry.getValue()));
@@ -335,20 +344,29 @@ public class DataEditorService {
         return itemList;
     }
 
-    public static View getViewOfMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaPartialViewMediaFiles) {
+    /**
+     * Get the view of a tree nod by comparing media files.
+     *
+     * @param treeNodes
+     *         The tree nodes
+     * @param mediaFiles
+     *         The media files to compare too
+     * @return View or null
+     */
+    public static View getViewOfMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaFiles) {
         for (TreeNode treeNode : treeNodes) {
             if (StructurePanel.VIEW_NODE_TYPE.equals(
                     treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
                 StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();
                 if (structureMediaTreeNode.getDataObject() instanceof View) {
                     View view = (View) structureMediaTreeNode.getDataObject();
-                    if (view.getPhysicalDivision().getMediaFiles().equals(mediaPartialViewMediaFiles)) {
+                    if (view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
                         return view;
                     }
                 }
             }
             if (treeNode.getChildCount() > 0) {
-                View view = getViewOfMediaFiles(treeNode.getChildren(), mediaPartialViewMediaFiles);
+                View view = getViewOfMediaFiles(treeNode.getChildren(), mediaFiles);
                 if (Objects.nonNull(view)) {
                     return view;
                 }

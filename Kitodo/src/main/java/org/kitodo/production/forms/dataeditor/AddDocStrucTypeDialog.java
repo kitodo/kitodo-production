@@ -466,7 +466,7 @@ public class AddDocStrucTypeDialog {
     }
 
     private void prepareDocStructAddTypeSelectionItemsForChildren() {
-        docStructAddTypeSelectionItemsForChildren = DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement()
+        docStructAddTypeSelectionItemsForChildren = DataEditorService.getAllowedSubstructuralElementsAsSortedListOfSelectItems(dataEditor.getRulesetManagement()
                         .getStructuralElementView(
                                 dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
                                 dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
@@ -495,7 +495,7 @@ public class AddDocStrucTypeDialog {
     private void prepareDocStructAddTypeSelectionItemsForSiblings() {
         docStructAddTypeSelectionItemsForSiblings = new ArrayList<>();
         if (!parents.isEmpty()) {
-            docStructAddTypeSelectionItemsForSiblings = DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement().getStructuralElementView(
+            docStructAddTypeSelectionItemsForSiblings = DataEditorService.getAllowedSubstructuralElementsAsSortedListOfSelectItems(dataEditor.getRulesetManagement().getStructuralElementView(
                     parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
                     dataEditor.getProcess().getRuleset());
         }

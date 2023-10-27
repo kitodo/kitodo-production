@@ -11,6 +11,11 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
@@ -18,11 +23,6 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
-
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
 
 public class MediaPartialViewForm implements Serializable {
     

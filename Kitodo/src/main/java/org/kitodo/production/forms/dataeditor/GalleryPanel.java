@@ -929,7 +929,7 @@ public class GalleryPanel {
         dataEditor.getSelectedMedia().clear();
         LogicalDivision logicalDivision = parentStripe.getStructure();
         PhysicalDivision physicalDivision = currentSelection.getView().getPhysicalDivision();
-        if(physicalDivision.hasMediaPartialView()) {
+        if (physicalDivision.hasMediaPartialView()) {
             logicalDivision = physicalDivision.getLogicalDivisions().get(0);
         }
         dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivision, logicalDivision));
@@ -993,6 +993,13 @@ public class GalleryPanel {
         return cachingUUID;
     }
 
+    /**
+     * Check if media view has mime type prefix.
+     *
+     * @param mimeTypePrefix
+     *         The mime type prefix
+     * @return True if media view has mime type prefix
+     */
     public boolean hasMediaViewMimeTypePrefix(String mimeTypePrefix) {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
         if (Objects.nonNull(lastSelection)) {
@@ -1004,6 +1011,7 @@ public class GalleryPanel {
                     return MediaUtil.isVideo(mediaViewMimeType);
                 case MediaUtil.MIME_TYPE_IMAGE_PREFIX:
                     return MediaUtil.isImage(mediaViewMimeType);
+                default:
             }
         }
         return false;

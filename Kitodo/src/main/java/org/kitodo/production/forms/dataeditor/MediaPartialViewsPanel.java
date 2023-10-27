@@ -21,6 +21,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.faces.model.SelectItem;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -29,8 +31,9 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.services.dataeditor.DataEditorService;
+import org.kitodo.utils.MediaUtil;
 
-import javax.faces.model.SelectItem;
+
 
 public class MediaPartialViewsPanel implements Serializable {
 
@@ -98,6 +101,11 @@ public class MediaPartialViewsPanel implements Serializable {
         mediaPartialViewForm.setBegin(mediaViewDivision.getValue().getBegin());
     }
 
+    /**
+     * Check if media partials panel can be rendered.
+     *
+     * @return True if enabled
+     */
     public boolean isEnabled() {
         return getMediaPartialDivisions().size() > 0;
     }
@@ -105,8 +113,10 @@ public class MediaPartialViewsPanel implements Serializable {
     public List<SelectItem> getMediaPartialDivisions() {
         List<SelectItem> getChildDivisions = new ArrayList<>();
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
-        if (Objects.nonNull(lastSelection)) {
-            getChildDivisions.addAll(DataEditorService.getTypeSelectItem(dataEditor.getRulesetManagement()
+        if (Objects.nonNull(lastSelection) && MediaUtil.isAudioOrVideo(
+                dataEditor.getGalleryPanel().getGalleryMediaContent(lastSelection.getKey()).getMediaViewMimeType())) {
+            getChildDivisions.addAll(DataEditorService.getAllowedSubstructuralElementsAsSortedListOfSelectItems(
+                    dataEditor.getRulesetManagement()
                     .getStructuralElementView(lastSelection.getRight().getType(), dataEditor.getAcquisitionStage(),
                             dataEditor.getPriorityList()), dataEditor.getProcess().getRuleset()));
             Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
@@ -118,6 +128,11 @@ public class MediaPartialViewsPanel implements Serializable {
         return getChildDivisions;
     }
 
+    /**
+     * Get the MediaPartialViewForm.
+     *
+     * @return The MediaPartialViewForm
+     */
     public MediaPartialViewForm getMediaPartialViewForm() {
         return mediaPartialViewForm;
     }
