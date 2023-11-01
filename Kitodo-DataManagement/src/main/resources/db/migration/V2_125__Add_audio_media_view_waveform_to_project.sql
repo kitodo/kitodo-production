@@ -11,4 +11,4 @@
 
 --
 -- Migration: Add column for state of audio waveform in media view to project table.
-ALTER TABLE project ADD mediaView_audio_waveform TINYINT(1) NOT NULL DEFAULT 0
+ALTER TABLE project ADD mediaView_audio_waveform TINYINT(1) NOT NULL DEFAULT 0;

@@ -47,7 +47,7 @@ class AudioWaveform {
     }
 
     #build() {
-        let self = this
+        let self = this;
         // wavesurfer uses the 'src' attribute of the audio element, and we add this attribute based on the browser's current source selection
         this.#audioElement.src = this.#audioElement.currentSrc;
 
@@ -96,9 +96,9 @@ class AudioWaveform {
                 input.onchange = (e) => {
                     self.#wavesurfer.setOptions({
                         [input.value]: e.target.checked,
-                    })
+                    });
                 }
-            })
+            });
             const jumpButtons = document.getElementsByClassName("audio-waveform-tools-jump-button");
             Array.from(jumpButtons).forEach(function (jumpButton) {
                 jumpButton.addEventListener('click', function (event) {
