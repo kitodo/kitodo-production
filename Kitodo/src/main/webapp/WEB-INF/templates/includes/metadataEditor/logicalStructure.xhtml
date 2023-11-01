@@ -213,7 +213,7 @@
                         disabled="#{readOnly}"
                         process="@this"/>
             <p:menuitem value="#{DataEditorForm.structurePanel.selectedLogicalNode.data.linked ? msgs.unlinkProcess : msgs.removeElement}"
-                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.type ne StructurePanel.VIEW_NODE_TYPE}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.data.dataObject ne null and DataEditorForm.structurePanel.selectedLogicalNode.type ne StructurePanel.VIEW_NODE_TYPE and DataEditorForm.structurePanel.selectedLogicalNode.type ne StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -227,6 +227,20 @@
                                 galleryWrapperPanel"/>
             <p:menuitem value="#{msgs.deleteMedia}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE}"
+                        icon="fa fa-trash fa-sm"
+                        styleClass="plain"
+                        disabled="#{readOnly}"
+                        onclick="$('#loadingScreen').show()"
+                        oncomplete="$('#loadingScreen').hide()"
+                        action="#{DataEditorForm.deletePhysicalDivision()}"
+                        process="@this"
+                        update="numberOfScans
+                                logicalTree
+                                paginationForm:paginationWrapperPanel
+                                metadataAccordion:logicalMetadataWrapperPanel
+                                galleryWrapperPanel"/>
+            <p:menuitem value="#{msgs.deleteMediaPartial}"
+                        rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"

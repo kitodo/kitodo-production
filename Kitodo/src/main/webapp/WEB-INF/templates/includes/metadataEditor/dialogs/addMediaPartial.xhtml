@@ -60,8 +60,7 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="apply"
                                          action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.save}"
-                                         oncomplete="PF('addMediaPartialDialog').hide();"
-                                         update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                         oncomplete="PF('addMediaPartialDialog').hide();imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"

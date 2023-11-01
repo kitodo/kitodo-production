@@ -206,7 +206,6 @@ public class StructurePanel implements Serializable {
                 severalAssignments.remove(view.getPhysicalDivision());
             }
         }
-        subViews.removeAll(multipleViews);
 
         LogicalDivision parent = ancestors.getLast();
 
@@ -228,24 +227,31 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedPhysicalDivision() {
-        for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
-            PhysicalDivision physicalDivision = selectedPhysicalDivision.getKey();
-            if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
-                if (physicalDivision.getLogicalDivisions().size() > 1) {
-                    Helper.setMessage(
-                            physicalDivision + ": is removed fom all assigned structural elements");
-                }
-                for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
-                    structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
-                }
-                physicalDivision.getLogicalDivisions().clear();
-                if (!deletePhysicalDivision(physicalDivision)) {
-                    return;
-                }
+        if (Objects.nonNull(selectedLogicalNode) && StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE.equals(
+                selectedLogicalNode.getType()) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
+            deletePhysicalDivision(
+                    ((View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject()).getPhysicalDivision());
+        } else {
 
-                dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
+            for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
+                PhysicalDivision physicalDivision = selectedPhysicalDivision.getKey();
+                if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
+                    if (physicalDivision.getLogicalDivisions().size() > 1) {
+                        Helper.setMessage(physicalDivision + ": is removed fom all assigned structural elements");
+                    }
+                    for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
+                        structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
+                    }
+                    physicalDivision.getLogicalDivisions().clear();
+                    if (!deletePhysicalDivision(physicalDivision)) {
+                        return;
+                    }
+
+                    dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
+                }
             }
         }
+
         int i = 1;
         for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece()
                 .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {

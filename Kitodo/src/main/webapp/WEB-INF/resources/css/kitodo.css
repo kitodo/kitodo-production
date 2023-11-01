@@ -3114,6 +3114,7 @@ Column content
 #imagePreviewForm\:mediaDetailMediaContainer {
     width: 100%;
     display: flex;
+    flex: 1;
     justify-content: center;
 }
 
@@ -3136,8 +3137,9 @@ Column content
 
 #imagePreviewForm\:mediaDetailMediaPartialsContainer {
     position: relative;
-    min-width: 60px;
+    flex: 0 0 auto;
     height: 100%;
+    min-width: 60px;
 }
 
 #imagePreviewForm\:mediaPartialList {
@@ -3145,7 +3147,7 @@ Column content
     overflow-y: scroll;
     background: var(--trans-blue);
     flex: 0 0 32%;
-    min-width: 130px;
+    width: 400px;
 }
 
 #imagePreviewForm\:addMediaPartial{

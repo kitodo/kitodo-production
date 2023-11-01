@@ -111,21 +111,21 @@ public class MediaPartialViewsPanel implements Serializable {
     }
 
     public List<SelectItem> getMediaPartialDivisions() {
-        List<SelectItem> getChildDivisions = new ArrayList<>();
+        List<SelectItem> mediaPartialDivisions = new ArrayList<>();
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         if (Objects.nonNull(lastSelection) && MediaUtil.isAudioOrVideo(
                 dataEditor.getGalleryPanel().getGalleryMediaContent(lastSelection.getKey()).getMediaViewMimeType())) {
-            getChildDivisions.addAll(DataEditorService.getAllowedSubstructuralElementsAsSortedListOfSelectItems(
+            mediaPartialDivisions.addAll(DataEditorService.getAllowedSubstructuralElementsAsSortedListOfSelectItems(
                     dataEditor.getRulesetManagement()
                     .getStructuralElementView(lastSelection.getRight().getType(), dataEditor.getAcquisitionStage(),
                             dataEditor.getPriorityList()), dataEditor.getProcess().getRuleset()));
             Collection<String> mediaPartialDivisionIds = dataEditor.getRulesetManagement()
                     .getFunctionalDivisions(FunctionalDivision.MEDIA_PARTIAL);
-            getChildDivisions = getChildDivisions.stream()
+            mediaPartialDivisions = mediaPartialDivisions.stream()
                     .filter(selectItem -> mediaPartialDivisionIds.contains(selectItem.getValue()))
                     .collect(Collectors.toList());
         }
-        return getChildDivisions;
+        return mediaPartialDivisions;
     }
 
     /**
