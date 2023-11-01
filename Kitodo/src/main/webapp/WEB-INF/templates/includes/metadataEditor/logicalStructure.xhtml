@@ -131,8 +131,7 @@
             <p:treeNode type="#{StructurePanel.VIEW_NODE_TYPE}"
                         icon="ui-icon-document">
                 <h:outputText value="#{empty logicalNode.label ? msgs['dataEditor.withoutType'] : logicalNode.label}"
-                              title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
+                              title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"/>
                 <h:outputText value="#{DataEditorForm.structurePanel.getMultipleAssignmentsIndex(logicalNode) + 1}"
                               rendered="#{logicalNode.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
