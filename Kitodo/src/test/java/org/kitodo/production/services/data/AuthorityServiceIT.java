@@ -67,7 +67,7 @@ public class AuthorityServiceIT {
     @Test
     public void shouldNotGetByTitle() throws Exception {
         exception.expect(DAOException.class);
-        exception.expectMessage("Object cannot be found in database");
+        exception.expectMessage("Authority 'viewAllStuff_globalAssignable' cannot be found in database");
         authorityService.getByTitle("viewAllStuff_globalAssignable");
     }
 
