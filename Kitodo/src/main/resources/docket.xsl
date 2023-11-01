@@ -333,13 +333,15 @@
                         <fo:table line-height="14pt">
                             <fo:table-column column-width="12.8cm"/>
                             <fo:table-body>
-                                <fo:table-row height="2cm" border-width="1pt" border-style="solid">
-                                    <fo:table-cell>
-                                        <fo:block>
-                                            <xsl:value-of select="kitodo:comment"/>
-                                        </fo:block>
-                                    </fo:table-cell>
-                                </fo:table-row>
+                                <xsl:for-each select="kitodo:comments/kitodo:comment">
+                                    <fo:table-row border-width="1pt" border-style="solid">
+                                        <fo:table-cell>
+                                            <fo:block>
+                                                <xsl:value-of select="text()"/>
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:for-each>
                             </fo:table-body>
                         </fo:table>
 

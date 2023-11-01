@@ -39,8 +39,8 @@ public class DocketData {
     /** The creation Date of the process. */
     private String creationDate;
 
-    /** A comment. */
-    private String comment;
+    /** The comments. */
+    private List<String> comments = new ArrayList<>();
 
     /** The template properties. */
     private List<Property> templateProperties;
@@ -185,22 +185,22 @@ public class DocketData {
     }
 
     /**
-     * Gets the comment.
+     * Gets the comments.
      * 
-     * @return The comment.
+     * @return The comments.
      */
-    public String getComment() {
-        return comment;
+    public List<String> getComments() {
+        return comments;
     }
 
     /**
-     * Sets the comment.
+     * Sets the comments.
      * 
-     * @param comment
-     *            The comment.
+     * @param comments
+     *            The comments.
      */
-    public void setComment(String comment) {
-        this.comment = comment;
+    public void setComments(List<String> comments) {
+        this.comments = comments;
     }
 
     /**

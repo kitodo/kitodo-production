@@ -1,0 +1,58 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="editCommentDialog"
+              width="480"
+              resizable="false"
+              modal="true"
+              dynamic="true"
+              widgetVar="editCommentDialog">
+        <h:body>
+            <h:form id="editCommentForm"
+                    rendered="#{CommentForm.getEditedComment() ne null}">
+            <h3>#{msgs.commentEdit}</h3>
+                <p:outputLabel value="Text"
+                               for="editCommentTextArea"/>
+                <p:inputTextarea id="editCommentTextArea"
+                                 value="#{CommentForm.editedComment.message}"
+                                 styleClass="new-comment-box">
+                    <p:ajax event="blur"/>
+                </p:inputTextarea>
+                   <span class="button-wrapper">
+                    <!-- Save comment -->
+                    <p:commandButton id="save"
+                                     value="#{msgs.save}"
+                                     action="#{CommentForm.saveEditedComment()}"
+                                     update="#{request.requestURI.contains('metadataEditor') ? 'commentsBox:commentsGrid commentsNumberWrapper' : 'tasksTabView:commentsBox:commentsGrid tasksTabView:commentsNumberWrapper'}"
+                                     oncomplete="PF('editCommentDialog').hide()"
+                                     styleClass="primary dialog"
+                                     icon="fa fa-check fa-lg"
+                                     iconPos="right"/>
+                    <!-- Cancel -->
+                    <p:commandButton styleClass="secondary dialog"
+                                     value="#{msgs.cancel}"
+                                     action="#{CommentForm.setEditedComment(null)}"
+                                     icon="fa fa-times fa-lg"
+                                     iconPos="right"
+                                     onclick="PF('editCommentDialog').hide()">
+                    </p:commandButton>
+                </span>                
+            </h:form>
+        </h:body>
+    </p:dialog>
+</ui:composition>

@@ -268,7 +268,9 @@ body.first-visit #portal-header {
     color: inherit;
 }
 
-#header-nav li:hover a {
+#dashboard-menu:hover,
+#user-menu:hover {
+    background: transparent;
     color: var(--carbon-blue);
 }
 
@@ -1802,15 +1804,8 @@ Mass import
     color: var(--medium-gray);
 }
 
-.correction-marker {
-    color: var(--focused-orange);
-    font-size: var(--input-height);
-    font-weight: bold;
-}
-
 .correction {
     color: var(--focused-orange);
-    font-weight: bold;
 }
 
 .corrected {
@@ -2299,6 +2294,10 @@ form#metadata div label,
     display: none;
 }
 
+.comment-correction {
+    margin-right: var(--group-margin);
+}
+
 .comment-author {
     font-weight: bold;
     margin-right: .2em;
@@ -2323,19 +2322,19 @@ form#metadata div label,
     text-align: center;
 }
 
-#newCommentDialog .ui-dialog-content {
+#newCommentDialog .ui-dialog-content, #editCommentDialog .ui-dialog-content {
     padding: var(--default-double-size);
 }
 
-#newCommentDialog .ui-dialog-titlebar {
+#newCommentDialog .ui-dialog-titlebar, #editCommentDialog .ui-dialog-titlebar {
     display: none;
 }
 
-#newCommentForm h3 {
+#newCommentForm h3, #editCommentForm h3 {
     padding: 0;
 }
 
-#newCommentForm\:newCommentTextArea {
+#newCommentForm\:newCommentTextArea, #editCommentForm\:editCommentTextArea {
     width: 100%;
     margin-bottom: 32px;
     height: calc(var(--default-double-size) * 3);
@@ -3929,7 +3928,7 @@ footer {
     width: 1em;
 }
 
-.ui-tooltip.comments .icon .correction-marker {
+.ui-tooltip.comments .icon .correction {
     font-size: inherit;
 }
 
