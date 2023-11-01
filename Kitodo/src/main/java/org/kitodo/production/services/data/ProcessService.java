@@ -37,6 +37,8 @@ import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -833,7 +835,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public QueryBuilder createPropertyQuery(String title, String value) {
         String titleSearchKey = ProcessTypeField.PROPERTIES + ".title.keyword";
-        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value.keyword";
+        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value";
 
         BoolQueryBuilder pairQuery = new BoolQueryBuilder();
         if (!WILDCARD.equals(title)) {
@@ -2036,7 +2038,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         docketdata.setProcessName(process.getTitle());
         docketdata.setProjectName(process.getProject().getTitle());
         docketdata.setRulesetName(process.getRuleset().getTitle());
-        docketdata.setComment(process.getWikiField());
+        docketdata.setComments(getDocketDataForComments(process.getComments()));
 
         if (!process.getTemplates().isEmpty()) {
             docketdata.setTemplateProperties(getDocketDataForProperties(process.getTemplates()));
@@ -2062,6 +2064,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
 
         return propertiesForDocket;
+    }
+
+    private static List<String> getDocketDataForComments(List<Comment> comments) {
+        List<String> commentsForDocket = new ArrayList<>();
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        for (Comment comment : comments) {
+            String commentString = dateFormat.format(comment.getCreationDate()) + " "
+                    + comment.getAuthor().getFullName() + ": " + comment.getMessage();
+            commentsForDocket.add(commentString);
+        }
+        return commentsForDocket;
     }
 
     private List<Map<String, Object>> getMetadataForIndex(Process process) {

@@ -43,7 +43,12 @@ public enum TaskEditType {
     /**
      * Automatic = all kinds of automatic steps.
      */
-    AUTOMATIC(4, "automatic");
+    AUTOMATIC(4, "automatic"),
+
+    /**
+     * Queue = all kinds of changes by ActiveMQ.
+     */
+    QUEUE(5, "queue");
 
     private int value;
     private String title;

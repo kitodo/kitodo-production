@@ -152,8 +152,9 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
 
     @Override
     public List<Project> getAllForSelectedClient() {
-        return dao.getByQuery("SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
+        return dao.getByQuery(
+                "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId ORDER BY title",
+                Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
     @Override

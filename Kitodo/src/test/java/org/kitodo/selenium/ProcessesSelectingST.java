@@ -13,17 +13,10 @@ package org.kitodo.selenium;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.time.ZoneId;
-
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -42,37 +35,9 @@ public class ProcessesSelectingST extends BaseTestSelenium {
     public static void setup() throws Exception {
 
         User user = ServiceManager.getUserService().getById(1);
-        user.setTableSize(2);
+        user.setTableSize(1);
         ServiceManager.getUserService().saveToDatabase(user);
-        addProcesses();
         processesPage = Pages.getProcessesPage();
-    }
-
-    private static void addProcesses() throws Exception {
-        Project projectOne = ServiceManager.getProjectService().getById(1);
-        Template template = ServiceManager.getTemplateService().getById(1);
-
-        Process forthProcess = new Process();
-        forthProcess.setTitle("Forth process");
-        LocalDate localDate = LocalDate.of(2020, 3, 20);
-        forthProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-        forthProcess.setWikiField("SelectionTest");
-        forthProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        forthProcess.setProject(projectOne);
-        forthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        forthProcess.setTemplate(template);
-        ServiceManager.getProcessService().save(forthProcess);
-
-        Process fifthProcess = new Process();
-        fifthProcess.setTitle("Fifth process");
-        localDate = LocalDate.of(2020, 4, 20);
-        fifthProcess.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
-        fifthProcess.setWikiField("SelectionTest");
-        fifthProcess.setDocket(ServiceManager.getDocketService().getById(1));
-        fifthProcess.setProject(projectOne);
-        fifthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        fifthProcess.setTemplate(template);
-        ServiceManager.getProcessService().save(fifthProcess);
     }
 
     @Before
@@ -94,7 +59,7 @@ public class ProcessesSelectingST extends BaseTestSelenium {
         processesPage.goTo();
 
         processesPage.selectAllRowsOnPage();
-        assertEquals(processesPage.countListedSelectedProcesses(), 2);
+        assertEquals(processesPage.countListedSelectedProcesses(), 1);
 
         processesPage.goToNextPage();
         assertEquals(processesPage.countListedSelectedProcesses(), 0);
@@ -109,9 +74,9 @@ public class ProcessesSelectingST extends BaseTestSelenium {
         processesPage.goTo();
 
         processesPage.selectAllRows();
-        assertEquals(processesPage.countListedSelectedProcesses(), 2);
+        assertEquals(processesPage.countListedSelectedProcesses(), 1);
 
         processesPage.goToNextPage();
-        assertEquals(processesPage.countListedSelectedProcesses(), 2);
+        assertEquals(processesPage.countListedSelectedProcesses(), 1);
     }
 }

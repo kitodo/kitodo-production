@@ -164,8 +164,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      *             if no unique user can be found
      */
     public User getByLdapLoginOrLogin(String login) {
-        List<User> users = getByLoginQuery(login, "from User where ldapLogin = :login");
-        users.addAll(getByLoginQuery(login, "from User where login = :login"));
+        List<User> users = getByLoginQuery(login, "from User where ldapLogin = :login or login = :login");
         return uniqueResult(users, login);
     }
 
@@ -175,6 +174,8 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @param login
      *            The login.
      * @return The user.
+     * @throws UsernameNotFoundException
+     *             if no unique user can be found
      */
     public User getByLogin(String login) {
         List<User> users = getByLoginQuery(login, "from User where login = :login");
