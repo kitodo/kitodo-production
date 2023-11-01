@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.faces.model.SelectItem;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.xpath.XPath;
@@ -992,7 +993,7 @@ public class ImportService {
                 return 1; // Non-matching value comes later
             }
         });
-        Collections.sort(sortedList, comparator);
+        sortedList.sort(comparator);
         return sortedList;
     }
 
@@ -1415,5 +1416,63 @@ public class ImportService {
      */
     public Collection<RecordIdentifierMissingDetail> getDetailsOfRecordIdentifierMissingError() {
         return recordIdentifierMissingDetails;
+    }
+
+    /**
+     * Create and return list of "SelectItem" objects for given list of "ProcessDTO"s. For each "ProcessDTO" object
+     * check whether current user can link to it as a parent process.
+     * - If a specific process belongs to a project that is not assigned to the current user, add a hint to message to
+     *   the corresponding "SelectItem"
+     * - If the user cannot link to a specific process, because the process belongs to a project which is not assigned
+     *   to him, and he also lacks the special permission to link to processes in unassigned projects, the corresponding
+     *   "SelectItem" is disabled.
+     * @param parentCandidates list of "ProcessDTO"s
+     * @param maxNumber limit
+     * @return list of "SelectItem" objects corresponding to given "ProcessDTO" objects.
+     * @throws DAOException when checking whether user can link to given "ProcessDTO"s fails
+     */
+    public ArrayList<SelectItem> getPotentialParentProcesses(List<ProcessDTO> parentCandidates, int maxNumber)
+            throws DAOException {
+        ArrayList<SelectItem> possibleParentProcesses = new ArrayList<>();
+        for (ProcessDTO process : parentCandidates.subList(0, Math.min(parentCandidates.size(), maxNumber))) {
+            SelectItem selectItem = new SelectItem(process.getId().toString(), process.getTitle());
+            selectItem.setDisabled(!userMayLinkToParent(process.getId()));
+            if (!processInAssignedProject(process.getId())) {
+                String problem = Helper.getTranslation("projectNotAssignedToCurrentUser", process.getProject().getTitle());
+                selectItem.setDescription(problem);
+                selectItem.setLabel(selectItem.getLabel() + " (" + problem + ")");
+            }
+            possibleParentProcesses.add(selectItem);
+        }
+        return possibleParentProcesses;
+    }
+
+    /**
+     * Check and return whether the process with the provided ID "processId" belongs to a project that is assigned to
+     * the current user or not.
+     * @param processId ID of the process to check
+     * @return whether the process with the provided ID belongs to a project assigned to the current user or not
+     * @throws DAOException when retrieving the process with the ID "processId" from the database fails
+     */
+    public static Boolean processInAssignedProject(int processId) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processId);
+        if (Objects.nonNull(process)) {
+            return ServiceManager.getUserService().getCurrentUser().getProjects().contains(process.getProject());
+        }
+        return false;
+    }
+
+    /**
+     * Check and return whether current user is allowed to link to process with provided ID "processId". For this
+     * method to return "true", one of the following two conditions has to be met:
+     * 1. the project of the process with the provided ID is assigned to the current user OR
+     * 2. the current user has the special permission to link to parent processes of unassigned projects
+     * @param processId the ID of the process to which a link is to be established
+     * @return whether the current user can link to the process with the provided ID or not
+     * @throws DAOException when checking whether the process with provided ID fails
+     */
+    public static boolean userMayLinkToParent(int processId) throws DAOException {
+        return processInAssignedProject(processId)
+                || ServiceManager.getSecurityAccessService().hasAuthorityToLinkToProcessesOfUnassignedProjects();
     }
 }
