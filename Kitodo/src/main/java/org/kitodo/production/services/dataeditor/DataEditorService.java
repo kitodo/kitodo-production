@@ -345,7 +345,7 @@ public class DataEditorService {
     }
 
     /**
-     * Get the view of a tree nod by comparing media files.
+     * Get the view of base media by comparing media files of tree nodes.
      *
      * @param treeNodes
      *         The tree nodes
@@ -353,7 +353,7 @@ public class DataEditorService {
      *         The media files to compare too
      * @return View or null
      */
-    public static View getViewOfMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaFiles) {
+    public static View getViewOfBaseMediaByMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaFiles) {
         for (TreeNode treeNode : treeNodes) {
             if (StructurePanel.VIEW_NODE_TYPE.equals(
                     treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
@@ -366,7 +366,7 @@ public class DataEditorService {
                 }
             }
             if (treeNode.getChildCount() > 0) {
-                View view = getViewOfMediaFiles(treeNode.getChildren(), mediaFiles);
+                View view = getViewOfBaseMediaByMediaFiles(treeNode.getChildren(), mediaFiles);
                 if (Objects.nonNull(view)) {
                     return view;
                 }

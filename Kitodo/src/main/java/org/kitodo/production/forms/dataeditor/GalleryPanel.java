@@ -811,10 +811,11 @@ public class GalleryPanel {
         }
 
         if (Objects.nonNull(selectedPhysicalDivision) && selectedPhysicalDivision.hasMediaPartialView()) {
-            View mediaView = DataEditorService.getViewOfMediaFiles(dataEditor.getStructurePanel().getLogicalTree().getChildren(),
+            View mediaView = DataEditorService.getViewOfBaseMediaByMediaFiles(dataEditor.getStructurePanel().getLogicalTree().getChildren(),
                     selectedPhysicalDivision.getMediaFiles());
             if (Objects.nonNull(mediaView)) {
                 selectedPhysicalDivision = mediaView.getPhysicalDivision();
+                stripeIndex = "";
             }
         }
 
@@ -1003,15 +1004,18 @@ public class GalleryPanel {
     public boolean hasMediaViewMimeTypePrefix(String mimeTypePrefix) {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
         if (Objects.nonNull(lastSelection)) {
-            String mediaViewMimeType = getGalleryMediaContent(lastSelection.getKey()).getMediaViewMimeType();
-            switch (mimeTypePrefix) {
-                case MediaUtil.MIME_TYPE_AUDIO_PREFIX:
-                    return MediaUtil.isAudio(mediaViewMimeType);
-                case MediaUtil.MIME_TYPE_VIDEO_PREFIX:
-                    return MediaUtil.isVideo(mediaViewMimeType);
-                case MediaUtil.MIME_TYPE_IMAGE_PREFIX:
-                    return MediaUtil.isImage(mediaViewMimeType);
-                default:
+            GalleryMediaContent galleryMediaContent = getGalleryMediaContent(lastSelection.getKey());
+            if (Objects.nonNull(galleryMediaContent)) {
+                String mediaViewMimeType = galleryMediaContent.getMediaViewMimeType();
+                switch (mimeTypePrefix) {
+                    case MediaUtil.MIME_TYPE_AUDIO_PREFIX:
+                        return MediaUtil.isAudio(mediaViewMimeType);
+                    case MediaUtil.MIME_TYPE_VIDEO_PREFIX:
+                        return MediaUtil.isVideo(mediaViewMimeType);
+                    case MediaUtil.MIME_TYPE_IMAGE_PREFIX:
+                        return MediaUtil.isImage(mediaViewMimeType);
+                    default:
+                }
             }
         }
         return false;

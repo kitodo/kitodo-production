@@ -229,8 +229,13 @@ public class StructurePanel implements Serializable {
     void deleteSelectedPhysicalDivision() {
         if (Objects.nonNull(selectedLogicalNode) && StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE.equals(
                 selectedLogicalNode.getType()) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-            deletePhysicalDivision(
-                    ((View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject()).getPhysicalDivision());
+            PhysicalDivision physicalDivision = ((View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject()).getPhysicalDivision();
+            for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
+                structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
+            }
+            if (deletePhysicalDivision(physicalDivision)){
+                physicalDivision.getLogicalDivisions().clear();
+            }
         } else {
 
             for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
@@ -280,7 +285,6 @@ public class StructurePanel implements Serializable {
         }
         PhysicalDivision parent = ancestors.getLast();
         parent.getChildren().remove(physicalDivision);
-
         return true;
     }
 

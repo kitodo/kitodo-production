@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale.LanguageRange;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -44,7 +43,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -830,7 +828,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 } else if (structureTreeNode.getDataObject() instanceof View) {
                     View view = (View) structureTreeNode.getDataObject();
                     if (view.getPhysicalDivision().hasMediaPartialView()) {
-                        View mediaView = DataEditorService.getViewOfMediaFiles(structurePanel.getLogicalTree().getChildren(),
+                        View mediaView = DataEditorService.getViewOfBaseMediaByMediaFiles(structurePanel.getLogicalTree().getChildren(),
                                 view.getPhysicalDivision().getMediaFiles());
                         if (Objects.nonNull(mediaView)) {
                             view = mediaView;
