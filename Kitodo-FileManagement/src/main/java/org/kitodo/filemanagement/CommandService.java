@@ -14,7 +14,6 @@ package org.kitodo.filemanagement;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.command.CommandResult;
