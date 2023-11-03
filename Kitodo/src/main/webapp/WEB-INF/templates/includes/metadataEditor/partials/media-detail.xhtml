@@ -16,7 +16,8 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <h:panelGroup id="mediaDetail" layout="block">
         <ui:param name="selectedGalleryMediaContent"
@@ -24,6 +25,40 @@
 
         <ui:fragment
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
+
+            <p:outputPanel rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}">
+                <div id="audioWaveformTools" >
+                    <div>
+                        <label><h:outputText value="#{msgs.audioWaveformToolsZoom}"/>: <input type="range" min="0" max="250" value="0"/></label>
+                    </div>
+                    <div>
+                        <label><h:outputText value="#{msgs.audioWaveformToolsCenteredCursor}"/>: <input type="checkbox" checked="" value="autoCenter"/></label>
+                    </div>
+                    <div>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpBackFiveSeconds}"
+                                         type="button"
+                                         icon="fa fa-angle-double-left"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="-5"/>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpBackOneSecond}"
+                                         type="button"
+                                         icon="fa fa-angle-left"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="-1"/>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpForwardOneSecond}"
+                                         type="button"
+                                         icon="fa fa-angle-right"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="1"/>
+                        <p:commandButton title="#{msgs.audioWaveformToolsJumpForwardFiveSeconds}"
+                                         type="button"
+                                         icon="fa fa-angle-double-right"
+                                         styleClass="audio-waveform-tools-jump-button secondary"
+                                         a:data-audio-waveform-tools-jump-seconds="5"/>
+                    </div>
+                </div>
+            </p:outputPanel>
+
             <p:media styleClass="mediaPreviewItem" value="#{mediaProvider.mediaView}"
                      player="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') ? 'html-video' : 'html-audio'}"
                      width="90%" height="auto">
@@ -36,6 +71,10 @@
                 <f:param name="type" value="#{selectedGalleryMediaContent.mediaViewMimeType}"/>
                 <f:param name="krsc" value="true"/>
             </p:media>
+
+            <h:outputScript a:type="module" name="js/libs/wavesurfer/wavesurfer.esm.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}"  />
+            <h:outputScript a:type="module" name="js/media_detail_audio_waveform.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}" />
+
         </ui:fragment>
 
         <ui:fragment
