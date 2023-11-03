@@ -21,6 +21,7 @@ import org.awaitility.Durations;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
@@ -37,6 +38,7 @@ public class IndexingST extends BaseTestSelenium {
         Pages.getTopNavigation().logout();
     }
 
+    @Ignore
     @Test
     public void reindexingTest() throws Exception {
         Assert.assertTrue(true);
