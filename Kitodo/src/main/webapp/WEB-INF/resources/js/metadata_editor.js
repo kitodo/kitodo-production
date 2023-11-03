@@ -14,27 +14,6 @@
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
-function addLeadingZeros(num, totalLength) {
-    return String(num).padStart(totalLength, '0');
-}
-
-function mediaPartialViewFormatTime( ms ) {
-    let seconds = ms / 1000;
-    let hours = parseInt( seconds / 3600 ); // 3,600 seconds in 1 hour
-    seconds = seconds % 3600; // seconds remaining after extracting hours
-    let minutes = parseInt( seconds / 60 ); // 60 seconds in 1 minute
-    seconds = seconds % 60;
-    let formattedTime = addLeadingZeros(hours, 2) + ":" + addLeadingZeros(minutes, 2) + ":";
-    seconds = seconds.toString();
-    if(seconds.includes(".")) {
-        let secondsSplitted = seconds.split(".");
-        let last = parseFloat(addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1]);
-        formattedTime += last.toFixed(2);
-    } else {
-        formattedTime += addLeadingZeros(seconds, 2) + ".00";
-    }
-    return formattedTime;
-}
 
 var metadataEditor = {};
 
@@ -83,13 +62,65 @@ metadataEditor.gallery = {
         this.pages.handleDragStart(event);
     },
 
-    mediaViews: {
-        setBeginIfEmpty() {
-            let begin = document.getElementById("mediaPartialViewForm:beginInput");
-            if(!begin.value) {
-                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000;
-                begin.value = mediaPartialViewFormatTime(currentMilliseconds);
+    mediaPartial: {
+        addLeadingZeros(num, totalLength) {
+            return String(num).padStart(totalLength, '0');
+        },
+        formatTime(seconds) {
+            let hours = parseInt(seconds / 3600); // 3,600 seconds in 1 hour
+            seconds = seconds % 3600; // seconds remaining after extracting hours
+            let minutes = parseInt(seconds / 60); // 60 seconds in 1 minute
+            seconds = seconds % 60;
+            let formattedTime = this.addLeadingZeros(hours, 2) + ":" + this.addLeadingZeros(minutes, 2) + ":";
+            seconds = seconds.toString();
+            if (seconds.includes(".")) {
+                let secondsSplitted = seconds.split(".");
+                let last = parseFloat(this.addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1]);
+                formattedTime += last.toFixed(2);
+            } else {
+                formattedTime += this.addLeadingZeros(seconds, 2) + ".00";
             }
+            return formattedTime;
+        },
+        parseFormatedTimeToSeconds(formattedTime) {
+            let time = formattedTime.split(":")
+            return (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
+        },
+        setBeginIfEmpty() {
+            let begin = document.getElementById("mediaPartialForm:beginInput");
+            if(!begin.value) {
+                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime;
+                begin.value = this.formatTime(currentMilliseconds);
+            }
+        },
+        togglePlay(button, formattedTimeBegin, formattedTimeExtend) {
+            let interval;
+            let icon = button.querySelector(".ui-icon");
+            let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
+            if (mediaElement.paused) {
+                let beginTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
+                let endTime = this.parseFormatedTimeToSeconds(formattedTimeExtend);
+                mediaElement.currentTime = beginTime;
+                icon.classList.remove("fa-play");
+                icon.classList.add("fa-stop");
+                mediaElement.play();
+                if (formattedTimeExtend.trim().length !== 0) {
+                    let self = this;
+                    interval = setInterval(function () {
+                        if (mediaElement.currentTime >= beginTime + endTime) {
+                            self.stopPlay(mediaElement, interval, icon);
+                        }
+                    }, 500);
+                }
+            } else {
+                this.stopPlay(mediaElement, interval, icon);
+            }
+        },
+        stopPlay(mediaElement, interval, icon) {
+            mediaElement.pause();
+            clearInterval(interval);
+            icon.classList.remove("fa-stop");
+            icon.classList.add("fa-play");
         }
     },
 

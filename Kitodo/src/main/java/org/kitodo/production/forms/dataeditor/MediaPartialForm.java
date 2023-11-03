@@ -24,12 +24,12 @@ import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 
-public class MediaPartialViewForm implements Serializable {
+public class MediaPartialForm implements Serializable {
     
     private final DataEditorForm dataEditor;
 
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
-    private Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision;
+    private Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision;
     private String title;
     private String begin;
 
@@ -53,19 +53,19 @@ public class MediaPartialViewForm implements Serializable {
         this.begin = begin;
     }
 
-    MediaPartialViewForm(DataEditorForm dataEditor) {
+    MediaPartialForm(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
 
     public boolean isEdit() {
-        return Objects.nonNull(mediaViewDivision);
+        return Objects.nonNull(mediaPartialDivision);
     }
 
     /**
      * Clean the media view division.
      */
     public void clean() {
-        mediaViewDivision = null;
+        mediaPartialDivision = null;
         title = "";
         begin = "";
         extent = "";
@@ -76,9 +76,9 @@ public class MediaPartialViewForm implements Serializable {
      */
     public void save() {
         if (isEdit()) {
-            mediaViewDivision.getKey().setLabel(getTitle());
-            mediaViewDivision.getValue().setBegin(getBegin());
-            mediaViewDivision.getValue().setExtent(getExtent());
+            mediaPartialDivision.getKey().setLabel(getTitle());
+            mediaPartialDivision.getValue().setBegin(getBegin());
+            mediaPartialDivision.getValue().setExtent(getExtent());
         } else {
             if (Objects.nonNull(mediaSelection)) {
                 LogicalDivision logicalDivision = new LogicalDivision();
@@ -114,8 +114,8 @@ public class MediaPartialViewForm implements Serializable {
         this.mediaSelection = mediaSelection;
     }
 
-    public void setMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
-        this.mediaViewDivision = mediaViewDivision;
+    public void setMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
+        this.mediaPartialDivision = mediaPartialDivision;
     }
 
     public String getType() {

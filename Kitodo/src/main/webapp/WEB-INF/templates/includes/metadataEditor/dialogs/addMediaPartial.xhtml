@@ -22,8 +22,7 @@
               resizable="false"
               showHeader="false"
               dynamic="true"
-              modal="true"
-              onShow="metadataEditor.gallery.mediaViews.setBeginIfEmpty();">
+              modal="true">
         <h:form id="mediaPartialViewForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
@@ -33,34 +32,35 @@
                         <p:outputPanel
                                 styleClass="#{(DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions.size() gt 1)?'':'hidden'}">
                             <p:outputLabel for="type" value="Typ"/>
-                            <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.type}">
+                            <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.type}">
                                 <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions}"/>
                             </p:selectOneMenu>
                         </p:outputPanel>
                         <p:outputPanel>
                             <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                             <p:inputText id="titleInput" class="input"
-                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.title}"
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.title}"
                                          placeholder="#{msgs.title}"/>
                         </p:outputPanel>
                         <p:outputPanel>
                             <p:outputLabel for="beginInput" value="Begin"/>
                             <p:inputText id="beginInput" class="input"
-                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.begin}"
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.begin}"
                                          placeholder="Begin"/>
                         </p:outputPanel>
                         <p:outputPanel>
                             <p:outputLabel for="extentInput" value="Extent"/>
                             <p:inputText id="extentInput" class="input"
-                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.extent}" />
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.extent}" />
                         </p:outputPanel>
                     </p:outputPanel>
 
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
-                        <p:commandButton id="apply"
-                                         action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.save}"
-                                         oncomplete="PF('addMediaPartialDialog').hide();imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                        <p:commandButton id="addMediaPartialButton"
+                                         action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.save}"
+                                         oncomplete="PF('addMediaPartialDialog').hide();"
+                                         update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"

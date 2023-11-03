@@ -11,6 +11,10 @@
 
 package org.kitodo.api.dataformat;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Objects;
+
 public class MediaPartialView extends View {
 
     private String begin;
@@ -32,6 +36,10 @@ public class MediaPartialView extends View {
 
     public String getExtent() {
         return extent;
+    }
+
+    public boolean hasExtent() {
+        return StringUtils.isNotEmpty(extent);
     }
 
     public void setExtent(String extent) {

@@ -26,7 +26,6 @@
             <p:outputPanel id="mediaPartialList"
                            rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions.size() > 0}">
                 <p:dataList
-                        styleClass="mediaViewsList"
                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions}"
                         var="mediaPartialDivision"
                         type="ordered">
@@ -34,18 +33,25 @@
                     <p:dataViewListItem>
                         <h:panelGrid columns="2" layout="flex"
                                      columnClasses="metadata,actions"
-                                     styleClass="mediaViewsDetail">
+                                     styleClass="mediaPartialItem"
+                                     a:data-media-partial-begin="#{mediaPartialDivision.value.begin}">
                             <p:outputPanel>
-                                <h:panelGrid columns="2">
+                                <h:panelGrid columns="1">
                                     <h:outputText value="Title:"/>
                                     <h:outputText value="#{mediaPartialDivision.key.label}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
                                     <h:outputText value="Begin:"/>
                                     <h:outputText value="#{mediaPartialDivision.value.begin}"/>
-                                    <h:outputText value="Extend:"/>
-                                    <h:outputText value="#{mediaPartialDivision.value.extent}"/>
+                                    <h:outputText value="Extent:" rendered="#{mediaPartialDivision.value.hasExtent()}"/>
+                                    <h:outputText value="#{mediaPartialDivision.value.extent}" rendered="#{mediaPartialDivision.value.hasExtent()}"/>
                                 </h:panelGrid>
                             </p:outputPanel>
                             <p:outputPanel>
+                                <p:commandButton styleClass="secondary"
+                                                 icon="fa fa-play"
+                                                 type="button"
+                                                 onclick="metadataEditor.gallery.mediaPartial.togglePlay(this, '#{mediaPartialDivision.value.begin}', '#{mediaPartialDivision.value.extent}')"/>
                                 <p:commandButton styleClass="editMediaView secondary"
                                                  action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaPartialDivision)}"
                                                  update="addMediaPartialDialog"
@@ -63,7 +69,7 @@
 
             <p:commandButton id="addMediaPartial"
                              icon="fa fa-plus"
-                             action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewForm.clean}"
+                             action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.clean}"
                              update="addMediaPartialDialog"
                              styleClass="secondary"
                              oncomplete="PF('addMediaPartialDialog').show();">

@@ -3069,40 +3069,33 @@ Column content
     width: 100%;
 }
 
-#imagePreviewForm\:mediaPartialList .mediaViewsList li {
+#imagePreviewForm\:mediaPartialList ol li {
     border-top: 1px solid var(--cloudy-gray);
 }
 
-#imagePreviewForm\:mediaPartialList .mediaViewsList li:first-child {
+#imagePreviewForm\:mediaPartialList ol li:first-child {
     border: none;
 }
 
-#imagePreviewForm\:mediaPartialList .mediaViewsDetail {
+#imagePreviewForm\:mediaPartialList .mediaPartialItem {
     width: 100%;
 }
 
-#imagePreviewForm\:mediaPartialList .mediaViewsDetail .metadata {
-
-}
-
-#imagePreviewForm\:mediaPartialList .mediaViewsDetail .metadata td {
+#imagePreviewForm\:mediaPartialList .mediaPartialItem .metadata td {
     padding: 5px;
 }
 
-#imagePreviewForm\:mediaPartialList .mediaViewsDetail .actions {
-    width: 85px;
+#imagePreviewForm\:mediaPartialList .mediaPartialItem table:first-child td:first-child {
+    padding-bottom: 0px;
 }
 
-#imagePreviewForm\:mediaPartialList .mediaViewsDetail .actions button {
-    margin-left: 8px;
+#imagePreviewForm\:mediaPartialList .mediaPartialItem .actions > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
 }
-
-#imagePreviewForm\:mediaPartialList .mediaViewsDetail .actions button:first-child {
-    margin-left: 0;
-}
-
-
-
 
 #imagePreviewForm\:mediaDetail {
     display: flex;

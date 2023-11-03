@@ -37,12 +37,12 @@ import org.kitodo.utils.MediaUtil;
 
 public class MediaPartialViewsPanel implements Serializable {
 
-    private MediaPartialViewForm mediaPartialViewForm;
+    private MediaPartialForm mediaPartialForm;
     private DataEditorForm dataEditor;
 
     MediaPartialViewsPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
-        mediaPartialViewForm = new MediaPartialViewForm(dataEditor);
+        mediaPartialForm = new MediaPartialForm(dataEditor);
     }
 
     /**
@@ -54,7 +54,7 @@ public class MediaPartialViewsPanel implements Serializable {
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         Map<LogicalDivision, MediaPartialView> mediaPartialViewDivisions = new LinkedHashMap<>();
         if (Objects.nonNull(lastSelection)) {
-            mediaPartialViewForm.setMediaSelection(lastSelection);
+            mediaPartialForm.setMediaSelection(lastSelection);
             getMediaPartialViewDivisions(mediaPartialViewDivisions, lastSelection.getKey().getLogicalDivisions(),
                     lastSelection.getLeft().getMediaFiles());
 
@@ -96,9 +96,9 @@ public class MediaPartialViewsPanel implements Serializable {
      * @param mediaViewDivision the media view division
      */
     public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
-        mediaPartialViewForm.setMediaViewDivision(mediaViewDivision);
-        mediaPartialViewForm.setTitle(mediaViewDivision.getKey().getLabel());
-        mediaPartialViewForm.setBegin(mediaViewDivision.getValue().getBegin());
+        mediaPartialForm.setMediaPartialDivision(mediaViewDivision);
+        mediaPartialForm.setTitle(mediaViewDivision.getKey().getLabel());
+        mediaPartialForm.setBegin(mediaViewDivision.getValue().getBegin());
     }
 
     /**
@@ -129,11 +129,11 @@ public class MediaPartialViewsPanel implements Serializable {
     }
 
     /**
-     * Get the MediaPartialViewForm.
+     * Get the MediaPartialForm.
      *
-     * @return The MediaPartialViewForm
+     * @return The MediaPartialForm
      */
-    public MediaPartialViewForm getMediaPartialViewForm() {
-        return mediaPartialViewForm;
+    public MediaPartialForm getMediaPartialForm() {
+        return mediaPartialForm;
     }
 }
