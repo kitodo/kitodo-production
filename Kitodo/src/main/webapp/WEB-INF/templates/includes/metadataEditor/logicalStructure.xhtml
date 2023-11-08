@@ -73,6 +73,7 @@
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
                                 changeToMapView();
+                                metadataEditor.gallery.mediaView.update();
                                 expandMetadata('logical-metadata-tab');"
                     update="galleryHeadingWrapper
                             imagePreviewForm:mediaDetail
@@ -87,6 +88,7 @@
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
                                 changeToMapView();
+                                metadataEditor.gallery.mediaView.update();
                                 PF('contextMenuLogicalTree').show(currentEvent)"
                     update="@(.stripe)
                             @(.thumbnail)

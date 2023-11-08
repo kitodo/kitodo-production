@@ -232,6 +232,13 @@ public class GalleryPanel {
         }
     }
 
+    /**
+     * Check if audio media view waveform is activated in project.
+     */
+    public boolean isAudioMediaViewWaveform() {
+        return dataEditor.getProcess().getProject().isAudioMediaViewWaveform();
+    }
+
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
         Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);
@@ -842,7 +849,8 @@ public class GalleryPanel {
 
         String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
-            PrimeFaces.current().executeScript("checkScrollPosition();initializeImage();" + scrollScripts);
+            PrimeFaces.current().executeScript(
+                    "checkScrollPosition();initializeImage();metadataEditor.gallery.mediaView.update();" + scrollScripts);
         } else {
             PrimeFaces.current().executeScript(scrollScripts);
         }

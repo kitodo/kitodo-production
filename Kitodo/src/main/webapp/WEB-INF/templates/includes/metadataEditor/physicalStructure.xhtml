@@ -35,6 +35,7 @@
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
                                 initializeImage();
+                                metadataEditor.gallery.mediaView.update();
                                 expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
                             imagePreviewForm:mediaDetail
@@ -43,7 +44,7 @@
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
                     onstart="$('#contextMenuPhysicalTree .ui-menuitem').addClass('ui-state-disabled')"
-                    oncomplete="initializeImage();PF('contextMenuPhysicalTree').show(currentEvent)"
+                    oncomplete="initializeImage();metadataEditor.gallery.mediaView.update();PF('contextMenuPhysicalTree').show(currentEvent)"
                     update="@(.stripe)
                                 @(.thumbnail)
                                 galleryHeadingWrapper
