@@ -70,4 +70,10 @@
     <fileFormat extension="bmp" formatName="bmp" imageFileFormat="BMP" mimeType="image/bmp">
         <label>Windows Bitmap (image/bmp, *.bmp)</label>
     </fileFormat>
+    <fileFormat extension="mp4" formatName="mp4" mimeType="video/mp4">
+        <label>MP4 (video/mp4, *.mp4)</label>
+    </fileFormat>
+    <fileFormat extension="mp3" formatName="mp3" mimeType="audio/mpeg">
+        <label>MP3 (audio/mpeg, *.mp3)</label>
+    </fileFormat>
 </kitodo_fileFormats>
