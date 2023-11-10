@@ -64,6 +64,9 @@ class AudioWaveform {
         waveContainer.style.display = "none";
         this.#audioElement.parentNode.insertBefore(waveContainer, this.#audioElement);
 
+        // add fixed width to prevent zooming overflow
+        this.#audioElement.parentNode.style.width = this.#audioElement.parentNode.clientWidth + 'px';
+
         this.#wavesurfer = WaveSurfer.create({
             container: document.getElementById(waveContainer.getAttribute("id")),
             height: 100,
@@ -107,6 +110,7 @@ class AudioWaveform {
                 });
             });
         });
+
     }
 
 }

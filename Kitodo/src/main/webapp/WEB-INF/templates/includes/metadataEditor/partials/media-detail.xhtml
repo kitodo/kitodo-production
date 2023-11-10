@@ -27,7 +27,7 @@
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
 
             <p:outputPanel id="mediaDetailMediaContainer">
-              
+
               <p:outputPanel rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}">
                   <div id="audioWaveformTools" >
                       <div>
@@ -75,12 +75,12 @@
                   <f:param name="krsc" value="true"/>
               </p:media>
 
-              <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail-media-partial-list.xhtml"/>
-
               <h:outputScript a:type="module" name="js/libs/wavesurfer/wavesurfer.esm.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}"  />
               <h:outputScript a:type="module" name="js/media_detail_audio_waveform.js" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}" />
 
             </p:outputPanel>
+
+            <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail-media-partial-list.xhtml"/>
 
         </ui:fragment>
 
