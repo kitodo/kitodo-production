@@ -229,11 +229,12 @@ public class StructurePanel implements Serializable {
     void deleteSelectedPhysicalDivision() {
         if (Objects.nonNull(selectedLogicalNode) && StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE.equals(
                 selectedLogicalNode.getType()) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-            PhysicalDivision physicalDivision = ((View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject()).getPhysicalDivision();
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            PhysicalDivision physicalDivision = ((View) structureTreeNode.getDataObject()).getPhysicalDivision();
             for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
                 structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
             }
-            if (deletePhysicalDivision(physicalDivision)){
+            if (deletePhysicalDivision(physicalDivision)) {
                 physicalDivision.getLogicalDivisions().clear();
             }
         } else {

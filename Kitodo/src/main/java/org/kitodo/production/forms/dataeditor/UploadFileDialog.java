@@ -44,7 +44,6 @@ import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.utils.MediaUtil;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;

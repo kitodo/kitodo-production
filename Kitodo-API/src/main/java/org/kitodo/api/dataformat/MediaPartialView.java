@@ -13,8 +13,6 @@ package org.kitodo.api.dataformat;
 
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Objects;
-
 public class MediaPartialView extends View {
 
     private String begin;

@@ -321,7 +321,7 @@ public class DataEditorService {
      *         The ruleset
      * @return Sorted list of select items
      */
-    public static List<SelectItem> getAllowedSubstructuralElementsAsSortedListOfSelectItems(
+    public static List<SelectItem> getSortedAllowedSubstructuralElements(
             StructuralElementViewInterface divisionView, Ruleset ruleset) {
         List<SelectItem> selectItems = new ArrayList<>();
         for (Map.Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {

@@ -110,12 +110,17 @@ public class MediaPartialViewsPanel implements Serializable {
         return getMediaPartialDivisions().size() > 0;
     }
 
+    /**
+     * Get the child divisions of use "mediaPartial" of the current selection.
+     *
+     * @return The divisions as selected items list
+     */
     public List<SelectItem> getMediaPartialDivisions() {
         List<SelectItem> mediaPartialDivisions = new ArrayList<>();
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         if (Objects.nonNull(lastSelection) && MediaUtil.isAudioOrVideo(
                 dataEditor.getGalleryPanel().getGalleryMediaContent(lastSelection.getKey()).getMediaViewMimeType())) {
-            mediaPartialDivisions.addAll(DataEditorService.getAllowedSubstructuralElementsAsSortedListOfSelectItems(
+            mediaPartialDivisions.addAll(DataEditorService.getSortedAllowedSubstructuralElements(
                     dataEditor.getRulesetManagement()
                     .getStructuralElementView(lastSelection.getRight().getType(), dataEditor.getAcquisitionStage(),
                             dataEditor.getPriorityList()), dataEditor.getProcess().getRuleset()));
