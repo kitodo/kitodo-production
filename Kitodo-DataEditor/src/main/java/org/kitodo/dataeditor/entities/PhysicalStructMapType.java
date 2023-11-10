@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterDataEditor;
 import org.kitodo.dataeditor.MetsKitodoObjectFactory;
@@ -64,7 +63,7 @@ public class PhysicalStructMapType extends StructMapType {
             div.setID("PHYS_" + String.format("%04d", counter));
             div.setORDER(BigInteger.valueOf(counter));
             div.setORDERLABEL(KitodoConfig.getParameter(ParameterDataEditor.METS_EDITOR_DEFAULT_PAGINATION));
-            div.setTYPE(getPhysicalDivTypeByFileType(file));
+            div.setTYPE(MediaUtil.getPhysicalDivisionTypeOfMimeType(file.getMIMETYPE()));
             DivType.Fptr divTypeFptr = objectFactory.createDivTypeFptr();
             divTypeFptr.setFILEID(file);
             div.getFptr().add(divTypeFptr);
@@ -74,15 +73,6 @@ public class PhysicalStructMapType extends StructMapType {
             counter++;
         }
         return divTypes;
-    }
-
-    private String getPhysicalDivTypeByFileType(FileType file) {
-        if (file.getMIMETYPE().contains("image")) {
-            return PhysicalDivision.TYPE_PAGE;
-        } else if (MediaUtil.isAudioOrVideo(file.getMIMETYPE())) {
-            return PhysicalDivision.TYPE_TRACK;
-        }
-        return PhysicalDivision.TYPE_OTHER;
     }
 
     private DivType getDivById(String id) {

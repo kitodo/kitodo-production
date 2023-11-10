@@ -36,6 +36,7 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.dataeditor.enums.FileLocationType;
 import org.kitodo.dataeditor.enums.PositionOfNewDiv;
 import org.kitodo.dataformat.metskitodo.DivType;
@@ -202,22 +203,22 @@ public class MetsKitodoWrapperTest {
     }
 
     @Test
-    public void shouldInsertFileGroup() throws IOException, DatatypeConfigurationException {
+    public void shouldInsertFileGroup() throws DatatypeConfigurationException, IOException {
         Path path = Paths.get("images");
         int numberOfFiles = 5;
         List<MediaFile> mediaFiles = new ArrayList<>();
         for (int i = 1; i <= numberOfFiles; i++) {
             mediaFiles.add(
-                new MediaFile(Paths.get(path + "/0000" + i + ".tif").toUri(), FileLocationType.URL, "image/tiff"));
+                    new MediaFile(Paths.get(path + "/0000" + i + ".tif").toUri(), FileLocationType.URL, "image/tiff"));
         }
 
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         metsKitodoWrapper.insertMediaFiles(mediaFiles);
 
         Assert.assertEquals("Wrong number of divs in physical structMap", numberOfFiles,
-            metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
-        Assert.assertEquals("Wrong number of fils in fileSec", numberOfFiles,
-            metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
+                metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
+        Assert.assertEquals("Wrong number of files in fileSec", numberOfFiles,
+                metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
 
         DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(1);
 
@@ -229,6 +230,28 @@ public class MetsKitodoWrapperTest {
         FileType fileType = (FileType) divType.getFptr().get(0).getFILEID();
         Assert.assertEquals("Wrong file id at second div", "FILE_0002", fileType.getID());
 
+    }
+
+
+    @Test
+    public void testPhysicalDivisionType() throws IOException, DatatypeConfigurationException {
+        List<MediaFile> mediaFiles = new ArrayList<>();
+        mediaFiles.add(new MediaFile(Paths.get("image/jpeg/0001.jpeg").toUri(), FileLocationType.URL, "image/jpeg"));
+        mediaFiles.add(new MediaFile(Paths.get("audio/mpeg/0002.jpeg").toUri(), FileLocationType.URL, "audio/mpeg"));
+        mediaFiles.add(new MediaFile(Paths.get("video/mp4/0003.jpeg").toUri(), FileLocationType.URL, "video/mp4"));
+
+        MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("MultiMedia");
+        metsKitodoWrapper.insertMediaFiles(mediaFiles);
+
+        Assert.assertEquals("Wrong number of divs in physical structMap", 3,
+                metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
+        Assert.assertEquals("Wrong number of files in fileSec", 3,
+                metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
+
+        List<DivType> divTypes = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv();
+        Assert.assertEquals(PhysicalDivision.TYPE_PAGE, divTypes.get(0).getTYPE());
+        Assert.assertEquals(PhysicalDivision.TYPE_TRACK, divTypes.get(1).getTYPE());
+        Assert.assertEquals(PhysicalDivision.TYPE_TRACK, divTypes.get(2).getTYPE());
     }
 
     @Rule

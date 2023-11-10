@@ -71,6 +71,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.MediaUtil;
 
 public class FileService {
 
@@ -1315,6 +1316,7 @@ public class FileService {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
 
+            // overwrite physical division type if mime type is audio or video
             if (!PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
                     mediaVariant.getMimeType())) {
                 physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
@@ -1341,7 +1343,8 @@ public class FileService {
      */
     public void renumberPhysicalDivisions(Workpiece workpiece, boolean sortByOrder) {
         int order = 1;
-        for (PhysicalDivision physicalDivision : sortByOrder ? workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()
+        for (PhysicalDivision physicalDivision : sortByOrder
+                ? workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()
                 : workpiece.getPhysicalStructure().getAllChildren()) {
             physicalDivision.setOrder(order++);
         }
