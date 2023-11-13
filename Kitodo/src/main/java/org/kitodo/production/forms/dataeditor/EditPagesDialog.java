@@ -206,7 +206,7 @@ public class EditPagesDialog {
 
     private List<View> getViewsToAdd(List<Integer> pages) {
         return pages.parallelStream()
-                .map(dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()::get)
+                .map(dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()::get)
                 .map(MetadataEditor::getFirstViewForPhysicalDivision)
                 .collect(Collectors.toList());
     }
@@ -232,7 +232,7 @@ public class EditPagesDialog {
         paginationSubSelectionItems = new ArrayList<>();
         paginationSelectionItems = new ArrayList<>();
 
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         int capacity = (int) Math.ceil(physicalDivisions.size() / .75);
         Set<Integer> assigneds = new HashSet<>(capacity);
         Set<Integer> unassigneds = new HashSet<>(capacity);

@@ -207,11 +207,15 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType eq 'video/mp4'}"
+                                                  rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('audio')}"
+                                                  value="#{msgs.audio}
+                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                    <h:outputText styleClass="columnHeading"
+                                                  rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('video')}"
                                                   value="#{msgs.video}
                                                   #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType ne 'video/mp4'}"
+                                                  rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('image')}"
                                                   value="#{msgs.image}
                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
                                                  #{msgs.page}
