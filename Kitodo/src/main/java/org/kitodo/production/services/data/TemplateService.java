@@ -17,11 +17,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -41,6 +43,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.production.dto.ProjectDTO;
 import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.dto.WorkflowDTO;
@@ -204,7 +207,8 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateDTO templateDTO)
             throws DataException {
         templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
-            ServiceManager.getProjectService()));
+            ServiceManager.getProjectService()).stream().sorted(Comparator.comparing(ProjectDTO::getTitle))
+                .collect(Collectors.toList()));
     }
 
     /**

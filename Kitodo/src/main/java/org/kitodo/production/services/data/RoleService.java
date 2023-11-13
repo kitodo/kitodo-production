@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.data;
 
+import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.kitodo.data.database.beans.Authority;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -160,6 +163,12 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
      * @return String containing role titles
      */
     public static String getRoleTitles(List<Role> roles) {
-        return roles.stream().map(Role::getTitle).collect(Collectors.joining(", "));
+        if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
+            return roles.stream().map(Role::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
+        } else {
+            Client currentClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+            return roles.stream().filter(role -> role.getClient().equals(currentClient)).map(Role::getTitle)
+                    .collect(Collectors.joining(COMMA_DELIMITER));
+        }
     }
 }

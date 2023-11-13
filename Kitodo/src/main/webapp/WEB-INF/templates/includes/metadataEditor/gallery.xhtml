@@ -65,7 +65,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-file"
-                                     oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView()"
+                                     oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView();metadataEditor.gallery.mediaView.update();"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>

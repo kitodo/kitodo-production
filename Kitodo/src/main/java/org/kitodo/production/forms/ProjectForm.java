@@ -675,6 +675,25 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
+     * Returns the state of the audio media view waveform.
+     *
+     * @return True if enabled
+     */
+    public boolean isAudioMediaViewWaveform() {
+        return project.isAudioMediaViewWaveform();
+    }
+
+    /**
+     * Sets the state of the audio media view waveform.
+     *
+     * @param audioMediaViewWaveform True if enabled
+     *
+     */
+    public void setAudioMediaViewWaveform(boolean audioMediaViewWaveform) {
+        project.setAudioMediaViewWaveform(audioMediaViewWaveform);
+    }
+
+    /**
      * Returns the folder to use for the video media view.
      *
      * @return video media view folder
