@@ -22,8 +22,9 @@
               resizable="false"
               showHeader="false"
               dynamic="true"
-              modal="true">
-        <h:form id="mediaPartialViewForm">
+              modal="true"
+              onShow="metadataEditor.gallery.mediaPartial.setDuration();metadataEditor.gallery.mediaPartial.setBeginIfEmpty();">
+        <h:form id="mediaPartialForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
                     <h3>Media Partial hinzufügen</h3>
@@ -52,6 +53,11 @@
                             <p:outputLabel for="extentInput" value="Extent"/>
                             <p:inputText id="extentInput" class="input"
                                          value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.extent}" />
+                        </p:outputPanel>
+                        <p:outputPanel>
+                            <p:outputLabel for="durationInput" value="Duration"/>
+                            <p:inputText id="durationInput" class="input"
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.duration}"/>
                         </p:outputPanel>
                     </p:outputPanel>
 

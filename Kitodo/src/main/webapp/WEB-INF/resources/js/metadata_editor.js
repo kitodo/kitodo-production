@@ -89,9 +89,12 @@ metadataEditor.gallery = {
         setBeginIfEmpty() {
             let begin = document.getElementById("mediaPartialForm:beginInput");
             if(!begin.value) {
-                let currentMilliseconds = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime;
-                begin.value = this.formatTime(currentMilliseconds);
+                begin.value = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000;
             }
+        },
+        setDuration() {
+            let duration = document.getElementById("mediaPartialForm:durationInput");
+            duration.value = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration * 1000;
         },
         togglePlay(button, formattedTimeBegin, formattedTimeExtend) {
             let interval;
