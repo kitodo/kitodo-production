@@ -91,8 +91,8 @@ metadataEditor.gallery = {
             }
         },
         setDuration() {
-            let duration = document.getElementById("mediaPartialForm:durationInput");
-            duration.value = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
+            let duration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration)
+            setMediaPartialsViewsPanelMembers([{name: "duration", value: duration}]);
         },
         togglePlay(button, formattedTimeBegin, formattedTimeExtend) {
             let interval;

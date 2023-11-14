@@ -23,6 +23,9 @@
                   rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.enabled}">
 
         <ui:fragment>
+            <p:remoteCommand name="setMediaPartialsViewsPanelMembers"
+                             action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.setMembersByRequestParameter()}"/>
+
             <p:outputPanel id="mediaPartialList"
                            rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions.size() > 0}">
                 <p:dataList
@@ -53,11 +56,13 @@
                                                  type="button"
                                                  onclick="metadataEditor.gallery.mediaPartial.togglePlay(this, '#{mediaPartialDivision.value.begin}', '#{mediaPartialDivision.value.extent}')"/>
                                 <p:commandButton styleClass="editMediaView secondary"
+                                                 onstart="metadataEditor.gallery.mediaPartial.setDuration()"
                                                  action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaPartialDivision)}"
                                                  update="addMediaPartialDialog"
                                                  icon="fa fa-pencil-square-o"
                                                  oncomplete="PF('addMediaPartialDialog').show();"/>
                                 <p:commandButton styleClass="deleteMediaView secondary"
+                                                 onstart="metadataEditor.gallery.mediaPartial.setDuration()"
                                                  action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.deleteMediaViewDivision(mediaPartialDivision)}"
                                                  update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                                  icon="fa fa-trash"/>
@@ -69,6 +74,7 @@
 
             <p:commandButton id="addMediaPartial"
                              icon="fa fa-plus"
+                             onstart="metadataEditor.gallery.mediaPartial.setDuration()"
                              action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.clean}"
                              update="addMediaPartialDialog"
                              styleClass="secondary"

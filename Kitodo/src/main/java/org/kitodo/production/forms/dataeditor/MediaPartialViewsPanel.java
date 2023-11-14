@@ -23,10 +23,13 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -34,6 +37,7 @@ import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.utils.MediaUtil;
 
@@ -41,9 +45,10 @@ import org.kitodo.utils.MediaUtil;
 
 public class MediaPartialViewsPanel implements Serializable {
 
+    public static final String FORMATTED_TIME_REGEX = "(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])";
+    public static final String REQUEST_PARAMETER_DURATION = "duration";
     private MediaPartialForm mediaPartialForm;
     private DataEditorForm dataEditor;
-
     private String duration;
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
 
@@ -81,18 +86,33 @@ public class MediaPartialViewsPanel implements Serializable {
         }
     }
 
+    public String validateDuration() {
+        String errorMessage = null;
+        if (StringUtils.isEmpty(getDuration())) {
+            errorMessage = "Duration is empty";
+        } else if (!Pattern.compile(MediaPartialViewsPanel.FORMATTED_TIME_REGEX).matcher(getDuration()).matches()) {
+            errorMessage = "Duration has wrong format";
+        }
+        return errorMessage;
+    }
+
     /**
      * Delete media view division from structure panel.
      *
      * @param mediaViewDivision to delete
      */
     public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
+        String errorMessage = validateDuration();
+        if (Objects.nonNull(errorMessage)) {
+            Helper.setErrorMessage(errorMessage);
+            return;
+        }
+
         LogicalDivision logicalDivision = mediaViewDivision.getKey();
         if (dataEditor.getStructurePanel()
                 .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
             logicalDivision.getViews().remove();
             dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
-
             generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
                     getMillisecondsOfFormattedTime(getDuration()));
         }
@@ -153,6 +173,16 @@ public class MediaPartialViewsPanel implements Serializable {
 
     public Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
         return mediaSelection;
+    }
+
+    /**
+     * Set members of panel by request parameter.
+     */
+    public void setMembersByRequestParameter() {
+        Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+        if (params.containsKey(REQUEST_PARAMETER_DURATION)) {
+            duration = params.get(REQUEST_PARAMETER_DURATION);
+        }
     }
 
     public static void generateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long duration) {

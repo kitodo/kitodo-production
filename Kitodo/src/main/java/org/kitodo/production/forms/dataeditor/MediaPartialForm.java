@@ -31,14 +31,11 @@ import static org.kitodo.production.forms.dataeditor.MediaPartialViewsPanel.getM
 
 public class MediaPartialForm implements Serializable {
 
-    private static final String FORMATTED_TIME_REGEX = "(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])";
-
     private final DataEditorForm dataEditor;
 
     private Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision;
     private String title;
     private String begin;
-    private String duration;
     private String extent;
     private String type;
     private String validationError;
@@ -68,28 +65,22 @@ public class MediaPartialForm implements Serializable {
             validationError = "Please select media";
             return false;
         }
+        validationError = dataEditor.getGalleryPanel().getMediaPartialViewsPanel().validateDuration();
+        if (Objects.nonNull(validationError)) {
+            return false;
+        }
         if (StringUtils.isEmpty(getBegin())) {
             validationError = "Begin is empty";
             return false;
         }
-        if (StringUtils.isEmpty(getDuration())) {
-            validationError = "Duration is empty";
-            return false;
-        }
-        Pattern pattern = Pattern.compile(FORMATTED_TIME_REGEX);
-        if (!pattern.matcher(getBegin()).matches()) {
+        if (!Pattern.compile(MediaPartialViewsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
             validationError = "Begin has wrong format";
-            return false;
-        }
-        if (!pattern.matcher(getDuration()).matches()) {
-            validationError = "Duration has wrong format";
             return false;
         }
         if (getMillisecondsOfFormattedTime(getBegin()) >= getMillisecondsOfFormattedTime(getDuration())) {
             validationError = "Begin musst be lower than duration";
             return false;
         }
-
         boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
                 logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
                         .getBegin().equals(getBegin()));
@@ -189,14 +180,10 @@ public class MediaPartialForm implements Serializable {
         this.extent = extent;
     }
 
-    public String getDuration() {
-        return duration;
+    private String getDuration() {
+        return dataEditor.getGalleryPanel().getMediaPartialViewsPanel().getDuration();
     }
-
-    public void setDuration(String duration) {
-        this.duration = duration;
-    }
-
+    
     private Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
         return dataEditor.getGalleryPanel().getMediaPartialViewsPanel().getMediaSelection();
     }
