@@ -74,11 +74,9 @@ metadataEditor.gallery = {
             let formattedTime = this.addLeadingZeros(hours, 2) + ":" + this.addLeadingZeros(minutes, 2) + ":";
             seconds = seconds.toString();
             if (seconds.includes(".")) {
-                let secondsSplitted = seconds.split(".");
-                let last = parseFloat(this.addLeadingZeros(secondsSplitted[0], 2) + "." + secondsSplitted[1]);
-                formattedTime += last.toFixed(2);
+                formattedTime += this.addLeadingZeros(seconds.split(".")[0], 2);
             } else {
-                formattedTime += this.addLeadingZeros(seconds, 2) + ".00";
+                formattedTime += this.addLeadingZeros(seconds, 2);
             }
             return formattedTime;
         },
@@ -89,12 +87,12 @@ metadataEditor.gallery = {
         setBeginIfEmpty() {
             let begin = document.getElementById("mediaPartialForm:beginInput");
             if(!begin.value) {
-                begin.value = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime * 1000;
+                begin.value = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime);
             }
         },
         setDuration() {
             let duration = document.getElementById("mediaPartialForm:durationInput");
-            duration.value = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration * 1000;
+            duration.value = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
         },
         togglePlay(button, formattedTimeBegin, formattedTimeExtend) {
             let interval;

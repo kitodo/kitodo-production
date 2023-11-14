@@ -28,6 +28,14 @@
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
                     <h3>Media Partial hinzufügen</h3>
+                    <h:panelGroup id="errorWrapper"
+                                  rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.hasValidationError()}">
+                        <h:panelGroup layout="block"
+                                      styleClass="select-note ui-messages-error">
+                            <h:outputText
+                                    value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.validationError}"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
                     <p:outputPanel styleClass="dialogFieldWrapper">
 
                         <p:outputPanel
@@ -47,7 +55,8 @@
                             <p:outputLabel for="beginInput" value="Begin"/>
                             <p:inputText id="beginInput" class="input"
                                          value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.begin}"
-                                         placeholder="Begin"/>
+                                         placeholder="Begin"
+                                         required="true"/>
                         </p:outputPanel>
                         <p:outputPanel>
                             <p:outputLabel for="extentInput" value="Extent"/>
@@ -65,9 +74,9 @@
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="addMediaPartialButton"
                                          action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.save}"
-                                         oncomplete="PF('addMediaPartialDialog').hide();"
-                                         update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe"
                                          value="#{msgs.apply}"
+                                         oncomplete="if($('#mediaPartialForm\\:errorWrapper').length == 0) { PF('addMediaPartialDialog').hide(); }"
+                                         update="mediaPartialForm,imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
                                          onclick="PF('addMediaPartialDialog').hide();"

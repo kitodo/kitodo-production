@@ -15,10 +15,14 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
@@ -40,6 +44,9 @@ public class MediaPartialViewsPanel implements Serializable {
     private MediaPartialForm mediaPartialForm;
     private DataEditorForm dataEditor;
 
+    private String duration;
+    private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
+
     MediaPartialViewsPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
         mediaPartialForm = new MediaPartialForm(dataEditor);
@@ -51,13 +58,11 @@ public class MediaPartialViewsPanel implements Serializable {
      * @return The media view divisions
      */
     public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions() {
-        Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
+        mediaSelection = dataEditor.getGalleryPanel().getLastSelection();
         Map<LogicalDivision, MediaPartialView> mediaPartialViewDivisions = new LinkedHashMap<>();
-        if (Objects.nonNull(lastSelection)) {
-            mediaPartialForm.setMediaSelection(lastSelection);
-            getMediaPartialViewDivisions(mediaPartialViewDivisions, lastSelection.getKey().getLogicalDivisions(),
-                    lastSelection.getLeft().getMediaFiles());
-
+        if (Objects.nonNull(mediaSelection)) {
+            getMediaPartialViewDivisions(mediaPartialViewDivisions, mediaSelection.getKey().getLogicalDivisions(),
+                    mediaSelection.getLeft().getMediaFiles());
         }
         return mediaPartialViewDivisions;
     }
@@ -87,6 +92,9 @@ public class MediaPartialViewsPanel implements Serializable {
                 .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
             logicalDivision.getViews().remove();
             dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
+
+            generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
+                    getMillisecondsOfFormattedTime(getDuration()));
         }
     }
 
@@ -133,6 +141,7 @@ public class MediaPartialViewsPanel implements Serializable {
         return mediaPartialDivisions;
     }
 
+
     /**
      * Get the MediaPartialForm.
      *
@@ -140,5 +149,75 @@ public class MediaPartialViewsPanel implements Serializable {
      */
     public MediaPartialForm getMediaPartialForm() {
         return mediaPartialForm;
+    }
+
+    public Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
+        return mediaSelection;
+    }
+
+    public static void generateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long duration) {
+        // sorting reverse to set extent starting from the last entry
+        Collections.sort(logicalDivisions, getLogicalDivisionComparator().reversed());
+
+        generateExtentForMediaPartials(logicalDivisions, duration);
+
+        Collections.sort(logicalDivisions, getLogicalDivisionComparator());
+    }
+
+    private static void generateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long duration) {
+        ListIterator<LogicalDivision> iterator = logicalDivisions.listIterator();
+        LogicalDivision previousLogicalDivision = null;
+        while (iterator.hasNext()) {
+            LogicalDivision logicalDivision = iterator.next();
+            MediaPartialView mediaPartialView = logicalDivision.getViews().getFirst().getPhysicalDivision()
+                    .getMediaPartialView();
+            if (Objects.nonNull(previousLogicalDivision)) {
+                PhysicalDivision previousPhysicalDivision = previousLogicalDivision.getViews().getFirst()
+                        .getPhysicalDivision();
+                if (previousPhysicalDivision.hasMediaPartialView()) {
+                    mediaPartialView.setExtent(getFormattedTimeOfMilliseconds(getMillisecondsOfFormattedTime(
+                            previousPhysicalDivision.getMediaPartialView().getBegin()) - getMillisecondsOfFormattedTime(
+                            mediaPartialView.getBegin())));
+                }
+            } else {
+                mediaPartialView.setExtent(getFormattedTimeOfMilliseconds(
+                        duration - getMillisecondsOfFormattedTime(mediaPartialView.getBegin())));
+            }
+            previousLogicalDivision = logicalDivision;
+        }
+    }
+
+    public static Long getMillisecondsOfFormattedTime(String formattedTime) {
+        if (formattedTime.contains(".")) {
+            formattedTime = formattedTime.split(".")[0];
+        }
+        String[] time = formattedTime.split(":");
+        return Long.valueOf(
+                Integer.valueOf(time[0]) * 3600 + Integer.valueOf(time[1]) * 60 + Integer.valueOf(time[2])) * 1000;
+    }
+
+    private static String getFormattedTimeOfMilliseconds(Long milliseconds) {
+        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(milliseconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60, TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60);
+    }
+
+    private static Comparator<LogicalDivision> getLogicalDivisionComparator() {
+        return (logicalDivision1, logicalDivision2) -> {
+            View view1 = logicalDivision1.getViews().getFirst();
+            View view2 = logicalDivision2.getViews().getFirst();
+            if (Objects.nonNull(view1) && Objects.nonNull(view2)) {
+                PhysicalDivision physicalDivision1 = view1.getPhysicalDivision();
+                PhysicalDivision physicalDivision2 = view2.getPhysicalDivision();
+                if (physicalDivision1.hasMediaPartialView() && physicalDivision2.hasMediaPartialView()) {
+                    return physicalDivision1.getMediaPartialView().getBegin()
+                            .compareTo(physicalDivision2.getMediaPartialView().getBegin());
+                }
+            }
+            return Integer.compare(logicalDivision1.getOrder(), logicalDivision2.getOrder());
+        };
+    }
+
+    public String getDuration() {
+        return duration;
     }
 }
