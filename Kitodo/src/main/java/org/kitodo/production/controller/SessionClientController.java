@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Client;
@@ -134,8 +135,12 @@ public class SessionClientController {
      * @param sessionClient
      *            The client object that is to be the new session client.
      */
-    public void setSessionClient(Client sessionClient) {
+    public String setSessionClient(Client sessionClient) {
         ServiceManager.getUserService().getAuthenticatedUser().setSessionClient(sessionClient);
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+            return FacesContext.getCurrentInstance().getViewRoot().getViewId();
+        }
+        return null;
     }
 
     /**
