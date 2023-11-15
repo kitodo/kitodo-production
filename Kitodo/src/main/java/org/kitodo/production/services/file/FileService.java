@@ -70,6 +70,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.MediaUtil;
 
 public class FileService {
 
@@ -1113,7 +1114,7 @@ public class FileService {
         }
 
         addNewURIsToExistingPhysicalDivisions(currentMedia,
-                workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
+                workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack(), canonicals);
         Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(currentMedia);
         List<String> mediaToRemove = new LinkedList<>(canonicals);
 
@@ -1162,7 +1163,7 @@ public class FileService {
         if (!baseUriString.endsWith("/")) {
             baseUriString = baseUriString.concat("/");
         }
-        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             String unitCanonical = "";
             for (Entry<MediaVariant, URI> entry : physicalDivision.getMediaFiles().entrySet()) {
                 Subfolder subfolder = subfolders.get(entry.getKey().getUse());
@@ -1211,7 +1212,7 @@ public class FileService {
 
     private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece,
                                                  Collection<Subfolder> subfolders) {
-        List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (String removal : mediaToRemove) {
             if (StringUtils.isNotBlank(removal)) {
                 for (PhysicalDivision page : pages) {
@@ -1233,7 +1234,7 @@ public class FileService {
         }
         if (!mediaToRemove.isEmpty()) {
             int i = 1;
-            for (PhysicalDivision division : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+            for (PhysicalDivision division : workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
                 division.setOrder(i);
                 i++;
             }
@@ -1311,6 +1312,13 @@ public class FileService {
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
+
+            // overwrite physical division type if mime type is audio or video
+            if (!PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
+                    mediaVariant.getMimeType())) {
+                physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
+            }
+
             physicalDivision.getMediaFiles().put(mediaVariant, entry.getValue());
         }
         return physicalDivision;
@@ -1331,7 +1339,8 @@ public class FileService {
      */
     public void renumberPhysicalDivisions(Workpiece workpiece, boolean sortByOrder) {
         int order = 1;
-        for (PhysicalDivision physicalDivision : sortByOrder ? workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()
+        for (PhysicalDivision physicalDivision : sortByOrder
+                ? workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()
                 : workpiece.getPhysicalStructure().getAllChildren()) {
             physicalDivision.setOrder(order++);
         }
@@ -1343,7 +1352,7 @@ public class FileService {
      * intermediate places are marked uncounted.
      */
     private void repaginatePhysicalDivisions(Workpiece workpiece) {
-        List<PhysicalDivision> physicalDivisions = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {

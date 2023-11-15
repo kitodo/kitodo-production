@@ -12,7 +12,7 @@
 package org.kitodo.api.dataformat;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
@@ -180,15 +180,16 @@ public class Workpiece {
 
     /**
      * Returns all child physical divisions of the physical division of the workpiece with
-     * type "page" sorted by their {@code order} as a flat list. The root media
+     * type "page" or "track" sorted by their {@code order} as a flat list. The root media
      * unit is not contained. The list isn’t backed by the physical divisions, which
      * means that insertions and deletions in the list would not change the
      * physical divisions. Therefore, a list that cannot be modified is returned.
      *
-     * @return all physical divisions with type "page", sorted by their {@code order}
+     * @return all physical divisions with type "page" or "track", sorted by their {@code order}
      */
-    public List<PhysicalDivision> getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted() {
-        return getAllPhysicalDivisionChildrenFilteredByTypes(Collections.singletonList(PhysicalDivision.TYPE_PAGE));
+    public List<PhysicalDivision> getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack() {
+        return getAllPhysicalDivisionChildrenFilteredByTypes(
+                Arrays.asList(PhysicalDivision.TYPE_PAGE, PhysicalDivision.TYPE_TRACK));
     }
 
     /**

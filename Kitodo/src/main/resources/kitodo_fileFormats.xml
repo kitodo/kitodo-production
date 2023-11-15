@@ -70,4 +70,22 @@
     <fileFormat extension="bmp" formatName="bmp" imageFileFormat="BMP" mimeType="image/bmp">
         <label>Windows Bitmap (image/bmp, *.bmp)</label>
     </fileFormat>
+    <fileFormat extension="mp4" formatName="mp4" mimeType="video/mp4">
+        <label>MP4 (video/mp4, *.mp4)</label>
+    </fileFormat>
+    <fileFormat extension="ogv" formatName="ogv" mimeType="video/ogg">
+        <label>OGG (video/ogg, *.ogv)</label>
+    </fileFormat>
+    <fileFormat extension="webm" formatName="webm" mimeType="video/webm">
+        <label>WEBM (video/webm, *.webm)</label>
+    </fileFormat>
+    <fileFormat extension="mp3" formatName="mp3" mimeType="audio/mpeg">
+        <label>MP3 (audio/mpeg, *.mp3)</label>
+    </fileFormat>
+    <fileFormat extension="oga" formatName="oga" mimeType="audio/ogg">
+        <label>OGG (audio/ogg, *.oga)</label>
+    </fileFormat>
+    <fileFormat extension="weba" formatName="weba" mimeType="audio/webm">
+        <label>WEBM (audio/webm, *.weba)</label>
+    </fileFormat>
 </kitodo_fileFormats>
