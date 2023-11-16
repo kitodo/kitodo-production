@@ -205,6 +205,11 @@ public class GalleryMediaContent {
         return Objects.nonNull(previewUri);
     }
 
+    /**
+     * Check if physical division of view has a media partial.
+     *
+     * @return True if has a media partial
+     */
     public boolean isMediaPartial() {
         return Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision()) && view.getPhysicalDivision()
                 .hasMediaPartialView();
