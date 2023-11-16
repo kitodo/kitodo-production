@@ -57,6 +57,7 @@ public class MediaPartialForm implements Serializable {
         title = "";
         begin = null;
         validationError = "";
+        Ajax.update("mediaPartialForm");
     }
 
     public boolean valid() {
@@ -145,7 +146,7 @@ public class MediaPartialForm implements Serializable {
             Helper.setErrorMessage(e.getMessage());
         }
 
-        Ajax.update("imagePreviewForm:mediaDetailMediaPartialsContainer",
+        Ajax.update("structureTreeForm", "imagePreviewForm:mediaDetailMediaPartialsContainer",
                     "imagePreviewForm:thumbnailStripe");
         PrimeFaces.current().executeScript("PF('addMediaPartialDialog').hide();");
     }

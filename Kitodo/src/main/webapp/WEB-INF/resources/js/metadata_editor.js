@@ -97,19 +97,17 @@ metadataEditor.gallery = {
         stopPlayEvent: new CustomEvent("mediaPartialStopPlay"),
         togglePlay(button, formattedTimeBegin, formattedTimeExtent) {
             let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
-
             let isPaused = mediaElement.paused;
+            let isAnotherMediaPartialTimeBegin = formattedTimeBegin != mediaElement.dataset.mediaPartialTimeBegin;
             mediaElement.dispatchEvent(this.stopPlayEvent); // stop already running media partial
 
-            // start if media element was paused before
-            if (isPaused) {
+            let startTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
+            let durationTime = this.parseFormatedTimeToSeconds(formattedTimeExtent);
 
-                let beginTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
-                let endTime = this.parseFormatedTimeToSeconds(formattedTimeExtent);
-
+            if (isPaused || isAnotherMediaPartialTimeBegin) {
                 let self = this;
                 let onTimeUpdate = function () {
-                    if (mediaElement.currentTime >= beginTime + endTime) {
+                    if (mediaElement.currentTime >= startTime + durationTime) {
                         self.stopPlay(mediaElement, icon);
                         mediaElement.removeEventListener("timeupdate", onTimeUpdate);
                     }
@@ -120,9 +118,10 @@ metadataEditor.gallery = {
                     mediaElement.removeEventListener("timeupdate", onTimeUpdate);
                 }
 
-                mediaElement.currentTime = beginTime;
+                mediaElement.currentTime = startTime;
                 mediaElement.addEventListener("timeupdate", onTimeUpdate);
                 mediaElement.addEventListener("mediaPartialStopPlay", onMediaPartialStopPlay);
+                mediaElement.dataset.mediaPartialTimeBegin = formattedTimeBegin;
 
                 let icon = button.querySelector(".ui-icon");
                 icon.classList.remove("fa-play");
@@ -133,6 +132,7 @@ metadataEditor.gallery = {
         },
         stopPlay(mediaElement, icon) {
             mediaElement.pause();
+            delete mediaElement.dataset.mediaPartialTimeBegin;
             icon.classList.remove("fa-stop");
             icon.classList.add("fa-play");
         }

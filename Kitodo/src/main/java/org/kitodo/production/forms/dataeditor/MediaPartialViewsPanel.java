@@ -130,6 +130,7 @@ public class MediaPartialViewsPanel implements Serializable {
      * @param mediaViewDivision the media view division
      */
     public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
+        mediaPartialForm.clean();
         mediaPartialForm.setMediaPartialDivision(mediaViewDivision);
         mediaPartialForm.setTitle(mediaViewDivision.getKey().getLabel());
         mediaPartialForm.setBegin(mediaViewDivision.getValue().getBegin());

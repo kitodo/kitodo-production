@@ -58,7 +58,6 @@
                                 <p:commandButton styleClass="editMediaView secondary"
                                                  onstart="metadataEditor.gallery.mediaPartial.setDuration()"
                                                  action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaPartialDivision)}"
-                                                 update="addMediaPartialDialog"
                                                  icon="fa fa-pencil-square-o"
                                                  oncomplete="PF('addMediaPartialDialog').show();"/>
                                 <p:commandButton styleClass="deleteMediaView secondary"
@@ -76,7 +75,6 @@
                              icon="fa fa-plus"
                              onstart="metadataEditor.gallery.mediaPartial.setDuration()"
                              action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.clean}"
-                             update="addMediaPartialDialog"
                              styleClass="secondary"
                              oncomplete="PF('addMediaPartialDialog').show();">
             </p:commandButton>

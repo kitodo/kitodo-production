@@ -3085,6 +3085,15 @@ Column content
     padding: 5px;
 }
 
+#imagePreviewForm\:mediaPartialList .mediaPartialItem table:first-child {
+    width: 275px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
 #imagePreviewForm\:mediaPartialList .mediaPartialItem table:first-child td:first-child {
     padding-bottom: 0px;
 }
