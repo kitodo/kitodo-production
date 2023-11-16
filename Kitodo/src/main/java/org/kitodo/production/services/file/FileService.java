@@ -1306,11 +1306,9 @@ public class FileService {
      */
     private PhysicalDivision createPhysicalDivision(Map<Subfolder, URI> data) {
         PhysicalDivision physicalDivision = new PhysicalDivision();
-
         if (!data.entrySet().isEmpty()) {
             physicalDivision.setType(PhysicalDivision.TYPE_PAGE);
         }
-
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
@@ -1323,7 +1321,6 @@ public class FileService {
 
             physicalDivision.getMediaFiles().put(mediaVariant, entry.getValue());
         }
-
         return physicalDivision;
     }
 
