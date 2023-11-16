@@ -27,40 +27,40 @@
         <h:form id="mediaPartialForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <h3>#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.isEdit() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
+                    <h3>#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.isEdit() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
                     <h:panelGroup id="errorWrapper"
-                                  rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.hasValidationError()}">
+                                  rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.hasValidationError()}">
                         <h:panelGroup layout="block"
                                       styleClass="select-note ui-messages-error">
                             <h:outputText
-                                    value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.validationError}"/>
+                                    value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.validationError}"/>
                         </h:panelGroup>
                     </h:panelGroup>
                     <p:outputPanel styleClass="dialogFieldWrapper">
 
                         <p:outputPanel
-                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions.size() gt 1)?'':'hidden'}">
+                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions.size() gt 1)?'':'hidden'}">
                             <p:outputLabel for="type" value="Typ"/>
-                            <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.type}">
-                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialDivisions}"/>
+                            <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.type}">
+                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions}"/>
                             </p:selectOneMenu>
                         </p:outputPanel>
                         <p:outputPanel>
                             <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                             <p:inputText id="titleInput" class="input"
-                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.title}"/>
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.title}"/>
                         </p:outputPanel>
                         <p:outputPanel>
                             <p:outputLabel for="beginInput" value="#{msgs.start}"/>
                             <p:inputText id="beginInput" class="input"
-                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.begin}"/>
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.begin}"/>
                         </p:outputPanel>
                     </p:outputPanel>
 
                     <h:panelGroup layout="block"
                                   styleClass="dialogButtonWrapper">
                         <p:commandButton id="addMediaPartialButton"
-                                         action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.save}"
+                                         action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.save}"
                                          value="#{msgs.apply}"
                                          update="@form"
                                          styleClass="primary right"/>

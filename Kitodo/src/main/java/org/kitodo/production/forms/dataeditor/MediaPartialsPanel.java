@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
-import com.sun.xml.bind.marshaller.Messages;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
@@ -44,7 +43,7 @@ import org.kitodo.utils.MediaUtil;
 
 
 
-public class MediaPartialViewsPanel implements Serializable {
+public class MediaPartialsPanel implements Serializable {
 
     public static final String FORMATTED_TIME_REGEX = "(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])";
     public static final String REQUEST_PARAMETER_DURATION = "duration";
@@ -53,7 +52,7 @@ public class MediaPartialViewsPanel implements Serializable {
     private String duration;
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
 
-    MediaPartialViewsPanel(DataEditorForm dataEditor) {
+    MediaPartialsPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
         mediaPartialForm = new MediaPartialForm(dataEditor);
     }
@@ -96,7 +95,7 @@ public class MediaPartialViewsPanel implements Serializable {
         String errorMessage = null;
         if (StringUtils.isEmpty(getDuration())) {
             errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationEmpty");
-        } else if (!Pattern.compile(MediaPartialViewsPanel.FORMATTED_TIME_REGEX).matcher(getDuration()).matches()) {
+        } else if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getDuration()).matches()) {
             errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationWrongTimeFormat");
         }
         return errorMessage;

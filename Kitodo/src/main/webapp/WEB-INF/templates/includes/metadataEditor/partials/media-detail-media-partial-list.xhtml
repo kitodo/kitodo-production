@@ -20,16 +20,16 @@
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <h:panelGroup id="mediaDetailMediaPartialsContainer" layout="block"
-                  rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.enabled}">
+                  rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.enabled}">
 
         <ui:fragment>
             <p:remoteCommand name="setMediaPartialsViewsPanelMembers"
-                             action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.setMembersByRequestParameter()}"/>
+                             action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.setMembersByRequestParameter()}"/>
 
             <p:outputPanel id="mediaPartialList"
-                           rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions.size() > 0}">
+                           rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialViewDivisions.size() > 0}">
                 <p:dataList
-                        value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialViewDivisions}"
+                        value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialViewDivisions}"
                         var="mediaPartialDivision"
                         type="ordered">
 
@@ -57,12 +57,12 @@
                                                  onclick="metadataEditor.gallery.mediaPartial.togglePlay(this, '#{mediaPartialDivision.value.begin}', '#{mediaPartialDivision.value.extent}')"/>
                                 <p:commandButton styleClass="editMediaView secondary"
                                                  onstart="metadataEditor.gallery.mediaPartial.setDuration()"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.editMediaViewDivision(mediaPartialDivision)}"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.editMediaViewDivision(mediaPartialDivision)}"
                                                  icon="fa fa-pencil-square-o"
                                                  oncomplete="PF('addMediaPartialDialog').show();"/>
                                 <p:commandButton styleClass="deleteMediaView secondary"
                                                  onstart="metadataEditor.gallery.mediaPartial.setDuration()"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.deleteMediaViewDivision(mediaPartialDivision)}"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.deleteMediaViewDivision(mediaPartialDivision)}"
                                                  update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
                                                  icon="fa fa-trash"/>
                             </p:outputPanel>
@@ -74,7 +74,7 @@
             <p:commandButton id="addMediaPartial"
                              icon="fa fa-plus"
                              onstart="metadataEditor.gallery.mediaPartial.setDuration()"
-                             action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.clean}"
+                             action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.clean}"
                              styleClass="secondary"
                              oncomplete="PF('addMediaPartialDialog').show();">
             </p:commandButton>

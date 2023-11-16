@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
-import static org.kitodo.production.forms.dataeditor.MediaPartialViewsPanel.generateExtentAndSortMediaPartials;
-import static org.kitodo.production.forms.dataeditor.MediaPartialViewsPanel.getMillisecondsOfFormattedTime;
+import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.generateExtentAndSortMediaPartials;
+import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.getMillisecondsOfFormattedTime;
 
 public class MediaPartialForm implements Serializable {
 
@@ -66,7 +66,7 @@ public class MediaPartialForm implements Serializable {
             validationError = Helper.getTranslation("mediaPartialFormNoMedium");
             return false;
         }
-        validationError = dataEditor.getGalleryPanel().getMediaPartialViewsPanel().validateDuration();
+        validationError = dataEditor.getGalleryPanel().getMediaPartialsPanel().validateDuration();
         if (Objects.nonNull(validationError)) {
             return false;
         }
@@ -74,7 +74,7 @@ public class MediaPartialForm implements Serializable {
             validationError = Helper.getTranslation("mediaPartialFormStartEmpty");
             return false;
         }
-        if (!Pattern.compile(MediaPartialViewsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
+        if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
             validationError = Helper.getTranslation("mediaPartialFormStartWrongTimeFormat");
             return false;
         }
@@ -180,10 +180,10 @@ public class MediaPartialForm implements Serializable {
     }
 
     private String getDuration() {
-        return dataEditor.getGalleryPanel().getMediaPartialViewsPanel().getDuration();
+        return dataEditor.getGalleryPanel().getMediaPartialsPanel().getDuration();
     }
     
     private Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
-        return dataEditor.getGalleryPanel().getMediaPartialViewsPanel().getMediaSelection();
+        return dataEditor.getGalleryPanel().getMediaPartialsPanel().getMediaSelection();
     }
 }
