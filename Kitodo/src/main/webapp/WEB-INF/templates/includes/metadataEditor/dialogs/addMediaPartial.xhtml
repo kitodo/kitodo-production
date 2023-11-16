@@ -27,7 +27,7 @@
         <h:form id="mediaPartialForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <h3>Media Partial hinzufügen</h3>
+                    <h3>#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.isEdit() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
                     <h:panelGroup id="errorWrapper"
                                   rendered="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.hasValidationError()}">
                         <h:panelGroup layout="block"
@@ -52,16 +52,10 @@
                                          placeholder="#{msgs.title}"/>
                         </p:outputPanel>
                         <p:outputPanel>
-                            <p:outputLabel for="beginInput" value="Begin"/>
+                            <p:outputLabel for="beginInput" value="#{msgs.start}"/>
                             <p:inputText id="beginInput" class="input"
                                          value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.begin}"
-                                         placeholder="Begin"
-                                         required="true"/>
-                        </p:outputPanel>
-                        <p:outputPanel>
-                            <p:outputLabel for="extentInput" value="Extent"/>
-                            <p:inputText id="extentInput" class="input"
-                                         value="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.extent}" />
+                                         placeholder="Begin"/>
                         </p:outputPanel>
                     </p:outputPanel>
 

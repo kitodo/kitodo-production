@@ -40,14 +40,14 @@
                                      a:data-media-partial-begin="#{mediaPartialDivision.value.begin}">
                             <p:outputPanel>
                                 <h:panelGrid columns="1">
-                                    <h:outputText value="Title:"/>
+                                    <h:outputText value="#{msgs.title}:"/>
                                     <h:outputText value="#{mediaPartialDivision.key.label}"/>
                                 </h:panelGrid>
                                 <h:panelGrid columns="2">
-                                    <h:outputText value="Begin:"/>
+                                    <h:outputText value="#{msgs.start}:"/>
                                     <h:outputText value="#{mediaPartialDivision.value.begin}"/>
-                                    <h:outputText value="Extent:" rendered="#{mediaPartialDivision.value.hasExtent()}"/>
-                                    <h:outputText value="#{mediaPartialDivision.value.extent}" rendered="#{mediaPartialDivision.value.hasExtent()}"/>
+                                    <h:outputText value="#{msgs.duration}:"/>
+                                    <h:outputText value="#{mediaPartialDivision.value.extent}"/>
                                 </h:panelGrid>
                             </p:outputPanel>
                             <p:outputPanel>

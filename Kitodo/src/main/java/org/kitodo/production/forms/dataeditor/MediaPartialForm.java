@@ -20,7 +20,6 @@ import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.omnifaces.util.Ajax;
-import org.omnifaces.util.Faces;
 import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
@@ -39,7 +38,6 @@ public class MediaPartialForm implements Serializable {
     private Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision;
     private String title;
     private String begin;
-    private String extent;
     private String type;
     private String validationError;
 
@@ -58,14 +56,13 @@ public class MediaPartialForm implements Serializable {
         mediaPartialDivision = null;
         title = "";
         begin = null;
-        extent = null;
         validationError = "";
     }
 
     public boolean valid() {
         validationError = "";
         if (Objects.isNull(getMediaSelection())) {
-            validationError = "Please select media";
+            validationError = Helper.getTranslation("mediaPartialFormNoMedium");
             return false;
         }
         validationError = dataEditor.getGalleryPanel().getMediaPartialViewsPanel().validateDuration();
@@ -73,23 +70,25 @@ public class MediaPartialForm implements Serializable {
             return false;
         }
         if (StringUtils.isEmpty(getBegin())) {
-            validationError = "Begin is empty";
+            validationError = Helper.getTranslation("mediaPartialFormStartEmpty");
             return false;
         }
         if (!Pattern.compile(MediaPartialViewsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
-            validationError = "Begin has wrong format";
+            validationError = Helper.getTranslation("mediaPartialFormStartWrongTimeFormat");
             return false;
         }
         if (getMillisecondsOfFormattedTime(getBegin()) >= getMillisecondsOfFormattedTime(getDuration())) {
-            validationError = "Begin musst be lower than duration";
+            validationError = Helper.getTranslation("mediaPartialFormStartLessThanMediaDuration");
             return false;
         }
-        boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
-                logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
-                        .getBegin().equals(getBegin()));
-        if (exists) {
-            validationError = "Begin already exists";
-            return false;
+        if (!isEdit() || (isEdit() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
+            boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
+                    logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
+                            .getBegin().equals(getBegin()));
+            if (exists) {
+                validationError = Helper.getTranslation("mediaPartialFormStartExists");
+                return false;
+            }
         }
         return true;
     }
@@ -121,7 +120,7 @@ public class MediaPartialForm implements Serializable {
             physicalDivision.getMediaFiles().putAll(getMediaSelection().getKey().getMediaFiles());
             physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
 
-            MediaPartialView mediaPartialView = new MediaPartialView(getBegin(), getExtent());
+            MediaPartialView mediaPartialView = new MediaPartialView(getBegin());
             physicalDivision.setMediaPartialView(mediaPartialView);
             mediaPartialView.setPhysicalDivision(physicalDivision);
             logicalDivision.getViews().add(mediaPartialView);
@@ -177,14 +176,6 @@ public class MediaPartialForm implements Serializable {
 
     public void setType(String type) {
         this.type = type;
-    }
-
-    public String getExtent() {
-        return extent;
-    }
-
-    public void setExtent(String extent) {
-        this.extent = extent;
     }
 
     private String getDuration() {

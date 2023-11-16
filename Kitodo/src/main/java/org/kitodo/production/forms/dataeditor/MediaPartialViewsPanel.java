@@ -29,6 +29,7 @@ import java.util.stream.Collectors;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
+import com.sun.xml.bind.marshaller.Messages;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
@@ -86,12 +87,17 @@ public class MediaPartialViewsPanel implements Serializable {
         }
     }
 
+    /**
+     * Validate the duration of the media.
+     *
+     * @return The error message if duration is not valid.
+     */
     public String validateDuration() {
         String errorMessage = null;
         if (StringUtils.isEmpty(getDuration())) {
-            errorMessage = "Duration is empty";
+            errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationEmpty");
         } else if (!Pattern.compile(MediaPartialViewsPanel.FORMATTED_TIME_REGEX).matcher(getDuration()).matches()) {
-            errorMessage = "Duration has wrong format";
+            errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationWrongTimeFormat");
         }
         return errorMessage;
     }
