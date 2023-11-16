@@ -70,8 +70,7 @@
                         <p:commandButton id="addMediaPartialButton"
                                          action="#{DataEditorForm.galleryPanel.mediaPartialViewsPanel.mediaPartialForm.save}"
                                          value="#{msgs.apply}"
-                                         oncomplete="if($('#mediaPartialForm\\:errorWrapper').length == 0) { PF('addMediaPartialDialog').hide(); }"
-                                         update="mediaPartialForm,imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe"
+                                         update="@form"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
                                          onclick="PF('addMediaPartialDialog').hide();"

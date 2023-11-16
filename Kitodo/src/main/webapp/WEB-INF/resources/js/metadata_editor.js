@@ -94,24 +94,24 @@ metadataEditor.gallery = {
             let duration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration)
             setMediaPartialsViewsPanelMembers([{name: "duration", value: duration}]);
         },
-        togglePlay(button, formattedTimeBegin, formattedTimeExtend) {
+        togglePlay(button, formattedTimeBegin, formattedTimeExtent) {
             let interval;
             let icon = button.querySelector(".ui-icon");
             let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
             if (mediaElement.paused) {
                 let beginTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
-                let endTime = this.parseFormatedTimeToSeconds(formattedTimeExtend);
+                let endTime = this.parseFormatedTimeToSeconds(formattedTimeExtent);
                 mediaElement.currentTime = beginTime;
                 icon.classList.remove("fa-play");
                 icon.classList.add("fa-stop");
                 mediaElement.play();
-                if (formattedTimeExtend.trim().length !== 0) {
+                if (formattedTimeExtent.trim().length !== 0) {
                     let self = this;
                     interval = setInterval(function () {
                         if (mediaElement.currentTime >= beginTime + endTime) {
                             self.stopPlay(mediaElement, interval, icon);
                         }
-                    }, 500);
+                    }, 100);
                 }
             } else {
                 this.stopPlay(mediaElement, interval, icon);

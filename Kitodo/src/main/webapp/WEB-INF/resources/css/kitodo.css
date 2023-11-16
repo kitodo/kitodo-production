@@ -3436,11 +3436,15 @@ Column content
 
 .thumbnail-container .icon-media-partial {
     top: 5px;
-    color: var(--pure-white);
+    color: var(--carbon-blue);
     left: 5px;
-    opacity: .9;
     position: absolute;
-    text-shadow: 0 0 3px var(--carbon-blue);
+    background: rgb(from var(--pure-white) r g b / 0.8);
+    width: 18px;
+    display: block;
+    text-align: center;
+    padding: 3px;
+    border-radius: 18px;
 }
 
 .thumbnail-container .icon-media-partial::before {

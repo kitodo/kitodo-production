@@ -19,6 +19,9 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.omnifaces.util.Ajax;
+import org.omnifaces.util.Faces;
+import org.primefaces.PrimeFaces;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -142,6 +145,10 @@ public class MediaPartialForm implements Serializable {
         } catch (UnknownTreeNodeDataException e) {
             Helper.setErrorMessage(e.getMessage());
         }
+
+        Ajax.update("imagePreviewForm:mediaDetailMediaPartialsContainer",
+                    "imagePreviewForm:thumbnailStripe");
+        PrimeFaces.current().executeScript("PF('addMediaPartialDialog').hide();");
     }
 
     public void setMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
