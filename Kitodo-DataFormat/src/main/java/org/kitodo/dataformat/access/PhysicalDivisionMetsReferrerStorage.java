@@ -32,7 +32,7 @@ class PhysicalDivisionMetsReferrerStorage extends PhysicalDivision {
      * Passthrough function for reading the file identifier to the URI.
      *
      * @param fLocatXmlElementAccess
-     *        Access object on f locat
+     *            Access object on f locat
      * @return Access object on f locat
      */
     FLocatXmlElementAccess storeFileId(FLocatXmlElementAccess fLocatXmlElementAccess) {
@@ -44,7 +44,7 @@ class PhysicalDivisionMetsReferrerStorage extends PhysicalDivision {
      * Returns the ID of file.
      *
      * @param key
-     *        URI whose ID to return
+     *            URI whose ID to return
      * @return the ID of file
      */
     String getFileId(URI key) {
