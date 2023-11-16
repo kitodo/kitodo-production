@@ -125,7 +125,7 @@ public class DataEditorService {
         if (metadataTitle.isPresent()) {
             return metadataTitle.get();
         }
-        return "";
+        return " - ";
     }
 
     /**
