@@ -1,0 +1,49 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="errorDialog"
+              widgetVar="errorDialog"
+              showHeader="false"
+              modal="true"
+              width="500px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <h:panelGroup id="messageWrapper">
+            <h3>#{err.errorOccurred}</h3>
+            <div class="select-note ui-messages-error">
+                #{ProcessForm.errorMessage}<br/>
+            </div>
+        </h:panelGroup>
+
+        <p:panelGrid>
+            <h:form id="buttonForm">
+                <p:panelGrid>
+                    <p:row>
+                        <p:commandButton id="okButton"
+                                         value="#{msgs.ok}"
+                                         update="messageWrapper"
+                                         style="margin-right: 32px;"
+                                         onclick="PF('errorDialog').hide();"
+                                         styleClass="primary right"/>
+                    </p:row>
+                </p:panelGrid>
+            </h:form>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>

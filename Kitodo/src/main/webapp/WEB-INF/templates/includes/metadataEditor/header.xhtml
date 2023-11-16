@@ -70,7 +70,7 @@
             <p:commandButton id="renameMedia"
                              widgetVar="renameMedia"
                              rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
-                             value="#{msgs['dataEditor.renameMedia']}"
+                             value="#{msgs['renameMediaFiles']}"
                              onclick="deactivateButtons();"
                              oncomplete="activateButtons();setHeight();"
                              action="#{DataEditorForm.renameMediaFiles()}"
