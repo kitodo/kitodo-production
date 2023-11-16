@@ -48,8 +48,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
 
     public static final List<String> TYPES = Arrays.asList(TYPE_PAGE, TYPE_TRACK, TYPE_OTHER);
     /**
-     * Each physical division can be available in different variants, for each of which a media file is available. This
-     * is in this map.
+     * Each physical division can be available in different variants, for each of which
+     * a media file is available. This is in this map.
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
 
