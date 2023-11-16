@@ -41,4 +41,5 @@ public class MediaPartialView extends View {
     public void setExtent(String extent) {
         this.extent = extent;
     }
+
 }
