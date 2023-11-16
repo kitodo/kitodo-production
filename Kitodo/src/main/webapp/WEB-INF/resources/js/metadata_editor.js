@@ -14,7 +14,6 @@
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
-
 var metadataEditor = {};
 
 /**
