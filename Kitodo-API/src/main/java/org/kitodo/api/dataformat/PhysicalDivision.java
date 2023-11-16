@@ -117,15 +117,31 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         return logicalDivisions;
     }
 
+    /**
+     * Set the media partial view.
+     *
+     * @param mediaPartialView
+     *         The media partial view
+     */
     public void setMediaPartialView(MediaPartialView mediaPartialView) {
         mediaPartialView.setPhysicalDivision(this);
         this.mediaPartialView = mediaPartialView;
     }
 
+    /**
+     * Check if physical division has media partial.
+     *
+     * @return True if has media partial
+     */
     public boolean hasMediaPartialView() {
         return Objects.nonNull(mediaPartialView);
     }
 
+    /**
+     * Get the media partial.
+     *
+     * @return The media partial.
+     */
     public MediaPartialView getMediaPartialView() {
         return mediaPartialView;
     }
