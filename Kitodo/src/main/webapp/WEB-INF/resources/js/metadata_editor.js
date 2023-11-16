@@ -94,32 +94,45 @@ metadataEditor.gallery = {
             let duration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration)
             setMediaPartialsViewsPanelMembers([{name: "duration", value: duration}]);
         },
+        stopPlayEvent: new CustomEvent("mediaPartialStopPlay"),
         togglePlay(button, formattedTimeBegin, formattedTimeExtent) {
-            let interval;
-            let icon = button.querySelector(".ui-icon");
             let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
-            if (mediaElement.paused) {
+
+            let isPaused = mediaElement.paused;
+            mediaElement.dispatchEvent(this.stopPlayEvent); // stop already running media partial
+
+            // start if media element was paused before
+            if (isPaused) {
+
                 let beginTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
                 let endTime = this.parseFormatedTimeToSeconds(formattedTimeExtent);
+
+                let self = this;
+                let onTimeUpdate = function () {
+                    if (mediaElement.currentTime >= beginTime + endTime) {
+                        self.stopPlay(mediaElement, icon);
+                        mediaElement.removeEventListener("timeupdate", onTimeUpdate);
+                    }
+                }
+
+                let onMediaPartialStopPlay = function () {
+                    self.stopPlay(mediaElement, icon);
+                    mediaElement.removeEventListener("timeupdate", onTimeUpdate);
+                }
+
                 mediaElement.currentTime = beginTime;
+                mediaElement.addEventListener("timeupdate", onTimeUpdate);
+                mediaElement.addEventListener("mediaPartialStopPlay", onMediaPartialStopPlay);
+
+                let icon = button.querySelector(".ui-icon");
                 icon.classList.remove("fa-play");
                 icon.classList.add("fa-stop");
+
                 mediaElement.play();
-                if (formattedTimeExtent.trim().length !== 0) {
-                    let self = this;
-                    interval = setInterval(function () {
-                        if (mediaElement.currentTime >= beginTime + endTime) {
-                            self.stopPlay(mediaElement, interval, icon);
-                        }
-                    }, 100);
-                }
-            } else {
-                this.stopPlay(mediaElement, interval, icon);
             }
         },
-        stopPlay(mediaElement, interval, icon) {
+        stopPlay(mediaElement, icon) {
             mediaElement.pause();
-            clearInterval(interval);
             icon.classList.remove("fa-stop");
             icon.classList.add("fa-play");
         }
