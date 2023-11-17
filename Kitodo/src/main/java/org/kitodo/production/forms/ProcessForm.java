@@ -30,6 +30,7 @@ import javax.faces.model.SelectItemGroup;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -61,6 +62,7 @@ import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.ToggleSelectEvent;
@@ -89,6 +91,7 @@ public class ProcessForm extends TemplateBaseForm {
 
     private String processEditReferer = DEFAULT_LINK;
     private String taskEditReferer = DEFAULT_LINK;
+    private String errorMessage = "";
 
     private List<SelectItem> customColumns;
 
@@ -1181,5 +1184,47 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public FilterMenu getFilterMenu() {
         return filterMenu;
+    }
+
+    /**
+     * Rename media files of all selected processes.
+     */
+    public void renameMedia() {
+        List<Process> processes = getSelectedProcesses();
+        errorMessage = ServiceManager.getFileService().tooManyProcessesSelectedForMediaRenaming(processes.size());
+        if (StringUtils.isBlank(errorMessage)) {
+            PrimeFaces.current().executeScript("PF('renameMediaConfirmDialog').show();");
+        } else {
+            Ajax.update("errorDialog");
+            PrimeFaces.current().executeScript("PF('errorDialog').show();");
+        }
+    }
+
+    /**
+     * Start renaming media files of selected processes.
+     */
+    public void startRenaming() {
+        ServiceManager.getFileService().renameMedia(getSelectedProcesses());
+        PrimeFaces.current().executeScript("PF('notifications').renderMessage({'summary':'"
+                + Helper.getTranslation("renamingMediaFilesOfSelectedProcessesStarted")
+                + "','severity':'info'})");
+    }
+
+    /**
+     * Return media renaming confirmation message with number of processes affected.
+     *
+     * @return media renaming confirmation message
+     */
+    public String getMediaRenamingConfirmMessage() {
+        return Helper.getTranslation("renameMediaForProcessesConfirmMessage",
+                String.valueOf(getSelectedProcesses().size()));
+    }
+
+    /**
+     * Get error message.
+     * @return error message
+     */
+    public String getErrorMessage() {
+        return errorMessage;
     }
 }

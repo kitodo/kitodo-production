@@ -37,6 +37,7 @@ import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProcessFromTemplatePage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
+import org.kitodo.utils.ProcessTestUtils;
 import org.openqa.selenium.support.ui.Select;
 
 public class ImportingST extends BaseTestSelenium {
@@ -120,7 +121,7 @@ public class ImportingST extends BaseTestSelenium {
     @Test
     public void checkDefaultChildProcessImportConfiguration() throws Exception {
         Process process = ServiceManager.getProcessService().getById(multiVolumeWorkId);
-        MockDatabase.copyTestMetadataFile(multiVolumeWorkId, TEST_MULTI_VOLUME_WORK_FILE);
+        ProcessTestUtils.copyTestMetadataFile(multiVolumeWorkId, TEST_MULTI_VOLUME_WORK_FILE);
         // re-save test process to ensure correct baseType
         ServiceManager.getProcessService().save(process, true);
         processesPage.goTo();

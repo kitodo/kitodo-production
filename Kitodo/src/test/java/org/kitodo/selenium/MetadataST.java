@@ -16,14 +16,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -42,13 +39,13 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.utils.ProcessTestUtils;
 
 /**
  * Tests for functions in the metadata editor.
  */
 public class MetadataST extends BaseTestSelenium {
 
-    private static final String TEST_IMAGES_DIR = "images";
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
@@ -65,32 +62,30 @@ public class MetadataST extends BaseTestSelenium {
     private static final String FIRST_CHILD_ID = "FIRST_CHILD_ID";
     private static final String SECOND_CHILD_ID = "SECOND_CHILD_ID";
     private static List<Integer> processHierarchyTestProcessIds = new LinkedList<>();
-    private static final int TEST_PROJECT_ID = 1;
-    private static final int TEST_TEMPLATE_ID = 1;
     private static final String FIRST_STRUCTURE_TREE_NODE_LABEL = "1 : -";
     private static final String SECOND_STRUCTURE_TREE_NODE_LABEL = "2 : -";
 
     private static void prepareMediaReferenceProcess() throws DAOException, DataException, IOException {
-        insertDummyProcesses();
+        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
     }
 
     private static void prepareMetadataLockProcess() throws DAOException, DataException, IOException {
-        insertDummyProcesses();
+        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         insertTestProcessForMetadataLockTest();
-        MockDatabase.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
+        ProcessTestUtils.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
     }
 
     private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DataException {
-        insertDummyProcesses();
+        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         processHierarchyTestProcessIds = linkProcesses();
         copyTestParentProcessMetadataFile();
         updateChildProcessIdsInParentProcessMetadataFile();
     }
 
     private static void prepareMediaRenamingProcess() throws DAOException, DataException, IOException {
-        insertDummyProcesses();
+        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         insertTestProcessForRenamingMediaFiles();
         copyTestFilesForRenamingMediaFiles();
     }
@@ -296,9 +291,9 @@ public class MetadataST extends BaseTestSelenium {
     private static List<Integer> linkProcesses() throws DAOException, DataException {
         List<Integer> processIds = new LinkedList<>();
         List<Process> childProcesses = new LinkedList<>();
-        childProcesses.add(addProcess(FIRST_CHILD_PROCESS_TITLE));
-        childProcesses.add(addProcess(SECOND_CHILD_PROCESS_TITLE));
-        Process parentProcess = addProcess(PARENT_PROCESS_TITLE);
+        childProcesses.add(ProcessTestUtils.addProcess(FIRST_CHILD_PROCESS_TITLE));
+        childProcesses.add(ProcessTestUtils.addProcess(SECOND_CHILD_PROCESS_TITLE));
+        Process parentProcess = ProcessTestUtils.addProcess(PARENT_PROCESS_TITLE);
         parentProcess.getChildren().addAll(childProcesses);
         ServiceManager.getProcessService().save(parentProcess);
         parentProcessId = parentProcess.getId();
@@ -311,62 +306,21 @@ public class MetadataST extends BaseTestSelenium {
         return processIds;
     }
 
-    private static Process addProcess(String processTitle) throws DAOException, DataException {
-        insertDummyProcesses();
-        return MockDatabase.addProcess(processTitle, TEST_PROJECT_ID, TEST_TEMPLATE_ID);
-    }
-
-    private static void insertDummyProcesses() throws DAOException, DataException {
-        dummyProcessIds = new LinkedList<>();
-        List<Integer> processIds = ServiceManager.getProcessService().getAll().stream().map(Process::getId)
-                .collect(Collectors.toList());
-        int id = Collections.max(processIds) + 1;
-        while (processDirExists(id)) {
-            dummyProcessIds.add(MockDatabase.insertDummyProcess(id));
-            id++;
-        }
-    }
-
-    private static boolean processDirExists(int processId) {
-        URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId)).toUri();
-        return ServiceManager.getFileService().isDirectory(uri);
-    }
-
     private static void copyTestFilesForMediaReferences() throws IOException {
-        copyTestFiles(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
+        ProcessTestUtils.copyTestFiles(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
     }
 
     private static void copyTestFilesForRenamingMediaFiles() throws IOException {
-        copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
-    }
-
-    private static void copyTestFiles(int processId, String filename) throws IOException {
-        // copy test meta xml
-        MockDatabase.copyTestMetadataFile(processId, filename);
-        URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
-                .toUri();
-        // copy test images
-        URI testImagesUri = Paths.get(ConfigCore.getKitodoDataDirectory(), TEST_IMAGES_DIR).toUri();
-        URI targetImages = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
-                + "/images/").toUri();
-        try {
-            if (!ServiceManager.getFileService().isDirectory(targetImages)) {
-                ServiceManager.getFileService().createDirectory(processDir, TEST_IMAGES_DIR);
-            }
-            ServiceManager.getFileService().copyDirectory(testImagesUri, targetImages);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw e;
-        }
+        ProcessTestUtils.copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
     }
 
     private static void copyTestParentProcessMetadataFile() throws IOException {
-        MockDatabase.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
+        ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
     }
 
     private static void updateChildProcessIdsInParentProcessMetadataFile() throws IOException, DAOException {
         Process parentProcess = ServiceManager.getProcessService().getById(parentProcessId);
-        Path metaXml = Paths.get(ConfigCore.getKitodoDataDirectory(), parentProcessId + MockDatabase.META_XML);
+        Path metaXml = Paths.get(ConfigCore.getKitodoDataDirectory(), parentProcessId + ProcessTestUtils.META_XML);
         String xmlContent = Files.readString(metaXml);
         String firstChildId = String.valueOf(parentProcess.getChildren().get(0).getId());
         String secondChildId = String.valueOf(parentProcess.getChildren().get(1).getId());
