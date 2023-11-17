@@ -181,7 +181,9 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
-        result = prime * result + ((mediaPartialView == null) ? 0 : mediaPartialView.hashCode());
+        result = prime * result + ((Objects.isNull(mediaPartialView) || Objects.isNull(mediaPartialView.getBegin()))
+                ? 0
+                : mediaPartialView.getBegin().hashCode());
         return result;
     }
 }

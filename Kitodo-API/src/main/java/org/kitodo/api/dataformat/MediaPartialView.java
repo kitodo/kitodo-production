@@ -11,6 +11,8 @@
 
 package org.kitodo.api.dataformat;
 
+import java.util.Objects;
+
 public class MediaPartialView extends View {
 
     private String begin;
@@ -41,5 +43,19 @@ public class MediaPartialView extends View {
     public void setExtent(String extent) {
         this.extent = extent;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!super.equals(o)) {
+            return false;
+        }
+        if (o == null || getClass().isInstance(o)) {
+            return false;
+        }
+        MediaPartialView mediaPartialView = (MediaPartialView) o;
+        return (Objects.isNull(begin) && Objects.isNull(mediaPartialView.begin)) || begin.equals(
+                mediaPartialView.getBegin());
+    }
+
 
 }
