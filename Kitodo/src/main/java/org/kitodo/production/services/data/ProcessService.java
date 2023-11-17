@@ -2303,9 +2303,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public static void deleteProcess(Process processToDelete) throws DataException, IOException {
         deleteMetadataDirectory(processToDelete);
 
-        processToDelete.getProject().getProcesses().remove(processToDelete);
+        if (Objects.nonNull(processToDelete.getProject())
+                && Objects.nonNull(processToDelete.getProject().getProcesses())) {
+            processToDelete.getProject().getProcesses().remove(processToDelete);
+        }
         processToDelete.setProject(null);
-        processToDelete.getTemplate().getProcesses().remove(processToDelete);
+        if (Objects.nonNull(processToDelete.getTemplate())
+                && Objects.nonNull(processToDelete.getTemplate().getProcesses())) {
+            processToDelete.getTemplate().getProcesses().remove(processToDelete);
+        }
         processToDelete.setTemplate(null);
         Process parent = processToDelete.getParent();
         if (Objects.nonNull(parent)) {

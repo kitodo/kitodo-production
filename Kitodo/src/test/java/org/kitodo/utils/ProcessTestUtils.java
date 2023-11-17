@@ -16,11 +16,11 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.net.URI;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,14 +33,26 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ProcessService;
 import org.primefaces.model.DefaultTreeNode;
 
 public class ProcessTestUtils {
 
     private static final String TEST_IMAGES_DIR = "images";
+    private static final String METADATA_DIR = "metadataFiles";
     public static final String META_XML = "/meta.xml";
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
+    public static final String testFileForHierarchyParent = "multivalued_metadata.xml";
+    public static final String testFileChildProcessToKeep = "testMetadataForChildProcessToKeep.xml";
+    private static final String testFileChildProcessToRemove = "testMetadataForKitodoScript.xml";
+    private static final Map<String, String> hierarchyProcessTitlesAndFiles;
+    static {
+        hierarchyProcessTitlesAndFiles = Map.of(
+                MockDatabase.HIERARCHY_PARENT, testFileForHierarchyParent,
+                MockDatabase.HIERARCHY_CHILD_TO_KEEP, testFileChildProcessToKeep,
+                MockDatabase.HIERARCHY_CHILD_TO_REMOVE, testFileChildProcessToRemove);
+    }
     private static final Logger logger = LogManager.getLogger(ProcessTestUtils.class);
 
     /**
@@ -75,8 +87,10 @@ public class ProcessTestUtils {
      * @param processId ID of test process to whose process directory test files are copied
      * @param filename filename of metadata file to copy
      * @throws IOException when copying test metadata file fails
+     * @throws DAOException when copying test metadata file fails
+     * @throws DataException when copying test metadata file fails
      */
-    public static void copyTestFiles(int processId, String filename) throws IOException {
+    public static void copyTestFiles(int processId, String filename) throws IOException, DAOException, DataException {
         // copy test meta xml
         copyTestMetadataFile(processId, filename);
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
@@ -96,24 +110,46 @@ public class ProcessTestUtils {
         }
     }
 
+    public static void copyTestResources(int processId, String sourceDirectory) throws IOException {
+        String sourceDir = Paths.get(ConfigCore.getKitodoDataDirectory(), sourceDirectory).toString();
+        String targetDir = Paths.get(ConfigCore.getKitodoDataDirectory(), processId + "/").toString();
+
+        try (Stream<Path> pathStream = Files.walk(Paths.get(sourceDir))) {
+            for (Path source : (Iterable<Path>) pathStream::iterator) {
+                Path destination = Paths.get(targetDir, source.toString().substring(sourceDir.length()));
+                try {
+                    Files.copy(source, destination);
+                } catch (IOException e) {
+                    logger.error(e);
+                }
+            }
+        }
+    }
+
     /**
      * Copy test metadata xml file with provided 'filename' to process directory of process with provided ID
-     * 'processId'. Creates directory if it does not exist.
+     * 'processId' and rename the file to 'meta.xml'. Creates directory if it does not exist.
      * @param processId process ID
      * @param filename filename of metadata file
      * @throws IOException when subdirectory cannot be created or metadata file cannot be copied
+     * @throws DAOException when retrieving process from database fails
+     * @throws DataException when saving process fails
      */
-    public static void copyTestMetadataFile(int processId, String filename) throws IOException {
+    public static void copyTestMetadataFile(int processId, String filename) throws IOException, DAOException,
+            DataException {
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
                 .toUri();
         URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
                 + META_XML).toUri();
-        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), filename).toUri();
+        URI metaFileUri = Paths.get(ConfigCore.getKitodoDataDirectory(), METADATA_DIR, filename).toUri();
         if (!ServiceManager.getFileService().isDirectory(processDir)) {
             ServiceManager.getFileService().createDirectory(Paths.get(ConfigCore.getKitodoDataDirectory()).toUri(),
                     String.valueOf(processId));
         }
         ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
+        // re-save process to add meta xml contents to index
+        Process process = ServiceManager.getProcessService().getById(processId);
+        ServiceManager.getProcessService().save(process, true);
     }
 
     /**
@@ -125,31 +161,38 @@ public class ProcessTestUtils {
      * @throws DataException when adding process fails
      */
     public static Process addProcess(String processTitle) throws DAOException, DataException {
-        insertDummyProcesses();
         return MockDatabase.addProcess(processTitle, TEST_PROJECT_ID, TEST_TEMPLATE_ID);
     }
 
     /**
-     * Insert dummy processes into database to avoid conflicts with existing test processes and process directories with
-     * static identifiers.
-     * @return list of dummy process IDs
-     * @throws DAOException when retrieving existing processes from or inserting dummy processes into database fails
-     * @throws DataException when inserting dummy processes into database fails
+     * Delete test process with given ID including potential parent processes.
+     * @param testProcessId ID of process to delete
+     * @throws DAOException when retrieving process from database for deletion fails
      */
-    public static List<Integer> insertDummyProcesses() throws DAOException, DataException {
-        List<Integer> dummyProcessIds = new LinkedList<>();
-        List<Integer> processIds = ServiceManager.getProcessService().getAll().stream().map(Process::getId)
-                .collect(Collectors.toList());
-        int id = Collections.max(processIds) + 1;
-        while (processDirExists(id)) {
-            dummyProcessIds.add(MockDatabase.insertDummyProcess(id));
-            id++;
+    public static void removeTestProcess(int testProcessId) throws DAOException {
+        if (testProcessId > 0) {
+            deleteProcessHierarchy(ServiceManager.getProcessService().getById(testProcessId));
         }
-        return dummyProcessIds;
     }
 
-    private static boolean processDirExists(int processId) {
-        URI uri = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId)).toUri();
-        return ServiceManager.getFileService().isDirectory(uri);
+    private static void deleteProcessHierarchy(Process process){
+        for (Process childProcess : process.getChildren()) {
+            deleteProcessHierarchy(childProcess);
+        }
+        try {
+            ProcessService.deleteProcess(process.getId());
+        } catch (Exception e) {
+            logger.error("Error removing process " + process.getTitle() + " (" + process.getId() + "): " + e.getMessage());
+        }
+    }
+
+    public static void copyHierarchyTestFiles(Map<String, Integer> processTitlesAndIds) throws IOException, DAOException, DataException {
+        for (Map.Entry<String, String> hierarchyProcess : hierarchyProcessTitlesAndFiles.entrySet()) {
+            int processId = processTitlesAndIds.get(hierarchyProcess.getKey());
+            ProcessTestUtils.copyTestFiles(processId, hierarchyProcess.getValue());
+            // re-save to index metadata file
+            Process testProcess = ServiceManager.getProcessService().getById(processId);
+            ServiceManager.getProcessService().save(testProcess);
+        }
     }
 }

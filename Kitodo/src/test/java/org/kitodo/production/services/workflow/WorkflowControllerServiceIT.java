@@ -45,6 +45,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.utils.ProcessTestUtils;
 
 public class WorkflowControllerServiceIT {
 
@@ -58,12 +59,20 @@ public class WorkflowControllerServiceIT {
     private static final FileService fileService = ServiceManager.getFileService();
     private static final TaskService taskService = ServiceManager.getTaskService();
     private static final WorkflowControllerService workflowService = new WorkflowControllerService();
+    private static int workflowTestProcessId = -1;
+    private static int workflowTestProcessId2 = -1;
+    private static final String METADATA_TEST_FILENAME = "testMetadataForNonBlockingParallelTasksTest.xml";
 
     @Before
     public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
+        workflowTestProcessId = Math.toIntExact(ServiceManager.getProcessService().count());
+        ProcessTestUtils.copyTestFiles(workflowTestProcessId, "testmetaNewspaper.xml");
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
+        Task task = ServiceManager.getTaskService().getById(35);
+        workflowTestProcessId2 = task.getProcess().getId();
+        ProcessTestUtils.copyTestMetadataFile(workflowTestProcessId2, METADATA_TEST_FILENAME);
 
         usersDirectory.mkdir();
 
@@ -77,6 +86,8 @@ public class WorkflowControllerServiceIT {
 
     @After
     public void cleanDatabase() throws Exception {
+        ProcessTestUtils.removeTestProcess(workflowTestProcessId);
+        ProcessTestUtils.removeTestProcess(workflowTestProcessId2);
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
@@ -160,6 +171,7 @@ public class WorkflowControllerServiceIT {
     @Test
     public void shouldCloseForProcessWithParallelTasks() throws Exception {
         Task task = taskService.getById(19);
+        ProcessTestUtils.copyTestMetadataFile(task.getProcess().getId(), ProcessTestUtils.testFileChildProcessToKeep);
 
         workflowService.close(task);
         assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
@@ -182,11 +194,14 @@ public class WorkflowControllerServiceIT {
         nextTask = taskService.getById(23);
         assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
             nextTask.getProcessingStatus());
+
+        ProcessTestUtils.removeTestProcess(task.getProcess().getId());
     }
 
     @Test
     public void shouldCloseForInWorkProcessWithParallelTasks() throws Exception {
         Task task = taskService.getById(25);
+        ProcessTestUtils.copyTestMetadataFile(task.getProcess().getId(), ProcessTestUtils.testFileChildProcessToKeep);
 
         workflowService.close(task);
         assertEquals("Task '" + task.getTitle() + "' was not closed!", TaskStatus.DONE, task.getProcessingStatus());
@@ -204,6 +219,7 @@ public class WorkflowControllerServiceIT {
         nextTask = taskService.getById(28);
         assertEquals("Task '" + nextTask.getTitle() + "' was set up to open!", TaskStatus.LOCKED,
             nextTask.getProcessingStatus());
+        ProcessTestUtils.removeTestProcess(task.getProcess().getId());
     }
 
     @Test
@@ -300,7 +316,7 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldCloseForProcessWithScriptParallelTasks() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
         // if you want to execute test on windows change sh to bat in
         // gateway-test5.bpmn20.xml
 
@@ -331,9 +347,10 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldCloseForProcessWithSkippedTask() throws DataException, DAOException, IOException {
-        Process process = new Process();
-        process.setProcessBaseUri(URI.create("4"));
-        ServiceManager.getProcessService().save(process);
+        int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
+        Process process = ServiceManager.getProcessService().getById(processId);
+        process.getTasks().clear();
+        ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForHierarchyParent);
         WorkflowCondition workflowCondition = new WorkflowCondition("xpath", "/mets:nothing");
         ServiceManager.getWorkflowConditionService().saveToDatabase(workflowCondition);
         Task taskToClose =  createAndSaveTask(TaskStatus.INWORK, 1, process, null);
@@ -369,7 +386,7 @@ public class WorkflowControllerServiceIT {
                 thirdTaskToSkip.getProcessingStatus());
 
         process.getTasks().clear();
-        ServiceManager.getProcessService().remove(process);
+        ProcessTestUtils.removeTestProcess(processId);
     }
 
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,

@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
+import java.nio.channels.FileLock;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collections;
@@ -44,7 +45,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.thread.RenameMediaThread;
 import org.kitodo.utils.ProcessTestUtils;
 
@@ -57,7 +57,6 @@ public class FileServiceIT {
     private static final String RENAME_MEDIA_PROCESS_1 = "renameMediaProcess1";
     private static final String RENAME_MEDIA_PROCESS_2 = "renameMediaProcess2";
     private static final String RENAME_MEDIA_REVERT_PROCESS = "revertMediaRenamingProcess";
-    private static List<Integer> dummyProcessIds = new LinkedList<>();
     private static int mediaRenamingFirstProcessId = -1;
     private static int mediaRenamingSecondProcessId = -1;
     private static int revertMediaRenamingProcessId = -1;
@@ -81,24 +80,19 @@ public class FileServiceIT {
     @Test
     public void testRenameFileWithLockedFile() throws IOException {
         FileService fileService = new FileService();
-
         URI oldUri = fileService.createResource(URI.create("fileServiceTest"), "oldName.xml");
         assertTrue(fileService.fileExist(oldUri));
         // Open stream to file and lock it, so it cannot be renamed
         FileOutputStream outputStream = new FileOutputStream(fileService.getFile(oldUri));
-        outputStream.getChannel().lock();
-
-        try {
+        try (outputStream) {
+            FileLock fileLock = outputStream.getChannel().lock();
             fileService.renameFile(oldUri, "newName.xml");
+            fileLock.close();
         } catch (IOException e) {
             URI newUri = URI.create("fileServiceTest/newName.xml");
             assertFalse(fileService.fileExist(newUri));
             assertTrue(fileService.fileExist(oldUri));
-
-        } finally {
-            outputStream.close();
         }
-
     }
 
     @Test
@@ -139,9 +133,7 @@ public class FileServiceIT {
 
     @Test
     public void testRenamingOfMultipleProcesses() throws DAOException, DataException, IOException, InterruptedException {
-        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         mediaRenamingFirstProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_1);
-        ProcessTestUtils.insertDummyProcesses();
         mediaRenamingSecondProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_2);
         ProcessTestUtils.copyTestFiles(mediaRenamingFirstProcessId, TEST_RENAME_MEDIA_FILE);
         ProcessTestUtils.copyTestFiles(mediaRenamingSecondProcessId, TEST_RENAME_MEDIA_FILE);
@@ -163,7 +155,6 @@ public class FileServiceIT {
     @Test
     public void testRevertingOriginalFilenamesAfterRenamingError() throws DAOException, DataException, IOException,
             InterruptedException {
-        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         revertMediaRenamingProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_REVERT_PROCESS);
         ProcessTestUtils.copyTestFiles(revertMediaRenamingProcessId, TEST_RENAME_MEDIA_FILE);
         Path processScansDir = Paths.get(ConfigCore.getKitodoDataDirectory(), revertMediaRenamingProcessId
@@ -223,14 +214,9 @@ public class FileServiceIT {
      */
     @AfterClass
     public static void removeDummyAndTestProcesses() throws Exception {
-        for (int processId : dummyProcessIds) {
-            ServiceManager.getProcessService().removeFromDatabase(processId);
-            ServiceManager.getProcessService().removeFromIndex(processId, false);
-        }
-        dummyProcessIds = new LinkedList<>();
-        ProcessService.deleteProcess(mediaRenamingFirstProcessId);
-        ProcessService.deleteProcess(mediaRenamingSecondProcessId);
-        ProcessService.deleteProcess(revertMediaRenamingProcessId);
+        ProcessTestUtils.removeTestProcess(mediaRenamingFirstProcessId);
+        ProcessTestUtils.removeTestProcess(mediaRenamingSecondProcessId);
+        ProcessTestUtils.removeTestProcess(revertMediaRenamingProcessId);
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }

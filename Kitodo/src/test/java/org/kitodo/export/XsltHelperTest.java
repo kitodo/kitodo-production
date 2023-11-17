@@ -26,12 +26,14 @@ import org.xmlunit.matchers.CompareMatcher;
 
 public class XsltHelperTest {
 
+    private static final String META_XML = "testMetadataFileServiceTest.xml";
+
     @Test
     public void shouldTransformKitodoToMods() throws Exception {
         final String path = "src/test/resources/";
 
         ByteArrayOutputStream outputStream = XsltHelper.transformXmlByXslt(
-            new StreamSource(path + "metadata/2/meta.xml"), URI.create(path + "xslt/kitodo2mods.xsl"));
+            new StreamSource(path + "metadata/metadataFiles/" + META_XML), URI.create(path + "xslt/kitodo2mods.xsl"));
 
         File expected = new File(path + "metsFromKitodo.xml");
         File result = new File(path + "mets.xml");

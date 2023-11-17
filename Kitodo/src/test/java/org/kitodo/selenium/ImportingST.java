@@ -122,8 +122,6 @@ public class ImportingST extends BaseTestSelenium {
     public void checkDefaultChildProcessImportConfiguration() throws Exception {
         Process process = ServiceManager.getProcessService().getById(multiVolumeWorkId);
         ProcessTestUtils.copyTestMetadataFile(multiVolumeWorkId, TEST_MULTI_VOLUME_WORK_FILE);
-        // re-save test process to ensure correct baseType
-        ServiceManager.getProcessService().save(process, true);
         processesPage.goTo();
         processesPage.applyFilter("id:" + multiVolumeWorkId);
         await("Wait for filter to be applied")

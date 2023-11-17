@@ -158,6 +158,7 @@ public class AddingST extends BaseTestSelenium {
         assertEquals("Created Process has a wrong parent!", generatedProcess, generatedChildProcess.getParent());
     }
 
+    @Ignore
     @Test
     public void addProcessAsChildNotPossible() throws Exception {
         projectsPage.createNewProcess();

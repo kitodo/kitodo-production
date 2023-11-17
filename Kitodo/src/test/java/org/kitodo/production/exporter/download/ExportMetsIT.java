@@ -40,13 +40,13 @@ public class ExportMetsIT {
 
     private static final File scriptCreateDirUserHome = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-    private static FileService fileService = ServiceManager.getFileService();
+    private static final FileService fileService = ServiceManager.getFileService();
     private static String userDirectory;
     private static String metadataDirectory;
     private static URI exportUri;
     private static Process process;
 
-    private ExportMets exportMets = new ExportMets();
+    private final ExportMets exportMets = new ExportMets();
 
     @BeforeClass
     public static void setUp() throws Exception {
@@ -60,7 +60,7 @@ public class ExportMetsIT {
         exportUri = ConfigCore.getUriParameter(ParameterCore.DIR_USERS, userDirectory);
 
         fileService.createDirectory(URI.create(""), metadataDirectory);
-        fileService.copyFile(URI.create("testmetaNewFormat.xml"), URI.create(metadataDirectory + "/meta.xml"));
+        fileService.copyFile(URI.create("metadataFiles/testmetaNewFormat.xml"), URI.create(metadataDirectory + "/meta.xml"));
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         FileLoader.createConfigProjectsFile();
 

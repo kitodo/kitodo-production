@@ -14,22 +14,19 @@ package org.kitodo.production.process;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.file.DirectoryStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.MonthDay;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.awaitility.Awaitility;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -38,7 +35,6 @@ import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.NewspaperCourse;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.TreeDeleter;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
@@ -56,6 +52,7 @@ import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
+import org.kitodo.utils.ProcessTestUtils;
 
 public class NewspaperProcessesGeneratorIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
@@ -63,6 +60,10 @@ public class NewspaperProcessesGeneratorIT {
 
     private static final String firstProcess = "First process";
     private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+    private static int newspaperTestProcessId = -1;
+    private static int rulesetId = -1;
+    private static final String NEWSPAPER_TEST_METADATA_FILE = "testmetaNewspaper.xml";
+    private static final String NEWSPAPER_TEST_PROCESS_TITLE = "NewspaperOverallProcess";
 
     @Rule
     public ExpectedException expectedEx = ExpectedException.none();
@@ -73,16 +74,17 @@ public class NewspaperProcessesGeneratorIT {
      * @throws Exception
      *             if that does not work
      */
-    @Before
-    public void setUp() throws Exception {
+    @BeforeClass
+    public static void setUp() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
         }
         FileLoader.createConfigProjectsFileForCalendarHierarchyTests();
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertProcessForCalendarHierarchyTests();
+        MockDatabase.insertFoldersForSecondProject();
         MockDatabase.setUpAwaitility();
+        rulesetId = MockDatabase.insertRuleset("Newspaper", "newspaper.xml", 1);
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         Awaitility.await().until(() -> {
@@ -94,8 +96,8 @@ public class NewspaperProcessesGeneratorIT {
     /**
      * The test environment is cleaned up and the database is closed.
      */
-    @After
-    public void tearDown() throws Exception {
+    @AfterClass
+    public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
@@ -106,36 +108,67 @@ public class NewspaperProcessesGeneratorIT {
     }
 
     /**
+     * Create newspaper test process and copy corresponding meta.xml file.
+     * @throws DAOException when inserting test or dummy processes fails
+     * @throws DataException when inserting test or dummy processes fails
+     * @throws IOException when copying test metadata file fails
+     */
+    @Before
+    public void prepareNewspaperProcess() throws DAOException, DataException, IOException {
+        newspaperTestProcessId = MockDatabase.insertTestProcess(NEWSPAPER_TEST_PROCESS_TITLE, 1, 1, rulesetId);
+        ProcessTestUtils.copyTestFiles(newspaperTestProcessId, NEWSPAPER_TEST_METADATA_FILE);
+    }
+
+    /**
+     * Remove newspaper test processes.
+     * @throws DAOException when removing dummy processes from database fails
+     * @throws DataException when deleting newspaper test processes fails
+     * @throws IOException when deleting metadata test files fails
+     */
+    @After
+    public void cleanupNewspaperProcess() throws DAOException, DataException, IOException {
+        if (newspaperTestProcessId > 0) {
+            deleteProcessHierarchy(ServiceManager.getProcessService().getById(newspaperTestProcessId));
+        }
+    }
+
+    private static void deleteProcessHierarchy(Process process) throws DAOException, DataException, IOException {
+        for (Process childProcess : process.getChildren()) {
+            deleteProcessHierarchy(childProcess);
+        }
+        ProcessService.deleteProcess(process.getId());
+    }
+
+    /**
      * Perform the test. A long-running task is simulated: Progress and number
      * of steps are queried and the next step is performed.
      */
     @Test
     public void shouldGenerateNewspaperProcesses() throws Exception {
-        // create backup of meta data file as this file is modified inside test
-        File metaFile = new File("src/test/resources/metadata/10/meta.xml");
-        File backupFile = new File("src/test/resources/metadata/10/meta.xml.1");
-        FileUtils.copyFile(metaFile, backupFile);
-
-        Process completeEdition = ServiceManager.getProcessService().getById(10);
+        Process completeEdition = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         Course course = NewspaperCourse.getCourse();
         course.splitInto(Granularity.DAYS);
         NewspaperProcessesGenerator underTest = new NewspaperProcessesGenerator(completeEdition, course);
         while (underTest.getProgress() < underTest.getNumberOfSteps()) {
             underTest.nextStep();
         }
+        int maxId = getChildProcessWithLargestId(completeEdition, 0);
         Assert.assertEquals("The newspaper processes generator has not been completed!", underTest.getNumberOfSteps(),
             underTest.getProgress());
         Assert.assertEquals("Process title missing in newspaper's meta.xml", "NewspaperOverallProcess",
-            readProcessTitleFromMetadata(10, false));
+            readProcessTitleFromMetadata(newspaperTestProcessId, false));
         Assert.assertEquals("Process title missing in year's meta.xml", "NewspaperOverallProcess_1703",
-            readProcessTitleFromMetadata(11, false));
+            readProcessTitleFromMetadata(newspaperTestProcessId + 1, false));
         Assert.assertEquals("Process title missing in issue's meta.xml", "NewspaperOverallProcess_17050127",
-            readProcessTitleFromMetadata(28, true));
+            readProcessTitleFromMetadata(maxId, true));
+    }
 
-        // restore backuped meta data file
-        FileUtils.deleteQuietly(metaFile);
-        FileUtils.moveFile(backupFile, metaFile);
-        cleanUp();
+    private int getChildProcessWithLargestId(Process process, int maxId) {
+        maxId = Math.max(maxId, process.getId());
+        for (Process childProcess : process.getChildren()) {
+            maxId = getChildProcessWithLargestId(childProcess, maxId);
+        }
+        return maxId;
     }
 
     /*
@@ -162,13 +195,7 @@ public class NewspaperProcessesGeneratorIT {
      */
     @Test
     public void shouldGenerateSeasonProcesses() throws Exception {
-        // create backup of meta data file as this file is modified inside test
-        File metaFile = new File("src/test/resources/metadata/10/meta.xml");
-        File backupFile = new File("src/test/resources/metadata/10/meta.xml.1");
-        FileUtils.copyFile(metaFile, backupFile);
-
-        // Set base type in metadata/10/meta.xml to "Season"
-        Process seasonProcess = ServiceManager.getProcessService().getById(10);
+        Process seasonProcess = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         URI seasonUri = processService.getMetadataFileUri(seasonProcess);
         Workpiece seasonMets = metsService.loadWorkpiece(seasonUri);
         seasonMets.getLogicalStructure().setType("Season");
@@ -197,32 +224,26 @@ public class NewspaperProcessesGeneratorIT {
                  */
                 String twoYears = workpiece.getLogicalStructure().getOrderlabel();
                 List<String> years = Arrays.asList(twoYears.split("/", 2));
-                Assert.assertTrue("Bad season-year in " + seasonProcess + ": " + twoYears,
-                    Integer.parseInt(years.get(0)) + 1 == Integer.parseInt(years.get(1)));
+                Assert.assertEquals("Bad season-year in " + seasonProcess + ": " + twoYears,
+                        Integer.parseInt(years.get(0)) + 1, Integer.parseInt(years.get(1)));
 
                 // more tests
                 monthChecksOfShouldGenerateSeasonProcesses(seasonProcess, workpiece, twoYears, years);
                 dayChecksOfShouldGenerateSeasonProcesses(seasonProcess, workpiece);
             }
         }
-
-        // restore backed-up meta data file
-        FileUtils.deleteQuietly(metaFile);
-        FileUtils.moveFile(backupFile, metaFile);
-        cleanUp();
     }
 
     @Test
     public void shouldNotGenerateDuplicateProcessTitle() throws DAOException, DataException {
-        Process completeEdition = ServiceManager.getProcessService().getById(10);
+        Process completeEdition = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         Course course = NewspaperCourse.getDuplicatedCourse();
         course.splitInto(Granularity.DAYS);
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
-        generatesNewspaperProcessesThread.run();
+        generatesNewspaperProcessesThread.start();
 
         ProcessDTO byId = ServiceManager.getProcessService().findById(11);
         Assert.assertNull("Process should not have been created", byId.getTitle());
-
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {
@@ -289,21 +310,6 @@ public class NewspaperProcessesGeneratorIT {
                     monthValue.compareTo(previousMonthValue) > 0);
             }
             previousMonthValue = monthValue;
-        }
-    }
-
-    /**
-     * To clean up after the end of the test. All metadata directories >10 will
-     * be deleted.
-     */
-    private static void cleanUp() throws IOException {
-        Path dirProcesses = Paths.get(ConfigCore.getParameter(ParameterCore.DIR_PROCESSES));
-        DirectoryStream<Path> directoryStream = Files.newDirectoryStream(dirProcesses);
-        for (Path path : directoryStream) {
-            String fileName = path.getFileName().toString();
-            if (fileName.matches("\\d+") && Integer.valueOf(fileName) > 10) {
-                TreeDeleter.deltree(path);
-            }
         }
     }
 }

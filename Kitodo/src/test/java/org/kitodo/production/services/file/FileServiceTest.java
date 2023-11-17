@@ -77,8 +77,8 @@ public class FileServiceTest {
         File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
         ExecutionPermission.setNoExecutePermission(script);
 
-        assertTrue("Result of execution was incorrect!",
-            URI.create((parentFolderUri.getPath() + '/' + "testMetaScript")).equals(result));
+        assertEquals("Result of execution was incorrect!", URI.create((parentFolderUri.getPath()
+                + '/' + "testMetaScript")), result);
         assertTrue("Created resource is not directory!", file.isDirectory());
         assertFalse("Created resource is file!", file.isFile());
         assertTrue("Directory was not created!", file.exists());
@@ -178,7 +178,7 @@ public class FileServiceTest {
         when(process.getProject()).thenReturn(project);
 
         when(process.getProcessBaseUri()).thenReturn(new URI(processBasePath));
-        URI testmeta = Paths.get("./src/test/resources/metadata/testmeta.xml").toUri();
+        URI testmeta = Paths.get("./src/test/resources/metadata/metadataFiles/testmeta.xml").toUri();
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(testmeta);
 
         fileService.searchForMedia(process, workpiece);
