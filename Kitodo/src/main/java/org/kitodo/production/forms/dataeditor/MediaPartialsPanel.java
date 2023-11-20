@@ -40,13 +40,15 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.utils.MediaUtil;
-
-
+import org.omnifaces.util.Ajax;
 
 public class MediaPartialsPanel implements Serializable {
 
     public static final String FORMATTED_TIME_REGEX = "([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d";
     public static final String REQUEST_PARAMETER_MEDIA_DURATION = "mediaDuration";
+    public static final String[] UPDATE_CLIENT_IDENTIFIERS = {"structureTreeForm",
+                                                              "imagePreviewForm:mediaDetailMediaPartialsContainer",
+                                                              "imagePreviewForm:thumbnailStripe"};
     private MediaPartialForm mediaPartialForm;
     private DataEditorForm dataEditor;
     private String mediaDuration;
@@ -89,16 +91,16 @@ public class MediaPartialsPanel implements Serializable {
     /**
      * Validate the duration of the media.
      *
-     * @return The error message if duration is not valid.
+     * @return The error if duration is not valid.
      */
     public String validateDuration() {
-        String errorMessage = null;
+        String error = null;
         if (StringUtils.isEmpty(getMediaDuration())) {
-            errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationEmpty");
+            error = "mediaPartialFormMediaDurationEmpty";
         } else if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getMediaDuration()).matches()) {
-            errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationWrongTimeFormat");
+            error = "mediaPartialFormMediaDurationWrongTimeFormat";
         }
-        return errorMessage;
+        return error;
     }
 
     /**
@@ -107,9 +109,9 @@ public class MediaPartialsPanel implements Serializable {
      * @param mediaViewDivision to delete
      */
     public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
-        String errorMessage = validateDuration();
-        if (Objects.nonNull(errorMessage)) {
-            Helper.setErrorMessage(errorMessage);
+        String error = validateDuration();
+        if (Objects.nonNull(error)) {
+            Helper.setErrorMessage(Helper.getTranslation(error));
             return;
         }
 
@@ -121,6 +123,8 @@ public class MediaPartialsPanel implements Serializable {
             generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
                     convertFormattedTimeToMilliseconds(getMediaDuration()));
         }
+
+        Ajax.update(UPDATE_CLIENT_IDENTIFIERS);
     }
 
     /**

@@ -69,7 +69,7 @@ class AudioWaveform {
 
         this.#wavesurfer = WaveSurfer.create({
             container: document.getElementById(waveContainer.getAttribute("id")),
-            height: 100,
+            height: 250,
             waveColor: "#f3f3f3",
             progressColor: "#ff4e00",
             cursorColor: "#ffffff",

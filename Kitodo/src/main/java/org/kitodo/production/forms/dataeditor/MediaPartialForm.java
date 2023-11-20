@@ -33,16 +33,15 @@ import org.primefaces.PrimeFaces;
 
 public class MediaPartialForm implements Serializable {
 
-    private final DataEditorForm dataEditor;
-
+    private final DataEditorForm dataEditorForm;
     private Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision;
     private String title;
     private String begin;
     private String type;
-    private String validationErrorMessage;
+    private String validationError;
 
-    MediaPartialForm(DataEditorForm dataEditor) {
-        this.dataEditor = dataEditor;
+    MediaPartialForm(DataEditorForm dataEditorForm) {
+        this.dataEditorForm = dataEditorForm;
     }
 
     /**
@@ -61,7 +60,7 @@ public class MediaPartialForm implements Serializable {
         mediaPartialDivision = null;
         title = "";
         begin = null;
-        validationErrorMessage = "";
+        validationError = "";
         Ajax.update("mediaPartialForm");
     }
 
@@ -70,17 +69,17 @@ public class MediaPartialForm implements Serializable {
      *
      * @return The validation error message.
      */
-    public String getValidationErrorMessage() {
-        return validationErrorMessage;
+    public String getValidationError() {
+        return Helper.getTranslation(validationError);
     }
 
     /**
-     * Check if form has a validation error message.
+     * Check if form has a validation error.
      *
      * @return True if validation error is not empty.
      */
-    public boolean hasValidationErrorMessage() {
-        return StringUtils.isNotEmpty(validationErrorMessage);
+    public boolean hasValidationError() {
+        return StringUtils.isNotEmpty(validationError);
     }
 
     /**
@@ -110,7 +109,7 @@ public class MediaPartialForm implements Serializable {
             physicalDivision.getLogicalDivisions().add(logicalDivision);
 
             LinkedList<PhysicalDivision> ancestorsOfPhysicalDivision = MetadataEditor.getAncestorsOfPhysicalDivision(
-                    getMediaSelection().getKey(), dataEditor.getWorkpiece().getPhysicalStructure());
+                    getMediaSelection().getKey(), dataEditorForm.getWorkpiece().getPhysicalStructure());
 
             ancestorsOfPhysicalDivision.getLast().getChildren().add(physicalDivision);
 
@@ -122,13 +121,12 @@ public class MediaPartialForm implements Serializable {
                 convertFormattedTimeToMilliseconds(getMediaDuration()));
 
         try {
-            dataEditor.refreshStructurePanel();
+            dataEditorForm.refreshStructurePanel();
         } catch (UnknownTreeNodeDataException e) {
             Helper.setErrorMessage(e.getMessage());
         }
 
-        Ajax.update("structureTreeForm", "imagePreviewForm:mediaDetailMediaPartialsContainer",
-                    "imagePreviewForm:thumbnailStripe");
+        Ajax.update(MediaPartialsPanel.UPDATE_CLIENT_IDENTIFIERS);
         PrimeFaces.current().executeScript("PF('addMediaPartialDialog').hide();");
     }
 
@@ -160,34 +158,34 @@ public class MediaPartialForm implements Serializable {
         this.type = type;
     }
 
-    private String getMediaDuration() {
-        return dataEditor.getGalleryPanel().getMediaPartialsPanel().getMediaDuration();
-    }
-    
-    private Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
-        return dataEditor.getGalleryPanel().getMediaPartialsPanel().getMediaSelection();
+    protected String getMediaDuration() {
+        return dataEditorForm.getGalleryPanel().getMediaPartialsPanel().getMediaDuration();
     }
 
-    private boolean valid() {
-        validationErrorMessage = "";
+    protected Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
+        return dataEditorForm.getGalleryPanel().getMediaPartialsPanel().getMediaSelection();
+    }
+
+    protected boolean valid() {
+        validationError = "";
         if (Objects.isNull(getMediaSelection())) {
-            validationErrorMessage = Helper.getTranslation("mediaPartialFormNoMedium");
+            validationError = "mediaPartialFormNoMedium";
             return false;
         }
-        validationErrorMessage = dataEditor.getGalleryPanel().getMediaPartialsPanel().validateDuration();
-        if (Objects.nonNull(validationErrorMessage)) {
+        validationError = dataEditorForm.getGalleryPanel().getMediaPartialsPanel().validateDuration();
+        if (Objects.nonNull(validationError)) {
             return false;
         }
         if (StringUtils.isEmpty(getBegin())) {
-            validationErrorMessage = Helper.getTranslation("mediaPartialFormStartEmpty");
+            validationError = "mediaPartialFormStartEmpty";
             return false;
         }
         if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
-            validationErrorMessage = Helper.getTranslation("mediaPartialFormStartWrongTimeFormat");
+            validationError = "mediaPartialFormStartWrongTimeFormat";
             return false;
         }
         if (convertFormattedTimeToMilliseconds(getBegin()) >= convertFormattedTimeToMilliseconds(getMediaDuration())) {
-            validationErrorMessage = Helper.getTranslation("mediaPartialFormStartLessThanMediaDuration");
+            validationError = "mediaPartialFormStartLessThanMediaDuration";
             return false;
         }
         if (!isEdit() || (isEdit() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
@@ -195,7 +193,7 @@ public class MediaPartialForm implements Serializable {
                     logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
                             .getBegin().equals(getBegin()));
             if (exists) {
-                validationErrorMessage = Helper.getTranslation("mediaPartialFormStartExists");
+                validationError = "mediaPartialFormStartExists";
                 return false;
             }
         }
