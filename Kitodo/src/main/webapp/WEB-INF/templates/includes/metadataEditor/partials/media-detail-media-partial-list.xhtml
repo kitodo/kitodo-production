@@ -23,7 +23,7 @@
                   rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.enabled}">
 
         <ui:fragment>
-            <p:remoteCommand name="setMediaPartialsViewsPanelMembers"
+            <p:remoteCommand name="remoteCommandSetMembersByRequestParameter"
                              action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.setMembersByRequestParameter()}"/>
 
             <p:outputPanel id="mediaPartialList"

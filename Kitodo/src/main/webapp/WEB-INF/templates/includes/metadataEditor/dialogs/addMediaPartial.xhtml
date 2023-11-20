@@ -29,11 +29,11 @@
                 <p:row>
                     <h3>#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.isEdit() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
                     <h:panelGroup id="errorWrapper"
-                                  rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.hasValidationError()}">
+                                  rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.hasValidationErrorMessage()}">
                         <h:panelGroup layout="block"
                                       styleClass="select-note ui-messages-error">
                             <h:outputText
-                                    value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.validationError}"/>
+                                    value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.validationErrorMessage}"/>
                         </h:panelGroup>
                     </h:panelGroup>
                     <p:outputPanel styleClass="dialogFieldWrapper">

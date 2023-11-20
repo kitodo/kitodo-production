@@ -11,6 +11,15 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.convertFormattedTimeToMilliseconds;
+import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.generateExtentAndSortMediaPartials;
+
+import java.io.Serializable;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.Objects;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -22,15 +31,6 @@ import org.kitodo.production.metadata.MetadataEditor;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
-import java.io.Serializable;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Objects;
-import java.util.regex.Pattern;
-
-import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.generateExtentAndSortMediaPartials;
-import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.getMillisecondsOfFormattedTime;
-
 public class MediaPartialForm implements Serializable {
 
     private final DataEditorForm dataEditor;
@@ -39,12 +39,17 @@ public class MediaPartialForm implements Serializable {
     private String title;
     private String begin;
     private String type;
-    private String validationError;
+    private String validationErrorMessage;
 
     MediaPartialForm(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
     }
 
+    /**
+     * Check if form is in edit mode.
+     *
+     * @return True if form is in edit mode.
+     */
     public boolean isEdit() {
         return Objects.nonNull(mediaPartialDivision);
     }
@@ -56,50 +61,26 @@ public class MediaPartialForm implements Serializable {
         mediaPartialDivision = null;
         title = "";
         begin = null;
-        validationError = "";
+        validationErrorMessage = "";
         Ajax.update("mediaPartialForm");
     }
 
-    public boolean valid() {
-        validationError = "";
-        if (Objects.isNull(getMediaSelection())) {
-            validationError = Helper.getTranslation("mediaPartialFormNoMedium");
-            return false;
-        }
-        validationError = dataEditor.getGalleryPanel().getMediaPartialsPanel().validateDuration();
-        if (Objects.nonNull(validationError)) {
-            return false;
-        }
-        if (StringUtils.isEmpty(getBegin())) {
-            validationError = Helper.getTranslation("mediaPartialFormStartEmpty");
-            return false;
-        }
-        if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
-            validationError = Helper.getTranslation("mediaPartialFormStartWrongTimeFormat");
-            return false;
-        }
-        if (getMillisecondsOfFormattedTime(getBegin()) >= getMillisecondsOfFormattedTime(getDuration())) {
-            validationError = Helper.getTranslation("mediaPartialFormStartLessThanMediaDuration");
-            return false;
-        }
-        if (!isEdit() || (isEdit() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
-            boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
-                    logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
-                            .getBegin().equals(getBegin()));
-            if (exists) {
-                validationError = Helper.getTranslation("mediaPartialFormStartExists");
-                return false;
-            }
-        }
-        return true;
+    /**
+     * Get the validation error message.
+     *
+     * @return The validation error message.
+     */
+    public String getValidationErrorMessage() {
+        return validationErrorMessage;
     }
 
-    public String getValidationError() {
-        return validationError;
-    }
-
-    public boolean hasValidationError() {
-        return StringUtils.isNotEmpty(validationError);
+    /**
+     * Check if form has a validation error message.
+     *
+     * @return True if validation error is not empty.
+     */
+    public boolean hasValidationErrorMessage() {
+        return StringUtils.isNotEmpty(validationErrorMessage);
     }
 
     /**
@@ -138,7 +119,7 @@ public class MediaPartialForm implements Serializable {
         }
 
         generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
-                getMillisecondsOfFormattedTime(getDuration()));
+                convertFormattedTimeToMilliseconds(getMediaDuration()));
 
         try {
             dataEditor.refreshStructurePanel();
@@ -179,11 +160,46 @@ public class MediaPartialForm implements Serializable {
         this.type = type;
     }
 
-    private String getDuration() {
-        return dataEditor.getGalleryPanel().getMediaPartialsPanel().getDuration();
+    private String getMediaDuration() {
+        return dataEditor.getGalleryPanel().getMediaPartialsPanel().getMediaDuration();
     }
     
     private Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
         return dataEditor.getGalleryPanel().getMediaPartialsPanel().getMediaSelection();
     }
+
+    private boolean valid() {
+        validationErrorMessage = "";
+        if (Objects.isNull(getMediaSelection())) {
+            validationErrorMessage = Helper.getTranslation("mediaPartialFormNoMedium");
+            return false;
+        }
+        validationErrorMessage = dataEditor.getGalleryPanel().getMediaPartialsPanel().validateDuration();
+        if (Objects.nonNull(validationErrorMessage)) {
+            return false;
+        }
+        if (StringUtils.isEmpty(getBegin())) {
+            validationErrorMessage = Helper.getTranslation("mediaPartialFormStartEmpty");
+            return false;
+        }
+        if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
+            validationErrorMessage = Helper.getTranslation("mediaPartialFormStartWrongTimeFormat");
+            return false;
+        }
+        if (convertFormattedTimeToMilliseconds(getBegin()) >= convertFormattedTimeToMilliseconds(getMediaDuration())) {
+            validationErrorMessage = Helper.getTranslation("mediaPartialFormStartLessThanMediaDuration");
+            return false;
+        }
+        if (!isEdit() || (isEdit() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
+            boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
+                    logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
+                            .getBegin().equals(getBegin()));
+            if (exists) {
+                validationErrorMessage = Helper.getTranslation("mediaPartialFormStartExists");
+                return false;
+            }
+        }
+        return true;
+    }
+
 }

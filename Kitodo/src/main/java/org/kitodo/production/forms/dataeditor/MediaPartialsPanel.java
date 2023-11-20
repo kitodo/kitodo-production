@@ -45,11 +45,11 @@ import org.kitodo.utils.MediaUtil;
 
 public class MediaPartialsPanel implements Serializable {
 
-    public static final String FORMATTED_TIME_REGEX = "(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])";
-    public static final String REQUEST_PARAMETER_DURATION = "duration";
+    public static final String FORMATTED_TIME_REGEX = "([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d";
+    public static final String REQUEST_PARAMETER_MEDIA_DURATION = "mediaDuration";
     private MediaPartialForm mediaPartialForm;
     private DataEditorForm dataEditor;
-    private String duration;
+    private String mediaDuration;
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
 
     MediaPartialsPanel(DataEditorForm dataEditor) {
@@ -93,9 +93,9 @@ public class MediaPartialsPanel implements Serializable {
      */
     public String validateDuration() {
         String errorMessage = null;
-        if (StringUtils.isEmpty(getDuration())) {
+        if (StringUtils.isEmpty(getMediaDuration())) {
             errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationEmpty");
-        } else if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getDuration()).matches()) {
+        } else if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getMediaDuration()).matches()) {
             errorMessage = Helper.getTranslation("mediaPartialFormMediaDurationWrongTimeFormat");
         }
         return errorMessage;
@@ -119,7 +119,7 @@ public class MediaPartialsPanel implements Serializable {
             logicalDivision.getViews().remove();
             dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
             generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
-                    getMillisecondsOfFormattedTime(getDuration()));
+                    convertFormattedTimeToMilliseconds(getMediaDuration()));
         }
     }
 
@@ -177,6 +177,11 @@ public class MediaPartialsPanel implements Serializable {
         return mediaPartialForm;
     }
 
+    /**
+     * Get the media selection.
+     *
+     * @return The media selection
+     */
     public Pair<PhysicalDivision, LogicalDivision> getMediaSelection() {
         return mediaSelection;
     }
@@ -186,16 +191,24 @@ public class MediaPartialsPanel implements Serializable {
      */
     public void setMembersByRequestParameter() {
         Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
-        if (params.containsKey(REQUEST_PARAMETER_DURATION)) {
-            duration = params.get(REQUEST_PARAMETER_DURATION);
+        if (params.containsKey(REQUEST_PARAMETER_MEDIA_DURATION)) {
+            mediaDuration = params.get(REQUEST_PARAMETER_MEDIA_DURATION);
         }
     }
 
-    public static void generateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long duration) {
+    /**
+     * Generate the extent field of every media partial and sort media partials by begin.
+     *
+     * @param logicalDivisions
+     *         The logical divisions of media partials.
+     * @param mediaDuration
+     *         The media duration.
+     */
+    public static void generateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         // sorting reverse to set extent starting from the last entry
         Collections.sort(logicalDivisions, getLogicalDivisionComparator().reversed());
 
-        generateExtentForMediaPartials(logicalDivisions, duration);
+        generateExtentForMediaPartials(logicalDivisions, mediaDuration);
 
         Collections.sort(logicalDivisions, getLogicalDivisionComparator());
     }
@@ -211,19 +224,27 @@ public class MediaPartialsPanel implements Serializable {
                 PhysicalDivision previousPhysicalDivision = previousLogicalDivision.getViews().getFirst()
                         .getPhysicalDivision();
                 if (previousPhysicalDivision.hasMediaPartialView()) {
-                    mediaPartialView.setExtent(getFormattedTimeOfMilliseconds(getMillisecondsOfFormattedTime(
-                            previousPhysicalDivision.getMediaPartialView().getBegin()) - getMillisecondsOfFormattedTime(
+                    mediaPartialView.setExtent(convertMillisecondsToFormattedTime(convertFormattedTimeToMilliseconds(
+                            previousPhysicalDivision.getMediaPartialView()
+                                    .getBegin()) - convertFormattedTimeToMilliseconds(
                             mediaPartialView.getBegin())));
                 }
             } else {
-                mediaPartialView.setExtent(getFormattedTimeOfMilliseconds(
-                        duration - getMillisecondsOfFormattedTime(mediaPartialView.getBegin())));
+                mediaPartialView.setExtent(convertMillisecondsToFormattedTime(
+                        duration - convertFormattedTimeToMilliseconds(mediaPartialView.getBegin())));
             }
             previousLogicalDivision = logicalDivision;
         }
     }
 
-    public static Long getMillisecondsOfFormattedTime(String formattedTime) {
+    /**
+     * Convert formatted time to milliseconds.
+     *
+     * @param formattedTime
+     *         The formatted time in form of {@value #FORMATTED_TIME_REGEX}
+     * @return The milliseconds
+     */
+    public static Long convertFormattedTimeToMilliseconds(String formattedTime) {
         if (formattedTime.contains(".")) {
             formattedTime = formattedTime.split(".")[0];
         }
@@ -232,28 +253,33 @@ public class MediaPartialsPanel implements Serializable {
                 Integer.valueOf(time[0]) * 3600 + Integer.valueOf(time[1]) * 60 + Integer.valueOf(time[2])) * 1000;
     }
 
-    private static String getFormattedTimeOfMilliseconds(Long milliseconds) {
+    private static String convertMillisecondsToFormattedTime(Long milliseconds) {
         return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(milliseconds),
                 TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60, TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60);
     }
 
     private static Comparator<LogicalDivision> getLogicalDivisionComparator() {
-        return (logicalDivision1, logicalDivision2) -> {
-            View view1 = logicalDivision1.getViews().getFirst();
-            View view2 = logicalDivision2.getViews().getFirst();
-            if (Objects.nonNull(view1) && Objects.nonNull(view2)) {
-                PhysicalDivision physicalDivision1 = view1.getPhysicalDivision();
-                PhysicalDivision physicalDivision2 = view2.getPhysicalDivision();
-                if (physicalDivision1.hasMediaPartialView() && physicalDivision2.hasMediaPartialView()) {
-                    return physicalDivision1.getMediaPartialView().getBegin()
-                            .compareTo(physicalDivision2.getMediaPartialView().getBegin());
+        return (logicalDivisionA, logicalDivisionB) -> {
+            View viewA = logicalDivisionA.getViews().getFirst();
+            View viewB = logicalDivisionB.getViews().getFirst();
+            if (Objects.nonNull(viewA) && Objects.nonNull(viewB)) {
+                PhysicalDivision physicalDivisionA = viewA.getPhysicalDivision();
+                PhysicalDivision physicalDivisionB = viewB.getPhysicalDivision();
+                if (physicalDivisionA.hasMediaPartialView() && physicalDivisionB.hasMediaPartialView()) {
+                    return physicalDivisionA.getMediaPartialView().getBegin()
+                            .compareTo(physicalDivisionB.getMediaPartialView().getBegin());
                 }
             }
-            return Integer.compare(logicalDivision1.getOrder(), logicalDivision2.getOrder());
+            return Integer.compare(logicalDivisionA.getOrder(), logicalDivisionB.getOrder());
         };
     }
 
-    public String getDuration() {
-        return duration;
+    /**
+     * Get the media duration.
+     *
+     * @return The media duration
+     */
+    public String getMediaDuration() {
+        return mediaDuration;
     }
 }

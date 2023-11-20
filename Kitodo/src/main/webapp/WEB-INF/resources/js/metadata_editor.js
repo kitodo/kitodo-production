@@ -90,8 +90,8 @@ metadataEditor.gallery = {
             }
         },
         setDuration() {
-            let duration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration)
-            setMediaPartialsViewsPanelMembers([{name: "duration", value: duration}]);
+            let mediaDuration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration)
+            remoteCommandSetMembersByRequestParameter([{name: "mediaDuration", value: mediaDuration}]);
         },
         stopPlayEvent: new CustomEvent("mediaPartialStopPlay"),
         togglePlay(button, formattedTimeBegin, formattedTimeExtent) {
