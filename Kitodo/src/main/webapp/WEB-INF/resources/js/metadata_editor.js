@@ -65,7 +65,7 @@ metadataEditor.gallery = {
         addLeadingZeros(num, totalLength) {
             return String(num).padStart(totalLength, '0');
         },
-        formatTime(seconds) {
+        convertSecondsToFormattedTime(seconds) {
             let hours = parseInt(seconds / 3600); // 3,600 seconds in 1 hour
             seconds = seconds % 3600; // seconds remaining after extracting hours
             let minutes = parseInt(seconds / 60); // 60 seconds in 1 minute
@@ -79,18 +79,18 @@ metadataEditor.gallery = {
             }
             return formattedTime;
         },
-        parseFormatedTimeToSeconds(formattedTime) {
+        convertFormattedTimeToSeconds(formattedTime) {
             let time = formattedTime.split(":");
             return (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
         },
         setBeginIfEmpty() {
             let begin = document.getElementById("mediaPartialForm:beginInput");
             if(!begin.value) {
-                begin.value = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime);
+                begin.value = this.convertSecondsToFormattedTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime);
             }
         },
         setDuration() {
-            let mediaDuration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
+            let mediaDuration = this.convertSecondsToFormattedTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
             remoteCommandSetMembersByRequestParameter([{name: "mediaDuration", value: mediaDuration}]);
         },
         stopPlayEvent: new CustomEvent("mediaPartialStopPlay"),
@@ -100,8 +100,8 @@ metadataEditor.gallery = {
             let isAnotherMediaPartialTimeBegin = formattedTimeBegin !== mediaElement.dataset.mediaPartialTimeBegin;
             mediaElement.dispatchEvent(this.stopPlayEvent); // stop already running media partial
 
-            let startTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
-            let durationTime = this.parseFormatedTimeToSeconds(formattedTimeExtent);
+            let startTime = this.convertFormattedTimeToSeconds(formattedTimeBegin);
+            let durationTime = this.convertFormattedTimeToSeconds(formattedTimeExtent);
 
             if (isPaused || isAnotherMediaPartialTimeBegin) {
                 let self = this;
