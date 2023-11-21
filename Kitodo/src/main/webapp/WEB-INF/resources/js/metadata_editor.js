@@ -10,7 +10,7 @@
  */
 /* globals sendGallerySelect, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF,
    scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata,
-   activateButtons, PF */
+   activateButtons, PF, remoteCommandSetMembersByRequestParameter */
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
@@ -80,7 +80,7 @@ metadataEditor.gallery = {
             return formattedTime;
         },
         parseFormatedTimeToSeconds(formattedTime) {
-            let time = formattedTime.split(":")
+            let time = formattedTime.split(":");
             return (+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]);
         },
         setBeginIfEmpty() {
@@ -90,14 +90,14 @@ metadataEditor.gallery = {
             }
         },
         setDuration() {
-            let mediaDuration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration)
+            let mediaDuration = this.formatTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
             remoteCommandSetMembersByRequestParameter([{name: "mediaDuration", value: mediaDuration}]);
         },
         stopPlayEvent: new CustomEvent("mediaPartialStopPlay"),
         togglePlay(button, formattedTimeBegin, formattedTimeExtent) {
             let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
             let isPaused = mediaElement.paused;
-            let isAnotherMediaPartialTimeBegin = formattedTimeBegin != mediaElement.dataset.mediaPartialTimeBegin;
+            let isAnotherMediaPartialTimeBegin = formattedTimeBegin !== mediaElement.dataset.mediaPartialTimeBegin;
             mediaElement.dispatchEvent(this.stopPlayEvent); // stop already running media partial
 
             let startTime = this.parseFormatedTimeToSeconds(formattedTimeBegin);
@@ -105,6 +105,10 @@ metadataEditor.gallery = {
 
             if (isPaused || isAnotherMediaPartialTimeBegin) {
                 let self = this;
+                let icon = button.querySelector(".ui-icon");
+                icon.classList.remove("fa-play");
+                icon.classList.add("fa-stop");
+
                 let onTimeUpdate = function () {
                     if (mediaElement.currentTime >= startTime + durationTime) {
                         self.stopPlay(mediaElement, icon);
@@ -121,10 +125,6 @@ metadataEditor.gallery = {
                 mediaElement.addEventListener("timeupdate", onTimeUpdate);
                 mediaElement.addEventListener("mediaPartialStopPlay", onMediaPartialStopPlay);
                 mediaElement.dataset.mediaPartialTimeBegin = formattedTimeBegin;
-
-                let icon = button.querySelector(".ui-icon");
-                icon.classList.remove("fa-play");
-                icon.classList.add("fa-stop");
 
                 mediaElement.play();
             }

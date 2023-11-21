@@ -11,6 +11,18 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+
+import java.lang.reflect.Field;
+import java.util.AbstractMap;
+import java.util.LinkedList;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -25,18 +37,6 @@ import org.mockito.Mockito;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
-import java.lang.reflect.Field;
-import java.util.AbstractMap;
-import java.util.LinkedList;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-
 public class MediaPartialFormTest {
 
     public static final String EXISTING_MEDIA_PARTIAL_BEGIN = "00:00:30";
@@ -46,6 +46,9 @@ public class MediaPartialFormTest {
     LogicalDivision logicalDivision;
     PhysicalDivision physicalDivision;
 
+    /**
+     * Initialize test class.
+     */
     @BeforeClass
     public static void initTestClass() {
         // mock frontend update calls
@@ -55,6 +58,9 @@ public class MediaPartialFormTest {
         primefacesSingleton.when(PrimeFaces::current).thenReturn(primeFaces);
     }
 
+    /**
+     * Initialize test function.
+     */
     @Before
     public void initTest() {
         dataEditorForm = mock(DataEditorForm.class);
@@ -87,6 +93,9 @@ public class MediaPartialFormTest {
         doReturn(ancestorsOfPhysicalDivision).when(mediaPartialForm).getAncestorsOfPhysicalDivision();
     }
 
+    /**
+     * Test save function.
+     */
     @Test
     public void testSave() {
         assertEquals(1, logicalDivision.getChildren().size());
@@ -124,6 +133,9 @@ public class MediaPartialFormTest {
                 mediaPartialView.getExtent()); // changed calculation of duration to the begin of next media partial
     }
 
+    /**
+     * Test valid function.
+     */
     @Test
     public void testValidation() throws NoSuchFieldException, IllegalAccessException {
         assertFalse(mediaPartialForm.valid());

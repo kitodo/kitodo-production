@@ -11,34 +11,37 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaPartialView;
-import org.kitodo.api.dataformat.PhysicalDivision;
-import org.mockito.Mockito;
-import org.omnifaces.util.Ajax;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
+import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.PhysicalDivision;
+
 public class MediaPartialPanelTest {
 
     MediaPartialsPanel mediaPartialsPanel;
 
+    /**
+     * Initialize test function.
+     */
     @Before
     public void initTest() {
         DataEditorForm dataEditorForm = mock(DataEditorForm.class);
         mediaPartialsPanel = spy(new MediaPartialsPanel(dataEditorForm));
     }
 
+    /**
+     * Test generation of extent and sorting of media partials.
+     */
     @Test
     public void testGenerateExtentAndSortMediaPartials() {
         List<LogicalDivision> logicalDivisions = new ArrayList<>();
@@ -60,16 +63,9 @@ public class MediaPartialPanelTest {
         Assert.assertEquals("00:00:05", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getExtent());
     }
 
-    private static LogicalDivision getLogicalDivisionWithMediaPartial(String label, String begin) {
-        LogicalDivision logicalDivision = new LogicalDivision();
-        logicalDivision.setLabel(label);
-        PhysicalDivision physicalDivision = new PhysicalDivision();
-        MediaPartialView mediaPartialView = new MediaPartialView(begin);
-        physicalDivision.setMediaPartialView(mediaPartialView);
-        logicalDivision.getViews().add(mediaPartialView);
-        return logicalDivision;
-    }
-
+    /**
+     * Test media duration validation.
+     */
     @Test
     public void testMediaDurationValidation() {
         assertEquals("mediaPartialFormMediaDurationEmpty", mediaPartialsPanel.validateMediaDuration());
@@ -79,9 +75,22 @@ public class MediaPartialPanelTest {
         Assert.assertNull(mediaPartialsPanel.validateMediaDuration());
     }
 
+    /**
+     * Test converting of formatted time and milliseconds.
+     */
     @Test
     public void testConverting() {
         assertEquals(Long.valueOf(3661000L), mediaPartialsPanel.convertFormattedTimeToMilliseconds("01:01:01"));
         assertEquals("01:01:01", mediaPartialsPanel.convertMillisecondsToFormattedTime(3661000L));
+    }
+
+    private static LogicalDivision getLogicalDivisionWithMediaPartial(String label, String begin) {
+        LogicalDivision logicalDivision = new LogicalDivision();
+        logicalDivision.setLabel(label);
+        PhysicalDivision physicalDivision = new PhysicalDivision();
+        MediaPartialView mediaPartialView = new MediaPartialView(begin);
+        physicalDivision.setMediaPartialView(mediaPartialView);
+        logicalDivision.getViews().add(mediaPartialView);
+        return logicalDivision;
     }
 }
