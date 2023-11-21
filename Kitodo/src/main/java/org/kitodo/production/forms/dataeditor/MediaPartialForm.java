@@ -108,10 +108,7 @@ public class MediaPartialForm implements Serializable {
 
             physicalDivision.getLogicalDivisions().add(logicalDivision);
 
-            LinkedList<PhysicalDivision> ancestorsOfPhysicalDivision = MetadataEditor.getAncestorsOfPhysicalDivision(
-                    getMediaSelection().getKey(), dataEditorForm.getWorkpiece().getPhysicalStructure());
-
-            ancestorsOfPhysicalDivision.getLast().getChildren().add(physicalDivision);
+            getAncestorsOfPhysicalDivision().getLast().getChildren().add(physicalDivision);
 
             getMediaSelection().getValue().getChildren().add(logicalDivision);
 
@@ -128,6 +125,11 @@ public class MediaPartialForm implements Serializable {
 
         Ajax.update(MediaPartialsPanel.UPDATE_CLIENT_IDENTIFIERS);
         PrimeFaces.current().executeScript("PF('addMediaPartialDialog').hide();");
+    }
+
+    protected LinkedList<PhysicalDivision> getAncestorsOfPhysicalDivision() {
+        return MetadataEditor.getAncestorsOfPhysicalDivision(getMediaSelection().getKey(),
+                dataEditorForm.getWorkpiece().getPhysicalStructure());
     }
 
     public void setMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
