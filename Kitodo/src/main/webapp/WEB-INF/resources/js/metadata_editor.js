@@ -89,7 +89,7 @@ metadataEditor.gallery = {
                 begin.value = this.convertSecondsToFormattedTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime);
             }
         },
-        setDuration() {
+        setMediaDuration() {
             let mediaDuration = this.convertSecondsToFormattedTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
             remoteCommandSetMembersByRequestParameter([{name: "mediaDuration", value: mediaDuration}]);
         },
