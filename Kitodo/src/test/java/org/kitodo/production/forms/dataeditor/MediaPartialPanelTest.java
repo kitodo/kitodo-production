@@ -13,6 +13,7 @@ package org.kitodo.production.forms.dataeditor;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
@@ -31,12 +32,6 @@ import static org.mockito.Mockito.when;
 public class MediaPartialPanelTest {
 
     MediaPartialsPanel mediaPartialsPanel;
-
-    @Before
-    public void init() {
-        // mock frontend update calls
-        Mockito.mockStatic(Ajax.class);
-    }
 
     @Before
     public void initTest() {
