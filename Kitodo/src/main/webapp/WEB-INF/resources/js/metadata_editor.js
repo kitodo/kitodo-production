@@ -114,12 +114,12 @@ metadataEditor.gallery = {
                         self.stopPlay(mediaElement, icon);
                         mediaElement.removeEventListener("timeupdate", onTimeUpdate);
                     }
-                }
+                };
 
                 let onMediaPartialStopPlay = function () {
                     self.stopPlay(mediaElement, icon);
                     mediaElement.removeEventListener("timeupdate", onTimeUpdate);
-                }
+                };
 
                 mediaElement.currentTime = startTime;
                 mediaElement.addEventListener("timeupdate", onTimeUpdate);
