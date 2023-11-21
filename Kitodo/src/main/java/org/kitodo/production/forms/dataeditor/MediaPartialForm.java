@@ -174,7 +174,7 @@ public class MediaPartialForm implements Serializable {
             validationError = "mediaPartialFormNoMedium";
             return false;
         }
-        validationError = dataEditorForm.getGalleryPanel().getMediaPartialsPanel().validateDuration();
+        validationError = dataEditorForm.getGalleryPanel().getMediaPartialsPanel().validateMediaDuration();
         if (Objects.nonNull(validationError)) {
             return false;
         }

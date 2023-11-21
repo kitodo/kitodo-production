@@ -12,7 +12,6 @@
 package org.kitodo.production.forms.dataeditor;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -30,6 +29,9 @@ import java.lang.reflect.Field;
 import java.util.AbstractMap;
 import java.util.LinkedList;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -87,7 +89,7 @@ public class MediaPartialFormTest {
 
     @Test
     public void testSave() {
-        Assert.assertEquals(1, logicalDivision.getChildren().size());
+        assertEquals(1, logicalDivision.getChildren().size());
 
         // add media partial
         when(mediaPartialForm.getMediaSelection()).thenReturn(new ImmutablePair<>(physicalDivision, logicalDivision));
@@ -97,12 +99,12 @@ public class MediaPartialFormTest {
 
         mediaPartialForm.save();
 
-        Assert.assertEquals(2, logicalDivision.getChildren().size());
-        Assert.assertEquals("Lorem", logicalDivision.getChildren().get(1).getLabel());
+        assertEquals(2, logicalDivision.getChildren().size());
+        assertEquals("Lorem", logicalDivision.getChildren().get(1).getLabel());
         LogicalDivision mediaPartialLogicalDivision = logicalDivision.getChildren().get(1);
         MediaPartialView mediaPartialView = (MediaPartialView) mediaPartialLogicalDivision.getViews().get(0);
-        Assert.assertEquals("00:00:45", mediaPartialView.getBegin());
-        Assert.assertEquals("00:00:15", mediaPartialView.getExtent());
+        assertEquals("00:00:45", mediaPartialView.getBegin());
+        assertEquals("00:00:15", mediaPartialView.getExtent());
 
         // edit media partial
         when(mediaPartialForm.getTitle()).thenReturn("Lorem ipsum");
@@ -112,54 +114,53 @@ public class MediaPartialFormTest {
 
         mediaPartialForm.save();
 
-        Assert.assertEquals(2, logicalDivision.getChildren().size());
+        assertEquals(2, logicalDivision.getChildren().size());
         // 'media partial' is now designated as the first child in the sorting order.
-        Assert.assertEquals("Lorem ipsum", logicalDivision.getChildren().get(0).getLabel());
+        assertEquals("Lorem ipsum", logicalDivision.getChildren().get(0).getLabel());
         mediaPartialLogicalDivision = logicalDivision.getChildren().get(0);
         mediaPartialView = (MediaPartialView) mediaPartialLogicalDivision.getViews().get(0);
-        Assert.assertEquals("00:00:10", mediaPartialView.getBegin());
-        Assert.assertEquals("00:00:20",
+        assertEquals("00:00:10", mediaPartialView.getBegin());
+        assertEquals("00:00:20",
                 mediaPartialView.getExtent()); // changed calculation of duration to the begin of next media partial
     }
 
     @Test
     public void testValidation() throws NoSuchFieldException, IllegalAccessException {
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormNoMedium", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormNoMedium", getValidationError(mediaPartialForm));
 
         when(mediaPartialForm.getMediaSelection()).thenReturn(new ImmutablePair<>(physicalDivision, logicalDivision));
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormMediaDurationEmpty", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormMediaDurationEmpty", getValidationError(mediaPartialForm));
 
         when(mediaPartialsPanel.getMediaDuration()).thenReturn("12345");
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormMediaDurationWrongTimeFormat", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormMediaDurationWrongTimeFormat", getValidationError(mediaPartialForm));
 
         when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00");
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormStartEmpty", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormStartEmpty", getValidationError(mediaPartialForm));
 
         when(mediaPartialForm.getBegin()).thenReturn("12345");
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormStartWrongTimeFormat", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormStartWrongTimeFormat", getValidationError(mediaPartialForm));
 
         when(mediaPartialForm.getBegin()).thenReturn("00:02:00");
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormStartLessThanMediaDuration", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormStartLessThanMediaDuration", getValidationError(mediaPartialForm));
 
         when(mediaPartialForm.getBegin()).thenReturn(EXISTING_MEDIA_PARTIAL_BEGIN);
-        Assert.assertFalse(mediaPartialForm.valid());
-        Assert.assertEquals("mediaPartialFormStartExists", getValidationError(mediaPartialForm));
+        assertFalse(mediaPartialForm.valid());
+        assertEquals("mediaPartialFormStartExists", getValidationError(mediaPartialForm));
 
         when(mediaPartialForm.getBegin()).thenReturn("00:00:45");
-        Assert.assertTrue(mediaPartialForm.valid());
+        assertTrue(mediaPartialForm.valid());
     }
 
     private static String getValidationError(MediaPartialForm mediaPartialForm)
             throws NoSuchFieldException, IllegalAccessException {
         Field validationErrorField = mediaPartialForm.getClass().getDeclaredField("validationError");
         validationErrorField.setAccessible(true);
-        String validationError = (String) validationErrorField.get(mediaPartialForm);
-        return validationError;
+        return (String) validationErrorField.get(mediaPartialForm);
     }
 }

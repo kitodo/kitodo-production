@@ -91,9 +91,9 @@ public class MediaPartialsPanel implements Serializable {
     /**
      * Validate the duration of the media.
      *
-     * @return The error if duration is not valid.
+     * @return The error if media duration is not valid.
      */
-    public String validateDuration() {
+    public String validateMediaDuration() {
         String error = null;
         if (StringUtils.isEmpty(getMediaDuration())) {
             error = "mediaPartialFormMediaDurationEmpty";
@@ -104,18 +104,18 @@ public class MediaPartialsPanel implements Serializable {
     }
 
     /**
-     * Delete media view division from structure panel.
+     * Delete media partial division from structure panel.
      *
-     * @param mediaViewDivision to delete
+     * @param mediaPartialDivision to delete
      */
-    public void deleteMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
-        String error = validateDuration();
+    public void deleteMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
+        String error = validateMediaDuration();
         if (Objects.nonNull(error)) {
             Helper.setErrorMessage(Helper.getTranslation(error));
             return;
         }
 
-        LogicalDivision logicalDivision = mediaViewDivision.getKey();
+        LogicalDivision logicalDivision = mediaPartialDivision.getKey();
         if (dataEditor.getStructurePanel()
                 .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
             logicalDivision.getViews().remove();
@@ -217,7 +217,7 @@ public class MediaPartialsPanel implements Serializable {
         Collections.sort(logicalDivisions, getLogicalDivisionComparator());
     }
 
-    private static void generateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long duration) {
+    private static void generateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         ListIterator<LogicalDivision> iterator = logicalDivisions.listIterator();
         LogicalDivision previousLogicalDivision = null;
         while (iterator.hasNext()) {
@@ -235,7 +235,7 @@ public class MediaPartialsPanel implements Serializable {
                 }
             } else {
                 mediaPartialView.setExtent(convertMillisecondsToFormattedTime(
-                        duration - convertFormattedTimeToMilliseconds(mediaPartialView.getBegin())));
+                        mediaDuration - convertFormattedTimeToMilliseconds(mediaPartialView.getBegin())));
             }
             previousLogicalDivision = logicalDivision;
         }
@@ -257,7 +257,7 @@ public class MediaPartialsPanel implements Serializable {
                 Integer.valueOf(time[0]) * 3600 + Integer.valueOf(time[1]) * 60 + Integer.valueOf(time[2])) * 1000;
     }
 
-    private static String convertMillisecondsToFormattedTime(Long milliseconds) {
+    public static String convertMillisecondsToFormattedTime(Long milliseconds) {
         return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(milliseconds),
                 TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60, TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60);
     }
