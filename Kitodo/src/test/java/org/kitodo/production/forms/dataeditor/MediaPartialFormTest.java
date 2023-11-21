@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
@@ -43,8 +44,17 @@ public class MediaPartialFormTest {
     LogicalDivision logicalDivision;
     PhysicalDivision physicalDivision;
 
+    @BeforeClass
+    public static void initTestClass() {
+        // mock frontend update calls
+        Mockito.mockStatic(Ajax.class);
+        PrimeFaces primeFaces = mock(PrimeFaces.class);
+        MockedStatic<PrimeFaces> primefacesSingleton = Mockito.mockStatic(PrimeFaces.class);
+        primefacesSingleton.when(PrimeFaces::current).thenReturn(primeFaces);
+    }
+
     @Before
-    public void init() {
+    public void initTest() {
         dataEditorForm = mock(DataEditorForm.class);
         Workpiece workpiece = mock(Workpiece.class);
         when(workpiece.getPhysicalStructure()).thenReturn(new PhysicalDivision());
@@ -73,12 +83,6 @@ public class MediaPartialFormTest {
         LinkedList ancestorsOfPhysicalDivision = new LinkedList<>();
         ancestorsOfPhysicalDivision.add(new PhysicalDivision());
         doReturn(ancestorsOfPhysicalDivision).when(mediaPartialForm).getAncestorsOfPhysicalDivision();
-
-        // mock frontend update calls
-        Mockito.mockStatic(Ajax.class);
-        PrimeFaces primeFaces = mock(PrimeFaces.class);
-        MockedStatic<PrimeFaces> primefacesSingleton = Mockito.mockStatic(PrimeFaces.class);
-        primefacesSingleton.when(PrimeFaces::current).thenReturn(primeFaces);
     }
 
     @Test
