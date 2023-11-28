@@ -48,11 +48,6 @@
                 </p:selectOneMenu>
             </div>
 
-            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
-                <p:outputLabel for="processTemplate" value="#{msgs.processTemplate}"/>
-                <p:inputText id="processTemplate" value="#{ProcessForm.process.template.title}" class="input"
-                             disabled="true" readonly="true"/>
-            </div>
         </p:row>
 
         <p:row>
@@ -94,7 +89,7 @@
                                  disabled="#{isViewMode}"
                                  converter="#{ocrdWorkflowConverter}">
                     <f:selectItem itemValue="#{null}"
-                                  itemLabel="-- #{msgs['processConfig.fromTemplate']} --"
+                                  itemLabel="#{not empty ProcessForm.ocrdWorkflowOfTemplate ? msgs['processConfig.fromTemplate'].concat(' (').concat(ProcessForm.ocrdWorkflowOfTemplate.value).concat(')') : msgs['notSelected']}"
                                   noSelectionOption="true"/>
                     <f:selectItems value="#{ProcessForm.ocrdWorkflows}"
                                    var="ocrdWorkflow"

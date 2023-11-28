@@ -883,7 +883,7 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @return list of OCR-D workflows
      */
-    public List<Pair> getOcrdWorkflows() {
+    public List<Pair<?, ?>> getOcrdWorkflows() {
         return ServiceManager.getOcrdWorkflowService().getOcrdWorkflows();
     }
 
@@ -892,8 +892,17 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @return Immutable key value pair
      */
-    public Pair getOcrdWorkflow() {
+    public Pair<?, ?> getOcrdWorkflow() {
         return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getOcrdWorkflowId());
+    }
+
+    /**
+     * Get the OCR-D workflow of process template.
+     *
+     * @return Immutable key value pair
+     */
+    public Pair<?, ?> getOcrdWorkflowOfTemplate() {
+        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getTemplate().getOcrdWorkflowId());
     }
 
     /**
@@ -902,7 +911,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param ocrdWorkflow
      *         The immutable key value pair
      */
-    public void setOcrdWorkflow(Pair ocrdWorkflow) {
+    public void setOcrdWorkflow(Pair<?, ?> ocrdWorkflow) {
         String ocrdWorkflowId = StringUtils.EMPTY;
         if (Objects.nonNull(ocrdWorkflow)) {
             ocrdWorkflowId = ocrdWorkflow.getKey().toString();

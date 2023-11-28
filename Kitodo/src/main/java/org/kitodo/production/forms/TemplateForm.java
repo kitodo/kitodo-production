@@ -280,7 +280,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return list of OCR-D workflows
      */
-    public List<Pair> getOcrdWorkflows() {
+    public List<Pair<?, ?>> getOcrdWorkflows() {
         return ServiceManager.getOcrdWorkflowService().getOcrdWorkflows();
     }
 
@@ -289,7 +289,7 @@ public class TemplateForm extends TemplateBaseForm {
      *
      * @return Immutable key value pair
      */
-    public Pair getOcrdWorkflow() {
+    public Pair<?, ?> getOcrdWorkflow() {
         return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(template.getOcrdWorkflowId());
     }
 
@@ -299,7 +299,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @param ocrdWorkflow
      *         The immutable key value pair
      */
-    public void setOcrdWorkflow(Pair ocrdWorkflow) {
+    public void setOcrdWorkflow(Pair<?, ?> ocrdWorkflow) {
         String ocrdWorkflowId = StringUtils.EMPTY;
         if (Objects.nonNull(ocrdWorkflow)) {
             ocrdWorkflowId = ocrdWorkflow.getKey().toString();

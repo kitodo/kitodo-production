@@ -61,7 +61,7 @@ public class OcrdWorkflowService {
      *
      * @return list of OCR-D workflows
      */
-    public List<Pair> getOcrdWorkflows() {
+    public List<Pair<?, ?>> getOcrdWorkflows() {
         String ocrdWorkflowsDirectoryConfig = ConfigCore.getParameterOrDefaultValue(ParameterCore.OCRD_WORKFLOWS_DIR);
         if (StringUtils.isNotEmpty(ocrdWorkflowsDirectoryConfig)) {
             Path ocrdWorkflowsDirectory = Path.of(ocrdWorkflowsDirectoryConfig);
@@ -78,7 +78,7 @@ public class OcrdWorkflowService {
         return new ArrayList<>();
     }
 
-    private static Pair getImmutablePairFromPath(Path filePath, Path ocrdWorkflowsDirectory) {
+    private static Pair<?, ?> getImmutablePairFromPath(Path filePath, Path ocrdWorkflowsDirectory) {
         String path = filePath.toString();
         path = path.replace(ocrdWorkflowsDirectory.toString(), StringUtils.EMPTY);
         path = StringUtils.removeStart(path, "/");
@@ -91,7 +91,7 @@ public class OcrdWorkflowService {
      * @param ocrdWorkflowId The OCR-D workflow identifier
      * @return The OCR-D workflow
      */
-    public Pair getOcrdWorkflow(String ocrdWorkflowId) {
+    public Pair<?, ?> getOcrdWorkflow(String ocrdWorkflowId) {
         if (StringUtils.isNotEmpty(ocrdWorkflowId)) {
             return getOcrdWorkflows().stream().filter(pair -> pair.getKey().equals(ocrdWorkflowId)).findFirst()
                     .orElse(null);
