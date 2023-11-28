@@ -55,6 +55,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.thread.TaskImageGeneratorThread;
+import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.FileUploadEvent;
 import org.primefaces.model.TreeNode;
@@ -213,16 +214,6 @@ public class UploadFileDialog {
         return mediaVariant;
     }
 
-    private String getPhysicalDivType() {
-        if (mimeType.contains("image")) {
-            return PhysicalDivision.TYPE_PAGE;
-        }
-        if (mimeType.contains("audio")) {
-            return PhysicalDivision.TYPE_TRACK;
-        }
-        return PhysicalDivision.TYPE_OTHER;
-    }
-
     private boolean setUpFolders() {
         VariableReplacer variableReplacer = new VariableReplacer(null, dataEditor.getProcess(), null);
         sourceFolder = dataEditor.getProcess().getProject().getGeneratorSource();
@@ -336,7 +327,7 @@ public class UploadFileDialog {
     public void uploadMedia(FileUploadEvent event) {
         if (event.getFile() != null) {
 
-            PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(getPhysicalDivType(),
+            PhysicalDivision physicalDivision = MetadataEditor.addPhysicalDivision(MediaUtil.getPhysicalDivisionTypeOfMimeType(mimeType),
                     dataEditor.getWorkpiece(), dataEditor.getWorkpiece().getPhysicalStructure(),
                     InsertionPosition.LAST_CHILD_OF_CURRENT_ELEMENT);
             uploadFileUri = new File(sourceFolderURI.getPath().concat(event.getFile().getFileName())).toURI();

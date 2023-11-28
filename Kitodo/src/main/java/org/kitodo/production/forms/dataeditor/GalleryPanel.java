@@ -50,6 +50,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -228,6 +229,13 @@ public class GalleryPanel {
         }
     }
 
+    /**
+     * Check if audio media view waveform is activated in project.
+     */
+    public boolean isAudioMediaViewWaveform() {
+        return dataEditor.getProcess().getProject().isAudioMediaViewWaveform();
+    }
+
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
         Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);
@@ -349,7 +357,7 @@ public class GalleryPanel {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
 
         mediaContentTypeVariants.clear();
         mediaContentTypePreviewFolder.clear();
@@ -393,7 +401,7 @@ public class GalleryPanel {
      */
     private void updateMedia() {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         medias = new ArrayList<>(physicalDivisions.size());
         dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
@@ -799,7 +807,7 @@ public class GalleryPanel {
     private void selectMedia(String physicalDivisionOrder, String stripeIndex, String selectionType) {
         PhysicalDivision selectedPhysicalDivision = null;
         for (PhysicalDivision physicalDivision : this.dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             if (Objects.equals(physicalDivision.getOrder(), Integer.parseInt(physicalDivisionOrder))) {
                 selectedPhysicalDivision = physicalDivision;
                 break;
@@ -829,7 +837,8 @@ public class GalleryPanel {
 
         String scrollScripts = "scrollToSelectedTreeNode();scrollToSelectedPaginationRow();";
         if (GalleryViewMode.PREVIEW.equals(galleryViewMode)) {
-            PrimeFaces.current().executeScript("checkScrollPosition();initializeImage();" + scrollScripts);
+            PrimeFaces.current().executeScript(
+                    "checkScrollPosition();initializeImage();metadataEditor.gallery.mediaView.update();" + scrollScripts);
         } else {
             PrimeFaces.current().executeScript(scrollScripts);
         }
@@ -976,4 +985,32 @@ public class GalleryPanel {
     public String getCachingUUID() {
         return cachingUUID;
     }
+
+    /**
+     * Check if media view has mime type prefix.
+     *
+     * @param mimeTypePrefix
+     *         The mime type prefix
+     * @return True if media view has mime type prefix
+     */
+    public boolean hasMediaViewMimeTypePrefix(String mimeTypePrefix) {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.nonNull(lastSelection)) {
+            GalleryMediaContent galleryMediaContent = getGalleryMediaContent(lastSelection.getKey());
+            if (Objects.nonNull(galleryMediaContent)) {
+                String mediaViewMimeType = galleryMediaContent.getMediaViewMimeType();
+                switch (mimeTypePrefix) {
+                    case MediaUtil.MIME_TYPE_AUDIO_PREFIX:
+                        return MediaUtil.isAudio(mediaViewMimeType);
+                    case MediaUtil.MIME_TYPE_VIDEO_PREFIX:
+                        return MediaUtil.isVideo(mediaViewMimeType);
+                    case MediaUtil.MIME_TYPE_IMAGE_PREFIX:
+                        return MediaUtil.isImage(mediaViewMimeType);
+                    default:
+                }
+            }
+        }
+        return false;
+    }
+
 }

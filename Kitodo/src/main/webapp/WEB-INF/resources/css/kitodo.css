@@ -3061,13 +3061,33 @@ Column content
 
 #imagePreviewForm\:mediaDetail {
     display: flex;
-    width: 100%;
+    width: calc(100% - 100px);
     align-items: center;
     justify-content: center;
+    flex-direction: column;
+    gap: 24px;
 }
 
 #imagePreviewForm\:mediaDetail .mediaPreviewItem {
     max-height: 100%;
+}
+
+#imagePreviewForm\:mediaDetail #audioWaveformTools{
+    display: flex;
+    gap: 30px;
+    justify-content: center;
+    align-items: center;
+    padding: 14px 16px;
+    background: var(--trans-blue);
+    border-radius: 3px;
+}
+
+#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button:first-child {
+    margin-left: 0;
+}
+
+#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button {
+    margin-left: 10px;
 }
 
 #imagePreviewForm .mediaListIconItem {
@@ -3942,6 +3962,16 @@ footer {
 
 .ui-tooltip.comments .message {
     max-width: 300px;
+}
+
+.loader {
+    width: 30px;
+    height: 30px;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
 }
 
 /*----------------------------------------------------------------------
