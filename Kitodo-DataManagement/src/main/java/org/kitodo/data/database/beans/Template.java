@@ -65,6 +65,9 @@ public class Template extends BaseTemplateBean {
                 @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_project_x_template_project_id")) })
     private List<Project> projects;
 
+    @Column(name = "ocrd_workflow_id")
+    private String ocrdWorkflowId;
+
     /**
      * Constructor.
      */
@@ -166,6 +169,26 @@ public class Template extends BaseTemplateBean {
      */
     public void setWorkflow(Workflow workflow) {
         this.workflow = workflow;
+    }
+
+
+    /**
+     * Get OCR-D workflow identifier.
+     *
+     * @return value of OCR-D workflow identifier
+     */
+    public String getOcrdWorkflowId() {
+        return ocrdWorkflowId;
+    }
+
+    /**
+     * Set the OCR-D workflow identifier.
+     *
+     * @param ocrdWorkflowId
+     *         The identifier of the OCR-D workflow
+     */
+    public void setOcrdWorkflowId(String ocrdWorkflowId) {
+        this.ocrdWorkflowId = ocrdWorkflowId;
     }
 
     /**

@@ -31,6 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -875,6 +876,47 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public List<Project> getProjects() {
         return ServiceManager.getProjectService().getAllForSelectedClient();
+    }
+
+    /**
+     * Get list of OCR-D workflows for select list.
+     *
+     * @return list of OCR-D workflows
+     */
+    public List<Pair<?, ?>> getOcrdWorkflows() {
+        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflows();
+    }
+
+    /**
+     * Get the OCR-D workflow.
+     *
+     * @return Immutable key value pair
+     */
+    public Pair<?, ?> getOcrdWorkflow() {
+        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getOcrdWorkflowId());
+    }
+
+    /**
+     * Get the OCR-D workflow of process template.
+     *
+     * @return Immutable key value pair
+     */
+    public Pair<?, ?> getOcrdWorkflowOfTemplate() {
+        return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(process.getTemplate().getOcrdWorkflowId());
+    }
+
+    /**
+     * Set the OCR-D workflow.
+     *
+     * @param ocrdWorkflow
+     *         The immutable key value pair
+     */
+    public void setOcrdWorkflow(Pair<?, ?> ocrdWorkflow) {
+        String ocrdWorkflowId = StringUtils.EMPTY;
+        if (Objects.nonNull(ocrdWorkflow)) {
+            ocrdWorkflowId = ocrdWorkflow.getKey().toString();
+        }
+        process.setOcrdWorkflowId(ocrdWorkflowId);
     }
 
     /**
