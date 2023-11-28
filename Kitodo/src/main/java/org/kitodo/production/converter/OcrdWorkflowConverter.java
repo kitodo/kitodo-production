@@ -24,7 +24,7 @@ import org.kitodo.production.services.ServiceManager;
 
 
 @Named
-public class OcrdWorkflowConverter extends BeanConverter implements Converter {
+public class OcrdWorkflowConverter extends BeanConverter implements Converter<Object> {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
@@ -36,8 +36,8 @@ public class OcrdWorkflowConverter extends BeanConverter implements Converter {
 
     @Override
     public String getAsString(FacesContext context, UIComponent component, Object value) {
-        if (Objects.nonNull(value) && value instanceof Pair) {
-            return (String) ((Pair) value).getKey();
+        if (Objects.nonNull(value) && value instanceof Pair<?,?>) {
+            return (String) ((Pair<?,?>) value).getKey();
         }
         return null;
     }
