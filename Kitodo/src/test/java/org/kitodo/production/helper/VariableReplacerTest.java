@@ -23,6 +23,7 @@ import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Template;
 
 public class VariableReplacerTest {
 
@@ -158,6 +159,26 @@ public class VariableReplacerTest {
         assertEquals("String should not match as containing file variables!", expected,
                 replaced);
     }
+
+    @Test
+    public void shouldReplaceOcrdWorkflowId() {
+        Process process = prepareProcess();
+        Template template = new Template();
+        template.setOcrdWorkflowId("/template-ocrd-workflow.sh");
+        process.setTemplate(template);
+
+        VariableReplacer variableReplacerTemplate = new VariableReplacer(null, process, null);
+        String replaced = variableReplacerTemplate.replace("-title (ocrdworkflowid) -hardcoded test");
+        String expected = "-title " + template.getOcrdWorkflowId() + " -hardcoded test";
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+
+        process.setOcrdWorkflowId("/process-ocrd-workflow.sh");
+        VariableReplacer variableReplacerProcess = new VariableReplacer(null, process, null);
+        replaced = variableReplacerProcess.replace("-title (ocrdworkflowid) -hardcoded test");
+        expected = "-title " + process.getOcrdWorkflowId() + " -hardcoded test";
+        assertEquals("String was replaced incorrectly!", expected, replaced);
+    }
+
 
     private Process prepareProcess() {
         Process process = new Process();

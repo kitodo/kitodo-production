@@ -47,6 +47,12 @@ public enum ParameterCore implements ParameterInterface {
     DIR_RULESETS(new Parameter<UndefinedParameter>("directory.rulesets")),
 
     /**
+     * Absolute path to the directory that the OCR-D workflow files will be
+     * read from. It must be terminated by a directory separator ("/").
+     */
+    OCRD_WORKFLOWS_DIR(new Parameter<>("ocrd.workflows.directory", "")),
+
+    /**
      * Absolute path to the directory that XSLT files are stored in which are used
      * to transform the "XML log" (as visible from the XML button in the processes
      * list) to a downloadable PDF docket which can be enclosed with the physical
