@@ -393,7 +393,7 @@ public class FileManagement implements FileManagementInterface {
         File processRootDirectory = new File(KitodoConfig.getKitodoDataDirectory() + File.separator + processId);
         String scriptCreateDirMeta = KitodoConfig.getParameter("script_createDirMeta");
         String command = scriptCreateDirMeta + ' ' + processRootDirectory.getPath();
-        if (!processRootDirectory.exists() && !commandService.runCommand(command.hashCode(), command).isSuccessful()) {
+        if (!processRootDirectory.exists() && !commandService.runCommand(command).isSuccessful()) {
             throw new IOException("Could not create processRoot directory.");
         }
         return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(processRootDirectory.getPath()).toUri());

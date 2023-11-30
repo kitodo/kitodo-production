@@ -14,15 +14,12 @@ package org.kitodo.filemanagement;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
 
 import org.kitodo.api.command.CommandInterface;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 
 class CommandService {
-
-    private Random random = new Random(1000000);
 
     /**
      * Method executes a script string.
@@ -39,7 +36,7 @@ class CommandService {
         KitodoServiceLoader<CommandInterface> serviceLoader = new KitodoServiceLoader<>(CommandInterface.class);
         CommandInterface command = serviceLoader.loadModule();
 
-        CommandResult commandResult = command.runCommand(random.nextInt(), script);
+        CommandResult commandResult = command.runCommand(script);
         List<String> commandResultMessages = commandResult.getMessages();
         if (commandResultMessages.size() > 0 && commandResultMessages.get(0).contains("IOException")) {
             throw new IOException(commandResultMessages.get(1));
