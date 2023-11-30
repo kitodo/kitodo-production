@@ -3378,6 +3378,47 @@ Column content
     margin-right: 3px;
 }
 
+
+.mediaListImageTooltipTrigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mediaListImageTooltipTrigger i.fa {
+    font-size: 30px;
+}
+
+.ui-tooltip.mediaListImageTooltip {
+    max-width: fit-content;
+}
+
+.ui-tooltip.mediaListImageTooltip.ui-tooltip-left > .ui-tooltip-arrow {
+    border-left-color: var(--pure-white);
+}
+
+.ui-tooltip.mediaListImageTooltip.ui-tooltip-right > .ui-tooltip-arrow {
+    border-right-color: var(--pure-white);
+}
+
+.ui-tooltip.mediaListImageTooltip > .ui-tooltip-text {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--pure-white);
+    padding: 8px;
+}
+
+.ui-tooltip.mediaListImageTooltip > .ui-tooltip-text > img {
+    max-width: 30vw;
+    max-height: 40vh;
+}
+
+.ui-tooltip.mediaListImageTooltip > .ui-tooltip-text > div {
+    color: var(--carbon-blue);
+    margin-top: 6px;
+    font-size: smaller;
+}
+
 .ui-widget .thumbnail-overlay {
     position: absolute;
     top: 0;

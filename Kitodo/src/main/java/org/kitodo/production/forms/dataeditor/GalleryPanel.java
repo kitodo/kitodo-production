@@ -236,6 +236,14 @@ public class GalleryPanel {
         return dataEditor.getProcess().getProject().isAudioMediaViewWaveform();
     }
 
+    /**
+     * Check if the preview tooltip is activated in project.
+     */
+    public boolean isPreviewTooltip() {
+        return dataEditor.getProcess().getProject().isPreviewTooltip();
+    }
+
+
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
         Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);

@@ -12,20 +12,52 @@
 -->
 
 <ui:composition
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:outputPanel class="thumbnail-overlay">
-        <h:outputText rendered="#{media.type eq 'VIDEO'}">
-            #{msgs.video} #{media.shortId}
-        </h:outputText>
-        <h:outputText rendered="#{media.type eq 'AUDIO'}">
-            #{msgs.audio} #{media.shortId}
-        </h:outputText>
-        <h:outputText rendered="#{media.type eq 'IMAGE'}">
-            #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
-        </h:outputText>
-    </p:outputPanel>
+    <ui:param name="isPreviewTooltip"
+              value="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image') and DataEditorForm.galleryPanel.isPreviewTooltip()}"/>
+
+    <ui:fragment rendered="#{not isPreviewTooltip}">
+        <p:outputPanel class="thumbnail-overlay">
+            <h:outputText rendered="#{media.type eq 'VIDEO'}">
+                #{msgs.video} #{media.shortId}
+            </h:outputText>
+            <h:outputText rendered="#{media.type eq 'AUDIO'}">
+                #{msgs.audio} #{media.shortId}
+            </h:outputText>
+            <h:outputText rendered="#{media.type eq 'IMAGE'}">
+                #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
+            </h:outputText>
+        </p:outputPanel>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{isPreviewTooltip}">
+        <p:outputPanel id="mediaListImageTooltipTrigger" class="mediaListImageTooltipTrigger thumbnail-overlay">
+            <h:panelGroup>
+                <i class="fa fa-search-plus"></i>
+            </h:panelGroup>
+        </p:outputPanel>
+
+        <p:tooltip for="mediaListImageTooltipTrigger" styleClass="mediaListImageTooltip">
+            <p:graphicImage value="#{mediaProvider.previewData}"
+                            a:loading="lazy">
+                <f:param name="mediaId"
+                         value="#{media.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+            </p:graphicImage>
+            <p:outputPanel>
+                <h:outputText>
+                    #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
+                </h:outputText>
+            </p:outputPanel>
+        </p:tooltip>
+    </ui:fragment>
 
 </ui:composition>

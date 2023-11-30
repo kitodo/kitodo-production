@@ -128,6 +128,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private Folder preview;
 
     /**
+     * Field to define the status of the preview tooltip.
+     */
+    @Column(name = "preview_tooltip")
+    private Boolean previewTooltip = false;
+
+    /**
      * Folder with media to use for the audio preview.
      */
     @ManyToOne
@@ -519,6 +525,25 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     public void setPreview(Folder preview) {
         this.preview = preview;
     }
+
+    /**
+     * Get the status of the preview tooltip.
+     *
+     * @return True if is active
+     */
+    public boolean isPreviewTooltip() {
+        return previewTooltip;
+    }
+
+    /**
+     * Set the status of the preview tooltip.
+     *
+     * @param previewTooltip True if is active
+     */
+    public void setPreviewTooltip(boolean previewTooltip) {
+        this.previewTooltip = previewTooltip;
+    }
+
 
     /**
      * Returns the folder to use for audio preview.
