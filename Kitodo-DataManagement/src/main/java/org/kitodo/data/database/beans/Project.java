@@ -544,7 +544,6 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.previewTooltip = previewTooltip;
     }
 
-
     /**
      * Returns the folder to use for audio preview.
      *
