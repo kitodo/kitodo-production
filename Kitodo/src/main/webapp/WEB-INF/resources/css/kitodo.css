@@ -3089,7 +3089,7 @@ Column content
 }
 
 #imagePreviewForm\:mediaPartialList .mediaPartialItem table:first-child td:first-child {
-    padding-bottom: 0px;
+    padding-bottom: 0;
 }
 
 #imagePreviewForm\:mediaPartialList .mediaPartialItem .actions > div {
