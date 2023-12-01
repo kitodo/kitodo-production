@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -145,7 +144,7 @@ public class MediaPartialsPanel implements Serializable {
      * @return True if enabled
      */
     public boolean isEnabled() {
-        return !getMediaPartialDivisions().isEmpty();;
+        return !getMediaPartialDivisions().isEmpty();
     }
 
     /**
