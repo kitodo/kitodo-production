@@ -119,7 +119,7 @@ public class MediaPartialsPanel implements Serializable {
                 .deletePhysicalDivision(logicalDivision.getViews().getFirst().getPhysicalDivision())) {
             logicalDivision.getViews().remove();
             dataEditor.getStructurePanel().deleteLogicalDivision(logicalDivision);
-            generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
+            calculateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
                     convertFormattedTimeToMilliseconds(getMediaDuration()));
         }
 
@@ -200,23 +200,32 @@ public class MediaPartialsPanel implements Serializable {
     }
 
     /**
-     * Generate the extent field of every media partial and sort media partials by begin.
+     * Calculates the extent field of every media partial and sort media partials by begin.
      *
      * @param logicalDivisions
      *         The logical divisions of media partials.
      * @param mediaDuration
      *         The media duration.
      */
-    public static void generateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
-        // sorting reverse to set extent starting from the last entry
-        logicalDivisions.sort(getLogicalDivisionComparator().reversed());
-
-        generateExtentForMediaPartials(logicalDivisions, mediaDuration);
-
+    public static void calculateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
+        calculateExtentForMediaPartials(logicalDivisions, mediaDuration);
         logicalDivisions.sort(getLogicalDivisionComparator());
     }
 
-    private static void generateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
+    /**
+     * Calculate the extent of a media partial.
+     *
+     * Calculates the duration or extent of a media partial until the next one or until the end of the media.
+     *
+     * @param logicalDivisions
+     *         The logical divisions of media partials.
+     * @param mediaDuration
+     *         The media duration.
+     */
+    private static void calculateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
+        // sorting reverse by begin
+        logicalDivisions.sort(getLogicalDivisionComparator().reversed());
+
         ListIterator<LogicalDivision> iterator = logicalDivisions.listIterator();
         LogicalDivision previousLogicalDivision = null;
         while (iterator.hasNext()) {
@@ -224,6 +233,7 @@ public class MediaPartialsPanel implements Serializable {
             MediaPartialView mediaPartialView = logicalDivision.getViews().getFirst().getPhysicalDivision()
                     .getMediaPartialView();
             if (Objects.nonNull(previousLogicalDivision)) {
+                // calculate the duration of media partial to previous media partial
                 PhysicalDivision previousPhysicalDivision = previousLogicalDivision.getViews().getFirst()
                         .getPhysicalDivision();
                 if (previousPhysicalDivision.hasMediaPartialView()) {
@@ -233,6 +243,7 @@ public class MediaPartialsPanel implements Serializable {
                             mediaPartialView.getBegin())));
                 }
             } else {
+                // calculate the duration of media partial to the end of media
                 mediaPartialView.setExtent(convertMillisecondsToFormattedTime(
                         mediaDuration - convertFormattedTimeToMilliseconds(mediaPartialView.getBegin())));
             }

@@ -12,7 +12,7 @@
 package org.kitodo.production.forms.dataeditor;
 
 import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.convertFormattedTimeToMilliseconds;
-import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.generateExtentAndSortMediaPartials;
+import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.calculateExtentAndSortMediaPartials;
 
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -111,10 +111,9 @@ public class MediaPartialForm implements Serializable {
             getAncestorsOfPhysicalDivision().getLast().getChildren().add(physicalDivision);
 
             getMediaSelection().getValue().getChildren().add(logicalDivision);
-
         }
 
-        generateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
+        calculateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
                 convertFormattedTimeToMilliseconds(getMediaDuration()));
 
         try {
@@ -132,6 +131,12 @@ public class MediaPartialForm implements Serializable {
                 dataEditorForm.getWorkpiece().getPhysicalStructure());
     }
 
+    /**
+     * Set the current media partial division.
+     *
+     * @param mediaPartialDivision
+     *         The media partial division.
+     */
     public void setMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
         this.mediaPartialDivision = mediaPartialDivision;
     }

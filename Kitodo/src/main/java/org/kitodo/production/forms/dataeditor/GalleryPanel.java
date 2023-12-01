@@ -1029,6 +1029,11 @@ public class GalleryPanel {
         return false;
     }
 
+    /**
+     * Get the media partials panel.
+     *
+     * @return The media partials
+     */
     public MediaPartialsPanel getMediaPartialsPanel() {
         return mediaPartialsPanel;
     }
