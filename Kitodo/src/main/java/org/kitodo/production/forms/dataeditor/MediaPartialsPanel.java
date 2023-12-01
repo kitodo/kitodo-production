@@ -49,8 +49,8 @@ public class MediaPartialsPanel implements Serializable {
     public static final String[] UPDATE_CLIENT_IDENTIFIERS = {"structureTreeForm",
                                                               "imagePreviewForm:mediaDetailMediaPartialsContainer",
                                                               "imagePreviewForm:thumbnailStripe"};
-    private MediaPartialForm mediaPartialForm;
-    private DataEditorForm dataEditor;
+    private final MediaPartialForm mediaPartialForm;
+    private final DataEditorForm dataEditor;
     private String mediaDuration;
     private Pair<PhysicalDivision, LogicalDivision> mediaSelection;
 
@@ -145,7 +145,7 @@ public class MediaPartialsPanel implements Serializable {
      * @return True if enabled
      */
     public boolean isEnabled() {
-        return getMediaPartialDivisions().size() > 0;
+        return !getMediaPartialDivisions().isEmpty();;
     }
 
     /**
@@ -210,11 +210,11 @@ public class MediaPartialsPanel implements Serializable {
      */
     public static void generateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         // sorting reverse to set extent starting from the last entry
-        Collections.sort(logicalDivisions, getLogicalDivisionComparator().reversed());
+        logicalDivisions.sort(getLogicalDivisionComparator().reversed());
 
         generateExtentForMediaPartials(logicalDivisions, mediaDuration);
 
-        Collections.sort(logicalDivisions, getLogicalDivisionComparator());
+        logicalDivisions.sort(getLogicalDivisionComparator());
     }
 
     private static void generateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {

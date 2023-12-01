@@ -51,7 +51,7 @@ public class MediaPartialPanelTest {
         logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:35"));
 
         // one minute media duration
-        MediaPartialsPanel.generateExtentAndSortMediaPartials(logicalDivisions, Long.valueOf(60000L));
+        MediaPartialsPanel.generateExtentAndSortMediaPartials(logicalDivisions, 60000L);
 
         Assert.assertEquals("00:00:00", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getBegin());
         Assert.assertEquals("00:00:35", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getExtent());
@@ -81,7 +81,7 @@ public class MediaPartialPanelTest {
     @Test
     public void testConverting() {
         assertEquals(Long.valueOf(3661000L), MediaPartialsPanel.convertFormattedTimeToMilliseconds("01:01:01"));
-        assertEquals("01:01:01", mediaPartialsPanel.convertMillisecondsToFormattedTime(3661000L));
+        assertEquals("01:01:01", MediaPartialsPanel.convertMillisecondsToFormattedTime(3661000L));
     }
 
     private static LogicalDivision getLogicalDivisionWithMediaPartial(String label, String begin) {

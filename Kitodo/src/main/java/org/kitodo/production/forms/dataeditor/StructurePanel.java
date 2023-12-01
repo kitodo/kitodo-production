@@ -574,7 +574,7 @@ public class StructurePanel implements Serializable {
         LinkedList<View> views = structure.getViews();
         if (views.size() > 1) {
             return buildViewLabel(views.getFirst()) + " | " + buildViewLabel(views.getLast());
-        } else if (views.size() > 0 && Objects.nonNull(views.getFirst())) {
+        } else if (!views.isEmpty() && Objects.nonNull(views.getFirst())) {
             return buildViewLabel(views.getFirst());
         }
         return null;
