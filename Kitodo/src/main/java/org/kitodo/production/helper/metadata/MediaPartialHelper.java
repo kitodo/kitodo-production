@@ -11,6 +11,12 @@
 
 package org.kitodo.production.helper.metadata;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
@@ -18,13 +24,6 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.metadata.MetadataEditor;
-
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 public class MediaPartialHelper {
 
@@ -73,6 +72,7 @@ public class MediaPartialHelper {
     /**
      * Calculate the extent of a media partial.
      *
+     * <p>
      * Calculates the duration or extent of a media partial until the next one or until the end of the media.
      *
      * @param logicalDivisions
@@ -108,6 +108,20 @@ public class MediaPartialHelper {
         }
     }
 
+    /**
+     * Add a media partial to the media selection.
+     *
+     * @param type
+     *         Type of the logical division
+     * @param title
+     *         The title of the media partial
+     * @param begin
+     *         The begin of the media partial
+     * @param mediaSelection
+     *         The media selection
+     * @param workpiece
+     *         The workpiece
+     */
     public static void addMediaPartialToMediaSelection(String type, String title, String begin,
             Pair<PhysicalDivision, LogicalDivision> mediaSelection, Workpiece workpiece) {
         LogicalDivision logicalDivision = new LogicalDivision();
