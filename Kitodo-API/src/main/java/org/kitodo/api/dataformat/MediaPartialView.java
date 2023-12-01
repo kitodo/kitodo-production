@@ -46,13 +46,23 @@ public class MediaPartialView extends View {
 
     @Override
     public boolean equals(Object o) {
-        if (!super.equals(o)) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || !getClass().isInstance(o)) {
             return false;
         }
-        if (o == null || getClass().isInstance(o)) {
-            return false;
-        }
+
         MediaPartialView mediaPartialView = (MediaPartialView) o;
+
+        // prevent endless loop and not calling super.equals
+        if (Objects.isNull(getPhysicalDivision()) && Objects.nonNull(
+                mediaPartialView.getPhysicalDivision()) || Objects.nonNull(getPhysicalDivision()) && Objects.isNull(
+                mediaPartialView.getPhysicalDivision()) || getPhysicalDivision().hashCode() != mediaPartialView.getPhysicalDivision()
+                .hashCode()) {
+            return false;
+        }
+
         return (Objects.isNull(begin) && Objects.isNull(mediaPartialView.begin)) || begin.equals(
                 mediaPartialView.getBegin());
     }
