@@ -63,7 +63,7 @@ public class View {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass().isInstance(o)) {
+        if (o == null || !getClass().isInstance(o)) {
             return false;
         }
         View view = (View) o;
