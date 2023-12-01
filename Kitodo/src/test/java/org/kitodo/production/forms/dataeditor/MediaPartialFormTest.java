@@ -88,7 +88,7 @@ public class MediaPartialFormTest {
         mediaPartialForm = spy(new MediaPartialForm(dataEditorForm));
 
         // overwrites to handle save function
-        LinkedList ancestorsOfPhysicalDivision = new LinkedList<>();
+        LinkedList<PhysicalDivision> ancestorsOfPhysicalDivision = new LinkedList<>();
         ancestorsOfPhysicalDivision.add(new PhysicalDivision());
         doReturn(ancestorsOfPhysicalDivision).when(mediaPartialForm).getAncestorsOfPhysicalDivision();
     }
