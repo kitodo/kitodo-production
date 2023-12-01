@@ -25,6 +25,7 @@ import org.junit.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.production.helper.metadata.MediaPartialHelper;
 
 public class MediaPartialPanelTest {
 
@@ -51,7 +52,7 @@ public class MediaPartialPanelTest {
         logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:35"));
 
         // one minute media duration
-        MediaPartialsPanel.calculateExtentAndSortMediaPartials(logicalDivisions, 60000L);
+        MediaPartialHelper.calculateExtentAndSortMediaPartials(logicalDivisions, 60000L);
 
         Assert.assertEquals("00:00:00", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getBegin());
         Assert.assertEquals("00:00:35", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getExtent());
@@ -80,8 +81,8 @@ public class MediaPartialPanelTest {
      */
     @Test
     public void testConverting() {
-        assertEquals(Long.valueOf(3661000L), MediaPartialsPanel.convertFormattedTimeToMilliseconds("01:01:01"));
-        assertEquals("01:01:01", MediaPartialsPanel.convertMillisecondsToFormattedTime(3661000L));
+        assertEquals(Long.valueOf(3661000L), MediaPartialHelper.convertFormattedTimeToMilliseconds("01:01:01"));
+        assertEquals("01:01:01", MediaPartialHelper.convertMillisecondsToFormattedTime(3661000L));
     }
 
     private static LogicalDivision getLogicalDivisionWithMediaPartial(String label, String begin) {

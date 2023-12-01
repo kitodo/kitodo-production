@@ -32,6 +32,8 @@ import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.production.helper.metadata.MediaPartialHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.omnifaces.util.Ajax;
@@ -45,6 +47,8 @@ public class MediaPartialFormTest {
     MediaPartialForm mediaPartialForm;
     LogicalDivision logicalDivision;
     PhysicalDivision physicalDivision;
+    PhysicalDivision physicalStructure;
+
 
     /**
      * Initialize test class.
@@ -65,7 +69,8 @@ public class MediaPartialFormTest {
     public void initTest() {
         dataEditorForm = mock(DataEditorForm.class);
         Workpiece workpiece = mock(Workpiece.class);
-        when(workpiece.getPhysicalStructure()).thenReturn(new PhysicalDivision());
+        physicalStructure = new PhysicalDivision();
+        when(workpiece.getPhysicalStructure()).thenReturn(physicalStructure);
         when(dataEditorForm.getWorkpiece()).thenReturn(workpiece);
 
         GalleryPanel galleryPanel = mock(GalleryPanel.class);
@@ -86,11 +91,6 @@ public class MediaPartialFormTest {
         physicalDivision = new PhysicalDivision();
 
         mediaPartialForm = spy(new MediaPartialForm(dataEditorForm));
-
-        // overwrites to handle save function
-        LinkedList<PhysicalDivision> ancestorsOfPhysicalDivision = new LinkedList<>();
-        ancestorsOfPhysicalDivision.add(new PhysicalDivision());
-        doReturn(ancestorsOfPhysicalDivision).when(mediaPartialForm).getAncestorsOfPhysicalDivision();
     }
 
     /**
@@ -100,8 +100,17 @@ public class MediaPartialFormTest {
     public void testSave() {
         assertEquals(1, logicalDivision.getChildren().size());
 
-        // add media partial
         when(mediaPartialForm.getMediaSelection()).thenReturn(new ImmutablePair<>(physicalDivision, logicalDivision));
+
+        // overwrite to test save function
+        LinkedList<PhysicalDivision> ancestorsOfPhysicalDivision = new LinkedList<>();
+        ancestorsOfPhysicalDivision.add(new PhysicalDivision());
+        MockedStatic<MetadataEditor> metadataEditorMockedStatic = Mockito.mockStatic(MetadataEditor.class);
+        metadataEditorMockedStatic.when(() -> MetadataEditor.getAncestorsOfPhysicalDivision(physicalDivision, physicalStructure))
+                    .thenReturn(ancestorsOfPhysicalDivision);
+
+        // add media partial
+
         when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00");
         when(mediaPartialForm.getTitle()).thenReturn("Lorem");
         when(mediaPartialForm.getBegin()).thenReturn("00:00:45");

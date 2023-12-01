@@ -11,11 +11,11 @@
 
 package org.kitodo.production.forms.dataeditor;
 
-import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.convertFormattedTimeToMilliseconds;
-import static org.kitodo.production.forms.dataeditor.MediaPartialsPanel.calculateExtentAndSortMediaPartials;
+import static org.kitodo.production.helper.metadata.MediaPartialHelper.addMediaPartialToMediaSelection;
+import static org.kitodo.production.helper.metadata.MediaPartialHelper.calculateExtentAndSortMediaPartials;
+import static org.kitodo.production.helper.metadata.MediaPartialHelper.convertFormattedTimeToMilliseconds;
 
 import java.io.Serializable;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
@@ -27,7 +27,7 @@ import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.helper.metadata.MediaPartialHelper;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 
@@ -94,23 +94,8 @@ public class MediaPartialForm implements Serializable {
             mediaPartialDivision.getKey().setLabel(getTitle());
             mediaPartialDivision.getValue().setBegin(getBegin());
         } else {
-            LogicalDivision logicalDivision = new LogicalDivision();
-            logicalDivision.setType(getType());
-            logicalDivision.setLabel(getTitle());
-            PhysicalDivision physicalDivision = new PhysicalDivision();
-            physicalDivision.getMediaFiles().putAll(getMediaSelection().getKey().getMediaFiles());
-            physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
-
-            MediaPartialView mediaPartialView = new MediaPartialView(getBegin());
-            physicalDivision.setMediaPartialView(mediaPartialView);
-            mediaPartialView.setPhysicalDivision(physicalDivision);
-            logicalDivision.getViews().add(mediaPartialView);
-
-            physicalDivision.getLogicalDivisions().add(logicalDivision);
-
-            getAncestorsOfPhysicalDivision().getLast().getChildren().add(physicalDivision);
-
-            getMediaSelection().getValue().getChildren().add(logicalDivision);
+            addMediaPartialToMediaSelection(getType(), getTitle(), getBegin(), getMediaSelection(),
+                    dataEditorForm.getWorkpiece());
         }
 
         calculateExtentAndSortMediaPartials(getMediaSelection().getValue().getChildren(),
@@ -124,11 +109,6 @@ public class MediaPartialForm implements Serializable {
 
         Ajax.update(MediaPartialsPanel.UPDATE_CLIENT_IDENTIFIERS);
         PrimeFaces.current().executeScript("PF('addMediaPartialDialog').hide();");
-    }
-
-    protected LinkedList<PhysicalDivision> getAncestorsOfPhysicalDivision() {
-        return MetadataEditor.getAncestorsOfPhysicalDivision(getMediaSelection().getKey(),
-                dataEditorForm.getWorkpiece().getPhysicalStructure());
     }
 
     /**
@@ -187,7 +167,7 @@ public class MediaPartialForm implements Serializable {
             validationError = "mediaPartialFormStartEmpty";
             return false;
         }
-        if (!Pattern.compile(MediaPartialsPanel.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
+        if (!Pattern.compile(MediaPartialHelper.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
             validationError = "mediaPartialFormStartWrongTimeFormat";
             return false;
         }

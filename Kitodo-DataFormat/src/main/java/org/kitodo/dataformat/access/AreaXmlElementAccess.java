@@ -25,7 +25,7 @@ public class AreaXmlElementAccess {
     /**
      * The data object of this area XML element access.
      */
-    private View view = new View();
+    private final View view = new View();
 
     /**
      * Creates a new view. This constructor can be called via the service loader
@@ -45,8 +45,9 @@ public class AreaXmlElementAccess {
         if (fileXmlElementAccess.getPhysicalDivision().hasMediaPartialView()) {
             view.setPhysicalDivision(
                     fileXmlElementAccess.getPhysicalDivision().getMediaPartialView().getPhysicalDivision());
+        } else {
+            view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
         }
-        view.setPhysicalDivision(fileXmlElementAccess.getPhysicalDivision());
     }
 
     View getView() {

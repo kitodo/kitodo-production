@@ -787,7 +787,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public boolean isSelected(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
         if (Objects.nonNull(physicalDivision) && Objects.nonNull(logicalDivision)) {
-            if (physicalDivision.hasMediaPartialView()) {
+            if (physicalDivision.hasMediaPartialView() && physicalDivision.getLogicalDivisions().size() == 1) {
                 return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0)));
             }
             return selectedMedia.contains(new ImmutablePair<>(physicalDivision, logicalDivision));
