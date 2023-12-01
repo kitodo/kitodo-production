@@ -31,7 +31,6 @@ import org.apache.commons.lang3.SystemUtils;
 
 public class CommandTest {
     private static String scriptExtension;
-    private int processId = 3;
     private static boolean windows = false;
     private static File workingScript = new File(
             System.getProperty("user.dir") + "/src/test/resources/working_script.sh");
@@ -70,7 +69,7 @@ public class CommandTest {
         Command command = new Command();
 
         String commandString = "src/test/resources/working_script" + scriptExtension;
-        CommandResult commandResult = command.runCommand(processId, commandString);
+        CommandResult commandResult = command.runCommand(commandString);
 
         List<String> expectedMessages = new ArrayList<>();
         if (windows) {
@@ -80,7 +79,7 @@ public class CommandTest {
 
         expectedMessages.add("Hello World");
 
-        CommandResult expectedCommandResult = new CommandResult(processId, commandString, true, expectedMessages);
+        CommandResult expectedCommandResult = new CommandResult(commandString, true, expectedMessages);
 
         assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful());
@@ -95,9 +94,9 @@ public class CommandTest {
         Command command = new Command();
 
         String commandString = "src/test/resources/notExistingScript" + scriptExtension;
-        CommandResult commandResult = command.runCommand(processId, commandString);
+        CommandResult commandResult = command.runCommand(commandString);
 
-        CommandResult expectedCommandResult = new CommandResult(processId, commandString, false, null);
+        CommandResult expectedCommandResult = new CommandResult(commandString, false, null);
 
         assertEquals("Should not run not existing Command", expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful());
@@ -108,9 +107,9 @@ public class CommandTest {
         Command command = new Command();
 
         String commandString = "src/test/resources/not_working_script" + scriptExtension;
-        CommandResult commandResult = command.runCommand(processId, commandString);
+        CommandResult commandResult = command.runCommand(commandString);
 
-        CommandResult expectedCommandResult = new CommandResult(processId, commandString, false, null);
+        CommandResult expectedCommandResult = new CommandResult(commandString, false, null);
 
         assertEquals("Should not run command with false syntax", expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful());
@@ -121,7 +120,7 @@ public class CommandTest {
         Command command = new Command();
 
         String commandString = "src/test/resources/working_script_with_parameters" + scriptExtension + " testParameter";
-        CommandResult commandResult = command.runCommand(processId, commandString);
+        CommandResult commandResult = command.runCommand(commandString);
 
         ArrayList<String> expectedMessages = new ArrayList<>();
 
@@ -132,7 +131,7 @@ public class CommandTest {
 
         expectedMessages.add("testParameter");
 
-        CommandResult expectedCommandResult = new CommandResult(processId, commandString, true, expectedMessages);
+        CommandResult expectedCommandResult = new CommandResult(commandString, true, expectedMessages);
 
         assertEquals("successful booleans of CommandResults are not identical", expectedCommandResult.isSuccessful(),
                 commandResult.isSuccessful());

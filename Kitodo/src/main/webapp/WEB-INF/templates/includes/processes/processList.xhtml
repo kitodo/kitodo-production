@@ -317,6 +317,11 @@
                                 action="#{ProcessForm.generateResultAsPdf}"
                                 ajax="false"
                                 icon="fa fa-file-pdf-o"/>
+                    <p:menuitem id="renameMedia"
+                                rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
+                                value="#{msgs['renameMediaFiles']}"
+                                action="#{ProcessForm.renameMedia}"
+                                icon="fa fa-files-o"/>
                 </p:menu>
             <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary"
                              icon="fa fa-sort" iconPos="right" process="@this"/>

@@ -13,6 +13,7 @@
 
 <ui:composition
         xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:jsf="http://xmlns.jcp.org/jsf"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="isViewMode" type="boolean"-->
@@ -95,6 +96,21 @@
                 </p:selectOneMenu>
             </div>
 
+            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
+                <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
+                <p:selectOneMenu id="ocrdWorkflow" value="#{TemplateForm.ocrdWorkflow}"
+                                 disabled="#{isViewMode}"
+                                 converter="#{ocrdWorkflowConverter}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="#{msgs.notSelected}"
+                                  noSelectionOption="true"/>
+                    <f:selectItems value="#{TemplateForm.ocrdWorkflows}"
+                                   var="ocrdWorkflow"
+                                   itemValue="#{ocrdWorkflow}"
+                                   itemLabel="#{ocrdWorkflow.value}"/>
+                    <p:ajax event="change" oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
         </p:row>
     </p:panelGrid>
 </ui:composition>
