@@ -80,7 +80,7 @@ public class MediaPartialPanelTest {
      */
     @Test
     public void testConverting() {
-        assertEquals(Long.valueOf(3661000L), mediaPartialsPanel.convertFormattedTimeToMilliseconds("01:01:01"));
+        assertEquals(Long.valueOf(3661000L), MediaPartialsPanel.convertFormattedTimeToMilliseconds("01:01:01"));
         assertEquals("01:01:01", mediaPartialsPanel.convertMillisecondsToFormattedTime(3661000L));
     }
 
