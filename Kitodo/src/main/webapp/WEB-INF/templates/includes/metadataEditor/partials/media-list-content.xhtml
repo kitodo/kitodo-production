@@ -16,7 +16,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <h:outputText rendered="#{media.mediaPartial}" styleClass="icon-media-partial"/>
+    <h:outputText rendered="#{media.isMediaPartial()}" styleClass="icon-media-partial"/>
 
     <p:outputPanel class="thumbnail-overlay">
         <h:outputText rendered="#{media.type eq 'VIDEO'}">
