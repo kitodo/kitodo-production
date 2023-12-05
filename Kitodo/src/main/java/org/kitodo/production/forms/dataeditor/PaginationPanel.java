@@ -12,11 +12,14 @@
 package org.kitodo.production.forms.dataeditor;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
 
@@ -27,6 +30,8 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -49,6 +54,8 @@ public class PaginationPanel {
     private final DataEditorForm dataEditor;
     private boolean fictitiousCheckboxChecked = false;
     private List<SelectItem> paginationSelectionItems;
+    private List<SelectItem> pageLabelItems;
+    private String selectedPageLabelItem;
     private List<Integer> paginationSelectionSelectedItems = new ArrayList<>();
     private String paginationStartValue = "1";
     private Map<PaginatorType, String> paginationTypeSelectItems;
@@ -69,6 +76,22 @@ public class PaginationPanel {
         prepareSelectPaginationModeItems();
         prepareSelectPaginationScopeItems();
     }
+    
+    public String getSelectedPageLabelItem() {
+        return this.selectedPageLabelItem;
+    }
+
+    public void setSelectedPageLabelItem(String selectedPageLabelItem) {
+        this.selectedPageLabelItem = selectedPageLabelItem;
+    }
+
+    public List<SelectItem> getPageLabelItems() {
+        return this.pageLabelItems;
+    }
+
+    public void setPageLabelItems(List<SelectItem> pageLabelItems) {
+        this.pageLabelItems = pageLabelItems;
+    }
 
     /**
      * Checks and updates media references in workpiece depending on changes in file system.
@@ -84,7 +107,7 @@ public class PaginationPanel {
             Helper.setWarnMessage(e.getMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
             physicalDivision.setOrder(i);
@@ -112,7 +135,7 @@ public class PaginationPanel {
      *            selected items to set
      */
     public void setPaginationSelectionSelectedItems(List<Integer> selectedItems) {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         if (!selectedItems.isEmpty()) {
             int lastItemIndex = selectedItems.get(selectedItems.size() - 1);
             if (this.paginationSelectionSelectedItems.isEmpty()
@@ -266,7 +289,7 @@ public class PaginationPanel {
     }
 
     private void preparePaginationSelectionItems() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         paginationSelectionItems = new ArrayList<>(physicalDivisions.size());
         for (int i = 0; i < physicalDivisions.size(); i++) {
             View view = View.of(physicalDivisions.get(i));
@@ -280,7 +303,7 @@ public class PaginationPanel {
      */
     public void preparePaginationSelectionSelectedItems() {
         paginationSelectionSelectedItems = new ArrayList<>();
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
         for (Pair<PhysicalDivision, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
             for (int i = 0; i < physicalDivisions.size(); i++) {
                 PhysicalDivision physicalDivision = physicalDivisions.get(i);
@@ -342,7 +365,7 @@ public class PaginationPanel {
                 paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());
             Paginator paginator = new Paginator(initializer);
             List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                    .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+                    .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
             if (selectPaginationScopeSelectedItem) {
                 for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
                     physicalDivisions.get(i).setOrderlabel(paginator.next());
@@ -382,11 +405,24 @@ public class PaginationPanel {
     public void show() {
         paginationSelectionSelectedItems = new ArrayList<>();
         paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
-        selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
+        selectPaginationModeSelectedItem = null;
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;
         preparePaginationSelectionItems();
         preparePaginationSelectionSelectedItems();
+        preparePageLabelItems();
+    }
+    
+    private void preparePageLabelItems() {
+        RulesetManagementInterface rmi = dataEditor.getRulesetManagement();
+        pageLabelItems = new ArrayList<>();
+        Collection<String> pageLabels = rmi.getFunctionalKeys(FunctionalMetadata.PAGE_LABEL).stream()
+                .map(key -> rmi.getTranslationForKey(key, dataEditor.getPriorityList())).filter(Optional::isPresent)
+                .map(Optional::get).collect(Collectors.toList());
+        for (String s : pageLabels) {
+            pageLabelItems.add(new SelectItem(s, s));
+        }
     }
 }
+
