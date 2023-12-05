@@ -52,6 +52,11 @@ public class Setting {
     @XmlAttribute
     private Boolean editable;
 
+    /**
+     * This will present an input filter for the list of options in select fields if set to true. When entering text,
+     * the filter will display only those options that contain the entered text. This attribute exclusively works with
+     * keys that have an option list; for other keys, no action will occur.
+     */
     @XmlAttribute
     private Boolean filterable;
 

@@ -116,9 +116,8 @@ public class Settings {
     boolean isFilterable(String keyId) {
         if (currentSettings.containsKey(keyId)) {
             return currentSettings.get(keyId).isFilterable();
-        } else {
-            return false;
         }
+        return false;
     }
 
 
