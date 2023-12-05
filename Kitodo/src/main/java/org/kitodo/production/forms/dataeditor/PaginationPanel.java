@@ -107,7 +107,7 @@ public class PaginationPanel {
             Helper.setWarnMessage(e.getMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().ggetAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
             physicalDivision.setOrder(i);
