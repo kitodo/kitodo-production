@@ -46,22 +46,22 @@ public class MediaPartialPanelTest {
     @Test
     public void testGenerateExtentAndSortMediaPartials() {
         List<LogicalDivision> logicalDivisions = new ArrayList<>();
-        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:45"));
-        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:00"));
-        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:55"));
-        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:35"));
+        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:45.001"));
+        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:00.002"));
+        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:55.894"));
+        logicalDivisions.add(getLogicalDivisionWithMediaPartial("Lorem ipsum", "00:00:35.123"));
 
         // one minute media duration
         MediaPartialHelper.calculateExtentAndSortMediaPartials(logicalDivisions, 60000L);
 
-        Assert.assertEquals("00:00:00", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:35", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getExtent());
-        Assert.assertEquals("00:00:35", ((MediaPartialView) logicalDivisions.get(1).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:10", ((MediaPartialView) logicalDivisions.get(1).getViews().get(0)).getExtent());
-        Assert.assertEquals("00:00:45", ((MediaPartialView) logicalDivisions.get(2).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:10", ((MediaPartialView) logicalDivisions.get(2).getViews().get(0)).getExtent());
-        Assert.assertEquals("00:00:55", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:05", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getExtent());
+        Assert.assertEquals("00:00:00.002", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getBegin());
+        Assert.assertEquals("00:00:35.121", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getExtent());
+        Assert.assertEquals("00:00:35.123", ((MediaPartialView) logicalDivisions.get(1).getViews().get(0)).getBegin());
+        Assert.assertEquals("00:00:09.878", ((MediaPartialView) logicalDivisions.get(1).getViews().get(0)).getExtent());
+        Assert.assertEquals("00:00:45.001", ((MediaPartialView) logicalDivisions.get(2).getViews().get(0)).getBegin());
+        Assert.assertEquals("00:00:10.893", ((MediaPartialView) logicalDivisions.get(2).getViews().get(0)).getExtent());
+        Assert.assertEquals("00:00:55.894", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getBegin());
+        Assert.assertEquals("00:00:04.106", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getExtent());
     }
 
     /**
@@ -72,7 +72,7 @@ public class MediaPartialPanelTest {
         assertEquals("mediaPartialFormMediaDurationEmpty", mediaPartialsPanel.validateMediaDuration());
         when(mediaPartialsPanel.getMediaDuration()).thenReturn("123456");
         assertEquals("mediaPartialFormMediaDurationWrongTimeFormat", mediaPartialsPanel.validateMediaDuration());
-        when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00");
+        when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00.000");
         Assert.assertNull(mediaPartialsPanel.validateMediaDuration());
     }
 
@@ -81,8 +81,8 @@ public class MediaPartialPanelTest {
      */
     @Test
     public void testConverting() {
-        assertEquals(Long.valueOf(3661000L), MediaPartialHelper.convertFormattedTimeToMilliseconds("01:01:01"));
-        assertEquals("01:01:01", MediaPartialHelper.convertMillisecondsToFormattedTime(3661000L));
+        assertEquals(Long.valueOf(3661012L), MediaPartialHelper.convertFormattedTimeToMilliseconds("01:01:01.012"));
+        assertEquals("01:01:01.120", MediaPartialHelper.convertMillisecondsToFormattedTime(3661120L));
     }
 
     private static LogicalDivision getLogicalDivisionWithMediaPartial(String label, String begin) {

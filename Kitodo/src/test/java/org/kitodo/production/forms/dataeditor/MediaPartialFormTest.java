@@ -41,7 +41,7 @@ import org.primefaces.PrimeFaces;
 
 public class MediaPartialFormTest {
 
-    public static final String EXISTING_MEDIA_PARTIAL_BEGIN = "00:00:30";
+    public static final String EXISTING_MEDIA_PARTIAL_BEGIN = "00:00:30.000";
     DataEditorForm dataEditorForm;
     MediaPartialsPanel mediaPartialsPanel;
     MediaPartialForm mediaPartialForm;
@@ -111,9 +111,9 @@ public class MediaPartialFormTest {
 
         // add media partial
 
-        when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00");
+        when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00.000");
         when(mediaPartialForm.getTitle()).thenReturn("Lorem");
-        when(mediaPartialForm.getBegin()).thenReturn("00:00:45");
+        when(mediaPartialForm.getBegin()).thenReturn("00:00:45.000");
 
         mediaPartialForm.save();
 
@@ -121,12 +121,12 @@ public class MediaPartialFormTest {
         assertEquals("Lorem", logicalDivision.getChildren().get(1).getLabel());
         LogicalDivision mediaPartialLogicalDivision = logicalDivision.getChildren().get(1);
         MediaPartialView mediaPartialView = (MediaPartialView) mediaPartialLogicalDivision.getViews().get(0);
-        assertEquals("00:00:45", mediaPartialView.getBegin());
-        assertEquals("00:00:15", mediaPartialView.getExtent());
+        assertEquals("00:00:45.000", mediaPartialView.getBegin());
+        assertEquals("00:00:15.000", mediaPartialView.getExtent());
 
         // edit media partial
         when(mediaPartialForm.getTitle()).thenReturn("Lorem ipsum");
-        when(mediaPartialForm.getBegin()).thenReturn("00:00:10");
+        when(mediaPartialForm.getBegin()).thenReturn("00:00:10.000");
         mediaPartialForm.setMediaPartialDivision(
                 new AbstractMap.SimpleEntry<>(mediaPartialLogicalDivision, mediaPartialView));
 
@@ -137,8 +137,8 @@ public class MediaPartialFormTest {
         assertEquals("Lorem ipsum", logicalDivision.getChildren().get(0).getLabel());
         mediaPartialLogicalDivision = logicalDivision.getChildren().get(0);
         mediaPartialView = (MediaPartialView) mediaPartialLogicalDivision.getViews().get(0);
-        assertEquals("00:00:10", mediaPartialView.getBegin());
-        assertEquals("00:00:20",
+        assertEquals("00:00:10.000", mediaPartialView.getBegin());
+        assertEquals("00:00:20.000",
                 mediaPartialView.getExtent()); // changed calculation of duration to the begin of next media partial
     }
 
@@ -158,7 +158,7 @@ public class MediaPartialFormTest {
         assertFalse(mediaPartialForm.valid());
         assertEquals("mediaPartialFormMediaDurationWrongTimeFormat", getValidationError(mediaPartialForm));
 
-        when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00");
+        when(mediaPartialsPanel.getMediaDuration()).thenReturn("00:01:00.000");
         assertFalse(mediaPartialForm.valid());
         assertEquals("mediaPartialFormStartEmpty", getValidationError(mediaPartialForm));
 
@@ -166,7 +166,7 @@ public class MediaPartialFormTest {
         assertFalse(mediaPartialForm.valid());
         assertEquals("mediaPartialFormStartWrongTimeFormat", getValidationError(mediaPartialForm));
 
-        when(mediaPartialForm.getBegin()).thenReturn("00:02:00");
+        when(mediaPartialForm.getBegin()).thenReturn("00:02:00.000");
         assertFalse(mediaPartialForm.valid());
         assertEquals("mediaPartialFormStartLessThanMediaDuration", getValidationError(mediaPartialForm));
 
@@ -174,7 +174,7 @@ public class MediaPartialFormTest {
         assertFalse(mediaPartialForm.valid());
         assertEquals("mediaPartialFormStartExists", getValidationError(mediaPartialForm));
 
-        when(mediaPartialForm.getBegin()).thenReturn("00:00:45");
+        when(mediaPartialForm.getBegin()).thenReturn("00:00:45.000");
         assertTrue(mediaPartialForm.valid());
     }
 

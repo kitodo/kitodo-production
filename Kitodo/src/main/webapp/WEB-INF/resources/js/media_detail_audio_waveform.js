@@ -102,17 +102,8 @@ class AudioWaveform {
                     });
                 }
             });
-            const jumpButtons = document.getElementsByClassName("audio-waveform-tools-jump-button");
-            Array.from(jumpButtons).forEach(function (jumpButton) {
-                jumpButton.addEventListener('click', function () {
-                    let jumpSeconds = parseInt(this.getAttribute("data-audio-waveform-tools-jump-seconds"));
-                    self.#wavesurfer.setTime(self.#wavesurfer.getCurrentTime() + jumpSeconds);
-                });
-            });
         });
-
     }
-
 }
 
 const audioWaveform= new AudioWaveform();

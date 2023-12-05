@@ -3121,9 +3121,14 @@ Column content
     max-height: 100%;
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools{
+#imagePreviewForm\:mediaDetail #mediaFormattedTime {
+    color: var(--cloudy-gray);
+}
+
+#imagePreviewForm\:mediaDetail #audioWaveformTools,
+#imagePreviewForm\:mediaDetailMediaFormattedTime {
     display: flex;
-    gap: 30px;
+    gap: 10px;
     justify-content: center;
     align-items: center;
     padding: 14px 16px;

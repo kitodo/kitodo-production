@@ -11,12 +11,15 @@
 
 package org.kitodo.production.helper.metadata;
 
+import java.text.SimpleDateFormat;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
@@ -27,7 +30,7 @@ import org.kitodo.production.metadata.MetadataEditor;
 
 public class MediaPartialHelper {
 
-    public static final String FORMATTED_TIME_REGEX = "([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d";
+    public static final String FORMATTED_TIME_REGEX = "([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
 
     /**
      * Convert formatted time to milliseconds.
@@ -37,11 +40,12 @@ public class MediaPartialHelper {
      * @return The milliseconds
      */
     public static Long convertFormattedTimeToMilliseconds(String formattedTime) {
-        if (formattedTime.contains(".")) {
-            formattedTime = formattedTime.split("\\.")[0];
-        }
+        int milliseconds = 0;
+        String[] splittedFormattedTime = formattedTime.split("\\.");
+        formattedTime = splittedFormattedTime[0];
+        milliseconds = Integer.parseInt(splittedFormattedTime[1]);
         String[] time = formattedTime.split(":");
-        return (Integer.parseInt(time[0]) * 3600L + Integer.parseInt(time[1]) * 60L + Integer.parseInt(time[2])) * 1000;
+        return (Integer.parseInt(time[0]) * 3600L + Integer.parseInt(time[1]) * 60L + Integer.parseInt(time[2])) * 1000 + milliseconds;
     }
 
     /**
@@ -52,8 +56,11 @@ public class MediaPartialHelper {
      * @return The formatted time
      */
     public static String convertMillisecondsToFormattedTime(Long milliseconds) {
-        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(milliseconds),
-                TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60, TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60);
+        String formattedMilliseconds = StringUtils.leftPad(
+                String.valueOf(TimeUnit.MILLISECONDS.toMillis(milliseconds) % 1000), 3, "0");
+        return String.format("%02d:%02d:%02d.%s", TimeUnit.MILLISECONDS.toHours(milliseconds),
+                TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60, TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60,
+                formattedMilliseconds);
     }
 
     /**

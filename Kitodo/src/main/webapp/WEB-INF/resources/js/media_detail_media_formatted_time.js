@@ -10,11 +10,22 @@
  */
 
 let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
-let timerElement = document.querySelector('#imagePreviewForm\\:mediaCurrentFormattedTime');
 
 let formattedTime = document.createElement('div');
 formattedTime.setAttribute("id", "mediaFormattedTime");
 mediaElement.after(formattedTime);
+
+formattedTime.innerHTML = metadataEditor.gallery.mediaPartial.convertSecondsToFormattedTime(mediaElement.currentTime);
 mediaElement.addEventListener("timeupdate", function () {
-    timerElement.innerHTML = metadataEditor.gallery.mediaPartial.convertSecondsToFormattedTime(mediaElement.currentTime);
+    formattedTime.innerHTML = metadataEditor.gallery.mediaPartial.convertSecondsToFormattedTime(mediaElement.currentTime);
+});
+
+const jumpButtons = document.getElementsByClassName("media-formatted-time-jump-button");
+Array.from(jumpButtons).forEach(function (jumpButton) {
+    jumpButton.addEventListener('click', function () {
+        mediaElement.pause()
+        let jumpMilliseconds = parseInt(this.getAttribute("data-media-formatted-time-jump-milliseconds"));
+        mediaElement.currentTime = mediaElement.currentTime + jumpMilliseconds / 1000
+        formattedTime.innerHTML = metadataEditor.gallery.mediaPartial.convertSecondsToFormattedTime(mediaElement.currentTime);
+    });
 });
