@@ -425,4 +425,3 @@ public class PaginationPanel {
         }
     }
 }
-
