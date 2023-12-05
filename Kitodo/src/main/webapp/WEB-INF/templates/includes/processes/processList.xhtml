@@ -112,11 +112,10 @@
                       rendered="#{ProcessForm.showColumn('process.comments')}"
                       headerText="#{msgs.comments}">
                 <h:panelGroup id="commentIcon">
-                    <h:panelGroup styleClass="fa fa-comment"
-                                  rendered="#{process.hasComments() and process.correctionCommentStatus eq 0}"/>
-                    <h:outputText value="#{msgs.correctionK}"
-                                  styleClass="correction-marker #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
-                                  rendered="#{process.correctionCommentStatus gt 0}"/>
+                    <h:panelGroup styleClass="fa
+                        #{process.correctionCommentStatus gt 0 ? 'fa-exclamation-circle correction' : 'fa-comment'}
+                        #{process.correctionCommentStatus eq 1 ? 'corrected' : ''}"
+                                  rendered="#{process.hasComments()}"/>
                 </h:panelGroup>
                 <p:tooltip for="commentIcon" styleClass="comments" trackMouse="true" rendered="#{process.hasComments()}">
                     <ui:include src="/WEB-INF/templates/includes/base/commentTooltip.xhtml">
@@ -318,6 +317,11 @@
                                 action="#{ProcessForm.generateResultAsPdf}"
                                 ajax="false"
                                 icon="fa fa-file-pdf-o"/>
+                    <p:menuitem id="renameMedia"
+                                rendered="#{SecurityAccessController.hasAuthorityToRenameMediaFiles()}"
+                                value="#{msgs['renameMediaFiles']}"
+                                action="#{ProcessForm.renameMedia}"
+                                icon="fa fa-files-o"/>
                 </p:menu>
             <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary"
                              icon="fa fa-sort" iconPos="right" process="@this"/>

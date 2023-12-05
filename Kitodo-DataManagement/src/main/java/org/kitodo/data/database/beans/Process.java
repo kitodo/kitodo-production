@@ -85,7 +85,7 @@ public class Process extends BaseTemplateBean {
     @OrderBy("ordering")
     private List<Task> tasks;
 
-    @OneToMany(mappedBy = "process", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Comment> comments;
 
     @ManyToMany(cascade = CascadeType.ALL)
@@ -115,6 +115,9 @@ public class Process extends BaseTemplateBean {
 
     @Column(name = "inChoiceListShown")
     Boolean inChoiceListShown;
+
+    @Column(name = "ocrd_workflow_id")
+    private String ocrdWorkflowId;
 
     @Transient
     private User blockedUser;
@@ -650,5 +653,24 @@ public class Process extends BaseTemplateBean {
      */
     public void setNumberOfStructures(int numberOfStructures) {
         this.numberOfStructures = numberOfStructures;
+    }
+
+    /**
+     * Get OCR-D workflow identifier.
+     *
+     * @return The OCR-D workflow identifier
+     */
+    public String getOcrdWorkflowId() {
+        return ocrdWorkflowId;
+    }
+
+    /**
+     * Set the OCR-D workflow identifier.
+     *
+     * @param ocrdWorkflowId
+     *         The identifier of the OCR-D workflow
+     */
+    public void setOcrdWorkflowId(String ocrdWorkflowId) {
+        this.ocrdWorkflowId = ocrdWorkflowId;
     }
 }

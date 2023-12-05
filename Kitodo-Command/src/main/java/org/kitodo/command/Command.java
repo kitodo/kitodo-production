@@ -31,14 +31,12 @@ public class Command implements CommandInterface {
     /**
      * Method executes a script.
      *
-     * @param id
-     *            The id, to identify the command and it's results.
      * @param command
      *            The command as a String.
      * @return The command result.
      */
     @Override
-    public CommandResult runCommand(Integer id, String command) {
+    public CommandResult runCommand(String command) {
         CommandResult commandResult;
         Process process;
         String[] callSequence = command.split("[\\r\\n\\s]+");
@@ -53,17 +51,17 @@ public class Command implements CommandInterface {
 
                 outputMessage.addAll(errorMessage);
 
-                commandResult = new CommandResult(id, command, errCode == 0, outputMessage);
+                commandResult = new CommandResult(command, errCode == 0, outputMessage);
                 if (commandResult.isSuccessful()) {
-                    logger.info("Execution of Command {} {} was successful!: {}", commandResult.getId(),
+                    logger.info("Execution of Command {} was successful!: {}",
                         commandResult.getCommand(), commandResult.getMessages());
                 } else {
-                    logger.error("Execution of Command {} {} failed!: {}", commandResult.getId(),
+                    logger.error("Execution of Command {} failed!: {}",
                         commandResult.getCommand(), commandResult.getMessages());
                 }
             }
         } catch (InterruptedException e) {
-            commandResult = new CommandResult(id, command, false, Collections.singletonList(e.getMessage()));
+            commandResult = new CommandResult(command, false, Collections.singletonList(e.getMessage()));
             logger.error("Execution of Command Thread was interrupted!");
             Thread.currentThread().interrupt();
             return commandResult;
@@ -71,8 +69,8 @@ public class Command implements CommandInterface {
             List<String> errorMessages = new ArrayList<>();
             errorMessages.add(e.getCause().toString());
             errorMessages.add(e.getMessage());
-            commandResult = new CommandResult(id, command, false, errorMessages);
-            logger.error("Execution of Command {} {} failed!: {}", commandResult.getId(), commandResult.getCommand(),
+            commandResult = new CommandResult(command, false, errorMessages);
+            logger.error("Execution of Command {} failed!: {}", commandResult.getCommand(),
                 commandResult.getMessages());
             return commandResult;
         }

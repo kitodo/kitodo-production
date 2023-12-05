@@ -65,7 +65,9 @@
                 <!-- Switch between normal and correction comment -->
                 <p:panelGrid columns="1">
                     <p:column>
-                        <p:outputLabel value="#{msgs.correctionMessage}" for="correctionMessageSwitch"/>
+                        <p:outputLabel for="correctionMessageSwitch">
+                            #{msgs.correctionMessage} <i class="fa fa-exclamation-circle"></i>
+                        </p:outputLabel>
                         <p:selectBooleanCheckbox id="correctionMessageSwitch"
                                                  value="#{CommentForm.correctionComment}"
                                                  disabled="#{!CommentForm.correctionCommentAllowed}"

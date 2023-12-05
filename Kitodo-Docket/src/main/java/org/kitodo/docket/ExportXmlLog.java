@@ -300,9 +300,15 @@ public class ExportXmlLog implements Consumer<OutputStream> {
         ruleset.setText(docketData.getRulesetName());
         processElements.add(ruleset);
 
-        Element comment = new Element("comment", xmlns);
-        comment.setText(docketData.getComment());
-        processElements.add(comment);
+        Element comments = new Element("comments", xmlns);
+        List<Element> commentList = new ArrayList<>();
+        for (String commentString : docketData.getComments()) {
+            Element comment = new Element("comment", xmlns);
+            comment.setText(commentString);
+            commentList.add(comment);
+        }
+        comments.addContent(commentList);
+        processElements.add(comments);
 
         List<Element> processProperties = prepareProperties(docketData.getProcessProperties(), xmlns);
 

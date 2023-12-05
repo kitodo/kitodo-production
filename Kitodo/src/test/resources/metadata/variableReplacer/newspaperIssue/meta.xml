@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2023-08-29T06:02:00.000+02:00" LASTMODDATE="2023-09-20T19:36:14.446+02:00">
+        <mets:metsDocumentID>740460</mets:metsDocumentID>
+    </mets:metsHdr>
+    <mets:dmdSec ID="uuid-b6cf1e58-29a9-3a16-9a91-f0998a104007">
+        <mets:mdWrap>
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="PeriodicalIssue">01-Musiktheater</kitodo:metadata>
+                    <kitodo:metadata name="docType">PeriodicalIssue</kitodo:metadata>
+                    <kitodo:metadata name="singleDigCollection">Saxonica</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMain">01-Musiktheater</kitodo:metadata>
+                    <kitodo:metadata name="singleDigCollection">Performance Ephemera</kitodo:metadata>
+                    <kitodo:metadata name="singleDigCollection">Musik</kitodo:metadata>
+                    <kitodo:metadata name="slub_script">Antiqua</kitodo:metadata>
+                    <kitodo:metadata name="DocLanguage">ger</kitodo:metadata>
+                    <kitodo:metadata name="slub_ownerOrig">SLUB Dresden</kitodo:metadata>
+                    <kitodo:metadata name="slub_ownerDigi">SLUB Dresden</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec/>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="PHYS_0000"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="LOG_0009" ORDER="1" ORDERLABEL="1855-04">
+            <mets:div ID="LOG_0010" ORDER="1" ORDERLABEL="1855-04-30">
+                <mets:div ID="LOG_0011" DMDID="uuid-b6cf1e58-29a9-3a16-9a91-f0998a104007" TYPE="PeriodicalIssue" ORDER="1"/>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+    <mets:structLink/>
+</mets:mets>

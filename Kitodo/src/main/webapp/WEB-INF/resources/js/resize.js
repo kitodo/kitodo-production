@@ -8,7 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-/* globals PF */
+/* globals PF, metadataEditor */
 // jshint unused:false
 
 var SEPARATOR_WIDTH = 3;
@@ -523,6 +523,7 @@ function updateMetadataEditorView(showMetadataColumn) {
     expandThirdColumn();
     scrollToSelectedThumbnail();
     initializeImage();
+    metadataEditor.gallery.mediaView.update();
     scrollToSelectedTreeNode();
     scrollToSelectedPaginationRow();
 }

@@ -48,6 +48,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageService;
 import org.kitodo.production.services.index.IndexingService;
 import org.kitodo.production.services.migration.MigrationService;
+import org.kitodo.production.services.ocr.OcrdWorkflowService;
 import org.kitodo.production.services.schema.SchemaService;
 import org.kitodo.production.services.security.SecurityAccessService;
 import org.kitodo.production.services.security.SessionService;
@@ -83,6 +84,7 @@ public class ServiceManager {
     private static MetsService metsService;
     private static MigrationService migrationService;
     private static ImportConfigurationService importConfigurationService;
+    private static OcrdWorkflowService ocrdWorkflowService;
     private static PropertyService propertyService;
     private static ProcessService processService;
     private static ProjectService projectService;
@@ -198,6 +200,12 @@ public class ServiceManager {
     private static void initializeFolderService() {
         if (Objects.isNull(folderService)) {
             folderService = new FolderService();
+        }
+    }
+
+    private static void initializeOcrdWorkflowService() {
+        if (Objects.isNull(ocrdWorkflowService)) {
+            ocrdWorkflowService = OcrdWorkflowService.getInstance();
         }
     }
 
@@ -505,6 +513,17 @@ public class ServiceManager {
     public static FolderService getFolderService() {
         initializeFolderService();
         return folderService;
+    }
+
+    /**
+     * Initialize OcrdWorkflowService if it is not yet initialized and next return
+     * it.
+     *
+     * @return OcrdWorkflowService object
+     */
+    public static OcrdWorkflowService getOcrdWorkflowService() {
+        initializeOcrdWorkflowService();
+        return ocrdWorkflowService;
     }
 
     /**

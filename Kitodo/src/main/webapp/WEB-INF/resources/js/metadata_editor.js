@@ -433,6 +433,13 @@ metadataEditor.gallery = {
         }
     },
 
+    mediaView: {
+        updateEventName : "kitodo-metadataditor-mediaview-update",
+        update(){
+            document.dispatchEvent(new Event(this.updateEventName));
+        }
+    },
+
     /** 
      * Event handlers methods related to gallery stripes
      */
