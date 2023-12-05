@@ -107,7 +107,7 @@ public class PaginationPanel {
             Helper.setWarnMessage(e.getMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().ggetAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
             physicalDivision.setOrder(i);
@@ -135,7 +135,7 @@ public class PaginationPanel {
      *            selected items to set
      */
     public void setPaginationSelectionSelectedItems(List<Integer> selectedItems) {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         if (!selectedItems.isEmpty()) {
             int lastItemIndex = selectedItems.get(selectedItems.size() - 1);
             if (this.paginationSelectionSelectedItems.isEmpty()
@@ -289,7 +289,7 @@ public class PaginationPanel {
     }
 
     private void preparePaginationSelectionItems() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         paginationSelectionItems = new ArrayList<>(physicalDivisions.size());
         for (int i = 0; i < physicalDivisions.size(); i++) {
             View view = View.of(physicalDivisions.get(i));
@@ -303,7 +303,7 @@ public class PaginationPanel {
      */
     public void preparePaginationSelectionSelectedItems() {
         paginationSelectionSelectedItems = new ArrayList<>();
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (Pair<PhysicalDivision, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
             for (int i = 0; i < physicalDivisions.size(); i++) {
                 PhysicalDivision physicalDivision = physicalDivisions.get(i);
@@ -365,7 +365,7 @@ public class PaginationPanel {
                 paginationStartValue, fictitiousCheckboxChecked, pageSeparators.get(0).getSeparatorString());
             Paginator paginator = new Paginator(initializer);
             List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                    .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                    .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
             if (selectPaginationScopeSelectedItem) {
                 for (int i = paginationSelectionSelectedItems.get(0); i < physicalDivisions.size(); i++) {
                     physicalDivisions.get(i).setOrderlabel(paginator.next());
@@ -405,7 +405,7 @@ public class PaginationPanel {
     public void show() {
         paginationSelectionSelectedItems = new ArrayList<>();
         paginationTypeSelectSelectedItem = PaginatorType.ARABIC;
-        selectPaginationModeSelectedItem = null;
+        selectPaginationModeSelectedItem = selectPaginationModeItems.get(0);
         paginationStartValue = "1";
         fictitiousCheckboxChecked = false;
         selectPaginationScopeSelectedItem = Boolean.TRUE;
