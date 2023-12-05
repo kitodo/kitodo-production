@@ -77,7 +77,7 @@ public enum FunctionalMetadata {
     DOC_TYPE("docType"),
 
     /**
-     * Used for predfined page label selection
+     * Used for predfined page label selection.
      */
     PAGE_LABEL("pageLabel");
 
