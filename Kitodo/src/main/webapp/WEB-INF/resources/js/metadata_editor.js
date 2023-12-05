@@ -69,7 +69,7 @@ metadataEditor.gallery = {
             return String(num).padEnd(totalLength, '0');
         },
         truncWithoutRound(number, decimal) {
-            return Math.trunc(number * Math.pow(10, decimal)) / Math.pow(10, decimal)
+            return Math.trunc(number * Math.pow(10, decimal)) / Math.pow(10, decimal);
         },
         convertSecondsToFormattedTime(seconds) {
             let hours = parseInt(parseInt(seconds) / 3600); // 3,600 seconds in 1 hour

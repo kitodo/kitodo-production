@@ -8,7 +8,7 @@
  * For the full copyright and license information, please read the
  * GPL3-License.txt file that was distributed with this source code.
  */
-
+/* globals metadataEditor */
 
 let initMediaFormattedTime = function () {
     let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
@@ -25,13 +25,13 @@ let initMediaFormattedTime = function () {
     const jumpButtons = document.getElementsByClassName("media-formatted-time-jump-button");
     Array.from(jumpButtons).forEach(function (jumpButton) {
         jumpButton.addEventListener('click', function () {
-            mediaElement.pause()
+            mediaElement.pause();
             let jumpMilliseconds = parseInt(this.getAttribute("data-media-formatted-time-jump-milliseconds"));
-            mediaElement.currentTime = ((mediaElement.currentTime * 1000) + jumpMilliseconds) / 1000
+            mediaElement.currentTime = ((mediaElement.currentTime * 1000) + jumpMilliseconds) / 1000;
             formattedTime.innerHTML = metadataEditor.gallery.mediaPartial.convertSecondsToFormattedTime(mediaElement.currentTime);
         });
     });
-}
+};
 
 initMediaFormattedTime();
 
