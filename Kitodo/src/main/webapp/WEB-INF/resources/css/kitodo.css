@@ -3125,7 +3125,7 @@ Column content
     color: var(--cloudy-gray);
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools,
+#imagePreviewForm\:audioWaveformTools,
 #imagePreviewForm\:mediaDetailMediaFormattedTime {
     display: flex;
     gap: 10px;
@@ -3136,11 +3136,11 @@ Column content
     border-radius: 3px;
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button:first-child {
+#imagePreviewForm\:audioWaveformTools > div > button:first-child {
     margin-left: 0;
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button {
+#imagePreviewForm\:audioWaveformTools > div > button {
     margin-left: 10px;
 }
 

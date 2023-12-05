@@ -25,7 +25,7 @@ Array.from(jumpButtons).forEach(function (jumpButton) {
     jumpButton.addEventListener('click', function () {
         mediaElement.pause()
         let jumpMilliseconds = parseInt(this.getAttribute("data-media-formatted-time-jump-milliseconds"));
-        mediaElement.currentTime = mediaElement.currentTime + jumpMilliseconds / 1000
+        mediaElement.currentTime = ((mediaElement.currentTime * 1000) + jumpMilliseconds) / 1000
         formattedTime.innerHTML = metadataEditor.gallery.mediaPartial.convertSecondsToFormattedTime(mediaElement.currentTime);
     });
 });

@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-import WaveSurfer from './libs/wavesurfer/wavesurfer.esm.js.jsf';
+import WaveSurfer from './../libs/wavesurfer/wavesurfer.esm.js.jsf';
 
 class AudioWaveform {
     #audioElement;
@@ -87,7 +87,7 @@ class AudioWaveform {
             waveContainer.style.display = "block";
             self.#loader.style.display = "none";
 
-            let waveToolsContainer = document.getElementById("audioWaveformTools");
+            let waveToolsContainer = document.getElementById("imagePreviewForm:audioWaveformTools");
             const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]');
 
             waveToolsSlider.addEventListener('input', (e) => {

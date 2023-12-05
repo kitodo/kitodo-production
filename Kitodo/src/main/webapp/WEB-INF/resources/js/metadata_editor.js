@@ -72,7 +72,7 @@ metadataEditor.gallery = {
             return Math.trunc(number * Math.pow(10, decimal)) / Math.pow(10, decimal)
         },
         convertSecondsToFormattedTime(seconds) {
-            let hours = parseInt(seconds / 3600); // 3,600 seconds in 1 hour
+            let hours = parseInt(parseInt(seconds) / 3600); // 3,600 seconds in 1 hour
             seconds = seconds % 3600; // seconds remaining after extracting hours
             let minutes = parseInt(seconds / 60); // 60 seconds in 1 minute
             seconds = seconds % 60;
@@ -145,7 +145,6 @@ metadataEditor.gallery = {
                 mediaElement.addEventListener("mediaPartialStopPlay", onMediaPartialStopPlay);
                 mediaElement.addEventListener("pause", onMediaPartialStopPlay);
                 mediaElement.dataset.mediaPartialTimeBegin = formattedTimeBegin;
-
                 mediaElement.play();
             }
         },
