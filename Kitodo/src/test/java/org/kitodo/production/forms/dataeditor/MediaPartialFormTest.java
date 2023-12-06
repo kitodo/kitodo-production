@@ -14,7 +14,6 @@ package org.kitodo.production.forms.dataeditor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -24,15 +23,14 @@ import java.util.AbstractMap;
 import java.util.LinkedList;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.production.helper.metadata.MediaPartialHelper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -53,7 +51,7 @@ public class MediaPartialFormTest {
     /**
      * Initialize test class.
      */
-    @BeforeClass
+    @BeforeAll
     public static void initTestClass() {
         // mock frontend update calls
         Mockito.mockStatic(Ajax.class);
@@ -65,7 +63,7 @@ public class MediaPartialFormTest {
     /**
      * Initialize test function.
      */
-    @Before
+    @BeforeEach
     public void initTest() {
         dataEditorForm = mock(DataEditorForm.class);
         Workpiece workpiece = mock(Workpiece.class);
