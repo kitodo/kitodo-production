@@ -68,11 +68,11 @@
         <junit.version>5.9.2</junit.version>
         <elasticsearch.version>7.17.10</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-        <maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
-        <maven-jar-plugin.version>3.1.2</maven-jar-plugin.version>
-        <maven-war-plugin.version>3.3.2</maven-war-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
         <mockito.version>5.0.0</mockito.version>
-        <properties-maven-plugin.version>1.0.0</properties-maven-plugin.version>
+        <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
         <spring.security.version>5.7.10</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
@@ -832,6 +832,11 @@ from system library in Java 11+ -->
                             </configuration>
                         </execution>
                     </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.11.0</version>
                 </plugin>
             </plugins>
         </pluginManagement>
