@@ -107,6 +107,21 @@ public class Settings {
     }
 
     /**
+     * Whether the key is filterable.
+     *
+     * @param keyId
+     *            key for which the query is
+     * @return whether the key is filterable
+     */
+    boolean isFilterable(String keyId) {
+        if (currentSettings.containsKey(keyId)) {
+            return currentSettings.get(keyId).isFilterable();
+        }
+        return false;
+    }
+
+
+    /**
      * Whether the key is excluded.
      *
      * @param keyId
@@ -176,6 +191,7 @@ public class Settings {
                         other.getAlwaysShowing() != null ? other.getAlwaysShowing() : current.getAlwaysShowing());
                     merged.setEditable(other.getEditable() != null ? other.getEditable() : current.getEditable());
                     merged.setExcluded(other.getExcluded() != null ? other.getExcluded() : current.getExcluded());
+                    merged.setFilterable(other.getFilterable() != null ? other.getFilterable() : current.getFilterable());
                     merged.setMultiline(other.getMultiline() != null ? other.getMultiline() : current.getMultiline());
                     merged.setReimport(other.getReimport() != null ? other.getReimport() : current.getReimport());
                     merged.setSettings(merge(current.getSettings(), other.getSettings()));

@@ -2964,9 +2964,32 @@ Column content
     max-width: 100%;
 }
 
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-inputfield.ui-selectmanymenu.read-only,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio.read-only {
     max-width: unset;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-icon-search,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search {
+    top: 8px;
+    right: 6px;
+    text-indent: unset;
+    background: none;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-icon-search::after,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search::after {
+    font-family: FontAwesome;
+    content: "\f002";
+    text-indent: unset;
+    color: var(--blue);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter {
+    padding-right: 26px;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
