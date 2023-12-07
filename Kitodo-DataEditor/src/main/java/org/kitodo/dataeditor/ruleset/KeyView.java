@@ -157,8 +157,7 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
     @Override
     public boolean isFilterable() {
         InputType inputType = getInputType();
-        if (InputType.MULTIPLE_SELECTION.equals(inputType) || InputType.MULTI_LINE_SINGLE_SELECTION.equals(
-                inputType) || InputType.ONE_LINE_SINGLE_SELECTION.equals(inputType)) {
+        if (InputType.MULTIPLE_SELECTION.equals(inputType) || InputType.ONE_LINE_SINGLE_SELECTION.equals(inputType)) {
             return settings.isFilterable(declaration.getId());
         }
         return false;
