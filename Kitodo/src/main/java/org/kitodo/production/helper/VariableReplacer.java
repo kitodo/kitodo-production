@@ -392,9 +392,8 @@ public class VariableReplacer {
 
         switch (metadataLevel) {
             case ALL:
-                List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
-                String allFirstchildValue = allChildren.isEmpty() ? null
-                        : MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+                String allFirstchildValue = determinateReplacementForAll(variableFinder, dollarSignIfToKeep);
+
                 if (Objects.nonNull(allFirstchildValue)) {
                     return allFirstchildValue;
                 }
@@ -409,6 +408,24 @@ public class VariableReplacer {
             default:
                 throw new IllegalStateException("complete switch");
         }
+    }
+
+    private String determinateReplacementForAll(Matcher variableFinder, String dollarSignIfToKeep) {
+        List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
+        String allFirstchildValue = null;
+        if (!allChildren.isEmpty()) {
+            allFirstchildValue = MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+            if (Objects.isNull(allFirstchildValue)) {
+                allFirstchildValue = determineReplacementForTopstruct(variableFinder, dollarSignIfToKeep);
+            }
+            if (StringUtils.isEmpty(allFirstchildValue)) {
+                List<LogicalDivision> firstChildChildren = allChildren.get(0).getChildren();
+                if (!firstChildChildren.isEmpty()) {
+                    allFirstchildValue = MetadataEditor.getMetadataValue(firstChildChildren.get(0), variableFinder.group(5));
+                }
+            }
+        }
+        return allFirstchildValue;
     }
 
     private String determineReplacementForTopstruct(Matcher variableFinder, String failureResult) {
