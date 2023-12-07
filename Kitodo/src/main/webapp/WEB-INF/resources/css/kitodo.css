@@ -3878,15 +3878,6 @@ footer {
     padding: .75em 1.5em;
 }
 
-.la-folder-use {
-    padding-left: 16px;
-}
-
-.so-folder-use {
-    margin: 0 15px 1.3em 15px;
-    width: calc(100% - 64px);
-}
-
 .import-table-section-title,
 .ui-panelgrid-cell > .import-table-section-title {
     font-weight: bold;

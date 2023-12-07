@@ -12,14 +12,15 @@
 -->
 
 <ui:composition
-        xmlns:a="http://xmlns.jcp.org/jsf/passthrough"
         xmlns:p="http://primefaces.org/ui"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
     <ui:param name="isPreviewTooltip"
-              value="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image') and DataEditorForm.galleryPanel.isPreviewTooltip()}"/>
+              value="#{DataEditorForm.galleryPanel.isPreviewTooltip() and (
+                        not DataEditorForm.galleryPanel.isPreviewTooltipMediaView() and mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image') ) or (
+                        DataEditorForm.galleryPanel.isPreviewTooltipMediaView() and mediaProvider.hasMediaViewVariant(media) and fn:startsWith(media.mediaViewMimeType, 'image') ) }"/>
 
     <ui:fragment rendered="#{not isPreviewTooltip}">
         <p:outputPanel class="thumbnail-overlay">
@@ -43,8 +44,8 @@
         </p:outputPanel>
 
         <p:tooltip for="mediaListImageTooltipTrigger" styleClass="mediaListImageTooltip">
-            <p:graphicImage value="#{mediaProvider.previewData}"
-                            a:loading="lazy">
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.isPreviewTooltipMediaView()}"
+                            value="#{mediaProvider.mediaView}">
                 <f:param name="mediaId"
                          value="#{media.id}"/>
                 <f:param name="process"
@@ -52,6 +53,17 @@
                 <f:param name="sessionId"
                          value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
             </p:graphicImage>
+
+            <p:graphicImage rendered="#{not DataEditorForm.galleryPanel.isPreviewTooltipMediaView()}"
+                            value="#{mediaProvider.previewData}">
+                <f:param name="mediaId"
+                         value="#{media.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+            </p:graphicImage>
+
             <p:outputPanel>
                 <h:outputText>
                     #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}

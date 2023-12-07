@@ -754,6 +754,24 @@ public class ProjectForm extends BaseForm {
     }
 
     /**
+     * Get the status if the media view should be displayed preview tooltip.
+     *
+     * @return True if is active
+     */
+    public boolean isPreviewTooltipMediaView() {
+        return project.isPreviewTooltipMediaView();
+    }
+
+    /**
+     * Set the status if the media view should be displayed preview tooltip.
+     *
+     * @param previewTooltipMediaView True if is active
+     */
+    public void setPreviewTooltipMediaView(boolean previewTooltipMediaView) {
+        project.setPreviewTooltipMediaView(previewTooltipMediaView);
+    }
+
+    /**
      * Returns the folder to use for audio preview.
      *
      * @return audio preview folder

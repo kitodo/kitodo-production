@@ -243,6 +243,13 @@ public class GalleryPanel {
         return dataEditor.getProcess().getProject().isPreviewTooltip();
     }
 
+    /**
+     * Check if the media view for preview tooltip is activated in project.
+     */
+    public boolean isPreviewTooltipMediaView() {
+        return dataEditor.getProcess().getProject().isPreviewTooltipMediaView();
+    }
+
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
         Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);
