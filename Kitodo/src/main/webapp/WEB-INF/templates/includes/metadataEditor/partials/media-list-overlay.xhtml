@@ -15,7 +15,8 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:param name="isPreviewTooltip"
               value="#{DataEditorForm.galleryPanel.isPreviewTooltip() and (
@@ -43,9 +44,11 @@
             </h:panelGroup>
         </p:outputPanel>
 
-        <p:tooltip for="mediaListImageTooltipTrigger" styleClass="mediaListImageTooltip">
+        <p:tooltip for="mediaListImageTooltipTrigger" styleClass="mediaListImageTooltip"
+                   beforeShow="metadataEditor.gallery.pages.preloadTooltipImage(this)">
             <p:graphicImage rendered="#{DataEditorForm.galleryPanel.isPreviewTooltipMediaView()}"
-                            value="#{mediaProvider.mediaView}">
+                            value="#{mediaProvider.mediaView}"
+                            a:loading="lazy">
                 <f:param name="mediaId"
                          value="#{media.id}"/>
                 <f:param name="process"
@@ -55,7 +58,8 @@
             </p:graphicImage>
 
             <p:graphicImage rendered="#{not DataEditorForm.galleryPanel.isPreviewTooltipMediaView()}"
-                            value="#{mediaProvider.previewData}">
+                            value="#{mediaProvider.previewData}"
+                            a:loading="lazy">
                 <f:param name="mediaId"
                          value="#{media.id}"/>
                 <f:param name="process"

@@ -3408,7 +3408,6 @@ Column content
 }
 
 .ui-tooltip.mediaListImageTooltip > .ui-tooltip-text > img {
-    max-width: 30vw;
     max-height: 40vh;
 }
 
