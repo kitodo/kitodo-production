@@ -77,6 +77,15 @@
                                          value="#{UserForm.userObject.showPaginationByDefault}"
                                          onchange="toggleSave()"/>
             </div>
+            <div>
+                <p:outputLabel for="paginationScopeByDefault"
+                               value="#{msgs['userEdit.metadataEditorSettings.paginationScopeByDefault']}"/>
+                <p:selectBooleanCheckbox id="paginationScopeByDefault"
+                                         styleClass="switch input"
+                                         disabled="#{isViewMode}"
+                                         value="#{UserForm.userObject.paginationScopeByDefault}"
+                                         onchange="toggleSave()"/>
+            </div>
         </p:row>
     </p:panelGrid>
 </ui:composition>

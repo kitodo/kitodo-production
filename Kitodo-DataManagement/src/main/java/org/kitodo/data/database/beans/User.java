@@ -111,6 +111,9 @@ public class User extends BaseBean {
     @Column(name = "show_pagination_by_default")
     private boolean showPaginationByDefault;
 
+    @Column(name = "paginate_from_first_page_by_default")
+    private boolean paginateFromFirstPageByDefault;
+
     /**
      * Constructor for User Entity.
      */
@@ -146,6 +149,7 @@ public class User extends BaseBean {
         this.shortcuts = user.shortcuts;
         this.showCommentsByDefault = user.showCommentsByDefault;
         this.showPaginationByDefault = user.showPaginationByDefault;
+        this.paginateFromFirstPageByDefault = user.paginateFromFirstPageByDefault;
         this.defaultGalleryViewMode = user.defaultGalleryViewMode;
 
         if (user.roles != null) {
@@ -172,7 +176,6 @@ public class User extends BaseBean {
             this.filters = user.filters;
         }
 
-        // default values
         if (Objects.nonNull(user.tableSize)) {
             this.tableSize = user.tableSize;
         }
@@ -491,6 +494,24 @@ public class User extends BaseBean {
      */
     public void setShowPaginationByDefault(boolean showPaginationByDefault) {
         this.showPaginationByDefault = showPaginationByDefault;
+    }
+
+    /**
+     * Get paginateFromFirstPageByDefault.
+     * 
+     * @return value of paginateFromFirstPageByDefault
+     */
+    public boolean isPaginateFromFirstPageByDefault() {
+        return paginateFromFirstPageByDefault;
+    }
+    
+    /**
+     * Set paginateFromFirstPageByDefault.
+     * 
+     * @param paginateFromFirstPageByDefault as boolean
+     */
+    public void setPaginateFromFirstPageByDefault(boolean paginateFromFirstPageByDefault) {
+        this.paginateFromFirstPageByDefault = paginateFromFirstPageByDefault;
     }
 
     /**

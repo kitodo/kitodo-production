@@ -29,6 +29,7 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MediaNotFoundException;
@@ -56,12 +57,13 @@ public class PaginationPanel {
     private List<IllustratedSelectItem> selectPaginationModeItems;
     private IllustratedSelectItem selectPaginationModeSelectedItem;
     private Map<Boolean, String> selectPaginationScopeItems;
-    private Boolean selectPaginationScopeSelectedItem = Boolean.TRUE;
+    private Boolean selectPaginationScopeSelectedItem;
 
     /**
      * Constructor.
      *
-     * @param dataEditor DataEditorForm instance
+     * @param dataEditor
+     *            DataEditorForm instance
      */
     PaginationPanel(DataEditorForm dataEditor) {
         this.dataEditor = dataEditor;
@@ -71,20 +73,22 @@ public class PaginationPanel {
     }
 
     /**
-     * Checks and updates media references in workpiece depending on changes in file system.
+     * Checks and updates media references in workpiece depending on changes in
+     * file system.
      */
     public void updateMediaReferences() {
         boolean mediaReferencesChanged = false;
         try {
             mediaReferencesChanged = ServiceManager.getFileService().searchForMedia(dataEditor.getProcess(),
-                    dataEditor.getWorkpiece());
+                dataEditor.getWorkpiece());
         } catch (InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage());
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
         }
         dataEditor.setMediaUpdated(mediaReferencesChanged);
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (int i = 1; i < physicalDivisions.size(); i++) {
             PhysicalDivision physicalDivision = physicalDivisions.get(i - 1);
             physicalDivision.setOrder(i);
@@ -112,15 +116,16 @@ public class PaginationPanel {
      *            selected items to set
      */
     public void setPaginationSelectionSelectedItems(List<Integer> selectedItems) {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         if (!selectedItems.isEmpty()) {
             int lastItemIndex = selectedItems.get(selectedItems.size() - 1);
-            if (this.paginationSelectionSelectedItems.isEmpty()
-                    || !Objects.equals(this.paginationSelectionSelectedItems.get(
-                    this.paginationSelectionSelectedItems.size() - 1), lastItemIndex)) {
+            if (this.paginationSelectionSelectedItems.isEmpty() || !Objects.equals(
+                this.paginationSelectionSelectedItems.get(this.paginationSelectionSelectedItems.size() - 1),
+                lastItemIndex)) {
                 dataEditor.getStructurePanel().updateNodeSelection(
-                        dataEditor.getGalleryPanel().getGalleryMediaContent(physicalDivisions.get(lastItemIndex)),
-                        physicalDivisions.get(lastItemIndex).getLogicalDivisions().get(0));
+                    dataEditor.getGalleryPanel().getGalleryMediaContent(physicalDivisions.get(lastItemIndex)),
+                    physicalDivisions.get(lastItemIndex).getLogicalDivisions().get(0));
                 updateMetadataPanel();
             }
         }
@@ -218,7 +223,6 @@ public class PaginationPanel {
         return paginationSelectionItems;
     }
 
-
     /**
      * Returns the items for the paginationTypeSelect select menu.
      *
@@ -265,8 +269,14 @@ public class PaginationPanel {
         this.fictitiousCheckboxChecked = fictitiousCheckboxChecked;
     }
 
+    private void prepareSelectPaginationScopeSelectedItem() {
+        selectPaginationScopeSelectedItem = ServiceManager.getUserService().getCurrentUser()
+                .isPaginateFromFirstPageByDefault();
+    }
+
     private void preparePaginationSelectionItems() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         paginationSelectionItems = new ArrayList<>(physicalDivisions.size());
         for (int i = 0; i < physicalDivisions.size(); i++) {
             View view = View.of(physicalDivisions.get(i));
@@ -280,7 +290,8 @@ public class PaginationPanel {
      */
     public void preparePaginationSelectionSelectedItems() {
         paginationSelectionSelectedItems = new ArrayList<>();
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (Pair<PhysicalDivision, LogicalDivision> selectedElement : dataEditor.getSelectedMedia()) {
             for (int i = 0; i < physicalDivisions.size(); i++) {
                 PhysicalDivision physicalDivision = physicalDivisions.get(i);
@@ -303,18 +314,18 @@ public class PaginationPanel {
 
     private void prepareSelectPaginationModeItems() {
         selectPaginationModeItems = new ArrayList<>(6);
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.PAGES, "pageCount",
-                "paginierung_seite.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "columnCount",
-                "paginierung_spalte.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "sheetCounting",
-                "paginierung_blatt.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION, "sheetCountingRectoVerso",
-                "paginierung_blatt_rectoverso.svg"));
+        selectPaginationModeItems
+                .add(new IllustratedSelectItem(PaginatorMode.PAGES, "pageCount", "paginierung_seite.svg"));
+        selectPaginationModeItems
+                .add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "columnCount", "paginierung_spalte.svg"));
+        selectPaginationModeItems
+                .add(new IllustratedSelectItem(PaginatorMode.FOLIATION, "sheetCounting", "paginierung_blatt.svg"));
+        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO_FOLIATION,
+                "sheetCountingRectoVerso", "paginierung_blatt_rectoverso.svg"));
         selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.RECTOVERSO, "pageCountRectoVerso",
                 "paginierung_seite_rectoverso.svg"));
-        selectPaginationModeItems.add(new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "pageCountDouble",
-                "paginierung_doppelseite.svg"));
+        selectPaginationModeItems.add(
+            new IllustratedSelectItem(PaginatorMode.DOUBLE_PAGES, "pageCountDouble", "paginierung_doppelseite.svg"));
     }
 
     private void prepareSelectPaginationScopeItems() {
@@ -353,7 +364,7 @@ public class PaginationPanel {
                 }
             }
         } catch (NumberFormatException e) {
-            Helper.setErrorMessage("paginationFormatError", new Object[] { paginationStartValue });
+            Helper.setErrorMessage("paginationFormatError", new Object[] {paginationStartValue });
         }
         paginationSelectionSelectedItems = new ArrayList<>();
         preparePaginationSelectionItems();
@@ -370,8 +381,9 @@ public class PaginationPanel {
                 && dataEditor.getStructurePanel().getSelectedLogicalNode().getData() instanceof StructureTreeNode
                 && Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
                 && ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
-                .getDataObject() instanceof View) {
-            View view = (View) ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData()).getDataObject();
+                        .getDataObject() instanceof View) {
+            View view = (View) ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
+                    .getDataObject();
             dataEditor.getMetadataPanel().showPageInLogical(view.getPhysicalDivision());
         }
     }
@@ -388,5 +400,6 @@ public class PaginationPanel {
         selectPaginationScopeSelectedItem = Boolean.TRUE;
         preparePaginationSelectionItems();
         preparePaginationSelectionSelectedItems();
+        prepareSelectPaginationScopeSelectedItem();
     }
 }
