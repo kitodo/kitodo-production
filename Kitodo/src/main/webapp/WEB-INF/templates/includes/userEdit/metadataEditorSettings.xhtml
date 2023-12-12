@@ -78,12 +78,12 @@
                                          onchange="toggleSave()"/>
             </div>
             <div>
-                <p:outputLabel for="paginationScopeByDefault"
-                               value="#{msgs['userEdit.metadataEditorSettings.paginationScopeByDefault']}"/>
+                <p:outputLabel for="paginateFromFirstPageByDefault"
+                               value="#{msgs['userEdit.metadataEditorSettings.paginateFromFirstPageByDefault']}"/>
                 <p:selectBooleanCheckbox id="paginationScopeByDefault"
                                          styleClass="switch input"
                                          disabled="#{isViewMode}"
-                                         value="#{UserForm.userObject.paginationScopeByDefault}"
+                                         value="#{UserForm.userObject.paginateFromFirstPageByDefault}"
                                          onchange="toggleSave()"/>
             </div>
         </p:row>
