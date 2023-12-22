@@ -24,6 +24,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.OPACConfig;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -96,6 +97,8 @@ public class ImportConfigurationListView extends BaseForm {
             PrimeFaces.current().executeScript("PF('importCatalogConfigurationsDialog').show();");
         } catch (ConfigurationException e) {
             Helper.setErrorMessage(e.getMessage() + ": " + e.getCause().getMessage());
+        } catch (ConfigException e) {
+            Helper.setErrorMessage(e.getMessage());
         }
     }
 }
