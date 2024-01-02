@@ -11,21 +11,19 @@
 
 package org.kitodo.production.helper.metadata;
 
-import org.apache.commons.lang3.StringUtils;
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.regex.Pattern;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.metadata.MetadataEditor;
-
-import java.time.Duration;
-import java.time.LocalTime;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 public class MediaPartialHelper {
 
@@ -96,9 +94,10 @@ public class MediaPartialHelper {
                 PhysicalDivision previousPhysicalDivision = previousLogicalDivision.getViews().getFirst()
                         .getPhysicalDivision();
                 if (previousPhysicalDivision.hasMediaPartialView()) {
-                    mediaPartialView.setExtent(convertMillisecondsToFormattedTime(convertFormattedTimeToMilliseconds(
-                            previousPhysicalDivision.getMediaPartialView()
-                                    .getBegin()) - convertFormattedTimeToMilliseconds(mediaPartialView.getBegin())));
+                    long previousBegin = convertFormattedTimeToMilliseconds(
+                            previousPhysicalDivision.getMediaPartialView().getBegin());
+                    long currentBegin = convertFormattedTimeToMilliseconds(mediaPartialView.getBegin());
+                    mediaPartialView.setExtent(convertMillisecondsToFormattedTime(previousBegin - currentBegin));
                 }
             } else {
                 // calculate the duration of media partial to the end of media

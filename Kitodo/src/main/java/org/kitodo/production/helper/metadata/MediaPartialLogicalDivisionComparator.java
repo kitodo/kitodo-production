@@ -11,12 +11,12 @@
 
 package org.kitodo.production.helper.metadata;
 
+import java.util.Comparator;
+import java.util.Objects;
+
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
-
-import java.util.Comparator;
-import java.util.Objects;
 
 public class MediaPartialLogicalDivisionComparator implements Comparator<LogicalDivision> {
 
