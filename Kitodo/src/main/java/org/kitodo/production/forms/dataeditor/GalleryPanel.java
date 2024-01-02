@@ -817,7 +817,7 @@ public class GalleryPanel {
             }
         }
 
-        if (Objects.nonNull(selectedPhysicalDivision) && selectedPhysicalDivision.hasMediaPartialView()) {
+        if (Objects.nonNull(selectedPhysicalDivision) && selectedPhysicalDivision.hasMediaPartial()) {
             View mediaView = DataEditorService.getViewOfBaseMediaByMediaFiles(dataEditor.getStructurePanel().getLogicalTree().getChildren(),
                     selectedPhysicalDivision.getMediaFiles());
             if (Objects.nonNull(mediaView)) {
@@ -938,7 +938,7 @@ public class GalleryPanel {
         dataEditor.getSelectedMedia().clear();
         LogicalDivision logicalDivision = parentStripe.getStructure();
         PhysicalDivision physicalDivision = currentSelection.getView().getPhysicalDivision();
-        if (physicalDivision.hasMediaPartialView()) {
+        if (physicalDivision.hasMediaPartial()) {
             logicalDivision = physicalDivision.getLogicalDivisions().get(0);
         }
         dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivision, logicalDivision));

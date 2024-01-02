@@ -27,7 +27,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -78,7 +78,7 @@ public class MediaPartialFormTest {
 
         View view = mock(View.class);
         PhysicalDivision childPhysicalDivision = spy(PhysicalDivision.class);
-        childPhysicalDivision.setMediaPartialView(new MediaPartialView(EXISTING_MEDIA_PARTIAL_BEGIN));
+        childPhysicalDivision.setMediaPartial(new MediaPartial(EXISTING_MEDIA_PARTIAL_BEGIN));
         when(view.getPhysicalDivision()).thenReturn(childPhysicalDivision);
 
         LogicalDivision childLogicalDivision = spy(LogicalDivision.class);
@@ -118,15 +118,16 @@ public class MediaPartialFormTest {
         assertEquals(2, logicalDivision.getChildren().size());
         assertEquals("Lorem", logicalDivision.getChildren().get(1).getLabel());
         LogicalDivision mediaPartialLogicalDivision = logicalDivision.getChildren().get(1);
-        MediaPartialView mediaPartialView = (MediaPartialView) mediaPartialLogicalDivision.getViews().get(0);
-        assertEquals("00:00:45.000", mediaPartialView.getBegin());
-        assertEquals("00:00:15.000", mediaPartialView.getExtent());
+        MediaPartial mediaPartial = mediaPartialLogicalDivision.getViews().get(0).getPhysicalDivision()
+                .getMediaPartial();
+        assertEquals("00:00:45.000", mediaPartial.getBegin());
+        assertEquals("00:00:15.000", mediaPartial.getExtent());
 
         // edit media partial
         when(mediaPartialForm.getTitle()).thenReturn("Lorem ipsum");
         when(mediaPartialForm.getBegin()).thenReturn("00:00:10.000");
         mediaPartialForm.setMediaPartialDivision(
-                new AbstractMap.SimpleEntry<>(mediaPartialLogicalDivision, mediaPartialView));
+                new AbstractMap.SimpleEntry<>(mediaPartialLogicalDivision, mediaPartial));
 
         mediaPartialForm.save();
 
@@ -134,10 +135,11 @@ public class MediaPartialFormTest {
         // 'media partial' is now designated as the first child in the sorting order.
         assertEquals("Lorem ipsum", logicalDivision.getChildren().get(0).getLabel());
         mediaPartialLogicalDivision = logicalDivision.getChildren().get(0);
-        mediaPartialView = (MediaPartialView) mediaPartialLogicalDivision.getViews().get(0);
-        assertEquals("00:00:10.000", mediaPartialView.getBegin());
+        mediaPartial = mediaPartialLogicalDivision.getViews().get(0).getPhysicalDivision()
+                .getMediaPartial();
+        assertEquals("00:00:10.000", mediaPartial.getBegin());
         assertEquals("00:00:20.000",
-                mediaPartialView.getExtent()); // changed calculation of duration to the begin of next media partial
+                mediaPartial.getExtent()); // changed calculation of duration to the begin of next media partial
     }
 
     /**

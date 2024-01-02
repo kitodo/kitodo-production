@@ -23,8 +23,9 @@ import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.production.helper.metadata.MediaPartialHelper;
 
 public class MediaPartialPanelTest {
@@ -54,14 +55,18 @@ public class MediaPartialPanelTest {
         // one minute media duration
         MediaPartialHelper.calculateExtentAndSortMediaPartials(logicalDivisions, 60000L);
 
-        Assert.assertEquals("00:00:00.002", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:35.121", ((MediaPartialView) logicalDivisions.get(0).getViews().get(0)).getExtent());
-        Assert.assertEquals("00:00:35.123", ((MediaPartialView) logicalDivisions.get(1).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:09.878", ((MediaPartialView) logicalDivisions.get(1).getViews().get(0)).getExtent());
-        Assert.assertEquals("00:00:45.001", ((MediaPartialView) logicalDivisions.get(2).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:10.893", ((MediaPartialView) logicalDivisions.get(2).getViews().get(0)).getExtent());
-        Assert.assertEquals("00:00:55.894", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getBegin());
-        Assert.assertEquals("00:00:04.106", ((MediaPartialView) logicalDivisions.get(3).getViews().get(0)).getExtent());
+        Assert.assertEquals("00:00:00.002", getMediaPartialOfLogicalDivision(logicalDivisions, 0).getBegin());
+        Assert.assertEquals("00:00:35.121", getMediaPartialOfLogicalDivision(logicalDivisions, 0).getExtent());
+        Assert.assertEquals("00:00:35.123", getMediaPartialOfLogicalDivision(logicalDivisions, 1).getBegin());
+        Assert.assertEquals("00:00:09.878", getMediaPartialOfLogicalDivision(logicalDivisions, 1).getExtent());
+        Assert.assertEquals("00:00:45.001", getMediaPartialOfLogicalDivision(logicalDivisions, 2).getBegin());
+        Assert.assertEquals("00:00:10.893", getMediaPartialOfLogicalDivision(logicalDivisions, 2).getExtent());
+        Assert.assertEquals("00:00:55.894", getMediaPartialOfLogicalDivision(logicalDivisions, 3).getBegin());
+        Assert.assertEquals("00:00:04.106", getMediaPartialOfLogicalDivision(logicalDivisions, 3).getExtent());
+    }
+
+    private static MediaPartial getMediaPartialOfLogicalDivision(List<LogicalDivision> logicalDivisions, int index) {
+        return logicalDivisions.get(index).getViews().get(0).getPhysicalDivision().getMediaPartial();
     }
 
     /**
@@ -89,9 +94,9 @@ public class MediaPartialPanelTest {
         LogicalDivision logicalDivision = new LogicalDivision();
         logicalDivision.setLabel(label);
         PhysicalDivision physicalDivision = new PhysicalDivision();
-        MediaPartialView mediaPartialView = new MediaPartialView(begin);
-        physicalDivision.setMediaPartialView(mediaPartialView);
-        logicalDivision.getViews().add(mediaPartialView);
+        MediaPartial mediaPartial = new MediaPartial(begin);
+        physicalDivision.setMediaPartial(mediaPartial);
+        logicalDivision.getViews().add(View.of(physicalDivision));
         return logicalDivision;
     }
 }

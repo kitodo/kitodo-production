@@ -22,7 +22,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
@@ -33,7 +33,7 @@ import org.primefaces.PrimeFaces;
 public class MediaPartialForm implements Serializable {
 
     private final DataEditorForm dataEditorForm;
-    private Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision;
+    private Map.Entry<LogicalDivision, MediaPartial> mediaPartialDivision;
     private String title;
     private String begin;
     private String type;
@@ -116,7 +116,7 @@ public class MediaPartialForm implements Serializable {
      * @param mediaPartialDivision
      *         The media partial division.
      */
-    public void setMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
+    public void setMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartial> mediaPartialDivision) {
         this.mediaPartialDivision = mediaPartialDivision;
     }
 
@@ -176,7 +176,7 @@ public class MediaPartialForm implements Serializable {
         }
         if (!isEditable() || (isEditable() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
             boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
-                    logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
+                    logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartial()
                             .getBegin().equals(getBegin()));
             if (exists) {
                 validationError = "mediaPartialFormStartExists";

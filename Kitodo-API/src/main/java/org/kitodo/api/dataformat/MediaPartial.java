@@ -13,25 +13,28 @@ package org.kitodo.api.dataformat;
 
 import java.util.Objects;
 
-public class MediaPartialView extends View {
+/**
+ *
+ */
+public class MediaPartial {
 
     private String begin;
 
     private String extent;
 
     /**
-     * Constructs a media partial view object.
+     * Constructs a media partial object.
      *
      * @param begin
      *         The begin as formatted time in form of
      *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
      */
-    public MediaPartialView(String begin) {
+    public MediaPartial(String begin) {
         this.begin = begin;
     }
 
     /**
-     * Constructs a media partial view object.
+     * Constructs a media partial object.
      *
      * @param begin
      *         The begin as formatted time in form of
@@ -40,7 +43,7 @@ public class MediaPartialView extends View {
      *         The extent as formatted time in form of
      *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
      */
-    public MediaPartialView(String begin, String extent) {
+    public MediaPartial(String begin, String extent) {
         this(begin);
         this.extent = extent;
     }
@@ -70,15 +73,7 @@ public class MediaPartialView extends View {
             return false;
         }
 
-        MediaPartialView mediaPartialView = (MediaPartialView) o;
-
-        // prevent endless loop and not calling super.equals
-        if (Objects.isNull(getPhysicalDivision()) && Objects.nonNull(
-                mediaPartialView.getPhysicalDivision()) || Objects.nonNull(getPhysicalDivision()) && Objects.isNull(
-                mediaPartialView.getPhysicalDivision()) || getPhysicalDivision().hashCode() != mediaPartialView.getPhysicalDivision()
-                .hashCode()) {
-            return false;
-        }
+        MediaPartial mediaPartialView = (MediaPartial) o;
 
         return (Objects.isNull(begin) && Objects.isNull(mediaPartialView.begin)) || begin.equals(
                 mediaPartialView.getBegin());

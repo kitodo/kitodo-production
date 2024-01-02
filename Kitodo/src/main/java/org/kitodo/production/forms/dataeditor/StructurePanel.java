@@ -650,7 +650,7 @@ public class StructurePanel implements Serializable {
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
                     DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
-                    viewNode.setType(pair.getLeft().getPhysicalDivision().hasMediaPartialView()
+                    viewNode.setType(pair.getLeft().getPhysicalDivision().hasMediaPartial()
                             ? MEDIA_PARTIAL_VIEW_NODE_TYPE
                             : VIEW_NODE_TYPE);
                     viewsShowingOnAChild.add(pair.getLeft());

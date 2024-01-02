@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
@@ -62,9 +62,9 @@ public class MediaPartialsPanel implements Serializable {
      *
      * @return The media view divisions
      */
-    public Map<LogicalDivision, MediaPartialView> getMediaPartialViewDivisions() {
+    public Map<LogicalDivision, MediaPartial> getMediaPartialViewDivisions() {
         mediaSelection = dataEditor.getGalleryPanel().getLastSelection();
-        Map<LogicalDivision, MediaPartialView> mediaPartialViewDivisions = new LinkedHashMap<>();
+        Map<LogicalDivision, MediaPartial> mediaPartialViewDivisions = new LinkedHashMap<>();
         if (Objects.nonNull(mediaSelection)) {
             getMediaPartialViewDivisions(mediaPartialViewDivisions, mediaSelection.getKey().getLogicalDivisions(),
                     mediaSelection.getLeft().getMediaFiles());
@@ -72,14 +72,14 @@ public class MediaPartialsPanel implements Serializable {
         return mediaPartialViewDivisions;
     }
 
-    private static void getMediaPartialViewDivisions(Map<LogicalDivision, MediaPartialView> mediaViewDivisions,
+    private static void getMediaPartialViewDivisions(Map<LogicalDivision, MediaPartial> mediaViewDivisions,
             List<LogicalDivision> logicalDivisions, Map<MediaVariant, URI> mediaFiles) {
         for (LogicalDivision logicalDivision : logicalDivisions) {
             for (View view : logicalDivision.getViews()) {
                 if (PhysicalDivision.TYPE_TRACK.equals(
                         view.getPhysicalDivision().getType()) && view.getPhysicalDivision()
-                        .hasMediaPartialView() && view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
-                    mediaViewDivisions.put(logicalDivision, view.getPhysicalDivision().getMediaPartialView());
+                        .hasMediaPartial() && view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
+                    mediaViewDivisions.put(logicalDivision, view.getPhysicalDivision().getMediaPartial());
                 }
             }
             getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren(), mediaFiles);
@@ -106,7 +106,7 @@ public class MediaPartialsPanel implements Serializable {
      *
      * @param mediaPartialDivision to delete
      */
-    public void deleteMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaPartialDivision) {
+    public void deleteMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartial> mediaPartialDivision) {
         String error = validateMediaDuration();
         if (Objects.nonNull(error)) {
             Helper.setErrorMessage(Helper.getTranslation(error));
@@ -130,7 +130,7 @@ public class MediaPartialsPanel implements Serializable {
      *
      * @param mediaViewDivision the media view division
      */
-    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaPartialView> mediaViewDivision) {
+    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaPartial> mediaViewDivision) {
         mediaPartialForm.clean();
         mediaPartialForm.setMediaPartialDivision(mediaViewDivision);
         mediaPartialForm.setTitle(mediaViewDivision.getKey().getLabel());

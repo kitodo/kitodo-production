@@ -212,7 +212,7 @@ public class GalleryMediaContent {
      */
     public boolean isMediaPartial() {
         return Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision()) && view.getPhysicalDivision()
-                .hasMediaPartialView();
+                .hasMediaPartial();
     }
 
     /**

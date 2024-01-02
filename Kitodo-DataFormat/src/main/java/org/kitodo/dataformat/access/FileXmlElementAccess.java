@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.MdSec;
-import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
@@ -70,8 +70,8 @@ public class FileXmlElementAccess {
         for (Fptr fptr : div.getFptr()) {
             Object fileId = fptr.getFILEID();
             if (Objects.nonNull(fptr.getArea())) {
-                physicalDivision.setMediaPartialView(
-                        new MediaPartialView(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
+                physicalDivision.setMediaPartial(
+                        new MediaPartial(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
                 fileId = fptr.getArea().getFILEID();
             }
             if (fileId instanceof FileType) {
@@ -117,8 +117,8 @@ public class FileXmlElementAccess {
             this.physicalDivision.setOrder(physicalDivision.getOrder());
             this.physicalDivision.setOrderlabel(physicalDivision.getOrderlabel());
             this.physicalDivision.setType(physicalDivision.getType());
-            if (physicalDivision.hasMediaPartialView()) {
-                this.physicalDivision.setMediaPartialView(physicalDivision.getMediaPartialView());
+            if (physicalDivision.hasMediaPartial()) {
+                this.physicalDivision.setMediaPartial(physicalDivision.getMediaPartial());
             }
         }
     }
@@ -156,7 +156,7 @@ public class FileXmlElementAccess {
             Fptr fptr = new Fptr();
             FileType fileId = mediaFilesToIDFiles.get(use.getValue());
             if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
-                    use.getKey().getMimeType()) && physicalDivision.hasMediaPartialView()) {
+                    use.getKey().getMimeType()) && physicalDivision.hasMediaPartial()) {
                 fptr.setArea(getAreaType(fileId));
             } else {
                 fptr.setFILEID(fileId);
@@ -182,7 +182,7 @@ public class FileXmlElementAccess {
     }
 
     private AreaType getAreaType(FileType fileId) {
-        MediaPartialView mediaPartialView = physicalDivision.getMediaPartialView();
+        MediaPartial mediaPartialView = physicalDivision.getMediaPartial();
         AreaType areaType = new AreaType();
         areaType.setFILEID(fileId);
         areaType.setBEGIN(mediaPartialView.getBegin());

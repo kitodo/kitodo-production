@@ -20,8 +20,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.MediaPartialView;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.PhysicalDivision;
+import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.metadata.MetadataEditor;
 
@@ -87,15 +88,15 @@ public class MediaPartialHelper {
         LogicalDivision previousLogicalDivision = null;
         while (iterator.hasNext()) {
             LogicalDivision logicalDivision = iterator.next();
-            MediaPartialView mediaPartialView = logicalDivision.getViews().getFirst().getPhysicalDivision()
-                    .getMediaPartialView();
+            MediaPartial mediaPartialView = logicalDivision.getViews().getFirst().getPhysicalDivision()
+                    .getMediaPartial();
             if (Objects.nonNull(previousLogicalDivision)) {
                 // calculate the duration of media partial to previous media partial
                 PhysicalDivision previousPhysicalDivision = previousLogicalDivision.getViews().getFirst()
                         .getPhysicalDivision();
-                if (previousPhysicalDivision.hasMediaPartialView()) {
+                if (previousPhysicalDivision.hasMediaPartial()) {
                     long previousBegin = convertFormattedTimeToMilliseconds(
-                            previousPhysicalDivision.getMediaPartialView().getBegin());
+                            previousPhysicalDivision.getMediaPartial().getBegin());
                     long currentBegin = convertFormattedTimeToMilliseconds(mediaPartialView.getBegin());
                     String extent = convertMillisecondsToFormattedTime(previousBegin - currentBegin);
                     mediaPartialView.setExtent(extent);
@@ -132,10 +133,9 @@ public class MediaPartialHelper {
         physicalDivision.getMediaFiles().putAll(mediaSelection.getKey().getMediaFiles());
         physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
 
-        MediaPartialView mediaPartialView = new MediaPartialView(begin);
-        physicalDivision.setMediaPartialView(mediaPartialView);
-        mediaPartialView.setPhysicalDivision(physicalDivision);
-        logicalDivision.getViews().add(mediaPartialView);
+        MediaPartial mediaPartial = new MediaPartial(begin);
+        physicalDivision.setMediaPartial(mediaPartial);
+        logicalDivision.getViews().add(View.of(physicalDivision));
 
         physicalDivision.getLogicalDivisions().add(logicalDivision);
 

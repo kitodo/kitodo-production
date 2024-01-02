@@ -53,7 +53,7 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
 
-    private MediaPartialView mediaPartialView;
+    private MediaPartial mediaPartial;
 
     /**
      * Saves the METS identifier for the division.
@@ -118,14 +118,13 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
     }
 
     /**
-     * Set the media partial view.
+     * Set the media partial.
      *
-     * @param mediaPartialView
-     *         The media partial view
+     * @param mediaPartial
+     *         The media partial
      */
-    public void setMediaPartialView(MediaPartialView mediaPartialView) {
-        mediaPartialView.setPhysicalDivision(this);
-        this.mediaPartialView = mediaPartialView;
+    public void setMediaPartial(MediaPartial mediaPartial) {
+        this.mediaPartial = mediaPartial;
     }
 
     /**
@@ -133,8 +132,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
      *
      * @return True if has media partial
      */
-    public boolean hasMediaPartialView() {
-        return Objects.nonNull(mediaPartialView);
+    public boolean hasMediaPartial() {
+        return Objects.nonNull(mediaPartial);
     }
 
     /**
@@ -142,8 +141,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
      *
      * @return The media partial.
      */
-    public MediaPartialView getMediaPartialView() {
-        return mediaPartialView;
+    public MediaPartial getMediaPartial() {
+        return mediaPartial;
     }
 
     @Override
@@ -172,8 +171,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
             return false;
         }
         PhysicalDivision physicalDivision = (PhysicalDivision) o;
-        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartialView,
-                physicalDivision.mediaPartialView);
+        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartial,
+                physicalDivision.mediaPartial);
     }
 
     @Override
@@ -181,9 +180,9 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
-        result = prime * result + ((Objects.isNull(mediaPartialView) || Objects.isNull(mediaPartialView.getBegin()))
+        result = prime * result + ((Objects.isNull(mediaPartial) || Objects.isNull(mediaPartial.getBegin()))
                 ? 0
-                : mediaPartialView.getBegin().hashCode());
+                : mediaPartial.getBegin().hashCode());
         return result;
     }
 }
