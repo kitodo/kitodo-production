@@ -154,7 +154,7 @@ public class FileXmlElementAccess {
         div.setTYPE(physicalDivision.getType());
         for (Entry<MediaVariant, URI> use : physicalDivision.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();
-            Object fileId = mediaFilesToIDFiles.get(use.getValue());
+            FileType fileId = mediaFilesToIDFiles.get(use.getValue());
             if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
                     use.getKey().getMimeType()) && physicalDivision.hasMediaPartialView()) {
                 fptr.setArea(getAreaType(fileId));
@@ -181,7 +181,7 @@ public class FileXmlElementAccess {
         return div;
     }
 
-    private AreaType getAreaType(Object fileId) {
+    private AreaType getAreaType(FileType fileId) {
         MediaPartialView mediaPartialView = physicalDivision.getMediaPartialView();
         AreaType areaType = new AreaType();
         areaType.setFILEID(fileId);

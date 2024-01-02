@@ -11,41 +11,37 @@
 
 package org.kitodo.production.helper.metadata;
 
-import java.text.SimpleDateFormat;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.ListIterator;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartialView;
 import org.kitodo.api.dataformat.PhysicalDivision;
-import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.metadata.MetadataEditor;
 
+import java.time.Duration;
+import java.time.LocalTime;
+import java.util.List;
+import java.util.ListIterator;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
 public class MediaPartialHelper {
 
-    public static final String FORMATTED_TIME_REGEX = "([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}";
+    public static final Pattern FORMATTED_TIME_PATTERN = Pattern.compile("([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}");
+
+    private static final MediaPartialLogicalDivisionComparator mediaPartialLogicalDivisionComparator = new MediaPartialLogicalDivisionComparator();
 
     /**
      * Convert formatted time to milliseconds.
      *
      * @param formattedTime
-     *         The formatted time in form of {@value #FORMATTED_TIME_REGEX}
+     *         The formatted time in form of {@value #FORMATTED_TIME_PATTERN}
      * @return The milliseconds
      */
     public static Long convertFormattedTimeToMilliseconds(String formattedTime) {
-        int milliseconds = 0;
-        String[] splittedFormattedTime = formattedTime.split("\\.");
-        formattedTime = splittedFormattedTime[0];
-        milliseconds = Integer.parseInt(splittedFormattedTime[1]);
-        String[] time = formattedTime.split(":");
-        return (Integer.parseInt(time[0]) * 3600L + Integer.parseInt(time[1]) * 60L + Integer.parseInt(time[2])) * 1000 + milliseconds;
+        return Duration.between(LocalTime.MIN, LocalTime.parse(formattedTime)).toMillis();
     }
 
     /**
@@ -56,11 +52,9 @@ public class MediaPartialHelper {
      * @return The formatted time
      */
     public static String convertMillisecondsToFormattedTime(Long milliseconds) {
-        String formattedMilliseconds = StringUtils.leftPad(
-                String.valueOf(TimeUnit.MILLISECONDS.toMillis(milliseconds) % 1000), 3, "0");
-        return String.format("%02d:%02d:%02d.%s", TimeUnit.MILLISECONDS.toHours(milliseconds),
-                TimeUnit.MILLISECONDS.toMinutes(milliseconds) % 60, TimeUnit.MILLISECONDS.toSeconds(milliseconds) % 60,
-                formattedMilliseconds);
+        Duration duration = Duration.ofMillis(milliseconds);
+        return String.format("%02d:%02d:%02d.%03d", duration.toHours(), duration.toMinutesPart(),
+                duration.toSecondsPart(), duration.toMillisPart());
     }
 
     /**
@@ -73,7 +67,7 @@ public class MediaPartialHelper {
      */
     public static void calculateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         calculateExtentForMediaPartials(logicalDivisions, mediaDuration);
-        logicalDivisions.sort(getLogicalDivisionComparator());
+        logicalDivisions.sort(mediaPartialLogicalDivisionComparator);
     }
 
     /**
@@ -89,7 +83,7 @@ public class MediaPartialHelper {
      */
     private static void calculateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         // sorting reverse by begin
-        logicalDivisions.sort(getLogicalDivisionComparator().reversed());
+        logicalDivisions.sort(mediaPartialLogicalDivisionComparator.reversed());
 
         ListIterator<LogicalDivision> iterator = logicalDivisions.listIterator();
         LogicalDivision previousLogicalDivision = null;
@@ -149,22 +143,6 @@ public class MediaPartialHelper {
                 .getChildren().add(physicalDivision);
 
         mediaSelection.getValue().getChildren().add(logicalDivision);
-    }
-
-    private static Comparator<LogicalDivision> getLogicalDivisionComparator() {
-        return (logicalDivisionA, logicalDivisionB) -> {
-            View viewA = logicalDivisionA.getViews().getFirst();
-            View viewB = logicalDivisionB.getViews().getFirst();
-            if (Objects.nonNull(viewA) && Objects.nonNull(viewB)) {
-                PhysicalDivision physicalDivisionA = viewA.getPhysicalDivision();
-                PhysicalDivision physicalDivisionB = viewB.getPhysicalDivision();
-                if (physicalDivisionA.hasMediaPartialView() && physicalDivisionB.hasMediaPartialView()) {
-                    return physicalDivisionA.getMediaPartialView().getBegin()
-                            .compareTo(physicalDivisionB.getMediaPartialView().getBegin());
-                }
-            }
-            return Integer.compare(logicalDivisionA.getOrder(), logicalDivisionB.getOrder());
-        };
     }
 
 }

@@ -18,7 +18,6 @@ import static org.kitodo.production.helper.metadata.MediaPartialHelper.convertFo
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -167,7 +166,7 @@ public class MediaPartialForm implements Serializable {
             validationError = "mediaPartialFormStartEmpty";
             return false;
         }
-        if (!Pattern.compile(MediaPartialHelper.FORMATTED_TIME_REGEX).matcher(getBegin()).matches()) {
+        if (!MediaPartialHelper.FORMATTED_TIME_PATTERN.matcher(getBegin()).matches()) {
             validationError = "mediaPartialFormStartWrongTimeFormat";
             return false;
         }
