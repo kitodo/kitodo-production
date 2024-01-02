@@ -84,5 +84,10 @@ public class MediaPartialView extends View {
                 mediaPartialView.getBegin());
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        return prime * super.hashCode() + Objects.hash(begin, extent);
+    }
 
 }

@@ -48,7 +48,7 @@ public class MediaPartialForm implements Serializable {
      *
      * @return True if form is in edit mode.
      */
-    public boolean isEdit() {
+    public boolean isEditable() {
         return Objects.nonNull(mediaPartialDivision);
     }
 
@@ -89,7 +89,7 @@ public class MediaPartialForm implements Serializable {
             return;
         }
 
-        if (isEdit()) {
+        if (isEditable()) {
             mediaPartialDivision.getKey().setLabel(getTitle());
             mediaPartialDivision.getValue().setBegin(getBegin());
         } else {
@@ -174,7 +174,7 @@ public class MediaPartialForm implements Serializable {
             validationError = "mediaPartialFormStartLessThanMediaDuration";
             return false;
         }
-        if (!isEdit() || (isEdit() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
+        if (!isEditable() || (isEditable() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
             boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
                     logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartialView()
                             .getBegin().equals(getBegin()));
