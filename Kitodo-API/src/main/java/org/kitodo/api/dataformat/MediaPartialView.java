@@ -19,10 +19,27 @@ public class MediaPartialView extends View {
 
     private String extent;
 
+    /**
+     * Constructs a media partial view object.
+     *
+     * @param begin
+     *         The begin as formatted time in form of
+     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     */
     public MediaPartialView(String begin) {
         this.begin = begin;
     }
 
+    /**
+     * Constructs a media partial view object.
+     *
+     * @param begin
+     *         The begin as formatted time in form of
+     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     * @param extent
+     *         The extent as formatted time in form of
+     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     */
     public MediaPartialView(String begin, String extent) {
         this(begin);
         this.extent = extent;

@@ -29,7 +29,7 @@ public class MediaPartialHelper {
 
     public static final Pattern FORMATTED_TIME_PATTERN = Pattern.compile("([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}");
 
-    private static final MediaPartialLogicalDivisionComparator mediaPartialLogicalDivisionComparator = new MediaPartialLogicalDivisionComparator();
+    private static final MediaPartialLogicalDivisionComparator logicalDivisionComparator = new MediaPartialLogicalDivisionComparator();
 
     /**
      * Convert formatted time to milliseconds.
@@ -65,7 +65,7 @@ public class MediaPartialHelper {
      */
     public static void calculateExtentAndSortMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         calculateExtentForMediaPartials(logicalDivisions, mediaDuration);
-        logicalDivisions.sort(mediaPartialLogicalDivisionComparator);
+        logicalDivisions.sort(logicalDivisionComparator);
     }
 
     /**
@@ -81,7 +81,7 @@ public class MediaPartialHelper {
      */
     private static void calculateExtentForMediaPartials(List<LogicalDivision> logicalDivisions, Long mediaDuration) {
         // sorting reverse by begin
-        logicalDivisions.sort(mediaPartialLogicalDivisionComparator.reversed());
+        logicalDivisions.sort(logicalDivisionComparator.reversed());
 
         ListIterator<LogicalDivision> iterator = logicalDivisions.listIterator();
         LogicalDivision previousLogicalDivision = null;
@@ -97,7 +97,8 @@ public class MediaPartialHelper {
                     long previousBegin = convertFormattedTimeToMilliseconds(
                             previousPhysicalDivision.getMediaPartialView().getBegin());
                     long currentBegin = convertFormattedTimeToMilliseconds(mediaPartialView.getBegin());
-                    mediaPartialView.setExtent(convertMillisecondsToFormattedTime(previousBegin - currentBegin));
+                    String extent = convertMillisecondsToFormattedTime(previousBegin - currentBegin);
+                    mediaPartialView.setExtent(extent);
                 }
             } else {
                 // calculate the duration of media partial to the end of media
