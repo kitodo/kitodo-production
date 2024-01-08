@@ -64,10 +64,6 @@
                     <f:param name="projecttitle" value="#{project.title}"/>
                     <h:outputText><i class="fa fa-clipboard fa-lg"/></h:outputText>
                 </h:link>
-                <h:link styleClass="action"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
-                    <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
-                </h:link>
                 <h:panelGroup styleClass="action"
                               title="#{project.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
                     <p:commandLink id="deleteProject"
