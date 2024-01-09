@@ -11,6 +11,7 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -209,6 +210,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private int numberOfNewMappings = 0;
 
     private String renamingError = "";
+    private String metadataFileLoadingError = "";
 
     /**
      * Public constructor.
@@ -294,6 +296,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
+        } catch (FileNotFoundException e) {
+            metadataFileLoadingError = e.getLocalizedMessage();
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
@@ -341,6 +345,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             logger.warn("Workpiece has no ID. Cannot verify workpiece ID. Setting workpiece ID.");
             workpiece.setId(process.getId().toString());
         }
+        metadataFileLoadingError = "";
         return ServiceManager.getFileService().searchForMedia(process, workpiece);
     }
 
@@ -390,7 +395,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void close() {
         deleteNotSavedUploadedMedia();
         unsavedDeletedMedia.clear();
-        ServiceManager.getFileService().revertRenaming(filenameMapping.inverseBidiMap(), workpiece);
+        if (Objects.nonNull(workpiece)) {
+            ServiceManager.getFileService().revertRenaming(filenameMapping.inverseBidiMap(), workpiece);
+        }
         metadataPanel.clear();
         structurePanel.clear();
         workpiece = null;
@@ -398,7 +405,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         mainFileUri = null;
         ruleset = null;
         currentChildren.clear();
-        selectedMedia.clear();
+        if (Objects.nonNull(selectedMedia)) {
+            selectedMedia.clear();
+        }
         if (!FacesContext.getCurrentInstance().isPostback()) {
             mediaProvider.resetMediaResolverForProcess(process.getId());
         }
@@ -1153,5 +1162,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         galleryPanel.show();
         paginationPanel.show();
         structurePanel.show();
+    }
+
+    /**
+     * Get metadata file loading error.
+     * @return metadata file loading error
+     */
+    public String getMetadataFileLoadingError() {
+        return metadataFileLoadingError;
     }
 }
