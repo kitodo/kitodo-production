@@ -52,7 +52,9 @@
         <!--@elvariable id="commentsNumber" type="Integer"-->
         <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
 
-        <p:panel id="metadataEditorContainer" style="margin: auto 16px; padding: 0;">
+        <p:panel id="metadataEditorContainer"
+                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError()}"
+                 style="margin: auto 16px; padding: 0;">
 
             <p:panel id="metadataEditor">
                 <!-- Header -->
@@ -253,6 +255,7 @@
         <ui:include src="/WEB-INF/templates/includes/comments/newCommentDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/uploadFile.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataLocked.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/errorLoadingMetadataDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/fileReferencesUpdatedDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/dataEditorSettingSavingResult.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/renamingMediaResults.xhtml"/>
