@@ -73,10 +73,9 @@ public class MediaPartial {
             return false;
         }
 
-        MediaPartial mediaPartialView = (MediaPartial) o;
+        MediaPartial mediaPartial = (MediaPartial) o;
 
-        return (Objects.isNull(begin) && Objects.isNull(mediaPartialView.begin)) || begin.equals(
-                mediaPartialView.getBegin());
+        return (Objects.isNull(begin) && Objects.isNull(mediaPartial.begin)) || begin.equals(mediaPartial.getBegin());
     }
 
     @Override

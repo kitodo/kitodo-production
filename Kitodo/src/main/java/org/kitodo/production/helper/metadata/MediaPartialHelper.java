@@ -88,7 +88,7 @@ public class MediaPartialHelper {
         LogicalDivision previousLogicalDivision = null;
         while (iterator.hasNext()) {
             LogicalDivision logicalDivision = iterator.next();
-            MediaPartial mediaPartialView = logicalDivision.getViews().getFirst().getPhysicalDivision()
+            MediaPartial mediaPartial = logicalDivision.getViews().getFirst().getPhysicalDivision()
                     .getMediaPartial();
             if (Objects.nonNull(previousLogicalDivision)) {
                 // calculate the duration of media partial to previous media partial
@@ -97,14 +97,14 @@ public class MediaPartialHelper {
                 if (previousPhysicalDivision.hasMediaPartial()) {
                     long previousBegin = convertFormattedTimeToMilliseconds(
                             previousPhysicalDivision.getMediaPartial().getBegin());
-                    long currentBegin = convertFormattedTimeToMilliseconds(mediaPartialView.getBegin());
+                    long currentBegin = convertFormattedTimeToMilliseconds(mediaPartial.getBegin());
                     String extent = convertMillisecondsToFormattedTime(previousBegin - currentBegin);
-                    mediaPartialView.setExtent(extent);
+                    mediaPartial.setExtent(extent);
                 }
             } else {
                 // calculate the duration of media partial to the end of media
-                mediaPartialView.setExtent(convertMillisecondsToFormattedTime(
-                        mediaDuration - convertFormattedTimeToMilliseconds(mediaPartialView.getBegin())));
+                mediaPartial.setExtent(convertMillisecondsToFormattedTime(
+                        mediaDuration - convertFormattedTimeToMilliseconds(mediaPartial.getBegin())));
             }
             previousLogicalDivision = logicalDivision;
         }

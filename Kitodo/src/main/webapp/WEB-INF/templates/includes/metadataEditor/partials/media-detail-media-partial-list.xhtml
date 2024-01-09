@@ -25,9 +25,9 @@
                              action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.setMembersByRequestParameter()}"/>
 
             <p:outputPanel id="mediaPartialList"
-                           rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialViewDivisions.size() > 0}">
+                           rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions.size() > 0}">
                 <p:dataList
-                        value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialViewDivisions}"
+                        value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions}"
                         var="mediaPartialDivision"
                         type="ordered">
 
@@ -55,7 +55,7 @@
                                                  onclick="metadataEditor.gallery.mediaPartial.togglePlay(this, '#{mediaPartialDivision.value.begin}', '#{mediaPartialDivision.value.extent}')"/>
                                 <p:commandButton styleClass="editMediaView secondary"
                                                  onstart="metadataEditor.gallery.mediaPartial.setMediaDuration()"
-                                                 action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.editMediaViewDivision(mediaPartialDivision)}"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.editMediaPartialDivision(mediaPartialDivision)}"
                                                  icon="fa fa-pencil-square-o"
                                                  oncomplete="PF('addMediaPartialDialog').show();"/>
                                 <p:commandButton styleClass="deleteMediaView secondary"

@@ -182,13 +182,13 @@ public class FileXmlElementAccess {
     }
 
     private AreaType getAreaType(FileType fileId) {
-        MediaPartial mediaPartialView = physicalDivision.getMediaPartial();
+        MediaPartial mediaPartial = physicalDivision.getMediaPartial();
         AreaType areaType = new AreaType();
         areaType.setFILEID(fileId);
-        areaType.setBEGIN(mediaPartialView.getBegin());
+        areaType.setBEGIN(mediaPartial.getBegin());
         areaType.setBETYPE("TIME");
-        if (Objects.nonNull(mediaPartialView.getExtent()) && !mediaPartialView.getExtent().isEmpty()) {
-            areaType.setEXTENT(mediaPartialView.getExtent());
+        if (Objects.nonNull(mediaPartial.getExtent()) && !mediaPartial.getExtent().isEmpty()) {
+            areaType.setEXTENT(mediaPartial.getExtent());
             areaType.setEXTTYPE("TIME");
         }
         return areaType;

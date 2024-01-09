@@ -58,21 +58,21 @@ public class MediaPartialsPanel implements Serializable {
     }
 
     /**
-     * Get the media view divisions.
+     * Get the media partial divisions.
      *
-     * @return The media view divisions
+     * @return The media partial divisions
      */
-    public Map<LogicalDivision, MediaPartial> getMediaPartialViewDivisions() {
+    public Map<LogicalDivision, MediaPartial> getMediaPartialDivisions() {
         mediaSelection = dataEditor.getGalleryPanel().getLastSelection();
-        Map<LogicalDivision, MediaPartial> mediaPartialViewDivisions = new LinkedHashMap<>();
+        Map<LogicalDivision, MediaPartial> mediaPartialDivisions = new LinkedHashMap<>();
         if (Objects.nonNull(mediaSelection)) {
-            getMediaPartialViewDivisions(mediaPartialViewDivisions, mediaSelection.getKey().getLogicalDivisions(),
+            addMediaPartialDivisions(mediaPartialDivisions, mediaSelection.getKey().getLogicalDivisions(),
                     mediaSelection.getLeft().getMediaFiles());
         }
-        return mediaPartialViewDivisions;
+        return mediaPartialDivisions;
     }
 
-    private static void getMediaPartialViewDivisions(Map<LogicalDivision, MediaPartial> mediaViewDivisions,
+    private static void addMediaPartialDivisions(Map<LogicalDivision, MediaPartial> mediaViewDivisions,
             List<LogicalDivision> logicalDivisions, Map<MediaVariant, URI> mediaFiles) {
         for (LogicalDivision logicalDivision : logicalDivisions) {
             for (View view : logicalDivision.getViews()) {
@@ -82,7 +82,7 @@ public class MediaPartialsPanel implements Serializable {
                     mediaViewDivisions.put(logicalDivision, view.getPhysicalDivision().getMediaPartial());
                 }
             }
-            getMediaPartialViewDivisions(mediaViewDivisions, logicalDivision.getChildren(), mediaFiles);
+            addMediaPartialDivisions(mediaViewDivisions, logicalDivision.getChildren(), mediaFiles);
         }
     }
 
@@ -126,15 +126,15 @@ public class MediaPartialsPanel implements Serializable {
     }
 
     /**
-     * Edit media view division form.
+     * Edit media partial division form.
      *
-     * @param mediaViewDivision the media view division
+     * @param mediaPartialDivision the media partial division
      */
-    public void editMediaViewDivision(Map.Entry<LogicalDivision, MediaPartial> mediaViewDivision) {
+    public void editMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartial> mediaPartialDivision) {
         mediaPartialForm.clean();
-        mediaPartialForm.setMediaPartialDivision(mediaViewDivision);
-        mediaPartialForm.setTitle(mediaViewDivision.getKey().getLabel());
-        mediaPartialForm.setBegin(mediaViewDivision.getValue().getBegin());
+        mediaPartialForm.setMediaPartialDivision(mediaPartialDivision);
+        mediaPartialForm.setTitle(mediaPartialDivision.getKey().getLabel());
+        mediaPartialForm.setBegin(mediaPartialDivision.getValue().getBegin());
     }
 
     /**
@@ -143,7 +143,7 @@ public class MediaPartialsPanel implements Serializable {
      * @return True if enabled
      */
     public boolean isEnabled() {
-        return !getMediaPartialDivisions().isEmpty();
+        return !addMediaPartialDivisions().isEmpty();
     }
 
     /**
@@ -151,7 +151,7 @@ public class MediaPartialsPanel implements Serializable {
      *
      * @return The divisions as selected items list
      */
-    public List<SelectItem> getMediaPartialDivisions() {
+    public List<SelectItem> addMediaPartialDivisions() {
         List<SelectItem> mediaPartialDivisions = new ArrayList<>();
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         if (Objects.nonNull(lastSelection) && MediaUtil.isAudioOrVideo(

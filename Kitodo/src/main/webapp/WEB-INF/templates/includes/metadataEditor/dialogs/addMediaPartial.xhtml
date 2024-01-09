@@ -27,7 +27,7 @@
         <h:form id="mediaPartialForm">
             <p:panelGrid columns="1" layout="grid">
                 <p:row>
-                    <h3>#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.isEdit() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
+                    <h3>#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.isEditable() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
                     <h:panelGroup id="errorWrapper"
                                   rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.hasValidationError()}">
                         <h:panelGroup layout="block"

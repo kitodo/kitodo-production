@@ -63,7 +63,7 @@ public class StructurePanel implements Serializable {
     public static final String STRUCTURE_NODE_TYPE = "Structure";
     public static final String PHYS_STRUCTURE_NODE_TYPE = "PhysStructure";
     public static final String MEDIA_NODE_TYPE = "Media";
-    public static final String MEDIA_PARTIAL_VIEW_NODE_TYPE = "MediaPartialView";
+    public static final String MEDIA_PARTIAL_NODE_TYPE = "MediaPartial";
     public static final String VIEW_NODE_TYPE = "View";
 
     private final DataEditorForm dataEditor;
@@ -227,7 +227,7 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedPhysicalDivision() {
-        if (Objects.nonNull(selectedLogicalNode) && StructurePanel.MEDIA_PARTIAL_VIEW_NODE_TYPE.equals(
+        if (Objects.nonNull(selectedLogicalNode) && StructurePanel.MEDIA_PARTIAL_NODE_TYPE.equals(
                 selectedLogicalNode.getType()) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
             PhysicalDivision physicalDivision = ((View) structureTreeNode.getDataObject()).getPhysicalDivision();
@@ -651,7 +651,7 @@ public class StructurePanel implements Serializable {
                     // add views of current logical division as leaf nodes
                     DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
                     viewNode.setType(pair.getLeft().getPhysicalDivision().hasMediaPartial()
-                            ? MEDIA_PARTIAL_VIEW_NODE_TYPE
+                            ? MEDIA_PARTIAL_NODE_TYPE
                             : VIEW_NODE_TYPE);
                     viewsShowingOnAChild.add(pair.getLeft());
                 }
@@ -902,7 +902,7 @@ public class StructurePanel implements Serializable {
                 false, false, physicalDivision, parentTreeNode);
 
         if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType())) {
-            treeNode.setType(MEDIA_PARTIAL_VIEW_NODE_TYPE);
+            treeNode.setType(MEDIA_PARTIAL_NODE_TYPE);
         } else if (PhysicalDivision.TYPES.contains(physicalDivision.getType())) {
             treeNode.setType(MEDIA_NODE_TYPE);
         } else {
@@ -1088,7 +1088,7 @@ public class StructurePanel implements Serializable {
             if (treeNode.getData() instanceof StructureTreeNode
                     && Objects.nonNull(((StructureTreeNode) treeNode.getData()).getDataObject())
                     && (((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
-                    || MEDIA_PARTIAL_VIEW_NODE_TYPE.equals(currentTreeNode.getType()))
+                    || MEDIA_PARTIAL_NODE_TYPE.equals(currentTreeNode.getType()))
                     && currentTreeNode.getData() instanceof StructureTreeNode
                     && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
                     && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getPhysicalDivision()
