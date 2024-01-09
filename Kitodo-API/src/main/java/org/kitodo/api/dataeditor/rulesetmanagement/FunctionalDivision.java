@@ -44,7 +44,8 @@ public enum FunctionalDivision {
     private static final Logger logger = LogManager.getLogger(FunctionalDivision.class);
 
     /**
-     * This character string defines how the special field is to be marked in the ruleset.
+     * This character string defines how the special field is to be marked in
+     * the ruleset.
      */
     private final String mark;
 
