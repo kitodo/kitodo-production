@@ -39,10 +39,10 @@
                     <p:outputPanel styleClass="dialogFieldWrapper">
 
                         <p:outputPanel
-                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions.size() gt 1)?'':'hidden'}">
+                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialChildDivisionsOfSelection.size() gt 1)?'':'hidden'}">
                             <p:outputLabel for="type" value="Typ"/>
                             <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.type}">
-                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions}"/>
+                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialChildDivisionsOfSelection}"/>
                             </p:selectOneMenu>
                         </p:outputPanel>
                         <p:outputPanel>

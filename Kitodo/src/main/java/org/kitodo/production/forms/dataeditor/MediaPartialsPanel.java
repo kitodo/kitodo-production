@@ -143,7 +143,7 @@ public class MediaPartialsPanel implements Serializable {
      * @return True if enabled
      */
     public boolean isEnabled() {
-        return !addMediaPartialDivisions().isEmpty();
+        return !getMediaPartialChildDivisionsOfSelection().isEmpty();
     }
 
     /**
@@ -151,7 +151,7 @@ public class MediaPartialsPanel implements Serializable {
      *
      * @return The divisions as selected items list
      */
-    public List<SelectItem> addMediaPartialDivisions() {
+    public List<SelectItem> getMediaPartialChildDivisionsOfSelection() {
         List<SelectItem> mediaPartialDivisions = new ArrayList<>();
         Pair<PhysicalDivision, LogicalDivision> lastSelection = dataEditor.getGalleryPanel().getLastSelection();
         if (Objects.nonNull(lastSelection) && MediaUtil.isAudioOrVideo(
