@@ -53,7 +53,7 @@ public class MediaPartialForm implements Serializable {
     }
 
     /**
-     * Clean the media view division.
+     * Clean the form.
      */
     public void clean() {
         mediaPartialDivision = null;
@@ -82,7 +82,7 @@ public class MediaPartialForm implements Serializable {
     }
 
     /**
-     * Save the media view.
+     * Save the media partial.
      */
     public void save() {
         if (!valid()) {

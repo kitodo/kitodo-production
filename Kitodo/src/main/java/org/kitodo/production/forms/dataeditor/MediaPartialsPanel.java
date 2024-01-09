@@ -147,9 +147,9 @@ public class MediaPartialsPanel implements Serializable {
     }
 
     /**
-     * Get the child divisions of use "mediaPartial" of the current selection.
+     * Retrieve the child divisions with use 'mediaPartial' from the current selection.
      *
-     * @return The divisions as selected items list
+     * @return The child divisions as selected items list
      */
     public List<SelectItem> getMediaPartialChildDivisionsOfSelection() {
         List<SelectItem> mediaPartialDivisions = new ArrayList<>();

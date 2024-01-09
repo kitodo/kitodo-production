@@ -1032,7 +1032,7 @@ public class GalleryPanel {
     /**
      * Get the media partials panel.
      *
-     * @return The media partials
+     * @return The media partials panel
      */
     public MediaPartialsPanel getMediaPartialsPanel() {
         return mediaPartialsPanel;
