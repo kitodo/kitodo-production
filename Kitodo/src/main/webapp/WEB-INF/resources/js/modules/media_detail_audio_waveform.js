@@ -100,7 +100,7 @@ class AudioWaveform {
                     self.#wavesurfer.setOptions({
                         [input.value]: e.target.checked,
                     });
-                }
+                };
             });
         });
     }
