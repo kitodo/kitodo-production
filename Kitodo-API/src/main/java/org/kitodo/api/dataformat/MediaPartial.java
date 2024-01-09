@@ -14,7 +14,9 @@ package org.kitodo.api.dataformat;
 import java.util.Objects;
 
 /**
- *
+ * MediaPartial is part of a {@link PhysicalDivision} of type
+ * {@link PhysicalDivision#TYPE_TRACK} and contains additional
+ * information about the start and length.
  */
 public class MediaPartial {
 
