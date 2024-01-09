@@ -14,7 +14,7 @@ let initMediaFormattedTime = function () {
     let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
 
     if( mediaElement ) {
-        if(mediaElement.tagName == 'VIDEO') {
+        if(mediaElement.tagName === 'VIDEO') {
             mediaElement.style.maxWidth = '700px';
         }
 
