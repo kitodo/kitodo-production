@@ -110,7 +110,7 @@ public final class ImportProcesses extends EmptyTask {
         this.importRootPath = checkIndir(indir);
         this.project = checkProject(project);
         this.templateForProcesses = checkTemplate(template);
-        this.errorPath = checkErros(errors);
+        this.errorPath = checkErrors(errors);
         this.importingProcesses = Files.walk(this.importRootPath, 1)
                 .filter(Files::isDirectory)
                 .filter(Predicate.not(this.importRootPath::equals))
@@ -238,7 +238,7 @@ public final class ImportProcesses extends EmptyTask {
      * @return a Path object to the errors directory, or {@code null} if not
      *         specified
      */
-    private final Path checkErros(String errors) {
+    private final Path checkErrors(String errors) {
         if (Objects.isNull(errors)) {
             return null;
         }
