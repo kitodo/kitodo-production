@@ -12,7 +12,6 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
-import static org.kitodo.selenium.testframework.Browser.hoverWebElement;
 
 import java.util.concurrent.TimeUnit;
 

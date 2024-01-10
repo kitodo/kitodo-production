@@ -32,7 +32,6 @@ import javax.persistence.Transient;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.enums.LinkingMode;
-import org.kitodo.forms.FolderGenerator;
 
 /**
  * Stores configuration settings regarding a type of sub-folder in the process
