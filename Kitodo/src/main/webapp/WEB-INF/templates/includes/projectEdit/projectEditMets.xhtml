@@ -257,21 +257,18 @@
 
     <p:panelGrid columns="1" layout="grid">
         <p:row>
-            <h4>#{msgs['tooltip.headline']}</h4>
+            <h4>#{msgs['preview.headline']}</h4>
         </p:row>
         <p:row>
-            <p:outputLabel for="previewTooltip" value="#{msgs['tooltip.enable']}"/>
-            <p:selectBooleanCheckbox id="previewTooltip" styleClass="switch input"
-                                     value="#{ProjectForm.previewTooltip}" disabled="#{ProjectForm.locked}">
+            <p:outputLabel for="previewHoverMode" value="#{msgs['previewHoverMode']}"/>
+            <p:selectOneMenu id="previewHoverMode" value="#{ProjectForm.previewHoverMode}"
+                             disabled="#{ProjectForm.locked}">
+                <f:selectItem itemLabel="#{msgs['previewHoverMode.OVERLAY']}" itemValue="OVERLAY"/>
+                <f:selectItem itemLabel="#{msgs['previewHoverMode.TOOLTIP_PREVIEW']}"
+                              itemValue="TOOLTIP_PREVIEW"/>
+                <f:selectItem itemLabel="#{msgs['previewHoverMode.TOOLTIP_MEDIAVIEW']}" itemValue="TOOLTIP_MEDIAVIEW"/>
                 <p:ajax event="change" oncomplete="toggleSave()"/>
-            </p:selectBooleanCheckbox>
-        </p:row>
-        <p:row>
-            <p:outputLabel for="previewTooltipMediaView" value="#{msgs['tooltip.mediaView']}"/>
-            <p:selectBooleanCheckbox id="previewTooltipMediaView" styleClass="switch input"
-                                     value="#{ProjectForm.previewTooltipMediaView}" disabled="#{ProjectForm.locked}">
-                <p:ajax event="change" oncomplete="toggleSave()"/>
-            </p:selectBooleanCheckbox>
+            </p:selectOneMenu>
         </p:row>
     </p:panelGrid>
 

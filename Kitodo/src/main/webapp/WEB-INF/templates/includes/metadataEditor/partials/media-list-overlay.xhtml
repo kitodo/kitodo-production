@@ -20,9 +20,8 @@
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <ui:param name="isPreviewTooltip"
-              value="#{DataEditorForm.galleryPanel.isPreviewTooltip() and (
-                        not DataEditorForm.galleryPanel.isPreviewTooltipMediaView() and mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image') ) or (
-                        DataEditorForm.galleryPanel.isPreviewTooltipMediaView() and mediaProvider.hasMediaViewVariant(media) and fn:startsWith(media.mediaViewMimeType, 'image') ) }"/>
+              value="#{(DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW' and mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')) or
+              (DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW' and mediaProvider.hasMediaViewVariant(media) and fn:startsWith(media.mediaViewMimeType, 'image'))}"/>
 
     <ui:fragment rendered="#{not isPreviewTooltip}">
         <p:outputPanel class="thumbnail-overlay">
@@ -47,7 +46,7 @@
 
         <p:tooltip for="mediaListImageTooltipTrigger" styleClass="mediaListImageTooltip"
                    beforeShow="metadataEditor.gallery.pages.preloadTooltipImage(this)">
-            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.isPreviewTooltipMediaView()}"
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW'}"
                             value="#{mediaProvider.mediaView}"
                             a:loading="lazy">
                 <f:param name="mediaId"
@@ -58,7 +57,7 @@
                          value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
             </p:graphicImage>
 
-            <p:graphicImage rendered="#{not DataEditorForm.galleryPanel.isPreviewTooltipMediaView()}"
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW'}"
                             value="#{mediaProvider.previewData}"
                             a:loading="lazy">
                 <f:param name="mediaId"

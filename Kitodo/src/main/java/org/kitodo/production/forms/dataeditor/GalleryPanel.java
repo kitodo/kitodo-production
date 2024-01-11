@@ -43,6 +43,7 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.MediaContentType;
@@ -237,18 +238,14 @@ public class GalleryPanel {
     }
 
     /**
-     * Check if the preview tooltip is activated in project.
+     * Returns the preview hover mode of project.
+     *
+     * @return The preview hover mode
      */
-    public boolean isPreviewTooltip() {
-        return dataEditor.getProcess().getProject().isPreviewTooltip();
+    public PreviewHoverMode getPreviewHoverMode() {
+        return dataEditor.getProcess().getProject().getPreviewHoverMode();
     }
 
-    /**
-     * Check if the media view for preview tooltip is activated in project.
-     */
-    public boolean isPreviewTooltipMediaView() {
-        return dataEditor.getProcess().getProject().isPreviewTooltipMediaView();
-    }
 
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);

@@ -43,6 +43,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -733,42 +734,22 @@ public class ProjectForm extends BaseForm {
         project.setPreview(getFolderMap().get(preview));
     }
 
-
     /**
-     * Returns the state of the preview tooltip field.
+     * Returns the preview hover mode.
      *
-     * @return True if enabled
+     * @return The preview hover mode
      */
-    public boolean isPreviewTooltip() {
-        return project.isPreviewTooltip();
+    public PreviewHoverMode getPreviewHoverMode() {
+        return project.getPreviewHoverMode();
     }
 
     /**
-     * Sets the state of the preview tooltip field.
+     * Sets the preview hover mode.
      *
-     * @param previewTooltip True if enabled
-     *
+     * @param previewHoverMode preview hover mode
      */
-    public void setPreviewTooltip(boolean previewTooltip) {
-        project.setPreviewTooltip(previewTooltip);
-    }
-
-    /**
-     * Get the status if the media view should be displayed preview tooltip.
-     *
-     * @return True if is active
-     */
-    public boolean isPreviewTooltipMediaView() {
-        return project.isPreviewTooltipMediaView();
-    }
-
-    /**
-     * Set the status if the media view should be displayed preview tooltip.
-     *
-     * @param previewTooltipMediaView True if is active
-     */
-    public void setPreviewTooltipMediaView(boolean previewTooltipMediaView) {
-        project.setPreviewTooltipMediaView(previewTooltipMediaView);
+    public void setPreviewHoverMode(PreviewHoverMode previewHoverMode) {
+        project.setPreviewHoverMode(previewHoverMode);
     }
 
     /**

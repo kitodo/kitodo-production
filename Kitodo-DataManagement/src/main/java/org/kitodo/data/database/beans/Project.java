@@ -19,6 +19,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -26,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
@@ -128,16 +131,11 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     private Folder preview;
 
     /**
-     * Field to define the status of the preview tooltip.
+     * Field to define mode of hover in preview.
      */
-    @Column(name = "preview_tooltip")
-    private Boolean previewTooltip = false;
-
-    /**
-     * Field to define the status if the media view should be displayed preview tooltip.
-     */
-    @Column(name = "preview_tooltip_media_view")
-    private Boolean previewTooltipMediaView = false;
+    @Column(name = "preview_hover_mode")
+    @Enumerated(EnumType.STRING)
+    private PreviewHoverMode previewHoverMode = PreviewHoverMode.OVERLAY;
 
     /**
      * Folder with media to use for the audio preview.
@@ -533,40 +531,21 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Get the status of the preview tooltip.
+     * Sets the preview hover mode.
      *
-     * @return True if is active
+     * @param previewHoverMode preview hover mode
      */
-    public boolean isPreviewTooltip() {
-        return previewTooltip;
+    public void setPreviewHoverMode(PreviewHoverMode previewHoverMode) {
+        this.previewHoverMode = previewHoverMode;
     }
 
     /**
-     * Set the status if the media view should be displayed preview tooltip.
+     * Returns the preview hover mode.
      *
-     * @param previewTooltipMediaView True if is active
+     * @return The preview hover mode
      */
-    public void setPreviewTooltipMediaView(boolean previewTooltipMediaView) {
-        this.previewTooltipMediaView = previewTooltipMediaView;
-    }
-
-    /**
-     * Get the status if the media view should be displayed preview tooltip.
-     *
-     * @return True if is active
-     */
-    public boolean isPreviewTooltipMediaView() {
-        return previewTooltipMediaView;
-    }
-
-    /**
-     * Set the status of the preview tooltip.
-     *
-     * @param previewTooltip
-     *         True if is active
-     */
-    public void setPreviewTooltip(boolean previewTooltip) {
-        this.previewTooltip = previewTooltip;
+    public PreviewHoverMode getPreviewHoverMode() {
+        return previewHoverMode;
     }
 
     /**
