@@ -16,7 +16,8 @@
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:o="http://omnifaces.org/ui">
     <ui:define name="contentHeader">
         <h3>#{msgs.extendedSearch}</h3>
 
@@ -27,6 +28,7 @@
                          icon="fa fa-search"
                          iconPos="right"
                          styleClass="right"
+                         update="searchTabView"
                          rendered="#{SecurityAccessController.hasAuthorityToViewTaskList()}"/>
         <p:commandButton id="submitProcessSearch"
                          value="#{msgs.searchForVolume}"
@@ -35,12 +37,19 @@
                          icon="fa fa-search"
                          iconPos="right"
                          styleClass="right"
+                         update="searchTabView"
                          rendered="#{SecurityAccessController.hasAuthorityToViewProcessList()}"/>
     </ui:define>
 
     <ui:define name="pageTabView">
         <p:tabView id="searchTabView">
             <p:tab id="searchTab" title="#{msgs.details}">
+                <o:validateAllOrNone id="taskStatusValidation"
+                                     message="#{err.fillOutAllOrNone}"
+                                     components="taskStatus taskName"/>
+                <o:validateAllOrNone id="processPropertyValidation"
+                                     message="#{err.fillOutAllOrNone}"
+                                     components="processProperty processPropertyTitle"/>
                 <p:panelGrid id="processSearch-grid">
                     <!-- process title -->
                     <p:row>
@@ -85,7 +94,9 @@
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu value="#{SearchForm.processPropertyTitle}">
+                            <p:selectOneMenu id="processPropertyTitle"
+                                             label="#{msgs.value}"
+                                             value="#{SearchForm.processPropertyTitle}">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{SearchForm.processPropertyTitles}"
                                                var="proc" itemLabel="#{proc}"
@@ -100,21 +111,26 @@
                     </p:row>
                     <!--steps -->
                     <p:row>
-                        <p:column><p:outputLabel value="#{msgs.task}"/></p:column>
+                        <p:column><p:outputLabel for="taskName" value="#{msgs.task}"/></p:column>
                         <p:column>
                             <p:selectOneMenu value="#{SearchForm.stepOperand}">
                                 <f:selectItems value="#{SearchForm.operands}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="taskStatus" value="#{SearchForm.status}">
+                            <p:selectOneMenu id="taskStatus"
+                                             label="#{msgs.taskStatus}"
+                                             value="#{SearchForm.status}"
+                                             requiredMessage="Bitte geben Sie sowohl den Aufgabenstatus als auch -titel an">
                             	<f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{SearchForm.stepstatus}" var="stepstatus"
                                                itemLabel="#{HelperForm.getTranslated(stepstatus.title)}" itemValue="#{stepstatus.searchString}"/>
                             </p:selectOneMenu>
                         </p:column>
                         <p:column>
-                            <p:selectOneMenu id="taskName" value="#{SearchForm.stepname}">
+                            <p:selectOneMenu id="taskName"
+                                             value="#{SearchForm.stepname}"
+                                             requiredMessage="Bitte geben Sie sowohl den Aufgabenstatus als auch -titel an">
                                 <f:selectItem itemValue="#{null}" itemLabel="#{msgs.notSelected}" noSelectionOption="true"/>
                                 <f:selectItems value="#{SearchForm.stepTitles}" var="stepTitles" itemLabel="#{stepTitles}"
                                                itemValue="#{stepTitles}"/>
