@@ -13,12 +13,10 @@ package org.kitodo.production.helper.tasks;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;

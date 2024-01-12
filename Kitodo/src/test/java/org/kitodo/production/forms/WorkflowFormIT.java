@@ -33,7 +33,6 @@ import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TaskService;
-import org.kitodo.production.services.data.WorkflowService;
 
 public class WorkflowFormIT {
 
