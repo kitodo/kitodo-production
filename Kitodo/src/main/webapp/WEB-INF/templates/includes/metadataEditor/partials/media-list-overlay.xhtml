@@ -18,7 +18,7 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
-
+    <!--@elvariable id="media" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
     <ui:param name="isPreviewTooltip"
               value="#{(DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW' and mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')) or
               (DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW' and mediaProvider.hasMediaViewVariant(media) and fn:startsWith(media.mediaViewMimeType, 'image'))}"/>
