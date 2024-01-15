@@ -43,6 +43,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -731,6 +732,24 @@ public class ProjectForm extends BaseForm {
      */
     public void setPreview(String preview) {
         project.setPreview(getFolderMap().get(preview));
+    }
+
+    /**
+     * Returns the preview hover mode.
+     *
+     * @return The preview hover mode
+     */
+    public PreviewHoverMode getPreviewHoverMode() {
+        return project.getPreviewHoverMode();
+    }
+
+    /**
+     * Sets the preview hover mode.
+     *
+     * @param previewHoverMode preview hover mode
+     */
+    public void setPreviewHoverMode(PreviewHoverMode previewHoverMode) {
+        project.setPreviewHoverMode(previewHoverMode);
     }
 
     /**

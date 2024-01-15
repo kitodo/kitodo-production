@@ -55,7 +55,6 @@
                     <f:param name="krsc"
                              value="true"/>
                 </p:media>
-                <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
             <ui:fragment rendered="#{mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')}">
@@ -74,7 +73,6 @@
                 <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
                               rendered="#{media.assignedSeveralTimes}"
                               styleClass="assigned-several-times"/>
-                <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
 
             <ui:fragment rendered="#{not mediaProvider.hasPreviewVariant(media)}">
@@ -89,8 +87,9 @@
                         <i class="fa fa-file-image-o"/>
                     </h:panelGroup>
                 </p:outputPanel>
-                <ui:include src="media-list-overlay.xhtml"/>
             </ui:fragment>
+
+            <ui:include src="media-list-overlay.xhtml"/>
 
         </p:outputPanel>
     </p:outputPanel>
