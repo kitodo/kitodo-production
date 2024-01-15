@@ -21,6 +21,7 @@
               width="500px"
               showHeader="false"
               visible="#{not empty DataEditorForm.metadataFileLoadingError}"
+              onShow="if($('#loadingScreen').length) {$('#loadingScreen').hide();}"
               appendTo="@(body)"
               resizable="false"
               closable="false"
