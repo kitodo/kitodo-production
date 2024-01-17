@@ -11,7 +11,6 @@
 
 package org.kitodo.api.dataformat.mets;
 
-import java.math.BigInteger;
 import java.util.UUID;
 
 /**

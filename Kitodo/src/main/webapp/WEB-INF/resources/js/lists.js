@@ -51,7 +51,7 @@ $(document).on("click", ".allSelectable .ui-chkbox-all .ui-chkbox-box", function
 
 $(window).on("load", function () {
     $.ready.then(function () {
-        if (typeof PF('processesTable').selection !== "undefined" && (PF('processesTable').selection[0] === '@all' || PF('processesTable').selection.length === PF('processesTable').cfg.paginator.rowCount )) {
+        if ($('#processesTabView\\:processesForm\\:processesTable').length && typeof PF('processesTable').selection !== "undefined" && (PF('processesTable').selection[0] === '@all' || PF('processesTable').selection.length === PF('processesTable').cfg.paginator.rowCount )) {
             PF('processesTable').selectAllRows();
             PF('processesTable').selection=new Array("@all");
             $(PF('processesTable').selectionHolder).val('@all');

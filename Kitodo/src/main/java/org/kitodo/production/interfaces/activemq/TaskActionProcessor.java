@@ -28,7 +28,6 @@ import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessorException;
 import org.kitodo.production.services.ServiceManager;

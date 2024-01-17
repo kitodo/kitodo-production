@@ -12,10 +12,8 @@
 package org.kitodo.production.helper.tasks;
 
 import java.io.File;
-import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.AfterClass;

@@ -144,11 +144,6 @@
                     </p:commandLink>
                 </h:panelGroup>
 
-                <h:link styleClass="action"
-                        rendered="#{SecurityAccessController.hasAuthorityToViewDatabaseStatistics()}">
-                    <h:outputText><i class="fa fa-bar-chart fa-lg"/></h:outputText>
-                </h:link>
-
                 <h:panelGroup styleClass="action"
                               title="#{item.hasProcesses() ? msgs.cannotDeleteProject : msgs.delete}">
                     <p:commandLink id="deleteProject"

@@ -490,6 +490,29 @@ metadataEditor.gallery = {
         },
 
         /**
+         * Preload the images in tooltip.
+         *
+         * To improve performance, the images within the tooltips are loaded only when the tooltip is displayed.
+         * For the preview image, it makes no difference, as the image is already loaded. However, if the image
+         * from the MediaView is to be displayed in the tooltip, it must be preloaded. Otherwise, the tooltip appears
+         * at a shifted position because, at the time of display, it does not yet know the size of its content.
+         */
+        preloadTooltipImage(tooltip) {
+            let tooltipElement = document.getElementById(tooltip.id);
+            if (!tooltipElement.hasAttribute("data-preloaded")) {
+                let tempImage = new Image();
+                tempImage.src = tooltipElement.getElementsByTagName('img')[0].src;
+                tempImage.onload = function () {
+                    tooltipElement.setAttribute("data-preloaded", "true");
+                    tooltipElement.getElementsByTagName('img')[0].height = tempImage.height;
+                    PF(tooltip.cfg.widgetVar).show();
+                }
+                return false;
+            }
+            return true;
+        },
+
+        /**
          * Checks whether selection is a continuous selection and applies corresponding CSS style class.
          */
         updateDiscontinuousSecletionState() {

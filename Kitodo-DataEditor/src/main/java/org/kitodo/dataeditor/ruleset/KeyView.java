@@ -154,6 +154,15 @@ class KeyView extends AbstractKeyView<KeyDeclaration> implements DatesSimpleMeta
         return settings.isEditable(declaration.getId());
     }
 
+    @Override
+    public boolean isFilterable() {
+        InputType inputType = getInputType();
+        if (InputType.MULTIPLE_SELECTION.equals(inputType) || InputType.ONE_LINE_SINGLE_SELECTION.equals(inputType)) {
+            return settings.isFilterable(declaration.getId());
+        }
+        return false;
+    }
+
     /**
      * Checks if a URI is in the configured namespace, if one has been
      * specified. Typically, a namespace is used as a URL prefix. For namespaces

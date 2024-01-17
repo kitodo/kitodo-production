@@ -2968,9 +2968,32 @@ Column content
     max-width: 100%;
 }
 
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-inputfield.ui-selectmanymenu.read-only,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio.read-only {
     max-width: unset;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-icon-search,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search {
+    top: 8px;
+    right: 6px;
+    text-indent: unset;
+    background: none;
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-icon-search::after,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-icon-search::after {
+    font-family: FontAwesome;
+    content: "\f002";
+    text-indent: unset;
+    color: var(--blue);
+}
+
+#editForm\:processFromTemplateTabView\:metadataTable .ui-selectlistbox-filter-container .ui-selectlistbox-filter,
+#metadataAccordion\:metadata\:metadataTable_data .ui-selectlistbox-filter-container .ui-selectlistbox-filter {
+    padding-right: 26px;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data .ui-selectoneradio {
@@ -3474,6 +3497,45 @@ Column content
     margin-right: 3px;
 }
 
+.mediaListImageTooltipTrigger {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mediaListImageTooltipTrigger i.fa {
+    font-size: 30px;
+}
+
+.ui-tooltip.mediaListImageTooltip {
+    max-width: fit-content;
+}
+
+.ui-tooltip.mediaListImageTooltip.ui-tooltip-left > .ui-tooltip-arrow {
+    border-left-color: var(--pure-white);
+}
+
+.ui-tooltip.mediaListImageTooltip.ui-tooltip-right > .ui-tooltip-arrow {
+    border-right-color: var(--pure-white);
+}
+
+.ui-tooltip.mediaListImageTooltip > .ui-tooltip-text {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--pure-white);
+    padding: 8px;
+}
+
+.ui-tooltip.mediaListImageTooltip > .ui-tooltip-text > img {
+    max-height: 40vh;
+}
+
+.ui-tooltip.mediaListImageTooltip > .ui-tooltip-text > div {
+    color: var(--carbon-blue);
+    margin-top: 6px;
+    font-size: smaller;
+}
+
 .ui-widget .thumbnail-overlay {
     position: absolute;
     top: 0;
@@ -3932,15 +3994,6 @@ footer {
 .ot-folder-use {
     font-weight: bold;
     padding: .75em 1.5em;
-}
-
-.la-folder-use {
-    padding-left: 16px;
-}
-
-.so-folder-use {
-    margin: 0 15px 1.3em 15px;
-    width: calc(100% - 64px);
 }
 
 .import-table-section-title,

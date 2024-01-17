@@ -46,7 +46,6 @@ import org.kitodo.production.model.bibliography.course.metadata.CountableMetadat
 import org.kitodo.production.model.bibliography.course.metadata.MetadataEditMode;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.ImportService;
 
 public class CalendarService {
 
