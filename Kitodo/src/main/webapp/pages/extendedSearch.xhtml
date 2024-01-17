@@ -44,12 +44,12 @@
     <ui:define name="pageTabView">
         <p:tabView id="searchTabView">
             <p:tab id="searchTab" title="#{msgs.details}">
-                <o:validateAllOrNone id="taskStatusValidation"
-                                     message="#{err.fillOutAllOrNone}"
-                                     components="taskStatus taskName"/>
                 <o:validateAllOrNone id="processPropertyValidation"
                                      message="#{err.fillOutAllOrNone}"
                                      components="processProperty processPropertyTitle"/>
+                <o:validateAllOrNone id="taskStatusValidation"
+                                     message="#{err.fillOutAllOrNone}"
+                                     components="taskStatus taskName"/>
                 <p:panelGrid id="processSearch-grid">
                     <!-- process title -->
                     <p:row>
