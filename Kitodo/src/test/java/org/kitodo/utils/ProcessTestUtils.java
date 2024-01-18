@@ -39,7 +39,8 @@ import org.primefaces.model.DefaultTreeNode;
 public class ProcessTestUtils {
 
     private static final String TEST_IMAGES_DIR = "images";
-    private static final String METADATA_DIR = "metadataFiles";
+    public static final String METADATA_DIR = "metadataFiles";
+    public static final String METADATA_BASE_DIR = "src/test/resources/metadata/";
     public static final String META_XML = "/meta.xml";
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
@@ -194,5 +195,16 @@ public class ProcessTestUtils {
             Process testProcess = ServiceManager.getProcessService().getById(processId);
             ServiceManager.getProcessService().save(testProcess);
         }
+    }
+
+    /**
+     * Log title and ID of given test process.
+     *
+     * @param process test process
+     */
+    public static void logTestProcessInfo(Process process) {
+        logger.info(" ************* ");
+        logger.info(" Process '" + process.getTitle() + "' has ID " + process.getId());
+        logger.info(" ************* ");
     }
 }

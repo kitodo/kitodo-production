@@ -101,6 +101,7 @@ import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
+import org.kitodo.utils.ProcessTestUtils;
 
 /**
  * Insert data to test database.
@@ -701,7 +702,7 @@ public class MockDatabase {
         parentProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         parentProcess.setTitle(HIERARCHY_PARENT);
         ServiceManager.getProcessService().save(parentProcess);
-        logTestProcessInfo(parentProcess);
+        ProcessTestUtils.logTestProcessInfo(parentProcess);
         testProcesses.put(parentProcess.getTitle(), parentProcess.getId());
 
         Process childProcessToRemove = new Process();
@@ -711,7 +712,7 @@ public class MockDatabase {
         childProcessToRemove.setProject(ServiceManager.getProjectService().getById(1));
         childProcessToRemove.setRuleset(ServiceManager.getRulesetService().getById(1));
         ServiceManager.getProcessService().save(childProcessToRemove);
-        logTestProcessInfo(childProcessToRemove);
+        ProcessTestUtils.logTestProcessInfo(childProcessToRemove);
         testProcesses.put(childProcessToRemove.getTitle(), childProcessToRemove.getId());
 
         Process sixthProcess = new Process();
@@ -721,21 +722,15 @@ public class MockDatabase {
         sixthProcess.setProject(ServiceManager.getProjectService().getById(1));
         sixthProcess.setParent(parentProcess);
         ServiceManager.getProcessService().save(sixthProcess);
-        logTestProcessInfo(sixthProcess);
+        ProcessTestUtils.logTestProcessInfo(sixthProcess);
         testProcesses.put(sixthProcess.getTitle(), sixthProcess.getId());
 
         Process seventhProcess = new Process();
         seventhProcess.setTitle(HIERARCHY_CHILD_TO_ADD);
         ServiceManager.getProcessService().save(seventhProcess);
-        logTestProcessInfo(seventhProcess);
+        ProcessTestUtils.logTestProcessInfo(seventhProcess);
         testProcesses.put(seventhProcess.getTitle(), seventhProcess.getId());
         return testProcesses;
-    }
-
-    private static void logTestProcessInfo(Process process) {
-        System.out.println(" ************* ");
-        System.out.println(" Process '" + process.getTitle() + "' has ID " + process.getId());
-        System.out.println(" ************* ");
     }
 
     /**
@@ -1071,27 +1066,6 @@ public class MockDatabase {
 
         project.setMediaView(secondFolder);
         ServiceManager.getProjectService().save(project);
-    }
-
-    /**
-     * Insert dummy process into database.
-     * @param dummyProcessId id used in dummy process title
-     * @param projectId id of project to which the dummy process is added
-     * @return database ID of created dummy process
-     * @throws DAOException when loading test project fails
-     * @throws DataException when saving dummy process fails
-     */
-    public static int insertDummyProcess(int dummyProcessId, int projectId) throws DAOException, DataException {
-        Project firstProject = ServiceManager.getProjectService().getById(projectId);
-        Template template = firstProject.getTemplates().get(0);
-        Process dummyProcess = new Process();
-        dummyProcess.setTitle("Dummy_process_" + dummyProcessId);
-        dummyProcess.setProject(firstProject);
-        dummyProcess.setTemplate(template);
-        dummyProcess.setRuleset(template.getRuleset());
-        dummyProcess.setDocket(template.getDocket());
-        ServiceManager.getProcessService().save(dummyProcess);
-        return dummyProcess.getId();
     }
 
     /**

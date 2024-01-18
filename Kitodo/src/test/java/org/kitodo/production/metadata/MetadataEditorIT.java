@@ -13,6 +13,8 @@ package org.kitodo.production.metadata;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
+import static org.kitodo.utils.ProcessTestUtils.META_XML;
+import static org.kitodo.utils.ProcessTestUtils.METADATA_BASE_DIR;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -88,7 +90,7 @@ public class MetadataEditorIT {
     public void shouldAddLink() throws Exception {
         int parentId = testProcessIds.get(MockDatabase.HIERARCHY_PARENT);
         int childId = testProcessIds.get(MockDatabase.HIERARCHY_CHILD_TO_ADD);
-        File metaXmlFile = new File("src/test/resources/metadata/" + parentId + "/meta.xml");
+        File metaXmlFile = new File(METADATA_BASE_DIR + parentId + META_XML);
         List<String> metaXmlContentBefore = FileUtils.readLines(metaXmlFile, StandardCharsets.UTF_8);
 
         MetadataEditor.addLink(ServiceManager.getProcessService().getById(parentId), "0", childId);
@@ -97,14 +99,14 @@ public class MetadataEditorIT {
             isInternalMetsLink(FileUtils.readLines(metaXmlFile, StandardCharsets.UTF_8).get(36), childId));
 
         FileUtils.writeLines(metaXmlFile, StandardCharsets.UTF_8.toString(), metaXmlContentBefore);
-        FileUtils.deleteQuietly(new File("src/test/resources/metadata/" + parentId + "/meta.xml.1"));
+        FileUtils.deleteQuietly(new File(METADATA_BASE_DIR + parentId + "/meta.xml.1"));
     }
 
     @Test
     public void shouldAddMultipleStructuresWithoutMetadata() throws Exception {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        File metaXmlFile = new File("src/test/resources/metadata/" + testProcessId + "/meta.xml");
+        File metaXmlFile = new File(METADATA_BASE_DIR + testProcessId + META_XML);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
 
         int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();
@@ -130,7 +132,7 @@ public class MetadataEditorIT {
 
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        File metaXmlFile = new File("src/test/resources/metadata/" + testProcessId + "/meta.xml");
+        File metaXmlFile = new File(METADATA_BASE_DIR + testProcessId + META_XML);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
 
         int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();
@@ -165,7 +167,7 @@ public class MetadataEditorIT {
 
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        File metaXmlFile = new File("src/test/resources/metadata/" + testProcessId + "/meta.xml");
+        File metaXmlFile = new File(METADATA_BASE_DIR + testProcessId + META_XML);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metaXmlFile.toURI());
 
         int oldNrLogicalDivisions = workpiece.getAllLogicalDivisions().size();

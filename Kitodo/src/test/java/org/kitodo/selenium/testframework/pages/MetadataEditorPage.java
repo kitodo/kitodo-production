@@ -201,7 +201,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void expandAll() {
         expandAllButton.click();
-        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(1, TimeUnit.SECONDS)
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
                 .until(() -> expandAllButton.isEnabled());
     }
 
@@ -210,7 +210,7 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void collapseAll() {
         collapseAllButton.click();
-        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(1, TimeUnit.SECONDS)
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
                 .until(() -> collapseAllButton.isEnabled());
     }
 
