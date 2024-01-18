@@ -119,7 +119,8 @@ public class ProcessHelperIT {
 
     private void testForceRegenerationByTempProcessParents(TempProcess tempProcess,
             RulesetManagementInterface rulesetManagement) throws DAOException, ProcessGenerationException {
-        TempProcess tempProcessParent = new TempProcess(ServiceManager.getProcessService().getById(processHelperTestProcessId), new Workpiece());
+        TempProcess tempProcessParent = new TempProcess(ServiceManager.getProcessService().getById(processHelperTestProcessId),
+                new Workpiece());
         tempProcess.getProcessMetadata().setProcessDetails(new ProcessFieldedMetadata() {
             {
                 treeNode.getChildren()

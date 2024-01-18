@@ -48,6 +48,7 @@ public class ProcessTestUtils {
     public static final String testFileChildProcessToKeep = "testMetadataForChildProcessToKeep.xml";
     private static final String testFileChildProcessToRemove = "testMetadataForKitodoScript.xml";
     private static final Map<String, String> hierarchyProcessTitlesAndFiles;
+
     static {
         hierarchyProcessTitlesAndFiles = Map.of(
                 MockDatabase.HIERARCHY_PARENT, testFileForHierarchyParent,
@@ -111,6 +112,13 @@ public class ProcessTestUtils {
         }
     }
 
+    /**
+     * Copy test resources from source directory specified in second parameter 'sourceDirectory' to metadata directory
+     * of test process with provided ID 'processId'.
+     * @param processId ID of process to which test resources are copied
+     * @param sourceDirectory directory containing test resources to be copied
+     * @throws IOException when listing files in source directory fails
+     */
     public static void copyTestResources(int processId, String sourceDirectory) throws IOException {
         String sourceDir = Paths.get(ConfigCore.getKitodoDataDirectory(), sourceDirectory).toString();
         String targetDir = Paths.get(ConfigCore.getKitodoDataDirectory(), processId + "/").toString();
@@ -176,7 +184,7 @@ public class ProcessTestUtils {
         }
     }
 
-    private static void deleteProcessHierarchy(Process process){
+    private static void deleteProcessHierarchy(Process process) {
         for (Process childProcess : process.getChildren()) {
             deleteProcessHierarchy(childProcess);
         }

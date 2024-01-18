@@ -491,6 +491,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
             .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
     }
 
+    /**
+     * Navigate to calendar page to create child processes for process with provided ID 'processId'.
+     * @param processId ID of process for which child processes are created using the calendar
+     * @throws Exception when navigating to the calendar page fails
+     */
     public void goToCalendar(int processId) throws Exception {
         String xpath = String.format(CALENDER_ACTION_XPATH, processId);
         WebElement openCalendarLink = Browser.getDriver().findElementByXPath(xpath);
