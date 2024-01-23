@@ -212,6 +212,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private String renamingError = "";
     private String metadataFileLoadingError = "";
 
+    static final String GROWL_MESSAGE =
+            "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
+
     /**
      * Public constructor.
      */
@@ -296,11 +299,24 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
+            if (Objects.nonNull(this.dataEditorSetting) && Objects.nonNull(dataEditorSetting.getId())) {
+                showDataEditorSettingsLoadedMessage();
+            }
         } catch (FileNotFoundException e) {
             metadataFileLoadingError = e.getLocalizedMessage();
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
+    }
+
+    private void showDataEditorSettingsLoadedMessage() throws DAOException {
+        String taskTitle = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
+        String messageTitle = Helper.getTranslation("dataEditor.layoutLoadedSuccessfullyTitle");
+        String messageText = Helper.getTranslation("dataEditor.layoutLoadedSuccessfullyText", taskTitle);
+        String script = GROWL_MESSAGE.replace("SUMMARY", messageTitle).replace("DETAIL", messageText)
+                .replace("SEVERITY", "info");
+        PrimeFaces.current().executeScript("PF('notifications').removeAll();");
+        PrimeFaces.current().executeScript(script);
     }
 
     private void checkProjectFolderConfiguration() {
