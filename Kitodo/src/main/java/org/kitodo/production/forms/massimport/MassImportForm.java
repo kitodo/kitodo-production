@@ -30,6 +30,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.forms.CsvRecord;
@@ -62,6 +63,7 @@ public class MassImportForm extends BaseForm {
     private HashMap<String, String> importSuccessMap = new HashMap<>();
     private Integer progress = 0;
     private Boolean rulesetConfigurationForOpacImportComplete = null;
+    private String configurationError = null;
 
     /**
      * Prepare mass import.
@@ -157,6 +159,11 @@ public class MassImportForm extends BaseForm {
             PrimeFaces.current().ajax().update("massImportResultDialog");
         } catch (ImportException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        } catch (ConfigException e) {
+            configurationError = e.getLocalizedMessage();
+            PrimeFaces.current().executeScript("PF('massImportProgressBar').cancel();");
+            PrimeFaces.current().executeScript("PF('configErrorDialog').show();");
+            PrimeFaces.current().ajax().update("configErrorDialog");
         }
     }
 
@@ -442,5 +449,13 @@ public class MassImportForm extends BaseForm {
      */
     public Boolean getRulesetConfigurationForOpacImportComplete() {
         return rulesetConfigurationForOpacImportComplete;
+    }
+
+    /**
+     * Get ConfigurationError value.
+     * @return configuration error value
+     */
+    public String getConfigurationError() {
+        return configurationError;
     }
 }

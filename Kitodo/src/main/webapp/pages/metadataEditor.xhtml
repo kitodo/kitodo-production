@@ -52,7 +52,9 @@
         <!--@elvariable id="commentsNumber" type="Integer"-->
         <ui:param name="commentsNumber" value="#{CommentForm.getAllComments().size()}"/>
 
-        <p:panel id="metadataEditorContainer" style="margin: auto 16px; padding: 0;">
+        <p:panel id="metadataEditorContainer"
+                 rendered="#{empty DataEditorForm.getMetadataFileLoadingError()}"
+                 style="margin: auto 16px; padding: 0;">
 
             <p:panel id="metadataEditor">
                 <!-- Header -->
@@ -207,11 +209,15 @@
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType eq 'video/mp4'}"
+                                                  rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('audio')}"
+                                                  value="#{msgs.audio}
+                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                    <h:outputText styleClass="columnHeading"
+                                                  rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('video')}"
                                                   value="#{msgs.video}
                                                   #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
                                     <h:outputText styleClass="columnHeading"
-                                                  rendered="#{DataEditorForm.galleryPanel.lastSelection ne null and DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType ne 'video/mp4'}"
+                                                  rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('image')}"
                                                   value="#{msgs.image}
                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
                                                  #{msgs.page}
@@ -249,6 +255,7 @@
         <ui:include src="/WEB-INF/templates/includes/comments/newCommentDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/uploadFile.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/metadataLocked.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/errorLoadingMetadataDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/fileReferencesUpdatedDialog.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/dataEditorSettingSavingResult.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/metadataEditor/dialogs/renamingMediaResults.xhtml"/>

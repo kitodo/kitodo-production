@@ -53,6 +53,14 @@ public class Setting {
     private Boolean editable;
 
     /**
+     * This will present an input filter for the list of options in select fields if set to true. When entering text,
+     * the filter will display only those options that contain the entered text. This attribute exclusively works with
+     * keys that have an option list; for other keys, no action will occur.
+     */
+    @XmlAttribute
+    private Boolean filterable;
+
+    /**
      * This will hide a field, even if a value has been entered for this field.
      * Normally, there are rules in the ruleset that say which fields are
      * allowed, but if data is in fields, they will still be displayed, even if
@@ -122,6 +130,18 @@ public class Setting {
     }
 
     /**
+     * Returns the value “filterable” if one is set. This getter returns
+     * {@code null} if the attribute was not entered. This is needed, for
+     * example, when merging attributes. If only the simple value (with default,
+     * if no value was specified) is needed, use {@link #isFilterable()}.
+     *
+     * @return the value “filterable”, if set, else {@code null}
+     */
+    public Boolean getFilterable() {
+        return filterable;
+    }
+
+    /**
      * Returns the key whose representation is influenced.
      * 
      * @return the key whose representation is influenced
@@ -183,6 +203,16 @@ public class Setting {
     }
 
     /**
+     * Returns the “filterable” value or otherwise the default value if the
+     * attribute is not set.
+     *
+     * @return the “filterable” value or its default value
+     */
+    public boolean isFilterable() {
+        return filterable != null ? filterable : false;
+    }
+
+    /**
      * Returns the “excluded” value or otherwise the default value if the
      * attribute is not set.
      * 
@@ -222,6 +252,17 @@ public class Setting {
      */
     public void setEditable(Boolean editable) {
         this.editable = editable;
+    }
+
+    /**
+     * This sets the “filterable” value. If you set the value to {@code null}, no
+     * attribute is written.
+     *
+     * @param filterable
+     *            “filterable” value to set
+     */
+    public void setFilterable(Boolean filterable) {
+        this.filterable = filterable;
     }
 
     /**

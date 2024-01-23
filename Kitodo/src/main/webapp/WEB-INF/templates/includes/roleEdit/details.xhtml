@@ -42,52 +42,53 @@
             </p:row>
             <p:row rendered="#{not SecurityAccessController.hasAuthorityGlobalToAddOrEditRole()}" />
         </p:panelGrid>
-            <div>
-                <p:panelGrid columns="2" layout="grid">
-                    <!--global authorities-->
+        <p:panelGrid columns="2" layout="grid">
+            <p:row>
+                <!--global authorities-->
+                <h:panelGroup>
+                    <h3 style="margin-bottom: 20px">
+                        <h:outputText value="#{msgs.globalAssignable}"/>
+                    </h3>
+                    <p:pickList id="authoritiesGlobalPick"
+                                showSourceFilter="true" showTargetFilter="true"
+                                filterMatchMode="contains"
+                                responsive="true"
+                                disabled="#{isViewMode}"
+                                value="#{RoleForm.globalAssignableAuthorities}"
+                                converter="#{authorityConverter}"
+                                var="authority"
+                                itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
+                                itemValue="#{authority}"
+                                onTransfer="toggleSave()">
+                        <f:facet name="sourceCaption">#{msgs.available}</f:facet>
+                        <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
+                    </p:pickList>
+                </h:panelGroup>
+            </p:row>
 
-                    <h:panelGroup>
-                        <h3 style="margin-bottom: 20px">
-                            <h:outputText value="#{msgs.globalAssignable}"/>
-                        </h3>
-                        <p:pickList id="authoritiesGlobalPick"
-                                    showSourceFilter="true" showTargetFilter="true"
-                                    filterMatchMode="contains"
-                                    responsive="true"
-                                    disabled="#{isViewMode}"
-                                    value="#{RoleForm.globalAssignableAuthorities}"
-                                    converter="#{authorityConverter}"
-                                    var="authority"
-                                    itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
-                                    itemValue="#{authority}"
-                                    onTransfer="toggleSave()">
-                            <f:facet name="sourceCaption">#{msgs.available}</f:facet>
-                            <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
-                        </p:pickList>
-                    </h:panelGroup>
-
-                    <!--client authorities-->
-                    <h:panelGroup>
-                        <h3 style="margin-bottom: 20px">
-                            <h:outputText value="#{msgs.clientAssignable}"/>
-                        </h3>
-                        <p:pickList id="authoritiesClientPick"
-                                    value="#{RoleForm.clientAssignableAuthorities}"
-                                    converter="#{authorityConverter}"
-                                    var="authority"
-                                    disabled="#{isViewMode}"
-                                    showSourceFilter="true" showTargetFilter="true"
-                                    filterMatchMode="contains"
-                                    responsive="true"
-                                    onTransfer="toggleSave()"
-                                    itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
-                                    itemValue="#{authority}">
-                            <f:facet name="sourceCaption">#{msgs.available}</f:facet>
-                            <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
-                        </p:pickList>
-                    </h:panelGroup>
-                </p:panelGrid>
-            </div>
+            <p:row>
+                <!--client authorities-->
+                <h:panelGroup>
+                    <h3 style="margin-bottom: 20px">
+                        <h:outputText value="#{msgs.clientAssignable}"/>
+                    </h3>
+                    <p:pickList id="authoritiesClientPick"
+                                value="#{RoleForm.clientAssignableAuthorities}"
+                                converter="#{authorityConverter}"
+                                var="authority"
+                                disabled="#{isViewMode}"
+                                showSourceFilter="true" showTargetFilter="true"
+                                filterMatchMode="contains"
+                                responsive="true"
+                                onTransfer="toggleSave()"
+                                itemLabel="#{HelperForm.getTranslated(authority.getTitleWithoutSuffix())}"
+                                itemValue="#{authority}">
+                        <f:facet name="sourceCaption">#{msgs.available}</f:facet>
+                        <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
+                    </p:pickList>
+                </h:panelGroup>
+            </p:row>
+        </p:panelGrid>
         <p:row/>
     </p:panelGrid>
 

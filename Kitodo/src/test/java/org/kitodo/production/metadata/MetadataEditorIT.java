@@ -36,11 +36,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.production.forms.dataeditor.DataEditorForm;
-import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 

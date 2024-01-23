@@ -553,7 +553,7 @@ public class AddDocStrucTypeDialog {
     }
 
     private void prepareSelectPageOnAddNodeItems() {
-        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         selectPageOnAddNodeItems = new ArrayList<>(physicalDivisions.size());
         for (int i = 0; i < physicalDivisions.size(); i++) {
             View view = View.of(physicalDivisions.get(i));

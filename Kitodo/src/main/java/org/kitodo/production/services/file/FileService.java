@@ -24,6 +24,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -33,6 +34,7 @@ import java.util.Objects;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualHashBidiMap;
@@ -64,12 +66,16 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.pagination.Paginator;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataEditor;
+import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.thread.RenameMediaThread;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.kitodo.utils.MediaUtil;
 
 public class FileService {
 
@@ -1113,7 +1119,7 @@ public class FileService {
         }
 
         addNewURIsToExistingPhysicalDivisions(currentMedia,
-                workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted(), canonicals);
+                workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack(), canonicals);
         Map<String, Map<Subfolder, URI>> mediaToAdd = new TreeMap<>(currentMedia);
         List<String> mediaToRemove = new LinkedList<>(canonicals);
 
@@ -1162,7 +1168,7 @@ public class FileService {
         if (!baseUriString.endsWith("/")) {
             baseUriString = baseUriString.concat("/");
         }
-        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+        for (PhysicalDivision physicalDivision : workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             String unitCanonical = "";
             for (Entry<MediaVariant, URI> entry : physicalDivision.getMediaFiles().entrySet()) {
                 Subfolder subfolder = subfolders.get(entry.getKey().getUse());
@@ -1211,7 +1217,7 @@ public class FileService {
 
     private void removeMissingMediaFromWorkpiece(List<String> mediaToRemove, Workpiece workpiece,
                                                  Collection<Subfolder> subfolders) {
-        List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> pages = workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         for (String removal : mediaToRemove) {
             if (StringUtils.isNotBlank(removal)) {
                 for (PhysicalDivision page : pages) {
@@ -1233,7 +1239,7 @@ public class FileService {
         }
         if (!mediaToRemove.isEmpty()) {
             int i = 1;
-            for (PhysicalDivision division : workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+            for (PhysicalDivision division : workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
                 division.setOrder(i);
                 i++;
             }
@@ -1311,6 +1317,13 @@ public class FileService {
         for (Entry<Subfolder, URI> entry : data.entrySet()) {
             Folder folder = entry.getKey().getFolder();
             MediaVariant mediaVariant = createMediaVariant(folder);
+
+            // overwrite physical division type if mime type is audio or video
+            if (!PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
+                    mediaVariant.getMimeType())) {
+                physicalDivision.setType(PhysicalDivision.TYPE_TRACK);
+            }
+
             physicalDivision.getMediaFiles().put(mediaVariant, entry.getValue());
         }
         return physicalDivision;
@@ -1331,7 +1344,8 @@ public class FileService {
      */
     public void renumberPhysicalDivisions(Workpiece workpiece, boolean sortByOrder) {
         int order = 1;
-        for (PhysicalDivision physicalDivision : sortByOrder ? workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()
+        for (PhysicalDivision physicalDivision : sortByOrder
+                ? workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()
                 : workpiece.getPhysicalStructure().getAllChildren()) {
             physicalDivision.setOrder(order++);
         }
@@ -1343,7 +1357,7 @@ public class FileService {
      * intermediate places are marked uncounted.
      */
     private void repaginatePhysicalDivisions(Workpiece workpiece) {
-        List<PhysicalDivision> physicalDivisions = workpiece.getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+        List<PhysicalDivision> physicalDivisions = workpiece.getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         int first = 0;
         String value;
         switch (ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_PAGINATION)) {
@@ -1516,6 +1530,52 @@ public class FileService {
     }
 
     /**
+     * Check whether too many processes are selected for media renaming and return corresponding error message.
+     * @param numberOfProcesses number of processes for media renaming
+     * @return error message if too many processes are selected; otherwise return empty string
+     */
+    public String tooManyProcessesSelectedForMediaRenaming(int numberOfProcesses) {
+        int limit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.MAX_NUMBER_OF_PROCESSES_FOR_MEDIA_RENAMING);
+        if (0 < limit && limit < numberOfProcesses) {
+            return Helper.getTranslation("tooManyProcessesSelectedForMediaRenaming", String.valueOf(limit),
+                    String.valueOf(numberOfProcesses));
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Rename media files of given processes.
+     * @param processes Processes whose media is renamed
+     */
+    public void renameMedia(List<Process> processes) {
+        processes = lockAndSortProcessesForRenaming(processes);
+        TaskManager.addTask(new RenameMediaThread(processes));
+    }
+
+    private List<Process> lockAndSortProcessesForRenaming(List<Process> processes) {
+        processes.sort(Comparator.comparing(Process::getId));
+        List<Integer> lockedProcesses = new LinkedList<>();
+        for (Process process : processes) {
+            int processId = process.getId();
+            if (MetadataLock.isLocked(processId)) {
+                lockedProcesses.add(processId);
+                if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.ANONYMIZE)) {
+                    logger.error("Unable to lock process " + processId + " for media renaming because it is currently "
+                            + "being worked on by another user");
+                } else {
+                    User currentUser = MetadataLock.getLockUser(processId);
+                    logger.error("Unable to lock process " + processId + " for media renaming because it is currently "
+                            + "being worked on by another user (" + currentUser.getFullName() + ")");
+                }
+            } else {
+                MetadataLock.setLocked(processId, ServiceManager.getUserService().getCurrentUser());
+            }
+        }
+        return processes.stream().filter(p -> !lockedProcesses.contains(p.getId())).collect(Collectors.toList());
+    }
+
+    /**
      * Revert renaming of media files when the user leaves the metadata editor without saving. This method uses a
      * provided map object to rename media files identified by the map entries values to the corresponding map entries
      * keys.
@@ -1525,6 +1585,7 @@ public class FileService {
      */
     public void revertRenaming(BidiMap<URI, URI> filenameMappings, Workpiece workpiece) {
         // revert media variant URIs for all media files in workpiece to previous, original values
+        logger.info("Reverting to original media filenames of process " + workpiece.getId());
         for (PhysicalDivision physicalDivision : workpiece
                 .getAllPhysicalDivisionChildrenFilteredByTypes(PhysicalDivision.TYPES)) {
             for (Entry<MediaVariant, URI> mediaVariantURIEntry : physicalDivision.getMediaFiles().entrySet()) {
@@ -1536,8 +1597,14 @@ public class FileService {
         try {
             List<URI> tempUris = new LinkedList<>();
             for (Entry<URI, URI> mapping : filenameMappings.entrySet()) {
-                tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()
-                        + TEMP_EXTENSION));
+                if (mapping.getKey().toString().endsWith(TEMP_EXTENSION)) {
+                    // if current URI has '.tmp' extension, directly revert to original name (without '.tmp' extension)
+                    tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()));
+                } else {
+                    // rename to new filename with '.tmp' extension otherwise
+                    tempUris.add(fileManagementModule.rename(mapping.getKey(), mapping.getValue().toString()
+                            + TEMP_EXTENSION));
+                }
             }
             for (URI tempUri : tempUris) {
                 fileManagementModule.rename(tempUri, StringUtils.removeEnd(tempUri.toString(), TEMP_EXTENSION));

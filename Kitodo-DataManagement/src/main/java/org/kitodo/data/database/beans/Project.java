@@ -19,6 +19,8 @@ import java.util.Objects;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -26,6 +28,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
@@ -126,6 +129,13 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @ManyToOne
     @JoinColumn(name = "preview_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_folder_id"))
     private Folder preview;
+
+    /**
+     * Field to define mode of hover in preview.
+     */
+    @Column(name = "preview_hover_mode")
+    @Enumerated(EnumType.STRING)
+    private PreviewHoverMode previewHoverMode = PreviewHoverMode.OVERLAY;
 
     /**
      * Folder with media to use for the audio preview.
@@ -518,6 +528,24 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      */
     public void setPreview(Folder preview) {
         this.preview = preview;
+    }
+
+    /**
+     * Sets the preview hover mode.
+     *
+     * @param previewHoverMode preview hover mode
+     */
+    public void setPreviewHoverMode(PreviewHoverMode previewHoverMode) {
+        this.previewHoverMode = previewHoverMode;
+    }
+
+    /**
+     * Returns the preview hover mode.
+     *
+     * @return The preview hover mode
+     */
+    public PreviewHoverMode getPreviewHoverMode() {
+        return previewHoverMode;
     }
 
     /**

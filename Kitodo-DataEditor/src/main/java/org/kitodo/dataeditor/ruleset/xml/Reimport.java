@@ -14,8 +14,6 @@ package org.kitodo.dataeditor.ruleset.xml;
 import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 
-import org.apache.commons.lang3.ArrayUtils;
-
 /**
  * This class is a backing bean for the XML attribute reimport in the ruleset.
  * With it, JAXB can map the attribute to an enum.

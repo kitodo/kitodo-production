@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -393,7 +392,7 @@ public class FileManagement implements FileManagementInterface {
         File processRootDirectory = new File(KitodoConfig.getKitodoDataDirectory() + File.separator + processId);
         String scriptCreateDirMeta = KitodoConfig.getParameter("script_createDirMeta");
         String command = scriptCreateDirMeta + ' ' + processRootDirectory.getPath();
-        if (!processRootDirectory.exists() && !commandService.runCommand(command.hashCode(), command).isSuccessful()) {
+        if (!processRootDirectory.exists() && !commandService.runCommand(command).isSuccessful()) {
             throw new IOException("Could not create processRoot directory.");
         }
         return fileMapper.unmapUriFromKitodoDataDirectoryUri(Paths.get(processRootDirectory.getPath()).toUri());

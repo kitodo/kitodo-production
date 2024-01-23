@@ -21,6 +21,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -70,10 +71,9 @@ public class VariableReplacer {
      * be replaced.
      */
     private static final Pattern VARIABLE_FINDER_REGEX = Pattern.compile(
-                "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath)|"
-                + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
-                + "(?:(filename|basename|relativepath))))\\)");
-
+            "(\\$?)\\((?:(prefs|processid|processtitle|projectid|stepid|stepname|generatorsource|generatorsourcepath|ocrdworkflowid)|"
+                    + "(?:(meta|process|product|template)\\.(?:(firstchild|topstruct)\\.)?([^)]+)|"
+                    + "(?:(filename|basename|relativepath))))\\)");
     /**
      * The map is filled with replacement instructions that are required for
      * backwards compatibility with version 2.
@@ -244,6 +244,8 @@ public class VariableReplacer {
             case "generatorsource" :
             case "generatorsourcepath":
                 return determineReplacementForGeneratorSource(variableFinder, variableFinder.group(2));
+            case "ocrdworkflowid":
+                return determineReplacementForOcrdWorkflowId(variableFinder);
             default:
                 logger.warn("Cannot replace \"{}\": no such case defined in switch", variableFinder.group());
                 return variableFinder.group();
@@ -279,6 +281,28 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
         return variableFinder.group(1) + process.getId().toString();
+    }
+
+    private String determineReplacementForOcrdWorkflowId(Matcher variableFinder) {
+        if (Objects.isNull(process)) {
+            logger.warn("Cannot replace \"(ocrdworkflowid)\": no process given");
+            return variableFinder.group(1);
+        }
+
+        if (StringUtils.isNotEmpty(process.getOcrdWorkflowId())) {
+            return variableFinder.group(1) + process.getOcrdWorkflowId();
+        }
+
+        if (Objects.isNull(process.getTemplate())) {
+            logger.warn("Cannot replace \"(ocrdworkflowid)\": process has no template assigned");
+            return variableFinder.group(1);
+        }
+
+        if (StringUtils.isEmpty(process.getTemplate().getOcrdWorkflowId())) {
+            logger.warn("Cannot replace \"(ocrdworkflowid)\": template has no OCR-D workflow assigned");
+            return variableFinder.group(1);
+        }
+        return variableFinder.group(1) + process.getTemplate().getOcrdWorkflowId();
     }
 
     private String determineReplacementForProcesstitle(Matcher variableFinder) {
@@ -368,9 +392,8 @@ public class VariableReplacer {
 
         switch (metadataLevel) {
             case ALL:
-                List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
-                String allFirstchildValue = allChildren.isEmpty() ? null
-                        : MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+                String allFirstchildValue = determinateReplacementForAll(variableFinder, dollarSignIfToKeep);
+
                 if (Objects.nonNull(allFirstchildValue)) {
                     return allFirstchildValue;
                 }
@@ -385,6 +408,24 @@ public class VariableReplacer {
             default:
                 throw new IllegalStateException("complete switch");
         }
+    }
+
+    private String determinateReplacementForAll(Matcher variableFinder, String dollarSignIfToKeep) {
+        List<LogicalDivision> allChildren = workpiece.getLogicalStructure().getChildren();
+        String allFirstchildValue = null;
+        if (!allChildren.isEmpty()) {
+            allFirstchildValue = MetadataEditor.getMetadataValue(allChildren.get(0), variableFinder.group(5));
+            if (Objects.isNull(allFirstchildValue)) {
+                allFirstchildValue = determineReplacementForTopstruct(variableFinder, dollarSignIfToKeep);
+            }
+            if (StringUtils.isEmpty(allFirstchildValue)) {
+                List<LogicalDivision> firstChildChildren = allChildren.get(0).getChildren();
+                if (!firstChildChildren.isEmpty()) {
+                    allFirstchildValue = MetadataEditor.getMetadataValue(firstChildChildren.get(0), variableFinder.group(5));
+                }
+            }
+        }
+        return allFirstchildValue;
     }
 
     private String determineReplacementForTopstruct(Matcher variableFinder, String failureResult) {

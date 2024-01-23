@@ -1,0 +1,58 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://java.sun.com/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:dialog id="configErrorDialog"
+              widgetVar="configErrorDialog"
+              showHeader="false"
+              modal="true"
+              width="680px"
+              appendTo="@(body)"
+              resizable="false"
+              closable="false">
+        <h:panelGroup id="configErrorWrapper">
+            <h3>#{err['configurationError']} - #{MassImportForm.importConfigurationId.title}</h3>
+            <div class="select-note ui-messages-error">
+                <h:outputText value="#{MassImportForm.configurationError}"/>
+            </div>
+        </h:panelGroup>
+
+        <p:panelGrid>
+            <h:panelGroup layout="block"
+                          styleClass="dialogButtonWrapper right">
+                <p:commandButton value="#{msgs.close}"
+                                 type="button"
+                                 widgetVar="closeButton"
+                                 onclick="PF('configErrorDialog').hide();"
+                                 icon="fa fa-times fa-lg"
+                                 iconPos="right"
+                                 styleClass="primary right"/>
+                <p:button id="editImportConfiguration"
+                          outcome="importConfigurationEdit"
+                          title="#{msgs.editImportConfiguration}"
+                          value="#{msgs.editImportConfiguration}"
+                          icon="fa fa-pencil-square-o fa-lg"
+                          iconPos="right"
+                          styleClass="secondary-button secondary right"
+                          rendered="#{SecurityAccessController.hasAuthorityToEditImportConfiguration()}">
+                    <f:param name="id" value="#{MassImportForm.importConfigurationId.id}"/>
+                </p:button>
+            </h:panelGroup>
+        </p:panelGrid>
+    </p:dialog>
+</ui:composition>

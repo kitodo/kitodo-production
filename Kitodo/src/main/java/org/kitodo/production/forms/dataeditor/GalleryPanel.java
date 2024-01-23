@@ -43,6 +43,7 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.MediaContentType;
@@ -50,6 +51,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.utils.MediaUtil;
 import org.primefaces.PrimeFaces;
 
 /**
@@ -235,6 +237,16 @@ public class GalleryPanel {
         return dataEditor.getProcess().getProject().isAudioMediaViewWaveform();
     }
 
+    /**
+     * Returns the preview hover mode of project.
+     *
+     * @return The preview hover mode
+     */
+    public PreviewHoverMode getPreviewHoverMode() {
+        return dataEditor.getProcess().getProject().getPreviewHoverMode();
+    }
+
+
     private boolean dragStripeIndexMatches(String dragId) {
         Matcher dragStripeImageMatcher = DRAG_STRIPE_IMAGE.matcher(dragId);
         Matcher dragUnstructuredMediaMatcher = DRAG_UNSTRUCTURED_MEDIA.matcher(dragId);
@@ -356,7 +368,7 @@ public class GalleryPanel {
         Process process = dataEditor.getProcess();
         Project project = process.getProject();
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
 
         mediaContentTypeVariants.clear();
         mediaContentTypePreviewFolder.clear();
@@ -400,7 +412,7 @@ public class GalleryPanel {
      */
     private void updateMedia() {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted();
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         medias = new ArrayList<>(physicalDivisions.size());
         dataEditor.getMediaProvider().resetMediaResolverForProcess(dataEditor.getProcess().getId());
         for (PhysicalDivision physicalDivision : physicalDivisions) {
@@ -806,7 +818,7 @@ public class GalleryPanel {
     private void selectMedia(String physicalDivisionOrder, String stripeIndex, String selectionType) {
         PhysicalDivision selectedPhysicalDivision = null;
         for (PhysicalDivision physicalDivision : this.dataEditor.getWorkpiece()
-                .getAllPhysicalDivisionChildrenFilteredByTypePageAndSorted()) {
+                .getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             if (Objects.equals(physicalDivision.getOrder(), Integer.parseInt(physicalDivisionOrder))) {
                 selectedPhysicalDivision = physicalDivision;
                 break;
@@ -984,4 +996,32 @@ public class GalleryPanel {
     public String getCachingUUID() {
         return cachingUUID;
     }
+
+    /**
+     * Check if media view has mime type prefix.
+     *
+     * @param mimeTypePrefix
+     *         The mime type prefix
+     * @return True if media view has mime type prefix
+     */
+    public boolean hasMediaViewMimeTypePrefix(String mimeTypePrefix) {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.nonNull(lastSelection)) {
+            GalleryMediaContent galleryMediaContent = getGalleryMediaContent(lastSelection.getKey());
+            if (Objects.nonNull(galleryMediaContent)) {
+                String mediaViewMimeType = galleryMediaContent.getMediaViewMimeType();
+                switch (mimeTypePrefix) {
+                    case MediaUtil.MIME_TYPE_AUDIO_PREFIX:
+                        return MediaUtil.isAudio(mediaViewMimeType);
+                    case MediaUtil.MIME_TYPE_VIDEO_PREFIX:
+                        return MediaUtil.isVideo(mediaViewMimeType);
+                    case MediaUtil.MIME_TYPE_IMAGE_PREFIX:
+                        return MediaUtil.isImage(mediaViewMimeType);
+                    default:
+                }
+            }
+        }
+        return false;
+    }
+
 }

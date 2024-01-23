@@ -13,12 +13,10 @@ package org.kitodo.production.helper.tasks;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
@@ -144,47 +142,49 @@ public class TaskSitter implements Runnable, ServletContextListener {
      */
     @Override
     public void run() {
-        TaskManager taskManager = TaskManager.singleton();
-        if (taskManager.taskList.isEmpty()) {
-            return;
-        }
-
-        LinkedList<EmptyTask> launchableThreads = new LinkedList<>();
-        LinkedList<EmptyTask> finishedThreads = new LinkedList<>();
-        LinkedList<EmptyTask> failedThreads = new LinkedList<>();
-        int availableClearance = autoRunLimit;
-
-        int successfulMaxCount = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL);
-        int failedMaxCount = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.TASK_MANAGER_KEEP_FAILED);
-        Duration successfulMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL_MINS,
-                ChronoUnit.MINUTES);
-        Duration failedMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_FAILED_MINS,
-                ChronoUnit.MINUTES);
-
-        ListIterator<EmptyTask> position = taskManager.taskList.listIterator();
-        EmptyTask task;
-        try {
-            while (position.hasNext()) {
-                availableClearance = handleTaskModification(launchableThreads, finishedThreads, failedThreads,
-                        availableClearance, successfulMaxAge, failedMaxAge, position);
+        LinkedList<EmptyTask> taskList = TaskManager.singleton().taskList;
+        synchronized (taskList) {
+            if (taskList.isEmpty()) {
+                return;
             }
-        } catch (ConcurrentModificationException e) {
-            return;
-        }
+    
+            LinkedList<EmptyTask> launchableThreads = new LinkedList<>();
+            LinkedList<EmptyTask> finishedThreads = new LinkedList<>();
+            LinkedList<EmptyTask> failedThreads = new LinkedList<>();
+            int availableClearance = autoRunLimit;
+    
+            int successfulMaxCount = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL);
+            int failedMaxCount = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.TASK_MANAGER_KEEP_FAILED);
+            Duration successfulMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_SUCCESSFUL_MINS,
+                    ChronoUnit.MINUTES);
+            Duration failedMaxAge = ConfigCore.getDurationParameter(ParameterCore.TASK_MANAGER_KEEP_FAILED_MINS,
+                    ChronoUnit.MINUTES);
 
-        while (finishedThreads.size() > successfulMaxCount && (task = finishedThreads.pollFirst()) != null) {
-            taskManager.taskList.remove(task);
-        }
+            ListIterator<EmptyTask> position = taskList.listIterator();
+            EmptyTask task;
+            try {
+                while (position.hasNext()) {
+                    availableClearance = handleTaskModification(launchableThreads, finishedThreads, failedThreads,
+                            availableClearance, successfulMaxAge, failedMaxAge, position);
+                }
+            } catch (ConcurrentModificationException e) {
+                return;
+            }
 
-        while (failedThreads.size() > failedMaxCount && (task = failedThreads.pollFirst()) != null) {
-            taskManager.taskList.remove(task);
-        }
+            while (finishedThreads.size() > successfulMaxCount && (task = finishedThreads.pollFirst()) != null) {
+                taskList.remove(task);
+            }
 
-        while (launchableThreads.size() > availableClearance) {
-            launchableThreads.removeLast();
-        }
-        while ((task = launchableThreads.pollFirst()) != null) {
-            task.start();
+            while (failedThreads.size() > failedMaxCount && (task = failedThreads.pollFirst()) != null) {
+                taskList.remove(task);
+            }
+
+            while (launchableThreads.size() > availableClearance) {
+                launchableThreads.removeLast();
+            }
+            while ((task = launchableThreads.pollFirst()) != null) {
+                task.start();
+            }
         }
     }
 

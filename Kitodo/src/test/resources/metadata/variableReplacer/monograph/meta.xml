@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+   <mets:metsHdr CREATEDATE="2023-09-18T09:02:55">
+      <mets:metsDocumentID>750440</mets:metsDocumentID>
+   </mets:metsHdr>
+   <mets:dmdSec ID="DMDLOG_0000">
+      <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+         <mets:xmlData>
+            <kitodo:kitodo>
+               <kitodo:metadata name="TitleDocMain">Andreas Hammerschmids Chor-Music</kitodo:metadata>
+               <kitodo:metadata name="TitleDocMainShort">Andreas Hammerschmids Chor-Music</kitodo:metadata>
+               <kitodo:metadata name="singleDigCollection">Drucke des 17. Jahrhunderts</kitodo:metadata>
+               <kitodo:metadata name="singleDigCollection">LDP: Sammlung Fürsten- und Landesschule Grimma</kitodo:metadata>
+               <kitodo:metadata name="singleDigCollection">Musik</kitodo:metadata>
+               <kitodo:metadata name="slub_script">keine_OCR</kitodo:metadata>
+               <kitodo:metadata name="docType">Monograph</kitodo:metadata>
+               <kitodo:metadata name="slub_ownerDigi">SLUB Dresden</kitodo:metadata>
+               <kitodo:metadata name="slub_ownerOrig">SLUB Dresden</kitodo:metadata>
+            </kitodo:kitodo>
+         </mets:xmlData>
+      </mets:mdWrap>
+   </mets:dmdSec>
+   <mets:fileSec>
+      <mets:fileGrp USE="LOCAL"/>
+   </mets:fileSec>
+   <mets:structMap TYPE="LOGICAL">
+      <mets:div DMDID="DMDLOG_0000"
+                ID="LOG_0000"
+                LABEL="Andreas Hammerschmids Chor-Music"
+                ORDERLABEL="Andreas Hammerschmids Chor-Music"
+                TYPE="Monograph"/>
+   </mets:structMap>
+   <mets:structMap TYPE="PHYSICAL">
+      <mets:div ID="PHYS_0000"/>
+   </mets:structMap>
+   <mets:structLink>
+      <mets:smLink xmlns:xlink="http://www.w3.org/1999/xlink" xlink:to="" xlink:from=""/>
+   </mets:structLink>
+</mets:mets>

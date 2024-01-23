@@ -1221,10 +1221,12 @@ tr.ui-expanded-row-content:hover .ui-datatable tbody {
     border: solid var(--default-border-width) var(--medium-gray);
 }
 
-.ui-state-error .ui-picklist-list {
-    background: #fef1ec;
-    border: 1px solid #cd0a0a;
-    color: #cd0a0a;
+.ui-state-error .ui-picklist-list,
+.ui-state-error .ui-selectonemenu-label,
+.ui-state-error .ui-selectonemenu-trigger {
+    background: var(--error-background);
+    border: 1px solid var(--focused-orange);
+    color: var(--focused-orange);
 }
 
 .row-expansion-wrapper > table {

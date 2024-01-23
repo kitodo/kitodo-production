@@ -234,6 +234,15 @@ public class SecurityAccessService extends SecurityAccess {
     }
 
     /**
+     * Check if the current user has the authority to assign an OCR-D workflow to template or process.
+     *
+     * @return true if the current user has the authority to assign an OCR-D workflow
+     */
+    public boolean hasAuthorityToAssignOcrdWorkflow() {
+        return hasAnyAuthorityForClient("assignOcrdWorkflow");
+    }
+
+    /**
      * Check if the current user has the authority to delete the batch.
      *
      * @return true if the current user has the authority to delete the batch
