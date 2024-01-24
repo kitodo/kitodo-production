@@ -71,7 +71,7 @@ public class MediaPartial {
         if (this == o) {
             return true;
         }
-        if (o == null || !getClass().isInstance(o)) {
+        if (!getClass().isInstance(o)) {
             return false;
         }
 
