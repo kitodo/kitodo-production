@@ -82,13 +82,13 @@ public class TasksPage extends Page<TasksPage> {
         int index = triggerRowToggle(taskTable, "Progress");
         String firstElementId = TASK_TABLE + ":" + index + ":taskDetailTableFirst";
         String secondElementId = TASK_TABLE + ":" + index + ":taskDetailTableSecond";
-        WebElement firstDetails = Browser.getDriver().findElementById(firstElementId);
-        WebElement secondDetails = Browser.getDriver().findElementById(secondElementId);
         await("Wait for first task details to become visible").atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(firstElementId)).isDisplayed()));
+                WebElement firstDetails = Browser.getDriver().findElementById(firstElementId);
         List<String> taskDetails = getTableDataByColumn(firstDetails, 1);
         await("Wait for second task details to become visible").atMost(3, TimeUnit.SECONDS)
                 .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(secondElementId)).isDisplayed()));
+                WebElement secondDetails = Browser.getDriver().findElementById(secondElementId);
         taskDetails.addAll(getTableDataByColumn(secondDetails, 1));
         return taskDetails;
     }
