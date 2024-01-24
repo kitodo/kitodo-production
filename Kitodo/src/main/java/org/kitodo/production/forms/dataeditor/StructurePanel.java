@@ -238,7 +238,6 @@ public class StructurePanel implements Serializable {
                 physicalDivision.getLogicalDivisions().clear();
             }
         } else {
-
             for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
                 PhysicalDivision physicalDivision = selectedPhysicalDivision.getKey();
                 if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
