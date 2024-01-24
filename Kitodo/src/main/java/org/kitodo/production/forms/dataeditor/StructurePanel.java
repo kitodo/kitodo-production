@@ -227,7 +227,7 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedPhysicalDivision() {
-        if (Objects.nonNull(selectedLogicalNode) && StructurePanel.MEDIA_PARTIAL_NODE_TYPE.equals(
+        if (Objects.nonNull(selectedLogicalNode) && MEDIA_PARTIAL_NODE_TYPE.equals(
                 selectedLogicalNode.getType()) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
             PhysicalDivision physicalDivision = ((View) structureTreeNode.getDataObject()).getPhysicalDivision();
