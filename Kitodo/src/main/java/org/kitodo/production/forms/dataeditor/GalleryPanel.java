@@ -949,7 +949,9 @@ public class GalleryPanel {
         dataEditor.getSelectedMedia().clear();
         LogicalDivision logicalDivision = parentStripe.getStructure();
         PhysicalDivision physicalDivision = currentSelection.getView().getPhysicalDivision();
-        if (physicalDivision.hasMediaPartial() && !physicalDivision.getLogicalDivisions().isEmpty()) {
+        if (Objects.nonNull(
+                physicalDivision) && physicalDivision.hasMediaPartial() && !physicalDivision.getLogicalDivisions()
+                .isEmpty()) {
             logicalDivision = physicalDivision.getLogicalDivisions().get(0);
         }
         dataEditor.getSelectedMedia().add(new ImmutablePair<>(physicalDivision, logicalDivision));
