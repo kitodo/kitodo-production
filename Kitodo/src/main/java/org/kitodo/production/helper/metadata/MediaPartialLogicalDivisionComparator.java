@@ -22,14 +22,16 @@ public class MediaPartialLogicalDivisionComparator implements Comparator<Logical
 
     @Override
     public int compare(LogicalDivision logicalDivisionA, LogicalDivision logicalDivisionB) {
-        View viewA = logicalDivisionA.getViews().getFirst();
-        View viewB = logicalDivisionB.getViews().getFirst();
-        if (Objects.nonNull(viewA) && Objects.nonNull(viewB)) {
-            PhysicalDivision physicalDivisionA = viewA.getPhysicalDivision();
-            PhysicalDivision physicalDivisionB = viewB.getPhysicalDivision();
-            if (physicalDivisionA.hasMediaPartial() && physicalDivisionB.hasMediaPartial()) {
-                return physicalDivisionA.getMediaPartial().getBegin()
-                        .compareTo(physicalDivisionB.getMediaPartial().getBegin());
+        if (logicalDivisionA.getViews().size() > 0 && logicalDivisionB.getViews().size() > 0) {
+            View viewA = logicalDivisionA.getViews().getFirst();
+            View viewB = logicalDivisionB.getViews().getFirst();
+            if (Objects.nonNull(viewA) && Objects.nonNull(viewB)) {
+                PhysicalDivision physicalDivisionA = viewA.getPhysicalDivision();
+                PhysicalDivision physicalDivisionB = viewB.getPhysicalDivision();
+                if (physicalDivisionA.hasMediaPartial() && physicalDivisionB.hasMediaPartial()) {
+                    return physicalDivisionA.getMediaPartial().getBegin()
+                            .compareTo(physicalDivisionB.getMediaPartial().getBegin());
+                }
             }
         }
         return Integer.compare(logicalDivisionA.getOrder(), logicalDivisionB.getOrder());

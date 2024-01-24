@@ -91,6 +91,9 @@ public class MediaPartialHelper {
         LogicalDivision previousLogicalDivision = null;
         while (iterator.hasNext()) {
             LogicalDivision logicalDivision = iterator.next();
+            if (logicalDivision.getViews().size() == 0) {
+                continue;
+            }
             MediaPartial mediaPartial = logicalDivision.getViews().getFirst().getPhysicalDivision()
                     .getMediaPartial();
             if (Objects.nonNull(previousLogicalDivision)) {

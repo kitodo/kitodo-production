@@ -16,6 +16,7 @@ import static org.kitodo.production.helper.metadata.MediaPartialHelper.calculate
 import static org.kitodo.production.helper.metadata.MediaPartialHelper.convertFormattedTimeToMilliseconds;
 
 import java.io.Serializable;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -176,8 +177,8 @@ public class MediaPartialForm implements Serializable {
         }
         if (!isEditable() || (isEditable() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
             boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
-                    logicalDivision -> logicalDivision.getViews().getFirst().getPhysicalDivision().getMediaPartial()
-                            .getBegin().equals(getBegin()));
+                    logicalDivision -> logicalDivision.getViews().size() > 0 && logicalDivision.getViews().getFirst()
+                            .getPhysicalDivision().getMediaPartial().getBegin().equals(getBegin()));
             if (exists) {
                 validationError = "mediaPartialFormStartExists";
                 return false;
