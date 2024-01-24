@@ -11,16 +11,20 @@
 
 package org.kitodo.production.helper.metadata;
 
+import java.net.URI;
 import java.time.Duration;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartial;
+import org.kitodo.api.dataformat.MediaVariant;.
+
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -143,6 +147,30 @@ public class MediaPartialHelper {
                 .getChildren().add(physicalDivision);
 
         mediaSelection.getValue().getChildren().add(logicalDivision);
+    }
+
+    /**
+     * Add a media partial division to the media partial divisions map.
+     *
+     * @param mediaPartialDivisions
+     *         The media partial divisions
+     * @param logicalDivisions
+     *         The logical divisions of current selection
+     * @param mediaFiles
+     *         The media files of current selection
+     */
+    public static void addMediaPartialDivisions(Map<LogicalDivision, MediaPartial> mediaPartialDivisions,
+            List<LogicalDivision> logicalDivisions, Map<MediaVariant, URI> mediaFiles) {
+        for (LogicalDivision logicalDivision : logicalDivisions) {
+            for (View view : logicalDivision.getViews()) {
+                if (PhysicalDivision.TYPE_TRACK.equals(
+                        view.getPhysicalDivision().getType()) && view.getPhysicalDivision()
+                        .hasMediaPartial() && view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
+                    mediaPartialDivisions.put(logicalDivision, view.getPhysicalDivision().getMediaPartial());
+                }
+            }
+            addMediaPartialDivisions(mediaPartialDivisions, logicalDivision.getChildren(), mediaFiles);
+        }
     }
 
 }
