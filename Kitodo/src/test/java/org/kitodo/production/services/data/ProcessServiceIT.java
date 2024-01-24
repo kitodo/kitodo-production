@@ -66,7 +66,7 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 /**
  * Tests for ProcessService class.

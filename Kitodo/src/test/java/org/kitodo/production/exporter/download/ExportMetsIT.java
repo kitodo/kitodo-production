@@ -11,8 +11,8 @@
 
 package org.kitodo.production.exporter.download;
 
-import static org.kitodo.utils.ProcessTestUtils.META_XML;
-import static org.kitodo.utils.ProcessTestUtils.METADATA_DIR;
+import static org.kitodo.test.utils.ProcessTestUtils.METADATA_DIR;
+import static org.kitodo.test.utils.ProcessTestUtils.META_XML;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,7 +46,6 @@ public class ExportMetsIT {
     private static final FileService fileService = ServiceManager.getFileService();
     private static String userDirectory;
     private static String metadataDirectory;
-    private static URI exportUri;
     private static Process process;
 
     private final ExportMets exportMets = new ExportMets();
@@ -60,7 +59,6 @@ public class ExportMetsIT {
         process = ServiceManager.getProcessService().getById(1);
         metadataDirectory = process.getId().toString();
         userDirectory = user.getLogin();
-        exportUri = ConfigCore.getUriParameter(ParameterCore.DIR_USERS, userDirectory);
 
         fileService.createDirectory(URI.create(""), metadataDirectory);
         fileService.copyFile(URI.create(METADATA_DIR + "/testmetaNewFormat.xml"), URI.create(metadataDirectory + META_XML));

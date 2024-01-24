@@ -39,7 +39,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 /**
  * Tests for functions in the metadata editor.

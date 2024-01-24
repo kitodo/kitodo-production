@@ -45,7 +45,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class WorkflowControllerServiceIT {
 

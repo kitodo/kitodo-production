@@ -52,7 +52,7 @@ import org.kitodo.production.model.bibliography.course.Granularity;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class NewspaperProcessesGeneratorIT {
     private static final ProcessService processService = ServiceManager.getProcessService();

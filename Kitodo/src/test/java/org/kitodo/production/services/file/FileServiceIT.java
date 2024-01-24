@@ -46,7 +46,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.thread.RenameMediaThread;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class FileServiceIT {
     /**

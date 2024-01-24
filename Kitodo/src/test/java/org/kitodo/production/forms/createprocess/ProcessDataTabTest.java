@@ -20,7 +20,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.process.TitleGenerator;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 import org.primefaces.model.DefaultTreeNode;
 
 public class ProcessDataTabTest {

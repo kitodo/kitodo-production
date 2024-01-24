@@ -32,7 +32,7 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.CalendarPage;
 import org.kitodo.selenium.testframework.pages.ProcessesPage;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class CalendarST extends BaseTestSelenium {
 

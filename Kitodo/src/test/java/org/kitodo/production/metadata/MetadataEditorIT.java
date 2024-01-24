@@ -13,8 +13,8 @@ package org.kitodo.production.metadata;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertTrue;
-import static org.kitodo.utils.ProcessTestUtils.META_XML;
-import static org.kitodo.utils.ProcessTestUtils.METADATA_BASE_DIR;
+import static org.kitodo.test.utils.ProcessTestUtils.METADATA_BASE_DIR;
+import static org.kitodo.test.utils.ProcessTestUtils.META_XML;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
@@ -42,7 +42,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 
 public class MetadataEditorIT {

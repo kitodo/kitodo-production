@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.utils;
+package org.kitodo.test.utils;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -195,7 +195,15 @@ public class ProcessTestUtils {
         }
     }
 
-    public static void copyHierarchyTestFiles(Map<String, Integer> processTitlesAndIds) throws IOException, DAOException, DataException {
+    /**
+     * Copy metadata test files for hierarchical processes t
+     * @param processTitlesAndIds Map containing process titles as keys and IDs as values
+     * @throws IOException when copying test resources for a process fails
+     * @throws DAOException when copying test resources for a process or loading the process from the database fails
+     * @throws DataException when saving a test process fails
+     */
+    public static void copyHierarchyTestFiles(Map<String, Integer> processTitlesAndIds) throws IOException,
+            DAOException, DataException {
         for (Map.Entry<String, String> hierarchyProcess : hierarchyProcessTitlesAndFiles.entrySet()) {
             int processId = processTitlesAndIds.get(hierarchyProcess.getKey());
             ProcessTestUtils.copyTestFiles(processId, hierarchyProcess.getValue());
