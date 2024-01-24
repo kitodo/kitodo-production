@@ -12,6 +12,7 @@
 package org.kitodo.selenium.testframework.pages;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.Assert.assertTrue;
 import static org.kitodo.selenium.testframework.Browser.getRowsOfTable;
 import static org.kitodo.selenium.testframework.Browser.getTableDataByColumn;
 import static org.kitodo.selenium.testframework.Browser.scrollWebElementIntoView;
@@ -79,12 +80,16 @@ public class TasksPage extends Page<TasksPage> {
 
     public List<String> getTaskDetails() {
         int index = triggerRowToggle(taskTable, "Progress");
-        WebElement detailsTable1 = Browser.getDriver()
-                .findElementById(TASK_TABLE + ":" + index + ":taskDetailTableFirst");
-        WebElement detailsTable2 = Browser.getDriver()
-                .findElementById(TASK_TABLE + ":" + index + ":taskDetailTableSecond");
-        List<String> taskDetails = getTableDataByColumn(detailsTable1, 1);
-        taskDetails.addAll(getTableDataByColumn(detailsTable2, 1));
+        String firstElementId = TASK_TABLE + ":" + index + ":taskDetailTableFirst";
+        String secondElementId = TASK_TABLE + ":" + index + ":taskDetailTableSecond";
+        await("Wait for first task details to become visible").atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(firstElementId)).isDisplayed()));
+                WebElement firstDetails = Browser.getDriver().findElementById(firstElementId);
+        List<String> taskDetails = getTableDataByColumn(firstDetails, 1);
+        await("Wait for second task details to become visible").atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(secondElementId)).isDisplayed()));
+                WebElement secondDetails = Browser.getDriver().findElementById(secondElementId);
+        taskDetails.addAll(getTableDataByColumn(secondDetails, 1));
         return taskDetails;
     }
 
