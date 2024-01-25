@@ -22,7 +22,7 @@ public class MediaPartialLogicalDivisionComparator implements Comparator<Logical
 
     @Override
     public int compare(LogicalDivision logicalDivisionA, LogicalDivision logicalDivisionB) {
-        if (logicalDivisionA.getViews().size() > 0 && logicalDivisionB.getViews().size() > 0) {
+        if (!logicalDivisionA.getViews().isEmpty() && !logicalDivisionB.getViews().isEmpty()) {
             View viewA = logicalDivisionA.getViews().getFirst();
             View viewB = logicalDivisionB.getViews().getFirst();
             if (Objects.nonNull(viewA) && Objects.nonNull(viewB)) {
