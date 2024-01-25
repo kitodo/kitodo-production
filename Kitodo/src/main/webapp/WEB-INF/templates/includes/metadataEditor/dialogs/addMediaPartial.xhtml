@@ -1,0 +1,78 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <p:dialog id="addMediaPartialDialog"
+              widgetVar="addMediaPartialDialog"
+              resizable="false"
+              showHeader="false"
+              dynamic="true"
+              modal="true"
+              onShow="metadataEditor.gallery.mediaPartial.setMediaDuration();metadataEditor.gallery.mediaPartial.setBeginIfEmpty();">
+        <h:form id="mediaPartialForm">
+            <p:panelGrid columns="1" layout="grid">
+                <p:row>
+                    <h3>#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.isEditable() ? msgs.editMediaPartial : msgs.addMediaPartial}</h3>
+                    <h:panelGroup id="errorWrapper"
+                                  rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.hasValidationError()}">
+                        <h:panelGroup layout="block"
+                                      styleClass="select-note ui-messages-error">
+                            <h:outputText
+                                    value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.validationError}"/>
+                        </h:panelGroup>
+                    </h:panelGroup>
+                    <p:outputPanel styleClass="dialogFieldWrapper">
+
+                        <p:outputPanel
+                                styleClass="#{(DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialChildDivisionsOfSelection.size() gt 1)?'':'hidden'}">
+                            <p:outputLabel for="type" value="Typ"/>
+                            <p:selectOneMenu id="type" value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.type}">
+                                <f:selectItems value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialChildDivisionsOfSelection}"/>
+                            </p:selectOneMenu>
+                        </p:outputPanel>
+                        <p:outputPanel>
+                            <p:outputLabel for="titleInput" value="#{msgs.title}"/>
+                            <p:inputText id="titleInput" class="input"
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.title}"/>
+                        </p:outputPanel>
+                        <p:outputPanel>
+                            <p:outputLabel for="beginInput" value="#{msgs.start}"/>
+                            <p:inputText id="beginInput" class="input"
+                                         value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.begin}"/>
+                        </p:outputPanel>
+                    </p:outputPanel>
+
+                    <h:panelGroup layout="block"
+                                  styleClass="dialogButtonWrapper">
+                        <p:commandButton id="addMediaPartialButton"
+                                         action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.save}"
+                                         value="#{msgs.apply}"
+                                         update="@form"
+                                         styleClass="primary right"/>
+                        <p:commandButton id="cancel"
+                                         onclick="PF('addMediaPartialDialog').hide();"
+                                         value="#{msgs.cancel}"
+                                         icon="fa fa-times fa-lg"
+                                         iconPos="right"
+                                         styleClass="secondary right"/>
+                    </h:panelGroup>
+                </p:row>
+            </p:panelGrid>
+        </h:form>
+    </p:dialog>
+</ui:composition>

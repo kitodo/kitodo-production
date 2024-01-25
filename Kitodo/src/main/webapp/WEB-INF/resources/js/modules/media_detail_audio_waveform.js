@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-import WaveSurfer from './libs/wavesurfer/wavesurfer.esm.js.jsf';
+import WaveSurfer from './../libs/wavesurfer/wavesurfer.esm.js.jsf';
 
 class AudioWaveform {
     #audioElement;
@@ -64,9 +64,12 @@ class AudioWaveform {
         waveContainer.style.display = "none";
         this.#audioElement.parentNode.insertBefore(waveContainer, this.#audioElement);
 
+        // add fixed width to prevent zooming overflow
+        this.#audioElement.parentNode.style.width = this.#audioElement.parentNode.clientWidth + 'px';
+
         this.#wavesurfer = WaveSurfer.create({
             container: document.getElementById(waveContainer.getAttribute("id")),
-            height: 100,
+            height: 250,
             waveColor: "#f3f3f3",
             progressColor: "#ff4e00",
             cursorColor: "#ffffff",
@@ -84,7 +87,7 @@ class AudioWaveform {
             waveContainer.style.display = "block";
             self.#loader.style.display = "none";
 
-            let waveToolsContainer = document.getElementById("audioWaveformTools");
+            let waveToolsContainer = document.getElementById("imagePreviewForm:audioWaveformTools");
             const waveToolsSlider = waveToolsContainer.querySelector('input[type="range"]');
 
             waveToolsSlider.addEventListener('input', (e) => {
@@ -97,18 +100,10 @@ class AudioWaveform {
                     self.#wavesurfer.setOptions({
                         [input.value]: e.target.checked,
                     });
-                }
-            });
-            const jumpButtons = document.getElementsByClassName("audio-waveform-tools-jump-button");
-            Array.from(jumpButtons).forEach(function (jumpButton) {
-                jumpButton.addEventListener('click', function () {
-                    let jumpSeconds = parseInt(this.getAttribute("data-audio-waveform-tools-jump-seconds"));
-                    self.#wavesurfer.setTime(self.#wavesurfer.getCurrentTime() + jumpSeconds);
-                });
+                };
             });
         });
     }
-
 }
 
 const audioWaveform= new AudioWaveform();

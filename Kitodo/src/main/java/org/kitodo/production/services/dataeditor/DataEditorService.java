@@ -20,6 +20,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -37,6 +38,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
+import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -45,6 +47,7 @@ import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
+import org.kitodo.production.forms.dataeditor.StructurePanel;
 import org.kitodo.production.forms.dataeditor.StructureTreeNode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.serviceloader.KitodoServiceLoader;
@@ -310,6 +313,25 @@ public class DataEditorService {
     }
 
     /**
+     * Get allowed substructural elements as sorted list of select items.
+     *
+     * @param divisionView
+     *         The division View
+     * @param ruleset
+     *         The ruleset
+     * @return Sorted list of select items
+     */
+    public static List<SelectItem> getSortedAllowedSubstructuralElements(
+            StructuralElementViewInterface divisionView, Ruleset ruleset) {
+        List<SelectItem> selectItems = new ArrayList<>();
+        for (Map.Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
+            selectItems.add(new SelectItem(entry.getKey(), entry.getValue()));
+        }
+        sortMetadataList(selectItems, ruleset);
+        return selectItems;
+    }
+
+    /**
      * Sort a metadata list alphabetically if the 'orderMetadataByRuleset' parameter of the ruleset not set as true.
      * @param itemList as a List of SelectItem
      * @param ruleset as a Ruleset
@@ -321,4 +343,36 @@ public class DataEditorService {
         }
         return itemList;
     }
+
+    /**
+     * Get the view of base media by comparing media files of tree nodes.
+     *
+     * @param treeNodes
+     *         The tree nodes
+     * @param mediaFiles
+     *         The media files to compare too
+     * @return View or null
+     */
+    public static View getViewOfBaseMediaByMediaFiles(List<TreeNode> treeNodes, Map<MediaVariant, URI> mediaFiles) {
+        for (TreeNode treeNode : treeNodes) {
+            if (StructurePanel.VIEW_NODE_TYPE.equals(
+                    treeNode.getType()) && treeNode.getData() instanceof StructureTreeNode) {
+                StructureTreeNode structureMediaTreeNode = (StructureTreeNode) treeNode.getData();
+                if (structureMediaTreeNode.getDataObject() instanceof View) {
+                    View view = (View) structureMediaTreeNode.getDataObject();
+                    if (view.getPhysicalDivision().getMediaFiles().equals(mediaFiles)) {
+                        return view;
+                    }
+                }
+            }
+            if (treeNode.getChildCount() > 0) {
+                View view = getViewOfBaseMediaByMediaFiles(treeNode.getChildren(), mediaFiles);
+                if (Objects.nonNull(view)) {
+                    return view;
+                }
+            }
+        }
+        return null;
+    }
+
 }

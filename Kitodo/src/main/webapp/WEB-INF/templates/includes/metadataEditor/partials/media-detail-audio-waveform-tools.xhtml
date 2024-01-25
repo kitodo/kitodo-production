@@ -1,0 +1,27 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+    <!--@elvariable id="selectedGalleryMediaContent" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
+    <p:outputPanel id="audioWaveformTools" rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}">
+        <div>
+            <label><h:outputText value="#{msgs.audioWaveformToolsZoom}"/>: <input type="range" min="0" max="250" value="0"/></label>
+        </div>
+        <div>
+            <label><h:outputText value="#{msgs.audioWaveformToolsCenteredCursor}"/>: <input type="checkbox" checked="" value="autoCenter"/></label>
+        </div>
+    </p:outputPanel>
+</ui:composition>

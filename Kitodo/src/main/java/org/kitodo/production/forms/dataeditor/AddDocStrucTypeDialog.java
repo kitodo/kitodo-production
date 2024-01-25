@@ -64,9 +64,9 @@ public class AddDocStrucTypeDialog {
     private static final Logger logger = LogManager.getLogger(AddDocStrucTypeDialog.class);
 
     private final DataEditorForm dataEditor;
-    private List<SelectItem> docStructAddTypeSelectionItemsForChildren;
-    private List<SelectItem> docStructAddTypeSelectionItemsForParent;
-    private List<SelectItem> docStructAddTypeSelectionItemsForSiblings;
+    private List<SelectItem> selectionItemsForChildren;
+    private List<SelectItem> selectionItemsForParent;
+    private List<SelectItem> selectionItemsForSiblings;
     private String docStructAddTypeSelectionSelectedItem;
     private List<SelectItem> docStructPositionSelectionItems;
     private InsertionPosition selectedDocStructPosition = LAST_CHILD_OF_CURRENT_ELEMENT;
@@ -209,13 +209,13 @@ public class AddDocStrucTypeDialog {
         switch (selectedDocStructPosition) {
             case AFTER_CURRENT_ELEMENT:
             case BEFORE_CURRENT_ELEMENT:
-                return docStructAddTypeSelectionItemsForSiblings;
+                return selectionItemsForSiblings;
             case CURRENT_POSITION:
             case FIRST_CHILD_OF_CURRENT_ELEMENT:
             case LAST_CHILD_OF_CURRENT_ELEMENT:
-                return docStructAddTypeSelectionItemsForChildren;
+                return selectionItemsForChildren;
             case PARENT_OF_CURRENT_ELEMENT:
-                return docStructAddTypeSelectionItemsForParent;
+                return selectionItemsForParent;
             default:
                 return Collections.emptyList();
         }
@@ -452,32 +452,30 @@ public class AddDocStrucTypeDialog {
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                     dataEditor.getWorkpiece().getLogicalStructure());
             if (parents.isEmpty()) {
-                docStructAddTypeSelectionItemsForParent = Collections.emptyList();
+                selectionItemsForParent = Collections.emptyList();
             } else {
                 prepareDocStructAddTypeSelectionItemsForParent();
             }
             prepareDocStructAddTypeSelectionItemsForChildren();
             prepareDocStructAddTypeSelectionItemsForSiblings();
         } else {
-            docStructAddTypeSelectionItemsForChildren = Collections.emptyList();
-            docStructAddTypeSelectionItemsForParent = Collections.emptyList();
-            docStructAddTypeSelectionItemsForSiblings = Collections.emptyList();
+            selectionItemsForChildren = Collections.emptyList();
+            selectionItemsForParent = Collections.emptyList();
+            selectionItemsForSiblings = Collections.emptyList();
         }
     }
 
     private void prepareDocStructAddTypeSelectionItemsForChildren() {
-        docStructAddTypeSelectionItemsForChildren = new ArrayList<>();
-        StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-            dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
-            dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-        for (Entry<String, String> entry : divisionView.getAllowedSubstructuralElements().entrySet()) {
-            docStructAddTypeSelectionItemsForChildren.add(new SelectItem(entry.getKey(), entry.getValue()));
-        }
-        DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForChildren, dataEditor.getProcess().getRuleset());
+        selectionItemsForChildren = DataEditorService.getSortedAllowedSubstructuralElements(
+                dataEditor.getRulesetManagement()
+                        .getStructuralElementView(
+                                dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType(),
+                                dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
+                dataEditor.getProcess().getRuleset());
     }
 
     private void prepareDocStructAddTypeSelectionItemsForParent() {
-        docStructAddTypeSelectionItemsForParent = new ArrayList<>();
+        selectionItemsForParent = new ArrayList<>();
         if (!parents.isEmpty()) {
             StructuralElementViewInterface parentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
                 parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
@@ -487,22 +485,21 @@ public class AddDocStrucTypeDialog {
                     newParent, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
                 if (newParentDivisionView.getAllowedSubstructuralElements().containsKey(
                     dataEditor.getSelectedStructure().orElseThrow(IllegalStateException::new).getType())) {
-                    docStructAddTypeSelectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
+                    selectionItemsForParent.add(new SelectItem(newParent, entry.getValue()));
                 }
             }
-            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForParent, dataEditor.getProcess().getRuleset());
+            DataEditorService.sortMetadataList(selectionItemsForParent,
+                    dataEditor.getProcess().getRuleset());
         }
     }
 
     private void prepareDocStructAddTypeSelectionItemsForSiblings() {
-        docStructAddTypeSelectionItemsForSiblings = new ArrayList<>();
+        selectionItemsForSiblings = new ArrayList<>();
         if (!parents.isEmpty()) {
-            StructuralElementViewInterface parentDivisionView = dataEditor.getRulesetManagement().getStructuralElementView(
-                parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-            for (Entry<String, String> entry : parentDivisionView.getAllowedSubstructuralElements().entrySet()) {
-                docStructAddTypeSelectionItemsForSiblings.add(new SelectItem(entry.getKey(), entry.getValue()));
-            }
-            DataEditorService.sortMetadataList(docStructAddTypeSelectionItemsForSiblings, dataEditor.getProcess().getRuleset());
+            selectionItemsForSiblings = DataEditorService.getSortedAllowedSubstructuralElements(
+                    dataEditor.getRulesetManagement().getStructuralElementView(
+                    parents.getLast().getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()),
+                    dataEditor.getProcess().getRuleset());
         }
     }
 

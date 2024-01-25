@@ -108,7 +108,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     private final EditPagesDialog editPagesDialog;
 
-    private final UploadFileDialog uploadFileDialog ;
+    private final UploadFileDialog uploadFileDialog;
     /**
      * Backing bean for the gallery panel.
      */
@@ -796,6 +796,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public boolean isSelected(PhysicalDivision physicalDivision, LogicalDivision logicalDivision) {
         if (Objects.nonNull(physicalDivision) && Objects.nonNull(logicalDivision)) {
+            if (physicalDivision.hasMediaPartial() && physicalDivision.getLogicalDivisions().size() == 1) {
+                return selectedMedia.contains(new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0)));
+            }
             return selectedMedia.contains(new ImmutablePair<>(physicalDivision, logicalDivision));
         }
         return false;
@@ -832,8 +835,15 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                         getSelectedMedia().clear();
                     }
                 } else if (structureTreeNode.getDataObject() instanceof View) {
-                    // Page selected in logical tree
                     View view = (View) structureTreeNode.getDataObject();
+                    if (view.getPhysicalDivision().hasMediaPartial()) {
+                        View mediaView = DataEditorService.getViewOfBaseMediaByMediaFiles(structurePanel.getLogicalTree().getChildren(),
+                                view.getPhysicalDivision().getMediaFiles());
+                        if (Objects.nonNull(mediaView)) {
+                            view = mediaView;
+                        }
+                    }
+
                     metadataPanel.showPageInLogical(view.getPhysicalDivision());
                     if (updateGalleryAndPhysicalTree) {
                         updateGallery(view);
@@ -844,6 +854,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
         paginationPanel.preparePaginationSelectionSelectedItems();
     }
+
+
 
     void switchPhysicalDivision() throws NoSuchMetadataFieldException {
         try {
@@ -911,10 +923,18 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @return 'title' value of the LogicalDivision contained in the given StructureTreeNode 'treeNode'
      */
     public String getStructureElementTitle(Object dataObject) {
+        String title = "";
         if (dataObject instanceof LogicalDivision) {
-            return DataEditorService.getTitleValue((LogicalDivision) dataObject, structurePanel.getTitleMetadata());
+            LogicalDivision logicalDivision = ((LogicalDivision) dataObject);
+            title = DataEditorService.getTitleValue(logicalDivision, structurePanel.getTitleMetadata());
+            if (StringUtils.isBlank(title)) {
+                title = logicalDivision.getLabel();
+                if (StringUtils.isBlank(title)) {
+                    title = " - ";
+                }
+            }
         }
-        return "";
+        return title;
     }
 
     /**

@@ -63,7 +63,9 @@ public class StructurePanel implements Serializable {
     public static final String STRUCTURE_NODE_TYPE = "Structure";
     public static final String PHYS_STRUCTURE_NODE_TYPE = "PhysStructure";
     public static final String MEDIA_NODE_TYPE = "Media";
+    public static final String MEDIA_PARTIAL_NODE_TYPE = "MediaPartial";
     public static final String VIEW_NODE_TYPE = "View";
+
     private final DataEditorForm dataEditor;
 
     /**
@@ -177,9 +179,17 @@ public class StructurePanel implements Serializable {
              */
             return;
         }
-        LogicalDivision selectedStructure = getSelectedStructure().get();
+        deleteLogicalDivision(getSelectedStructure().get());
+    }
+
+    /**
+     * Delete the logical division.
+     *
+     * @param selectedStructure The logical division.
+     */
+    public void deleteLogicalDivision(LogicalDivision selectedStructure) {
         LinkedList<LogicalDivision> ancestors = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure,
-            structure);
+                structure);
         if (ancestors.isEmpty()) {
             // The selected element is the root node of the tree.
             return;
@@ -196,7 +206,6 @@ public class StructurePanel implements Serializable {
                 severalAssignments.remove(view.getPhysicalDivision());
             }
         }
-        subViews.removeAll(multipleViews);
 
         LogicalDivision parent = ancestors.getLast();
 
@@ -218,26 +227,36 @@ public class StructurePanel implements Serializable {
     }
 
     void deleteSelectedPhysicalDivision() {
-        for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
-            if (!dataEditor.getUnsavedDeletedMedia().contains(selectedPhysicalDivision.getKey())) {
-                if (selectedPhysicalDivision.getKey().getLogicalDivisions().size() > 1) {
-                    Helper.setMessage(selectedPhysicalDivision.getKey().toString() + ": is removed fom all assigned structural elements");
+        if (Objects.nonNull(selectedLogicalNode) && MEDIA_PARTIAL_NODE_TYPE.equals(
+                selectedLogicalNode.getType()) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
+            PhysicalDivision physicalDivision = ((View) structureTreeNode.getDataObject()).getPhysicalDivision();
+            for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
+                structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
+            }
+            if (deletePhysicalDivision(physicalDivision)) {
+                physicalDivision.getLogicalDivisions().clear();
+            }
+        } else {
+            for (Pair<PhysicalDivision, LogicalDivision> selectedPhysicalDivision : dataEditor.getSelectedMedia()) {
+                PhysicalDivision physicalDivision = selectedPhysicalDivision.getKey();
+                if (!dataEditor.getUnsavedDeletedMedia().contains(physicalDivision)) {
+                    if (physicalDivision.getLogicalDivisions().size() > 1) {
+                        Helper.setMessage(physicalDivision + ": is removed fom all assigned structural elements");
+                    }
+                    for (LogicalDivision structuralElement : physicalDivision.getLogicalDivisions()) {
+                        structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(physicalDivision));
+                    }
+                    physicalDivision.getLogicalDivisions().clear();
+                    if (!deletePhysicalDivision(physicalDivision)) {
+                        return;
+                    }
+
+                    dataEditor.getUnsavedDeletedMedia().add(physicalDivision);
                 }
-                for (LogicalDivision structuralElement : selectedPhysicalDivision.getKey().getLogicalDivisions()) {
-                    structuralElement.getViews().removeIf(view -> view.getPhysicalDivision().equals(selectedPhysicalDivision.getKey()));
-                }
-                selectedPhysicalDivision.getKey().getLogicalDivisions().clear();
-                LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(selectedPhysicalDivision.getKey(),
-                        dataEditor.getWorkpiece().getPhysicalStructure());
-                if (ancestors.isEmpty()) {
-                    // The selected element is the root node of the tree.
-                    return;
-                }
-                PhysicalDivision parent = ancestors.getLast();
-                parent.getChildren().remove(selectedPhysicalDivision.getKey());
-                dataEditor.getUnsavedDeletedMedia().add(selectedPhysicalDivision.getKey());
             }
         }
+
         int i = 1;
         for (PhysicalDivision physicalDivision : dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack()) {
             physicalDivision.setOrder(i);
@@ -248,6 +267,24 @@ public class StructurePanel implements Serializable {
         dataEditor.getSelectedMedia().clear();
         dataEditor.getGalleryPanel().updateStripes();
         dataEditor.getPaginationPanel().show();
+    }
+
+    /**
+     * Delete as physical division.
+     *
+     * @param physicalDivision The physical division.
+     * @return True if deleted
+     */
+    public boolean deletePhysicalDivision(PhysicalDivision physicalDivision) {
+        LinkedList<PhysicalDivision> ancestors = MetadataEditor.getAncestorsOfPhysicalDivision(physicalDivision,
+                dataEditor.getWorkpiece().getPhysicalStructure());
+        if (ancestors.isEmpty()) {
+            // The selected element is the root node of the tree.
+            return false;
+        }
+        PhysicalDivision parent = ancestors.getLast();
+        parent.getChildren().remove(physicalDivision);
+        return true;
     }
 
     /**
@@ -536,7 +573,7 @@ public class StructurePanel implements Serializable {
         LinkedList<View> views = structure.getViews();
         if (views.size() > 1) {
             return buildViewLabel(views.getFirst()) + " | " + buildViewLabel(views.getLast());
-        } else if (views.size() > 0) {
+        } else if (!views.isEmpty() && Objects.nonNull(views.getFirst())) {
             return buildViewLabel(views.getFirst());
         }
         return null;
@@ -612,7 +649,9 @@ public class StructurePanel implements Serializable {
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
                     DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
-                    viewNode.setType(VIEW_NODE_TYPE);
+                    viewNode.setType(pair.getLeft().getPhysicalDivision().hasMediaPartial()
+                            ? MEDIA_PARTIAL_NODE_TYPE
+                            : VIEW_NODE_TYPE);
                     viewsShowingOnAChild.add(pair.getLeft());
                 }
             }
@@ -861,7 +900,9 @@ public class StructurePanel implements Serializable {
                         ? divisionView.getLabel().concat(" " + physicalDivision.getOrderlabel()) : divisionView.getLabel(),
                 false, false, physicalDivision, parentTreeNode);
 
-        if (PhysicalDivision.TYPES.contains(physicalDivision.getType())) {
+        if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType())) {
+            treeNode.setType(MEDIA_PARTIAL_NODE_TYPE);
+        } else if (PhysicalDivision.TYPES.contains(physicalDivision.getType())) {
             treeNode.setType(MEDIA_NODE_TYPE);
         } else {
             treeNode.setType(PHYS_STRUCTURE_NODE_TYPE);
@@ -1045,7 +1086,8 @@ public class StructurePanel implements Serializable {
         for (TreeNode currentTreeNode : treeNode.getChildren()) {
             if (treeNode.getData() instanceof StructureTreeNode
                     && Objects.nonNull(((StructureTreeNode) treeNode.getData()).getDataObject())
-                    && ((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
+                    && (((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
+                    || MEDIA_PARTIAL_NODE_TYPE.equals(currentTreeNode.getType()))
                     && currentTreeNode.getData() instanceof StructureTreeNode
                     && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
                     && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getPhysicalDivision()

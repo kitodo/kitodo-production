@@ -31,7 +31,12 @@ public enum FunctionalDivision {
     /**
      * A division whose children are created from this division directly.
      */
-    CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent");
+    CREATE_CHILDREN_FROM_PARENT("createChildrenFromParent"),
+
+    /**
+     * Indicate the division for media partial usage.
+     */
+    MEDIA_PARTIAL("mediaPartial");
 
     /**
      * With the logger, text can be written to a log file or to the console.

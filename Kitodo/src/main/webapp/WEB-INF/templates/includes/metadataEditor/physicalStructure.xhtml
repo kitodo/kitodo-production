@@ -39,6 +39,7 @@
                                 expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
                             imagePreviewForm:mediaDetail
+                            imagePreviewForm:mediaPartialList
                             metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
@@ -48,6 +49,7 @@
                                 @(.thumbnail)
                                 galleryHeadingWrapper
                                 imagePreviewForm:mediaDetail
+                                imagePreviewForm:mediaPartialList
                                 contextMenuPhysicalTree
                                 logicalTree
                                 metadataAccordion:physicalMetadataWrapperPanel"/>
@@ -76,6 +78,13 @@
             </p:treeNode>
             <p:treeNode type="#{StructurePanel.MEDIA_NODE_TYPE}"
                         icon="ui-icon-document">
+                <h:outputText
+                        value="#{physicalNode.label}"
+                        a:data-order="#{physicalNode.order}"/>
+                <h:outputText value=" 🔗" rendered="#{physicalNode.linked}"/>
+            </p:treeNode>
+            <p:treeNode type="#{DataEditorForm.structurePanel.MEDIA_PARTIAL_NODE_TYPE}"
+                        icon="ui-icon-media-partial">
                 <h:outputText
                         value="#{physicalNode.label}"
                         a:data-order="#{physicalNode.order}"/>

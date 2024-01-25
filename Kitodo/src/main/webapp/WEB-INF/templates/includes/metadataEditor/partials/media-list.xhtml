@@ -87,9 +87,12 @@
                         <i class="fa fa-file-image-o"/>
                     </h:panelGroup>
                 </p:outputPanel>
+                <h:outputText value="#{DataEditorForm.galleryPanel.getSeveralAssignmentsIndex(media) + 1}"
+                              rendered="#{media.assignedSeveralTimes}"
+                              styleClass="assigned-several-times"/>
             </ui:fragment>
 
-            <ui:include src="media-list-overlay.xhtml"/>
+            <ui:include src="media-list-content.xhtml"/>
 
         </p:outputPanel>
     </p:outputPanel>
