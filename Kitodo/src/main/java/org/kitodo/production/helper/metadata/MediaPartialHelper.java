@@ -92,7 +92,7 @@ public class MediaPartialHelper {
         LogicalDivision previousLogicalDivision = null;
         while (iterator.hasNext()) {
             LogicalDivision logicalDivision = iterator.next();
-            if (logicalDivision.getViews().size() == 0) {
+            if (logicalDivision.getViews().isEmpty()) {
                 continue;
             }
             MediaPartial mediaPartial = logicalDivision.getViews().getFirst().getPhysicalDivision()
