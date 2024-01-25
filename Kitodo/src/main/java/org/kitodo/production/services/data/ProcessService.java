@@ -359,7 +359,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
                 process.setNumberOfStructures(getNumberOfStructures(workpiece));
                 process.setBaseType(getBaseType(workpiece));
-            } catch (IOException e) {
+            } catch (IllegalArgumentException | IOException e) {
                 logger.warn("Cannot read metadata file for indexing: {}", metadataFilePath);
                 logger.catching(Level.DEBUG, e);
             }
