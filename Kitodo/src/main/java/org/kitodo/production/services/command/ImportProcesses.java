@@ -273,8 +273,8 @@ public final class ImportProcesses extends EmptyTask {
     public void run() {
         try {
             while (step < totalActions) {
-                run(step++);
-                super.setProgress(100d * step / totalActions);
+                run(step);
+                super.setProgress(100d * ++step / totalActions);
                 if (super.isInterrupted()) {
                     return;
                 }
