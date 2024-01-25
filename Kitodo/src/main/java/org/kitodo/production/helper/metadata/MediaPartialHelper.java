@@ -148,7 +148,7 @@ public class MediaPartialHelper {
 
         LinkedList<PhysicalDivision> physicalDivisions = MetadataEditor.getAncestorsOfPhysicalDivision(
                 mediaSelection.getKey(), workpiece.getPhysicalStructure());
-        if(physicalDivisions.size() > 0) {
+        if (physicalDivisions.size() > 0) {
             MetadataEditor.getAncestorsOfPhysicalDivision(mediaSelection.getKey(), workpiece.getPhysicalStructure())
                     .getLast().getChildren().add(physicalDivision);
         }
