@@ -18,12 +18,12 @@
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <p:outputPanel id="mediaDetailMediaFormattedTime" rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.enabled}" >
-        <p:commandButton title="#{msgs.jumpBackwardOnSecond}"
+        <p:commandButton title="#{msgs.jumpBackwardOneSecond}"
                          type="button"
                          icon="fa fa-step-backward"
                          styleClass="media-formatted-time-jump-button secondary"
                          a:data-media-formatted-time-jump-milliseconds="-1000"/>
-        <p:commandButton title="#{msgs.jumpBackwardOnHundredMilliseconds}"
+        <p:commandButton title="#{msgs.jumpBackwardOneHundredMilliseconds}"
                          type="button"
                          icon="fa fa-chevron-left"
                          styleClass="media-formatted-time-jump-button secondary"
