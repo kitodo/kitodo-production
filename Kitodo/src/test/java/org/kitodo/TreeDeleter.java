@@ -24,7 +24,7 @@ import java.nio.file.attribute.BasicFileAttributes;
  * {@code DELTREE}.
  */
 public class TreeDeleter extends SimpleFileVisitor<Path> {
-    private static TreeDeleter instance = new TreeDeleter();
+    private static final TreeDeleter instance = new TreeDeleter();
 
     public static void deltree(File file) throws IOException {
         deltree(file.toPath());

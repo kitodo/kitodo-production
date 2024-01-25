@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -100,6 +101,7 @@ import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 /**
  * Insert data to test database.
@@ -123,6 +125,10 @@ public class MockDatabase {
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
     public static final String MEDIA_RENAMING_TEST_PROCESS_TITLE = "Rename media";
+    public static final String HIERARCHY_PARENT = "HierarchyParent";
+    public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
+    public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
+    public static final String HIERARCHY_CHILD_TO_ADD = "HierarchyChildToAdd";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -689,58 +695,62 @@ public class MockDatabase {
         ServiceManager.getImportService().setUsingTemplates(true);
     }
 
-    public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
-        Process fourthProcess = new Process();
-        fourthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        fourthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        fourthProcess.setTitle("HierarchyParent");
-        ServiceManager.getProcessService().save(fourthProcess);
+    public static Map<String, Integer> insertProcessesForHierarchyTests() throws DAOException, DataException {
+        Map<String, Integer> testProcesses = new HashMap<>();
+        Process parentProcess = new Process();
+        parentProcess.setProject(ServiceManager.getProjectService().getById(1));
+        parentProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
+        parentProcess.setTitle(HIERARCHY_PARENT);
+        ServiceManager.getProcessService().save(parentProcess);
+        ProcessTestUtils.logTestProcessInfo(parentProcess);
+        testProcesses.put(parentProcess.getTitle(), parentProcess.getId());
 
-        Process fifthProcess = new Process();
-        fifthProcess.setTitle("HierarchChildToKeep");
-        fourthProcess.getChildren().add(fifthProcess);
-        fifthProcess.setParent(fourthProcess);
-        fifthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        fifthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getProcessService().save(fifthProcess);
+        Process childProcessToRemove = new Process();
+        childProcessToRemove.setTitle(HIERARCHY_CHILD_TO_KEEP);
+        parentProcess.getChildren().add(childProcessToRemove);
+        childProcessToRemove.setParent(parentProcess);
+        childProcessToRemove.setProject(ServiceManager.getProjectService().getById(1));
+        childProcessToRemove.setRuleset(ServiceManager.getRulesetService().getById(1));
+        ServiceManager.getProcessService().save(childProcessToRemove);
+        ProcessTestUtils.logTestProcessInfo(childProcessToRemove);
+        testProcesses.put(childProcessToRemove.getTitle(), childProcessToRemove.getId());
 
         Process sixthProcess = new Process();
-        sixthProcess.setTitle("HierarchChildToRemove");
-        fourthProcess.getChildren().add(sixthProcess);
+        sixthProcess.setTitle(HIERARCHY_CHILD_TO_REMOVE);
+        parentProcess.getChildren().add(sixthProcess);
         sixthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         sixthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        sixthProcess.setParent(fourthProcess);
+        sixthProcess.setParent(parentProcess);
         ServiceManager.getProcessService().save(sixthProcess);
+        ProcessTestUtils.logTestProcessInfo(sixthProcess);
+        testProcesses.put(sixthProcess.getTitle(), sixthProcess.getId());
 
         Process seventhProcess = new Process();
-        seventhProcess.setTitle("HierarchChildToAdd");
+        seventhProcess.setTitle(HIERARCHY_CHILD_TO_ADD);
         ServiceManager.getProcessService().save(seventhProcess);
+        ProcessTestUtils.logTestProcessInfo(seventhProcess);
+        testProcesses.put(seventhProcess.getTitle(), seventhProcess.getId());
+        return testProcesses;
     }
 
-    public static void removeProcessesForHierarchyTests() throws DataException {
-        ServiceManager.getProcessService().remove(5);
-        ServiceManager.getProcessService().remove(6);
-        ServiceManager.getProcessService().remove(7);
-        ServiceManager.getProcessService().remove(4);
-    }
-
-
-    public static void insertProcessForCalendarHierarchyTests() throws DAOException, DataException {
-        Ruleset fivthRuleset = new Ruleset();
-        fivthRuleset.setTitle("Newspaper");
-        fivthRuleset.setFile("newspaper.xml");
-        fivthRuleset.setOrderMetadataByRuleset(false);
-        fivthRuleset.setClient(ServiceManager.getClientService().getById(1));
-        ServiceManager.getRulesetService().save(fivthRuleset);
-
-        insertPlaceholderProcesses(4, 9);
-
-        Process tenthProcess = new Process();
-        tenthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        tenthProcess.setTemplate(ServiceManager.getTemplateService().getById(1));
-        tenthProcess.setRuleset(ServiceManager.getRulesetService().getById(5));
-        tenthProcess.setTitle("NewspaperOverallProcess");
-        ServiceManager.getProcessService().save(tenthProcess);
+    /**
+     * Insert ruleset.
+     * @param rulesetTitle ruleset title
+     * @param rulesetFilename ruleset filename
+     * @param clientId client id
+     * @return id of ruleset
+     * @throws DAOException when retrieving client by ID fails
+     * @throws DataException when saving ruleset failed
+     */
+    public static int insertRuleset(String rulesetTitle, String rulesetFilename, int clientId) throws DAOException,
+            DataException {
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle(rulesetTitle);
+        ruleset.setFile(rulesetFilename);
+        ruleset.setOrderMetadataByRuleset(false);
+        ruleset.setClient(ServiceManager.getClientService().getById(clientId));
+        ServiceManager.getRulesetService().save(ruleset);
+        return ruleset.getId();
     }
 
     private static void insertTemplates() throws DAOException, DataException {
@@ -1059,26 +1069,6 @@ public class MockDatabase {
     }
 
     /**
-     * Insert dummy process into database.
-     * @param dummyProcessId id used in dummy process title
-     * @return database ID of created dummy process
-     * @throws DAOException when loading test project fails
-     * @throws DataException when saving dummy process fails
-     */
-    public static int insertDummyProcess(int dummyProcessId) throws DAOException, DataException {
-        Project firstProject = ServiceManager.getProjectService().getById(2);
-        Template template = firstProject.getTemplates().get(0);
-        Process dummyProcess = new Process();
-        dummyProcess.setTitle("Dummy_process_" + dummyProcessId);
-        dummyProcess.setProject(firstProject);
-        dummyProcess.setTemplate(template);
-        dummyProcess.setRuleset(template.getRuleset());
-        dummyProcess.setDocket(template.getDocket());
-        ServiceManager.getProcessService().save(dummyProcess);
-        return dummyProcess.getId();
-    }
-
-    /**
      * Add test process for media references update test to second project.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
@@ -1125,6 +1115,31 @@ public class MockDatabase {
         mediaReferencesProcess.setDocket(template.getDocket());
         ServiceManager.getProcessService().save(mediaReferencesProcess);
         return mediaReferencesProcess.getId();
+    }
+
+    /**
+     * Insert test process.
+     * @param processTitle process title of test process
+     * @param projectId project id of test process
+     * @param templateId template id of test process
+     * @param rulesetId ruleset id of test process
+     * @return id of test process
+     * @throws DAOException when retrieving project, template or ruleset fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcess(String processTitle, int projectId, int templateId, int rulesetId)
+            throws DAOException, DataException {
+        Project project = ServiceManager.getProjectService().getById(projectId);
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+        Process process = new Process();
+        process.setTitle(processTitle);
+        process.setProject(project);
+        process.setTemplate(template);
+        process.setRuleset(ruleset);
+        process.setDocket(template.getDocket());
+        ServiceManager.getProcessService().save(process);
+        return process.getId();
     }
 
     /**

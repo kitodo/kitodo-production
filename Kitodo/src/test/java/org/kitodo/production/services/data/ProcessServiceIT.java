@@ -28,6 +28,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.OptionalInt;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.elasticsearch.index.query.Operator;
@@ -64,6 +66,7 @@ import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 /**
  * Tests for ProcessService class.
@@ -72,10 +75,12 @@ public class ProcessServiceIT {
 
     private static final FileService fileService = new FileService();
     private static final ProcessService processService = ServiceManager.getProcessService();
-
+    private static final String TEST_PROCESS_TITLE = "Test process";
+    private static final String TEST_METADATA_FILE = "testMetadataFileServiceTest.xml";
     private static final String firstProcess = "First process";
     private static final String processNotFound = "Process was not found in index!";
     private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+    private static Map<String, Integer> testProcessIds;
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -84,7 +89,8 @@ public class ProcessServiceIT {
         }
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertProcessesForHierarchyTests();
+        testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
+        ProcessTestUtils.copyHierarchyTestFiles(testProcessIds);
         MockDatabase.setUpAwaitility();
         fileService.createDirectory(URI.create(""), "1");
         User userOne = ServiceManager.getUserService().getById(1);
@@ -97,6 +103,7 @@ public class ProcessServiceIT {
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
+        ProcessTestUtils.removeTestProcess(testProcessIds.get(MockDatabase.HIERARCHY_PARENT));
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create("1"));
@@ -183,7 +190,7 @@ public class ProcessServiceIT {
         Process process = new Process();
         process.setTitle("To Remove");
         processService.save(process);
-        Process foundProcess = processService.getById(8);
+        Process foundProcess = processService.getById(process.getId());
         assertEquals("Additional process was not inserted in database!", "To Remove", foundProcess.getTitle());
 
         processService.remove(foundProcess);
@@ -214,7 +221,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByMetadata() throws DataException {
-        assertEquals(processNotFound, 4,
+        assertEquals(processNotFound, 3,
             processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
@@ -225,8 +232,11 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByMetadataContent() throws DataException {
+    public void shouldFindByMetadataContent() throws DataException, DAOException, IOException {
+        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
+        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
     @Test
@@ -256,9 +266,11 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByMetadataGroupContent() throws DataException {
-        processService.findByTitle("Second Process");
+    public void shouldFindByMetadataGroupContent() throws DataException, DAOException, IOException {
+        int testProcessId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         assertEquals(processNotFound, 1, processService.findByAnything("August").size());
+        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
     @Test
@@ -480,10 +492,13 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetMetadataFilePath() throws Exception {
-        Process process = processService.getById(2);
+        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
+        Process process = processService.getById(testProcessId);
         URI directory = fileService.getMetadataFilePath(process);
-        boolean condition = directory.getRawPath().contains("2/meta.xml");
+        boolean condition = directory.getRawPath().contains(testProcessId + "/meta.xml");
         assertTrue("Metadata file path doesn't match to given file path!", condition);
+        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
     @Test
@@ -599,7 +614,7 @@ public class ProcessServiceIT {
 
         for (Process child : process.getChildren()) {
             assertTrue("Process should have child to keep and child to add as only children",
-                Arrays.asList("HierarchChildToKeep", "HierarchChildToAdd").contains(child.getTitle()));
+                Arrays.asList("HierarchyChildToKeep", "HierarchyChildToAdd").contains(child.getTitle()));
             assertEquals("Child should have parent as parent", process, child.getParent());
         }
         assertNull("Process to remove should have no parent", processService.getById(6).getParent());
@@ -613,9 +628,11 @@ public class ProcessServiceIT {
 
         allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
         Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
-        Assert.assertEquals("Duplicate ids in index", allIDs.size(), new HashSet<Integer>(allIDs).size());
-        Integer maxId = allIDs.stream().mapToInt(Integer::intValue).max().getAsInt();
-        Integer minId = allIDs.stream().mapToInt(Integer::intValue).min().getAsInt();
+        Assert.assertEquals("Duplicate ids in index", allIDs.size(), new HashSet<>(allIDs).size());
+        OptionalInt maxStream = allIDs.stream().mapToInt(Integer::intValue).max();
+        assertTrue("Unable to find largest ID in stream of all process IDs!", maxStream.isPresent());
+        int maxId = maxStream.getAsInt();
+        int minId = allIDs.stream().mapToInt(Integer::intValue).min().getAsInt();
         Assert.assertTrue("Ids should all be smaller than 8", maxId < 8);
         Assert.assertTrue("Ids should all be larger than 0", minId > 0);
         
@@ -624,11 +641,14 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testCountMetadata() throws DAOException, IOException {
-        Process process = ServiceManager.getProcessService().getById(2);
+    public void testCountMetadata() throws DAOException, IOException, DataException {
+        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
+        Process process = ServiceManager.getProcessService().getById(testProcessId);
         URI metadataFilePath = ServiceManager.getFileService().getMetadataFilePath(process);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
         long logicalMetadata = MetsService.countLogicalMetadata(workpiece);
         Assert.assertEquals("Wrong amount of metadata found!", 4, logicalMetadata);
+        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 }

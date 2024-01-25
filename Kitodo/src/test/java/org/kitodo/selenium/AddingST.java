@@ -23,6 +23,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
+import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -40,6 +41,7 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -54,6 +56,7 @@ import org.kitodo.selenium.testframework.pages.ProjectsPage;
 import org.kitodo.selenium.testframework.pages.RoleEditPage;
 import org.kitodo.selenium.testframework.pages.UserEditPage;
 import org.kitodo.selenium.testframework.pages.UsersPage;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class AddingST extends BaseTestSelenium {
 
@@ -63,6 +66,8 @@ public class AddingST extends BaseTestSelenium {
     private static RoleEditPage roleEditPage;
     private static UserEditPage userEditPage;
     private static ImportConfigurationEditPage importConfigurationEditPage;
+    private static final String TEST_METADATA_FILE = "testMetadataFileServiceTest.xml";
+    private static int secondProcessId = -1;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -74,6 +79,24 @@ public class AddingST extends BaseTestSelenium {
         importConfigurationEditPage = Pages.getImportConfigurationEditPage();
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
+
+        for (Process process : ServiceManager.getProcessService().getAll()) {
+            if ("Second process".equals(process.getTitle())) {
+                secondProcessId = process.getId();
+                break;
+            }
+        }
+        assertTrue("Should find exactly one second process!", secondProcessId > 0);
+        ProcessTestUtils.copyTestMetadataFile(secondProcessId, TEST_METADATA_FILE);
+    }
+
+    /**
+     * Remove unsuitable parent test process.
+     * @throws DAOException when test process cannot be removed
+     */
+    @AfterClass
+    public static void removeUnsuitableParentTestProcess() throws DAOException {
+        ProcessTestUtils.removeTestProcess(secondProcessId);
     }
 
     @Before

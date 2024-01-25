@@ -39,7 +39,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 /**
  * Tests for functions in the metadata editor.
@@ -53,8 +53,6 @@ public class MetadataST extends BaseTestSelenium {
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
     private static int renamingMediaProcessId = -1;
-
-    private static List<Integer> dummyProcessIds = new LinkedList<>();
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
     private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
@@ -66,26 +64,22 @@ public class MetadataST extends BaseTestSelenium {
     private static final String SECOND_STRUCTURE_TREE_NODE_LABEL = "2 : -";
 
     private static void prepareMediaReferenceProcess() throws DAOException, DataException, IOException {
-        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
     }
 
     private static void prepareMetadataLockProcess() throws DAOException, DataException, IOException {
-        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         insertTestProcessForMetadataLockTest();
         ProcessTestUtils.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
     }
 
     private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DataException {
-        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         processHierarchyTestProcessIds = linkProcesses();
         copyTestParentProcessMetadataFile();
         updateChildProcessIdsInParentProcessMetadataFile();
     }
 
     private static void prepareMediaRenamingProcess() throws DAOException, DataException, IOException {
-        dummyProcessIds = ProcessTestUtils.insertDummyProcesses();
         insertTestProcessForRenamingMediaFiles();
         copyTestFilesForRenamingMediaFiles();
     }
@@ -183,8 +177,8 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void totalNumberOfScansTest() throws Exception {
         login("kowal");
-        Pages.getProcessesPage().goTo().editMetadata();
-        assertEquals("Total number of scans is not correct", "(1 Medium)",
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        assertEquals("Total number of scans is not correct", "(3 Medien)",
                 Pages.getMetadataEditorPage().getNumberOfScans());
     }
 
@@ -195,11 +189,11 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void showPaginationByDefaultTest() throws Exception {
         login("kowal");
-        Pages.getProcessesPage().goTo().editMetadata();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
         Pages.getMetadataEditorPage().closeEditor();
         Pages.getUserEditPage().setPaginationToShowByDefault();
-        Pages.getProcessesPage().goTo().editMetadata();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertTrue(Pages.getMetadataEditorPage().isPaginationPanelVisible());
     }
 
@@ -257,10 +251,6 @@ public class MetadataST extends BaseTestSelenium {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);
         }
-        for (int dummyProcessId : dummyProcessIds) {
-            ServiceManager.getProcessService().removeFromDatabase(dummyProcessId);
-            ServiceManager.getProcessService().removeFromIndex(dummyProcessId, false);
-        }
         ProcessService.deleteProcess(mediaReferencesProcessId);
         ProcessService.deleteProcess(metadataLockProcessId);
         ProcessService.deleteProcess(renamingMediaProcessId);
@@ -306,15 +296,15 @@ public class MetadataST extends BaseTestSelenium {
         return processIds;
     }
 
-    private static void copyTestFilesForMediaReferences() throws IOException {
+    private static void copyTestFilesForMediaReferences() throws IOException, DAOException, DataException {
         ProcessTestUtils.copyTestFiles(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
     }
 
-    private static void copyTestFilesForRenamingMediaFiles() throws IOException {
+    private static void copyTestFilesForRenamingMediaFiles() throws IOException, DAOException, DataException {
         ProcessTestUtils.copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
     }
 
-    private static void copyTestParentProcessMetadataFile() throws IOException {
+    private static void copyTestParentProcessMetadataFile() throws IOException, DAOException, DataException {
         ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
     }
 
