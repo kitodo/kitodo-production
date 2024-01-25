@@ -51,6 +51,7 @@ import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -62,6 +63,7 @@ import org.kitodo.production.process.NewspaperProcessesGenerator;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.validation.MetadataValidationService;
@@ -86,6 +88,7 @@ final class ImportingProcess {
     private final MetadataValidationService metadataValidationService = ServiceManager.getMetadataValidationService();
     private final MetsService metsService = ServiceManager.getMetsService();
     private final ProcessService processService = ServiceManager.getProcessService();
+    private final TaskService taskService = ServiceManager.getTaskService();
 
     /*
      * This class makes extensive use of global variables (fields). This is due
@@ -474,6 +477,9 @@ final class ImportingProcess {
         process.setTitle(title);
         process.setBaseType(baseType);
         processService.save(process);
+        for (Task task : process.getTasks()) {
+            taskService.save(task);
+        }
         return process.getId();
     }
 
