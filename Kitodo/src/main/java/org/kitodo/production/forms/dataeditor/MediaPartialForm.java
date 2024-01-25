@@ -176,7 +176,7 @@ public class MediaPartialForm implements Serializable {
         }
         if (!isEditable() || (isEditable() && !mediaPartialDivision.getValue().getBegin().equals(getBegin()))) {
             boolean exists = getMediaSelection().getValue().getChildren().stream().anyMatch(
-                    logicalDivision -> logicalDivision.getViews().size() > 0 && logicalDivision.getViews().getFirst()
+                    logicalDivision -> !logicalDivision.getViews().isEmpty() && logicalDivision.getViews().getFirst()
                             .getPhysicalDivision().getMediaPartial().getBegin().equals(getBegin()));
             if (exists) {
                 validationError = "mediaPartialFormStartExists";
