@@ -14,6 +14,7 @@ package org.kitodo.production.helper.metadata;
 import java.net.URI;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -145,9 +146,12 @@ public class MediaPartialHelper {
 
         physicalDivision.getLogicalDivisions().add(logicalDivision);
 
-        MetadataEditor.getAncestorsOfPhysicalDivision(mediaSelection.getKey(), workpiece.getPhysicalStructure()).getLast()
-                .getChildren().add(physicalDivision);
-
+        LinkedList<PhysicalDivision> physicalDivisions = MetadataEditor.getAncestorsOfPhysicalDivision(
+                mediaSelection.getKey(), workpiece.getPhysicalStructure());
+        if(physicalDivisions.size() > 0) {
+            MetadataEditor.getAncestorsOfPhysicalDivision(mediaSelection.getKey(), workpiece.getPhysicalStructure())
+                    .getLast().getChildren().add(physicalDivision);
+        }
         mediaSelection.getValue().getChildren().add(logicalDivision);
     }
 
