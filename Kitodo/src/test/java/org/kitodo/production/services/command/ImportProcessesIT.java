@@ -28,6 +28,7 @@ import java.nio.file.Paths;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.util.Objects;
 
 // open source code
 import org.apache.commons.lang3.SystemUtils;
@@ -57,6 +58,7 @@ public class ImportProcessesIT {
     private static final Path ERRORS_DIR_PATH = Paths.get("src/test/resources/errors");
 
     // keep and restore original meta.xml files
+    @Deprecated // will be able to be removed after merge with PR #5876
     private String fourMeta, fiveMeta, sixMeta;
 
     @BeforeClass
@@ -114,11 +116,15 @@ public class ImportProcessesIT {
         Files.createDirectories(ERRORS_DIR_PATH);
     }
 
+    @Deprecated // will be able to be removed after merge with PR #5876
     @Before
     public void keepMetaXmlFiles() throws Exception {
-        fourMeta = Files.readString(Paths.get("src/test/resources/metadata/4/meta.xml"), UTF_8);
-        fiveMeta = Files.readString(Paths.get("src/test/resources/metadata/5/meta.xml"), UTF_8);
-        sixMeta = Files.readString(Paths.get("src/test/resources/metadata/6/meta.xml"), UTF_8);
+        Path fourMetaPath = Paths.get("src/test/resources/metadata/4/meta.xml");
+        if (Files.exists(fourMetaPath)) {
+            fourMeta = Files.readString(fourMetaPath, UTF_8);
+            fiveMeta = Files.readString(Paths.get("src/test/resources/metadata/5/meta.xml"), UTF_8);
+            sixMeta = Files.readString(Paths.get("src/test/resources/metadata/6/meta.xml"), UTF_8);
+        }
     }
 
     @AfterClass
@@ -130,9 +136,17 @@ public class ImportProcessesIT {
 
     @After
     public void restoreMetaXmlFiles() throws Exception {
-        Files.writeString(Paths.get("src/test/resources/metadata/4/meta.xml"), fourMeta, UTF_8);
-        Files.writeString(Paths.get("src/test/resources/metadata/5/meta.xml"), fiveMeta, UTF_8);
-        Files.writeString(Paths.get("src/test/resources/metadata/6/meta.xml"), sixMeta, UTF_8);
+        if (Objects.nonNull(fourMeta)) {
+            // case able to be removed after merge with PR #5876
+            Files.writeString(Paths.get("src/test/resources/metadata/4/meta.xml"), fourMeta, UTF_8);
+            Files.writeString(Paths.get("src/test/resources/metadata/5/meta.xml"), fiveMeta, UTF_8);
+            Files.writeString(Paths.get("src/test/resources/metadata/6/meta.xml"), sixMeta, UTF_8);
+        } else {
+            // true after merge with PR #5876
+            Files.deleteIfExists(Paths.get("src/test/resources/metadata/4/meta.xml"));
+            Files.deleteIfExists(Paths.get("src/test/resources/metadata/5/meta.xml"));
+            Files.deleteIfExists(Paths.get("src/test/resources/metadata/6/meta.xml"));
+        }
     }
 
     @AfterClass
