@@ -187,7 +187,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                     importChildren(projectId, templateId, importConfiguration, processes);
                 }
 
-                if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
+                if (!createProcessForm.getProcesses().isEmpty() && additionalImport) {
                     extendsMetadataTableOfMetadataTab(processes);
                 } else {
                     createProcessForm.setProcesses(processes);

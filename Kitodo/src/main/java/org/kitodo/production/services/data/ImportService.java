@@ -139,7 +139,7 @@ public class ImportService {
     private static final String VOLUME = "Volume";
     private static final String MULTI_VOLUME_WORK = "MultiVolumeWork";
 
-    private static Collection<RecordIdentifierMissingDetail> recordIdentifierMissingDetails = new ArrayList<>();
+    private static final Collection<RecordIdentifierMissingDetail> recordIdentifierMissingDetails = new ArrayList<>();
     private String tiffDefinition = "";
     private boolean usingTemplates;
 
@@ -208,7 +208,7 @@ public class ImportService {
     public List<String> getAvailableSearchFields(ImportConfiguration importConfiguration) {
         try {
             if (SearchInterfaceType.FTP.name().equals(importConfiguration.getInterfaceType())) {
-                // FTP server do not support query parameters but only use the filename for OPAC search!
+                // FTP servers do not support query parameters but only use the filename for OPAC search!
                 return Collections.singletonList(Helper.getTranslation("filename"));
             } else if (SearchInterfaceType.OAI.name().equals(importConfiguration.getInterfaceType())) {
                 // OAI PMH interfaces do not support query parameters but only use the ID of the record to retrieve it!
@@ -359,8 +359,9 @@ public class ImportService {
         Collection<String> doctypes = getDocTypeMetadata(ruleset);
         Element root = record.getDocumentElement();
         NodeList kitodoNodes = root.getElementsByTagNameNS(KITODO_NAMESPACE, KITODO_STRING);
-        if (kitodoNodes.getLength() > 0 && !doctypes.isEmpty()) {
-            NodeList importedMetadata = kitodoNodes.item(0).getChildNodes();
+        if (kitodoNodes.getLength() > 0 && !doctypes.isEmpty() && kitodoNodes.item(0) instanceof Element) {
+            Element kitodoElement = (Element) kitodoNodes.item(0);
+            NodeList importedMetadata = kitodoElement.getElementsByTagNameNS(KITODO_NAMESPACE, "metadata");
             for (int i = 0; i < importedMetadata.getLength(); i++) {
                 Node metadataNode = importedMetadata.item(i);
                 Element metadataElement = (Element) metadataNode;
