@@ -35,6 +35,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.OptionalInt;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -552,11 +553,11 @@ final class ImportingProcess {
      * @return number of levels of children below
      */
     int childDepth() {
-        if (children.isEmpty()) {
+        OptionalInt childrenMaxDepth = children.parallelStream().mapToInt(ImportingProcess::childDepth).max();
+        if(childrenMaxDepth.isEmpty()) {
             return 0;
         } else {
-            int childrenMaxDepth = children.parallelStream().mapToInt(ImportingProcess::childDepth).max().getAsInt();
-            return childrenMaxDepth + 1;
+            return childrenMaxDepth.getAsInt() + 1;
         }
     }
 
