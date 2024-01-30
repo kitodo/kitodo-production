@@ -135,9 +135,7 @@ final class ImportingProcess {
     ImportingProcess(Path sourceDir) {
         this.sourceDir = sourceDir;
         this.directoryName = sourceDir.getFileName().toString();
-        try (
-            Stream<Path> pathStream = Files.walk(sourceDir);
-        ) {
+        try (Stream<Path> pathStream = Files.walk(sourceDir)) {
             for (Path entry : (Iterable<Path>) pathStream::iterator) {
                 if (!entry.equals(sourceDir)) {
                     filesAndDirectories.add(sourceDir.relativize(entry));
