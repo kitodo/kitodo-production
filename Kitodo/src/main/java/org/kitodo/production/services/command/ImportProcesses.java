@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // open source code
 import org.apache.logging.log4j.LogManager;
@@ -111,12 +112,16 @@ public final class ImportProcesses extends EmptyTask {
         this.project = checkProject(project);
         this.templateForProcesses = checkTemplate(template);
         this.errorPath = checkErrors(errors);
-        this.importingProcesses = Files.walk(this.importRootPath, 1)
-                .filter(Files::isDirectory)
-                .filter(Predicate.not(this.importRootPath::equals))
-                .collect(Collectors.toMap(path -> path.getFileName().toString(), ImportingProcess::new,
-                    (existing, replacing) -> replacing, TreeMap::new));
-        this.numberOfImportingProcesses = importingProcesses.size();
+        try (
+                Stream<Path> pathStream = Files.walk(this.importRootPath, 1);
+        ) {
+            this.importingProcesses = pathStream
+                    .filter(Files::isDirectory)
+                    .filter(Predicate.not(this.importRootPath::equals))
+                    .collect(Collectors.toMap(path -> path.getFileName().toString(), ImportingProcess::new,
+                        (existing, replacing) -> replacing, TreeMap::new));
+            this.numberOfImportingProcesses = importingProcesses.size();
+        }
     }
 
     /**
