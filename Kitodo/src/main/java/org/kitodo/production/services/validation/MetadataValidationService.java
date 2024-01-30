@@ -170,8 +170,8 @@ public class MetadataValidationService {
      * @param ruleset
      *            Ruleset file
      * @return the validation result
-     * @throws DataException
-     *             if an error occurs while reading from the search engine
+     * @throws DAOException
+     *             if an error occurs while reading from the database
      */
     public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset)
             throws DAOException {
@@ -188,8 +188,8 @@ public class MetadataValidationService {
      * @param strict
      *            whether to validate document ID and presence of images
      * @return the validation result
-     * @throws DataException
-     *             if an error occurs while reading from the search engine
+     * @throws DAOException
+     *             if an error occurs while reading from the database
      */
     public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset, boolean strict)
             throws DAOException {
@@ -209,8 +209,8 @@ public class MetadataValidationService {
      * @param workpiece
      *            METS file
      * @return the validation result
-     * @throws DataException
-     *             if an error occurs while reading from the search engine
+     * @throws DAOException
+     *             if an error occurs while reading from the database
      */
     private ValidationResult checkTheIdentifier(Workpiece workpiece) throws DAOException {
         boolean error = false;
