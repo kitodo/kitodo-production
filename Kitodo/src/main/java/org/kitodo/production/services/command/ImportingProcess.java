@@ -139,9 +139,7 @@ final class ImportingProcess {
             Stream<Path> pathStream = Files.walk(sourceDir);
         ) {
             for (Path entry : (Iterable<Path>) pathStream::iterator) {
-                if (entry.equals(sourceDir)) {
-                    return;
-                } else {
+                if (!entry.equals(sourceDir)) {
                     filesAndDirectories.add(sourceDir.relativize(entry));
                 }
             }
