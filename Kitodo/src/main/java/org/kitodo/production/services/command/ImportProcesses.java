@@ -113,7 +113,7 @@ public final class ImportProcesses extends EmptyTask {
         this.templateForProcesses = checkTemplate(template);
         this.errorPath = checkErrors(errors);
         try (
-                Stream<Path> pathStream = Files.walk(this.importRootPath, 1);
+            Stream<Path> pathStream = Files.walk(this.importRootPath, 1);
         ) {
             this.importingProcesses = pathStream
                     .filter(Files::isDirectory)
