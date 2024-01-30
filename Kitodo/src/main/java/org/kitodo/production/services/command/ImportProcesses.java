@@ -112,16 +112,13 @@ public final class ImportProcesses extends EmptyTask {
         this.project = checkProject(project);
         this.templateForProcesses = checkTemplate(template);
         this.errorPath = checkErrors(errors);
-        try (
-            Stream<Path> pathStream = Files.walk(this.importRootPath, 1);
-        ) {
-            this.importingProcesses = pathStream
-                    .filter(Files::isDirectory)
+        try (Stream<Path> pathStream = Files.walk(this.importRootPath, 1)) {
+            this.importingProcesses = pathStream.filter(Files::isDirectory)
                     .filter(Predicate.not(this.importRootPath::equals))
                     .collect(Collectors.toMap(path -> path.getFileName().toString(), ImportingProcess::new,
                         (existing, replacing) -> replacing, TreeMap::new));
-            this.numberOfImportingProcesses = importingProcesses.size();
         }
+        this.numberOfImportingProcesses = importingProcesses.size();
     }
 
     /**
@@ -142,7 +139,7 @@ public final class ImportProcesses extends EmptyTask {
         this.step = source.step;
         this.totalActions = source.totalActions;
         this.importingProcessesIterator = source.importingProcessesIterator;
-        this.validatingImportingProcess = source.validatingImportingProcess;;
+        this.validatingImportingProcess = source.validatingImportingProcess;
         this.currentlyImporting = source.currentlyImporting;
         this.nextAction = source.nextAction;
         this.numberOfRemainingActions = source.numberOfRemainingActions;
