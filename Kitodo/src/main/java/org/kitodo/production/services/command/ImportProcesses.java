@@ -155,7 +155,7 @@ public final class ImportProcesses extends EmptyTask {
      *            parameter is not specified
      * @return a Path object to the root directory for bulk import
      */
-    private final Path checkIndir(String indir) {
+    private Path checkIndir(String indir) {
         if (Objects.isNull(indir)) {
             throw new IllegalArgumentException("kitodoScript.importProcesses.indir.isNull");
         }
@@ -181,7 +181,7 @@ public final class ImportProcesses extends EmptyTask {
      *            parameter is not specified
      * @return the project object from the database
      */
-    private final Project checkProject(String project) {
+    private Project checkProject(String project) {
         if (Objects.isNull(project)) {
             throw new IllegalArgumentException("kitodoScript.importProcesses.project.isNull");
         }
@@ -209,7 +209,7 @@ public final class ImportProcesses extends EmptyTask {
      *            if the parameter is not specified
      * @return the production template object from the database
      */
-    private final Template checkTemplate(String template) {
+    private Template checkTemplate(String template) {
         if (Objects.isNull(template)) {
             throw new IllegalArgumentException("kitodoScript.importProcesses.template.isNull");
         }
@@ -238,7 +238,7 @@ public final class ImportProcesses extends EmptyTask {
      * @return a Path object to the errors directory, or {@code null} if not
      *         specified
      */
-    private final Path checkErrors(String errors) {
+    private Path checkErrors(String errors) {
         if (Objects.isNull(errors)) {
             return null;
         }
