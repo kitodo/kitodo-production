@@ -204,7 +204,7 @@ public final class ImportProcesses extends EmptyTask {
      * production template must be specified, its ID must be syntactically valid
      * (a positive integer), and a production template with that ID must exist.
      * 
-     * @param project
+     * @param template
      *            user-entered production template number. Can be {@code null}
      *            if the parameter is not specified
      * @return the production template object from the database
