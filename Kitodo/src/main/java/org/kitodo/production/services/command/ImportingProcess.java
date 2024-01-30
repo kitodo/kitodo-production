@@ -37,6 +37,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // open source code
 import org.apache.logging.log4j.LogManager;
@@ -134,14 +135,16 @@ final class ImportingProcess {
     ImportingProcess(Path sourceDir) {
         this.sourceDir = sourceDir;
         this.directoryName = sourceDir.getFileName().toString();
-        try {
-            Files.walk(sourceDir).forEach(entry -> {
+        try (
+            Stream<Path> pathStream = Files.walk(sourceDir);
+        ) {
+            for (Path entry : (Iterable<Path>) pathStream::iterator) {
                 if (entry.equals(sourceDir)) {
                     return;
                 } else {
                     filesAndDirectories.add(sourceDir.relativize(entry));
                 }
-            });
+            }
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
