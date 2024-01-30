@@ -297,7 +297,7 @@ final class ImportingProcess {
     private String formProcessTitle(RulesetManagementInterface ruleset, Workpiece workpiece) {
         Optional<String> processTitleAttribute = ruleset
                 .getStructuralElementView(baseType, "create", NewspaperProcessesGenerator.ENGLISH).getProcessTitle();
-        if (!processTitleAttribute.isPresent()) {
+        if (processTitleAttribute.isEmpty()) {
             errors.add(Helper.getTranslation("kitodoScript.importProcesses.noProcessTitleRule", baseType));
             return null;
         }
