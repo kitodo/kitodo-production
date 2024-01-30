@@ -554,7 +554,7 @@ final class ImportingProcess {
      */
     int childDepth() {
         OptionalInt childrenMaxDepth = children.parallelStream().mapToInt(ImportingProcess::childDepth).max();
-        if(childrenMaxDepth.isEmpty()) {
+        if (childrenMaxDepth.isEmpty()) {
             return 0;
         } else {
             return childrenMaxDepth.getAsInt() + 1;
