@@ -40,6 +40,7 @@ import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.TreeDeleter;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Client;
@@ -50,9 +51,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
-
-// test support
-import test.TreeDeleter;
 
 public class ImportProcessesIT {
     private static final Path ERRORS_DIR_PATH = Paths.get("src/test/resources/errors");
@@ -129,9 +127,9 @@ public class ImportProcessesIT {
 
     @AfterClass
     public static void deleteCreatedFiles() throws Exception {
-        TreeDeleter.delete(Paths.get("src/test/resources/metadata/4/images"));
-        TreeDeleter.delete(Paths.get("src/test/resources/metadata/5/images"));
-        TreeDeleter.delete(ERRORS_DIR_PATH);
+        TreeDeleter.deltree(Paths.get("src/test/resources/metadata/4/images"));
+        TreeDeleter.deltree(Paths.get("src/test/resources/metadata/5/images"));
+        TreeDeleter.deltree(ERRORS_DIR_PATH);
     }
 
     @After
