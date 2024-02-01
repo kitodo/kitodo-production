@@ -466,7 +466,8 @@ public class IndexingService {
     }
 
     private boolean isMappingValid(String mapping, String mappingType) {
-        return isMappingEqualTo(mapping, mappingType);
+        String onlyMappings = mapping.replaceFirst("^\\{.+?\"mappings\"", "\\{\"mappings\"");
+        return isMappingEqualTo(onlyMappings, mappingType);
     }
 
 
