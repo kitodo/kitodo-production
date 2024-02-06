@@ -74,7 +74,6 @@
         <p:tabView id="docketTabView">
             <p:tab id="docketTab" title="#{msgs.details}">
                 <p:panelGrid id="docket-grid" columns="2" layout="grid">
-                    <p:row>
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title" class="input" value="#{DocketForm.docket.title}"
@@ -89,8 +88,6 @@
                                 <p:ajax oncomplete="toggleSave()"/>
                             </p:selectOneMenu>
                         </div>
-                    </p:row>
-                    <p:row />
                 </p:panelGrid>
             </p:tab>
         </p:tabView>

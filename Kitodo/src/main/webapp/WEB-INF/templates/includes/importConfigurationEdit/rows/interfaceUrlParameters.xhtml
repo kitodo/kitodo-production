@@ -17,7 +17,7 @@
         xmlns:p="http://primefaces.org/ui">
     <f:view>
         <!--@elvariable id="isViewMode" type="boolean"-->
-        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
             <div>
                 <p:outputLabel for="sruVersion"
                                value="#{msgs['importConfig.field.urlparameter.sruversion']}"/>
@@ -40,9 +40,9 @@
                 <p:tooltip for="sruVersionButton"
                            value="#{msgs['tooltip.importConfig.sruVersionHelp']}"/>
             </div>
-        </p:row>
+        </p:outputPanel>
 
-        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'SRU'}">
             <div>
                 <p:outputLabel for="sruRecordSchema"
                                value="#{msgs['importConfig.field.urlparameter.srurecordschema']}"/>
@@ -62,9 +62,9 @@
                 <p:tooltip for="sruRecordSchemaHelpButton"
                            value="#{msgs['tooltip.importConfig.sruRecordSchemaHelp']}"/>
             </div>
-        </p:row>
+        </p:outputPanel>
 
-        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
             <div>
                 <p:outputLabel for="oaiMetadataPrefix"
                                value="#{msgs['importConfig.field.urlparameter.oaimetadataprefix']} *"/>
@@ -84,8 +84,8 @@
                 <p:tooltip for="oaiMetadataPrefixHelpButton"
                            value="#{msgs['tooltip.importConfig.oaiMetadataPrefixHelp']}"/>
             </div>
-        </p:row>
-        <p:row rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
+        </p:outputPanel>
+        <p:outputPanel rendered="#{importConfigurationEditView.importConfiguration.interfaceType eq 'OAI'}">
             <div>
                 <p:outputLabel for="oaiIdParameterPrefix"
                                value="#{msgs['importConfig.searchFields.idPrefix']}"/>
@@ -100,7 +100,7 @@
                 <p:tooltip for="oaiIdParameterPrefixHelp"
                            value="#{msgs['tooltip.importConfig.idParameterPrefixHelp']}"/>
             </div>
-        </p:row>
+        </p:outputPanel>
 
     </f:view>
 

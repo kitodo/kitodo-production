@@ -64,7 +64,6 @@
         <p:tabView id="ldapGroupTabView">
             <p:tab id="labgroupTab" title="#{msgs.details}">
                 <p:panelGrid columns="2" layout="grid">
-                    <p:row>
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title"
@@ -119,9 +118,6 @@
                                         redisplay="true"
                                         onchange="toggleSave()"/>
                         </div>
-
-                    </p:row>
-                    <p:row>
                         <div>
                             <p:outputLabel for="url" value="#{msgs.url}"/>
                             <p:inputText id="url"
@@ -173,8 +169,6 @@
                                          value="#{LdapServerForm.ldapServer.keystore}"
                                          onchange="toggleSave()"/>
                         </div>
-
-                    </p:row>
                 </p:panelGrid>
                 <p:panel styleClass="content-header"
                          rendered="#{not isViewMode}">
