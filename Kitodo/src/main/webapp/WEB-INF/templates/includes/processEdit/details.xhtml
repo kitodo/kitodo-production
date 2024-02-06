@@ -18,7 +18,6 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <!--@elvariable id="isViewMode" type="boolean"-->
     <p:panelGrid id="editDetailForm" columns="2" cellpadding="10" layout="grid">
-        <p:row>
             <div>
                 <p:outputLabel for="title" value="#{msgs.processTitle}"/>
                 <p:inputText id="title" placeholder="#{msgs.processTitle}"
@@ -63,9 +62,6 @@
                 </p:selectOneMenu>
             </div>
 
-        </p:row>
-
-        <p:row>
             <div>
                 <p:outputLabel for="ruleset" value="#{msgs.ruleset}"/>
                 <p:selectOneMenu id="ruleset" value="#{ProcessForm.process.ruleset}" converter="#{rulesetConverter}"
@@ -98,7 +94,7 @@
                 </p:selectOneMenu>
             </div>
 
-            <div jsf:rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
+            <p:outputPanel rendered="#{SecurityAccessController.hasAuthorityToAssignOcrdWorkflow()}">
                 <p:outputLabel for="ocrdWorkflow" value="#{msgs.ocrdWorkflow}"/>
                 <p:selectOneMenu id="ocrdWorkflow" value="#{ProcessForm.ocrdWorkflow}"
                                  disabled="#{isViewMode}"
@@ -112,10 +108,8 @@
                                    itemLabel="#{ocrdWorkflow.value}"/>
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-            </div>
-        </p:row>
+            </p:outputPanel>
 
-        <p:row>
             <div>
                 <p:outputLabel for="templateSwitch" value="#{msgs.processTemplate}"/>
                 <p:selectBooleanCheckbox styleClass="switch input"
@@ -124,6 +118,6 @@
                                          onchange="toggleSave()"
                                          value="#{ProcessForm.process.inChoiceListShown}"/>
             </div>
-        </p:row>
+
     </p:panelGrid>
 </ui:composition>

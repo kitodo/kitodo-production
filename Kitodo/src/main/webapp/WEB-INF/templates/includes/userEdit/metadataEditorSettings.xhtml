@@ -20,7 +20,7 @@
     <p:panelGrid id="metadataEditorSettings"
                  columns="2"
                  layout="grid">
-        <p:row>
+
             <div>
                 <p:outputLabel for="metaDataLanguage"
                                value="#{msgs.metadataLanguage}"/>
@@ -56,8 +56,7 @@
                                  styleClass="secondary">
                 </p:commandButton>
             </div>
-        </p:row>
-        <p:row>
+
             <div>
                 <p:outputLabel for="showCommentsByDefault"
                                value="#{msgs['userEdit.metadataEditorSettings.showCommentsByDefault']}"/>
@@ -94,6 +93,5 @@
                                          value="#{UserForm.userObject.showPhysicalPageNumberBelowThumbnail}"
                                          onchange="toggleSave()"/>
             </div>
-        </p:row>
     </p:panelGrid>
 </ui:composition>

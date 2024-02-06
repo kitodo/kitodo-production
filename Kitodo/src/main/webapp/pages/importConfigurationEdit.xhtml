@@ -72,7 +72,6 @@
         <p:tabView id="importConfigurationTabView">
             <p:tab id="detailsTab" title="#{msgs.details}">
                 <p:panelGrid id="importConfiguration-grid" columns="2" layout="grid">
-                    <p:row>
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title} *"/>
                             <p:inputText id="title"
@@ -102,8 +101,6 @@
                             <p:tooltip for="descriptionHelp"
                                        value="#{msgs['tooltip.importConfig.descriptionHelp']}"/>
                         </div>
-                    </p:row>
-                    <p:row>
                         <div>
                             <p:outputLabel for="configurationType" value="#{msgs['importConfig.field.configurationType']} *"/>
                             <p:selectOneMenu id="configurationType" styleClass="input-with-button"
@@ -124,7 +121,6 @@
                             <p:tooltip for="configurationTypeHelp"
                                        value="#{msgs['tooltip.importConfig.configurationTypeHelp']}"/>
                         </div>
-                    </p:row>
                 </p:panelGrid>
 
                 <h:panelGroup layout="block"
@@ -151,7 +147,6 @@
                 <p:panelGrid columns="1"
                              layout="grid"
                              id="mappingFiles">
-                    <p:row>
                         <div>
                             <!--@elvariable id="mappingfile" type="org.kitodo.data.database.beans.MappingFile"-->
                             <p:pickList id="mappingFilesPicklist"
@@ -171,7 +166,6 @@
                                 <f:facet name="targetCaption">#{msgs.assigned}</f:facet>
                             </p:pickList>
                         </div>
-                    </p:row>
                 </p:panelGrid>
             </p:tab>
 
