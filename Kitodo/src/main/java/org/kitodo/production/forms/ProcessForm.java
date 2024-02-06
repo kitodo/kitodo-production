@@ -70,6 +70,7 @@ import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
 import org.primefaces.event.UnselectEvent;
+import org.primefaces.model.SortMeta;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -609,6 +610,27 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
         }
+    }
+
+    private List<Process> getProcessesForActions() {
+        // TODO: find a way to pass filters
+        List<ProcessDTO> filteredProcesses = new ArrayList<>();
+        Map<String, SortMeta> sortBy = new HashMap<String, SortMeta>();
+        for (Object object : lazyDTOModel.load(0, 100000, sortBy, null)) {
+            if (object instanceof ProcessDTO) {
+                filteredProcesses.add((ProcessDTO) object);
+            }
+        }
+        List<Process> processesForActions = new ArrayList<>();
+
+        try {
+            processesForActions = ServiceManager.getProcessService().convertDtosToBeans(filteredProcesses);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
+                logger, e);
+        }
+
+        return processesForActions;
     }
 
     /**

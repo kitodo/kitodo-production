@@ -31,7 +31,7 @@ public class AddMetadataDialog {
     /**
      * Prepare addable metadata for metadata group.
      */
-    public void prepareAddableMetadataForGroup(TreeNode treeNode) {
+    public void prepareAddableMetadataForGroup(TreeNode<Object> treeNode) {
         dataEditor.getMetadataPanel().setSelectedMetadataTreeNode(treeNode);
         addableMetadata = DataEditorService.getAddableMetadataForGroup(dataEditor.getProcess().getRuleset(), treeNode);
     }
@@ -41,7 +41,7 @@ public class AddMetadataDialog {
      *
      * @param metadataNodes metadata already assigned to the logical structure element
      */
-    public void prepareAddableMetadataForStructure(List<TreeNode> metadataNodes) {
+    public void prepareAddableMetadataForStructure(List<TreeNode<Object>> metadataNodes) {
         // parameter "structureType" not required because "currentItem" is always true!
         dataEditor.getMetadataPanel().setSelectedMetadataTreeNode(null);
         addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, true, metadataNodes, null, true);
@@ -52,7 +52,7 @@ public class AddMetadataDialog {
      *
      * @param metadataNodes metadata already assigned to media unit
      */
-    public void prepareAddableMetadataForMediaUnit(List<TreeNode> metadataNodes) {
+    public void prepareAddableMetadataForMediaUnit(List<TreeNode<Object>> metadataNodes) {
         // parameter "structureType" not required because "currentItem" is always true!
         addableMetadata = DataEditorService.getAddableMetadataForStructureElement(this.dataEditor, true, metadataNodes, null, false);
     }

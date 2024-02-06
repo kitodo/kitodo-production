@@ -29,6 +29,11 @@ public class KitodoMediaRenderer extends MediaRenderer {
 
     private static final String PLAYER_HTML_AUDIO = "html-audio";
 
+    private String getMediaSrc(FacesContext context, Media media) {
+        // TODO: Fix this issue after migrating to Primefaces 12!
+        return "not-implemented-problem";
+    }
+
     @Override
     public void encodeEnd(FacesContext context, UIComponent component) throws IOException {
         Media media = (Media) component;
