@@ -71,7 +71,7 @@
         <p:tabView id="rulesetTabView">
             <p:tab id="rulesetTab" title="#{msgs.details}">
                 <p:panelGrid columns="2" layout="grid">
-                    <p:row>
+
                         <div>
                             <p:outputLabel for="title" value="#{msgs.title}"/>
                             <p:inputText id="title" class="input" placeholder="#{msgs.title}"
@@ -87,15 +87,14 @@
                                         update="editForm:rulesetTabView:functionalMetadataGrid"/>
                             </p:selectOneMenu>
                         </div>
-                    </p:row>
-                    <p:row>
+
                         <div>
                             <p:outputLabel for="sortByRuleset" value="#{msgs.metadataSortByRuleset}"/>
                             <p:selectBooleanCheckbox id="sortByRuleset" styleClass="switch input" disabled="#{isViewMode}"
                                                      value="#{RulesetForm.ruleset.orderMetadataByRuleset}"
                                                      onchange="toggleSave()"/>
                         </div>
-                    </p:row>
+
                 </p:panelGrid>
                 <h:panelGroup id="functionalMetadataWrapper">
                     <p:importEnum type="org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata"
