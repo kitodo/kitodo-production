@@ -16,7 +16,7 @@
     xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid columns="2" cellpadding="10" layout="grid">
-        <p:row>
+
             <div>
                 <p:outputLabel for="title" value="#{msgs.title}" />
                 <p:inputText id="title" placeholder="#{msgs.title}" class="input"
@@ -37,8 +37,7 @@
                              disabled="#{ProjectForm.locked}">
                 </p:inputText>
             </div>
-        </p:row>
-        <p:row>
+
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
                 <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjectForm.project.startDate}"
@@ -75,8 +74,7 @@
                     </p:selectBooleanCheckbox>
                 </div>
             </ui:fragment>
-        </p:row>
-        <p:row>
+
             <div>
                 <p:outputLabel for="projectIsActive" value="#{msgs.projectIsActive}" />
                 <p:selectBooleanCheckbox id="projectIsActive" styleClass="switch input" value="#{ProjectForm.project.active}"
@@ -84,6 +82,6 @@
                     <p:ajax event="change" oncomplete="toggleSave()"/>
                 </p:selectBooleanCheckbox>
             </div>
-        </p:row>
+
     </p:panelGrid>
 </ui:composition>

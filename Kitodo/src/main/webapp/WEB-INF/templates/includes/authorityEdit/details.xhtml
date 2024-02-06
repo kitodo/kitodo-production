@@ -17,15 +17,12 @@
         xmlns:p="http://primefaces.org/ui">
 
     <p:panelGrid columns="2" layout="grid">
-        <p:row>
             <div>
                 <p:outputLabel for="titleInput" value="#{msgs.title}"/>
                 <p:inputText id="titleInput" class="input" disabled="#{isViewMode}"
                              value="#{AuthorityForm.title}" placeholder="#{msgs.title}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
             </div>
-        </p:row>
-        <p:row>
             <div>
                 <p:outputLabel for="types" value="#{msgs.type}"/>
                 <p:selectOneMenu id="types" value="#{AuthorityForm.type}" disabled="#{isViewMode}"
@@ -35,7 +32,6 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </div>
-        </p:row>
     </p:panelGrid>
 
 </ui:composition>

@@ -22,7 +22,6 @@
         <h:form id="paginationForm">
             <p:panel id="paginationWrapperPanel" styleClass="wrapperPanel">
                 <p:panelGrid columns="1" layout="grid">
-                    <p:row>
                         <div>
                             <p:commandButton id="updateMediaReferencesButton"
                                              action="#{DataEditorForm.paginationPanel.updateMediaReferences()}"
@@ -213,7 +212,6 @@
                                                          style="margin-bottom: 0;"
                                                          value="#{DataEditorForm.paginationPanel.fictitiousCheckboxChecked}"/>
                         </h:panelGroup>
-                    </p:row>
                 </p:panelGrid>
             </p:panel>
             <h:panelGroup layout="block"

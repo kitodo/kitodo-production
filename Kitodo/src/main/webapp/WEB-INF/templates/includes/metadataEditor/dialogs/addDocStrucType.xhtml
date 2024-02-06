@@ -264,7 +264,7 @@
                     </p:row>
                 </p:panelGrid>
 
-                <p:panelGrid id="submitButtonGroup">
+                <p:panelGrid id="submitButtonGroup" columns="1">
 
                     <!-- submit buttons for new structure element(s) -->
                     <h:panelGroup layout="block"
@@ -307,7 +307,8 @@
 
                     <!-- submit buttons for linking processes -->
                     <h:panelGroup layout="block"
-                                  rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}">
+                                  rendered="#{DataEditorForm.addDocStrucTypeDialog.linkSubDialogVisible}"
+                                  columns="1">
                         <p:commandButton id="addLinkButton"
                                          value="#{msgs.apply}"
                                          action="#{DataEditorForm.addDocStrucTypeDialog.addProcessLink}"

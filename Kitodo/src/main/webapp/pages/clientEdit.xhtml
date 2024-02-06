@@ -67,7 +67,6 @@
         <p:tabView id="clientsTabView">
             <p:tab id="clientsTab" title="#{msgs.client}">
                 <p:panelGrid id="clientEdit-grid" columns="2" layout="grid">
-                    <p:row>
                         <div>
                             <p:outputLabel for="nameInput" value="#{msgs.name}"/>
                             <p:inputText id="nameInput"
@@ -77,8 +76,7 @@
                                          value="#{ClientForm.client.name}"
                                          required="true"/>
                         </div>
-                    </p:row>
-                    <p:row>
+                        <div></div>
                         <div>
                             <p:dataTable id="clientRoleDatatable" var="role" value="#{ClientForm.getRolesForClient()}">
                                 <p:column id="titleColumn"
@@ -112,7 +110,6 @@
                                              action="#{ClientForm.copyRolesToClient()}"
                                              value="#{msgs.copyRolesToClient}"/>
                         </div>
-                    </p:row>
                 </p:panelGrid>
             </p:tab>
         </p:tabView>

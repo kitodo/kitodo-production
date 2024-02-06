@@ -60,12 +60,12 @@
     <p:panelGrid id="processData"
                  layout="grid"
                  columns="2">
-        <p:row>
+
             <div class="import-table-section-title">
                 <h:outputText value="#{msgs.basicData}"/>
             </div>
             <p:panelGrid id="processDataEditGrid" layout="grid" columns="1">
-                <p:row>
+
                     <div>
                         <!-- process title -->
                         <p:outputLabel for="processTitle"
@@ -148,11 +148,9 @@
                             <p:ajax event="change"/>
                         </p:inputText>
                     </div>
-                </p:row>
 
             </p:panelGrid>
-        </p:row>
-        <p:row>
+
             <div class="import-table-section-title">
                 <h:outputText value="#{msgs.metadata}"/>
                 <h:panelGroup id="addMetadataButtonWrapper"
@@ -176,7 +174,6 @@
                     <ui:param name="Form" value="#{CreateProcessForm}"/>
                 </ui:include>
             </h:panelGroup>
-        </p:row>
     </p:panelGrid>
 
     <p:remoteCommand name="preserveMetadata"

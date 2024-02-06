@@ -23,7 +23,7 @@
     <!--@elvariable id="isViewMode" type="boolean"-->
 
     <p:panelGrid id="useredit-grid" columns="2" layout="grid">
-        <p:row>
+
             <div>
                 <p:outputLabel for="surname" value="#{msgs.surname}"/>
                 <p:inputText id="surname"
@@ -108,8 +108,7 @@
                     <p:resetInput target=":resetPasswordForm"/>
                 </p:commandButton>
             </div>
-        </p:row>
-        <p:row>
+
             <div>
                 <p:outputLabel for="login" value="#{msgs.login}"/>
                 <p:inputText id="login" class="input" disabled="#{isViewMode || isConfigMode}" placeholder="#{msgs.login}"
@@ -193,6 +192,6 @@
                 <p:selectBooleanCheckbox id="show-process-data" styleClass="switch input" onchange="toggleSave()"
                                          disabled="#{isViewMode}" value="#{UserForm.userObject.configProductionDateShow}"/>
             </div>
-        </p:row>
+
     </p:panelGrid>
 </ui:composition>
