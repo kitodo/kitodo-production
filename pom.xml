@@ -68,7 +68,8 @@
         <mysql.version>8.2.0</mysql.version>
         <pdfbox.version>3.0.3</pdfbox.version>
         <poi.version>5.4.0</poi.version>
-        <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
+        <primefaces.version>12.0.0</primefaces.version>
+        <primefaces.extensions.version>12.0.11</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
         <junit.version>5.9.3</junit.version>
@@ -668,6 +669,11 @@ from system library in Java 11+ -->
                 <groupId>org.passay</groupId>
                 <artifactId>passay</artifactId>
                 <version>1.6.6</version>
+            </dependency>
+            <dependency>
+                <groupId>org.primefaces</groupId>
+                <artifactId>primefaces</artifactId>
+                <version>${primefaces.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.primefaces.extensions</groupId>
