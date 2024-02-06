@@ -21,8 +21,9 @@ import org.kitodo.api.externaldatamanagement.SearchResult;
 import org.kitodo.api.externaldatamanagement.SingleHit;
 import org.kitodo.production.forms.createprocess.CatalogImportDialog;
 import org.kitodo.production.services.ServiceManager;
+import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
-import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class LazyHitModel extends LazyDataModel<Object> {
 
@@ -39,12 +40,17 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        return this.searchResult.getNumberOfHits();
+    }
+
+    @Override
     public Object getRowData(String rowKey) {
         return null;
     }
 
     @Override
-    public Object getRowKey(Object inObject) {
+    public String getRowKey(Object inObject) {
         return null;
     }
 
@@ -58,11 +64,11 @@ public class LazyHitModel extends LazyDataModel<Object> {
     }
 
     @Override
-    public List<Object> load(int first, int resultSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
 
         searchResult = ServiceManager.getImportService().performSearch(
                 catalogImportDialog.getSelectedField(), catalogImportDialog.getSearchTerm(),
-                catalogImportDialog.createProcessForm.getCurrentImportConfiguration(), first, resultSize);
+                catalogImportDialog.createProcessForm.getCurrentImportConfiguration(), first, pageSize);
 
         if (Objects.isNull(searchResult) || Objects.isNull(searchResult.getHits())) {
             return Collections.emptyList();
