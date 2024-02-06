@@ -34,6 +34,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
+import org.primefaces.model.SortMeta;
 
 public class LazyBeanModel extends LazyDataModel<Object> {
 
@@ -65,6 +66,21 @@ public class LazyBeanModel extends LazyDataModel<Object> {
     }
 
     @Override
+    public int count(Map<String, FilterMeta> filterBy) {
+        HashMap<String, String> filterMap = new HashMap<>();
+        if (!StringUtils.isBlank(this.filterString)) {
+            filterMap.put(FilterService.FILTER_STRING, this.filterString);
+        }
+        try {
+            return toIntExact(searchService.countResults(filterMap));
+        } catch (DAOException e) {
+            logger.error(e.getMessage());
+        }
+        return 0;
+    }
+
+
+    @Override
     public Object getRowData(String rowKey) {
         Stopwatch stopwatch = new Stopwatch(this, "getRowData");
         try {
@@ -76,19 +92,25 @@ public class LazyBeanModel extends LazyDataModel<Object> {
     }
 
     @Override
-    public Object getRowKey(Object inObject) {
+    public String getRowKey(Object inObject) {
         Stopwatch stopwatch = new Stopwatch(this, "getRowKey");
         if (inObject instanceof BaseBean) {
             BaseBean bean = (BaseBean) inObject;
-            return stopwatch.stop(bean.getId());
+            return String.valueOf(stopwatch.stop(bean.getId()));
         }
-        return stopwatch.stop(0);
+        return String.valueOf(stopwatch.stop(0));
     }
 
     @Override
     @SuppressWarnings("unchecked")
-    public List<Object> load(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<String, FilterMeta> filters) {
+    public List<Object> load(int first, int pageSize, Map<String, SortMeta> sortBy, Map<String, FilterMeta> filters) {
+        String sortField = null;
+        SortOrder sortOrder = SortOrder.ASCENDING;
+        if (!sortBy.isEmpty()) {
+            SortMeta sortMeta = sortBy.values().iterator().next();
+            sortField = sortMeta.getField();
+            sortOrder = sortMeta.getOrder();
+        }
         Stopwatch stopwatch = new Stopwatch(this, "load", "first", Integer.toString(first), "pageSize", Integer
                 .toString(pageSize), "sortField", sortField, "sortOrder", Objects.toString(sortOrder), "filters",
                 Objects.toString(filters));
