@@ -253,15 +253,15 @@ public class ImportProcessesIT {
         assertTrue("should have created process directory",
             Files.isDirectory(Paths.get("src/test/resources/metadata/4")));
         underTest.run(12);
+        underTest.run(13);
+        underTest.run(14);
+        underTest.run(15);
         assertTrue("should have created images directory",
             Files.isDirectory(Paths.get("src/test/resources/metadata/4/images")));
-        underTest.run(13);
         assertTrue("should have created media directory",
             Files.isDirectory(Paths.get("src/test/resources/metadata/4/images/17_123_0001_media")));
-        underTest.run(14);
         assertTrue("should have copied media file",
             Files.exists(Paths.get("src/test/resources/metadata/4/images/17_123_0001_media/00000001.jpg")));
-        underTest.run(15);
         assertTrue("should have written meta.xml file",
             Files.exists(Paths.get("src/test/resources/metadata/4/meta.xml")));
         assertTrue("should have added image to meta.xml file",
