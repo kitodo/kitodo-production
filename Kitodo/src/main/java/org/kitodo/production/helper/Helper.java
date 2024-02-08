@@ -490,6 +490,7 @@ public class Helper {
         StringBuilder messageBuilder = new StringBuilder(message);
         for (String insertion : insertions) {
             String separator = ": ";
+            insertion = Objects.toString(insertion);
             if (!messageBuilder.toString().contains(insertion)) {
                 messageBuilder.append(separator).append(insertion);
             }
