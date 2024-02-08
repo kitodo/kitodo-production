@@ -90,7 +90,7 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     private WebElement searchTermInput;
 
     @SuppressWarnings("unused")
-    @FindBy(id = TAB_VIEW + ":performCatalogSearch")
+    @FindBy(id = OPAC_SEARCH_FORM + ":performCatalogSearch")
     private WebElement performCatalogSearchButton;
 
     @SuppressWarnings("unused")
@@ -262,21 +262,28 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
         }
     }
 
+    /**
+     * Tests importing metadata from a simulated OPAC and saving it as a process in Kitodo.Production.
+     * @return title of the created process as String.
+     * @throws Exception when saving the imported process fails.
+     */
     public String createProcessFromCatalog() throws Exception {
         clickElement(catalogSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(catalogSelect.getAttribute("id") + "_2")));
-
+        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='K10Plus']")));
         clickElement(fieldSelect.findElement(By.cssSelector(CSS_SELECTOR_DROPDOWN_TRIGGER)));
-        clickElement(Browser.getDriver().findElement(By.id(fieldSelect.getAttribute("id") + "_1")));
-
+        clickElement(Browser.getDriver().findElement(By.cssSelector("li[data-label='PPN']")));
+        await("Wait for 'searchInput' field to become active").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> searchTermInput.isEnabled());
         searchTermInput.sendKeys("test");
+        await("Wait for 'performSearch' button to become active").pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(() -> performCatalogSearchButton.isEnabled());
         performCatalogSearchButton.click();
-        selectRecord.click();
-
-        Thread.sleep(Browser.getDelayAfterPickListClick());
+        await("Wait for popup dialog and loading screen to disappear").pollDelay(1, TimeUnit.SECONDS)
+                .atMost(5, TimeUnit.SECONDS).ignoreExceptions().until(() -> !Browser.getDriver()
+                        .findElement(By.id("loadingScreen")).isDisplayed());
         titleSortInput.sendKeys("Test");
         ppnAnalogInput.sendKeys("12345");
-
+        ppnDigitalInput.sendKeys("67890");
         guessImagesInput.sendKeys("299");
         generateTitleButton.click();
         await("Wait for title generation").pollDelay(3, TimeUnit.SECONDS).atMost(10, TimeUnit.SECONDS)

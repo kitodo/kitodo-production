@@ -136,6 +136,7 @@ public class MockDatabase {
     public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
     public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
     public static final String HIERARCHY_CHILD_TO_ADD = "HierarchyChildToAdd";
+    public static final int PORT = 8888;
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -1717,7 +1718,7 @@ public class MockDatabase {
         kalliopeConfiguration.setHost("localhost");
         kalliopeConfiguration.setScheme("http");
         kalliopeConfiguration.setPath("/sru");
-        kalliopeConfiguration.setPort(8888);
+        kalliopeConfiguration.setPort(PORT);
         kalliopeConfiguration.setPrestructuredImport(false);
         kalliopeConfiguration.setReturnFormat(FileFormat.XML.name());
         kalliopeConfiguration.setMetadataFormat(MetadataFormat.MODS.name());
@@ -1755,7 +1756,8 @@ public class MockDatabase {
         k10plusConfiguration.setHost("localhost");
         k10plusConfiguration.setScheme("http");
         k10plusConfiguration.setPath("/sru");
-        k10plusConfiguration.setPort(8888);
+        k10plusConfiguration.setPort(PORT);
+        k10plusConfiguration.setDefaultImportDepth(1);
         k10plusConfiguration.setPrestructuredImport(false);
         k10plusConfiguration.setReturnFormat(FileFormat.XML.name());
         k10plusConfiguration.setMetadataFormat(MetadataFormat.PICA.name());
@@ -1807,7 +1809,7 @@ public class MockDatabase {
         customConfiguration.setHost("localhost");
         customConfiguration.setScheme("http");
         customConfiguration.setPath("/custom");
-        customConfiguration.setPort(8888);
+        customConfiguration.setPort(PORT);
         customConfiguration.setPrestructuredImport(false);
         customConfiguration.setReturnFormat(FileFormat.XML.name());
         customConfiguration.setMetadataFormat(MetadataFormat.PICA.name());

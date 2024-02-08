@@ -104,7 +104,6 @@ public class ImportServiceIT {
     private static final List<String> CHILD_RECORD_IDS = Arrays.asList("9991", "9992", "9993");
     private static final String KALLIOPE_RECORD_ID = "999";
     private static final String CUSTOM_INTERFACE_RECORD_ID = "12345";
-    private static final int PORT = 8888;
     private static final int TEMPLATE_ID = 1;
     private static final int PROJECT_ID = 1;
     private static final int RULESET_ID = 1;
@@ -136,7 +135,7 @@ public class ImportServiceIT {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
             return !processService.findByTitle(firstProcess).isEmpty();
         });
-        server = new StubServer(PORT).run();
+        server = new StubServer(MockDatabase.PORT).run();
         setupServer();
     }
 

@@ -234,6 +234,19 @@ public class ProcessesPage extends Page<ProcessesPage> {
         return getTableDataByColumn(processesTable, 3);
     }
 
+    /**
+     * Returns a list of all process IDs which were displayed on process page.
+     *
+     * @return list of process IDs
+     * @throws Exception when navigating to processes page fails
+     */
+    public List<String> getProcessIds() throws Exception {
+        if (isNotAt()) {
+            goTo();
+        }
+        return getTableDataByColumn(processesTable, 2);
+    }
+
     public void createNewBatch() throws Exception {
         switchToTabByIndex(TabIndex.BATCHES.getIndex());
 
