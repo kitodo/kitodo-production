@@ -15,6 +15,7 @@
                     <kitodo:metadata name="TitleDocMain">Second process</kitodo:metadata>
                     <kitodo:metadata name="TitleDocMainShort">Second</kitodo:metadata>
                     <kitodo:metadata name="TSL_ATS">Proc</kitodo:metadata>
+                    <kitodo:metadata name="CatalogIDDigital">999999999999999991</kitodo:metadata>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>
