@@ -20,6 +20,7 @@ import static org.junit.Assume.assumeTrue;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 import com.xebialabs.restito.server.StubServer;
@@ -172,12 +173,10 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Process was not listed at processes table!", processAvailable);
 
         ProcessService processService = ServiceManager.getProcessService();
-        // TODO: make processService.findByTitle(generatedTitle) work
-        int recordNumber = 1;
-        Process generatedProcess;
-        do {
-            generatedProcess = processService.getById(recordNumber++);
-        } while (!generatedTitle.equals(generatedProcess.getTitle()));
+        Optional<Process> optionalProcess = processService.getAll().stream().filter(process -> generatedTitle
+                .equals(process.getTitle())).findAny();
+        assertTrue("Generated process not found in database", optionalProcess.isPresent());
+        Process generatedProcess = optionalProcess.get();
         assertNull("Created Process unexpectedly got a parent!", generatedProcess.getParent());
 
         projectsPage.createNewProcess();
@@ -187,12 +186,12 @@ public class AddingST extends BaseTestSelenium {
         boolean childProcessAvailable = processesPage.getProcessTitles().contains(generatedChildTitle);
         assertTrue("Created Process was not listed at processes table!", childProcessAvailable);
 
-        // TODO: make processService.findByTitle(generatedChildTitle) work
-        Process generatedChildProcess;
-        do {
-            generatedChildProcess = processService.getById(recordNumber++);
-        } while (!generatedChildTitle.equals(generatedChildProcess.getTitle()));
+        Optional<Process> optionalChildProcess = processService.getAll().stream().filter(process -> generatedChildTitle
+                .equals(process.getTitle())).findAny();
+        assertTrue("Generated child process not found in database", optionalChildProcess.isPresent());
+        Process generatedChildProcess = optionalChildProcess.get();
         assertEquals("Created Process has a wrong parent!", generatedProcess, generatedChildProcess.getParent());
+        ProcessTestUtils.removeTestProcess(generatedProcess.getId());
     }
 
     @Test
