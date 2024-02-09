@@ -230,6 +230,12 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByLongNumberInMetadata() throws DataException {
+        assertEquals(processNotFound, 1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999991")).size());
+    }
+
+    @Test
     public void shouldFindProcessWithUnderscore() throws DataException, DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
         Process process = new Process();
