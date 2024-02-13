@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<zs:searchRetrieveResponse xmlns:zs="http://www.loc.gov/zing/srw/">
+    <zs:version>1.2</zs:version>
+    <zs:numberOfRecords>3</zs:numberOfRecords>
+    <zs:echoedSearchRetrieveRequest>
+        <zs:version>1.2</zs:version>
+        <zs:query>pica.ppn=11111</zs:query>
+        <zs:maximumRecords>0</zs:maximumRecords>
+        <zs:recordPacking>xml</zs:recordPacking>
+        <zs:recordSchema>mods</zs:recordSchema>
+    </zs:echoedSearchRetrieveRequest>
+</zs:searchRetrieveResponse>

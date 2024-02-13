@@ -572,4 +572,21 @@ public class ProcessesPage extends Page<ProcessesPage> {
                     + MULTI_VOLUME_WORK_PROCESS_TITLE + "'");
         }
     }
+
+    /**
+     * Toggles first row expansion in process list.
+     */
+    public void filterByChildren() {
+        WebElement rowToggler = processesTable.findElement(By.className("ui-row-toggler"));
+        rowToggler.click();
+        await("Wait for row expansion to become visible").pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(500, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(() -> Browser.getDriver().findElement(By.className("row-expansion-wrapper")).isDisplayed());
+        WebElement rowExpansion = Browser.getDriver().findElement(By.className("row-expansion-wrapper"));
+        WebElement childFilterLink = rowExpansion.findElement(By.cssSelector(".value a"));
+        childFilterLink.click();
+        await("Wait for execution of link click").pollDelay(1, TimeUnit.SECONDS)
+                .atMost(Browser.getDelayMaxAfterLinkClick(), TimeUnit.MILLISECONDS).ignoreExceptions()
+                .until(this::isAt);
+    }
 }

@@ -192,7 +192,7 @@ public abstract class Page<T> {
         WebDriverWait webDriverWait = new WebDriverWait(Browser.getDriver(), 60);
         for (int attempt = 1; attempt < 4; attempt++) {
             try {
-                await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
+                await("Wait for button clicked").pollDelay(700, TimeUnit.MILLISECONDS).atMost(10, TimeUnit.SECONDS)
                         .ignoreExceptions().until(() -> isButtonClicked.test(button));
                 if (Browser.isAlertPresent() && url.contains("login")) {
                     Browser.getDriver().switchTo().alert().accept();
@@ -208,7 +208,7 @@ public abstract class Page<T> {
     }
 
     protected void clickElement(WebElement element) {
-        await("Wait for element clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
+        await("Wait for element " + element.getText() + ", " + element.getTagName() + " to be clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isButtonClicked.test(element));
     }
 

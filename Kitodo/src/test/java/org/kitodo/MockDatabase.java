@@ -105,6 +105,7 @@ import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 
 import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
 import static com.xebialabs.restito.semantics.Condition.get;
@@ -1686,7 +1687,7 @@ public class MockDatabase {
 
         // add GBV import configuration, including id and default search fields
         ImportConfiguration gbvConfiguration = new ImportConfiguration();
-        gbvConfiguration.setTitle("GBV");
+        gbvConfiguration.setTitle(TestConstants.GBV);
         gbvConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         gbvConfiguration.setSruVersion("1.2");
@@ -1710,7 +1711,7 @@ public class MockDatabase {
 
         // add Kalliope import configuration, including id search field
         ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
-        kalliopeConfiguration.setTitle("Kalliope");
+        kalliopeConfiguration.setTitle(TestConstants.KALLIOPE);
         kalliopeConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         kalliopeConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         kalliopeConfiguration.setSruVersion("1.2");
@@ -1726,12 +1727,12 @@ public class MockDatabase {
                 .getById(1)));
 
         SearchField idSearchFieldKalliope = new SearchField();
-        idSearchFieldKalliope.setValue("ead.id");
+        idSearchFieldKalliope.setValue(TestConstants.EAD_ID);
         idSearchFieldKalliope.setLabel("Identifier");
         idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
         SearchField parentIdSearchFieldKalliope = new SearchField();
-        parentIdSearchFieldKalliope.setValue("context.ead.id");
+        parentIdSearchFieldKalliope.setValue(TestConstants.EAD_PARENT_ID);
         parentIdSearchFieldKalliope.setLabel("Parent ID");
         parentIdSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
@@ -1748,7 +1749,7 @@ public class MockDatabase {
 
         // add K10Plus import configuration, including id search field
         ImportConfiguration k10plusConfiguration = new ImportConfiguration();
-        k10plusConfiguration.setTitle("K10Plus");
+        k10plusConfiguration.setTitle(TestConstants.K10PLUS);
         k10plusConfiguration.setConfigurationType(ImportConfigurationType.OPAC_SEARCH.name());
         k10plusConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         k10plusConfiguration.setSruVersion("1.1");
@@ -2167,6 +2168,23 @@ public class MockDatabase {
      * @param numberOfRecords URL parameter containing maximum number of records associated with this endpoint
      * @throws IOException when reading the response file fails
      */
+    public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
+                                             int startRecord, int numberOfRecords)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/sru"),
+                            parameter("operation", "searchRetrieve"),
+                            parameter("recordSchema", format),
+                            parameter("startRecord", String.valueOf(startRecord)),
+                            parameter("maximumRecords", String.valueOf(numberOfRecords)),
+                            parameter("query", query))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
+
+    }
+
     public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
                                              int numberOfRecords)
             throws IOException {
