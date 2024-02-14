@@ -805,7 +805,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         BoolQueryBuilder processQuery = new BoolQueryBuilder()
                 .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput));
         if (searchInput.matches("\\d*")) {
-            processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput));
+            processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true));
         }
         BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
                 .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
