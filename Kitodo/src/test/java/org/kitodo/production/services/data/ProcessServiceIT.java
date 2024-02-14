@@ -233,6 +233,10 @@ public class ProcessServiceIT {
     public void shouldFindByLongNumberInMetadata() throws DataException {
         assertEquals(processNotFound, 1, processService
                 .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999991")).size());
+        assertEquals(processNotFound, 1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "991022551489706476")).size());
+        assertEquals(processNotFound, 1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999999999999991")).size());
     }
 
     @Test

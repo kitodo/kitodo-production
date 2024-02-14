@@ -32,6 +32,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -647,7 +648,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 ProcessTypeField.PROJECT_TITLE.getKey(),
                 ProcessTypeField.COMMENTS.getKey(),
                 ProcessTypeField.WIKI_FIELD.getKey(),
-                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
+                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND).lenient(true);
 
         if (searchQuery.matches("^\\d*$")) {
             multiMatchQueryForProcessFields.fields().put(ProcessTypeField.ID.getKey(), 1.0f);
@@ -2105,8 +2106,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         while (keys.hasNext()) {
             String key = keys.next();
             Object value = xmlJSONObject.get(key);
-            if (value instanceof String || value instanceof Integer || value instanceof Long) {
+            if (value instanceof String || value instanceof Integer) {
                 json.put(prepareKey(key), value);
+            } else if (value instanceof Long || value instanceof BigInteger) {
+                json.put(prepareKey(key), value.toString());
             } else if (value instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) value;
                 Map<String, Object> map = iterateOverJsonObject(jsonObject);
