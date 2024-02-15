@@ -27,7 +27,7 @@ import org.kitodo.api.imagemanagement.ImageFileFormat;
 import org.kitodo.api.imagemanagement.ImageManagementInterface;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.config.enums.ParameterImageManagement;
-import org.kitodo.exceptions.Guard;
+import org.kitodo.utils.Guard;
 
 /**
  * An ImageManagementInterface implementation using ImageMagick.

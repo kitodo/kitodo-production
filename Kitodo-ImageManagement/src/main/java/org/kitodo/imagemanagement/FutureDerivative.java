@@ -19,7 +19,7 @@ import java.util.List;
 import org.apache.commons.lang3.tuple.Pair;
 import org.im4java.core.IMOperation;
 import org.kitodo.api.imagemanagement.ImageFileFormat;
-import org.kitodo.exceptions.Guard;
+import org.kitodo.utils.Guard;
 
 /**
  * One image derivative to be created. Multiple result images with different
