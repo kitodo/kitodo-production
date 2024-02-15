@@ -32,6 +32,7 @@ import java.time.ZoneId;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.ExecutionPermission;
@@ -48,6 +49,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class ImportProcessesIT {
     private static final Path ERRORS_DIR_PATH = Paths.get("src/test/resources/errors");
@@ -102,23 +104,17 @@ public class ImportProcessesIT {
         }
     }
 
-    @BeforeClass
-    public static void createOutputDirectories() throws Exception {
+    @Before
+    public void createOutputDirectories() throws Exception {
         Files.createDirectories(ERRORS_DIR_PATH);
     }
 
-    @AfterClass
-    public static void deleteCreatedFiles() throws Exception {
-        TreeDeleter.deltree(Paths.get("src/test/resources/metadata/4/images"));
-        TreeDeleter.deltree(Paths.get("src/test/resources/metadata/5/images"));
-        TreeDeleter.deltree(ERRORS_DIR_PATH);
-    }
-
     @After
-    public void restoreMetaXmlFiles() throws Exception {
-        Files.deleteIfExists(Paths.get("src/test/resources/metadata/4/meta.xml"));
-        Files.deleteIfExists(Paths.get("src/test/resources/metadata/5/meta.xml"));
-        Files.deleteIfExists(Paths.get("src/test/resources/metadata/6/meta.xml"));
+    public void deleteCreatedFiles() throws Exception {
+        ProcessTestUtils.removeTestProcess(4);
+        ProcessTestUtils.removeTestProcess(5);
+        ProcessTestUtils.removeTestProcess(6);
+        TreeDeleter.deltree(ERRORS_DIR_PATH);
     }
 
     @AfterClass
