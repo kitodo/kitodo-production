@@ -24,7 +24,7 @@ import javax.jms.MapMessage;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.exceptions.Guard;
+import org.kitodo.utils.Guard;
 
 public class MapMessageObjectReader {
 

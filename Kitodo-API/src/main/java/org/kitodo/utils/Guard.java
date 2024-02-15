@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.exceptions;
+package org.kitodo.utils;
 
 import java.util.Objects;
 
