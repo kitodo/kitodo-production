@@ -73,6 +73,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.join.ScoreMode;
@@ -352,11 +353,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (!fileService.fileExist(metadataFilePath)) {
             logger.info("No metadata file for indexing: {}", metadataFilePath);
         } else {
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-            process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
-            process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
-            process.setNumberOfStructures(getNumberOfStructures(workpiece));
-            process.setBaseType(getBaseType(workpiece));
+            try {
+                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+                process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
+                process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
+                process.setNumberOfStructures(getNumberOfStructures(workpiece));
+                process.setBaseType(getBaseType(workpiece));
+            } catch (IllegalArgumentException | IOException e) {
+                logger.warn("Cannot read metadata file for indexing: {}", metadataFilePath);
+                logger.catching(Level.DEBUG, e);
+            }
         }
     }
 
