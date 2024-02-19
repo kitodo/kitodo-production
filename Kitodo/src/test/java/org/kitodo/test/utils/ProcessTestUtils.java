@@ -14,12 +14,18 @@ package org.kitodo.test.utils;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.logging.log4j.LogManager;
@@ -44,6 +50,7 @@ public class ProcessTestUtils {
     public static final String META_XML = "/meta.xml";
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
+    private static final String ID_PLACEHOLDER = "IDENTIFIER_PLACEHOLDER";
     public static final String testFileForHierarchyParent = "multivalued_metadata.xml";
     public static final String testFileChildProcessToKeep = "testMetadataForChildProcessToKeep.xml";
     private static final String testFileChildProcessToRemove = "testMetadataForKitodoScript.xml";
@@ -210,6 +217,30 @@ public class ProcessTestUtils {
             // re-save to index metadata file
             Process testProcess = ServiceManager.getProcessService().getById(processId);
             ServiceManager.getProcessService().save(testProcess);
+        }
+    }
+
+    /**
+     * Replace string ID_PLACEHOLDER with given integer 'processId' in metadata file of corresponding test process.
+     * @param processId ID of process
+     * @throws DAOException when process cannot be loaded from test database
+     * @throws IOException when metadata file of process cannot be read or saved
+     * @throws DataException when process cannot be re-saved
+     */
+    public static void updateIdentifier(int processId) throws DAOException, IOException, DataException {
+        Process process = ServiceManager.getProcessService().getById(processId);
+        URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
+        try (InputStream fileContent = ServiceManager.getFileService().readMetadataFile(process)) {
+            InputStreamReader inputStreamReader = new InputStreamReader(fileContent);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            List<String> textLines = bufferedReader.lines().collect(Collectors.toList());
+            String textContent = String.join("", textLines);
+            textContent = textContent.replace(ID_PLACEHOLDER, String.valueOf(processId));
+            try (OutputStream updatedFileContent = ServiceManager.getFileService().write(metadataFileUri)) {
+                updatedFileContent.write(textContent.getBytes());
+                // re-save process to update index
+                ServiceManager.getProcessService().save(process);
+            }
         }
     }
 

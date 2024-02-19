@@ -538,7 +538,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         this.saveChildProcessLinks();
 
         // if a process is selected in 'TitleRecordLinkTab' link it as parent with the first process in the list
-        if (this.processes.size() > 0 && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
+        if (!this.processes.isEmpty() && Objects.nonNull(titleRecordLinkTab.getTitleRecordProcess())) {
             MetadataEditor.addLink(titleRecordLinkTab.getTitleRecordProcess(),
                 titleRecordLinkTab.getSelectedInsertionPosition(), this.processes.get(0).getProcess().getId());
             ProcessService.setParentRelations(titleRecordLinkTab.getTitleRecordProcess(),

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+  *
+  * This file is part of the Kitodo project.
+  *
+  * It is licensed under GNU General Public License version 3 or later.
+  *
+  * For the full copyright and license information, please read the
+  * GPL3-License.txt file that was distributed with this source code.
+  -->
+<mets:mets xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2024-02-14T10:01:44"/>
+    <mets:dmdSec ID="DMDLOG_0000">
+        <mets:mdWrap MDTYPE="OTHER" OTHERMDTYPE="KITODO">
+            <mets:xmlData>
+                <!-- Note: the child nodes of kitodo:kitodo are not indented in this test file because the corresponding method in Kitodo.Production expects XML documents without line breaks -->
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0"><kitodo:metadata name="TitleDocMain">Parent process - Test Inventory</kitodo:metadata><kitodo:metadata name="CatalogIDDigital">123123</kitodo:metadata><kitodo:metadata name="document_type">Inventory</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
+    </mets:structMap>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence"/>
+    </mets:structMap>
+</mets:mets>

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -40,6 +41,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import com.xebialabs.restito.semantics.Action;
+import com.xebialabs.restito.server.StubServer;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,6 +105,10 @@ import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
+
+import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
+import static com.xebialabs.restito.semantics.Condition.get;
+import static com.xebialabs.restito.semantics.Condition.parameter;
 
 /**
  * Insert data to test database.
@@ -1683,6 +1690,11 @@ public class MockDatabase {
         gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         gbvConfiguration.setSruVersion("1.2");
         gbvConfiguration.setSruRecordSchema("mods");
+        gbvConfiguration.setItemFieldXpath(".//*[local-name()='datafield'][@tag='954']");
+        gbvConfiguration.setItemFieldOwnerSubPath(".//*[local-name()='subfield'][@code='0']");
+        gbvConfiguration.setItemFieldOwnerMetadata("itemOwner");
+        gbvConfiguration.setItemFieldSignatureSubPath(".//*[local-name()='subfield'][@code='d']");
+        gbvConfiguration.setItemFieldSignatureMetadata("itemSignatur");
 
         SearchField ppnField = new SearchField();
         ppnField.setValue("pica.ppn");
@@ -1717,10 +1729,20 @@ public class MockDatabase {
         idSearchFieldKalliope.setLabel("Identifier");
         idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
-        kalliopeConfiguration.setSearchFields(Collections.singletonList(idSearchFieldKalliope));
+        SearchField parentIdSearchFieldKalliope = new SearchField();
+        parentIdSearchFieldKalliope.setValue("context.ead.id");
+        parentIdSearchFieldKalliope.setLabel("Parent ID");
+        parentIdSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
+
+        List<SearchField> kalliopeSearchFields = new LinkedList<>();
+        kalliopeSearchFields.add(idSearchFieldKalliope);
+        kalliopeSearchFields.add(parentIdSearchFieldKalliope);
+
+        kalliopeConfiguration.setSearchFields(kalliopeSearchFields);
         ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
 
         kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
+        kalliopeConfiguration.setParentSearchField(kalliopeConfiguration.getSearchFields().get(1));
         ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
 
         // add K10Plus import configuration, including id search field
@@ -1745,10 +1767,20 @@ public class MockDatabase {
         idSearchFieldK10Plus.setLabel("PPN");
         idSearchFieldK10Plus.setImportConfiguration(k10plusConfiguration);
 
-        k10plusConfiguration.setSearchFields(Collections.singletonList(idSearchFieldK10Plus));
+        SearchField parentIdSearchFieldK10Plus = new SearchField();
+        parentIdSearchFieldK10Plus.setValue("pica.parentId");
+        parentIdSearchFieldK10Plus.setLabel("Parent ID");
+        parentIdSearchFieldK10Plus.setImportConfiguration(k10plusConfiguration);
+
+        List<SearchField> k10SearchFields = new LinkedList<>();
+        k10SearchFields.add(idSearchFieldK10Plus);
+        k10SearchFields.add(parentIdSearchFieldK10Plus);
+
+        k10plusConfiguration.setSearchFields(k10SearchFields);
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
+        k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {
@@ -2059,6 +2091,16 @@ public class MockDatabase {
     }
 
     /**
+     * Return GBV ImportConfiguration.
+     *
+     * @return GBV ImportConfiguration
+     * @throws DAOException when GBV ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getGbvImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(1);
+    }
+
+    /**
      * Return Kalliope ImportConfiguration.
      *
      * @return Kalliope ImportConfiguration
@@ -2112,5 +2154,50 @@ public class MockDatabase {
         process.setTemplate(template);
         ServiceManager.getProcessService().save(process);
         return process;
+    }
+
+    /**
+     * Adds a REST endpoint for a simulated SRU search interface stub server with the given parameters.
+     * @param server the stub server to which the REST endpoint is added
+     * @param query URL parameter containing query associated with this endpoint
+     * @param filePath path to file containing response to be returned by stub server when requesting this endpoint
+     * @param format URL parameter containing record schema format associated with this endpoint
+     * @param numberOfRecords URL parameter containing maximum number of records associated with this endpoint
+     * @throws IOException when reading the response file fails
+     */
+    public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
+                                             int numberOfRecords)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/sru"),
+                            parameter("operation", "searchRetrieve"),
+                            parameter("recordSchema", format),
+                            parameter("maximumRecords", String.valueOf(numberOfRecords)),
+                            parameter("query", query))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
+    }
+
+    /**
+     * Adds a REST endpoint for a simulated CUSTOM search interface stub server with the given parameters.
+     * @param server the stub server to which the REST endpoint is added
+     * @param filePath path to file containing response to be returned by stub server when requesting this endpoint
+     * @param recordId URL parameter containing record ID associated with this endpoint
+     * @param customParameterValue URL parameter containing custom URL parameter value associated with this endpoint
+     * @throws IOException when reading the response file fails
+     */
+    public static void addRestEndPointForCustom(StubServer server, String filePath, String recordId,
+                                                String customParameterValue)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/custom"),
+                            parameter("firstKey", customParameterValue),
+                            parameter("id", recordId))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
     }
 }
