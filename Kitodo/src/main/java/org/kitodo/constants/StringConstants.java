@@ -14,5 +14,6 @@ package org.kitodo.constants;
 public class StringConstants {
 
     public static String COMMA_DELIMITER = ", ";
+    public static String SEMICOLON_DELIMITER = "; ";
 
 }
