@@ -12,6 +12,7 @@
 package org.kitodo.production.services.command;
 
 // abbreviations
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsString;
 import static org.junit.Assert.assertEquals;
@@ -20,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 // base Java
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -54,6 +54,9 @@ import org.kitodo.test.utils.ProcessTestUtils;
 public class ImportProcessesIT {
     private static final Path ERRORS_DIR_PATH = Paths.get("src/test/resources/errors");
 
+    private int firstProcessId, secondProcessId, thirdProcessId;
+    private static Template template;
+
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
@@ -66,28 +69,27 @@ public class ImportProcessesIT {
         ruleset.setOrderMetadataByRuleset(true);
         Client clientOne = ServiceManager.getClientService().getById(1);
         ruleset.setClient(clientOne);
-        ServiceManager.getRulesetService().save(ruleset); // will get ID 5
+        ServiceManager.getRulesetService().save(ruleset);
 
         Task task = new Task();
         task.getRoles().add(ServiceManager.getRoleService().getById(1));
-        ServiceManager.getTaskService().save(task); // will get ID 14
+        ServiceManager.getTaskService().save(task);
 
-        Template template = new Template();
+        template = new Template();
         template.setTitle("Import processes template");
         LocalDate localDate = LocalDate.of(2023, 8, 9);
         template.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         template.setClient(clientOne);
         template.setDocket(ServiceManager.getDocketService().getById(1));
         template.getProjects().add(ServiceManager.getProjectService().getById(1));
-        template.setRuleset(ServiceManager.getRulesetService().getById(5)); // ruleset added above
-        ServiceManager.getTemplateService().save(template, true); // will get ID 5
+        template.setRuleset(ruleset);
+        ServiceManager.getTemplateService().save(template, true);
 
-        task = ServiceManager.getTaskService().getById(14);
-        task.setTemplate(ServiceManager.getTemplateService().getById(5));
-        template.getTasks().add(ServiceManager.getTaskService().getById(14));
+        task.setTemplate(template);
+        template.getTasks().add(task);
         ServiceManager.getTemplateService().save(template, true);
         ServiceManager.getTaskService().save(task);
-        
+
         Folder local = ServiceManager.getFolderService().getById(6);
         local.setMimeType("image/jpeg");
         ServiceManager.getFolderService().saveToDatabase(local);
@@ -109,20 +111,6 @@ public class ImportProcessesIT {
         Files.createDirectories(ERRORS_DIR_PATH);
     }
 
-    @After
-    public void deleteCreatedFiles() throws Exception {
-        ProcessTestUtils.removeTestProcess(4);
-        ProcessTestUtils.removeTestProcess(5);
-        ProcessTestUtils.removeTestProcess(6);
-        TreeDeleter.deltree(ERRORS_DIR_PATH);
-    }
-
-    @AfterClass
-    public static void cleanDatabase() throws Exception {
-        MockDatabase.stopNode();
-        MockDatabase.cleanDatabase();
-    }
-
     /**
      * Tests the target behavior specified.
      */
@@ -130,12 +118,12 @@ public class ImportProcessesIT {
     public void shouldImport() throws Exception {
         // create test object
         String indir = "src/test/resources/ImportProcessesIT";
-        String project = "1";
-        String template = "5";
+        String projectId = "1";
+        String templateId = template.getId().toString();
         String errors = "src/test/resources/errors";
-        ImportProcesses underTest = new ImportProcesses(indir, project, template, errors);
+        ImportProcesses underTest = new ImportProcesses(indir, projectId, templateId, errors);
 
-        long processesBefore = ServiceManager.getProcessService().countDatabaseRows();
+        int processesBefore = ServiceManager.getProcessService().countDatabaseRows().intValue();
 
         // initialize
         underTest.run(0);
@@ -143,8 +131,7 @@ public class ImportProcessesIT {
 
         // validate: correct processes
         underTest.run(1);
-        assertEquals("should have validated p1_valid", "p1_valid",
-            underTest.validatingImportingProcess.directoryName);
+        assertEquals("should have validated p1_valid", "p1_valid", underTest.validatingImportingProcess.directoryName);
         ImportingProcess p1_valid = underTest.validatingImportingProcess;
         assertTrue("should have validated without errors", p1_valid.errors.isEmpty());
 
@@ -209,36 +196,41 @@ public class ImportProcessesIT {
         ImportingProcess p4c1_notValid = underTest.validatingImportingProcess;
         assertFalse("should have validated with error", p4c1_notValid.errors.isEmpty());
 
-        assertFalse("p1_valid should not be correct, due to problem in child case",
-            p4_valid_butChildIsNot.isCorrect());
+        assertFalse("p1_valid should not be correct, due to problem in child case", p4_valid_butChildIsNot.isCorrect());
         assertFalse("p1c1_valid should not be correct", p4c1_notValid.isCorrect());
 
         // copy files and create database entry
 
         // p1c1_valid (OK)
+        firstProcessId = processesBefore + 1;
+        Path processPath = Paths.get("src/test/resources/metadata", Integer.toString(firstProcessId));
+        Path imagesPath = processPath.resolve("images");
+        Path mediaPath = imagesPath.resolve("17_123_0001_media");
+        Path imageOne = mediaPath.resolve("00000001.jpg");
+        Path metaXml = processPath.resolve("meta.xml");
+
         underTest.run(10);
-        assertEquals("should have created 1st process,", processesBefore + 1,
-            (long) ServiceManager.getProcessService().countDatabaseRows());
+        assertEquals("should have created 1st process,", Long.valueOf(firstProcessId),
+            ServiceManager.getProcessService().countDatabaseRows());
         underTest.run(11);
-        assertTrue("should have created process directory",
-            Files.isDirectory(Paths.get("src/test/resources/metadata/4")));
+        assertTrue("should have created process directory", Files.isDirectory(processPath));
         underTest.run(12);
         underTest.run(13);
         underTest.run(14);
         underTest.run(15);
-        assertTrue("should have created images directory",
-            Files.isDirectory(Paths.get("src/test/resources/metadata/4/images")));
-        assertTrue("should have created media directory",
-            Files.isDirectory(Paths.get("src/test/resources/metadata/4/images/17_123_0001_media")));
-        assertTrue("should have copied media file",
-            Files.exists(Paths.get("src/test/resources/metadata/4/images/17_123_0001_media/00000001.jpg")));
-        assertTrue("should have written meta.xml file",
-            Files.exists(Paths.get("src/test/resources/metadata/4/meta.xml")));
+
+        assertTrue("should have created images directory", Files.isDirectory(imagesPath));
+        assertTrue("should have created media directory", Files.isDirectory(mediaPath));
+        assertTrue("should have copied media file", Files.exists(imageOne));
+        assertTrue("should have written meta.xml file", Files.exists(metaXml));
         assertTrue("should have added image to meta.xml file",
-            Files.readString(Paths.get("src/test/resources/metadata/4/meta.xml"), StandardCharsets.UTF_8)
-                    .contains("xlink:href=\"images/17_123_0001_media/00000001.jpg\""));
+            Files.readString(metaXml, UTF_8).contains("xlink:href=\"images/17_123_0001_media/00000001.jpg\""));
 
         // p1c2_valid (OK)
+        secondProcessId = processesBefore + 2;
+        processPath = Paths.get("src/test/resources/metadata", Integer.toString(secondProcessId));
+        metaXml = processPath.resolve("meta.xml");
+
         underTest.run(16);
         underTest.run(17);
         underTest.run(18);
@@ -246,18 +238,16 @@ public class ImportProcessesIT {
         underTest.run(20);
         underTest.run(21);
         assertTrue("should have added image to meta.xml file",
-            Files.readString(Paths.get("src/test/resources/metadata/5/meta.xml"), StandardCharsets.UTF_8)
-                    .contains("xlink:href=\"images/17_123_0002_media/00000001.jpg\""));
+            Files.readString(metaXml, UTF_8).contains("xlink:href=\"images/17_123_0002_media/00000001.jpg\""));
 
         // p2c1_valid (error, broken parent)
         underTest.run(22);
-        assertTrue("should have error directory",
-            Files.isDirectory(Paths.get("src/test/resources/errors/p2c1_valid")));
+        assertTrue("should have error directory", Files.isDirectory(Paths.get("src/test/resources/errors/p2c1_valid")));
         underTest.run(23);
         assertTrue("should have written Errors.txt file",
             Files.exists(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt")));
         assertTrue("should have written error message",
-            Files.readString(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt"), StandardCharsets.UTF_8)
+            Files.readString(Paths.get("src/test/resources/errors/p2c1_valid/Errors.txt"), UTF_8)
                     .contains("errors in related process(es): p2_parentMissingAChild"));
         underTest.run(24);
         assertTrue("should have copied meta.xml file",
@@ -267,7 +257,7 @@ public class ImportProcessesIT {
         underTest.run(25);
         underTest.run(26);
         assertTrue("should have written error message",
-            Files.readString(Paths.get("src/test/resources/errors/p3c1_valid/Errors.txt"), StandardCharsets.UTF_8)
+            Files.readString(Paths.get("src/test/resources/errors/p3c1_valid/Errors.txt"), UTF_8)
                     .contains("errors in related process(es): p3_not-valid"));
         underTest.run(27);
         assertTrue("should have copied meta.xml file",
@@ -277,31 +267,33 @@ public class ImportProcessesIT {
         underTest.run(28);
         underTest.run(29);
         assertTrue("should have written error message",
-            Files.readString(Paths.get("src/test/resources/errors/p4c1_not-valid/Errors.txt"),
-                StandardCharsets.UTF_8).contains("Validation error"));
+            Files.readString(Paths.get("src/test/resources/errors/p4c1_not-valid/Errors.txt"), UTF_8)
+                    .contains("Validation error"));
         underTest.run(30);
 
         // p1_valid (OK)
+        thirdProcessId = processesBefore + 3;
+        processPath = Paths.get("src/test/resources/metadata", Integer.toString(thirdProcessId));
+        metaXml = processPath.resolve("meta.xml");
+
         underTest.run(31);
         assertEquals("should have created 3rd process,", processesBefore + 3,
             (long) ServiceManager.getProcessService().countDatabaseRows());
         underTest.run(32);
-        assertTrue("should have created process directory",
-            Files.isDirectory(Paths.get("src/test/resources/metadata/6")));
+        assertTrue("should have created process directory", Files.isDirectory(processPath));
         underTest.run(33);
-        String sixMetaXml = Files.readString(Paths.get("src/test/resources/metadata/6/meta.xml"),
-            StandardCharsets.UTF_8);
-        assertThat("should have added correct child links to meta.xml file",
-            sixMetaXml, containsString("xlink:href=\"database://?process.id=4\""));
-        assertThat("should have added correct child links to meta.xml file",
-            sixMetaXml, containsString("xlink:href=\"database://?process.id=5\""));
+        String thirdMetaXml = Files.readString(metaXml, UTF_8);
+        assertThat("should have added correct child links to meta.xml file", thirdMetaXml,
+            containsString("xlink:href=\"database://?process.id=" + firstProcessId + "\""));
+        assertThat("should have added correct child links to meta.xml file", thirdMetaXml,
+            containsString("xlink:href=\"database://?process.id=" + secondProcessId + "\""));
 
         Process parent = ServiceManager.getProcessService().getById(6);
         assertEquals("parent should have 2 children", 2, parent.getChildren().size());
-        assertEquals("child (ID 4) should have the correct parent", parent,
-            ServiceManager.getProcessService().getById(4).getParent());
-        assertEquals("child (ID 5) should have the correct parent", parent,
-            ServiceManager.getProcessService().getById(5).getParent());
+        assertEquals("child (ID " + firstProcessId + ") should have the correct parent", parent,
+            ServiceManager.getProcessService().getById(firstProcessId).getParent());
+        assertEquals("child (ID " + secondProcessId + ") should have the correct parent", parent,
+            ServiceManager.getProcessService().getById(secondProcessId).getParent());
 
         // p2_parentMissingAChild (error)
         underTest.run(34);
@@ -322,5 +314,19 @@ public class ImportProcessesIT {
         assertEquals("Should import 3 processes,", processesBefore + 3,
             (long) ServiceManager.getProcessService().countDatabaseRows());
         assertEquals("Should not import 6 processes,", 6, ERRORS_DIR_PATH.toFile().list().length);
+    }
+
+    @After
+    public void deleteCreatedFiles() throws Exception {
+        ProcessTestUtils.removeTestProcess(firstProcessId);
+        ProcessTestUtils.removeTestProcess(secondProcessId);
+        ProcessTestUtils.removeTestProcess(thirdProcessId);
+        TreeDeleter.deltree(ERRORS_DIR_PATH);
+    }
+
+    @AfterClass
+    public static void cleanDatabase() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
     }
 }
