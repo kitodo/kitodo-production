@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:m="http://meta.kitodo.org/v1/">
+<dmdSec ID="metadata"><mdWrap><xmlData><m:kitodo>
+
+<m:metadata name="CRNumber">17</m:metadata>
+<m:metadata name="CaseNumber">123</m:metadata>
+<m:metadata name="Description1">Lorem ipsum dolor sit amet</m:metadata>
+<m:metadataGroup name="Address">
+  <m:metadata name="StreetName">Molenstraat</m:metadata>
+  <m:metadata name="HouseNumber">21</m:metadata>
+  <m:metadata name="Additions">B</m:metadata>
+</m:metadataGroup>
+
+</m:kitodo></xmlData></mdWrap></dmdSec>
+<structMap TYPE="LOGICAL"><div DMDID="metadata" TYPE="case">
+
+<div><mptr xlink:href="p2c1_valid"/></div>
+<div><mptr xlink:href="p2c2_missing"/></div>
+
+</div></structMap></mets>

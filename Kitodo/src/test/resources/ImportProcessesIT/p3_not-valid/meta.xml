@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets xmlns="http://www.loc.gov/METS/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:m="http://meta.kitodo.org/v1/">
+<dmdSec ID="metadata"><mdWrap><xmlData><m:kitodo>
+
+<m:metadata name="CRNumber">47</m:metadata>
+<m:metadata name="CaseNumber">11</m:metadata>
+<m:metadata name="Foo">Bar</m:metadata>
+
+</m:kitodo></xmlData></mdWrap></dmdSec>
+<structMap TYPE="LOGICAL"><div DMDID="metadata" TYPE="case">
+
+<div><mptr xlink:href="p3c1_valid"/></div>
+
+</div></structMap></mets>
