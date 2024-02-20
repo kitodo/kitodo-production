@@ -40,7 +40,7 @@ public class WebDriverProvider {
     // https://chromedriver.chromium.org/downloads
     private static final String CHROME_DRIVER_LAST_GOOD_VERSIONS_URL
             = "https://googlechromelabs.github.io/chrome-for-testing/last-known-good-versions.json";
-    private static final String CHROME_FOR_TESTING_URL = "https://edgedl.me.gvt1.com/edgedl/chrome/chrome-for-testing/";
+    private static final String CHROME_FOR_TESTING_URL = "https://storage.googleapis.com/chrome-for-testing-public/";
     public static final String CHROME_DRIVER = "chromedriver";
     private static final String CHROME_DRIVER_MAC_PREFIX = "mac-x64";
     private static final String CHROME_DRIVER_WIN_PREFIX = "win32";
