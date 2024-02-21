@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mets:mets
+        xsi:schemaLocation="info:lc/xmlns/premis-v2 http://www.loc.gov/standards/premis/v2/premis-v2-0.xsd http://www.loc.gov/mods/v3 http://www.loc.gov/standards/mods/mods.xsd http://www.loc.gov/METS/ http://www.loc.gov/standards/mets/mets.xsd http://www.loc.gov/mix/v10 http://www.loc.gov/standards/mix/mix10/mix10.xsd"
+        xmlns:mets="http://www.loc.gov/METS/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <mets:metsHdr CREATEDATE="2018-09-14T07:45:17">
+        <mets:agent OTHERTYPE="SOFTWARE" ROLE="CREATOR" TYPE="OTHER">
+            <mets:name>Kitodo - kitodo-ugh-3.0-SNAPSHOT - 18-April-2018 13:20:13</mets:name>
+            <mets:note>Kitodo</mets:note>
+        </mets:agent>
+    </mets:metsHdr>
+    <mets:dmdSec ID="DMDLOG_0000">
+        <mets:mdWrap MDTYPE="MODS">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
+                    <kitodo:metadata name="TitleDocMain">Second process</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMainShort">Second</kitodo:metadata>
+                    <kitodo:metadata name="TSL_ATS">Proc</kitodo:metadata>
+                    <kitodo:metadata name="CatalogIDDigital">999999999999999991</kitodo:metadata>
+                    <kitodo:metadata name="CatalogIDDigital">991022551489706476</kitodo:metadata>
+                    <kitodo:metadata name="CatalogIDDigital">999999999999999999999999991</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="DMDPHYS_0000">
+        <mets:mdWrap MDTYPE="MODS">
+            <mets:xmlData>
+                <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/">
+                    <kitodo:metadata name="pathimagefiles">file:/2/images/Sec_Proc_tif</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div DMDID="DMDLOG_0000" ID="LOG_0000" TYPE="Monograph"/>
+    </mets:structMap>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div DMDID="DMDPHYS_0000" ID="PHYS_0000" TYPE="physSequence"/>
+    </mets:structMap>
+    <mets:structLink>
+        <mets:smLink xlink:to="PHYS_0000" xlink:from="LOG_0000" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+    </mets:structLink>
+</mets:mets>
