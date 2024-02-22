@@ -2342,6 +2342,8 @@ form#metadata div label,
     width: 100%;
     margin-bottom: 32px;
     height: calc(var(--default-double-size) * 3);
+    max-height: 120px;
+    overflow-y: scroll;
 }
 
 #uploadFileDialog {
