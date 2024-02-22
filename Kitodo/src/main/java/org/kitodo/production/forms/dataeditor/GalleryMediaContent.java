@@ -24,8 +24,10 @@ import javax.faces.event.PhaseId;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.enums.MediaContentType;
+import org.kitodo.production.helper.metadata.MediaPartialHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
@@ -213,6 +215,16 @@ public class GalleryMediaContent {
     public boolean isMediaPartial() {
         return Objects.nonNull(view) && Objects.nonNull(view.getPhysicalDivision()) && view.getPhysicalDivision()
                 .hasMediaPartial();
+    }
+
+    /**
+     * @return
+     */
+    public MediaPartial getMediaPartial() {
+        if (isMediaPartial()) {
+            return view.getPhysicalDivision().getMediaPartial();
+        }
+        return null;
     }
 
     /**
