@@ -26,7 +26,7 @@
         <ui:fragment
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
 
-            <p:outputPanel id="mediaDetailMediaContainer" >
+            <p:outputPanel id="mediaDetailMediaContainer">
 
                 <ui:include
                         src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail-audio-waveform-tools.xhtml">

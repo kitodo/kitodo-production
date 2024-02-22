@@ -70,14 +70,6 @@ public class MediaPartialsPanel implements Serializable {
         return mediaPartialDivisions;
     }
 
-    public boolean isSelectedMediaPartialDivision(Map.Entry<LogicalDivision, MediaPartial> mediaPartialDivision) {
-        mediaSelection = dataEditor.getGalleryPanel().getLastSelection();
-        if (Objects.nonNull(mediaPartialDivision) && Objects.nonNull(mediaSelection)) {
-            return mediaSelection.getValue().equals(mediaPartialDivision.getKey());
-        }
-        return false;
-    }
-
     /**
      * Validate the duration of the media.
      *

@@ -218,7 +218,9 @@ public class GalleryMediaContent {
     }
 
     /**
-     * @return
+     * Get the media partial of physical division.
+     *
+     * @return The media partial or null
      */
     public MediaPartial getMediaPartial() {
         if (isMediaPartial()) {
