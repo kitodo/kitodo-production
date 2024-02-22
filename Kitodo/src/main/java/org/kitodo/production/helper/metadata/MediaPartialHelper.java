@@ -68,13 +68,12 @@ public class MediaPartialHelper {
         Date date;
         try {
             date = DateUtils.parseDate(separatedMilliseconds[0], "HH:mm:ss", "mm:ss", "ss");
-        } catch (ParseException e) {
+            if (separatedMilliseconds.length == 2) {
+                String filledMilliseconds = StringUtils.rightPad(separatedMilliseconds[1], 3, "0");
+                date = new Date(date.getTime() + Integer.parseInt(filledMilliseconds));
+            }
+        } catch (ParseException | NumberFormatException e) {
             return time;
-        }
-
-        if (separatedMilliseconds.length == 2) {
-            String filledMilliseconds = StringUtils.rightPad(separatedMilliseconds[1], 3, "0");
-            date = new Date(date.getTime() + Integer.parseInt(filledMilliseconds));
         }
 
         return new SimpleDateFormat("HH:mm:ss.SSS").format(date);
