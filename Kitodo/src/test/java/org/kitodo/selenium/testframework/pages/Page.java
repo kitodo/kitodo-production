@@ -238,7 +238,7 @@ public abstract class Page<T> {
     };
 
     Predicate<WebElement> isInputValueNotEmpty = (webElement) -> {
-        return !webElement.getAttribute("value").equals("");
+        return !webElement.getAttribute("value").isEmpty();
     };
 
     Predicate<File> isFileDownloaded = (file) -> {

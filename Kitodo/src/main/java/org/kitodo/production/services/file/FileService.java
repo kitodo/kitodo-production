@@ -1183,14 +1183,14 @@ public class FileService {
                     physicalDivision.getMediaFiles().put(entry.getKey(), mediaFile);
                 }
                 String fileCanonical = subfolder.getCanonical(mediaFile);
-                if ("".equals(unitCanonical)) {
+                if (unitCanonical.isEmpty()) {
                     unitCanonical = fileCanonical;
                 } else if (!unitCanonical.equals(fileCanonical)) {
                     throw new InvalidImagesException("Ambiguous canonical file name part in the same physical division: \""
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
             }
-            if (physicalDivision.getMediaFiles().size() > 0 && "".equals(unitCanonical)) {
+            if (!physicalDivision.getMediaFiles().isEmpty() && unitCanonical.isEmpty()) {
                 throw new InvalidImagesException("Missing canonical file name part in physical division " + physicalDivision);
             }
             canonicals.add(unitCanonical);

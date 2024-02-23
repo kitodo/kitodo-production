@@ -34,7 +34,7 @@ public class FileNameEndsAndDoesNotBeginWithFilter implements FilenameFilter {
      *             Strings
      */
     public FileNameEndsAndDoesNotBeginWithFilter(String notBegin, String end) {
-        if (notBegin == null || notBegin.equals("") || end == null || end.equals("")) {
+        if (notBegin == null || notBegin.isEmpty() || end == null || end.isEmpty()) {
             throw new IllegalArgumentException("No filter or empty filter for file begin or end is given.");
         }
         this.notBegin = notBegin;

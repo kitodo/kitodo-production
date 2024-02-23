@@ -412,7 +412,7 @@ public class Helper {
      * @return the date or null if it can not be parsed
      */
     public static Date parseDateFromFormattedString(String date) {
-        if (Objects.isNull(date) || date.equals("")) {
+        if (Objects.isNull(date) || date.isEmpty()) {
             return null;
         }
         try {

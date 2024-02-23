@@ -278,7 +278,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public Attributes getAttributes(String name) throws NamingException {
-        if (!name.equals("")) {
+        if (!name.isEmpty()) {
             throw new NameNotFoundException();
         }
         return (Attributes) this.attributes.clone();

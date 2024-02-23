@@ -426,7 +426,7 @@ public class IndexingService {
     public String createMapping() throws IOException, CustomResponseException {
         for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
             String mapping = readMapping(mappingType);
-            if ("".equals(mapping)) {
+            if (mapping.isEmpty()) {
                 if (indexRestClient.createIndex(null, mappingType)) {
                     currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
                 } else {

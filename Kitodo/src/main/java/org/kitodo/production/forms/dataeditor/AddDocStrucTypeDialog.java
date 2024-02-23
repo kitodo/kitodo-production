@@ -149,7 +149,7 @@ public class AddDocStrucTypeDialog {
     private void addMultiDocStruc() {
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
-            if (selectedMetadata != "") {
+            if (!selectedMetadata.isEmpty()) {
                 MetadataViewInterface metadataView = getMetadataViewFromKey(
                     docStructAddTypeSelectionSelectedItem, selectedMetadata);
                 MetadataEditor.addMultipleStructuresWithMetadata(elementsToAddSpinnerValue,
