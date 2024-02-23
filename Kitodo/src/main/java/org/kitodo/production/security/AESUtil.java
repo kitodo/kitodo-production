@@ -39,6 +39,8 @@ public class AESUtil {
 
     private static final Logger logger = LogManager.getLogger(AESUtil.class);
 
+    private static final SecureRandom secureRandom = new SecureRandom();
+
     /*
      * DO NOT CHANGE! Identifier for is encryption check and secret key generation.
      * If changed are made, encrypted data cannot be restored.
@@ -78,12 +80,12 @@ public class AESUtil {
 
         // generate salt
         byte[] salt = new byte[SALT_LENGTH];
-        new SecureRandom().nextBytes(salt);
+        secureRandom.nextBytes(salt);
         System.arraycopy(SALT_PREFIX.getBytes(), 0, salt, 0, SALT_PREFIX.getBytes().length);
 
         // generate iv
         byte[] iv = new byte[IV_LENGTH];
-        new SecureRandom().nextBytes(iv);
+        secureRandom.nextBytes(iv);
 
         Cipher cipher = Cipher.getInstance(ALGORITHM);
         cipher.init(Cipher.ENCRYPT_MODE, getSecretKey(secret, salt), new IvParameterSpec(iv));
