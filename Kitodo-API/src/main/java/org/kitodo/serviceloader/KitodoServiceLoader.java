@@ -400,7 +400,7 @@ public class KitodoServiceLoader<T> {
 
             // create a single URL class loader with all jars
             // such that plugins can load classes from each other
-            if (jarsToBeAdded.size() > 0) {
+            if (!jarsToBeAdded.isEmpty()) {
 
                 for (URL url : jarsToBeAdded) {
                     logger.info("Loading module jar file from path " + url.toString());

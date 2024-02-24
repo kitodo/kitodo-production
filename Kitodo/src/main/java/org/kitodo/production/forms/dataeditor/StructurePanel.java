@@ -1276,7 +1276,7 @@ public class StructurePanel implements Serializable {
             insertionIndex = -1;
         }
 
-        if (insertionIndex < 0 || toElement.getViews().size() == 0) {
+        if (insertionIndex < 0 || toElement.getViews().isEmpty()) {
             // no insertion position was specified or the element does not contain any pages yet
             physicalInsertionIndex = toElement.getOrder() - 1;
         } else {

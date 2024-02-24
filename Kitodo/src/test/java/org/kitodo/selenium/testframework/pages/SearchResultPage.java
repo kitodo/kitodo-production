@@ -82,7 +82,7 @@ public class SearchResultPage extends Page<SearchResultPage> {
      */
     public String getFirstSearchResultProcessTitle() {
         List<String> tableDataByColumn = getTableDataByColumn(searchResultTable, 3);
-        if (tableDataByColumn.size() == 0 || tableDataByColumn.contains("No records found.")) {
+        if (tableDataByColumn.isEmpty() || tableDataByColumn.contains("No records found.")) {
             return null;
         }
         return tableDataByColumn.get(0);

@@ -329,7 +329,7 @@ public class ProcessHelper {
     private static String getTitleFromParents(List<TempProcess> parentTempProcesses,
             RulesetManagementInterface rulesetManagement, String acquisitionStage,
             List<Locale.LanguageRange> priorityList) {
-        if (parentTempProcesses.size() == 0) {
+        if (parentTempProcesses.isEmpty()) {
             return StringUtils.EMPTY;
         }
 

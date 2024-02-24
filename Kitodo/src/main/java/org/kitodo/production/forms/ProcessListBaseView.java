@@ -132,7 +132,7 @@ public class ProcessListBaseView extends BaseForm {
                 logger.error(e.getMessage());
             }
         }
-        if (selectedProcessesOrProcessDTOs.size() > 0) {
+        if (!selectedProcessesOrProcessDTOs.isEmpty()) {
             if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
                 // list contains ProcessDTO instances
                 try {

@@ -130,7 +130,7 @@ public class GalleryPanel {
      * @return value of lastSelection
      */
     public Pair<PhysicalDivision, LogicalDivision> getLastSelection() {
-        if (dataEditor.getSelectedMedia().size() > 0) {
+        if (!dataEditor.getSelectedMedia().isEmpty()) {
             return dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1);
         } else if (dataEditor.getSelectedStructure().isPresent()
                 && !dataEditor.getSelectedStructure().get().getViews().isEmpty()) {
@@ -148,7 +148,7 @@ public class GalleryPanel {
      * @return boolean
      */
     public boolean isLastSelection(GalleryMediaContent galleryMediaContent, GalleryStripe galleryStripe) {
-        if (isSelected(galleryMediaContent, galleryStripe) && dataEditor.getSelectedMedia().size() > 0
+        if (isSelected(galleryMediaContent, galleryStripe) && !dataEditor.getSelectedMedia().isEmpty()
                 && Objects.nonNull(galleryMediaContent)) {
             return Objects.equals(galleryMediaContent.getView().getPhysicalDivision(),
                     dataEditor.getSelectedMedia().get(dataEditor.getSelectedMedia().size() - 1).getKey());
@@ -337,7 +337,7 @@ public class GalleryPanel {
     }
 
     void updateSelection(PhysicalDivision physicalDivision, LogicalDivision structuralElement) {
-        if (physicalDivision.getMediaFiles().size() > 0) {
+        if (!physicalDivision.getMediaFiles().isEmpty()) {
 
             // Update structured view
             if (this.galleryViewMode.equals(GalleryViewMode.LIST)) {
@@ -708,7 +708,7 @@ public class GalleryPanel {
             countDown = true;
         }
 
-        if (galleryStripes.size() == 0) {
+        if (galleryStripes.isEmpty()) {
             return new LinkedList<>();
         }
 

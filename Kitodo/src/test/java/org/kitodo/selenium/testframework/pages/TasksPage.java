@@ -201,7 +201,7 @@ public class TasksPage extends Page<TasksPage> {
      */
     public String getFirstRowTaskTitle() {
         List<String> taskTitles = getTableDataByColumn(taskTable, 1);
-        if (taskTitles.size() > 0) {
+        if (!taskTitles.isEmpty()) {
             return taskTitles.get(0);
         }
         return "";
