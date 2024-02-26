@@ -240,6 +240,19 @@ public class ProcessServiceIT {
     }
 
     @Test
+    public void shouldFindByLongNumberInMetadata() throws DataException, DAOException, IOException {
+        int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
+        assertEquals(processNotFound, 1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999991")).size());
+        assertEquals(processNotFound, 1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "991022551489706476")).size());
+        assertEquals(processNotFound, 1, processService
+                .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999999999999991")).size());
+        ProcessTestUtils.removeTestProcess(processId);
+    }
+
+    @Test
     public void shouldFindProcessWithUnderscore() throws DataException, DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
         Process process = new Process();
