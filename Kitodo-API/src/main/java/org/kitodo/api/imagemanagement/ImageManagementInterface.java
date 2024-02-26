@@ -51,20 +51,6 @@ public interface ImageManagementInterface {
             throws IOException;
 
     /**
-     * Scales an image at a given path and returns it.
-     *
-     * @param imageFileUri
-     *            the URI to the image which should be scaled
-     * @param percent
-     *            the percentage for scaling
-     * @return the scaled image
-     * @throws IOException
-     *             if the plug-in is configured incorrectly, the image is
-     *             missing or corrupted, etc.
-     */
-    Image getScaledWebImage(URI imageFileUri, double percent) throws IOException;
-
-    /**
      * Changes the size (in pixel) of the image.
      *
      * @param imageFileUri
@@ -77,5 +63,4 @@ public interface ImageManagementInterface {
      *             missing or corrupted, etc.
      */
     Image getSizedWebImage(URI imageFileUri, int pixelWidth) throws IOException;
-
 }

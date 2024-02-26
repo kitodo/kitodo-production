@@ -831,7 +831,7 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     private static Stream<Folder> removeFoldersThatCannotBeGenerated(Stream<Folder> folders) {
         return folders.filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
-                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent());
+                || folder.getImageSize().isPresent());
     }
 
     /**

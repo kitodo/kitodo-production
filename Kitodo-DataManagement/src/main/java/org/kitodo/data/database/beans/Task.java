@@ -400,7 +400,7 @@ public class Task extends BaseIndexedBean {
         List<Folder> contentFolders = typeGenerateImages
                 ? process.getProject().getFolders().parallelStream()
                         .filter(folder -> folder.getDerivative().isPresent() || folder.getDpi().isPresent()
-                                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent())
+                                || folder.getImageSize().isPresent())
                         .collect(Collectors.toList())
                 : Collections.emptyList();
         return contentFolders;
