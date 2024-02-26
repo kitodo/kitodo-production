@@ -53,6 +53,7 @@ public class Helper {
     private static final Logger logger = LogManager.getLogger(Helper.class);
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> errorMessages = null;
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     /**
      * Determine a specific parameter of the request.
@@ -542,11 +543,10 @@ public class Helper {
      */
     public static String generateRandomString(int length) {
         final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom random = new SecureRandom();
 
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            sb.append(AB.charAt(random.nextInt(AB.length())));
+            sb.append(AB.charAt(secureRandom.nextInt(AB.length())));
         }
         return sb.toString();
     }
