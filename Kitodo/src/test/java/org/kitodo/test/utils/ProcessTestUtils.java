@@ -231,10 +231,7 @@ public class ProcessTestUtils {
         Process process = ServiceManager.getProcessService().getById(processId);
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
         try (InputStream fileContent = ServiceManager.getFileService().readMetadataFile(process)) {
-            InputStreamReader inputStreamReader = new InputStreamReader(fileContent);
-            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-            List<String> textLines = bufferedReader.lines().collect(Collectors.toList());
-            String textContent = String.join("", textLines);
+            String textContent = new String(fileContent.readAllBytes());
             textContent = textContent.replace(ID_PLACEHOLDER, String.valueOf(processId));
             try (OutputStream updatedFileContent = ServiceManager.getFileService().write(metadataFileUri)) {
                 updatedFileContent.write(textContent.getBytes());
