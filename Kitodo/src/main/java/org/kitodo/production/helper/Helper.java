@@ -37,6 +37,7 @@ import java.util.ResourceBundle;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 
+import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -535,19 +536,27 @@ public class Helper {
     }
 
     /**
-     * Generate random string.
+     * Generate random string with only letters.
      *
      * @param length
      *            of random string to be created
      * @return random string
      */
     public static String generateRandomString(int length) {
-        final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        return generateRandomString(length, true, false);
+    }
 
-        StringBuilder sb = new StringBuilder(length);
-        for (int i = 0; i < length; i++) {
-            sb.append(AB.charAt(secureRandom.nextInt(AB.length())));
-        }
-        return sb.toString();
+    /**
+     * Generate random string with and without letters and / or numbers.
+     *
+     * @param length of string to genertate
+     * @param letters should letter used
+     * @param numbers should number used
+     * @return random string with and without letters and / or numbers.
+     */
+    public static String generateRandomString(int length, boolean letters, boolean numbers) {
+        // RandomStringUtils is using a non-secure random generator by default
+        // call random method with all parameters to set a secure random generator
+        return RandomStringUtils.random(length, 0, 0, letters, numbers, null, secureRandom);
     }
 }
