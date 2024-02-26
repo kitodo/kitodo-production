@@ -44,6 +44,7 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.bouncycastle.crypto.digests.MD4Digest;
@@ -278,7 +279,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public Attributes getAttributes(String name) throws NamingException {
-        if (!name.isEmpty()) {
+        if (StringUtils.isBlank(name)) {
             throw new NameNotFoundException();
         }
         return (Attributes) this.attributes.clone();
@@ -291,7 +292,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public Attributes getAttributes(String name, String[] ids) throws NamingException {
-        if (!name.isEmpty()) {
+        if (StringUtils.isBlank(name)) {
             throw new NameNotFoundException();
         }
 
