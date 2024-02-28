@@ -93,8 +93,6 @@ public class GalleryPanel {
     private GalleryViewMode galleryViewMode = GalleryViewMode.LIST;
     private List<GalleryMediaContent> medias = Collections.emptyList();
 
-    private Map<String, GalleryMediaContent> previewImageResolver = new HashMap<>();
-
     private Map<MediaContentType, Map<GalleryViewMode, MediaVariant>> mediaContentTypeVariants = new HashMap<>();
 
     private Map<MediaContentType, Subfolder> mediaContentTypePreviewFolder = new HashMap<>();
