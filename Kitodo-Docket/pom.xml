@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.6.1</version>
+        <version>3.6.2</version>
     </parent>
 
     <name>Kitodo - Docket</name>
