@@ -147,7 +147,7 @@ public class DivXmlElementAccess extends LogicalDivision {
     private boolean fileXmlElementAccessIsLinkedToChildren(FileXmlElementAccess fileXmlElementAccess,
                                                            List<DivType> divs,
                                                            Map<String, List<FileXmlElementAccess>> physicalDivisionsMap) {
-        if (divs.size() == 0) {
+        if (divs.isEmpty()) {
             return false;
         }
         boolean test = false;

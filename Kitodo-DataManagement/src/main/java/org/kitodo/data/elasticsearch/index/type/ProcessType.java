@@ -61,7 +61,7 @@ public class ProcessType extends BaseType<Process> {
         jsonObject.put(ProcessTypeField.BATCHES.getKey(), addObjectRelation(process.getBatches(), true));
         jsonObject.put(ProcessTypeField.COMMENTS.getKey(), addObjectRelation(process.getComments()));
         jsonObject.put(ProcessTypeField.COMMENTS_MESSAGE.getKey(), getProcessComments(process));
-        jsonObject.put(ProcessTypeField.HAS_CHILDREN.getKey(), process.getChildren().size() > 0);
+        jsonObject.put(ProcessTypeField.HAS_CHILDREN.getKey(), !process.getChildren().isEmpty());
         jsonObject.put(ProcessTypeField.PARENT_ID.getKey(), processParentId);
         jsonObject.put(ProcessTypeField.TASKS.getKey(), addObjectRelation(process.getTasks(), true));
         jsonObject.put(ProcessTypeField.METADATA.getKey(), process.getMetadata());

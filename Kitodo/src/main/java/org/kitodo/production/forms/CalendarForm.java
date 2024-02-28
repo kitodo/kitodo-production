@@ -620,7 +620,7 @@ public class CalendarForm implements Serializable {
         if (index > 0) {
             index--;
         }
-        if (course.size() > 0) {
+        if (!course.isEmpty()) {
             navigate(course.get(index));
         }
     }

@@ -1114,7 +1114,7 @@ public class FileService {
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
                 process.getProcessBaseUri());
 
-        if (currentMedia.size() == 0 && canonicals.size() > 0) {
+        if (currentMedia.isEmpty() && !canonicals.isEmpty()) {
             throw new MediaNotFoundException();
         }
 
