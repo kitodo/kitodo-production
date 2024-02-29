@@ -21,16 +21,19 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.kitodo.api.MdSec;
+import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.mets.KitodoUUID;
 import org.kitodo.dataformat.metskitodo.AmdSecType;
+import org.kitodo.dataformat.metskitodo.AreaType;
 import org.kitodo.dataformat.metskitodo.DivType;
 import org.kitodo.dataformat.metskitodo.DivType.Fptr;
 import org.kitodo.dataformat.metskitodo.FileType;
 import org.kitodo.dataformat.metskitodo.MdSecType;
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.dataformat.metskitodo.MetsType;
+import org.kitodo.utils.MediaUtil;
 
 public class FileXmlElementAccess {
 
@@ -66,13 +69,17 @@ public class FileXmlElementAccess {
         Map<MediaVariant, URI> mediaFiles = new HashMap<>();
         for (Fptr fptr : div.getFptr()) {
             Object fileId = fptr.getFILEID();
+            if (Objects.nonNull(fptr.getArea())) {
+                physicalDivision.setMediaPartial(
+                        new MediaPartial(fptr.getArea().getBEGIN(), fptr.getArea().getEXTENT()));
+                fileId = fptr.getArea().getFILEID();
+            }
             if (fileId instanceof FileType) {
                 FileType file = (FileType) fileId;
                 String fileUse = fileUseByFileCache.getOrDefault(file, null);
                 if (Objects.isNull(fileUse)) {
                     throw new IllegalArgumentException(
-                        "Corrupt file: file use for <mets:fptr> with id " + file.getID() + " not found in <mets:fileGrp>"
-                    );
+                            "Corrupt file: file use for <mets:fptr> with id " + file.getID() + " not found in <mets:fileGrp>");
                 }
                 MediaVariant mediaVariant = useXmlAttributeAccess.get(fileUse);
                 FLocatXmlElementAccess fLocatXmlElementAccess = new FLocatXmlElementAccess(file);
@@ -110,6 +117,9 @@ public class FileXmlElementAccess {
             this.physicalDivision.setOrder(physicalDivision.getOrder());
             this.physicalDivision.setOrderlabel(physicalDivision.getOrderlabel());
             this.physicalDivision.setType(physicalDivision.getType());
+            if (physicalDivision.hasMediaPartial()) {
+                this.physicalDivision.setMediaPartial(physicalDivision.getMediaPartial());
+            }
         }
     }
 
@@ -144,14 +154,20 @@ public class FileXmlElementAccess {
         div.setTYPE(physicalDivision.getType());
         for (Entry<MediaVariant, URI> use : physicalDivision.getMediaFiles().entrySet()) {
             Fptr fptr = new Fptr();
-            fptr.setFILEID(mediaFilesToIDFiles.get(use.getValue()));
+            FileType fileId = mediaFilesToIDFiles.get(use.getValue());
+            if (PhysicalDivision.TYPE_TRACK.equals(physicalDivision.getType()) && MediaUtil.isAudioOrVideo(
+                    use.getKey().getMimeType()) && physicalDivision.hasMediaPartial()) {
+                fptr.setArea(getAreaType(fileId));
+            } else {
+                fptr.setFILEID(fileId);
+            }
             div.getFptr().add(fptr);
         }
         Optional<MdSecType> optionalDmdSec = DivXmlElementAccess.createMdSec(physicalDivision.getMetadata(), MdSec.DMD_SEC);
         String metsReferrerId = KitodoUUID.randomUUID();
         if (optionalDmdSec.isPresent()) {
             MdSecType dmdSec = optionalDmdSec.get();
-            String name = metsReferrerId + ':' + MdSec.DMD_SEC.toString();
+            String name = metsReferrerId + ':' + MdSec.DMD_SEC;
             dmdSec.setID(KitodoUUID.nameUUIDFromBytes(name.getBytes(StandardCharsets.UTF_8)));
             mets.getDmdSec().add(dmdSec);
             div.getDMDID().add(dmdSec);
@@ -163,5 +179,18 @@ public class FileXmlElementAccess {
             mets.getAmdSec().add(admSec);
         }
         return div;
+    }
+
+    private AreaType getAreaType(FileType fileId) {
+        MediaPartial mediaPartial = physicalDivision.getMediaPartial();
+        AreaType areaType = new AreaType();
+        areaType.setFILEID(fileId);
+        areaType.setBEGIN(mediaPartial.getBegin());
+        areaType.setBETYPE("TIME");
+        if (Objects.nonNull(mediaPartial.getExtent()) && !mediaPartial.getExtent().isEmpty()) {
+            areaType.setEXTENT(mediaPartial.getExtent());
+            areaType.setEXTTYPE("TIME");
+        }
+        return areaType;
     }
 }

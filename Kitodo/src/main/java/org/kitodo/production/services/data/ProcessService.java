@@ -32,6 +32,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.math.BigInteger;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.StandardCharsets;
@@ -73,6 +74,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.lucene.search.join.ScoreMode;
@@ -352,11 +354,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         if (!fileService.fileExist(metadataFilePath)) {
             logger.info("No metadata file for indexing: {}", metadataFilePath);
         } else {
-            Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
-            process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
-            process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
-            process.setNumberOfStructures(getNumberOfStructures(workpiece));
-            process.setBaseType(getBaseType(workpiece));
+            try {
+                Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metadataFilePath);
+                process.setNumberOfImages(getNumberOfImagesForIndex(workpiece));
+                process.setNumberOfMetadata(getNumberOfMetadata(workpiece));
+                process.setNumberOfStructures(getNumberOfStructures(workpiece));
+                process.setBaseType(getBaseType(workpiece));
+            } catch (IllegalArgumentException | IOException e) {
+                logger.warn("Cannot read metadata file for indexing: {}", metadataFilePath);
+                logger.catching(Level.DEBUG, e);
+            }
         }
     }
 
@@ -649,7 +656,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 ProcessTypeField.PROJECT_TITLE.getKey(),
                 ProcessTypeField.COMMENTS.getKey(),
                 ProcessTypeField.WIKI_FIELD.getKey(),
-                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND);
+                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND).lenient(true);
 
         if (searchQuery.matches("^\\d*$")) {
             multiMatchQueryForProcessFields.fields().put(ProcessTypeField.ID.getKey(), 1.0f);
@@ -806,7 +813,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         BoolQueryBuilder processQuery = new BoolQueryBuilder()
                 .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput));
         if (searchInput.matches("\\d*")) {
-            processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput));
+            processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true));
         }
         BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
                 .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
@@ -2120,6 +2127,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             Object value = xmlJSONObject.get(key);
             if (value instanceof String || value instanceof Integer) {
                 json.put(prepareKey(key), value);
+            } else if (value instanceof Long || value instanceof BigInteger) {
+                json.put(prepareKey(key), value.toString());
             } else if (value instanceof JSONObject) {
                 JSONObject jsonObject = (JSONObject) value;
                 Map<String, Object> map = iterateOverJsonObject(jsonObject);
@@ -2303,9 +2312,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public static void deleteProcess(Process processToDelete) throws DataException, IOException {
         deleteMetadataDirectory(processToDelete);
 
-        processToDelete.getProject().getProcesses().remove(processToDelete);
+        if (Objects.nonNull(processToDelete.getProject())
+                && Objects.nonNull(processToDelete.getProject().getProcesses())) {
+            processToDelete.getProject().getProcesses().remove(processToDelete);
+        }
         processToDelete.setProject(null);
-        processToDelete.getTemplate().getProcesses().remove(processToDelete);
+        if (Objects.nonNull(processToDelete.getTemplate())
+                && Objects.nonNull(processToDelete.getTemplate().getProcesses())) {
+            processToDelete.getTemplate().getProcesses().remove(processToDelete);
+        }
         processToDelete.setTemplate(null);
         Process parent = processToDelete.getParent();
         if (Objects.nonNull(parent)) {

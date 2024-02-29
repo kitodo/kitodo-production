@@ -11,24 +11,12 @@
 
 package org.kitodo.production.services.catalogimport;
 
-import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-import static com.xebialabs.restito.semantics.Action.contentType;
-import static com.xebialabs.restito.semantics.Action.ok;
-import static com.xebialabs.restito.semantics.Action.stringContent;
-import static com.xebialabs.restito.semantics.Condition.get;
-import static com.xebialabs.restito.semantics.Condition.parameter;
-
 import com.xebialabs.restito.server.StubServer;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.apache.commons.io.IOUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -79,22 +67,8 @@ public class CatalogImportIT {
 
     private static void setupServer() throws IOException {
         server = new StubServer(PORT).run();
-        addRestEndPointForImport("ead.id=" + CHILD_RECORD_ID, CHILD_RECORD_PATH, 1);
-        addRestEndPointForImport("ead.id=" + PARENT_RECORD_ID, PARENT_RECORD_PATH, 1);
-        addRestEndPointForImport("ead.title=test", HITLIST_RECORD_PATH, 10);
-    }
-
-    private static void addRestEndPointForImport(String query, String filePath, int numberOfRecords) throws IOException {
-        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
-            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-            whenHttp(server)
-                    .match(get("/sru"),
-                            parameter("version", "1.2"),
-                            parameter("operation", "searchRetrieve"),
-                            parameter("recordSchema", "mods"),
-                            parameter("maximumRecords", String.valueOf(numberOfRecords)),
-                            parameter("query", query))
-                    .then(ok(), contentType("text/xml"), stringContent(serverResponse));
-        }
+        MockDatabase.addRestEndPointForSru(server, "ead.id=" + CHILD_RECORD_ID, CHILD_RECORD_PATH, "mods", 1);
+        MockDatabase.addRestEndPointForSru(server, "ead.id=" + PARENT_RECORD_ID, PARENT_RECORD_PATH, "mods",  1);
+        MockDatabase.addRestEndPointForSru(server, "ead.title=test", HITLIST_RECORD_PATH, "mods",10);
     }
 }

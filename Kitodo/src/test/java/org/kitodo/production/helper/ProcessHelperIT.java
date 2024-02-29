@@ -19,7 +19,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import org.junit.After;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
@@ -29,18 +31,21 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.utils.ProcessTestUtils;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class ProcessHelperIT {
 
     public static final String DOCTYPE = "Monograph";
     private static final String ACQUISITION_STAGE_CREATE = "create";
-
+    private static final String TEST_PROCESS_TITLE = "Second process";
     private static List<Locale.LanguageRange> priorityList;
+    private static int processHelperTestProcessId = -1;
+    private static final String metadataTestfile = "testMetadataForKitodoScript.xml";
 
     /**
      * Function to run before test is executed.
@@ -62,6 +67,18 @@ public class ProcessHelperIT {
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+    }
+
+    @Before
+    public void prepareTestProcess() throws DAOException, DataException, IOException {
+        processHelperTestProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(processHelperTestProcessId, metadataTestfile);
+    }
+
+    @After
+    public void removeTestProcess() throws DAOException {
+        ProcessTestUtils.removeTestProcess(processHelperTestProcessId);
+        processHelperTestProcessId = -1;
     }
 
     /**
@@ -96,13 +113,14 @@ public class ProcessHelperIT {
             RulesetManagementInterface rulesetManagement) throws ProcessGenerationException, DAOException {
         ProcessHelper.generateAtstslFields(tempProcess, tempProcess.getProcessMetadata().getProcessDetailsElements(),
                 null, DOCTYPE, rulesetManagement, ACQUISITION_STAGE_CREATE, priorityList,
-                ServiceManager.getProcessService().getById(2), true);
+                ServiceManager.getProcessService().getById(processHelperTestProcessId), true);
         assertEquals("Secopr", tempProcess.getAtstsl());
     }
 
     private void testForceRegenerationByTempProcessParents(TempProcess tempProcess,
             RulesetManagementInterface rulesetManagement) throws DAOException, ProcessGenerationException {
-        TempProcess tempProcessParent = new TempProcess(ServiceManager.getProcessService().getById(2), new Workpiece());
+        TempProcess tempProcessParent = new TempProcess(ServiceManager.getProcessService().getById(processHelperTestProcessId),
+                new Workpiece());
         tempProcess.getProcessMetadata().setProcessDetails(new ProcessFieldedMetadata() {
             {
                 treeNode.getChildren()

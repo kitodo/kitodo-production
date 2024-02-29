@@ -82,7 +82,7 @@ public class AddPhysicalDivisionDialog {
                     Helper.getTranslation("dataEditor.position.asLastChildOfCurrentElement")));
             List<PhysicalDivision> parents = MetadataEditor.getAncestorsOfPhysicalDivision(selectedPhysicalDivision.get(),
                     dataEditor.getWorkpiece().getPhysicalStructure());
-            if (parents.size() > 0) {
+            if (!parents.isEmpty()) {
                 possiblePositions.add(new SelectItem(InsertionPosition.BEFORE_CURRENT_ELEMENT,
                         Helper.getTranslation("dataEditor.position.beforeCurrentElement")));
                 possiblePositions.add(new SelectItem(InsertionPosition.AFTER_CURRENT_ELEMENT,

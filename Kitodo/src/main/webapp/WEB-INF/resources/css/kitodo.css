@@ -118,6 +118,10 @@ html.progressCursor * {
     cursor: progress;
 }
 
+.hidden {
+    display: none;
+}
+
 /*----------------------------------------------------------------------
 Header
 ----------------------------------------------------------------------*/
@@ -2338,6 +2342,8 @@ form#metadata div label,
     width: 100%;
     margin-bottom: 32px;
     height: calc(var(--default-double-size) * 3);
+    max-height: 120px;
+    overflow-y: scroll;
 }
 
 #uploadFileDialog {
@@ -3082,9 +3088,54 @@ Column content
     width: 100%;
 }
 
+#imagePreviewForm\:mediaPartialList ol li {
+    border-top: 1px solid var(--cloudy-gray);
+}
+
+#imagePreviewForm\:mediaPartialList ol li:first-child {
+    border: none;
+}
+
+#imagePreviewForm\:mediaPartialList .mediaPartialItem {
+    width: 100%;
+}
+
+#imagePreviewForm\:mediaPartialList .mediaPartialItem .metadata td {
+    padding: 5px;
+}
+
+#imagePreviewForm\:mediaPartialList .mediaPartialItem table:first-child {
+    width: 275px;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    -webkit-hyphens: auto;
+    -moz-hyphens: auto;
+    hyphens: auto;
+}
+
+#imagePreviewForm\:mediaPartialList .mediaPartialItem table:first-child td:first-child {
+    padding-bottom: 0;
+}
+
+#imagePreviewForm\:mediaPartialList .mediaPartialItem .actions > div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    gap: 5px;
+}
+
 #imagePreviewForm\:mediaDetail {
     display: flex;
     width: calc(100% - 100px);
+    align-items: center;
+    justify-content: left;
+}
+
+#imagePreviewForm\:mediaDetailMediaContainer {
+    width: 100%;
+    display: flex;
+    flex: 1;
     align-items: center;
     justify-content: center;
     flex-direction: column;
@@ -3095,9 +3146,14 @@ Column content
     max-height: 100%;
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools{
+#imagePreviewForm\:mediaDetail #mediaFormattedTime {
+    color: var(--cloudy-gray);
+}
+
+#imagePreviewForm\:audioWaveformTools,
+#imagePreviewForm\:mediaDetailMediaFormattedTime {
     display: flex;
-    gap: 30px;
+    gap: 10px;
     justify-content: center;
     align-items: center;
     padding: 14px 16px;
@@ -3105,11 +3161,11 @@ Column content
     border-radius: 3px;
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button:first-child {
+#imagePreviewForm\:audioWaveformTools > div > button:first-child {
     margin-left: 0;
 }
 
-#imagePreviewForm\:mediaDetail #audioWaveformTools > div > button {
+#imagePreviewForm\:audioWaveformTools > div > button {
     margin-left: 10px;
 }
 
@@ -3124,6 +3180,29 @@ Column content
 #imagePreviewForm .mediaListIconItem > i {
     font-size: 70px;
     color: white;
+}
+
+#imagePreviewForm\:mediaDetailMediaPartialsContainer {
+    position: relative;
+    flex: 0 0 auto;
+    height: 100%;
+    min-width: 60px;
+}
+
+#imagePreviewForm\:mediaPartialList {
+    height: 100%;
+    overflow-y: scroll;
+    background: var(--trans-blue);
+    flex: 0 0 32%;
+    width: 400px;
+}
+
+#imagePreviewForm\:addMediaPartial{
+    left: 10px;
+    position: absolute;
+    bottom: 10px;
+    border-radius: var(--default-border-radius);
+    box-shadow: var(--second-level-shadow);
 }
 
 #map {
@@ -3384,6 +3463,25 @@ Column content
     height: 100%;
     padding: 0;
     width: 100%;
+}
+
+
+.thumbnail-container .icon-media-partial {
+    top: 5px;
+    color: var(--carbon-blue);
+    left: 5px;
+    position: absolute;
+    background: rgb(from var(--pure-white) r g b / 0.8);
+    width: 18px;
+    display: block;
+    text-align: center;
+    padding: 3px;
+    border-radius: 18px;
+}
+
+.thumbnail-container .icon-media-partial::before {
+    content: "\f08d";
+    font-family: FontAwesome;
 }
 
 .thumbnail-container .assigned-several-times {

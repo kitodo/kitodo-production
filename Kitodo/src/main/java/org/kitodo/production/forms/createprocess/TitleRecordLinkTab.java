@@ -160,7 +160,7 @@ public class TitleRecordLinkTab {
             priorityList);
         logicalStructure.setExpanded(true);
 
-        if (selectableInsertionPositions.size() > 0) {
+        if (!selectableInsertionPositions.isEmpty()) {
             selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
                     .getValue();
         } else {

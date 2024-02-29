@@ -80,9 +80,14 @@ public class DivXmlElementAccess extends LogicalDivision {
      */
     DivXmlElementAccess(LogicalDivision logicalDivision) {
         super(logicalDivision);
-        metsReferrerId = logicalDivision instanceof DivXmlElementAccess
-                ? ((DivXmlElementAccess) logicalDivision).metsReferrerId
-                : KitodoUUID.randomUUID();
+        String obtainedReferrerId = null;
+        if (logicalDivision instanceof DivXmlElementAccess) {
+            obtainedReferrerId = ((DivXmlElementAccess) logicalDivision).metsReferrerId;
+        }
+        if (Objects.isNull(obtainedReferrerId)) {
+            obtainedReferrerId = KitodoUUID.randomUUID();
+        }
+        metsReferrerId = obtainedReferrerId;
     }
 
     /**
@@ -142,7 +147,7 @@ public class DivXmlElementAccess extends LogicalDivision {
     private boolean fileXmlElementAccessIsLinkedToChildren(FileXmlElementAccess fileXmlElementAccess,
                                                            List<DivType> divs,
                                                            Map<String, List<FileXmlElementAccess>> physicalDivisionsMap) {
-        if (divs.size() == 0) {
+        if (divs.isEmpty()) {
             return false;
         }
         boolean test = false;

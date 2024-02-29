@@ -303,8 +303,10 @@ public class ProjectsPage extends Page<ProjectsPage> {
 
     public List<String> getProjectDetails() {
         int index = triggerRowToggle(projectsTable, "First project");
-        WebElement detailsTable = Browser.getDriver()
-                .findElement(By.id(PROJECTS_TABLE + ":" + index + ":projectDetailTable"));
+        String elementId = PROJECTS_TABLE + ":" + index + ":projectDetailTable";
+        await("Wait for project table row to be expanded").atMost(3, TimeUnit.SECONDS)
+                .untilAsserted(() -> assertTrue(Browser.getDriver().findElement(By.id(elementId)).isDisplayed()));
+        WebElement detailsTable = Browser.getDriver().findElement(By.id(elementId));
         return getTableDataByColumn(detailsTable, 1);
     }
 

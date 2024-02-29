@@ -53,6 +53,7 @@ public class Helper {
     private static final Logger logger = LogManager.getLogger(Helper.class);
     private static Map<Locale, ResourceBundle> commonMessages = null;
     private static Map<Locale, ResourceBundle> errorMessages = null;
+    private static final SecureRandom secureRandom = new SecureRandom();
 
     /**
      * Determine a specific parameter of the request.
@@ -411,7 +412,7 @@ public class Helper {
      * @return the date or null if it can not be parsed
      */
     public static Date parseDateFromFormattedString(String date) {
-        if (Objects.isNull(date) || date.equals("")) {
+        if (Objects.isNull(date) || date.isEmpty()) {
             return null;
         }
         try {
@@ -489,6 +490,9 @@ public class Helper {
     private static String appendUnusedInsertions(String message, String... insertions) {
         StringBuilder messageBuilder = new StringBuilder(message);
         for (String insertion : insertions) {
+            if (Objects.isNull(insertion)) {
+                continue;
+            }
             String separator = ": ";
             insertion = Objects.toString(insertion);
             if (!messageBuilder.toString().contains(insertion)) {
@@ -539,11 +543,10 @@ public class Helper {
      */
     public static String generateRandomString(int length) {
         final String AB = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-        SecureRandom random = new SecureRandom();
 
         StringBuilder sb = new StringBuilder(length);
         for (int i = 0; i < length; i++) {
-            sb.append(AB.charAt(random.nextInt(AB.length())));
+            sb.append(AB.charAt(secureRandom.nextInt(AB.length())));
         }
         return sb.toString();
     }

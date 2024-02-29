@@ -96,7 +96,6 @@ public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
         clone.setCreateFolder(source.isCreateFolder());
         clone.setDerivative(source.getDerivative().orElse(null));
         clone.setDpi(source.getDpi().orElse(null));
-        clone.setImageScale(source.getImageScale().orElse(null));
         clone.setImageSize(source.getImageSize().orElse(null));
         clone.setLinkingMode(source.getLinkingMode());
         return clone;

@@ -480,6 +480,11 @@ button.ui-datepicker-trigger.ui-button-icon-only::before {
     top: -2px;
 }
 
+.ui-icon.ui-icon-media-partial::after {
+    content: "\f08d";
+    top: -2px;
+}
+
 .ui-icon.ui-icon-folder-expanded::after {
     content: "\f07c";
 }

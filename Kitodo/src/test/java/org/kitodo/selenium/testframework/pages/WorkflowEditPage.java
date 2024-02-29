@@ -55,7 +55,7 @@ public class WorkflowEditPage extends EditPage<WorkflowEditPage> {
         builder.click(taskBox).build().perform();
 
         WebElement roleTab = Browser.getDriver().findElementByCssSelector(
-            "#js-properties-panel > div > div > div.bpp-properties-tab-bar.scroll-tabs-overflow > ul > li:nth-child(2)");
+            "#js-properties-panel > div > div > div.bpp-properties-tab-bar > ul > li:nth-child(2)");
         builder.click(roleTab).build().perform();
 
         WebElement firstRole = Browser.getDriver().findElementByCssSelector("#camunda-permittedUserRole_1");

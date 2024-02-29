@@ -10,7 +10,7 @@
  */
 /* globals sendGallerySelect, setGalleryViewMode, destruct, initialize, scrollToSelectedThumbnail, changeToMapView, PF,
    scrollToStructureThumbnail, scrollToPreviewThumbnail, expandMetadata, preserveMetadata,
-   activateButtons, PF */
+   activateButtons, PF, remoteCommandSetMembersByRequestParameter */
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
@@ -59,6 +59,101 @@ metadataEditor.gallery = {
     handleDragStart(event) {
         // call thumbnail drag start handler, since only thumbnails are draggable
         this.pages.handleDragStart(event);
+    },
+
+    mediaPartial: {
+        addLeadingZeros(num, totalLength) {
+            return String(num).padStart(totalLength, '0');
+        },
+        addTrailingZeros(num, totalLength) {
+            return String(num).padEnd(totalLength, '0');
+        },
+        truncWithoutRound(number, decimal) {
+            return Math.trunc(number * Math.pow(10, decimal)) / Math.pow(10, decimal);
+        },
+        convertSecondsToFormattedTime(seconds) {
+            let hours = parseInt(parseInt(seconds) / 3600); // 3,600 seconds in 1 hour
+            seconds = seconds % 3600; // seconds remaining after extracting hours
+            let minutes = parseInt(seconds / 60); // 60 seconds in 1 minute
+            seconds = seconds % 60;
+            let formattedTime = this.addLeadingZeros(hours, 2) + ":" + this.addLeadingZeros(minutes, 2) + ":";
+            seconds = this.truncWithoutRound(Number.parseFloat(seconds), 3); // trunc remaining digits without rounding
+            seconds = seconds.toString();
+            if (seconds.includes(".")) {
+                let splittedSeconds = seconds.split(".");
+                formattedTime += this.addLeadingZeros(splittedSeconds[0], 2) + "." + this.addTrailingZeros(splittedSeconds[1], 3);
+            } else {
+                formattedTime += this.addLeadingZeros(seconds, 2) + ".000";
+            }
+            return formattedTime;
+        },
+        convertFormattedTimeToMilliseconds(formattedTime) {
+            let milliseconds = 0;
+            if (formattedTime.includes(".")) {
+                let splittedFormattedTime = formattedTime.split(".");
+                formattedTime = splittedFormattedTime[0];
+                milliseconds = parseInt(splittedFormattedTime[1]);
+            }
+            let time = formattedTime.split(":");
+            return ((+time[0]) * 60 * 60 + (+time[1]) * 60 + (+time[2]))  * 1000 + milliseconds;
+        },
+        setBeginIfEmpty() {
+            let begin = document.getElementById("mediaPartialForm:beginInput");
+            if(!begin.value) {
+                begin.value = this.convertSecondsToFormattedTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').currentTime);
+            }
+        },
+        setMediaDuration() {
+            let mediaDuration = this.convertSecondsToFormattedTime(document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio').duration);
+            remoteCommandSetMembersByRequestParameter([{name: "mediaDuration", value: mediaDuration}]);
+        },
+        stopPlayEvent: new CustomEvent("mediaPartialStopPlay"),
+        togglePlay(button, formattedTimeBegin, formattedTimeExtent) {
+            let mediaElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer video, #imagePreviewForm\\:mediaDetailMediaContainer audio');
+            let timerElement = document.querySelector('#imagePreviewForm\\:mediaDetailMediaContainer #mediaFormattedTime');
+            let isPaused = mediaElement.paused;
+            let isAnotherMediaPartialTimeBegin = formattedTimeBegin !== mediaElement.dataset.mediaPartialTimeBegin;
+            mediaElement.dispatchEvent(this.stopPlayEvent); // stop already running media partial
+
+            let startTime = this.convertFormattedTimeToMilliseconds(formattedTimeBegin);
+            let durationTime = this.convertFormattedTimeToMilliseconds(formattedTimeExtent);
+            let stopTime = (startTime + durationTime) / 1000;
+
+            if (isPaused || isAnotherMediaPartialTimeBegin) {
+                let self = this;
+                let icon = button.querySelector(".ui-icon");
+                icon.classList.remove("fa-play");
+                icon.classList.add("fa-stop");
+
+                let onTimeUpdate = function () {
+                    if (mediaElement.currentTime >= stopTime) {
+                        self.stopPlay(mediaElement, icon);
+                        mediaElement.removeEventListener("timeupdate", onTimeUpdate);
+                        mediaElement.currentTime = stopTime;
+                    }
+                    timerElement.innerHTML = self.convertSecondsToFormattedTime(mediaElement.currentTime);
+                };
+
+                let onMediaPartialStopPlay = function () {
+                    self.stopPlay(mediaElement, icon);
+                    mediaElement.removeEventListener("timeupdate", onTimeUpdate);
+                    timerElement.innerHTML = self.convertSecondsToFormattedTime(mediaElement.currentTime);
+                };
+
+                mediaElement.currentTime = startTime / 1000;
+                mediaElement.addEventListener("timeupdate", onTimeUpdate);
+                mediaElement.addEventListener("mediaPartialStopPlay", onMediaPartialStopPlay);
+                mediaElement.addEventListener("pause", onMediaPartialStopPlay);
+                mediaElement.dataset.mediaPartialTimeBegin = formattedTimeBegin;
+                mediaElement.play();
+            }
+        },
+        stopPlay(mediaElement, icon) {
+            mediaElement.pause();
+            delete mediaElement.dataset.mediaPartialTimeBegin;
+            icon.classList.remove("fa-stop");
+            icon.classList.add("fa-play");
+        }
     },
 
     /**
@@ -623,9 +718,9 @@ metadataEditor.logicalTree = {
      */
     onNodeClick(node, event) {
         let treeNodeId = node.attr("id").split(":")[1];
-        let isPage = node.hasClass("ui-treenode-leaf") 
-            && node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
-        if (isPage) {
+        let isMedia = node.hasClass("ui-treenode-leaf")
+            && node.find("> .ui-treenode-content > .ui-icon-document,> .ui-treenode-content > .ui-icon-media-partial").length > 0;
+        if (isMedia) {
             metadataEditor.gallery.stripes.resetSelectionStyle();
             metadataEditor.gallery.pages.markManyAsSelected([treeNodeId], treeNodeId);
             metadataEditor.pagination.markManyAsSelected([treeNodeId]);
@@ -700,8 +795,8 @@ metadataEditor.physicalTree = {
 
         // apply selection to other components of the metadata editor
         if (treeNodeId !== null) {
-            let isPage = node.find("> .ui-treenode-content > .ui-icon-document").length > 0;
-            if (isPage) {
+            let isMedia = node.find("> .ui-treenode-content > .ui-icon-document,> .ui-treenode-content > .ui-icon-media-partial").length > 0;
+            if (isMedia) {
                 let stripeTreeNodeId = treeNodeId.slice(0, treeNodeId.lastIndexOf("_"));
                 metadataEditor.logicalTree.markNodeAsSelected(stripeTreeNodeId);
                 metadataEditor.pagination.markManyAsSelected([treeNodeId]);

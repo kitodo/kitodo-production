@@ -134,7 +134,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
     public String getServerInformation() throws IOException {
         Request request = new Request(HttpMethod.GET, "/");
         request.addParameter("pretty", "true");
-        Response response = client.performRequest(request);
+        Response response = performRequest(request);
         return EntityUtils.toString(response.getEntity());
     }
 
@@ -158,7 +158,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
     public String getMapping(String mappingType) throws IOException {
         Request request = new Request(HttpMethod.GET, "/" + indexBase + "_" + mappingType + "/_mapping");
         request.addParameter("pretty", "true");
-        Response response = client.performRequest(request);
+        Response response = performRequest(request);
         return EntityUtils.toString(response.getEntity());
     }
 
@@ -188,7 +188,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
         HttpEntity entity = new NStringEntity(query, ContentType.APPLICATION_JSON);
         Request request = new Request(HttpMethod.PUT, "/" + indexBase + "_" + mappingType);
         request.setEntity(entity);
-        Response indexResponse = client.performRequest(request);
+        Response indexResponse = performRequest(request);
         int statusCode = processStatusCode(indexResponse.getStatusLine());
         return statusCode == 200 || statusCode == 201;
     }
@@ -200,7 +200,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public boolean typeIndexesExist() throws IOException, CustomResponseException {
         for (String mappingType : MAPPING_TYPES) {
-            Response indexResponse = client.performRequest(new Request(HttpMethod.GET, "/" + indexBase + "_" + mappingType));
+            Response indexResponse = performRequest(new Request(HttpMethod.GET, "/" + indexBase + "_" + mappingType));
             int statusCode = processStatusCode(indexResponse.getStatusLine());
             if (statusCode != 200 && statusCode != 201) {
                 return false;
@@ -214,7 +214,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      * @param mappingType mapping type
      */
     public void deleteIndex(String mappingType) throws IOException {
-        client.performRequest(new Request(HttpMethod.DELETE, "/" + indexBase + "_" + mappingType));
+        performRequest(new Request(HttpMethod.DELETE, "/" + indexBase + "_" + mappingType));
     }
 
     /**
@@ -222,7 +222,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      */
     public void deleteAllIndexes() throws IOException {
         for (String mappingType : MAPPING_TYPES) {
-            client.performRequest(new Request(HttpMethod.DELETE, "/" + indexBase + "_" + mappingType));
+            performRequest(new Request(HttpMethod.DELETE, "/" + indexBase + "_" + mappingType));
         }
     }
 
@@ -286,5 +286,15 @@ public abstract class KitodoRestClient implements RestClientInterface {
         } else if (statusCode >= 500 && statusCode <= 599) {
             throw new CustomResponseException("Server error: " + restStatus.toString());
         }
+    }
+    
+    private Response performRequest(Request request) throws IOException {
+        Response response = client.performRequest(request);
+        if (logger.isDebugEnabled()) {
+            logger.debug(logger.isTraceEnabled()
+                    ? response.toString() + System.lineSeparator() + EntityUtils.toString(response.getEntity())
+                    : response.toString());
+        }
+        return response;
     }
 }

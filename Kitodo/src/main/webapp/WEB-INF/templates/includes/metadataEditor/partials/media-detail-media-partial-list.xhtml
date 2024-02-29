@@ -1,0 +1,84 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+    <h:panelGroup id="mediaDetailMediaPartialsContainer" layout="block"
+                  rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.enabled}">
+
+        <ui:fragment>
+            <p:remoteCommand name="remoteCommandSetMembersByRequestParameter"
+                             action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.setMembersByRequestParameter()}"/>
+
+            <p:outputPanel id="mediaPartialList"
+                           rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions.size() > 0}">
+                <p:dataList
+                        value="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialDivisions}"
+                        var="mediaPartialDivision"
+                        type="ordered">
+
+                    <p:dataViewListItem>
+                        <h:panelGrid columns="2" layout="flex"
+                                     columnClasses="metadata,actions"
+                                     styleClass="mediaPartialItem"
+                                     a:data-media-partial-begin="#{mediaPartialDivision.value.begin}">
+                            <p:outputPanel>
+                                <h:panelGrid columns="1">
+                                    <h:outputText value="#{msgs.title}:"/>
+                                    <h:outputText value="#{mediaPartialDivision.key.label}"/>
+                                </h:panelGrid>
+                                <h:panelGrid columns="2">
+                                    <h:outputText value="#{msgs.start}:"/>
+                                    <h:outputText value="#{mediaPartialDivision.value.begin}"/>
+                                    <h:outputText value="#{msgs.duration}:"/>
+                                    <h:outputText value="#{mediaPartialDivision.value.extent}"/>
+                                </h:panelGrid>
+                            </p:outputPanel>
+                            <p:outputPanel>
+                                <p:commandButton styleClass="secondary"
+                                                 icon="fa fa-play"
+                                                 type="button"
+                                                 onclick="metadataEditor.gallery.mediaPartial.togglePlay(this, '#{mediaPartialDivision.value.begin}', '#{mediaPartialDivision.value.extent}')"/>
+                                <p:commandButton styleClass="editMediaView secondary"
+                                                 onclick="metadataEditor.gallery.mediaPartial.setMediaDuration()"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.editMediaPartialDivision(mediaPartialDivision)}"
+                                                 icon="fa fa-pencil-square-o"
+                                                 oncomplete="PF('addMediaPartialDialog').show();"/>
+                                <p:commandButton styleClass="deleteMediaView secondary"
+                                                 onclick="metadataEditor.gallery.mediaPartial.setMediaDuration()"
+                                                 action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.deleteMediaPartialDivision(mediaPartialDivision)}"
+                                                 update="imagePreviewForm:mediaPartialList,imagePreviewForm:thumbnailStripe,metadataAccordion:logicalMetadataWrapperPanel,logicalTree,physicalTree"
+                                                 icon="fa fa-trash"/>
+                            </p:outputPanel>
+                        </h:panelGrid>
+                    </p:dataViewListItem>
+                </p:dataList>
+            </p:outputPanel>
+
+            <p:commandButton id="addMediaPartial"
+                             icon="fa fa-plus"
+                             onclick="metadataEditor.gallery.mediaPartial.setMediaDuration()"
+                             action="#{DataEditorForm.galleryPanel.mediaPartialsPanel.mediaPartialForm.clean}"
+                             styleClass="secondary"
+                             oncomplete="PF('addMediaPartialDialog').show();">
+            </p:commandButton>
+
+        </ui:fragment>
+
+    </h:panelGroup>
+
+</ui:composition>

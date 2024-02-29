@@ -1,0 +1,81 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+    <!--@elvariable id="media" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
+    <ui:param name="isPreviewTooltip"
+              value="#{(DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW' and mediaProvider.hasPreviewVariant(media) and fn:startsWith(media.previewMimeType, 'image')) or
+              (DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW' and mediaProvider.hasMediaViewVariant(media) and fn:startsWith(media.mediaViewMimeType, 'image'))}"/>
+
+    <ui:fragment rendered="#{not isPreviewTooltip}">
+        <h:outputText rendered="#{media.isMediaPartial()}" styleClass="icon-media-partial"/>
+
+        <p:outputPanel class="thumbnail-overlay">
+            <h:outputText rendered="#{media.type eq 'VIDEO'}">
+                #{msgs.video} #{media.shortId}
+            </h:outputText>
+            <h:outputText rendered="#{media.type eq 'AUDIO'}">
+                #{msgs.audio} #{media.shortId}
+            </h:outputText>
+            <h:outputText rendered="#{media.type eq 'IMAGE'}">
+                #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
+            </h:outputText>
+        </p:outputPanel>
+    </ui:fragment>
+
+    <ui:fragment rendered="#{isPreviewTooltip}">
+        <p:outputPanel id="mediaListImageTooltipTrigger" class="mediaListImageTooltipTrigger thumbnail-overlay">
+            <h:panelGroup>
+                <i class="fa fa-search-plus"/>
+            </h:panelGroup>
+        </p:outputPanel>
+
+        <p:tooltip for="mediaListImageTooltipTrigger" styleClass="mediaListImageTooltip"
+                   beforeShow="metadataEditor.gallery.pages.preloadTooltipImage(this)">
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_MEDIAVIEW'}"
+                            value="#{mediaProvider.mediaView}"
+                            a:loading="lazy">
+                <f:param name="mediaId"
+                         value="#{media.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+            </p:graphicImage>
+
+            <p:graphicImage rendered="#{DataEditorForm.galleryPanel.previewHoverMode eq 'TOOLTIP_PREVIEW'}"
+                            value="#{mediaProvider.previewData}"
+                            a:loading="lazy">
+                <f:param name="mediaId"
+                         value="#{media.id}"/>
+                <f:param name="process"
+                         value="#{DataEditorForm.process.id}"/>
+                <f:param name="sessionId"
+                         value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+            </p:graphicImage>
+
+            <p:outputPanel>
+                <h:outputText>
+                    #{msgs.image} #{media.shortId}, #{msgs.page} #{media.orderlabel}
+                </h:outputText>
+            </p:outputPanel>
+        </p:tooltip>
+    </ui:fragment>
+
+</ui:composition>

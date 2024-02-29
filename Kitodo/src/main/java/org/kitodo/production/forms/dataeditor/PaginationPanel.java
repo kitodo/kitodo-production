@@ -29,6 +29,7 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MediaNotFoundException;
@@ -56,7 +57,7 @@ public class PaginationPanel {
     private List<IllustratedSelectItem> selectPaginationModeItems;
     private IllustratedSelectItem selectPaginationModeSelectedItem;
     private Map<Boolean, String> selectPaginationScopeItems;
-    private Boolean selectPaginationScopeSelectedItem = Boolean.TRUE;
+    private Boolean selectPaginationScopeSelectedItem;
 
     /**
      * Constructor.
@@ -265,6 +266,11 @@ public class PaginationPanel {
         this.fictitiousCheckboxChecked = fictitiousCheckboxChecked;
     }
 
+    private void prepareSelectPaginationScopeSelectedItem() {
+        selectPaginationScopeSelectedItem = ServiceManager.getUserService().getCurrentUser()
+                .isPaginateFromFirstPageByDefault();
+    }
+
     private void preparePaginationSelectionItems() {
         List<PhysicalDivision> physicalDivisions = dataEditor.getWorkpiece().getAllPhysicalDivisionChildrenSortedFilteredByPageAndTrack();
         paginationSelectionItems = new ArrayList<>(physicalDivisions.size());
@@ -388,5 +394,6 @@ public class PaginationPanel {
         selectPaginationScopeSelectedItem = Boolean.TRUE;
         preparePaginationSelectionItems();
         preparePaginationSelectionSelectedItems();
+        prepareSelectPaginationScopeSelectedItem();
     }
 }

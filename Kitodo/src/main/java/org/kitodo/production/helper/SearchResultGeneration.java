@@ -115,7 +115,7 @@ public class SearchResultGeneration {
 
     private void insertRowData(HSSFSheet sheet) {
         int rowCounter = 2;
-        int numberOfProcessedProcesses = 0;
+        long numberOfProcessedProcesses = 0;
         int elasticsearchLimit = 9999;
         try {
             Long numberOfExpectedProcesses = ServiceManager.getProcessService()

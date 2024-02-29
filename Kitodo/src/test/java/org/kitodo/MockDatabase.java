@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.sql.Date;
 import java.sql.SQLException;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -39,6 +41,8 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.json.JsonReader;
 
+import com.xebialabs.restito.semantics.Action;
+import com.xebialabs.restito.server.StubServer;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -100,6 +104,11 @@ import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.workflow.model.Converter;
+import org.kitodo.test.utils.ProcessTestUtils;
+
+import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
+import static com.xebialabs.restito.semantics.Condition.get;
+import static com.xebialabs.restito.semantics.Condition.parameter;
 
 /**
  * Insert data to test database.
@@ -123,6 +132,10 @@ public class MockDatabase {
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
     public static final String MEDIA_RENAMING_TEST_PROCESS_TITLE = "Rename media";
+    public static final String HIERARCHY_PARENT = "HierarchyParent";
+    public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
+    public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
+    public static final String HIERARCHY_CHILD_TO_ADD = "HierarchyChildToAdd";
 
     public static void startDatabaseServer() throws SQLException {
         tcpServer = Server.createTcpServer().start();
@@ -689,58 +702,62 @@ public class MockDatabase {
         ServiceManager.getImportService().setUsingTemplates(true);
     }
 
-    public static void insertProcessesForHierarchyTests() throws DAOException, DataException {
-        Process fourthProcess = new Process();
-        fourthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        fourthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        fourthProcess.setTitle("HierarchyParent");
-        ServiceManager.getProcessService().save(fourthProcess);
+    public static Map<String, Integer> insertProcessesForHierarchyTests() throws DAOException, DataException {
+        Map<String, Integer> testProcesses = new HashMap<>();
+        Process parentProcess = new Process();
+        parentProcess.setProject(ServiceManager.getProjectService().getById(1));
+        parentProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
+        parentProcess.setTitle(HIERARCHY_PARENT);
+        ServiceManager.getProcessService().save(parentProcess);
+        ProcessTestUtils.logTestProcessInfo(parentProcess);
+        testProcesses.put(parentProcess.getTitle(), parentProcess.getId());
 
-        Process fifthProcess = new Process();
-        fifthProcess.setTitle("HierarchChildToKeep");
-        fourthProcess.getChildren().add(fifthProcess);
-        fifthProcess.setParent(fourthProcess);
-        fifthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        fifthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
-        ServiceManager.getProcessService().save(fifthProcess);
+        Process childProcessToRemove = new Process();
+        childProcessToRemove.setTitle(HIERARCHY_CHILD_TO_KEEP);
+        parentProcess.getChildren().add(childProcessToRemove);
+        childProcessToRemove.setParent(parentProcess);
+        childProcessToRemove.setProject(ServiceManager.getProjectService().getById(1));
+        childProcessToRemove.setRuleset(ServiceManager.getRulesetService().getById(1));
+        ServiceManager.getProcessService().save(childProcessToRemove);
+        ProcessTestUtils.logTestProcessInfo(childProcessToRemove);
+        testProcesses.put(childProcessToRemove.getTitle(), childProcessToRemove.getId());
 
         Process sixthProcess = new Process();
-        sixthProcess.setTitle("HierarchChildToRemove");
-        fourthProcess.getChildren().add(sixthProcess);
+        sixthProcess.setTitle(HIERARCHY_CHILD_TO_REMOVE);
+        parentProcess.getChildren().add(sixthProcess);
         sixthProcess.setRuleset(ServiceManager.getRulesetService().getById(1));
         sixthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        sixthProcess.setParent(fourthProcess);
+        sixthProcess.setParent(parentProcess);
         ServiceManager.getProcessService().save(sixthProcess);
+        ProcessTestUtils.logTestProcessInfo(sixthProcess);
+        testProcesses.put(sixthProcess.getTitle(), sixthProcess.getId());
 
         Process seventhProcess = new Process();
-        seventhProcess.setTitle("HierarchChildToAdd");
+        seventhProcess.setTitle(HIERARCHY_CHILD_TO_ADD);
         ServiceManager.getProcessService().save(seventhProcess);
+        ProcessTestUtils.logTestProcessInfo(seventhProcess);
+        testProcesses.put(seventhProcess.getTitle(), seventhProcess.getId());
+        return testProcesses;
     }
 
-    public static void removeProcessesForHierarchyTests() throws DataException {
-        ServiceManager.getProcessService().remove(5);
-        ServiceManager.getProcessService().remove(6);
-        ServiceManager.getProcessService().remove(7);
-        ServiceManager.getProcessService().remove(4);
-    }
-
-
-    public static void insertProcessForCalendarHierarchyTests() throws DAOException, DataException {
-        Ruleset fivthRuleset = new Ruleset();
-        fivthRuleset.setTitle("Newspaper");
-        fivthRuleset.setFile("newspaper.xml");
-        fivthRuleset.setOrderMetadataByRuleset(false);
-        fivthRuleset.setClient(ServiceManager.getClientService().getById(1));
-        ServiceManager.getRulesetService().save(fivthRuleset);
-
-        insertPlaceholderProcesses(4, 9);
-
-        Process tenthProcess = new Process();
-        tenthProcess.setProject(ServiceManager.getProjectService().getById(1));
-        tenthProcess.setTemplate(ServiceManager.getTemplateService().getById(1));
-        tenthProcess.setRuleset(ServiceManager.getRulesetService().getById(5));
-        tenthProcess.setTitle("NewspaperOverallProcess");
-        ServiceManager.getProcessService().save(tenthProcess);
+    /**
+     * Insert ruleset.
+     * @param rulesetTitle ruleset title
+     * @param rulesetFilename ruleset filename
+     * @param clientId client id
+     * @return id of ruleset
+     * @throws DAOException when retrieving client by ID fails
+     * @throws DataException when saving ruleset failed
+     */
+    public static int insertRuleset(String rulesetTitle, String rulesetFilename, int clientId) throws DAOException,
+            DataException {
+        Ruleset ruleset = new Ruleset();
+        ruleset.setTitle(rulesetTitle);
+        ruleset.setFile(rulesetFilename);
+        ruleset.setOrderMetadataByRuleset(false);
+        ruleset.setClient(ServiceManager.getClientService().getById(clientId));
+        ServiceManager.getRulesetService().save(ruleset);
+        return ruleset.getId();
     }
 
     private static void insertTemplates() throws DAOException, DataException {
@@ -1059,26 +1076,6 @@ public class MockDatabase {
     }
 
     /**
-     * Insert dummy process into database.
-     * @param dummyProcessId id used in dummy process title
-     * @return database ID of created dummy process
-     * @throws DAOException when loading test project fails
-     * @throws DataException when saving dummy process fails
-     */
-    public static int insertDummyProcess(int dummyProcessId) throws DAOException, DataException {
-        Project firstProject = ServiceManager.getProjectService().getById(2);
-        Template template = firstProject.getTemplates().get(0);
-        Process dummyProcess = new Process();
-        dummyProcess.setTitle("Dummy_process_" + dummyProcessId);
-        dummyProcess.setProject(firstProject);
-        dummyProcess.setTemplate(template);
-        dummyProcess.setRuleset(template.getRuleset());
-        dummyProcess.setDocket(template.getDocket());
-        ServiceManager.getProcessService().save(dummyProcess);
-        return dummyProcess.getId();
-    }
-
-    /**
      * Add test process for media references update test to second project.
      * @return ID of created test process
      * @throws DAOException when retrieving project fails
@@ -1125,6 +1122,31 @@ public class MockDatabase {
         mediaReferencesProcess.setDocket(template.getDocket());
         ServiceManager.getProcessService().save(mediaReferencesProcess);
         return mediaReferencesProcess.getId();
+    }
+
+    /**
+     * Insert test process.
+     * @param processTitle process title of test process
+     * @param projectId project id of test process
+     * @param templateId template id of test process
+     * @param rulesetId ruleset id of test process
+     * @return id of test process
+     * @throws DAOException when retrieving project, template or ruleset fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcess(String processTitle, int projectId, int templateId, int rulesetId)
+            throws DAOException, DataException {
+        Project project = ServiceManager.getProjectService().getById(projectId);
+        Template template = ServiceManager.getTemplateService().getById(templateId);
+        Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
+        Process process = new Process();
+        process.setTitle(processTitle);
+        process.setProject(project);
+        process.setTemplate(template);
+        process.setRuleset(ruleset);
+        process.setDocket(template.getDocket());
+        ServiceManager.getProcessService().save(process);
+        return process.getId();
     }
 
     /**
@@ -1668,6 +1690,11 @@ public class MockDatabase {
         gbvConfiguration.setInterfaceType(SearchInterfaceType.SRU.name());
         gbvConfiguration.setSruVersion("1.2");
         gbvConfiguration.setSruRecordSchema("mods");
+        gbvConfiguration.setItemFieldXpath(".//*[local-name()='datafield'][@tag='954']");
+        gbvConfiguration.setItemFieldOwnerSubPath(".//*[local-name()='subfield'][@code='0']");
+        gbvConfiguration.setItemFieldOwnerMetadata("itemOwner");
+        gbvConfiguration.setItemFieldSignatureSubPath(".//*[local-name()='subfield'][@code='d']");
+        gbvConfiguration.setItemFieldSignatureMetadata("itemSignatur");
 
         SearchField ppnField = new SearchField();
         ppnField.setValue("pica.ppn");
@@ -1702,10 +1729,20 @@ public class MockDatabase {
         idSearchFieldKalliope.setLabel("Identifier");
         idSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
 
-        kalliopeConfiguration.setSearchFields(Collections.singletonList(idSearchFieldKalliope));
+        SearchField parentIdSearchFieldKalliope = new SearchField();
+        parentIdSearchFieldKalliope.setValue("context.ead.id");
+        parentIdSearchFieldKalliope.setLabel("Parent ID");
+        parentIdSearchFieldKalliope.setImportConfiguration(kalliopeConfiguration);
+
+        List<SearchField> kalliopeSearchFields = new LinkedList<>();
+        kalliopeSearchFields.add(idSearchFieldKalliope);
+        kalliopeSearchFields.add(parentIdSearchFieldKalliope);
+
+        kalliopeConfiguration.setSearchFields(kalliopeSearchFields);
         ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
 
         kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
+        kalliopeConfiguration.setParentSearchField(kalliopeConfiguration.getSearchFields().get(1));
         ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
 
         // add K10Plus import configuration, including id search field
@@ -1730,10 +1767,20 @@ public class MockDatabase {
         idSearchFieldK10Plus.setLabel("PPN");
         idSearchFieldK10Plus.setImportConfiguration(k10plusConfiguration);
 
-        k10plusConfiguration.setSearchFields(Collections.singletonList(idSearchFieldK10Plus));
+        SearchField parentIdSearchFieldK10Plus = new SearchField();
+        parentIdSearchFieldK10Plus.setValue("pica.parentId");
+        parentIdSearchFieldK10Plus.setLabel("Parent ID");
+        parentIdSearchFieldK10Plus.setImportConfiguration(k10plusConfiguration);
+
+        List<SearchField> k10SearchFields = new LinkedList<>();
+        k10SearchFields.add(idSearchFieldK10Plus);
+        k10SearchFields.add(parentIdSearchFieldK10Plus);
+
+        k10plusConfiguration.setSearchFields(k10SearchFields);
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
+        k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {
@@ -2044,6 +2091,16 @@ public class MockDatabase {
     }
 
     /**
+     * Return GBV ImportConfiguration.
+     *
+     * @return GBV ImportConfiguration
+     * @throws DAOException when GBV ImportConfiguration cannot be loaded from database
+     */
+    public static ImportConfiguration getGbvImportConfiguration() throws DAOException {
+        return ServiceManager.getImportConfigurationService().getById(1);
+    }
+
+    /**
      * Return Kalliope ImportConfiguration.
      *
      * @return Kalliope ImportConfiguration
@@ -2097,5 +2154,50 @@ public class MockDatabase {
         process.setTemplate(template);
         ServiceManager.getProcessService().save(process);
         return process;
+    }
+
+    /**
+     * Adds a REST endpoint for a simulated SRU search interface stub server with the given parameters.
+     * @param server the stub server to which the REST endpoint is added
+     * @param query URL parameter containing query associated with this endpoint
+     * @param filePath path to file containing response to be returned by stub server when requesting this endpoint
+     * @param format URL parameter containing record schema format associated with this endpoint
+     * @param numberOfRecords URL parameter containing maximum number of records associated with this endpoint
+     * @throws IOException when reading the response file fails
+     */
+    public static void addRestEndPointForSru(StubServer server, String query, String filePath, String format,
+                                             int numberOfRecords)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/sru"),
+                            parameter("operation", "searchRetrieve"),
+                            parameter("recordSchema", format),
+                            parameter("maximumRecords", String.valueOf(numberOfRecords)),
+                            parameter("query", query))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
+    }
+
+    /**
+     * Adds a REST endpoint for a simulated CUSTOM search interface stub server with the given parameters.
+     * @param server the stub server to which the REST endpoint is added
+     * @param filePath path to file containing response to be returned by stub server when requesting this endpoint
+     * @param recordId URL parameter containing record ID associated with this endpoint
+     * @param customParameterValue URL parameter containing custom URL parameter value associated with this endpoint
+     * @throws IOException when reading the response file fails
+     */
+    public static void addRestEndPointForCustom(StubServer server, String filePath, String recordId,
+                                                String customParameterValue)
+            throws IOException {
+        try (InputStream inputStream = Files.newInputStream(Paths.get(filePath))) {
+            String serverResponse = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
+            whenHttp(server)
+                    .match(get("/custom"),
+                            parameter("firstKey", customParameterValue),
+                            parameter("id", recordId))
+                    .then(Action.ok(), Action.contentType("text/xml"), Action.stringContent(serverResponse));
+        }
     }
 }

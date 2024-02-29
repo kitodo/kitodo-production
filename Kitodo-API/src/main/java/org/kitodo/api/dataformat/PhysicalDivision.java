@@ -53,6 +53,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
      */
     private Map<MediaVariant, URI> mediaFiles = new HashMap<>();
 
+    private MediaPartial mediaPartial;
+
     /**
      * Saves the METS identifier for the division.
      */
@@ -115,6 +117,34 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         return logicalDivisions;
     }
 
+    /**
+     * Set the media partial.
+     *
+     * @param mediaPartial
+     *         The media partial
+     */
+    public void setMediaPartial(MediaPartial mediaPartial) {
+        this.mediaPartial = mediaPartial;
+    }
+
+    /**
+     * Check if physical division has media partial.
+     *
+     * @return True if has media partial
+     */
+    public boolean hasMediaPartial() {
+        return Objects.nonNull(mediaPartial);
+    }
+
+    /**
+     * Get the media partial.
+     *
+     * @return The media partial.
+     */
+    public MediaPartial getMediaPartial() {
+        return mediaPartial;
+    }
+
     @Override
     public String toString() {
         String fileName = "No file (";
@@ -141,7 +171,8 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
             return false;
         }
         PhysicalDivision physicalDivision = (PhysicalDivision) o;
-        return Objects.equals(mediaFiles, physicalDivision.mediaFiles);
+        return Objects.equals(mediaFiles, physicalDivision.mediaFiles) && Objects.equals(mediaPartial,
+                physicalDivision.mediaPartial);
     }
 
     @Override
@@ -149,6 +180,9 @@ public class PhysicalDivision extends Division<PhysicalDivision> {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + ((mediaFiles == null) ? 0 : mediaFiles.hashCode());
+        result = prime * result + ((Objects.isNull(mediaPartial) || Objects.isNull(mediaPartial.getBegin()))
+                ? 0
+                : mediaPartial.getBegin().hashCode());
         return result;
     }
 }

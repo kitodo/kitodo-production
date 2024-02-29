@@ -1,0 +1,64 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
+
+    <p:outputPanel id="mediaDetailMediaFormattedTime" rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.enabled}" >
+        <p:commandButton title="#{msgs.jumpBackwardOneSecond}"
+                         type="button"
+                         icon="fa fa-step-backward"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="-1000"/>
+        <p:commandButton title="#{msgs.jumpBackwardOneHundredMilliseconds}"
+                         type="button"
+                         icon="fa fa-chevron-left"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="-100"/>
+        <p:commandButton title="#{msgs.jumpBackwardTenMilliseconds}"
+                         type="button"
+                         icon="fa fa-angle-double-left"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="-10"/>
+        <p:commandButton title="#{msgs.jumpBackwardOneMillisecond}"
+                         type="button"
+                         icon="fa fa-angle-left"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="-1"/>
+        <p:commandButton title="#{msgs.jumpForwardOneMillisecond}"
+                         type="button"
+                         icon="fa fa-angle-right"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="1"/>
+        <p:commandButton title="#{msgs.jumpForwardTenMilliseconds}"
+                         type="button"
+                         icon="fa fa-angle-double-right"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="10"/>
+        <p:commandButton title="#{msgs.jumpForwardOneHundredMilliseconds}"
+                         type="button"
+                         icon="fa fa-chevron-right"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="100"/>
+        <p:commandButton title="#{msgs.jumpForwardOneSecond}"
+                         type="button"
+                         icon="fa fa-step-forward"
+                         styleClass="media-formatted-time-jump-button secondary"
+                         a:data-media-formatted-time-jump-milliseconds="1000"/>
+    </p:outputPanel>
+    <h:outputScript a:type="module" name="js/modules/media_detail_media_formatted_time.js" rendered="#{DataEditorForm.galleryPanel.mediaPartialsPanel.enabled}" />
+
+</ui:composition>

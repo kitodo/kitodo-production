@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<mets:mets xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:kitodo="http://meta.kitodo.org/v1/" xmlns:mets="http://www.loc.gov/METS/">
+    <mets:metsHdr CREATEDATE="2018-09-14T07:45:17.000+02:00" LASTMODDATE="2021-03-01T18:45:18.869+01:00">
+        <mets:agent ROLE="CREATOR" TYPE="OTHER" OTHERTYPE="SOFTWARE">
+            <mets:name>Kitodo - kitodo-ugh-3.0-SNAPSHOT - 18-April-2018 13:20:13</mets:name>
+            <mets:note>Kitodo</mets:note>
+        </mets:agent>
+    </mets:metsHdr>
+    <mets:dmdSec ID="uuid-83867038-fca7-3001-9e9c-2ca97bc1b168">
+        <mets:mdWrap>
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="pathimagefiles">file:/2/images/Sec_Proc_tif</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:dmdSec ID="uuid-017a6d80-fde9-3445-a239-bc86ba0c9f14">
+        <mets:mdWrap>
+            <mets:xmlData>
+                <kitodo:kitodo>
+                    <kitodo:metadata name="TitleDocMain">Second process</kitodo:metadata>
+                    <kitodo:metadata name="TSL_ATS">Proc</kitodo:metadata>
+                    <kitodo:metadata name="DigitalCollection">Kollektion2</kitodo:metadata>
+                    <kitodo:metadata name="TitleDocMainShort">Second</kitodo:metadata>
+                </kitodo:kitodo>
+            </mets:xmlData>
+        </mets:mdWrap>
+    </mets:dmdSec>
+    <mets:fileSec/>
+    <mets:structMap TYPE="PHYSICAL">
+        <mets:div ID="PHYS_0000" DMDID="uuid-83867038-fca7-3001-9e9c-2ca97bc1b168" TYPE="physSequence"/>
+    </mets:structMap>
+    <mets:structMap TYPE="LOGICAL">
+        <mets:div ID="LOG_0000" DMDID="uuid-017a6d80-fde9-3445-a239-bc86ba0c9f14" TYPE="Monograph" ORDER="1">
+            <mets:div ID="uuid-0a7803be-1d54-455f-bea8-dfee41735e09">
+                <mets:mptr LOCTYPE="OTHER" OTHERLOCTYPE="Kitodo.Production" xlink:href="database://?process.id=7"/>
+            </mets:div>
+        </mets:div>
+    </mets:structMap>
+    <mets:structLink>
+        <mets:smLink xlink:to="PHYS_0000" xlink:from="LOG_0000"/>
+    </mets:structLink>
+</mets:mets>

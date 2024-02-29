@@ -428,6 +428,12 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
     private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
         StructLink structLink = new StructLink();
         structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
+            if (Objects.isNull(entry.getLeft())) {
+                throw new IllegalArgumentException("smLinkData.entry[?].left must not be null");
+            }
+            if (Objects.isNull(entry.getRight())) {
+                throw new IllegalArgumentException("smLinkData.entry[?].right must not be null");
+            }
             SmLink smLink = new SmLink();
             smLink.setFrom(entry.getLeft());
             smLink.setTo(entry.getRight());

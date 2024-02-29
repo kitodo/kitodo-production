@@ -24,13 +24,14 @@ import org.kitodo.production.services.ServiceManager;
 
 public class DataEditorServiceTest {
 
-    private DataEditorService dataEditorService = ServiceManager.getDataEditorService();
+    private final DataEditorService dataEditorService = ServiceManager.getDataEditorService();
     private static byte[] testMetaOldFormat;
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
+    private static final String metadataFilesDir = "./src/test/resources/metadata/metadataFiles/";
 
     @Before
     public void saveFile() throws IOException {
-        File file = new File("src/test/resources/metadata/testmetaOldFormat.xml");
+        File file = new File(metadataFilesDir + "testmetaOldFormat.xml");
         testMetaOldFormat = IOUtils.toByteArray(file.toURI());
     }
 
@@ -41,12 +42,12 @@ public class DataEditorServiceTest {
 
     @Test
     public void shouldReadMetadata() throws IOException {
-        dataEditorService.readData(Paths.get("./src/test/resources/metadata/testmeta.xml").toUri());
+        dataEditorService.readData(Paths.get(metadataFilesDir + "testmeta.xml").toUri());
     }
 
     @Test
     public void shouldReadOldMetadata() throws IOException {
-        dataEditorService.readData(Paths.get("./src/test/resources/metadata/testmetaOldFormat.xml").toUri());
+        dataEditorService.readData(Paths.get(metadataFilesDir + "testmetaOldFormat.xml").toUri());
     }
 
     @Test(expected = IOException.class)

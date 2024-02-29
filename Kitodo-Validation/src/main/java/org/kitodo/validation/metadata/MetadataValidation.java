@@ -106,7 +106,7 @@ public class MetadataValidation implements MetadataValidationInterface {
             RulesetManagementInterface ruleset = getRulesetManagement();
             ruleset.load(new File(rulesetFileUri.getPath()));
 
-            return validate(workpiece, ruleset, metadataLanguage, translations);
+            return validate(workpiece, ruleset, metadataLanguage, translations, true);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -114,12 +114,14 @@ public class MetadataValidation implements MetadataValidationInterface {
 
     @Override
     public ValidationResult validate(Workpiece workpiece, RulesetManagementInterface ruleset,
-            List<LanguageRange> metadataLanguage, Map<String, String> translations) {
+            List<LanguageRange> metadataLanguage, Map<String, String> translations, boolean checkMedia) {
 
         Collection<ValidationResult> results = new ArrayList<>();
 
-        results.add(checkForStructuresWithoutMedia(workpiece, translations));
-        results.add(checkForUnlinkedMedia(workpiece, translations));
+        if (checkMedia) {
+            results.add(checkForStructuresWithoutMedia(workpiece, translations));
+            results.add(checkForUnlinkedMedia(workpiece, translations));
+        }
 
         for (LogicalDivision logicalDivision : workpiece.getAllLogicalDivisions()) {
             results.addAll(checkMetadataRules(logicalDivision.toString(), logicalDivision.getType(),
