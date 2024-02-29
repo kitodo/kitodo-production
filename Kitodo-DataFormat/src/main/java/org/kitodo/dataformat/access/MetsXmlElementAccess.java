@@ -427,12 +427,13 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
      */
     private StructLink createStructLink(LinkedList<Pair<String, String>> smLinkData) {
         StructLink structLink = new StructLink();
-        structLink.getSmLinkOrSmLinkGrp().addAll(smLinkData.parallelStream().map(entry -> {
+        List<Object> content = structLink.getSmLinkOrSmLinkGrp();
+        for (Pair<String, String> link : smLinkData) {
             SmLink smLink = new SmLink();
-            smLink.setFrom(entry.getLeft());
-            smLink.setTo(entry.getRight());
-            return smLink;
-        }).collect(Collectors.toList()));
+            smLink.setFrom(link.getLeft());
+            smLink.setTo(link.getRight());
+            content.add(smLink);
+        }
         return structLink;
     }
 

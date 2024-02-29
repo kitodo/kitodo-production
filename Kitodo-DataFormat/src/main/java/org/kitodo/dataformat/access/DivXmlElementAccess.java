@@ -15,6 +15,7 @@ import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -249,8 +250,9 @@ public class DivXmlElementAccess extends LogicalDivision {
         }
         div.setORDERLABEL(super.getOrderlabel());
         div.setTYPE(super.getType());
-        smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision).map(physicalDivisionIDs::get)
-                .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId)).collect(Collectors.toList()));
+        smLinkData.addAll(super.getViews().stream().map(View::getPhysicalDivision)
+            .sorted(Comparator.comparing(PhysicalDivision::getOrder)).map(physicalDivisionIDs::get)
+            .map(physicalDivisionId -> Pair.of(metsReferrerId, physicalDivisionId)).collect(Collectors.toList()));
 
         Optional<MdSecType> optionalDmdSec = createMdSec(super.getMetadata(), MdSec.DMD_SEC);
         if (optionalDmdSec.isPresent()) {
