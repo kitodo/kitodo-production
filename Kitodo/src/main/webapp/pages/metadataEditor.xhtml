@@ -233,7 +233,7 @@
                                               value="#{selectedGalleryMediaContent.getMediaPartial()}"/>
                                     <h:outputText styleClass="columnHeading mediaPartialHeading"
                                                   value="(#{msgs.start}:#{mediaPartial.begin}, #{msgs.duration}:#{mediaPartial.extent})"
-                                                  rendered="#{selectedGalleryMediaContent.isMediaPartial() and mediaPartial not null}"
+                                                  rendered="#{selectedGalleryMediaContent.isMediaPartial() and mediaPartial ne null}"
                                                   a:data-media-partial-start="#{mediaPartial.begin}"
                                                   a:data-media-partial-duration="#{mediaPartial.extent}"/>
                                 </ui:fragment>
