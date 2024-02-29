@@ -27,10 +27,10 @@ let initMediaPartial = function () {
 
         let onCanPlay = function () {
             mediaElement.currentTime = startTime / 1000;
-        }
+        };
 
         mediaElement.addEventListener("play", function () {
-            mediaElement.removeEventListener("canplay", onCanPlay)
+            mediaElement.removeEventListener("canplay", onCanPlay);
             mediaElement.currentTime = startTime / 1000;
         });
 
