@@ -27,7 +27,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.MediaPartial;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.production.enums.MediaContentType;
-import org.kitodo.production.helper.metadata.MediaPartialHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
