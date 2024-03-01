@@ -53,7 +53,7 @@
                                 rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}"/>
                 <h:outputScript a:type="module" name="js/modules/media_detail_audio_waveform.js"
                                 rendered="#{fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio') and DataEditorForm.galleryPanel.isAudioMediaViewWaveform()}"/>
-
+                <h:outputScript a:type="module" name="js/modules/media_detail_media_partial.js" rendered="#{selectedGalleryMediaContent.isMediaPartial()}"/>
             </p:outputPanel>
 
             <ui:include src="/WEB-INF/templates/includes/metadataEditor/partials/media-detail-media-partial-list.xhtml"/>
