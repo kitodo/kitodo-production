@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<course>
+   <description>Die Zeitung erschien vom 1. Januar 2024 bis zum 31. Januar 2024 regelmäßig an allen Montagen, Dienstagen, Mittwochen, Donnerstagen und Freitagen.</description>
+   <processes>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-01"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-02"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-03"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-04"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-05"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-08"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-09"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-10"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-11"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-12"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-15"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-16"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-17"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-18"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-19"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-22"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-23"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-24"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-25"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-26"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-29"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-30"/>
+         </title>
+      </process>
+      <process>
+         <title index="1">
+            <appeared date="2024-01-31"/>
+         </title>
+      </process>
+   </processes>
+</course>
