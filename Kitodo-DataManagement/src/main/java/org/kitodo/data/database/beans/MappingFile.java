@@ -12,6 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -160,5 +161,23 @@ public class MappingFile extends BaseBean {
             return mappingFile.getId().equals(this.getId());
         }
         return false;
+    }
+
+    /**
+     * hashCode method of current class.
+     *
+     * @see java.lang.Object#hashCode()
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                title,
+                file,
+                inputMetadataFormat,
+                outputMetadataFormat,
+                prestructuredImport,
+                importConfigurations
+            );
     }
 }
