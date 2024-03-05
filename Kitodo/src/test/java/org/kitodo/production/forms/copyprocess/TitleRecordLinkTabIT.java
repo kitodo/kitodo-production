@@ -13,6 +13,7 @@ package org.kitodo.production.forms.copyprocess;
 
 import static org.awaitility.Awaitility.await;
 
+import java.util.Map;
 import java.util.Objects;
 
 import org.junit.AfterClass;
@@ -31,11 +32,13 @@ import org.kitodo.production.forms.createprocess.TitleRecordLinkTab;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
+import org.kitodo.test.utils.ProcessTestUtils;
 
 public class TitleRecordLinkTabIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
-
+    private static final String META_XML = "testParentProcessMeta.xml";
     private static final String firstProcess = "First process";
+    private static int parentProcessId = -1;
 
     /**
      * Is running before the class runs.
@@ -44,7 +47,9 @@ public class TitleRecordLinkTabIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
-        MockDatabase.insertProcessesForHierarchyTests();
+        Map<String, Integer> hierarchyProcesses = MockDatabase.insertProcessesForHierarchyTests();
+        parentProcessId = hierarchyProcesses.get(MockDatabase.HIERARCHY_PARENT);
+        ProcessTestUtils.copyTestMetadataFile(parentProcessId, META_XML);
         MockDatabase.setUpAwaitility();
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
@@ -59,6 +64,7 @@ public class TitleRecordLinkTabIT {
      */
     @AfterClass
     public static void cleanDatabase() throws Exception {
+        ProcessTestUtils.removeTestProcess(parentProcessId);
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
