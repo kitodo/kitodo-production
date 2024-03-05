@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -311,26 +312,27 @@ public class TitleRecordLinkTab {
         }
         try {
             List<ProcessDTO> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
-                    createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
+                    createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
                 Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.noHits");
             }
             indicationOfMoreHitsVisible = processes.size() > MAXIMUM_NUMBER_OF_HITS;
             possibleParentProcesses = ServiceManager.getImportService()
                     .getPotentialParentProcesses(processes, MAXIMUM_NUMBER_OF_HITS);
-        } catch (DataException | DAOException e) {
+        } catch (DataException | DAOException | IOException e) {
             Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.error", e.getMessage(),
                     logger, e);
             indicationOfMoreHitsVisible = false;
             possibleParentProcesses = Collections.emptyList();
         }
+        possibleParentProcesses.sort(Comparator.comparing(SelectItem::getLabel));
         for (SelectItem selectItem : possibleParentProcesses) {
             if (!selectItem.isDisabled()) {
-                int processId = Integer.parseInt(selectItem.getValue().toString());
                 try {
+                    int processId = Integer.parseInt(selectItem.getValue().toString());
                     setParentAsTitleRecord(ServiceManager.getProcessService().getById(processId));
                     break;
-                } catch (DAOException e) {
+                } catch (DAOException | NumberFormatException e) {
                     logger.error(e);
                 }
             }
@@ -447,16 +449,12 @@ public class TitleRecordLinkTab {
     public void setParentAsTitleRecord(Process parentProcess) {
         createProcessForm.setEditActiveTabIndex(CreateProcessForm.TITLE_RECORD_LINK_TAB_INDEX);
         try {
-            ProcessDTO parentProcessDto = ServiceManager.getProcessService().findById(parentProcess.getId());
-            possibleParentProcesses = ServiceManager.getImportService()
-                    .getPotentialParentProcesses(Collections.singletonList(parentProcessDto), MAXIMUM_NUMBER_OF_HITS);
-
             if (ImportService.userMayLinkToParent(parentProcess.getId())) {
                 setChosenParentProcess(String.valueOf(parentProcess.getId()));
             } else {
                 setChosenParentProcess(null);
             }
-        } catch (DAOException | DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(e);
         }
         chooseParentProcess();

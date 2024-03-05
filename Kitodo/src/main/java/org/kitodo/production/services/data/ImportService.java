@@ -1430,19 +1430,23 @@ public class ImportService {
      * @param maxNumber limit
      * @return list of "SelectItem" objects corresponding to given "ProcessDTO" objects.
      * @throws DAOException when checking whether user can link to given "ProcessDTO"s fails
+     * @throws IOException when opening ruleset file fails
      */
     public ArrayList<SelectItem> getPotentialParentProcesses(List<ProcessDTO> parentCandidates, int maxNumber)
-            throws DAOException {
+            throws DAOException, IOException {
         ArrayList<SelectItem> possibleParentProcesses = new ArrayList<>();
         for (ProcessDTO process : parentCandidates.subList(0, Math.min(parentCandidates.size(), maxNumber))) {
-            SelectItem selectItem = new SelectItem(process.getId().toString(), process.getTitle());
-            selectItem.setDisabled(!userMayLinkToParent(process.getId()));
-            if (!processInAssignedProject(process.getId())) {
-                String problem = Helper.getTranslation("projectNotAssignedToCurrentUser", process.getProject().getTitle());
-                selectItem.setDescription(problem);
-                selectItem.setLabel(selectItem.getLabel() + " (" + problem + ")");
+            if (ProcessService.canCreateChildProcess(process) || ProcessService.canCreateProcessWithCalendar(process)) {
+                SelectItem selectItem = new SelectItem(process.getId().toString(), process.getTitle());
+                selectItem.setDisabled(!userMayLinkToParent(process.getId()));
+                if (!processInAssignedProject(process.getId())) {
+                    String problem = Helper.getTranslation("projectNotAssignedToCurrentUser", process.getProject()
+                            .getTitle());
+                    selectItem.setDescription(problem);
+                    selectItem.setLabel(selectItem.getLabel() + " (" + problem + ")");
+                }
+                possibleParentProcesses.add(selectItem);
             }
-            possibleParentProcesses.add(selectItem);
         }
         return possibleParentProcesses;
     }
@@ -1454,7 +1458,7 @@ public class ImportService {
      * @return whether the process with the provided ID belongs to a project assigned to the current user or not
      * @throws DAOException when retrieving the process with the ID "processId" from the database fails
      */
-    public static Boolean processInAssignedProject(int processId) throws DAOException {
+    public static boolean processInAssignedProject(int processId) throws DAOException {
         Process process = ServiceManager.getProcessService().getById(processId);
         if (Objects.nonNull(process)) {
             return ServiceManager.getUserService().getCurrentUser().getProjects().contains(process.getProject());

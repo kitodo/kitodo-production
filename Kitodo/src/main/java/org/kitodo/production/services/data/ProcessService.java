@@ -815,15 +815,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param searchInput
      *            user input
-     * @param projectId
-     *            the id of the allowed project
      * @param rulesetId
      *            the id of the allowed ruleset
      * @return found processes
      * @throws DataException
      *             if the search engine fails
      */
-    public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
+    public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int rulesetId)
             throws DataException {
 
         BoolQueryBuilder processQuery = new BoolQueryBuilder()
