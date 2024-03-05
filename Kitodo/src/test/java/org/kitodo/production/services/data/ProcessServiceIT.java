@@ -319,7 +319,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldFindLinkableParentProcesses() throws DataException {
         assertEquals("Processes were not found in index!", 1,
-            processService.findLinkableParentProcesses("HierarchyParent", 1, 1).size());
+            processService.findLinkableParentProcesses("HierarchyParent", 1).size());
     }
 
     @Ignore("for second process is attached task which is processed by blocked user")
