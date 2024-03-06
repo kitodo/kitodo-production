@@ -757,7 +757,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * <p>Note: This method is called potentially thousands of times when rendering large galleries.</p>
      */
     public boolean consecutivePagesSelected() {
-        if (selectedMedia.isEmpty()) {
+        if (Objects.isNull(selectedMedia) || selectedMedia.isEmpty()) {
             return false;
         }
         int maxOrder = selectedMedia.stream().mapToInt(m -> m.getLeft().getOrder()).max().orElseThrow(NoSuchElementException::new);
