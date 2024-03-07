@@ -1430,23 +1430,20 @@ public class ImportService {
      * @param maxNumber limit
      * @return list of "SelectItem" objects corresponding to given "ProcessDTO" objects.
      * @throws DAOException when checking whether user can link to given "ProcessDTO"s fails
-     * @throws IOException when opening ruleset file fails
      */
     public ArrayList<SelectItem> getPotentialParentProcesses(List<ProcessDTO> parentCandidates, int maxNumber)
-            throws DAOException, IOException {
+            throws DAOException {
         ArrayList<SelectItem> possibleParentProcesses = new ArrayList<>();
         for (ProcessDTO process : parentCandidates.subList(0, Math.min(parentCandidates.size(), maxNumber))) {
-            if (ProcessService.canCreateChildProcess(process) || ProcessService.canCreateProcessWithCalendar(process)) {
-                SelectItem selectItem = new SelectItem(process.getId().toString(), process.getTitle());
-                selectItem.setDisabled(!userMayLinkToParent(process.getId()));
-                if (!processInAssignedProject(process.getId())) {
-                    String problem = Helper.getTranslation("projectNotAssignedToCurrentUser", process.getProject()
-                            .getTitle());
-                    selectItem.setDescription(problem);
-                    selectItem.setLabel(selectItem.getLabel() + " (" + problem + ")");
-                }
-                possibleParentProcesses.add(selectItem);
+            SelectItem selectItem = new SelectItem(process.getId().toString(), process.getTitle());
+            selectItem.setDisabled(!userMayLinkToParent(process.getId()));
+            if (!processInAssignedProject(process.getId())) {
+                String problem = Helper.getTranslation("projectNotAssignedToCurrentUser", process.getProject()
+                        .getTitle());
+                selectItem.setDescription(problem);
+                selectItem.setLabel(selectItem.getLabel() + " (" + problem + ")");
             }
+            possibleParentProcesses.add(selectItem);
         }
         return possibleParentProcesses;
     }

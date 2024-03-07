@@ -818,11 +818,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @param rulesetId
      *            the id of the allowed ruleset
      * @return found processes
-     * @throws DataException
-     *             if the search engine fails
+     * @throws DataException if the search engine fails
+     * @throws DAOException when loading ruleset from database fails
+     * @throws IOException when opening ruleset file fails
      */
     public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int rulesetId)
-            throws DataException {
+            throws DataException, DAOException, IOException {
 
         BoolQueryBuilder processQuery = new BoolQueryBuilder()
                 .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput));
@@ -831,7 +832,13 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
         BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-        return findByQueryInAllProjects(query, false);
+        List<ProcessDTO> filteredProcesses = new ArrayList<>();
+        for (ProcessDTO process : findByQueryInAllProjects(query, false)) {
+            if (ProcessService.canCreateChildProcess(process) || ProcessService.canCreateProcessWithCalendar(process)) {
+                filteredProcesses.add(process);
+            }
+        }
+        return filteredProcesses;
     }
 
     /**
