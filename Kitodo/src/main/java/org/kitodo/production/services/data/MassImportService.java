@@ -114,16 +114,17 @@ public class MassImportService {
      * @param metadataKeys metadata keys for additional metadata added to individual records during import
      * @param records list of CSV records
      */
-    public Map<String, Map<String, String>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
+    public Map<String, Map<String, List<String>>> prepareMetadata(List<String> metadataKeys, List<CsvRecord> records)
             throws ImportException {
-        Map<String, Map<String, String>> presetMetadata = new LinkedHashMap<>();
+        Map<String, Map<String, List<String>>> presetMetadata = new LinkedHashMap<>();
         for (CsvRecord record : records) {
-            Map<String, String> processMetadata = new HashMap<>();
+            Map<String, List<String>> processMetadata = new HashMap<>();
             // skip first metadata key as it always contains the record ID to be used for search
             for (int index = 1; index < metadataKeys.size(); index++) {
                 String metadataKey = metadataKeys.get(index);
                 if (StringUtils.isNotBlank(metadataKey)) {
-                    processMetadata.put(metadataKey, record.getCsvCells().get(index).getValue());
+                    List<String> values = processMetadata.computeIfAbsent(metadataKey, k -> new ArrayList<>());
+                    values.add(record.getCsvCells().get(index).getValue());
                 }
             }
             presetMetadata.put(record.getCsvCells().get(0).getValue(), processMetadata);
