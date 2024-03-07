@@ -1174,7 +1174,7 @@ public class ImportService {
      * @return the importedProcess
      */
     public Process importProcess(String ppn, int projectId, int templateId, ImportConfiguration importConfiguration,
-                                 Map<String, String> presetMetadata) throws ImportException {
+                                 Map<String, List<String>> presetMetadata) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         TempProcess tempProcess;
         Template template;
@@ -1257,14 +1257,16 @@ public class ImportService {
         return rulesetManagement.getFunctionalKeys(metadata);
     }
 
-    private List<MetadataEntry> createMetadata(Map<String, String> presetMetadata) {
+    private List<MetadataEntry> createMetadata(Map<String, List<String>> presetMetadata) {
         List<MetadataEntry> metadata = new LinkedList<>();
-        for (Map.Entry<String, String> presetMetadataEntry : presetMetadata.entrySet()) {
-            MetadataEntry metadataEntry = new MetadataEntry();
-            metadataEntry.setKey(presetMetadataEntry.getKey());
-            metadataEntry.setValue(presetMetadataEntry.getValue());
-            metadataEntry.setDomain(MdSec.DMD_SEC);
-            metadata.add(metadataEntry);
+        for (Map.Entry<String, List<String>> presetMetadataEntry : presetMetadata.entrySet()) {
+            for (String presetMetadataEntryValue : presetMetadataEntry.getValue()) {
+                MetadataEntry metadataEntry = new MetadataEntry();
+                metadataEntry.setKey(presetMetadataEntry.getKey());
+                metadataEntry.setValue(presetMetadataEntryValue);
+                metadataEntry.setDomain(MdSec.DMD_SEC);
+                metadata.add(metadataEntry);
+            }
         }
         return metadata;
     }
