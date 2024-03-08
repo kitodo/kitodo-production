@@ -350,7 +350,7 @@ public class IndexingService {
         while (true) {
             // check whether all jobs are done
             boolean done = true;
-            boolean failed = indexWorkerStatus.hasFailed() || indexWorkerStatus.isCanceled();
+            boolean failed = indexWorkerStatus.hasFailed();
             for (Future<?> future : futures) {
                 if (!future.isDone()) {
                     done = false;
@@ -637,23 +637,5 @@ public class IndexingService {
 
     void resetCurrentIndexState() {
         currentIndexState = ObjectType.NONE;
-    }
-
-    /**
-     * Cancels indexing upon user request.
-     */
-    public void cancelIndexing() {
-        if (Objects.nonNull(indexWorkerStatus)) {
-            indexWorkerStatus.markAsCanceled();
-        }
-    }
-
-    /**
-     * Get logger.
-     *
-     * @return value of logger
-     */
-    public static Logger getLogger() {
-        return logger;
     }
 }

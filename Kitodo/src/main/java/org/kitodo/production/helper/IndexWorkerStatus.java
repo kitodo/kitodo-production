@@ -35,11 +35,6 @@ public class IndexWorkerStatus {
     private final AtomicBoolean failed = new AtomicBoolean(false);
 
     /**
-     * Whether the indexing process was canceled by a user.
-     */
-    private final AtomicBoolean canceled = new AtomicBoolean(false);
-   
-    /**
      * Initialize index worker status.
      * 
      * @param maxBatch the maximum number of batches to be processed
@@ -80,21 +75,5 @@ public class IndexWorkerStatus {
      */
     public void markAsFailed() {
         this.failed.set(true);
-    }
-
-    /**
-     * Marks the index status as canceld by a user.
-     */
-    public void markAsCanceled() {
-        this.canceled.set(true);
-    }
-
-    /**
-     * Return whether indexing process was canceled by a user.
-     *
-     * @return true if canceled
-     */
-    public boolean isCanceled() {
-        return this.canceled.get();
     }
 }

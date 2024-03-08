@@ -55,8 +55,8 @@ public enum TabIndex {
 
     // system page
     TASKMANAGER(0),
-    INDEXING(null),
-    MIGRATION(2),
+    INDEXING(2),
+    MIGRATION(3),
 
     // user configuration
     SETTINGS(0),
@@ -67,9 +67,9 @@ public enum TabIndex {
     IMPORT_CONFIGURATION_MAPPING_FILES(1);
 
 
-    private final Integer index;
+    private final int index;
 
-    TabIndex(final Integer newIndex) {
+    TabIndex(final int newIndex) {
         index = newIndex;
     }
 

@@ -56,13 +56,13 @@ public class IndexManagmentThread extends Thread {
                 if (Objects.isNull(this.objectType) || currentType.equals(objectType)) {
                     try {
                         IndexWorkerStatus status = indexingService.runIndexing(currentType, context, indexAllObjects);
-                        if (Objects.nonNull(status) && (status.isCanceled() || status.hasFailed())) {
-                            // stop indexing due to failure or cancel
+                        if (Objects.nonNull(status) && (status.hasFailed())) {
+                            // stop indexing due to failure
                             break;
                         }
                     } catch (DataException | CustomResponseException | DAOException | RuntimeException e) {
                         logger.error(e);
-                        Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);
+                        Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                     }
                 }
             }

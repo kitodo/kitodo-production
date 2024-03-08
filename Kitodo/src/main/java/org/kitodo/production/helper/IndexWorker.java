@@ -55,7 +55,7 @@ public class IndexWorker implements Runnable {
         int maxBatch = indexWorkerStatus.getMaxBatch();
 
         int nextBatch = indexWorkerStatus.getAndIncrementNextBatch();
-        while (!indexWorkerStatus.hasFailed() && !indexWorkerStatus.isCanceled() && nextBatch < maxBatch) {
+        while (!indexWorkerStatus.hasFailed() && nextBatch < maxBatch) {
             // nextBatch is a valid batch that needs to be processed
 
             int attempt = 1;
