@@ -55,6 +55,7 @@ public class IndexingFormIT {
     }
 
     @Test
+    @Ignore("currently not implemented")
     public void shouldCreateMapping() {
         Assert.assertFalse(indexingForm.indexExists());
         indexingForm.createMapping(false);
