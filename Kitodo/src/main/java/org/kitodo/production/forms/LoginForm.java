@@ -99,16 +99,21 @@ public class LoginForm implements Serializable {
 
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         SessionClientController controller = new SessionClientController();
+        PrimeFaces.current().executeScript("PF('indexWarningDialog').hide();");
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
             if (controller.getAvailableClientsOfCurrentUser().size() > 1
                     && Objects.isNull(controller.getCurrentSessionClient())) {
                 controller.showClientSelectDialog();
+            } else if (ServiceManager.getIndexingService().isIndexCorrupted()) {
+                context.redirect(INDEXING_PAGE + determineIndexingTab());
             } else {
                 redirect(context);
             }
         } else {
-            if (controller.getAvailableClientsOfCurrentUser().size() > 1
+            if (ServiceManager.getIndexingService().isIndexCorrupted()) {
+                PrimeFaces.current().executeScript("PF('indexWarningDialog').show();");
+            } else if (controller.getAvailableClientsOfCurrentUser().size() > 1
                     && Objects.isNull(controller.getCurrentSessionClient())) {
                 controller.showClientSelectDialog();
             } else {
@@ -125,5 +130,16 @@ public class LoginForm implements Serializable {
         } else {
             context.redirect(context.getRequestContextPath() + originalRequest);
         }
+    }
+
+    private int determineIndexingTab() {
+        int indexingTabIndex = 2;
+        if (!securityAccessService.hasAuthorityToViewTermsPage()) {
+            indexingTabIndex -= 1;
+        }
+        if (!securityAccessService.hasAuthorityToViewTaskManagerPage()) {
+            indexingTabIndex -= 1;
+        }
+        return indexingTabIndex;
     }
 }

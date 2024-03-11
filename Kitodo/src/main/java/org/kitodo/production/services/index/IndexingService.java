@@ -182,6 +182,11 @@ public class IndexingService {
         return countDatabaseObjects;
     }
 
+    public boolean isIndexCorrupted() throws DAOException, DataException {
+        updateCounts();
+        return getTotalCount() != getAllIndexed();
+    }
+
     /**
      * Return the number of all objects processed during the current indexing
      * progress.
