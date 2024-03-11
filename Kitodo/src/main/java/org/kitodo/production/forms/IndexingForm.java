@@ -11,8 +11,8 @@
 
 package org.kitodo.production.forms;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -25,16 +25,8 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.IndexStates;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.index.IndexingService;
 import org.omnifaces.util.Ajax;
 
 @Named
@@ -42,7 +34,6 @@ import org.omnifaces.util.Ajax;
 public class IndexingForm {
 
     private static final List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
-    private static final Logger logger = LogManager.getLogger(IndexingForm.class);
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
     private String indexingStartedUser = "";
     private LocalDateTime indexingStartedTime = null;
@@ -65,11 +56,7 @@ public class IndexingForm {
      * click.
      */
     public void countDatabaseObjects() {
-        try {
-            ServiceManager.getIndexingService().countDatabaseObjects();
-        } catch (DAOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
@@ -87,7 +74,7 @@ public class IndexingForm {
      * @return value of countDatabaseObjects
      */
     public Map<ObjectType, Integer> getCountDatabaseObjects() {
-        return ServiceManager.getIndexingService().getCountDatabaseObjects();
+        return Collections.emptyMap();
     }
 
     /**
@@ -96,7 +83,7 @@ public class IndexingForm {
      * @return long number of all items that can be written to the index
      */
     public long getTotalCount() {
-        return ServiceManager.getIndexingService().getTotalCount();
+        return 0;
     }
 
     /**
@@ -108,12 +95,7 @@ public class IndexingForm {
      * @return number of indexed objects
      */
     public long getNumberOfIndexedObjects(ObjectType objectType) {
-        try {
-            return ServiceManager.getIndexingService().getNumberOfIndexedObjects(objectType);
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return 0;
-        }
+        return 0;
     }
 
     /**
@@ -123,12 +105,7 @@ public class IndexingForm {
      * @return long number of all currently indexed objects
      */
     public long getAllIndexed() {
-        try {
-            return ServiceManager.getIndexingService().getAllIndexed();
-        } catch (DataException | ArithmeticException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return 0;
-        }
+        return 0;
     }
 
     /**
@@ -138,13 +115,7 @@ public class IndexingForm {
      *            type objects that get indexed
      */
     public void callIndexing(ObjectType type) {
-        indexingStartedTime = LocalDateTime.now();
-        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        try {
-            ServiceManager.getIndexingService().startIndexing(pollingChannel, type);
-        } catch (IllegalStateException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
@@ -154,29 +125,21 @@ public class IndexingForm {
      *            type objects that get indexed
      */
     public void callIndexingRemaining(ObjectType type) {
-        indexingStartedTime = LocalDateTime.now();
-        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        try {
-            ServiceManager.getIndexingService().startIndexingRemaining(pollingChannel, type);
-        } catch (IllegalStateException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
-        indexingStartedTime = LocalDateTime.now();
-        indexingStartedUser = ServiceManager.getUserService().getAuthenticatedUser().getFullName();
-        ServiceManager.getIndexingService().startAllIndexing(pollingChannel);
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexingRemaining() {
-        ServiceManager.getIndexingService().startAllIndexingRemaining(pollingChannel);
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
@@ -196,7 +159,7 @@ public class IndexingForm {
      *         progress or not
      */
     public boolean indexingInProgress() {
-        return ServiceManager.getIndexingService().indexingInProgress();
+        return false;
     }
 
     /**
@@ -208,30 +171,14 @@ public class IndexingForm {
      *            or not.
      */
     public void createMapping(boolean updatePollingChannel) {
-        try {
-            if (updatePollingChannel) {
-                pollingChannel.send(IndexingService.MAPPING_STARTED_MESSAGE);
-            }
-            String mappingStateMessage = ServiceManager.getIndexingService().createMapping();
-            if (updatePollingChannel) {
-                pollingChannel.send(mappingStateMessage);
-            }
-        } catch (IOException | CustomResponseException e) {
-            ServiceManager.getIndexingService().setIndexState(IndexStates.CREATING_MAPPING_FAILED);
-            if (updatePollingChannel) {
-                pollingChannel.send(IndexingService.MAPPING_FAILED_MESSAGE);
-            }
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
      * Delete whole ElasticSearch index.
      */
     public void deleteIndex() {
-        pollingChannel.send(IndexingService.DELETION_STARTED_MESSAGE);
-        String updateMessage = ServiceManager.getIndexingService().deleteIndex();
-        pollingChannel.send(updateMessage);
+        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
@@ -241,12 +188,7 @@ public class IndexingForm {
      * @return String information about the server
      */
     public String getServerInformation() {
-        try {
-            return ServiceManager.getIndexingService().getServerInformation();
-        } catch (IOException e) {
-            Helper.setErrorMessage("elasticSearchNotRunning", logger, e);
-            return "";
-        }
+        return "";
     }
 
     /**
@@ -258,12 +200,7 @@ public class IndexingForm {
      * @return the progress of the current indexing process in percent
      */
     public int getProgress(ObjectType currentType) {
-        try {
-            return ServiceManager.getIndexingService().getProgress(currentType, pollingChannel);
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return 0;
-        }
+        return 0;
     }
 
     /**
@@ -272,7 +209,7 @@ public class IndexingForm {
      * @return true if mapping is empty, otherwise false
      */
     public boolean isMappingEmpty() {
-        return ServiceManager.getIndexingService().isMappingEmpty();
+        return false;
     }
 
     /**
@@ -281,11 +218,7 @@ public class IndexingForm {
      * @return whether the Elastic Search index exists or not
      */
     public boolean indexExists() {
-        try {
-            return ServiceManager.getIndexingService().indexExists();
-        } catch (IOException | CustomResponseException ignored) {
-            return false;
-        }
+        return false;
     }
 
     /**
@@ -296,7 +229,7 @@ public class IndexingForm {
      * @return state of ES index
      */
     public IndexStates getIndexState() {
-        return ServiceManager.getIndexingService().getIndexState();
+        return IndexStates.NO_STATE;
     }
 
     /**
@@ -308,7 +241,7 @@ public class IndexingForm {
      * @return indexing state of the given object type.
      */
     public IndexStates getObjectIndexState(ObjectType objectType) {
-        return ServiceManager.getIndexingService().getObjectIndexState(objectType);
+        return IndexStates.NO_STATE;
     }
 
     /**
@@ -320,7 +253,7 @@ public class IndexingForm {
      * @return static variable for global indexing state
      */
     public IndexStates getAllObjectsIndexingState() {
-        return ServiceManager.getIndexingService().getAllObjectsIndexingState();
+        return IndexStates.NO_STATE;
     }
 
     /**
@@ -366,6 +299,6 @@ public class IndexingForm {
      * Cancel indexing upon user request.
      */
     public void cancelIndexing() {
-        ServiceManager.getIndexingService().cancelIndexing();
+        throw new UnsupportedOperationException("currently not implemented");
     }
 }

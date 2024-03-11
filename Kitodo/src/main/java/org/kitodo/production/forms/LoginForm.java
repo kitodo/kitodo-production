@@ -20,6 +20,9 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.inject.Named;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -32,9 +35,9 @@ import org.primefaces.PrimeFaces;
 @Named("LoginForm")
 @SessionScoped
 public class LoginForm implements Serializable {
+    private static final Logger logger = LogManager.getLogger(LoginForm.class);
     private User loggedUser;
     private boolean firstVisit = true;
-    private static final String INDEXING_PAGE = "system.jsf?tabIndex=";
     private static final String DESKTOP_VIEW = "desktop.jsf";
     private final SecurityAccessService securityAccessService = ServiceManager.getSecurityAccessService();
 
@@ -100,20 +103,11 @@ public class LoginForm implements Serializable {
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         SessionClientController controller = new SessionClientController();
 
-        if (ServiceManager.getSecurityAccessService().hasAuthorityToEditIndex()) {
-            if (controller.getAvailableClientsOfCurrentUser().size() > 1
-                    && Objects.isNull(controller.getCurrentSessionClient())) {
-                controller.showClientSelectDialog();
-            } else {
-                redirect(context);
-            }
+        if (controller.getAvailableClientsOfCurrentUser().size() > 1
+                && Objects.isNull(controller.getCurrentSessionClient())) {
+            controller.showClientSelectDialog();
         } else {
-            if (controller.getAvailableClientsOfCurrentUser().size() > 1
-                    && Objects.isNull(controller.getCurrentSessionClient())) {
-                controller.showClientSelectDialog();
-            } else {
-                redirect(context);
-            }
+            redirect(context);
         }
     }
 
