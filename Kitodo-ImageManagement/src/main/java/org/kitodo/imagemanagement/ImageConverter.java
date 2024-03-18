@@ -74,8 +74,8 @@ class ImageConverter {
      *            source image to convert
      */
     ImageConverter(URI imageFileUri) {
-        // Add "[0]" to the path to make sure ImageMagick only uses the "main" image and ignores other, potential subfiles like embedded thumbnails.
-        // Especially relevant for TIFF files.
+        // Add "[0]" to the path to make sure ImageMagick only uses the "main" image and ignores other,
+        // potential subfiles like embedded thumbnails. Especially relevant for TIFF files.
         source = uriToPath(imageFileUri) + "[0]";
     }
 
