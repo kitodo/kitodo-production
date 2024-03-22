@@ -126,7 +126,7 @@ public class MassImportForm extends BaseForm {
      * Event listender function called when user switches CSV separator character used to split text lines into cells.
      */
     public void changeSeparator() {
-        metadataKeys = List.of(String.join(previousCsvSeparator, metadataKeys).split(csvSeparator));
+        metadataKeys = new LinkedList<>(Arrays.asList(String.join(previousCsvSeparator, metadataKeys).split(csvSeparator)));
         records = massImportService.updateSeparator(records, previousCsvSeparator, csvSeparator);
     }
 
