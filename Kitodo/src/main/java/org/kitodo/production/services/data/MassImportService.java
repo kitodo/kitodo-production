@@ -74,24 +74,9 @@ public class MassImportService {
     }
 
     /**
-     * Creates and returns new list of records from given list of records by applying a different
-     * CSV separator character to the lines obtained by joining the CSV cell values of the existing
-     * CSV records with the previous CSV separator character.
-     * @param records CSV records created using previous CSV separator character
-     * @param oldSeparator previous CSV separator character
-     * @param newSeparator new CSV separator character
-     * @return list of CSV records using new CSV separator character
-     */
-    public List<CsvRecord> updateSeparator(List<CsvRecord> records, String oldSeparator, String newSeparator) {
-        List<String> lines = records.stream().map(record -> record.getCsvCells()
-                .stream().map(CsvCell::getValue)
-                .collect(Collectors.joining(oldSeparator)))
-                .collect(Collectors.toList());
-        return parseLines(lines, newSeparator);
-    }
-
-    /**
      * Split provided lines by given 'separator'-String and return list of CsvRecord.
+     * The method also handles quoted csv values, which contain comma or semicolon to allow
+     * csv separators in csv cells.
      * @param lines lines to parse
      * @param separator String used to split lines into individual parts
      * @return list of CsvRecord
@@ -100,10 +85,24 @@ public class MassImportService {
         List<CsvRecord> records = new LinkedList<>();
         for (String line : lines) {
             List<CsvCell> cells = new LinkedList<>();
-            for (String value : line.split(separator, -1)) {
-                cells.add(new CsvCell(value));
+            if (!Objects.isNull(line) && !line.isBlank()) {
+                StringBuilder currentCell = new StringBuilder();
+                boolean inQuotes = false;
+                for (char c : line.toCharArray()) {
+                    if ((c == '\"' || c == '\'') && !inQuotes) {
+                        inQuotes = true;
+                    } else if (c == '\"' || c == '\'') {
+                        inQuotes = false;
+                    } else if (String.valueOf(c).equals(separator) && !inQuotes) {
+                        cells.add(new CsvCell(currentCell.toString()));
+                        currentCell.setLength(0); // Reset currentCell
+                    } else {
+                        currentCell.append(c);
+                    }
+                }
+                cells.add(new CsvCell(currentCell.toString()));
+                records.add(new CsvRecord(cells));
             }
-            records.add(new CsvRecord(cells));
         }
         return records;
     }
