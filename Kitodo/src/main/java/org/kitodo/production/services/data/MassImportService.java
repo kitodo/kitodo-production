@@ -100,10 +100,12 @@ public class MassImportService {
         List<CsvRecord> records = new LinkedList<>();
         for (String line : lines) {
             List<CsvCell> cells = new LinkedList<>();
-            for (String value : line.split(separator, -1)) {
-                cells.add(new CsvCell(value));
+            if (!Objects.isNull(line) && !line.isBlank()) {
+                for (String value : line.split(separator, -1)) {
+                    cells.add(new CsvCell(value));
+                }
+                records.add(new CsvRecord(cells));
             }
-            records.add(new CsvRecord(cells));
         }
         return records;
     }
