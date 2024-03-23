@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.massimport;
 
+import com.opencsv.exceptions.CsvValidationException;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -114,7 +116,7 @@ public class MassImportForm extends BaseForm {
                     records = massImportService.parseLines(importedCsvLines, csvSeparator);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | CsvValidationException e) {
             Helper.setErrorMessage(e);
         }
     }
@@ -132,7 +134,7 @@ public class MassImportForm extends BaseForm {
         metadataKeys = new LinkedList<>(Arrays.asList(importedCsvHeaderLine.split(csvSeparator, -1)));
         try {
             records = massImportService.parseLines(importedCsvLines, csvSeparator);
-        } catch (IOException e) {
+        } catch (IOException | CsvValidationException e) {
             Helper.setErrorMessage(e);
         }
     }

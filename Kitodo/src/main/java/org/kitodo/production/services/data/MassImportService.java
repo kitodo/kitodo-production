@@ -11,7 +11,11 @@
 
 package org.kitodo.production.services.data;
 
+import com.opencsv.CSVParser;
+import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
+import com.opencsv.CSVReaderBuilder;
+import com.opencsv.exceptions.CsvValidationException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -84,12 +88,19 @@ public class MassImportService {
      * @param separator String used to split lines into individual parts
      * @return list of CsvRecord
      */
-    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException {
+    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvValidationException {
         List<CsvRecord> records = new LinkedList<>();
         for (String line : lines) {
             if (!Objects.isNull(line) && !line.isBlank()) {
                 List<CsvCell> cells = new LinkedList<>();
-                CSVReader csvReader = new CSVReader(new StringReader(line), separator.charAt(0), '\"');
+                CSVParser parser = new CSVParserBuilder()
+                        .withSeparator(separator.charAt(0))
+                        .withQuoteChar('\"')
+                        .build();
+                CSVReader csvReader = new CSVReaderBuilder(new StringReader(line))
+                        .withSkipLines(0)
+                        .withCSVParser(parser)
+                        .build();
                 String[] values = csvReader.readNext();
                 if (!Objects.isNull(values)) {
                     for (String value : values) {
