@@ -90,13 +90,13 @@ public class MassImportService {
      */
     public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvValidationException {
         List<CsvRecord> records = new LinkedList<>();
+        CSVParser parser = new CSVParserBuilder()
+                .withSeparator(separator.charAt(0))
+                .withQuoteChar('\"')
+                .build();
         for (String line : lines) {
             if (!Objects.isNull(line) && !line.isBlank()) {
                 List<CsvCell> cells = new LinkedList<>();
-                CSVParser parser = new CSVParserBuilder()
-                        .withSeparator(separator.charAt(0))
-                        .withQuoteChar('\"')
-                        .build();
                 CSVReader csvReader = new CSVReaderBuilder(new StringReader(line))
                         .withSkipLines(0)
                         .withCSVParser(parser)
