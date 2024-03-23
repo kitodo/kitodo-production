@@ -54,7 +54,6 @@ public class MassImportForm extends BaseForm {
     private ImportConfiguration importConfiguration;
     private UploadedFile file;
     private String csvSeparator = ";";
-    private String previousCsvSeparator = null;
     private List<String> metadataKeys = new LinkedList<>(Collections.singletonList("ID"));
     private List<CsvRecord> records = new LinkedList<>();
     private String importedCsvHeaderLine = "";
@@ -131,7 +130,11 @@ public class MassImportForm extends BaseForm {
      */
     public void changeSeparator() {
         metadataKeys = new LinkedList<>(Arrays.asList(importedCsvHeaderLine.split(csvSeparator, -1)));
-        records = massImportService.parseLines(importedCsvLines, csvSeparator);
+        try {
+            records = massImportService.parseLines(importedCsvLines, csvSeparator);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e);
+        }
     }
 
     /**
@@ -304,7 +307,6 @@ public class MassImportForm extends BaseForm {
      * @param csvSeparator as java.lang.String
      */
     public void setCsvSeparator(String csvSeparator) {
-        this.previousCsvSeparator = this.csvSeparator;
         this.csvSeparator = csvSeparator;
     }
 

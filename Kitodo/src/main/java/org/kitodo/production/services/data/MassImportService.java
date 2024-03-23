@@ -11,9 +11,12 @@
 
 package org.kitodo.production.services.data;
 
+import com.opencsv.CSVReader;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -81,27 +84,19 @@ public class MassImportService {
      * @param separator String used to split lines into individual parts
      * @return list of CsvRecord
      */
-    public List<CsvRecord> parseLines(List<String> lines, String separator) {
+    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException {
         List<CsvRecord> records = new LinkedList<>();
         for (String line : lines) {
-            List<CsvCell> cells = new LinkedList<>();
             if (!Objects.isNull(line) && !line.isBlank()) {
-                StringBuilder currentCell = new StringBuilder();
-                boolean inQuotes = false;
-                for (char c : line.toCharArray()) {
-                    if ((c == '\"' || c == '\'') && !inQuotes) {
-                        inQuotes = true;
-                    } else if (c == '\"' || c == '\'') {
-                        inQuotes = false;
-                    } else if (String.valueOf(c).equals(separator) && !inQuotes) {
-                        cells.add(new CsvCell(currentCell.toString()));
-                        currentCell.setLength(0); // Reset currentCell
-                    } else {
-                        currentCell.append(c);
+                List<CsvCell> cells = new LinkedList<>();
+                CSVReader csvReader = new CSVReader(new StringReader(line), separator.charAt(0), '\"');
+                String[] values = csvReader.readNext();
+                if (!Objects.isNull(values)) {
+                    for (String value : values) {
+                        cells.add(new CsvCell(value));
                     }
+                    records.add(new CsvRecord(cells));
                 }
-                cells.add(new CsvCell(currentCell.toString()));
-                records.add(new CsvRecord(cells));
             }
         }
         return records;
