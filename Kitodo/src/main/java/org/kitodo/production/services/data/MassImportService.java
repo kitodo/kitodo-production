@@ -15,7 +15,7 @@ import com.opencsv.CSVParser;
 import com.opencsv.CSVParserBuilder;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVReaderBuilder;
-import com.opencsv.exceptions.CsvValidationException;
+import com.opencsv.exceptions.CsvException;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -88,26 +88,23 @@ public class MassImportService {
      * @param separator String used to split lines into individual parts
      * @return list of CsvRecord
      */
-    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvValidationException {
+    public List<CsvRecord> parseLines(List<String> lines, String separator) throws IOException, CsvException {
         List<CsvRecord> records = new LinkedList<>();
         CSVParser parser = new CSVParserBuilder()
                 .withSeparator(separator.charAt(0))
                 .withQuoteChar('\"')
                 .build();
-        for (String line : lines) {
-            if (!Objects.isNull(line) && !line.isBlank()) {
+        try (StringReader reader = new StringReader(String.join("\n", lines));
+             CSVReader csvReader = new CSVReaderBuilder(reader)
+                     .withSkipLines(0)
+                     .withCSVParser(parser)
+                     .build()) {
+            for (String[] entries : csvReader.readAll()) {
                 List<CsvCell> cells = new LinkedList<>();
-                CSVReader csvReader = new CSVReaderBuilder(new StringReader(line))
-                        .withSkipLines(0)
-                        .withCSVParser(parser)
-                        .build();
-                String[] values = csvReader.readNext();
-                if (!Objects.isNull(values)) {
-                    for (String value : values) {
-                        cells.add(new CsvCell(value));
-                    }
-                    records.add(new CsvRecord(cells));
+                for (String value : entries) {
+                    cells.add(new CsvCell(value));
                 }
+                records.add(new CsvRecord(cells));
             }
         }
         return records;
