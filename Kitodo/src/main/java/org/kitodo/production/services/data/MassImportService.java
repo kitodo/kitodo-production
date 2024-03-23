@@ -100,6 +100,9 @@ public class MassImportService {
                      .withCSVParser(parser)
                      .build()) {
             for (String[] entries : csvReader.readAll()) {
+                if (isSingleEmptyEntry(entries)) {
+                    continue; // Skip processing this line
+                }
                 List<CsvCell> cells = new LinkedList<>();
                 for (String value : entries) {
                     cells.add(new CsvCell(value));
@@ -108,6 +111,11 @@ public class MassImportService {
             }
         }
         return records;
+    }
+
+    // Helper method to check if a line has a single empty entry
+    private boolean isSingleEmptyEntry(String[] entries) {
+        return entries.length == 1 && entries[0].isEmpty();
     }
 
     /**
