@@ -269,11 +269,10 @@ public class QueryURLImport implements ExternalDataImportInterface {
         String prefix = Objects.nonNull(idPrefix) && !identifier.startsWith(idPrefix) ? idPrefix : "";
         String idParameter = SearchInterfaceType.OAI.equals(dataImport.getSearchInterfaceType()) ? OAI_IDENTIFIER
                 : dataImport.getIdParameter();
-        String queryParameter = idParameter + EQUALS_OPERAND + prefix + identifier;
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            fullUrl += URLEncoder.encode(queryParameter, encoding);
+            fullUrl += URLEncoder.encode(idParameter + EQUALS_OPERAND + prefix + identifier, encoding);
         } else {
-            fullUrl += queryParameter;
+            fullUrl += URLEncoder.encode(idParameter, encoding) + EQUALS_OPERAND + URLEncoder.encode(prefix + identifier, encoding);
         }
         try {
             this.reinitializeHttpClient(dataImport.getUsername(), dataImport.getPassword());
