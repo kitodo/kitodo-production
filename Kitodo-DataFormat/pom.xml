@@ -122,6 +122,7 @@
                             <generateDirectory>${project.build.directory}/generated-sources/xjc</generateDirectory>
                             <args>
                                 <arg>-Xequals</arg>
+                                <arg>-XhashCode</arg>
                                 <arg>-extension</arg>
                                 <arg>-Xnamespace-prefix</arg>
                             </args>
