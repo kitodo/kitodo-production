@@ -77,7 +77,7 @@ public class MediaPartial {
 
         MediaPartial mediaPartial = (MediaPartial) o;
 
-        return (Objects.isNull(begin) && Objects.isNull(mediaPartial.begin)) || begin.equals(mediaPartial.getBegin());
+        return Objects.equals(begin, mediaPartial.begin);
     }
 
     @Override
