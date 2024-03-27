@@ -61,6 +61,6 @@ public class AuthorityDAO extends BaseDAO<Authority> {
         if (!authorities.isEmpty()) {
             return authorities.get(0);
         }
-        throw new DAOException("Object cannot be found in database");
+        throw new DAOException(String.format("Authority '%s' cannot be found in database", title));
     }
 }

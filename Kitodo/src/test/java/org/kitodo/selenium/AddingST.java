@@ -66,7 +66,7 @@ public class AddingST extends BaseTestSelenium {
     private static RoleEditPage roleEditPage;
     private static UserEditPage userEditPage;
     private static ImportConfigurationEditPage importConfigurationEditPage;
-    private static final String TEST_METADATA_FILE = "testMetadataFileServiceTest.xml";
+    private static final String TEST_METADATA_FILE = "testMultiVolumeWorkMeta.xml";
     private static int secondProcessId = -1;
 
     @BeforeClass
