@@ -485,8 +485,8 @@ from system library in Java 11+ -->
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
-                <artifactId>javax.json</artifactId>
-                <version>1.1.4</version>
+                <artifactId>jakarta.json</artifactId>
+                <version>1.1.6</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
