@@ -53,7 +53,7 @@
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
         <hibernate.version>5.6.10.Final</hibernate.version>
-        <jaxb.api.version>2.3.1</jaxb.api.version>
+        <jaxb.api.version>2.3.3</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
@@ -226,8 +226,8 @@
             <!-- Include jaxb runtime dependencies which have been removed
 from system library in Java 11+ -->
             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jaxb.api.version}</version>
             </dependency>
             <dependency>
