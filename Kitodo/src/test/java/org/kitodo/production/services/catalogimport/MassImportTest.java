@@ -112,21 +112,21 @@ public class MassImportTest {
         Assert.assertEquals("Metadata for record with ID 123 contains wrong place", "Hamburg",
                 metadataSet.get(PLACE).get(0));
 
-        List<CsvRecord> csvRecords_multiple_values = service.parseLines(CSV_LINES_MUTLIPLE_VALUES,
+        List<CsvRecord> csvRecordsMultipleValues = service.parseLines(CSV_LINES_MUTLIPLE_VALUES,
                 StringConstants.COMMA_DELIMITER);
-        Map<String, Map<String, List<String>>> metadata_multiple_values = service.
-                prepareMetadata(METADATA_KEYS_MUTLIPLE_VALUES, csvRecords_multiple_values);
-        Map<String, List<String>> metadataSet_multiple_values = metadata_multiple_values.get("321");
-        Assert.assertNotNull("Metadata for record with ID 321 is null", metadataSet_multiple_values);
+        Map<String, Map<String, List<String>>> metadataMultipleValues = service.
+                prepareMetadata(METADATA_KEYS_MUTLIPLE_VALUES, csvRecordsMultipleValues);
+        Map<String, List<String>> metadataSetMultipleValues = metadataMultipleValues.get("321");
+        Assert.assertNotNull("Metadata for record with ID 321 is null", metadataSetMultipleValues);
         Assert.assertEquals("Metadata for record with ID 321 contains wrong title", 2,
-                metadataSet_multiple_values.size());
+                metadataSetMultipleValues.size());
         Assert.assertTrue("Metadata for record with ID 321 does not contain place metadata",
-                metadataSet_multiple_values.containsKey(PLACE));
+                metadataSetMultipleValues.containsKey(PLACE));
         Assert.assertEquals("Metadata for record with ID 123 has wrong size of place list", 2,
-                metadataSet_multiple_values.get(PLACE).size());
+                metadataSetMultipleValues.get(PLACE).size());
         Assert.assertEquals("Metadata for record with ID 321 has wrong size of place list", "Hamburg",
-                metadataSet_multiple_values.get(PLACE).get(0));
+                metadataSetMultipleValues.get(PLACE).get(0));
         Assert.assertEquals("Metadata for record with ID 321 contains wrong place", "Berlin",
-                metadataSet_multiple_values.get(PLACE).get(1));
+                metadataSetMultipleValues.get(PLACE).get(1));
     }
 }
