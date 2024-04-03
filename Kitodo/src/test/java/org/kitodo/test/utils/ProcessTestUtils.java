@@ -52,6 +52,7 @@ public class ProcessTestUtils {
     private static final int TEST_TEMPLATE_ID = 1;
     private static final String ID_PLACEHOLDER = "IDENTIFIER_PLACEHOLDER";
     public static final String testFileForHierarchyParent = "multivalued_metadata.xml";
+    public static final String testFileForLongNumbers = "testMetadataWithLongNumbers.xml";
     public static final String testFileChildProcessToKeep = "testMetadataForChildProcessToKeep.xml";
     private static final String testFileChildProcessToRemove = "testMetadataForKitodoScript.xml";
     private static final Map<String, String> hierarchyProcessTitlesAndFiles;

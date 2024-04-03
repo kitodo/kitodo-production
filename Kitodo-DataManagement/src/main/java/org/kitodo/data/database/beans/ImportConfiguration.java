@@ -853,4 +853,52 @@ public class ImportConfiguration extends BaseBean {
         }
         return false;
     }
+
+    /**
+     * hashCode method of current class.
+     *
+     * @see java.lang.Object#hashCode()
+     * @return int
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(
+                title,
+                description,
+                configurationType,
+                prestructuredImport,
+                interfaceType,
+                returnFormat,
+                metadataFormat,
+                defaultImportDepth,
+                parentElementTrimMode,
+                host,
+                scheme,
+                path,
+                port,
+                anonymousAccess,
+                username,
+                password,
+                queryDelimiter,
+                itemFieldXpath,
+                itemFieldOwnerSubPath,
+                itemFieldOwnerMetadata,
+                itemFieldSignatureSubPath,
+                itemFieldSignatureMetadata,
+                idPrefix,
+                searchFields,
+                urlParameters,
+                defaultSearchField,
+                idSearchField,
+                parentSearchField,
+                defaultTemplateProcess,
+                mappingFiles,
+                parentMappingFile,
+                sruVersion,
+                sruRecordSchema,
+                oaiMetadataPrefix,
+                metadataRecordIdXPath,
+                metadataRecordTitleXPath
+        );
+    }
 }

@@ -34,7 +34,7 @@ public class FileNameBeginsAndEndsWithFilter implements FilenameFilter {
      *             Strings
      */
     public FileNameBeginsAndEndsWithFilter(String begin, String end) {
-        if (begin == null || begin.equals("") || end == null || end.equals("")) {
+        if (begin == null || begin.isEmpty() || end == null || end.isEmpty()) {
             throw new IllegalArgumentException("No filter or empty filter for file begin or end is given.");
         }
         this.begin = begin;

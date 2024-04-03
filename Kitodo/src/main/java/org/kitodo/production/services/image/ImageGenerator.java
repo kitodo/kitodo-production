@@ -339,12 +339,9 @@ public class ImageGenerator implements Runnable {
      */
     private Image retrieveJavaImage(URI sourceImage, Folder imageProperties) throws IOException {
         Optional<Integer> optionalDpi = imageProperties.getDpi();
-        Optional<Double> optionalImageScale = imageProperties.getImageScale();
         Optional<Integer> optionalImageSize = imageProperties.getImageSize();
         if (optionalDpi.isPresent()) {
             return imageService.changeDpi(sourceImage, optionalDpi.get());
-        } else if (optionalImageScale.isPresent()) {
-            return imageService.getScaledWebImage(sourceImage, optionalImageScale.get());
         } else if (optionalImageSize.isPresent()) {
             return imageService.getSizedWebImage(sourceImage, optionalImageSize.get());
         }

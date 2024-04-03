@@ -99,19 +99,6 @@ public class ImageManagement implements ImageManagementInterface {
     /**
      * {@inheritDoc}
      *
-     * @see org.kitodo.api.imagemanagement.ImageManagementInterface#getScaledWebImage(java.net.URI,
-     *      double)
-     */
-    @Override
-    public Image getScaledWebImage(URI sourceUri, double factor) throws IOException {
-        validateParameters(sourceUri, factor);
-        return summarize("scaledWebImage-", WEB_IMAGE_FORMAT, sourceUri, lambda -> lambda.resize(factor),
-            "Generating scaled web image from {} as {}, factor {}%", 100 * factor);
-    }
-
-    /**
-     * {@inheritDoc}
-     *
      * @see org.kitodo.api.imagemanagement.ImageManagementInterface#getSizedWebImage(java.net.URI,
      *      int)
      */

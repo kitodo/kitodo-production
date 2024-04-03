@@ -12,8 +12,11 @@
 package org.kitodo.production.helper.metadata;
 
 import java.net.URI;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalTime;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.ListIterator;
@@ -21,6 +24,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaPartial;
@@ -45,6 +50,33 @@ public class MediaPartialHelper {
      */
     public static Long convertFormattedTimeToMilliseconds(String formattedTime) {
         return Duration.between(LocalTime.MIN, LocalTime.parse(formattedTime)).toMillis();
+    }
+
+    /**
+     * Convert various time input formats to formatted time.
+     *
+     * @param time
+     *         The time input.
+     * @return The formatted time
+     */
+    public static String convertTimeToFormattedTime(String time) {
+        if (FORMATTED_TIME_PATTERN.matcher(time).matches()) {
+            return time;
+        }
+
+        String[] separatedMilliseconds = time.split("\\.");
+        Date date;
+        try {
+            date = DateUtils.parseDate(separatedMilliseconds[0], "HH:mm:ss", "mm:ss", "ss");
+            if (separatedMilliseconds.length == 2) {
+                String filledMilliseconds = StringUtils.rightPad(separatedMilliseconds[1], 3, "0");
+                date = new Date(date.getTime() + Integer.parseInt(filledMilliseconds));
+            }
+        } catch (ParseException | NumberFormatException e) {
+            return time;
+        }
+
+        return new SimpleDateFormat("HH:mm:ss.SSS").format(date);
     }
 
     /**

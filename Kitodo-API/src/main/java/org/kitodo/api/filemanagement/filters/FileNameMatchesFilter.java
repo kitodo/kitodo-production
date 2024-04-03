@@ -27,7 +27,7 @@ public class FileNameMatchesFilter implements FilenameFilter {
      *             it is thrown in case parameter is null or empty String
      */
     public FileNameMatchesFilter(String name) {
-        if (name == null || name.equals("")) {
+        if (name == null || name.isEmpty()) {
             throw new IllegalArgumentException("No filter or empty name is given.");
         }
         this.name = name;

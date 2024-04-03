@@ -97,15 +97,6 @@ public class ImageManagementIT {
     }
 
     @Test
-    public void testGetScaledWebImage() throws IOException, InfoException {
-        assert new File(_00000001_TIF).exists();
-        ImageManagementInterface module = new ImageManagement();
-        Image scaledWebImage = module.getScaledWebImage(new File(_00000001_TIF).toURI(), 0.3);
-        assertEquals((int) Math.round(0.3 * new Info(_00000001_TIF, true).getImageWidth()),
-            scaledWebImage.getWidth(null));
-    }
-
-    @Test
     public void testCreateDerivative() throws IOException, InfoException {
         assert new File(_00000001_TIF).exists();
         File maxDerivative = new File(_00000001_MAX_JPG);

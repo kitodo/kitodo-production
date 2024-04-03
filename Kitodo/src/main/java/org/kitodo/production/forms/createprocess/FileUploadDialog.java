@@ -92,7 +92,7 @@ public class FileUploadDialog extends MetadataImportDialog {
                 }
             }
 
-            if (createProcessForm.getProcesses().size() > 0 && additionalImport) {
+            if (!createProcessForm.getProcesses().isEmpty() && additionalImport) {
                 extendsMetadataTableOfMetadataTab(processes);
             } else {
                 this.createProcessForm.setProcesses(processes);
@@ -116,7 +116,7 @@ public class FileUploadDialog extends MetadataImportDialog {
         Collection<String> higherLevelIdentifier = this.createProcessForm.getRulesetManagement()
                 .getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
 
-        if (higherLevelIdentifier.size() > 0) {
+        if (!higherLevelIdentifier.isEmpty()) {
             ImportService importService = ServiceManager.getImportService();
             String parentID = importService.getParentID(internalDocument, higherLevelIdentifier.toArray()[0].toString(),
                     importConfiguration.getParentElementTrimMode());

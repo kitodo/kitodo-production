@@ -49,7 +49,7 @@
                 URI; if the type is specified, this applies. If a namespace has been specified, Production looks for an
                 XML file in the same directory whose file name is the same as the last segment of the namespace URI
                 and, if it finds it, makes the namespace elements available as a selection list.
-                
+
                 The attribute "minDigits" can be used with type="integer" to define a minimum number of digits, which
                 will save the value with leading zeroes, if it has less digits.
             </xs:documentation>
@@ -366,6 +366,7 @@
         <xs:attribute type="xs:boolean" name="alwaysShowing" default="false"/>
         <xs:attribute type="xs:boolean" name="editable" default="true"/>
         <xs:attribute type="xs:boolean" name="excluded" default="false"/>
+        <xs:attribute type="xs:boolean" name="filterable" default="false"/>
         <xs:attribute type="xs:boolean" name="multiline" default="false"/>
         <xs:attribute type="ruleset:Reimport" name="reimport" default="replace"/>
     </xs:complexType>

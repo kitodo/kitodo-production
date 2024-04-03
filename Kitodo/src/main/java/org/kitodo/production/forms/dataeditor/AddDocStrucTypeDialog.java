@@ -130,7 +130,7 @@ public class AddDocStrucTypeDialog {
         }
         if (preview && (!(StringUtils.isEmpty(selectFirstPageOnAddNode)
                 || StringUtils.isEmpty(this.selectLastPageOnAddNode))
-                || Objects.nonNull(this.preselectedViews) && this.preselectedViews.size() > 0)) {
+                || Objects.nonNull(this.preselectedViews) && !this.preselectedViews.isEmpty())) {
             dataEditor.getGalleryPanel().setGalleryViewMode(PREVIEW_MODE);
         } else {
             dataEditor.getGalleryPanel().setGalleryViewMode(LIST_MODE);
@@ -149,7 +149,7 @@ public class AddDocStrucTypeDialog {
     private void addMultiDocStruc() {
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
-            if (selectedMetadata != "") {
+            if (!selectedMetadata.isEmpty()) {
                 MetadataViewInterface metadataView = getMetadataViewFromKey(
                     docStructAddTypeSelectionSelectedItem, selectedMetadata);
                 MetadataEditor.addMultipleStructuresWithMetadata(elementsToAddSpinnerValue,
@@ -393,7 +393,7 @@ public class AddDocStrucTypeDialog {
     }
 
     private List<View> getViewsToAdd() {
-        if (Objects.nonNull(preselectedViews) && preselectedViews.size() > 0) {
+        if (Objects.nonNull(preselectedViews) && !preselectedViews.isEmpty()) {
             return preselectedViews;
         }
         try {

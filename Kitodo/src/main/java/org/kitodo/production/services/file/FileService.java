@@ -1114,7 +1114,7 @@ public class FileService {
         List<String> canonicals = getCanonicalFileNamePartsAndSanitizeAbsoluteURIs(workpiece, subfolders,
                 process.getProcessBaseUri());
 
-        if (currentMedia.size() == 0 && canonicals.size() > 0) {
+        if (currentMedia.isEmpty() && !canonicals.isEmpty()) {
             throw new MediaNotFoundException();
         }
 
@@ -1183,14 +1183,14 @@ public class FileService {
                     physicalDivision.getMediaFiles().put(entry.getKey(), mediaFile);
                 }
                 String fileCanonical = subfolder.getCanonical(mediaFile);
-                if ("".equals(unitCanonical)) {
+                if (StringUtils.isBlank(unitCanonical)) {
                     unitCanonical = fileCanonical;
                 } else if (!unitCanonical.equals(fileCanonical)) {
                     throw new InvalidImagesException("Ambiguous canonical file name part in the same physical division: \""
                             + unitCanonical + "\" and \"" + fileCanonical + "\"!");
                 }
             }
-            if (physicalDivision.getMediaFiles().size() > 0 && "".equals(unitCanonical)) {
+            if (!physicalDivision.getMediaFiles().isEmpty() && StringUtils.isBlank(unitCanonical)) {
                 throw new InvalidImagesException("Missing canonical file name part in physical division " + physicalDivision);
             }
             canonicals.add(unitCanonical);

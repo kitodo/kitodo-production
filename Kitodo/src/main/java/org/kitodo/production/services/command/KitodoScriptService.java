@@ -415,7 +415,7 @@ public class KitodoScriptService {
             for (Folder folder : process.getProject().getFolders()) {
                 if ((all || folders.contains(folder.getPath())) && !folder.equals(generatorSource)
                         && (folder.getDerivative().isPresent() || folder.getDpi().isPresent()
-                                || folder.getImageScale().isPresent() || folder.getImageSize().isPresent())) {
+                                || folder.getImageSize().isPresent())) {
                     outputFolders.add(new Subfolder(process, folder));
                     ungeneratableFolders.remove(folder.getPath());
                 }

@@ -30,7 +30,7 @@ public class FileNameEndsWithFilter implements FilenameFilter {
      *             it is thrown in case parameter is null or empty String
      */
     public FileNameEndsWithFilter(String end) {
-        if (end == null || end.equals("")) {
+        if (end == null || end.isEmpty()) {
             throw new IllegalArgumentException("No filter or empty filter for file end is given.");
         }
         this.end = end;
