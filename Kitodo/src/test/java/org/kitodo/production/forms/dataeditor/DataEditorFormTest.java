@@ -15,6 +15,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
@@ -24,6 +25,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class DataEditorFormTest {
+
+    private final static String TITLE_METADATA = "Test-Titel";
+    private final static String TITLE_METADATA_KEY = "maintitle";
 
     /**
      * Test consecutive page selection in data editor form.
@@ -59,6 +63,24 @@ public class DataEditorFormTest {
                 dataEditorForm.isSelected(firstPage, chapter));
         Assert.assertFalse("Second page in chapter should be recognized as not selected",
                 dataEditorForm.isSelected(secondPage, chapter));
+    }
+
+    /**
+     * Test retrieving structure element title.
+     */
+    @Test
+    public void shouldGetStructuralElementTitle() {
+        // configure data editor form
+        DataEditorForm dataEditorForm = new DataEditorForm();
+        dataEditorForm.getStructurePanel().setTitleMetadata(TITLE_METADATA_KEY);
+        // prepare test structure
+        LogicalDivision structure = new LogicalDivision();
+        MetadataEntry titleMetadata = new MetadataEntry();
+        titleMetadata.setKey(TITLE_METADATA_KEY);
+        titleMetadata.setValue(TITLE_METADATA);
+        structure.getMetadata().add(titleMetadata);
+        Assert.assertEquals("Wrong title metadata value retrieved from structure element", TITLE_METADATA,
+                dataEditorForm.getStructureElementTitle(structure));
     }
 
     private List<Pair<PhysicalDivision, LogicalDivision>> prepareSelectedMedia(boolean selectMiddlePage,
