@@ -14,7 +14,7 @@ package org.kitodo.test.utils;
 /**
  * This class is used to group constants used in various tests in one place from which they can be retrieved.
  */
-public class TestConstants {
+public final class TestConstants {
 
     public static final String MODS = "mods";
     public static final String GBV = "GBV";
