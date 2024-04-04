@@ -73,6 +73,7 @@ import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -104,16 +105,13 @@ public class ImportServiceIT {
     private static final List<String> CHILD_RECORD_IDS = Arrays.asList("9991", "9992", "9993");
     private static final String KALLIOPE_RECORD_ID = "999";
     private static final String CUSTOM_INTERFACE_RECORD_ID = "12345";
-    private static final int PORT = 8888;
     private static final int TEMPLATE_ID = 1;
     private static final int PROJECT_ID = 1;
     private static final int RULESET_ID = 1;
     private static final int EXPECTED_NR_OF_CHILDREN = 23;
     private static final String PICA_XML = "picaxml";
-    private static final String MODS = "mods";
     private static final String PICA_PPN = "pica.ppn";
     private static final String PICA_PARENT_ID = "pica.parentId";
-    private static final String EAD_PARENT_ID = "context.ead.id";
     private static final String firstProcess = "First process";
     private static final String TEST_PROCESS_TITLE = "Testtitel";
     private static final String KITODO = "kitodo";
@@ -136,7 +134,7 @@ public class ImportServiceIT {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
             return !processService.findByTitle(firstProcess).isEmpty();
         });
-        server = new StubServer(PORT).run();
+        server = new StubServer(MockDatabase.PORT).run();
         setupServer();
     }
 
@@ -527,9 +525,9 @@ public class ImportServiceIT {
         // REST endpoint for testing failed import of child records
         MockDatabase.addRestEndPointForSru(server, PICA_PARENT_ID + "=" + RECORD_ID, TEST_FILE_PATH_NUMBER_OF_HITS, PICA_XML, 1);
         // REST endpoint for testing successful import of child records
-        MockDatabase.addRestEndPointForSru(server, EAD_PARENT_ID + "=" + KALLIOPE_RECORD_ID, CHILD_RECORDS_PATH, MODS, 3);
+        MockDatabase.addRestEndPointForSru(server, TestConstants.EAD_PARENT_ID + "=" + KALLIOPE_RECORD_ID, CHILD_RECORDS_PATH, TestConstants.MODS, 3);
         // REST endpoint for testing retrieval of child records given existing parent process
-        MockDatabase.addRestEndPointForSru(server, EAD_PARENT_ID + "=" + PARENT_RECORD_CATALOG_ID, CHILD_RECORDS_PATH, MODS,3);
+        MockDatabase.addRestEndPointForSru(server, TestConstants.EAD_PARENT_ID + "=" + PARENT_RECORD_CATALOG_ID, CHILD_RECORDS_PATH, TestConstants.MODS,3);
         // REST endpoint for successful import from custom search interface
         MockDatabase.addRestEndPointForCustom(server, TEST_FILE_SUCCESS_RESPONSE_PATH, CUSTOM_INTERFACE_RECORD_ID,
                 "firstValue");

@@ -46,6 +46,9 @@
         <key id="CatalogIDDigital" use="recordIdentifier">
             <label>PPN (digital)</label>
         </key>
+        <key id="CatalogIDPredecessorPeriodical" use="higherlevelIdentifier">
+            <label>PPN (Überordnung)</label>
+        </key>
         <key id="CatalogIDSource" domain="source">
             <label>PPN (Vorlage)</label>
         </key>
