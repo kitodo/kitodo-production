@@ -190,11 +190,11 @@ public class ImportServiceIT {
         HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
         try {
             Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata,TITLE,"Band 1"));
+                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
             Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata,PLACE,"Hamburg"));
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
             Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata,PLACE,"Berlin"));
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
         } finally {
             ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
         }

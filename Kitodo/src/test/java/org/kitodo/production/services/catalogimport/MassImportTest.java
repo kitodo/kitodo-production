@@ -30,13 +30,12 @@ public class MassImportTest {
     private static final String ID = "ID";
     private static final String TITLE = "Title";
     private static final String PLACE = "Place";
-    private static final String SECOND_PLACE = "Place";
     private static final List<String> METADATA_KEYS  = Arrays.asList(ID, TITLE, PLACE);
     private static final String CSV_FIRST_LINE = "123, Band 1, Hamburg";
     private static final String CSV_SECOND_LINE = "456, Band 2, Dresden";
     private static final String CSV_THIRD_LINE = "789, Band 3, Berlin";
     private static final List<String> CSV_LINES = Arrays.asList(CSV_FIRST_LINE, CSV_SECOND_LINE, CSV_THIRD_LINE);
-    private static final List<String> METADATA_KEYS_MUTLIPLE_VALUES  = Arrays.asList(ID, TITLE, PLACE, SECOND_PLACE);
+    private static final List<String> METADATA_KEYS_MUTLIPLE_VALUES  = Arrays.asList(ID, TITLE, PLACE, PLACE);
     private static final String CSV_FIRST_LINE_MUTLIPLE_VALUES  = "321, Band 1, Hamburg, Berlin";
     private static final String CSV_SECOND_LINE_MUTLIPLE_VALUES  = "654, Band 2, Dresden, Hannover";
     private static final List<String> CSV_LINES_MUTLIPLE_VALUES = Arrays.asList(CSV_FIRST_LINE_MUTLIPLE_VALUES,
@@ -103,7 +102,7 @@ public class MassImportTest {
         Assert.assertEquals("Wrong number of metadata sets prepared", 3, metadata.size());
         Map<String, List<String>> metadataSet = metadata.get("123");
         Assert.assertNotNull("Metadata for record with ID 123 is null", metadataSet);
-        Assert.assertEquals("Metadata for record with ID 123 contains wrong title", 2,
+        Assert.assertEquals("Wrong number of metadata sets prepared", 2,
                 metadataSet.size());
         Assert.assertEquals("Metadata for record with ID 123 contains wrong title", "Band 1",
                 metadataSet.get(TITLE).get(0));
