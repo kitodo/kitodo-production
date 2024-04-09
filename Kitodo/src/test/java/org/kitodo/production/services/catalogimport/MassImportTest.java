@@ -123,7 +123,7 @@ public class MassImportTest {
                 metadataSetMultipleValues.containsKey(PLACE));
         Assert.assertEquals("Metadata for record with ID 123 has wrong size of place list", 2,
                 metadataSetMultipleValues.get(PLACE).size());
-        Assert.assertEquals("Metadata for record with ID 321 has wrong size of place list", "Hamburg",
+        Assert.assertEquals("Metadata for record with ID 321 contains wrong place", "Hamburg",
                 metadataSetMultipleValues.get(PLACE).get(0));
         Assert.assertEquals("Metadata for record with ID 321 contains wrong place", "Berlin",
                 metadataSetMultipleValues.get(PLACE).get(1));
