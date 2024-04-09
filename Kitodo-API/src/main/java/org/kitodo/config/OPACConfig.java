@@ -14,14 +14,19 @@ package org.kitodo.config;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
-import org.apache.commons.configuration.tree.ConfigurationNode;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.event.EventListener;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -68,7 +73,7 @@ public class OPACConfig {
      * @return value of parameter
      */
     public static String getConfigValue(String catalogName, String parameter) throws ParameterNotFoundException {
-        HierarchicalConfiguration opacConfiguration = getCatalog(catalogName);
+        HierarchicalConfiguration<ImmutableNode> opacConfiguration = getCatalog(catalogName);
         if (Objects.isNull(opacConfiguration)) {
             throw new ParameterNotFoundException("No configuration found for catalog '" + catalogName + "'!");
         } else {
@@ -115,14 +120,9 @@ public class OPACConfig {
      * @return String description for catalog's "config"
      */
     public static String getOPACDescription(String catalogName) {
-        HierarchicalConfiguration catalogConfiguration = getCatalog(catalogName);
-        List<ConfigurationNode> descriptionAttributes = catalogConfiguration.getRoot().getAttributes(DESCRIPTION);
-        if (descriptionAttributes.isEmpty()) {
-            return NOT_AVAILABLE;
-        } else {
-            return descriptionAttributes.stream().map(cn -> cn.getValue().toString())
-                    .collect(Collectors.joining(System.lineSeparator()));
-        }
+        HierarchicalConfiguration<ImmutableNode> catalogConfiguration = getCatalog(catalogName);
+        Map<String, Object> attributes = catalogConfiguration.getNodeModel().getNodeHandler().getRootNode().getAttributes();
+        return (String) attributes.getOrDefault(DESCRIPTION, NOT_AVAILABLE);
     }
 
     /**
@@ -130,15 +130,15 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by title
      * @return HierarchicalConfiguration for catalog's "config"
      */
-    private static HierarchicalConfiguration getOPACConfiguration(String catalogName) {
+    private static HierarchicalConfiguration<ImmutableNode> getOPACConfiguration(String catalogName) {
         return getCatalog(catalogName).configurationAt("config");
     }
 
     private static String getUrlConfigPart(String catalogName, String parameter)
             throws MandatoryParameterMissingException {
-        HierarchicalConfiguration config = getOPACConfiguration(catalogName);
+        HierarchicalConfiguration<ImmutableNode> config = getOPACConfiguration(catalogName);
         if (Objects.nonNull(config)) {
-            for (HierarchicalConfiguration param : config.configurationsAt("param")) {
+            for (HierarchicalConfiguration<ImmutableNode> param : config.configurationsAt("param")) {
                 if (parameter.equals(param.getString("[@name]"))) {
                     return param.getString("[@value]");
                 }
@@ -177,7 +177,7 @@ public class OPACConfig {
     /**
      * Get port parameter of catalog configuration with name 'catalogName'.
      * @param catalogName name of catalog configuration
-     * @return port value as Integer
+     * @return port value as String
      */
     public static String getPort(String catalogName) throws MandatoryParameterMissingException {
         return getUrlConfigPart(catalogName, PORT);
@@ -188,7 +188,7 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by title
      * @return HierarchicalConfiguration for catalog's "searchFields"
      */
-    public static HierarchicalConfiguration getSearchFields(String catalogName) {
+    public static HierarchicalConfiguration<ImmutableNode> getSearchFields(String catalogName) {
         return getCatalog(catalogName).configurationAt("searchFields");
     }
 
@@ -199,7 +199,7 @@ public class OPACConfig {
      * @return String name of catalogs default "searchField" if it exists; empty String otherwise
      */
     public static String getDefaultSearchField(String catalogName) {
-        for (HierarchicalConfiguration searchField : getSearchFields(catalogName).configurationsAt("searchField")) {
+        for (HierarchicalConfiguration<ImmutableNode> searchField : getSearchFields(catalogName).configurationsAt("searchField")) {
             if (TRUE.equals(searchField.getString(DEFAULT))) {
                 String defaultSearchField = searchField.getString("[@label]");
                 if (StringUtils.isNotBlank(defaultSearchField)) {
@@ -229,15 +229,15 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by its title
      * @return HierarchicalConfiguration for catalog's "urlParameters"
      */
-    public static HierarchicalConfiguration getUrlParameters(String catalogName) {
+    public static HierarchicalConfiguration<ImmutableNode> getUrlParameters(String catalogName) {
         return getCatalog(catalogName).configurationAt("urlParameters");
     }
 
     private static String getUrlParameter(String catalogName, String parameter)
             throws MandatoryParameterMissingException {
-        HierarchicalConfiguration urlParameters = getCatalog(catalogName).configurationAt("urlParameters");
+        HierarchicalConfiguration<ImmutableNode> urlParameters = getCatalog(catalogName).configurationAt("urlParameters");
         if (Objects.nonNull(urlParameters)) {
-            for (HierarchicalConfiguration param : urlParameters.configurationsAt("param")) {
+            for (HierarchicalConfiguration<ImmutableNode> param : urlParameters.configurationsAt("param")) {
                 if (parameter.equals(param.getString("[@name]"))) {
                     return param.getString("[@value]");
                 }
@@ -275,7 +275,7 @@ public class OPACConfig {
      */
     public static List<String> getXsltMappingFiles(String catalogName) {
         return getCatalog(catalogName).configurationAt("mappingFiles").configurationsAt("file").stream()
-                .map(c -> c.getRoot().getValue().toString()).collect(Collectors.toList());
+                .map(c -> c.getNodeModel().getNodeHandler().getRootNode().getValue().toString()).collect(Collectors.toList());
     }
 
     /**
@@ -299,10 +299,10 @@ public class OPACConfig {
     /**
      * Retrieve the "parentElement" of the catalog identified by its title.
      * @param catalogName String identifying the catalog by its title
-     * @return HierarchicalConfiguration for catalog's "parentElement"
+     * @return String for catalog's "parentElement"
      */
     public static String getParentIDElement(String catalogName) {
-        for (HierarchicalConfiguration field : getSearchFields(catalogName).configurationsAt("searchField")) {
+        for (HierarchicalConfiguration<ImmutableNode> field : getSearchFields(catalogName).configurationsAt("searchField")) {
             if (TRUE.equals(field.getString("[@parentElement]"))) {
                 String parentIDElement = field.getString("[@label]");
                 if (StringUtils.isNotBlank(parentIDElement)) {
@@ -327,7 +327,7 @@ public class OPACConfig {
      * Load the "identifierParameter" of the catalog used to retrieve specific
      * individual records from that catalog.
      * @param catalogName String identifying the catalog by its title
-     * @return HierarchicalConfiguration for catalog's "identifierParameter"
+     * @return String for catalog's "identifierParameter"
      */
     public static String getIdentifierParameter(String catalogName) {
         return getCatalog(catalogName).getString("identifierParameter[@value]");
@@ -347,7 +347,7 @@ public class OPACConfig {
      * Load the name of the metadata type that is used to store the catalog ID
      * of a specific record in the internal metadata format.
      * @param catalogName String identifying the catalog by its title
-     * @return HierarchicalConfiguration for catalog's "identifierMetadata"
+     * @return String for catalog's "identifierMetadata"
      */
     public static String getIdentifierMetadata(String catalogName) {
         return getCatalog(catalogName).getString("identifierMetadata[@value]");
@@ -472,13 +472,14 @@ public class OPACConfig {
 
     /**
      * Retrieve the configuration for the passed catalog name from config file.
+     *
      * @param catalogName String identifying the catalog by attribute "title"
      * @return HierarchicalConfiguration for single catalog
      */
-    public static HierarchicalConfiguration getCatalog(String catalogName) {
+    public static HierarchicalConfiguration<ImmutableNode> getCatalog(String catalogName) {
         XMLConfiguration conf = getConfig();
         int countCatalogues = conf.getMaxIndex("catalogue");
-        HierarchicalConfiguration catalog = null;
+        HierarchicalConfiguration<ImmutableNode> catalog = null;
         for (int i = 0; i <= countCatalogues; i++) {
             String title = conf.getString("catalogue(" + i + ")[@title]");
             if (title.equals(catalogName)) {
@@ -493,17 +494,14 @@ public class OPACConfig {
     }
 
     private static XMLConfiguration getConfig() {
-        if (config != null) {
-            return config;
+        if (Objects.isNull(config)) {
+            try {
+                config = getKitodoOpacConfiguration();
+            } catch (ConfigurationException e) {
+                logger.error(e);
+                config = new XMLConfiguration();
+            }
         }
-        try {
-            config = getKitodoOpacConfiguration();
-        } catch (ConfigurationException e) {
-            logger.error(e);
-            config = new XMLConfiguration();
-        }
-        config.setListDelimiter('&');
-        config.setReloadingStrategy(new FileChangedReloadingStrategy());
         return config;
     }
 
@@ -518,6 +516,15 @@ public class OPACConfig {
             String message = "File not found: " + kitodoConfigOpacFile.getAbsolutePath();
             throw new ConfigException(message, new FileNotFoundException(message));
         }
-        return new XMLConfiguration(kitodoConfigOpacFile.getFile());
+        // Create and initialize the builder
+        ReloadingFileBasedConfigurationBuilder<XMLConfiguration> builder =
+            new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class)
+                .configure(new Parameters().xml()
+                    .setFile(kitodoConfigOpacFile.getFile())
+                    .setListDelimiterHandler(new DefaultListDelimiterHandler('&')));
+        // Register an event listener for triggering reloading checks
+        builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
+            (EventListener) event -> builder.getReloadingController().checkForReloading(null));
+        return builder.getConfiguration();
     }
 }

@@ -24,9 +24,11 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.HierarchicalConfiguration;
+import org.apache.commons.configuration2.HierarchicalConfiguration;
+import org.apache.commons.configuration2.ex.ConfigurationRuntimeException;
+import org.apache.commons.configuration2.tree.ImmutableNode;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
@@ -74,7 +76,7 @@ public class CatalogConfigurationImporter {
     private void convertOpacConfig(String catalogName, List<String> currentConfigurations) throws DAOException,
             UndefinedMappingFileException, MappingFilesMissingException, MandatoryParameterMissingException,
             InvalidPortException, URISyntaxException, IOException {
-        HierarchicalConfiguration opacConfiguration = OPACConfig.getCatalog(catalogName);
+        HierarchicalConfiguration<ImmutableNode> opacConfiguration = OPACConfig.getCatalog(catalogName);
         String fileUploadTitle = catalogName + FILE_UPLOAD_DEFAULT_POSTFIX;
         if (OPACConfig.getFileUploadConfig(catalogName) && !currentConfigurations.contains(fileUploadTitle)) {
             createFileUploadConfiguration(catalogName, fileUploadTitle);
@@ -119,7 +121,7 @@ public class CatalogConfigurationImporter {
         try {
             importConfiguration.setUsername(OPACConfig.getUsername(opacTitle));
             importConfiguration.setPassword(OPACConfig.getPassword(opacTitle));
-        } catch (IllegalArgumentException e) {
+        } catch (ConfigurationRuntimeException e) {
             logger.info("No credentials configured for configuration '" + opacTitle + "'.");
         }
     }
@@ -206,7 +208,7 @@ public class CatalogConfigurationImporter {
 
     private List<SearchField> getSearchFields(ImportConfiguration configuration) {
         List<SearchField> searchFields = new LinkedList<>();
-        for (HierarchicalConfiguration searchFieldConfig : OPACConfig.getSearchFields(configuration.getTitle())
+        for (HierarchicalConfiguration<ImmutableNode> searchFieldConfig : OPACConfig.getSearchFields(configuration.getTitle())
                 .configurationsAt(SEARCH_FIELD)) {
             SearchField searchField = new SearchField();
             searchField.setLabel(searchFieldConfig.getString(LABEL));
@@ -226,7 +228,7 @@ public class CatalogConfigurationImporter {
             for (String filename : OPACConfig.getXsltMappingFiles(configuration.getTitle())) {
                 mappingFiles.add(getConfiguredMappingFile(allMappingFiles, filename, configuration));
             }
-        } catch (IllegalArgumentException e) {
+        } catch (ConfigurationRuntimeException e) {
             logger.info("No 'mappingFiles' element found in catalog configuration '" + configuration.getTitle()
                     + "', trying to determine default mapping files.");
             String formatName = OPACConfig.getMetadataFormat(configuration.getTitle());
@@ -353,7 +355,7 @@ public class CatalogConfigurationImporter {
                         }
                     }
                 }
-            } catch (IllegalArgumentException e) {
+            } catch (ConfigurationRuntimeException e) {
                 logger.error("Unable to import OPAC configuration '" + catalogName + "' (" + e.getMessage() + ")");
             }
         }
