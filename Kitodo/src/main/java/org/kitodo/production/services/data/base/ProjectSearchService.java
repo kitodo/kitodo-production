@@ -25,10 +25,10 @@ import org.kitodo.data.elasticsearch.index.Indexer;
 import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BaseDTO;
+import org.kitodo.data.interfaces.DataInterface;
 import org.kitodo.production.services.ServiceManager;
 
-public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
+public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends DataInterface, V extends BaseDAO<T>>
         extends ClientSearchService<T, S, V> {
 
     private final String projectKey;

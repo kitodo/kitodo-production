@@ -58,7 +58,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -261,7 +261,7 @@ public class ProcessServiceIT {
         process.setTitle(processTitle);
         ServiceManager.getProcessService().save(process);
 
-        List<ProcessDTO> byAnything = processService.findByAnything("ith-hyphen_an");
+        List<ProcessInterface> byAnything = processService.findByAnything("ith-hyphen_an");
         assertFalse("nothing found", byAnything.isEmpty());
         assertEquals("wrong process found", processTitle, byAnything.get(0).getTitle());
 
@@ -288,31 +288,31 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByProperty() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Process Property", "first value");
+        List<ProcessInterface> processByProperty = processService.findByProperty("Process Property", "first value");
         assertEquals(1, processByProperty.size());
     }
 
     @Test
     public void shouldNotFindByWrongPropertyTitle() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "first value");
+        List<ProcessInterface> processByProperty = processService.findByProperty("test Property", "first value");
         assertTrue(processByProperty.isEmpty());
     }
 
     @Test
     public void shouldNotFindByWrongPropertyTitleAndValue() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "test value");
+        List<ProcessInterface> processByProperty = processService.findByProperty("test Property", "test value");
         assertTrue(processByProperty.isEmpty());
     }
 
     @Test
     public void shouldNotFindByTokenizedPropertyTitle() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "first value");
+        List<ProcessInterface> processByProperty = processService.findByProperty("Property", "first value");
         assertTrue(processByProperty.isEmpty());
     }
 
     @Test
     public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "test value");
+        List<ProcessInterface> processByProperty = processService.findByProperty("Property", "test value");
         assertTrue(processByProperty.isEmpty());
     }
 
@@ -434,7 +434,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetBatchId() throws Exception {
-        ProcessDTO process = processService.findById(1);
+        ProcessInterface process = processService.findById(1);
         String batchId = processService.getBatchID(process);
         boolean condition = batchId.equals("First batch, Third batch");
         assertTrue("BatchId doesn't match to given plain text!", condition);
@@ -480,7 +480,7 @@ public class ProcessServiceIT {
         processService.save(secondProcess);
 
         QueryBuilder querySortHelperStatusTrue = processService.getQueryForClosedProcesses();
-        List<ProcessDTO> byQuery = processService.findByQuery(querySortHelperStatusTrue, true);
+        List<ProcessInterface> byQuery = processService.findByQuery(querySortHelperStatusTrue, true);
 
         Assert.assertEquals("Found the wrong amount of Processes", 1 ,byQuery.size());
         secondProcess.setSortHelperStatus(sortHelperStatusOld);
@@ -597,14 +597,14 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(2);
-        assertTrue(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
+        ProcessInterface processInterface = processService.findById(2);
+        assertTrue(processService.isProcessAssignedToOnlyOneBatch(processInterface.getBatches()));
     }
 
     @Test
     public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(1);
-        assertFalse(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
+        ProcessInterface processInterface = processService.findById(1);
+        assertFalse(processService.isProcessAssignedToOnlyOneBatch(processInterface.getBatches()));
     }
 
     @Test

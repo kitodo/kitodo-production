@@ -14,13 +14,16 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.interfaces.ProcessInterface;
+
 /**
  * Batch DTO object.
  */
-public class BatchDTO extends BaseDTO {
+public class BatchDTO extends BaseDTO implements BatchInterface {
 
     private String title;
-    private List<ProcessDTO> processes = new ArrayList<>();
+    private List<ProcessInterface> processes = new ArrayList<>();
 
     /**
      * Get title.
@@ -46,7 +49,7 @@ public class BatchDTO extends BaseDTO {
      *
      * @return List of processes as ProcessDTO
      */
-    public List<ProcessDTO> getProcesses() {
+    public List<ProcessInterface> getProcesses() {
         return processes;
     }
 
@@ -56,7 +59,7 @@ public class BatchDTO extends BaseDTO {
      * @param processes
      *            as List of processes as ProcessDTO
      */
-    public void setProcesses(List<ProcessDTO> processes) {
+    public void setProcesses(List<ProcessInterface> processes) {
         this.processes = processes;
     }
 }

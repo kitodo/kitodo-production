@@ -18,14 +18,6 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -133,13 +125,14 @@ import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.PropertyInterface;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
-import org.kitodo.production.dto.BatchDTO;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.PropertyDTO;
-import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
@@ -173,7 +166,15 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ProcessService extends ProjectSearchService<Process, ProcessDTO, ProcessDAO> {
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
+public class ProcessService extends ProjectSearchService<Process, ProcessInterface, ProcessDAO> {
     private static final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
@@ -383,7 +384,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     @Override
-    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
+    public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
     }
@@ -400,7 +401,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return List of loaded processes
      * @throws DataException if processes cannot be loaded from search index
      */
-    public List<ProcessDTO> loadData(int first, int pageSize, String sortField,
+    public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
                                      org.primefaces.model.SortOrder sortOrder, Map filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         String filter = ServiceManager.getFilterService().parseFilterString(filters);
@@ -591,9 +592,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param metadata
      *            key is metadata tag and value is metadata content
-     * @return list of ProcessDTO objects with processes for specific metadata tag
+     * @return list of ProcessInterface objects with processes for specific metadata tag
      */
-    public List<ProcessDTO> findByMetadata(Map<String, String> metadata) throws DataException {
+    public List<ProcessInterface> findByMetadata(Map<String, String> metadata) throws DataException {
         return findByMetadata(metadata, false);
     }
 
@@ -604,9 +605,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            key is metadata tag and value is metadata content
      * @param exactMatch
      *            online return exact matches
-     * @return list of ProcessDTO objects with processes for specific metadata tag
+     * @return list of ProcessInterface objects with processes for specific metadata tag
      */
-    public List<ProcessDTO> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
+    public List<ProcessInterface> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
         String nameSearchKey = METADATA_SEARCH_KEY + ".name";
         String contentSearchKey = METADATA_SEARCH_KEY + ".content";
         if (exactMatch) {
@@ -633,8 +634,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @throws DataException
      *             when there is an error on conversion
      */
-    public List<ProcessDTO> findByTitle(String title) throws DataException {
-        return convertJSONObjectsToDTOs(findByTitle(title, true), true);
+    public List<ProcessInterface> findByTitle(String title) throws DataException {
+        return convertJSONObjectsToInterfaces(findByTitle(title, true), true);
     }
 
     /**
@@ -642,11 +643,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param searchQuery
      *            the query word or phrase
-     * @return a List of found ProcessDTOs
+     * @return a List of found ProcessInterfaces
      * @throws DataException
      *             when accessing the elasticsearch server fails
      */
-    public List<ProcessDTO> findByAnything(String searchQuery) throws DataException {
+    public List<ProcessInterface> findByAnything(String searchQuery) throws DataException {
         NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY,
             matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
         NestedQueryBuilder nestedQueryForMetadataGroupContent = nestedQuery(METADATA_GROUP_SEARCH_KEY,
@@ -770,7 +771,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @throws DataException
      *             if the search engine fails
      */
-    public List<ProcessDTO> findLinkableChildProcesses(String searchInput, int rulesetId,
+    public List<ProcessInterface> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException {
 
         BoolQueryBuilder query = new BoolQueryBuilder()
@@ -778,10 +779,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                         .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true))
                         .should(new WildcardQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*")))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-        List<ProcessDTO> linkableProcesses = new LinkedList<>();
+        List<ProcessInterface> linkableProcesses = new LinkedList<>();
 
-        List<ProcessDTO> processDTOS = findByQuery(query, false);
-        for (ProcessDTO process : processDTOS) {
+        List<ProcessInterface> processInterfaces = findByQuery(query, false);
+        for (ProcessInterface process : processInterfaces) {
             if (allowedStructuralElementTypes.contains(getBaseType(process.getId()))) {
                 linkableProcesses.add(process);
             }
@@ -807,7 +808,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @throws DataException
      *             if the search engine fails
      */
-    public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
+    public List<ProcessInterface> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException {
 
         BoolQueryBuilder processQuery = new BoolQueryBuilder()
@@ -830,7 +831,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            of property
      * @return list of JSON objects with processes for specific property
      */
-    public List<ProcessDTO> findByProperty(String title, String value) throws DataException {
+    public List<ProcessInterface> findByProperty(String title, String value) throws DataException {
         return findByQuery(createPropertyQuery(title, value), true);
     }
 
@@ -854,7 +855,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return nestedQuery(ProcessTypeField.PROPERTIES.toString(), pairQuery, ScoreMode.Total);
     }
 
-    List<ProcessDTO> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
+    List<ProcessInterface> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
         QueryBuilder query = createSetQuery("project.id", projectIds, true);
         return findByQuery(query, related);
     }
@@ -896,139 +897,139 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
-     * Convert list of DTOs to list of beans.
+     * Convert list of Interfaces to list of beans.
      *
      * @param dtos
-     *            list of DTO objects
+     *            list of Interface objects
      * @return list of beans
      */
-    public List<Process> convertDtosToBeans(List<ProcessDTO> dtos) throws DAOException {
+    public List<Process> convertDtosToBeans(List<ProcessInterface> dtos) throws DAOException {
         List<Process> processes = new ArrayList<>();
-        for (ProcessDTO processDTO : dtos) {
-            processes.add(getById(processDTO.getId()));
+        for (ProcessInterface processInterface : dtos) {
+            processes.add(getById(processInterface.getId()));
         }
         return processes;
     }
 
     @Override
-    public ProcessDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        ProcessDTO processDTO = new ProcessDTO();
+    public ProcessInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+        ProcessInterface processInterface = DTOFactory.instance().newProcess();
         if (!jsonObject.isEmpty()) {
-            processDTO.setId(getIdFromJSONObject(jsonObject));
-            processDTO.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
-            processDTO.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
-            processDTO.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
-            processDTO.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
-            processDTO.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
-            processDTO.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
-            processDTO.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
-            processDTO.setSortHelperStatus(ProcessTypeField.SORT_HELPER_STATUS.getStringValue(jsonObject));
-            processDTO.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
-            processDTO.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
-            processDTO.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
-            processDTO.setNumberOfImages(ProcessTypeField.NUMBER_OF_IMAGES.getIntValue(jsonObject));
-            processDTO.setNumberOfMetadata(ProcessTypeField.NUMBER_OF_METADATA.getIntValue(jsonObject));
-            processDTO.setNumberOfStructures(ProcessTypeField.NUMBER_OF_STRUCTURES.getIntValue(jsonObject));
-            processDTO.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
-            processDTO.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
-            processDTO.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-            processDTO.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
-            convertLastProcessingDates(jsonObject, processDTO);
-            convertTaskProgress(jsonObject, processDTO);
+            processInterface.setId(getIdFromJSONObject(jsonObject));
+            processInterface.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
+            processInterface.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
+            processInterface.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
+            processInterface.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
+            processInterface.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
+            processInterface.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
+            processInterface.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
+            processInterface.setSortHelperStatus(ProcessTypeField.SORT_HELPER_STATUS.getStringValue(jsonObject));
+            processInterface.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
+            processInterface.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
+            processInterface.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
+            processInterface.setNumberOfImages(ProcessTypeField.NUMBER_OF_IMAGES.getIntValue(jsonObject));
+            processInterface.setNumberOfMetadata(ProcessTypeField.NUMBER_OF_METADATA.getIntValue(jsonObject));
+            processInterface.setNumberOfStructures(ProcessTypeField.NUMBER_OF_STRUCTURES.getIntValue(jsonObject));
+            processInterface.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
+            processInterface.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
+            processInterface.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+            processInterface.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
+            convertLastProcessingDates(jsonObject, processInterface);
+            convertTaskProgress(jsonObject, processInterface);
 
             List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
-            List<PropertyDTO> properties = new ArrayList<>();
+            List<PropertyInterface> properties = new ArrayList<>();
             for (Map<String, Object> stringObjectMap : jsonArray) {
-                PropertyDTO propertyDTO = new PropertyDTO();
+                PropertyInterface propertyInterface = DTOFactory.instance().newProperty();
                 Object title = stringObjectMap.get(JSON_TITLE);
                 Object value = stringObjectMap.get(JSON_VALUE);
                 if (Objects.nonNull(title)) {
-                    propertyDTO.setTitle(title.toString());
-                    propertyDTO.setValue(Objects.nonNull(value) ? value.toString() : "");
-                    properties.add(propertyDTO);
+                    propertyInterface.setTitle(title.toString());
+                    propertyInterface.setValue(Objects.nonNull(value) ? value.toString() : "");
+                    properties.add(propertyInterface);
                 }
             }
-            processDTO.setProperties(properties);
+            processInterface.setProperties(properties);
 
             if (!related) {
-                convertRelatedJSONObjects(jsonObject, processDTO);
+                convertRelatedJSONObjects(jsonObject, processInterface);
             } else {
-                ProjectDTO projectDTO = new ProjectDTO();
-                projectDTO.setId(ProcessTypeField.PROJECT_ID.getIntValue(jsonObject));
-                projectDTO.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-                projectDTO.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(jsonObject));
-                processDTO.setProject(projectDTO);
+                ProjectInterface projectInterface = DTOFactory.instance().newProject();
+                projectInterface.setId(ProcessTypeField.PROJECT_ID.getIntValue(jsonObject));
+                projectInterface.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(jsonObject));
+                projectInterface.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(jsonObject));
+                processInterface.setProject(projectInterface);
             }
         }
-        return processDTO;
+        return processInterface;
     }
 
 
     /**
-     * Parses last processing dates from the jsonObject and adds them to the processDTO bean.
+     * Parses last processing dates from the jsonObject and adds them to the processInterface bean.
      * 
      * @param jsonObject the json object retrieved from elastic search
-     * @param processDTO the processDTO bean that will receive the processing dates
+     * @param processInterface the processInterface bean that will receive the processing dates
      */
-    private void convertLastProcessingDates(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
+    private void convertLastProcessingDates(Map<String, Object> jsonObject, ProcessInterface processInterface) throws DataException {
         String processingBeginLastTask = ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getStringValue(jsonObject);
-        processDTO.setProcessingBeginLastTask(Helper.parseDateFromFormattedString(processingBeginLastTask));
+        processInterface.setProcessingBeginLastTask(Helper.parseDateFromFormattedString(processingBeginLastTask));
         String processingEndLastTask = ProcessTypeField.PROCESSING_END_LAST_TASK.getStringValue(jsonObject);
-        processDTO.setProcessingEndLastTask(Helper.parseDateFromFormattedString(processingEndLastTask));
+        processInterface.setProcessingEndLastTask(Helper.parseDateFromFormattedString(processingEndLastTask));
     }
 
     /**
-     * Parses task progress properties from the jsonObject and adds them to the processDTO bean.
+     * Parses task progress properties from the jsonObject and adds them to the processInterface bean.
      * 
      * @param jsonObject the json object retrieved from elastic search
-     * @param processDTO the processDTO bean that will receive the progress information
+     * @param processInterface the processInterface bean that will receive the progress information
      */
-    private void convertTaskProgress(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
-        processDTO.setProgressClosed(ProcessTypeField.PROGRESS_CLOSED.getDoubleValue(jsonObject));
-        processDTO.setProgressInProcessing(ProcessTypeField.PROGRESS_IN_PROCESSING.getDoubleValue(jsonObject));
-        processDTO.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
-        processDTO.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
-        processDTO.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
+    private void convertTaskProgress(Map<String, Object> jsonObject, ProcessInterface processInterface) throws DataException {
+        processInterface.setProgressClosed(ProcessTypeField.PROGRESS_CLOSED.getDoubleValue(jsonObject));
+        processInterface.setProgressInProcessing(ProcessTypeField.PROGRESS_IN_PROCESSING.getDoubleValue(jsonObject));
+        processInterface.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
+        processInterface.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
+        processInterface.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessDTO processDTO) throws DataException {
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessInterface processInterface) throws DataException {
         int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
-            processDTO.setProject(ServiceManager.getProjectService().findById(project, true));
+            processInterface.setProject(ServiceManager.getProjectService().findById(project, true));
         }
         int ruleset = ProcessTypeField.RULESET.getIntValue(jsonObject);
         if (ruleset > 0) {
-            processDTO.setRuleset(ServiceManager.getRulesetService().findById(ruleset, true));
+            processInterface.setRuleset(ServiceManager.getRulesetService().findById(ruleset, true));
         }
 
-        processDTO.setBatchID(getBatchID(processDTO));
-        processDTO.setBatches(getBatchesForProcessDTO(jsonObject));
+        processInterface.setBatchID(getBatchID(processInterface));
+        processInterface.setBatches(getBatchesForProcessInterface(jsonObject));
         // TODO: leave it for now - right now it displays only status
-        processDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, ProcessTypeField.TASKS.getKey(),
+        processInterface.setTasks(convertRelatedJSONObjectToInterface(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
     }
 
-    private List<BatchDTO> getBatchesForProcessDTO(Map<String, Object> jsonObject) throws DataException {
+    private List<BatchInterface> getBatchesForProcessInterface(Map<String, Object> jsonObject) throws DataException {
         List<Map<String, Object>> jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
-        List<BatchDTO> batchDTOList = new ArrayList<>();
+        List<BatchInterface> batchInterfaceList = new ArrayList<>();
         for (Map<String, Object> singleObject : jsonArray) {
-            BatchDTO batchDTO = new BatchDTO();
-            batchDTO.setId(BatchTypeField.ID.getIntValue(singleObject));
-            batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(singleObject));
-            batchDTOList.add(batchDTO);
+            BatchInterface batchInterface = DTOFactory.instance().newBatch();
+            batchInterface.setId(BatchTypeField.ID.getIntValue(singleObject));
+            batchInterface.setTitle(BatchTypeField.TITLE.getStringValue(singleObject));
+            batchInterfaceList.add(batchInterface);
         }
-        return batchDTOList;
+        return batchInterfaceList;
     }
 
     /**
      * Check if process is assigned only to one batch.
      *
-     * @param batchDTOList
+     * @param list
      *            list of batches for checkout
      * @return true or false
      */
-    boolean isProcessAssignedToOnlyOneBatch(List<BatchDTO> batchDTOList) {
-        return batchDTOList.size() == 1;
+    boolean isProcessAssignedToOnlyOneBatch(List<BatchInterface> list) {
+        return list.size() == 1;
     }
 
     /**
@@ -1194,15 +1195,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Get process data directory.
      * Don't save it to the database, if it is for indexingAll.
      *
-     * @param processDTO
-     *            processDTO to get the dataDirectory from
+     * @param processInterface
+     *            processInterface to get the dataDirectory from
      * @return path
      */
-    public String getProcessDataDirectory(ProcessDTO processDTO) {
-        if (Objects.isNull(processDTO.getProcessBaseUri())) {
-            processDTO.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(processDTO));
+    public String getProcessDataDirectory(ProcessInterface processInterface) {
+        if (Objects.isNull(processInterface.getProcessBaseUri())) {
+            processInterface.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(processInterface));
         }
-        return processDTO.getProcessBaseUri();
+        return processInterface.getProcessBaseUri();
     }
 
     /**
@@ -1250,12 +1251,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @return the batches the process is in
      */
-    public String getBatchID(ProcessDTO process) {
+    public String getBatchID(ProcessInterface process) {
         if (process.getBatches().isEmpty()) {
             return null;
         }
         StringBuilder result = new StringBuilder();
-        for (BatchDTO batch : process.getBatches()) {
+        for (BatchInterface batch : process.getBatches()) {
             if (result.length() > 0) {
                 result.append(", ");
             }
@@ -1299,12 +1300,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         return currentTasks;
     }
 
-    private List<TaskDTO> getOpenTasks(ProcessDTO process) {
+    private List<TaskInterface> getOpenTasks(ProcessInterface process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
-    private List<TaskDTO> getTasksInWork(ProcessDTO process) {
+    private List<TaskInterface> getTasksInWork(ProcessInterface process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
@@ -1313,17 +1314,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Create and return String used as progress tooltip for a given process. Tooltip contains OPEN tasks and tasks
      * INWORK.
      *
-     * @param processDTO
+     * @param processInterface
      *          process for which the tooltop is created
      * @return String containing the progress tooltip for the given process
      */
-    public String createProgressTooltip(ProcessDTO processDTO) {
-        String openTasks = getOpenTasks(processDTO).stream()
+    public String createProgressTooltip(ProcessInterface processInterface) {
+        String openTasks = getOpenTasks(processInterface).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!openTasks.isEmpty()) {
             openTasks = Helper.getTranslation(TaskStatus.OPEN.getTitle()) + ":" + NEW_LINE_ENTITY + openTasks;
         }
-        String tasksInWork = getTasksInWork(processDTO).stream()
+        String tasksInWork = getTasksInWork(processInterface).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!tasksInWork.isEmpty()) {
             tasksInWork = Helper.getTranslation(TaskStatus.INWORK.getTitle()) + ":" + NEW_LINE_ENTITY + tasksInWork;
@@ -1342,12 +1343,12 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Get current task.
      *
-     * @param processDTO
-     *            DTOobject
+     * @param processInterface
+     *            Interfaceobject
      * @return current task
      */
-    public TaskDTO getCurrentTaskDTO(ProcessDTO processDTO) {
-        for (TaskDTO task : processDTO.getTasks()) {
+    public TaskInterface getCurrentTaskInterface(ProcessInterface processInterface) {
+        for (TaskInterface task : processInterface.getTasks()) {
             if (task.getProcessingStatus().equals(TaskStatus.OPEN)
                     || task.getProcessingStatus().equals(TaskStatus.INWORK)) {
                 return task;
@@ -1703,9 +1704,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *          cannot be found in the index)
      */
     public String getBaseType(int processId) throws DataException {
-        ProcessDTO processDTO = findById(processId, true);
-        if (Objects.nonNull(processDTO)) {
-            return processDTO.getBaseType();
+        ProcessInterface processInterface = findById(processId, true);
+        if (Objects.nonNull(processInterface)) {
+            return processInterface.getBaseType();
         }
         return "";
     }
@@ -1717,8 +1718,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *            List of process properties
      * @return List of filtered correction / solution messages
      */
-    private List<PropertyDTO> filterForCorrectionSolutionMessages(List<PropertyDTO> lpe) {
-        List<PropertyDTO> filteredList = new ArrayList<>();
+    private List<PropertyInterface> filterForCorrectionSolutionMessages(List<PropertyInterface> lpe) {
+        List<PropertyInterface> filteredList = new ArrayList<>();
 
         if (lpe.isEmpty()) {
             return filteredList;
@@ -1728,7 +1729,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
 
         // filtering for correction and solution messages
-        for (PropertyDTO property : lpe) {
+        for (PropertyInterface property : lpe) {
             if (translationList.contains(property.getTitle())) {
                 filteredList.add(property);
             }
@@ -2165,17 +2166,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Retrieve and return process property value of property with given name
-     * 'propertyName' from given ProcessDTO 'process'.
+     * 'propertyName' from given ProcessInterface 'process'.
      *
      * @param process
-     *            the ProcessDTO object from which the property value is retrieved
+     *            the ProcessInterface object from which the property value is retrieved
      * @param propertyName
      *            name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName',
      *         empty String otherwise
      */
-    public static String getPropertyValue(ProcessDTO process, String propertyName) {
-        for (PropertyDTO property : process.getProperties()) {
+    public static String getPropertyValue(ProcessInterface process, String propertyName) {
+        for (PropertyInterface property : process.getProperties()) {
             if (property.getTitle().equals(propertyName)) {
                 return property.getValue();
             }
@@ -2187,10 +2188,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Calculate and return duration/age of given process as a String.
      *
      * @param process
-     *            ProcessDTO object for which duration/age is calculated
+     *            ProcessInterface object for which duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessDTO process) {
+    public static String getProcessDuration(ProcessInterface process) {
         String creationDateTimeString = process.getCreationDate();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
@@ -2493,32 +2494,32 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Retrieve comments for the given process.
      *
-     * @param processDTO
+     * @param processInterface
      *          process for which the tooltip is created
      * @return List containing comments of given process
      *
      * @throws DAOException thrown when process cannot be loaded from database
      */
-    public List<Comment> getComments(ProcessDTO processDTO) throws DAOException {
-        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+    public List<Comment> getComments(ProcessInterface processInterface) throws DAOException {
+        Process process = ServiceManager.getProcessService().getById(processInterface.getId());
         return ServiceManager.getCommentService().getAllCommentsByProcess(process);
     }
 
     /**
-     * Check and return if child process for given ProcessDTO processDTO can be created via calendar or not.
+     * Check and return if child process for given ProcessInterface processInterface can be created via calendar or not.
      *
-     * @param processDTO ProcessDTO for which child processes may be created via calendar
-     * @return whether child processes for the given ProcessDTO can be created via the calendar or not
+     * @param processInterface ProcessInterface for which child processes may be created via calendar
+     * @return whether child processes for the given ProcessInterface can be created via the calendar or not
      * @throws DAOException if process could not be loaded from database
      * @throws IOException if ruleset file could not be read
      */
-    public static boolean canCreateProcessWithCalendar(ProcessDTO processDTO)
+    public static boolean canCreateProcessWithCalendar(ProcessInterface processInterface)
             throws DAOException, IOException {
         Collection<String> functionalDivisions;
-        if (Objects.isNull(processDTO.getRuleset())) {
+        if (Objects.isNull(processInterface.getRuleset())) {
             return false;
         }
-        Integer rulesetId = processDTO.getRuleset().getId();
+        Integer rulesetId = processInterface.getRuleset().getId();
         if (RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.get(rulesetId);
         } else {
@@ -2527,24 +2528,24 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                     .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_WITH_CALENDAR);
             RULESET_CACHE_FOR_CREATE_FROM_CALENDAR.put(rulesetId, functionalDivisions);
         }
-        return functionalDivisions.contains(processDTO.getBaseType());
+        return functionalDivisions.contains(processInterface.getBaseType());
     }
 
     /**
-     * Check and return if child process for given ProcessDTO processDTO can be created or not.
+     * Check and return if child process for given ProcessInterface processInterface can be created or not.
      *
-     * @param processDTO ProcessDTO for which child processes may be created
-     * @return whether child processes for the given ProcessDTO can be created via the calendar or not
+     * @param processInterface ProcessInterface for which child processes may be created
+     * @return whether child processes for the given ProcessInterface can be created via the calendar or not
      * @throws DAOException if process could not be loaded from database
      * @throws IOException if ruleset file could not be read
      */
-    public static boolean canCreateChildProcess(ProcessDTO processDTO) throws DAOException,
+    public static boolean canCreateChildProcess(ProcessInterface processInterface) throws DAOException,
             IOException {
         Collection<String> functionalDivisions;
-        if (Objects.isNull(processDTO.getRuleset())) {
+        if (Objects.isNull(processInterface.getRuleset())) {
             return false;
         }
-        Integer rulesetId = processDTO.getRuleset().getId();
+        Integer rulesetId = processInterface.getRuleset().getId();
         if (RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.containsKey(rulesetId)) {
             functionalDivisions = RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.get(rulesetId);
         } else {
@@ -2553,7 +2554,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                     .getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT);
             RULESET_CACHE_FOR_CREATE_CHILD_FROM_PARENT.put(rulesetId, functionalDivisions);
         }
-        return functionalDivisions.contains(processDTO.getBaseType());
+        return functionalDivisions.contains(processInterface.getBaseType());
     }
 
     /**
@@ -2682,15 +2683,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * @param processDTO process as DTO object
+     * @param processInterface process as Interface object
      * @param user user to filter the tasks for
-     * @return List of filtered tasks as DTO objects
+     * @return List of filtered tasks as Interface objects
      */
-    public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO, User user) {
+    public List<TaskInterface> getCurrentTasksForUser(ProcessInterface processInterface, User user) {
         Set<Integer> userRoles = user.getRoles().stream()
                 .map(Role::getId)
                 .collect(Collectors.toSet());
-        return processDTO.getTasks().stream()
+        return processInterface.getTasks().stream()
                 .filter(task -> TaskStatus.OPEN.equals(task.getProcessingStatus()) || TaskStatus.INWORK.equals(task.getProcessingStatus()))
                 .filter(task -> !task.getRoleIds().stream()
                         .filter(userRoles::contains)
@@ -2727,8 +2728,8 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         BoolQueryBuilder inChoiceListShownQuery = new BoolQueryBuilder();
         MatchQueryBuilder matchQuery = matchQuery(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), true);
         inChoiceListShownQuery.must(matchQuery);
-        for (ProcessDTO processDTO : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
-            templateProcesses.add(getById(processDTO.getId()));
+        for (ProcessInterface processInterface : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
+            templateProcesses.add(getById(processInterface.getId()));
         }
         templateProcesses.sort(Comparator.comparing(Process::getTitle));
         return templateProcesses;

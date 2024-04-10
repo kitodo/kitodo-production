@@ -46,11 +46,11 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.forms.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -373,7 +373,7 @@ public class ProjectForm extends BaseForm {
      *
      * @return list of assignable templates
      */
-    public List<TemplateDTO> getTemplates() {
+    public List<TemplateInterface> getTemplates() {
         try {
             return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
         } catch (DataException e) {
@@ -827,7 +827,7 @@ public class ProjectForm extends BaseForm {
      *
      * @return list of projects
      */
-    public List<ProjectDTO> getProjects() {
+    public List<ProjectInterface> getProjects() {
         try {
             return ServiceManager.getProjectService().findAll();
         } catch (DataException e) {

@@ -11,10 +11,12 @@
 
 package org.kitodo.production.dto;
 
+import org.kitodo.data.interfaces.PropertyInterface;
+
 /**
  * Property DTO object.
  */
-public class PropertyDTO extends BaseDTO {
+public class PropertyDTO extends BaseDTO implements PropertyInterface {
 
     private String title;
     private String value;

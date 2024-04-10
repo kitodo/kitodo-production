@@ -36,7 +36,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
@@ -307,14 +307,14 @@ public class TitleRecordLinkTab {
             return;
         }
         try {
-            List<ProcessDTO> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
+            List<ProcessInterface> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
                 createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
                 Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.noHits");
             }
             indicationOfMoreHitsVisible = processes.size() > MAXIMUM_NUMBER_OF_HITS;
             possibleParentProcesses = new ArrayList<>();
-            for (ProcessDTO process : processes.subList(0, Math.min(processes.size(), MAXIMUM_NUMBER_OF_HITS))) {
+            for (ProcessInterface process : processes.subList(0, Math.min(processes.size(), MAXIMUM_NUMBER_OF_HITS))) {
                 possibleParentProcesses.add(new SelectItem(process.getId().toString(), process.getTitle()));
             }
         } catch (DataException e) {

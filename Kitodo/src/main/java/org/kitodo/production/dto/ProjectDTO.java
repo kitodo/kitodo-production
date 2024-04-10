@@ -14,10 +14,15 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.UserInterface;
+
 /**
  * Project DTO object.
  */
-public class ProjectDTO extends BaseDTO {
+public class ProjectDTO extends BaseDTO implements ProjectInterface {
 
     private String title;
     private String startDate;
@@ -28,9 +33,9 @@ public class ProjectDTO extends BaseDTO {
     private Integer numberOfPages;
     private Integer numberOfVolumes;
     private Boolean active = true;
-    private ClientDTO client;
-    private List<TemplateDTO> templates = new ArrayList<>();
-    private List<UserDTO> users = new ArrayList<>();
+    private ClientInterface client;
+    private List<TemplateInterface> templates = new ArrayList<>();
+    private List<UserInterface> users = new ArrayList<>();
     private boolean hasProcesses;
 
     /**
@@ -209,7 +214,7 @@ public class ProjectDTO extends BaseDTO {
      *
      * @return The client.
      */
-    public ClientDTO getClient() {
+    public ClientInterface getClient() {
         return client;
     }
 
@@ -218,7 +223,7 @@ public class ProjectDTO extends BaseDTO {
      *
      * @param client The client.
      */
-    public void setClient(ClientDTO client) {
+    public void setClient(ClientInterface client) {
         this.client = client;
     }
 
@@ -227,7 +232,7 @@ public class ProjectDTO extends BaseDTO {
      *
      * @return list of active templates as TemplateDTO
      */
-    public List<TemplateDTO> getTemplates() {
+    public List<TemplateInterface> getActiveTemplates() {
         return templates;
     }
 
@@ -237,7 +242,7 @@ public class ProjectDTO extends BaseDTO {
      * @param templates
      *            as list of TemplateDTO
      */
-    public void setTemplates(List<TemplateDTO> templates) {
+    public void setActiveTemplates(List<TemplateInterface> templates) {
         this.templates = templates;
     }
 
@@ -246,7 +251,7 @@ public class ProjectDTO extends BaseDTO {
      *
      * @return list of users as UserDTO
      */
-    public List<UserDTO> getUsers() {
+    public List<UserInterface> getUsers() {
         return users;
     }
 
@@ -256,7 +261,7 @@ public class ProjectDTO extends BaseDTO {
      * @param users
      *            as list of UserDTO
      */
-    public void setUsers(List<UserDTO> users) {
+    public void setUsers(List<UserInterface> users) {
         this.users = users;
     }
 

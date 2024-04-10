@@ -14,15 +14,19 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.RoleInterface;
+import org.kitodo.data.interfaces.UserInterface;
+
 /**
  * Role DTO object.
  */
-public class RoleDTO extends BaseDTO {
+public class RoleDTO extends BaseDTO implements RoleInterface {
 
     private String title;
-    private List<UserDTO> users = new ArrayList<>();
+    private List<UserInterface> users = new ArrayList<>();
     private Integer usersSize;
-    private ClientDTO client;
+    private ClientInterface client;
 
     /**
      * Get title.
@@ -46,9 +50,9 @@ public class RoleDTO extends BaseDTO {
     /**
      * Get list of users.
      *
-     * @return list of users as UserDTO
+     * @return list of users as UserInterface
      */
-    public List<UserDTO> getUsers() {
+    public List<UserInterface> getUsers() {
         return users;
     }
 
@@ -56,9 +60,9 @@ public class RoleDTO extends BaseDTO {
      * Set list of users.
      *
      * @param users
-     *            list of users as UserDTO
+     *            list of users as UserInterface
      */
-    public void setUsers(List<UserDTO> users) {
+    public void setUsers(List<UserInterface> users) {
         this.users = users;
     }
 
@@ -84,18 +88,18 @@ public class RoleDTO extends BaseDTO {
     /**
      * Get client FTO object.
      *
-     * @return the client DTO object
+     * @return the client Interface object
      */
-    public ClientDTO getClient() {
+    public ClientInterface getClient() {
         return client;
     }
 
     /**
-     * Set client DTO object.
+     * Set client Interface object.
      *
-     * @param client as DTO object.
+     * @param client as Interface object.
      */
-    public void setClient(ClientDTO client) {
+    public void setClient(ClientInterface client) {
         this.client = client;
     }
 }

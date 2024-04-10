@@ -16,15 +16,21 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.PropertyInterface;
+import org.kitodo.data.interfaces.UserInterface;
+
 /**
  * Process DTO object.
  */
-public class ProcessDTO extends BaseTemplateDTO {
+public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
 
-    private ProjectDTO project;
-    private List<BatchDTO> batches = new ArrayList<>();
-    private List<PropertyDTO> properties = new ArrayList<>();
-    private UserDTO blockedUser;
+    private ProjectInterface project;
+    private List<BatchInterface> batches = new ArrayList<>();
+    private List<PropertyInterface> properties = new ArrayList<>();
+    private UserInterface blockedUser;
     private Double progressClosed;
     private Double progressInProcessing;
     private Double progressOpen;
@@ -53,28 +59,28 @@ public class ProcessDTO extends BaseTemplateDTO {
     /**
      * Get project.
      *
-     * @return project as ProjectDTO
+     * @return project as ProjectInterface
      */
-    public ProjectDTO getProject() {
+    public ProjectInterface getProject() {
         return project;
     }
 
     /**
      * Set project.
      *
-     * @param project
-     *            as ProjectDTO
+     * @param projectInterface
+     *            as ProjectInterface
      */
-    public void setProject(ProjectDTO project) {
-        this.project = project;
+    public void setProject(ProjectInterface projectInterface) {
+        this.project = (ProjectInterface) projectInterface;
     }
 
     /**
      * Get list of batches.
      *
-     * @return list of batches as BatchDTO
+     * @return list of batches as BatchInterface
      */
-    public List<BatchDTO> getBatches() {
+    public List<BatchInterface> getBatches() {
         return batches;
     }
 
@@ -82,18 +88,18 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set list of batches.
      *
      * @param batches
-     *            list of batches as BatchDTO
+     *            list of batches as BatchInterface
      */
-    public void setBatches(List<BatchDTO> batches) {
+    public void setBatches(List batches) {
         this.batches = batches;
     }
 
     /**
      * Get list of properties.
      *
-     * @return list of properties as PropertyDTO
+     * @return list of properties as PropertyInterface
      */
-    public List<PropertyDTO> getProperties() {
+    public List<PropertyInterface> getProperties() {
         if (Objects.isNull(this.properties)) {
             properties = new ArrayList<>();
         }
@@ -104,18 +110,18 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set list of properties.
      *
      * @param properties
-     *            list of properties as PropertyDTO
+     *            list of properties as PropertyInterface
      */
-    public void setProperties(List<PropertyDTO> properties) {
+    public void setProperties(List<PropertyInterface> properties) {
         this.properties = properties;
     }
 
     /**
      * Get blocked user.
      *
-     * @return blocked user as UserDTO
+     * @return blocked user as UserInterface
      */
-    public UserDTO getBlockedUser() {
+    public UserInterface getBlockedUser() {
         return blockedUser;
     }
 
@@ -123,9 +129,9 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set blocked user.
      *
      * @param blockedUser
-     *            as UserDTO
+     *            as UserInterface
      */
-    public void setBlockedUser(UserDTO blockedUser) {
+    public void setBlockedUser(UserInterface blockedUser) {
         this.blockedUser = blockedUser;
     }
 

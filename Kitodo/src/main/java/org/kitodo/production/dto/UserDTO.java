@@ -14,10 +14,17 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.FilterInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.RoleInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.UserInterface;
+
 /**
  * User DTO object.
  */
-public class UserDTO extends BaseDTO {
+public class UserDTO extends BaseDTO implements UserInterface {
 
     private String login;
     private String name;
@@ -26,15 +33,15 @@ public class UserDTO extends BaseDTO {
     private String location;
     private String ldapLogin;
     private boolean active = true;
-    private List<FilterDTO> filters = new ArrayList<>();
+    private List<FilterInterface> filters = new ArrayList<>();
     private Integer filtersSize;
-    private List<RoleDTO> roles = new ArrayList<>();
+    private List<RoleInterface> roles = new ArrayList<>();
     private Integer rolesSize;
-    private List<ClientDTO> clients = new ArrayList<>();
+    private List<ClientInterface> clients = new ArrayList<>();
     private int clientsSize;
-    private List<ProjectDTO> projects = new ArrayList<>();
+    private List<ProjectInterface> projects = new ArrayList<>();
     private Integer projectsSize;
-    private List<TaskDTO> processingTasks = new ArrayList<>();
+    private List<TaskInterface> processingTasks = new ArrayList<>();
 
     /**
      * Get login.
@@ -172,9 +179,9 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of filters.
      *
-     * @return list of filters as FilterDTO
+     * @return list of filters as FilterInterface
      */
-    public List<FilterDTO> getFilters() {
+    public List<FilterInterface> getFilters() {
         return filters;
     }
 
@@ -182,9 +189,9 @@ public class UserDTO extends BaseDTO {
      * Set list of filters.
      *
      * @param filters
-     *            list of filters as FilterDTO
+     *            list of filters as FilterInterface
      */
-    public void setFilters(List<FilterDTO> filters) {
+    public void setFilters(List<FilterInterface> filters) {
         this.filters = filters;
     }
 
@@ -210,9 +217,9 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of roles.
      *
-     * @return list of roles as RoleDTO
+     * @return list of roles as RoleInterface
      */
-    public List<RoleDTO> getRoles() {
+    public List<RoleInterface> getRoles() {
         return roles;
     }
 
@@ -220,9 +227,9 @@ public class UserDTO extends BaseDTO {
      * Set list of roles.
      *
      * @param roles
-     *            list of roles as RoleDTO
+     *            list of roles as RoleInterface
      */
-    public void setRoles(List<RoleDTO> roles) {
+    public void setRoles(List<RoleInterface> roles) {
         this.roles = roles;
     }
 
@@ -250,7 +257,7 @@ public class UserDTO extends BaseDTO {
      *
      * @return The clients.
      */
-    public List<ClientDTO> getClients() {
+    public List<ClientInterface> getClients() {
         return clients;
     }
 
@@ -259,7 +266,7 @@ public class UserDTO extends BaseDTO {
      *
      * @param clients The clients.
      */
-    public void setClients(List<ClientDTO> clients) {
+    public void setClients(List<ClientInterface> clients) {
         this.clients = clients;
     }
 
@@ -284,9 +291,9 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of projects.
      *
-     * @return list of projects as ProjectDTO
+     * @return list of projects as ProjectInterface
      */
-    public List<ProjectDTO> getProjects() {
+    public List<ProjectInterface> getProjects() {
         return projects;
     }
 
@@ -294,9 +301,9 @@ public class UserDTO extends BaseDTO {
      * Set list of projects.
      *
      * @param projects
-     *            list of projects as ProjectDTO
+     *            list of projects as ProjectInterface
      */
-    public void setProjects(List<ProjectDTO> projects) {
+    public void setProjects(List<ProjectInterface> projects) {
         this.projects = projects;
     }
 
@@ -323,9 +330,9 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of processing tasks.
      *
-     * @return list of processing tasks as TaskDTO
+     * @return list of processing tasks as TaskInterface
      */
-    public List<TaskDTO> getProcessingTasks() {
+    public List<TaskInterface> getProcessingTasks() {
         return processingTasks;
     }
 
@@ -333,9 +340,9 @@ public class UserDTO extends BaseDTO {
      * Set list of processing tasks.
      *
      * @param processingTasks
-     *            list of processing tasks as TaskDTO
+     *            list of processing tasks as TaskInterface
      */
-    public void setProcessingTasks(List<TaskDTO> processingTasks) {
+    public void setProcessingTasks(List<TaskInterface> processingTasks) {
         this.processingTasks = processingTasks;
     }
 }

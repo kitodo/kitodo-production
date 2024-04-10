@@ -31,13 +31,14 @@ import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BatchDTO;
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
+public class BatchService extends TitleSearchService<Batch, BatchInterface, BatchDAO> {
 
     private static volatile BatchService instance = null;
     private static final String BATCH = "batch";
@@ -150,18 +151,18 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public BatchDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        BatchDTO batchDTO = new BatchDTO();
-        batchDTO.setId(getIdFromJSONObject(jsonObject));
-        batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
+    public BatchInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+        BatchInterface batchInterface = DTOFactory.instance().newBatch();
+        batchInterface.setId(getIdFromJSONObject(jsonObject));
+        batchInterface.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
         if (!related) {
-            convertRelatedJSONObjects(jsonObject, batchDTO);
+            convertRelatedJSONObjects(jsonObject, batchInterface);
         }
-        return batchDTO;
+        return batchInterface;
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchDTO batchDTO) throws DataException {
-        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getKey(),
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batchInterface) throws DataException {
+        batchInterface.setProcesses(convertRelatedJSONObjectToInterface(jsonObject, BatchTypeField.PROCESSES.getKey(),
             ServiceManager.getProcessService()));
     }
 
@@ -211,7 +212,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *
      * @return a readable label for the batch
      */
-    public String getLabel(BatchDTO batch) {
+    public String getLabel(BatchInterface batch) {
         return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
     }
 
@@ -233,7 +234,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *
      * @return a readable label for the batch
      */
-    private String getNumericLabel(BatchDTO batch) {
+    private String getNumericLabel(BatchInterface batch) {
         return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 

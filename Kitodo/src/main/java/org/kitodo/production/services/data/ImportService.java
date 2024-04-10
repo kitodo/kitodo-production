@@ -77,6 +77,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
@@ -89,7 +90,6 @@ import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -956,8 +956,8 @@ public class ImportService {
                 HashMap<String, String> parentIDMetadata = new HashMap<>();
                 parentIDMetadata.put(identifierMetadata, parentId);
                 try {
-                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+                    for (ProcessInterface processInterface : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
+                        Process process = ServiceManager.getProcessService().getById(processInterface.getId());
                         if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
                             throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
                                     + process.getId() + " is null!");

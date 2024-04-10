@@ -50,13 +50,13 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.RulesetNotFoundException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
@@ -435,7 +435,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     defaultConfigurationType = null;
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
-                    ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
+                    ProcessInterface parentProcess = ServiceManager.getProcessService().findById(parentId);
                     RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
                             .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
                     Map<String, String> allowedSubstructuralElements = rulesetManagement

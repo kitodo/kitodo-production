@@ -14,13 +14,17 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.kitodo.data.interfaces.DocketInterface;
+import org.kitodo.data.interfaces.RulesetInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+
 public abstract class BaseTemplateDTO extends BaseDTO {
 
     private String title;
     private String creationDate;
-    private DocketDTO docket;
-    private RulesetDTO ruleset;
-    private List<TaskDTO> tasks = new ArrayList<>();
+    private DocketInterface docket;
+    private RulesetInterface ruleset;
+    private List<TaskInterface> tasks = new ArrayList<>();
 
     /**
      * Get title.
@@ -63,9 +67,9 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     /**
      * Get docket.
      *
-     * @return docket as DocketDTO
+     * @return docket as DocketInterface
      */
-    public DocketDTO getDocket() {
+    public DocketInterface getDocket() {
         return docket;
     }
 
@@ -73,18 +77,18 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * Set docket.
      *
      * @param docket
-     *            as DocketDTO
+     *            as DocketInterface
      */
-    public void setDocket(DocketDTO docket) {
+    public void setDocket(DocketInterface docket) {
         this.docket = docket;
     }
 
     /**
      * Get ruleset.
      *
-     * @return ruleset as RulesetDTO
+     * @return ruleset as RulesetInterface
      */
-    public RulesetDTO getRuleset() {
+    public RulesetInterface getRuleset() {
         return ruleset;
     }
 
@@ -92,18 +96,18 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * Set ruleset.
      *
      * @param ruleset
-     *            as RulesetDTO
+     *            as RulesetInterface
      */
-    public void setRuleset(RulesetDTO ruleset) {
+    public void setRuleset(RulesetInterface ruleset) {
         this.ruleset = ruleset;
     }
 
     /**
      * Get list of tasks.
      *
-     * @return list of tasks as TaskDTO
+     * @return list of tasks as TaskInterface
      */
-    public List<TaskDTO> getTasks() {
+    public List<TaskInterface> getTasks() {
         return tasks;
     }
 
@@ -111,9 +115,9 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * Set list of tasks.
      *
      * @param tasks
-     *            list of tasks as TaskDTO
+     *            list of tasks as TaskInterface
      */
-    public void setTasks(List<TaskDTO> tasks) {
+    public void setTasks(List<TaskInterface> tasks) {
         this.tasks = tasks;
     }
 }

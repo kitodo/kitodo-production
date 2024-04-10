@@ -30,9 +30,9 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -48,8 +48,8 @@ public class SearchResultForm extends ProcessListBaseView {
     private static final String SEARCH_RESULT_VIEW_ID = "/pages/searchResult.xhtml";
     private static final String SEARCH_RESULT_TABLE_ID = "searchResultTabView:searchResultForm:searchResultTable";
 
-    private List<ProcessDTO> filteredList = new ArrayList<>();
-    private List<ProcessDTO> resultList = new ArrayList<>();
+    private List<ProcessInterface> filteredList = new ArrayList<>();
+    private List<ProcessInterface> resultList = new ArrayList<>();
     private String searchQuery;
     private String currentTaskFilter;
     private Integer currentProjectFilter;
@@ -64,12 +64,12 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     public String searchForProcessesBySearchQuery() {
         ProcessService processService = ServiceManager.getProcessService();
-        HashMap<Integer, ProcessDTO> resultHash = new HashMap<>();
-        List<ProcessDTO> results;
+        HashMap<Integer, ProcessInterface> resultHash = new HashMap<>();
+        List<ProcessInterface> results;
         try {
             results = processService.findByAnything(searchQuery);
-            for (ProcessDTO processDTO : results) {
-                resultHash.put(processDTO.getId(), processDTO);
+            for (ProcessInterface processInterface : results) {
+                resultHash.put(processInterface.getId(), processInterface);
             }
             this.resultList = new ArrayList<>(resultHash.values());
             refreshFilteredList();
@@ -99,9 +99,9 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     void filterListByTaskAndStatus() {
         if (Objects.nonNull(currentTaskFilter) && Objects.nonNull(currentTaskStatusFilter)) {
-            for (ProcessDTO processDTO : new ArrayList<>(this.filteredList)) {
+            for (ProcessInterface processInterface : new ArrayList<>(this.filteredList)) {
                 boolean remove = true;
-                for (TaskDTO task : processDTO.getTasks()) {
+                for (TaskInterface task : processInterface.getTasks()) {
                     if (task.getTitle().equalsIgnoreCase(currentTaskFilter)
                             && task.getProcessingStatus().getValue().equals(currentTaskStatusFilter)) {
                         remove = false;
@@ -109,7 +109,7 @@ public class SearchResultForm extends ProcessListBaseView {
                     }
                 }
                 if (remove) {
-                    this.filteredList.remove(processDTO);
+                    this.filteredList.remove(processInterface);
                 }
 
             }
@@ -131,9 +131,9 @@ public class SearchResultForm extends ProcessListBaseView {
      *
      * @return A list of projects for filter list
      */
-    public Collection<ProjectDTO> getProjectsForFiltering() {
-        HashMap<Integer, ProjectDTO> projectsForFiltering = new HashMap<>();
-        for (ProcessDTO process : this.resultList) {
+    public Collection<ProjectInterface> getProjectsForFiltering() {
+        HashMap<Integer, ProjectInterface> projectsForFiltering = new HashMap<>();
+        for (ProcessInterface process : this.resultList) {
             projectsForFiltering.put(process.getProject().getId(), process.getProject());
         }
         return projectsForFiltering.values();
@@ -144,10 +144,10 @@ public class SearchResultForm extends ProcessListBaseView {
      *
      * @return A list of tasks for filter list
      */
-    public Collection<TaskDTO> getTasksForFiltering() {
-        HashMap<String, TaskDTO> tasksForFiltering = new HashMap<>();
-        for (ProcessDTO processDTO : this.resultList) {
-            for (TaskDTO currentTask : processDTO.getTasks()) {
+    public Collection<TaskInterface> getTasksForFiltering() {
+        HashMap<String, TaskInterface> tasksForFiltering = new HashMap<>();
+        for (ProcessInterface processInterface : this.resultList) {
+            for (TaskInterface currentTask : processInterface.getTasks()) {
                 tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
         }
@@ -170,17 +170,17 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Delete Process.
      *
-     * @param processDTO
+     * @param processInterface
      *            process to delete.
      */
     @Override
-    public void delete(ProcessDTO processDTO) {
+    public void delete(ProcessInterface processInterface) {
         try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
+            Process process = ServiceManager.getProcessService().getById(processInterface.getId());
             if (process.getChildren().isEmpty()) {
                 try {
                     ProcessService.deleteProcess(process);
-                    this.filteredList.remove(processDTO);
+                    this.filteredList.remove(processInterface);
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                             logger, e);
@@ -213,9 +213,9 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Gets the filtered list.
      *
-     * @return a list of ProcessDTO
+     * @return a list of ProcessInterface
      */
-    public List<ProcessDTO> getFilteredList() {
+    public List<ProcessInterface> getFilteredList() {
         return this.filteredList;
     }
 
@@ -223,9 +223,9 @@ public class SearchResultForm extends ProcessListBaseView {
      * Sets the filtered list.
      *
      * @param filteredList
-     *            a list of ProcessDTO
+     *            a list of ProcessInterface
      */
-    public void setFilteredList(List<ProcessDTO> filteredList) {
+    public void setFilteredList(List<ProcessInterface> filteredList) {
         this.filteredList = filteredList;
     }
 

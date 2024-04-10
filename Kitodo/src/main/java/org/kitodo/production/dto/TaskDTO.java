@@ -16,11 +16,16 @@ import java.util.List;
 
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 /**
  * Task DTO object.
  */
-public class TaskDTO extends BaseDTO {
+public class TaskDTO extends BaseDTO implements TaskInterface {
 
     private String title;
     private String localizedTitle;
@@ -29,13 +34,13 @@ public class TaskDTO extends BaseDTO {
     private String processingStatusTitle;
     private TaskEditType editType;
     private String editTypeTitle;
-    private UserDTO processingUser;
+    private UserInterface processingUser;
     private String processingTime;
     private String processingBegin;
     private String processingEnd;
-    private ProcessDTO process;
-    private ProjectDTO project;
-    private TemplateDTO template;
+    private ProcessInterface process;
+    private ProjectInterface project;
+    private TemplateInterface template;
     private List<Integer> roleIds = new ArrayList<>();
     private int rolesSize;
     private boolean correction;
@@ -182,21 +187,21 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Get processing user as UserDTO.
+     * Get processing user as UserInterface.
      *
-     * @return processing user as UserDTO
+     * @return processing user as UserInterface
      */
-    public UserDTO getProcessingUser() {
+    public UserInterface getProcessingUser() {
         return processingUser;
     }
 
     /**
-     * Set processing user as UserDTO.
+     * Set processing user as UserInterface.
      *
      * @param processingUser
-     *            as UserDTO
+     *            as UserInterface
      */
-    public void setProcessingUser(UserDTO processingUser) {
+    public void setProcessingUser(UserInterface processingUser) {
         this.processingUser = processingUser;
     }
 
@@ -258,30 +263,30 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Get process as ProcessDTO.
+     * Get process as ProcessInterface.
      *
-     * @return process as ProcessDTO
+     * @return process as ProcessInterface
      */
-    public ProcessDTO getProcess() {
+    public ProcessInterface getProcess() {
         return process;
     }
 
     /**
-     * Set process as ProcessDTO.
+     * Set process as ProcessInterface.
      *
      * @param process
-     *            as ProcessDTO
+     *            as ProcessInterface
      */
-    public void setProcess(ProcessDTO process) {
+    public void setProcess(ProcessInterface process) {
         this.process = process;
     }
 
     /**
      * Get project.
      *
-     * @return project as ProjectDTO
+     * @return project as ProjectInterface
      */
-    public ProjectDTO getProject() {
+    public ProjectInterface getProject() {
         return project;
     }
 
@@ -289,28 +294,28 @@ public class TaskDTO extends BaseDTO {
      * Set project.
      *
      * @param project
-     *            as ProjectDTO
+     *            as ProjectInterface
      */
-    public void setProject(ProjectDTO project) {
+    public void setProject(ProjectInterface project) {
         this.project = project;
     }
 
     /**
-     * Get template as TemplateDTO.
+     * Get template as TemplateInterface.
      *
-     * @return template as TemplateDTO
+     * @return template as TemplateInterface
      */
-    public TemplateDTO getTemplate() {
+    public TemplateInterface getTemplate() {
         return template;
     }
 
     /**
-     * Set template as TemplateDTO.
+     * Set template as TemplateInterface.
      *
      * @param template
-     *            as TemplateDTO
+     *            as TemplateInterface
      */
-    public void setTemplate(TemplateDTO template) {
+    public void setTemplate(TemplateInterface template) {
         this.template = template;
     }
 

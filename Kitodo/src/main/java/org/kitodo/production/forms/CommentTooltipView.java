@@ -22,8 +22,8 @@ import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 
@@ -31,7 +31,7 @@ import org.kitodo.production.services.ServiceManager;
 @RequestScoped
 public class CommentTooltipView {
 
-    private final Map<ProcessDTO, List<Comment>> comments;
+    private final Map<ProcessInterface, List<Comment>> comments;
 
     /**
      * Default constructor.
@@ -43,16 +43,16 @@ public class CommentTooltipView {
     /**
      * Get comments of given process.
      *
-     * @param processDTO process as ProcessDTO
+     * @param processInterface process as ProcessInterface
      * @return List of Comment objects
      */
-    public List<Comment> getComments(ProcessDTO processDTO) {
-        if (comments.containsKey(processDTO)) {
-            return comments.get(processDTO);
+    public List<Comment> getComments(ProcessInterface processInterface) {
+        if (comments.containsKey(processInterface)) {
+            return comments.get(processInterface);
         }
         try {
-            comments.put(processDTO, ServiceManager.getProcessService().getComments(processDTO));
-            return comments.get(processDTO);
+            comments.put(processInterface, ServiceManager.getProcessService().getComments(processInterface));
+            return comments.get(processInterface);
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
             return Collections.emptyList();
@@ -62,10 +62,10 @@ public class CommentTooltipView {
     /**
      * Get comments of process containing the given task.
      *
-     * @param taskDTO task as TaskDTO
+     * @param taskInterface task as TaskInterface
      * @return List of Comment objects
      */
-    public List<Comment> getComments(TaskDTO taskDTO) {
-        return getComments(taskDTO.getProcess());
+    public List<Comment> getComments(TaskInterface taskInterface) {
+        return getComments(taskInterface.getProcess());
     }
 }

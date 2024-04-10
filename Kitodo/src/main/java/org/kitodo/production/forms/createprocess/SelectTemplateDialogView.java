@@ -19,8 +19,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TemplateDTO;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
 import org.kitodo.production.helper.Helper;
 import org.primefaces.PrimeFaces;
 
@@ -29,7 +29,7 @@ import org.primefaces.PrimeFaces;
 public class SelectTemplateDialogView implements Serializable {
 
     private int selectedTemplateId = 0;
-    private ProjectDTO project;
+    private ProjectInterface project;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
     private static final String MASSIMPORT_PATH = "/pages/massImport.jsf?faces-redirect=true";
@@ -40,16 +40,16 @@ public class SelectTemplateDialogView implements Serializable {
      *
      * @return value of project
      */
-    public ProjectDTO getProject() {
+    public ProjectInterface getProject() {
         return project;
     }
 
     /**
      * Set project.
      *
-     * @param project as org.kitodo.production.dto.ProjectDTO
+     * @param project as org.kitodo.production.dto.ProjectInterface
      */
-    public void setProject(ProjectDTO project) {
+    public void setProject(ProjectInterface project) {
         this.project = project;
     }
 
@@ -65,7 +65,7 @@ public class SelectTemplateDialogView implements Serializable {
     /**
      * Set selectedTemplateId.
      *
-     * @param selectedTemplateId as org.kitodo.production.dto.TemplateDTO
+     * @param selectedTemplateId as org.kitodo.production.dto.TemplateInterface
      */
     public void setSelectedTemplateId(int selectedTemplateId) {
         this.selectedTemplateId = selectedTemplateId;
@@ -94,7 +94,7 @@ public class SelectTemplateDialogView implements Serializable {
      * Display error message if no template is configured for current project.
      */
     public void checkForTemplates() {
-        List<TemplateDTO> availableTemplates = this.project.getTemplates();
+        List<TemplateInterface> availableTemplates = this.project.getActiveTemplates();
         if (availableTemplates.size() == 1) {
             this.selectedTemplateId = availableTemplates.get(0).getId();
         }

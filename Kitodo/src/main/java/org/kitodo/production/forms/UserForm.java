@@ -54,7 +54,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProjectDTO;
+import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
@@ -563,10 +563,10 @@ public class UserForm extends BaseForm {
      *
      * @return list of projects available for assignment to the user
      */
-    public List<ProjectDTO> getProjects() {
+    public List<ProjectInterface> getProjects() {
         try {
             return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject)
-                    .stream().sorted(Comparator.comparing(ProjectDTO::getTitle)).collect(Collectors.toList());
+                    .stream().sorted(Comparator.comparing(ProjectInterface::getTitle)).collect(Collectors.toList());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
@@ -626,11 +626,11 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Check and return whether given UserDTO 'user' is logged in.
+     * Check and return whether given UserInterface 'user' is logged in.
      *
      * @param user
-     *            UserDTO to check
-     * @return whether given UserDTO is checked in
+     *            UserInterface to check
+     * @return whether given UserInterface is checked in
      */
     public static boolean checkUserLoggedIn(User user) {
         for (SecuritySession securitySession : ServiceManager.getSessionService().getActiveSessions()) {

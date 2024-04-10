@@ -27,13 +27,14 @@ import org.kitodo.data.elasticsearch.index.type.WorkflowType;
 import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.WorkflowDTO;
+import org.kitodo.data.interfaces.WorkflowInterface;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, WorkflowDAO> {
+public class WorkflowService extends ClientSearchService<Workflow, WorkflowInterface, WorkflowDAO> {
 
     private static volatile WorkflowService instance = null;
 
@@ -80,7 +81,7 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     }
 
     @Override
-    public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<WorkflowInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         return findByQuery(getWorkflowsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
@@ -98,12 +99,12 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     }
 
     @Override
-    public WorkflowDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        WorkflowDTO workflowDTO = new WorkflowDTO();
-        workflowDTO.setId(getIdFromJSONObject(jsonObject));
-        workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
-        workflowDTO.setStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
-        return workflowDTO;
+    public WorkflowInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+        WorkflowInterface workflowInterface = DTOFactory.instance().newWorkflow();
+        workflowInterface.setId(getIdFromJSONObject(jsonObject));
+        workflowInterface.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
+        workflowInterface.setStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
+        return workflowInterface;
     }
 
     private QueryBuilder getWorkflowsForCurrentUserQuery() {

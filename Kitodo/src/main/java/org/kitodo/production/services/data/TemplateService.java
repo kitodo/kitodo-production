@@ -42,18 +42,19 @@ import org.kitodo.data.elasticsearch.index.type.TemplateType;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.WorkflowInterface;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TaskDTO;
-import org.kitodo.production.dto.TemplateDTO;
-import org.kitodo.production.dto.WorkflowDTO;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class TemplateService extends ClientSearchService<Template, TemplateDTO, TemplateDAO> {
+public class TemplateService extends ClientSearchService<Template, TemplateInterface, TemplateDAO> {
 
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private static volatile TemplateService instance = null;
@@ -112,7 +113,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
     }
 
     @Override
-    public List<TemplateDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<TemplateInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         return findByQuery(createUserTemplatesQuery(filters), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
@@ -140,11 +141,11 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
      *            id of project which is going to be edited
      * @return list of all matching templates
      */
-    public List<TemplateDTO> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
+    public List<TemplateInterface> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
         return findAvailableForAssignToUser(projectId);
     }
 
-    private List<TemplateDTO> findAvailableForAssignToUser(Integer projectId) throws DataException {
+    private List<TemplateInterface> findAvailableForAssignToUser(Integer projectId) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
         if (Objects.nonNull(projectId)) {
             query.must(createSimpleQuery(TemplateTypeField.PROJECTS + ".id", projectId, false));
@@ -180,34 +181,34 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
     }
 
     @Override
-    public TemplateDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        TemplateDTO templateDTO = new TemplateDTO();
-        templateDTO.setId(getIdFromJSONObject(jsonObject));
-        templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
-        templateDTO.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
-        templateDTO.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
-        templateDTO.setDocket(
+    public TemplateInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+        TemplateInterface templateInterface = DTOFactory.instance().newTemplate();
+        templateInterface.setId(getIdFromJSONObject(jsonObject));
+        templateInterface.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
+        templateInterface.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
+        templateInterface.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
+        templateInterface.setDocket(
             ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(jsonObject)));
-        templateDTO.setRuleset(
+        templateInterface.setRuleset(
             ServiceManager.getRulesetService().findById(TemplateTypeField.RULESET_ID.getIntValue(jsonObject)));
-        WorkflowDTO workflowDTO = new WorkflowDTO();
-        workflowDTO.setTitle(TemplateTypeField.WORKFLOW_TITLE.getStringValue(jsonObject));
-        templateDTO.setWorkflow(workflowDTO);
-        templateDTO.setTasks(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.TASKS.getKey(),
+        WorkflowInterface workflowInterface = DTOFactory.instance().newWorkflow();
+        workflowInterface.setTitle(TemplateTypeField.WORKFLOW_TITLE.getStringValue(jsonObject));
+        templateInterface.setWorkflow(workflowInterface);
+        templateInterface.setTasks(convertRelatedJSONObjectToInterface(jsonObject, TemplateTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
-        templateDTO.setCanBeUsedForProcess(hasCompleteTasks(templateDTO.getTasks()));
+        templateInterface.setCanBeUsedForProcess(hasCompleteTasks(templateInterface.getTasks()));
 
         if (!related) {
-            convertRelatedJSONObjects(jsonObject, templateDTO);
+            convertRelatedJSONObjects(jsonObject, templateInterface);
         }
 
-        return templateDTO;
+        return templateInterface;
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateDTO templateDTO)
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateInterface templateInterface)
             throws DataException {
-        templateDTO.setProjects(convertRelatedJSONObjectToDTO(jsonObject, TemplateTypeField.PROJECTS.getKey(),
-            ServiceManager.getProjectService()).stream().sorted(Comparator.comparing(ProjectDTO::getTitle))
+        templateInterface.setProjects(convertRelatedJSONObjectToInterface(jsonObject, TemplateTypeField.PROJECTS.getKey(),
+            ServiceManager.getProjectService()).stream().sorted(Comparator.comparing(ProjectInterface::getTitle))
                 .collect(Collectors.toList()));
     }
 
@@ -286,15 +287,15 @@ public class TemplateService extends ClientSearchService<Template, TemplateDTO, 
      * Check whether the tasks assigned to template are complete. If it contains
      * tasks that are not assigned to a user or user group - tasks are not complete.
      *
-     * @param tasks
+     * @param list
      *            list of tasks for testing
      * @return true or false
      */
-    boolean hasCompleteTasks(List<TaskDTO> tasks) {
-        if (tasks.isEmpty()) {
+    boolean hasCompleteTasks(List<TaskInterface> list) {
+        if (list.isEmpty()) {
             return false;
         }
-        for (TaskDTO task : tasks) {
+        for (TaskInterface task : list) {
             if (task.getRolesSize() == 0) {
                 return false;
             }

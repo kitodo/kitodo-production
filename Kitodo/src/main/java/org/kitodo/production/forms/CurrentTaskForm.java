@@ -38,9 +38,9 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.TiffHeader;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
@@ -66,7 +66,7 @@ public class CurrentTaskForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
-    private List<TaskDTO> selectedTasks = new ArrayList<>();
+    private List<TaskInterface> selectedTasks = new ArrayList<>();
     private final WebDav myDav = new WebDav();
     private String scriptPath;
     private transient BatchTaskHelper batchHelper;
@@ -417,7 +417,7 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return List of selected Tasks
      */
-    public List<TaskDTO> getSelectedTasks() {
+    public List<TaskInterface> getSelectedTasks() {
         return this.selectedTasks;
     }
 
@@ -427,7 +427,7 @@ public class CurrentTaskForm extends BaseForm {
      * @param selectedTasks
      *            provided by data table
      */
-    public void setSelectedTasks(List<TaskDTO> selectedTasks) {
+    public void setSelectedTasks(List<TaskInterface> selectedTasks) {
         this.selectedTasks = selectedTasks;
     }
 
@@ -743,12 +743,12 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Retrieve and return process property value of property with given name 'propertyName' from process of given
-     * TaskDTO 'task'.
-     * @param task the TaskDTO object from which the property value is retrieved
+     * TaskInterface 'task'.
+     * @param task the TaskInterface object from which the property value is retrieved
      * @param propertyName name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName', empty String otherwise
      */
-    public static String getTaskProcessPropertyValue(TaskDTO task, String propertyName) {
+    public static String getTaskProcessPropertyValue(TaskInterface task, String propertyName) {
         return ProcessService.getPropertyValue(task.getProcess(), propertyName);
     }
 
@@ -765,10 +765,10 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Calculate and return age of given tasks process as a String.
      *
-     * @param task TaskDTO object whose process is used
+     * @param task TaskInterface object whose process is used
      * @return process age of given tasks process
      */
-    public String getProcessDuration(TaskDTO task) {
+    public String getProcessDuration(TaskInterface task) {
         return ProcessService.getProcessDuration(task.getProcess());
     }
 

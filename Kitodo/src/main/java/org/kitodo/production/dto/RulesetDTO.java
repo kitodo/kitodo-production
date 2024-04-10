@@ -11,16 +11,19 @@
 
 package org.kitodo.production.dto;
 
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.RulesetInterface;
+
 /**
  * Ruleset DTO object.
  */
-public class RulesetDTO extends BaseDTO {
+public class RulesetDTO extends BaseDTO implements RulesetInterface {
 
     private String file;
     private String title;
     private Boolean orderMetadataByRuleset = false;
     private Boolean active = true;
-    private ClientDTO client;
+    private ClientInterface client;
 
     /**
      * Get file.
@@ -101,9 +104,9 @@ public class RulesetDTO extends BaseDTO {
     /**
      * Get client object.
      *
-     * @return value of clientDTO
+     * @return value of clientInterface
      */
-    public ClientDTO getClient() {
+    public ClientInterface getClient() {
         return client;
     }
 
@@ -111,9 +114,9 @@ public class RulesetDTO extends BaseDTO {
      * Set client object.
      *
      * @param client
-     *            as org.kitodo.production.dto.ClientDTO
+     *            as org.kitodo.production.dto.ClientInterface
      */
-    public void setClientDTO(ClientDTO client) {
+    public void setClient(ClientInterface client) {
         this.client = client;
     }
 }

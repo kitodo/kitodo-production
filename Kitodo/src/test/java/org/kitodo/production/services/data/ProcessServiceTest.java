@@ -16,6 +16,8 @@ import java.net.URI;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.PropertyInterface;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.services.ServiceManager;
@@ -24,43 +26,43 @@ public class ProcessServiceTest {
 
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() {
-        final ProcessDTO processDTO = new ProcessDTO();
+        final ProcessInterface processInterface = new ProcessDTO();
 
-        PropertyDTO firstPropertyDTO = new PropertyDTO();
-        firstPropertyDTO.setId(1);
-        firstPropertyDTO.setTitle("Korrektur notwendig");
-        firstPropertyDTO.setValue("Fix it");
-        firstPropertyDTO.setCreationDate(null);
+        PropertyInterface firstPropertyInterface = new PropertyDTO();
+        firstPropertyInterface.setId(1);
+        firstPropertyInterface.setTitle("Korrektur notwendig");
+        firstPropertyInterface.setValue("Fix it");
+        firstPropertyInterface.setCreationDate(null);
 
-        PropertyDTO secondPropertyDTO = new PropertyDTO();
-        secondPropertyDTO.setId(2);
-        secondPropertyDTO.setTitle("Korrektur notwendig");
-        secondPropertyDTO.setValue("Fix it also");
-        secondPropertyDTO.setCreationDate(null);
+        PropertyInterface secondPropertyInterface = new PropertyDTO();
+        secondPropertyInterface.setId(2);
+        secondPropertyInterface.setTitle("Korrektur notwendig");
+        secondPropertyInterface.setValue("Fix it also");
+        secondPropertyInterface.setCreationDate(null);
 
-        PropertyDTO thirdPropertyDTO = new PropertyDTO();
-        thirdPropertyDTO.setId(3);
-        thirdPropertyDTO.setTitle("Other title");
-        thirdPropertyDTO.setValue("Other value");
-        thirdPropertyDTO.setCreationDate("2017-12-01");
+        PropertyInterface thirdPropertyInterface = new PropertyDTO();
+        thirdPropertyInterface.setId(3);
+        thirdPropertyInterface.setTitle("Other title");
+        thirdPropertyInterface.setValue("Other value");
+        thirdPropertyInterface.setCreationDate("2017-12-01");
 
-        PropertyDTO fourthPropertyDTO = new PropertyDTO();
-        fourthPropertyDTO.setId(4);
-        fourthPropertyDTO.setTitle("Korrektur durchgef\u00FChrt");
-        fourthPropertyDTO.setValue("Fixed second");
-        fourthPropertyDTO.setCreationDate("2017-12-05");
+        PropertyInterface fourthPropertyInterface = new PropertyDTO();
+        fourthPropertyInterface.setId(4);
+        fourthPropertyInterface.setTitle("Korrektur durchgef\u00FChrt");
+        fourthPropertyInterface.setValue("Fixed second");
+        fourthPropertyInterface.setCreationDate("2017-12-05");
 
-        PropertyDTO fifthPropertyDTO = new PropertyDTO();
-        fifthPropertyDTO.setId(5);
-        fifthPropertyDTO.setTitle("Korrektur durchgef\u00FChrt");
-        fifthPropertyDTO.setValue("Fixed first");
-        fifthPropertyDTO.setCreationDate("2017-12-03");
+        PropertyInterface fifthPropertyInterface = new PropertyDTO();
+        fifthPropertyInterface.setId(5);
+        fifthPropertyInterface.setTitle("Korrektur durchgef\u00FChrt");
+        fifthPropertyInterface.setValue("Fixed first");
+        fifthPropertyInterface.setCreationDate("2017-12-03");
 
-        processDTO.getProperties().add(firstPropertyDTO);
-        processDTO.getProperties().add(secondPropertyDTO);
-        processDTO.getProperties().add(thirdPropertyDTO);
-        processDTO.getProperties().add(fourthPropertyDTO);
-        processDTO.getProperties().add(fifthPropertyDTO);
+        processInterface.getProperties().add(firstPropertyInterface);
+        processInterface.getProperties().add(secondPropertyInterface);
+        processInterface.getProperties().add(thirdPropertyInterface);
+        processInterface.getProperties().add(fourthPropertyInterface);
+        processInterface.getProperties().add(fifthPropertyInterface);
 
     }
 

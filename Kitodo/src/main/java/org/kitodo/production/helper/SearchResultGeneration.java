@@ -24,7 +24,7 @@ import org.elasticsearch.index.query.RangeQueryBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 
@@ -60,16 +60,16 @@ public class SearchResultGeneration {
         return getWorkbook();
     }
 
-    private List<ProcessDTO> getResultsWithFilter() {
-        List<ProcessDTO> processDTOS = new ArrayList<>();
+    private List<ProcessInterface> getResultsWithFilter() {
+        List<ProcessInterface> processInterfaces = new ArrayList<>();
         try {
-            processDTOS = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
+            processInterfaces = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
                 ServiceManager.getProcessService().sortById(SortOrder.ASC), true);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
 
-        return processDTOS;
+        return processInterfaces;
     }
 
     /**
@@ -121,25 +121,25 @@ public class SearchResultGeneration {
             Long numberOfExpectedProcesses = ServiceManager.getProcessService()
                     .count(getQueryForFilter(ObjectType.PROCESS));
             if (numberOfExpectedProcesses > elasticsearchLimit) {
-                List<ProcessDTO> processDTOS;
+                List<ProcessInterface> processInterfaces;
                 int queriedIds = 0;
                 while (numberOfProcessedProcesses < numberOfExpectedProcesses) {
                     RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
                     rangeQueryBuilder.gte(queriedIds).lt(queriedIds + elasticsearchLimit);
                     BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
                     queryForFilter.must(rangeQueryBuilder);
-                    processDTOS = ServiceManager.getProcessService().findByQuery(queryForFilter,
+                    processInterfaces = ServiceManager.getProcessService().findByQuery(queryForFilter,
                         ServiceManager.getProcessService().sortById(SortOrder.ASC), true);
                     queriedIds += elasticsearchLimit;
-                    for (ProcessDTO processDTO : processDTOS) {
+                    for (ProcessInterface processDTO : processInterfaces) {
                         prepareRow(rowCounter, sheet, processDTO);
                         rowCounter++;
                     }
-                    numberOfProcessedProcesses += processDTOS.size();
+                    numberOfProcessedProcesses += processInterfaces.size();
                 }
             } else {
-                List<ProcessDTO> resultsWithFilter = getResultsWithFilter();
-                for (ProcessDTO processDTO : resultsWithFilter) {
+                List<ProcessInterface> resultsWithFilter = getResultsWithFilter();
+                for (ProcessInterface processDTO : resultsWithFilter) {
                     prepareRow(rowCounter, sheet, processDTO);
                     rowCounter++;
                 }
@@ -161,15 +161,15 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
-    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessDTO processDTO) {
+    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessInterface processInterface) {
         HSSFRow row = sheet.createRow(rowCounter);
-        row.createCell(0).setCellValue(processDTO.getTitle());
-        row.createCell(1).setCellValue(processDTO.getId());
-        row.createCell(2).setCellValue(processDTO.getCreationDate());
-        row.createCell(3).setCellValue(processDTO.getNumberOfImages());
-        row.createCell(4).setCellValue(processDTO.getNumberOfStructures());
-        row.createCell(5).setCellValue(processDTO.getNumberOfMetadata());
-        row.createCell(6).setCellValue(processDTO.getProject().getTitle());
-        row.createCell(7).setCellValue(processDTO.getSortHelperStatus());
+        row.createCell(0).setCellValue(processInterface.getTitle());
+        row.createCell(1).setCellValue(processInterface.getId());
+        row.createCell(2).setCellValue(processInterface.getCreationDate());
+        row.createCell(3).setCellValue(processInterface.getNumberOfImages());
+        row.createCell(4).setCellValue(processInterface.getNumberOfStructures());
+        row.createCell(5).setCellValue(processInterface.getNumberOfMetadata());
+        row.createCell(6).setCellValue(processInterface.getProject().getTitle());
+        row.createCell(7).setCellValue(processInterface.getSortHelperStatus());
     }
 }

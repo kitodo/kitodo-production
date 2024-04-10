@@ -53,7 +53,7 @@ import org.kitodo.data.elasticsearch.index.type.BaseType;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BaseDTO;
+import org.kitodo.data.interfaces.DataInterface;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.model.SortOrder;
@@ -62,7 +62,7 @@ import org.primefaces.model.SortOrder;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
+public abstract class SearchService<T extends BaseIndexedBean, S extends DataInterface, V extends BaseDAO<T>>
         extends SearchDatabaseService<T, V> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
@@ -91,16 +91,16 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Method converts JSON object object to DTO. Necessary for displaying in the
+     * Method converts JSON object object to Interface. Necessary for displaying in the
      * frontend.
      *
      * @param jsonObject
      *            return from find methods
      * @param related
      *            true or false
-     * @return DTO object
+     * @return Interface object
      */
-    public abstract S convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException;
+    public abstract S convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException;
 
     /**
      * Count all not indexed rows in database. Not indexed means that row has index
@@ -133,22 +133,22 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Get all DTO objects from index an convert them for frontend with all
+     * Get all Interface objects from index an convert them for frontend with all
      * relations.
      *
-     * @return List of DTO objects
+     * @return List of Interface objects
      */
     public List<S> findAll() throws DataException {
         return findAll(false);
     }
 
     /**
-     * Get all DTO objects from index.
+     * Get all Interface objects from index.
      *
-     * @return List of DTO objects
+     * @return List of Interface objects
      */
     public List<S> findAll(boolean related) throws DataException {
-        return convertJSONObjectsToDTOs(findAllDocuments(), related);
+        return convertJSONObjectsToInterfaces(findAllDocuments(), related);
     }
 
     /**
@@ -430,54 +430,54 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Find object in ES and convert it to DTO.
+     * Find object in ES and convert it to Interface.
      *
      * @param id
      *            object id
-     * @return DTO object
+     * @return Interface object
      */
     public S findById(Integer id) throws DataException {
         return findById(id, false);
     }
 
     /**
-     * Find object related to previously found object in ES and convert it to DTO.
+     * Find object related to previously found object in ES and convert it to Interface.
      *
      * @param id
      *            related object id
      * @param related
      *            this method should ba called only with true, if false call method
      *            findById(Integer id).
-     * @return related DTO object
+     * @return related Interface object
      */
     public S findById(Integer id, boolean related) throws DataException {
         try {
-            return convertJSONObjectToDTO(searcher.findDocument(id), related);
+            return convertJSONObjectToInterface(searcher.findDocument(id), related);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
     }
 
     /**
-     * Find list of DTO objects by query.
+     * Find list of Interface objects by query.
      *
      * @param query
      *            as QueryBuilder object
      * @param related
      *            determines if converted object is related to some other object (if
      *            so, objects related to it are not included in conversion)
-     * @return list of found DTO objects
+     * @return list of found Interface objects
      */
     public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
         try {
-            return convertJSONObjectsToDTOs(searcher.findDocuments(query), related);
+            return convertJSONObjectsToInterfaces(searcher.findDocuments(query), related);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
     }
 
     /**
-     * Find list of DTO objects by query.
+     * Find list of Interface objects by query.
      *
      * @param query
      *            as QueryBuilder object
@@ -486,18 +486,18 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @param related
      *            determines if converted object is related to some other object (if
      *            so, objects related to it are not included in conversion)
-     * @return list of found DTO objects
+     * @return list of found Interface objects
      */
     public List<S> findByQuery(QueryBuilder query, SortBuilder sort, boolean related) throws DataException {
         try {
-            return convertJSONObjectsToDTOs(searcher.findDocuments(query, sort), related);
+            return convertJSONObjectsToInterfaces(searcher.findDocuments(query, sort), related);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
     }
 
     /**
-     * Find list of sorted DTO objects by query with defined offset and size of
+     * Find list of sorted Interface objects by query with defined offset and size of
      * results.
      *
      * @param query
@@ -511,33 +511,33 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @param related
      *            determines if converted object is related to some other object (if
      *            so, objects related to it are not included in conversion)
-     * @return list of found DTO objects
+     * @return list of found Interface objects
      */
     public List<S> findByQuery(QueryBuilder query, SortBuilder sort, Integer offset, Integer size, boolean related)
             throws DataException {
         try {
-            return convertJSONObjectsToDTOs(searcher.findDocuments(query, sort, offset, size), related);
+            return convertJSONObjectsToInterfaces(searcher.findDocuments(query, sort, offset, size), related);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
     }
 
     /**
-     * Convert list of JSONObject object to list of DTO objects.
+     * Convert list of JSONObject object to list of Interface objects.
      *
      * @param jsonObjects
      *            list of SearchResult objects
      * @param related
      *            determines if converted object is related to some other object (if
      *            so, objects related to it are not included in conversion)
-     * @return list of DTO object
+     * @return list of Interface object
      */
-    protected List<S> convertJSONObjectsToDTOs(List<Map<String, Object>> jsonObjects, boolean related)
+    protected List<S> convertJSONObjectsToInterfaces(List<Map<String, Object>> jsonObjects, boolean related)
             throws DataException {
         List<S> results = new ArrayList<>();
 
         for (Map<String, Object> jsonObject : jsonObjects) {
-            results.add(convertJSONObjectToDTO(jsonObject, related));
+            results.add(convertJSONObjectToInterface(jsonObject, related));
         }
 
         return results;
@@ -552,9 +552,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      *            name of related property
      * @return bean object
      */
-    protected <O extends BaseDTO> List<O> convertRelatedJSONObjectToDTO(Map<String, Object> jsonObject, String key,
+    protected <O extends DataInterface> List<O> convertRelatedJSONObjectToInterface(Map<String, Object> jsonObject, String key,
             SearchService<?, O, ?> service) throws DataException {
-        List<Integer> ids = getRelatedPropertyForDTO(jsonObject, key);
+        List<Integer> ids = getRelatedPropertyForInterface(jsonObject, key);
         if (ids.isEmpty()) {
             return new ArrayList<>();
         }
@@ -905,7 +905,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return display properties as list of Integers
      */
     @SuppressWarnings("unchecked")
-    private List<Integer> getRelatedPropertyForDTO(Map<String, Object> object, String key) {
+    private List<Integer> getRelatedPropertyForInterface(Map<String, Object> object, String key) {
         if (Objects.nonNull(object)) {
             List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
             List<Integer> ids = new ArrayList<>();

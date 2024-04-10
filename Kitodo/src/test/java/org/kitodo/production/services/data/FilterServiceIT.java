@@ -33,7 +33,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 
@@ -348,9 +348,9 @@ public class FilterServiceIT {
 
         // TODO: why "step" creates something called historical filter?
         QueryBuilder query = filterService.queryBuilder("\"step:Finished\"", ObjectType.TASK, false, false);
-        List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
+        List<TaskInterface> taskInterfaceS = taskService.findByQuery(query, true);
         // assertEquals("Incorrect amount of tasks with title containing
-        // 'Testing'!", 1, taskDTOS.size());
+        // 'Testing'!", 1, taskInterfaceS.size());
 
         QueryBuilder firstQuery = filterService.queryBuilder("\"stepopen:Open\"", ObjectType.TASK, false, false);
         assertEquals("Incorrect amount of tasks with title containing 'Open'!", 1,
@@ -553,8 +553,8 @@ public class FilterServiceIT {
 
         // empty condition is not allowed and returns no results
         QueryBuilder query = filterService.queryBuilder("\"steplocked:\"", ObjectType.TASK, false, false);
-        List<TaskDTO> taskDTOS = taskService.findByQuery(query, true);
-        assertEquals("Incorrect amount of closed tasks with no ordering!", 0, taskDTOS.size());
+        List<TaskInterface> taskInterfaceS = taskService.findByQuery(query, true);
+        assertEquals("Incorrect amount of closed tasks with no ordering!", 0, taskInterfaceS.size());
 
         // empty condition is not allowed and throws Exception in ElasticSearch 7
         query = filterService.queryBuilder("\"id:\"", ObjectType.PROCESS, false, false);

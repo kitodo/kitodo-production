@@ -16,14 +16,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.WorkflowInterface;
 import org.kitodo.production.services.ServiceManager;
 
-public class TemplateDTO extends BaseTemplateDTO {
+public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
 
     private boolean active;
-    private WorkflowDTO workflow;
+    private WorkflowInterface workflow;
     private boolean canBeUsedForProcess;
-    private List<ProjectDTO> projects = new ArrayList<>();
+    private List<ProjectInterface> projects = new ArrayList<>();
 
     /**
      * Get diagram image.
@@ -59,9 +62,9 @@ public class TemplateDTO extends BaseTemplateDTO {
     /**
      * Set workflow.
      *
-     * @param workflow as org.kitodo.production.dto.WorkflowDTO
+     * @param workflow as org.kitodo.production.dto.WorkflowInterface
      */
-    public void setWorkflow(WorkflowDTO workflow) {
+    public void setWorkflow(WorkflowInterface workflow) {
         this.workflow = workflow;
     }
 
@@ -70,7 +73,7 @@ public class TemplateDTO extends BaseTemplateDTO {
      *
      * @return value of workflow
      */
-    public WorkflowDTO getWorkflow() {
+    public WorkflowInterface getWorkflow() {
         return workflow;
     }
 
@@ -98,7 +101,7 @@ public class TemplateDTO extends BaseTemplateDTO {
      *
      * @return value of projects
      */
-    public List<ProjectDTO> getProjects() {
+    public List<ProjectInterface> getProjects() {
         return projects;
     }
 
@@ -106,9 +109,9 @@ public class TemplateDTO extends BaseTemplateDTO {
      * Set projects.
      *
      * @param projects
-     *            as List of ProjectDTO
+     *            as List of ProjectInterface
      */
-    public void setProjects(List<ProjectDTO> projects) {
+    public void setProjects(List<ProjectInterface> projects) {
         this.projects = projects;
     }
 }

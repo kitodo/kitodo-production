@@ -19,7 +19,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.services.ServiceManager;
 
 public class SearchResultFormIT {
@@ -50,7 +50,7 @@ public class SearchResultFormIT {
     public void testSearch() {
         searchResultForm.setSearchQuery("es");
         searchResultForm.searchForProcessesBySearchQuery();
-        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
+        List<ProcessInterface> resultList = searchResultForm.getFilteredList();
 
         Assert.assertEquals(3, resultList.size());
 
@@ -104,7 +104,7 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.setCurrentProjectFilter(1000);
         searchResultForm.filterList();
-        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
+        List<ProcessInterface> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
         searchResultForm.setCurrentProjectFilter(1);
@@ -138,7 +138,7 @@ public class SearchResultFormIT {
         searchResultForm.setCurrentTaskFilter("notExistent");
         searchResultForm.setCurrentTaskStatusFilter(0);
         searchResultForm.filterList();
-        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
+        List<ProcessInterface> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(0, resultList.size());
 
         searchResultForm.setCurrentTaskFilter("Progress");
@@ -159,7 +159,7 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.filterList();
-        List<ProcessDTO> resultList = searchResultForm.getFilteredList();
+        List<ProcessInterface> resultList = searchResultForm.getFilteredList();
         Assert.assertEquals(2, resultList.size());
 
         searchResultForm.setCurrentTaskFilter("");

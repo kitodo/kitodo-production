@@ -11,7 +11,9 @@
 
 package org.kitodo.production.dto;
 
-public class WorkflowDTO extends BaseDTO {
+import org.kitodo.data.interfaces.WorkflowInterface;
+
+public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
 
     private String title;
     private String status;

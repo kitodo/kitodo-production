@@ -35,8 +35,8 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchProcessHelper;
@@ -108,7 +108,7 @@ public class BatchForm extends BaseForm {
      * Filter processes.
      */
     public void filterProcesses() {
-        List<ProcessDTO> processDTOS = new ArrayList<>();
+        List<ProcessInterface> processInterfaces = new ArrayList<>();
         QueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(this.processfilter)) {
@@ -123,17 +123,17 @@ public class BatchForm extends BaseForm {
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
         try {
             if (batchMaxSize > 0) {
-                processDTOS = ServiceManager.getProcessService().findByQuery(query,
+                processInterfaces = ServiceManager.getProcessService().findByQuery(query,
                     ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
             } else {
-                processDTOS = ServiceManager.getProcessService().findByQuery(query,
+                processInterfaces = ServiceManager.getProcessService().findByQuery(query,
                     ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         try {
-            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processDTOS);
+            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processInterfaces);
         } catch (DAOException e) {
             this.currentProcesses = new ArrayList<>();
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

@@ -45,7 +45,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -242,7 +242,7 @@ public class NewspaperProcessesGeneratorIT {
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
         generatesNewspaperProcessesThread.start();
 
-        ProcessDTO byId = ServiceManager.getProcessService().findById(11);
+        ProcessInterface byId = ServiceManager.getProcessService().findById(11);
         Assert.assertNull("Process should not have been created", byId.getTitle());
     }
 

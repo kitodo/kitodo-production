@@ -49,11 +49,13 @@ import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BaseDTO;
-import org.kitodo.production.dto.FilterDTO;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TaskDTO;
+import org.kitodo.data.interfaces.DataFactoryInterface;
+import org.kitodo.data.interfaces.DataInterface;
+import org.kitodo.data.interfaces.FilterInterface;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -64,7 +66,7 @@ import org.primefaces.model.SortOrder;
 /**
  * Service for Filter bean.
  */
-public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
+public class FilterService extends SearchService<Filter, FilterInterface, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
@@ -138,11 +140,11 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     }
 
     @Override
-    public FilterDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        FilterDTO filterDTO = new FilterDTO();
-        filterDTO.setId(getIdFromJSONObject(jsonObject));
-        filterDTO.setValue(FilterTypeField.VALUE.getStringValue(jsonObject));
-        return filterDTO;
+    public FilterInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+        FilterInterface filterInterface = DTOFactory.instance().newFilter();
+        filterInterface.setId(getIdFromJSONObject(jsonObject));
+        filterInterface.setValue(FilterTypeField.VALUE.getStringValue(jsonObject));
+        return filterInterface;
     }
 
     /**
@@ -271,10 +273,10 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         return limitToUserAssignedTasks(onlyOpenTasks, onlyUserAssignedTasks);
     }
 
-    Set<Integer> collectIds(List<? extends BaseDTO> dtos) {
+    Set<Integer> collectIds(List<? extends DataInterface> dtos) {
         Set<Integer> ids = new HashSet<>();
-        for (BaseDTO processDTO : dtos) {
-            ids.add(processDTO.getId());
+        for (DataInterface processInterface : dtos) {
+            ids.add(processInterface.getId());
         }
         return ids;
     }
@@ -550,9 +552,9 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), negate);
         } else if (objectType == ObjectType.TASK) {
-            List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findByQuery(
+            List<ProcessInterface> processInterfaces = ServiceManager.getProcessService().findByQuery(
                 createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), negate), true);
-            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), negate);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processInterfaces), negate);
         }
         return new BoolQueryBuilder();
     }
@@ -849,20 +851,20 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         /*
          * filtering by a certain done step, which the current user finished
          */
-        /*List<TaskDTO> taskDTOS = new ArrayList<>();
+        /*List<TaskInterface> taskInterfaces = new ArrayList<>();
         String login = getFilterValueFromFilterString(filter, FilterString.TASKDONEUSER);
         try {
             Map<String, Object> user = ServiceManager.getUserService().findByLogin(login);
-            UserDTO userDTO = ServiceManager.getUserService().convertJSONObjectToDTO(user, false);
-            taskDTOS = userDTO.getProcessingTasks();
+            UserInterface userInterface = ServiceManager.getUserService().convertJSONObjectToInterface(user, false);
+            taskInterfaces = userInterface.getProcessingTasks();
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
 
         if (objectType == ObjectType.PROCESS) {
-            return createSetQuery("tasks.id", collectIds(taskDTOS), true);
+            return createSetQuery("tasks.id", collectIds(taskInterfaces), true);
         } else if (objectType == ObjectType.TASK) {
-            return createSetQuery("_id", collectIds(taskDTOS), true);
+            return createSetQuery("_id", collectIds(taskInterfaces), true);
         }*/
         return new BoolQueryBuilder();
     }
@@ -962,8 +964,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
     private QueryBuilder getQueryAccordingToObjectTypeAndSearchInTask(ObjectType objectType, QueryBuilder query)
             throws DataException {
         if (objectType == ObjectType.PROCESS) {
-            List<TaskDTO> taskDTOS = ServiceManager.getTaskService().findByQuery(query, true);
-            return createSetQuery("tasks.id", collectIds(taskDTOS), true);
+            List<TaskInterface> taskInterfaces = ServiceManager.getTaskService().findByQuery(query, true);
+            return createSetQuery("tasks.id", collectIds(taskInterfaces), true);
         } else if (objectType == ObjectType.TASK) {
             return query;
         }
@@ -975,8 +977,8 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
         if (objectType == ObjectType.PROCESS) {
             return query;
         } else if (objectType == ObjectType.TASK) {
-            List<ProcessDTO> processDTOS = ServiceManager.getProcessService().findByQuery(query, true);
-            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processDTOS), true);
+            List<ProcessInterface> processInterfaces = ServiceManager.getProcessService().findByQuery(query, true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processInterfaces), true);
         }
         return new BoolQueryBuilder();
     }
@@ -1096,14 +1098,14 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      * @return List of String objects containing the project
      */
     public List<String> initProjects() {
-        List<ProjectDTO> projectsSortedByTitle = Collections.emptyList();
+        List<ProjectInterface> projectsSortedByTitle = Collections.emptyList();
         try {
             projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
         } catch (DataException e) {
             Helper.setErrorMessage("errorInitializingProjects", logger, e);
         }
 
-        return projectsSortedByTitle.stream().map(ProjectDTO::getTitle).sorted().collect(Collectors.toList());
+        return projectsSortedByTitle.stream().map(ProjectInterface::getTitle).sorted().collect(Collectors.toList());
     }
 
     /**

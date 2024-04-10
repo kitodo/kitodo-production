@@ -14,11 +14,15 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ClientDTO extends BaseDTO {
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.UserInterface;
+
+public class ClientDTO extends BaseDTO implements ClientInterface {
 
     private String name;
-    private List<UserDTO> users = new ArrayList<>();
-    private List<ProjectDTO> projects = new ArrayList<>();
+    private List<UserInterface> users = new ArrayList<>();
+    private List<ProjectInterface> projects = new ArrayList<>();
 
     /**
      * Gets title.
@@ -44,7 +48,7 @@ public class ClientDTO extends BaseDTO {
      *
      * @return The users.
      */
-    public List<UserDTO> getUsers() {
+    public List<UserInterface> getUsers() {
         return users;
     }
 
@@ -54,7 +58,7 @@ public class ClientDTO extends BaseDTO {
      * @param users
      *            The users.
      */
-    public void setUsers(List<UserDTO> users) {
+    public void setUsers(List<UserInterface> users) {
         this.users = users;
     }
 
@@ -63,7 +67,7 @@ public class ClientDTO extends BaseDTO {
      *
      * @return The projects.
      */
-    public List<ProjectDTO> getProjects() {
+    public List<ProjectInterface> getProjects() {
         return projects;
     }
 
@@ -73,7 +77,7 @@ public class ClientDTO extends BaseDTO {
      * @param projects
      *            The projects.
      */
-    public void setProjects(List<ProjectDTO> projects) {
+    public void setProjects(List<ProjectInterface> projects) {
         this.projects = projects;
     }
 }
