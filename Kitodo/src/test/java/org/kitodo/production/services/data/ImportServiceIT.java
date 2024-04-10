@@ -27,8 +27,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -108,6 +110,8 @@ public class ImportServiceIT {
     private static final int TEMPLATE_ID = 1;
     private static final int PROJECT_ID = 1;
     private static final int RULESET_ID = 1;
+    private static final String TITLE = "Title";
+    private static final String PLACE = "Place";
     private static final int EXPECTED_NR_OF_CHILDREN = 23;
     private static final String PICA_XML = "picaxml";
     private static final String PICA_PPN = "pica.ppn";
@@ -165,6 +169,42 @@ public class ImportServiceIT {
         } finally {
             ProcessTestUtils.removeTestProcess(importedProcess.getId());
         }
+    }
+
+    /**
+     * Tests whether basic catalog metadata import with additional preset metadata to a single process succeeds or not.
+     *
+     * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
+     * @throws ImportException when importing metadata fails
+     * @throws IOException when importing metadata fails
+     */
+    @Test
+    public void testImportProcessWithAdditionalMetadata() throws DAOException, ImportException, IOException {
+        Map<String, List<String>> presetMetadata = new HashMap<>();
+        presetMetadata.put(TITLE, List.of("Band 1"));
+        presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+                MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
+        HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
+        try {
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
+        } finally {
+            ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
+        }
+    }
+
+    private boolean assertMetadataSetContainsMetadata(HashSet<Metadata> metadataSet, String metadataKey, String metadataValue) {
+        return metadataSet.stream()
+                .filter(metadata -> metadata.getKey().equals(metadataKey))
+                .anyMatch(metadata -> metadata instanceof MetadataEntry &&
+                        ((MetadataEntry) metadata).getValue().equals(metadataValue));
     }
 
     @Test
@@ -544,6 +584,21 @@ public class ImportServiceIT {
         }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, new HashMap<>());
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+        return importedProcess;
+    }
+
+    private Process importProcessWithAdditionalMetadata(String recordId, ImportConfiguration importConfiguration,
+                                                        Map<String, List<String>> presetMetadata)
+            throws IOException, ImportException {
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+        Process importedProcess = importService.importProcess(recordId, 1, 1,
+                importConfiguration, presetMetadata);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
