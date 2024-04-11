@@ -31,6 +31,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -918,7 +919,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
             processInterface.setId(getIdFromJSONObject(jsonObject));
             processInterface.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
             processInterface.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
-            processInterface.setCreationDate(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
+            try {
+                processInterface.setCreationTime(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
+            } catch (ParseException e) {
+                throw new DataException(e);
+            }
             processInterface.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
             processInterface.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
             processInterface.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
@@ -2192,7 +2197,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @return process age of given process
      */
     public static String getProcessDuration(ProcessInterface process) {
-        String creationDateTimeString = process.getCreationDate();
+        String creationDateTimeString = process.getCreationTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());

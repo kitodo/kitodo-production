@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
@@ -186,7 +187,11 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
         templateInterface.setId(getIdFromJSONObject(jsonObject));
         templateInterface.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
         templateInterface.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
-        templateInterface.setCreationDate(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
+        try {
+        templateInterface.setCreationTime(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
+        } catch (ParseException e) {
+            throw new DataException(e);
+        }
         templateInterface.setDocket(
             ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(jsonObject)));
         templateInterface.setRuleset(

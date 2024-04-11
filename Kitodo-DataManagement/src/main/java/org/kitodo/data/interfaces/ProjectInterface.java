@@ -260,7 +260,7 @@ public interface ProjectInterface extends DataInterface {
      *
      * @return whether the project is active
      */
-    Boolean isActive();
+    boolean isActive();
 
     /**
      * Sets whether the project is active. Deactivated projects are hidden from

@@ -199,8 +199,8 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return whether project is active or not
      */
-    public Boolean isActive() {
-        return this.active;
+    public boolean isActive() {
+        return Boolean.TRUE.equals(this.active);
     }
 
     /**

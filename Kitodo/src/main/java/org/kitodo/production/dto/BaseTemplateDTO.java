@@ -11,9 +11,13 @@
 
 package org.kitodo.production.dto;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.RulesetInterface;
 import org.kitodo.data.interfaces.TaskInterface;
@@ -21,7 +25,7 @@ import org.kitodo.data.interfaces.TaskInterface;
 public abstract class BaseTemplateDTO extends BaseDTO {
 
     private String title;
-    private String creationDate;
+    protected String creationDate;
     private DocketInterface docket;
     private RulesetInterface ruleset;
     private List<? extends TaskInterface> tasks = new ArrayList<>();
@@ -50,7 +54,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      *
      * @return creation date as String
      */
-    public String getCreationDate() {
+    public String getCreationTime() {
         return creationDate;
     }
 
@@ -60,7 +64,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * @param creationDate
      *            as String
      */
-    public void setCreationDate(String creationDate) {
+    public void setCreationTime(String creationDate) {
         this.creationDate = creationDate;
     }
 
@@ -119,5 +123,17 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public void setTasks(List<? extends TaskInterface> tasks) {
         this.tasks = tasks;
+    }
+
+    public Date getCreationDate() {
+        try {
+            return Strings.isNotEmpty(this.creationDate) ? DATE_FORMAT.parse(this.creationDate) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = Objects.nonNull(creationDate) ? DATE_FORMAT.format(creationDate) : null;
     }
 }

@@ -165,7 +165,7 @@ public class SearchResultGeneration {
         HSSFRow row = sheet.createRow(rowCounter);
         row.createCell(0).setCellValue(processInterface.getTitle());
         row.createCell(1).setCellValue(processInterface.getId());
-        row.createCell(2).setCellValue(processInterface.getCreationDate());
+        row.createCell(2).setCellValue(processInterface.getCreationTime());
         row.createCell(3).setCellValue(processInterface.getNumberOfImages());
         row.createCell(4).setCellValue(processInterface.getNumberOfStructures());
         row.createCell(5).setCellValue(processInterface.getNumberOfMetadata());

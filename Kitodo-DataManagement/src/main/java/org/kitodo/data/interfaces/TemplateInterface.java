@@ -11,7 +11,11 @@
 
 package org.kitodo.data.interfaces;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 public interface TemplateInterface extends DataInterface {
 
@@ -31,19 +35,52 @@ public interface TemplateInterface extends DataInterface {
     void setTitle(String title);
 
     /**
-     * Returns the day the process template was created.
+     * Returns the time the process template was created. The string is
+     * formatted according to
+     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
-     * @return the day the process template was created
+     * @return the creation time
+     * @deprecated Use {@link #getCreationDate()}.
      */
-    String getCreationDate();
+    @Deprecated
+    default String getCreationTime() {
+        Date creationDate = getCreationDate();
+        return Objects.nonNull(creationDate) ? DATE_FORMAT.format(creationDate) : null;
+    }
 
     /**
-     * Sets the day of process template creation.
+     * Returns the time the process template was created. {@link Date} is a
+     * specific instant in time, with millisecond precision.
+     *
+     * @return the creation time
+     */
+    Date getCreationDate();
+
+    /**
+     * Sets the time the process template was created. The string must be
+     * parsable with {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
      * @param creationDate
-     *            the day of process template creation
+     *            creation time to set
+     * @throws ParseException
+     *             if the time cannot be converted
+     * @deprecated Use {@link #setCreationDate(Date)}.
      */
-    void setCreationDate(String creationDate);
+    @Deprecated
+    default void setCreationTime(String creationDate) throws ParseException {
+        setCreationDate(Objects.nonNull(creationDate) ? DATE_FORMAT.parse(creationDate) : null);
+    }
+
+    /**
+     * Sets the time the process template was created. The string must be
+     * parsable with {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     *
+     * @param creationDate
+     *            creation time to set
+     * @throws ParseException
+     *             if the time cannot be converted
+     */
+    void setCreationDate(Date creationDate);
 
     /**
      * Returns the docket generation statement to use when creating dockets for
