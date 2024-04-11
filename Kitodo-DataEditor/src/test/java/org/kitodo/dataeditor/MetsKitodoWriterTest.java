@@ -11,6 +11,9 @@
 
 package org.kitodo.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -24,33 +27,32 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class MetsKitodoWriterTest {
 
     private static MetsKitodoWriter metsKitodoWriter;
-    private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
-    private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
+    private final URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
+    private static final File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
     private static byte[] testMetaOldFormat;
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
 
-    @Before
+    @BeforeEach
     public void saveFile() throws IOException {
         File file = new File("src/test/resources/testmetaOldFormat.xml");
         testMetaOldFormat = IOUtils.toByteArray(file.toURI());
     }
 
-    @After
+    @AfterEach
     public void revertFile() throws IOException {
         IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException, JAXBException {
 
         metsKitodoWriter = new MetsKitodoWriter();
@@ -73,7 +75,7 @@ public class MetsKitodoWriterTest {
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         Files.deleteIfExists(manifestFile.toPath());
     }
@@ -94,18 +96,21 @@ public class MetsKitodoWriterTest {
         String savedMetadata = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0)
                 .getValue();
 
-        Assert.assertEquals("The metadata of the loaded and the saved mets file are not equal", loadedMetadata,
-            savedMetadata);
-        Assert.assertEquals("The number of dmdSec elements of the loaded and the saved mets file are not equal",
-            metsKitodoWrapper.getDmdSecs().size(), savedMetsKitodoWrapper.getDmdSecs().size());
+        assertEquals(loadedMetadata,
+            savedMetadata,
+            "The metadata of the loaded and the saved mets file are not equal");
+        assertEquals(metsKitodoWrapper.getDmdSecs().size(),
+            savedMetsKitodoWrapper.getDmdSecs().size(),
+            "The number of dmdSec elements of the loaded and the saved mets file are not equal");
 
-        Assert.assertEquals("Lastmoddate of Mets header was wrong", savedMetsKitodoWrapper.getMets().getMetsHdr().getLASTMODDATE().getHour(),
-            LocalDateTime.now().getHour());
+        assertEquals(savedMetsKitodoWrapper.getMets().getMetsHdr().getLASTMODDATE().getHour(),
+            LocalDateTime.now().getHour(),
+            "Lastmoddate of Mets header was wrong");
 
         String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
 
-        Assert.assertTrue("Prefix mapping for kitodo namespace is wrong", result.contains("kitodo:metadata"));
-        Assert.assertTrue("Prefix mapping for mets namespace is wrong", result.contains("mets:dmdSec"));
+        assertTrue(result.contains("kitodo:metadata"), "Prefix mapping for kitodo namespace is wrong");
+        assertTrue(result.contains("mets:dmdSec"), "Prefix mapping for mets namespace is wrong");
     }
 
     @Test
@@ -123,13 +128,16 @@ public class MetsKitodoWriterTest {
         String loadedMetadata = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0).getValue();
         String savedMetadata = savedMetsKitodoWrapper.getDmdSecs().get(0).getKitodoType().getMetadata().get(0).getValue();
 
-        Assert.assertEquals("The metadata of the loaded and the saved mets file are not equal", loadedMetadata,
-            savedMetadata);
-        Assert.assertEquals("The number of dmdSec elements of the loaded and the saved mets file are not equal",
-            metsKitodoWrapper.getDmdSecs().size(), savedMetsKitodoWrapper.getDmdSecs().size());
+        assertEquals(loadedMetadata,
+            savedMetadata,
+            "The metadata of the loaded and the saved mets file are not equal");
+        assertEquals(metsKitodoWrapper.getDmdSecs().size(),
+            savedMetsKitodoWrapper.getDmdSecs().size(),
+            "The number of dmdSec elements of the loaded and the saved mets file are not equal");
 
-        Assert.assertEquals("Conversation note was not inserted to mets header", 2,
-            metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getNote().size());
+        assertEquals(2,
+            metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getNote().size(),
+            "Conversation note was not inserted to mets header");
     }
 
     @Test
@@ -151,7 +159,7 @@ public class MetsKitodoWriterTest {
             "        </mets:mdWrap>\n" +
             "    </mets:dmdSec>";
 
-        Assert.assertTrue("The written String of the loaded mets was wrong", result.contains(expectedResult));
+        assertTrue(result.contains(expectedResult), "The written String of the loaded mets was wrong");
     }
 
     @Test
@@ -161,7 +169,7 @@ public class MetsKitodoWriterTest {
         MetsKitodoObjectFactory objectFactory = new MetsKitodoObjectFactory();
         metsKitodoWrapper.getDmdSecs().add(objectFactory.createDmdSecByKitodoMetadata(objectFactory.createKitodoType(),"testId"));
         String result = metsKitodoWriter.writeSerializedToString(metsKitodoWrapper.getMets());
-        Assert.assertTrue("Prefix mapping for kitodo namespace is wrong", result.contains("kitodo:kitodo"));
-        Assert.assertTrue("Prefix mapping for mets namespace is wrong", result.contains("mets:dmdSec"));
+        assertTrue(result.contains("kitodo:kitodo"), "Prefix mapping for kitodo namespace is wrong");
+        assertTrue(result.contains("mets:dmdSec"), "Prefix mapping for mets namespace is wrong");
     }
 }

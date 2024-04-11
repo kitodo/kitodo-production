@@ -11,6 +11,10 @@
 
 package org.kitodo.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -28,14 +32,11 @@ import javax.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.dataeditor.enums.FileLocationType;
 import org.kitodo.dataeditor.enums.PositionOfNewDiv;
@@ -50,24 +51,24 @@ import org.kitodo.dataformat.metskitodo.StructMapType;
 
 public class MetsKitodoWrapperTest {
 
-    private URI xmlfile = Paths.get("./src/test/resources/testmeta.xml").toUri();
-    private URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
-    private static File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
+    private final URI xmlfile = Paths.get("./src/test/resources/testmeta.xml").toUri();
+    private final URI xsltFile = Paths.get("./src/test/resources/xslt/MetsModsGoobi_to_MetsKitodo.xsl").toUri();
+    private static final File manifestFile = new File("./target/classes/META-INF/MANIFEST.MF");
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
     private static byte[] testMetaOldFormat;
 
-    @Before
+    @BeforeEach
     public void saveFile() throws IOException {
         File file = new File("src/test/resources/testmetaOldFormat.xml");
         testMetaOldFormat = IOUtils.toByteArray(file.toURI());
     }
 
-    @After
+    @AfterEach
     public void revertFile() throws IOException {
         IOUtils.write( testMetaOldFormat, Files.newOutputStream(Paths.get(pathOfOldMetaFormat)));
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
 
         String manifest =
@@ -88,13 +89,13 @@ public class MetsKitodoWrapperTest {
         FileUtils.write(manifestFile, manifest, "UTF-8");
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         Files.deleteIfExists(manifestFile.toPath());
     }
 
     @Test
-    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException, JAXBException {
+    public void shouldAddSmLink() throws DatatypeConfigurationException, IOException {
         List<DivType> physicalDivTypes = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             DivType physicalDiv = new DivType();
@@ -112,9 +113,9 @@ public class MetsKitodoWrapperTest {
                 .getSmLinkOrSmLinkGrp().get(0);
         int objectCount = metsKitodoWrapper.getMets().getStructLink().getSmLinkOrSmLinkGrp().size();
 
-        Assert.assertEquals("'from' attribute of smLink was wrong", logicalDiv.getID(), smLink.getFrom());
-        Assert.assertEquals("'to' attribute of smLink was wrong", physicalDivTypes.get(0).getID(), smLink.getTo());
-        Assert.assertEquals("Number of inserted smLinks was wrong", physicalDivTypes.size(), objectCount);
+        assertEquals(logicalDiv.getID(), smLink.getFrom(), "'from' attribute of smLink was wrong");
+        assertEquals(physicalDivTypes.get(0).getID(), smLink.getTo(), "'to' attribute of smLink was wrong");
+        assertEquals(physicalDivTypes.size(), objectCount, "Number of inserted smLinks was wrong");
     }
 
     @Test
@@ -126,17 +127,17 @@ public class MetsKitodoWrapperTest {
         String type = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getTYPE();
         String otherType = metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getOTHERTYPE();
 
-        Assert.assertEquals("Role of mets header agent was inserted wrong", "CREATOR", role);
-        Assert.assertEquals("Type of mets header agent was inserted wrong", "OTHER", type);
-        Assert.assertEquals("OtherType of mets header agent was inserted wrong", "SOFTWARE", otherType);
-        Assert.assertTrue("Name of mets header agent was inserted wrong", name.contains("Kitodo"));
+        assertEquals("CREATOR", role, "Role of mets header agent was inserted wrong");
+        assertEquals("OTHER", type, "Type of mets header agent was inserted wrong");
+        assertEquals("SOFTWARE", otherType, "OtherType of mets header agent was inserted wrong");
+        assertTrue(name.contains("Kitodo"), "Name of mets header agent was inserted wrong");
     }
 
     @Test
     public void shouldCreateMetsByFile()
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
-        Assert.assertEquals("Number of dmdSec elements was wrong!", 6, metsKitodoWrapper.getMets().getDmdSec().size());
+        assertEquals(6, metsKitodoWrapper.getMets().getDmdSec().size(), "Number of dmdSec elements was wrong!");
     }
 
     @Test
@@ -144,7 +145,7 @@ public class MetsKitodoWrapperTest {
             throws JAXBException, TransformerException, IOException, DatatypeConfigurationException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         String id = metsKitodoWrapper.getMets().getDmdSec().get(0).getID();
-        Assert.assertEquals("Reading id of dmdSec data out of mets was not correct", "DMDLOG_ROOT", id);
+        assertEquals("DMDLOG_ROOT", id, "Reading id of dmdSec data out of mets was not correct");
     }
 
     @Test
@@ -155,10 +156,8 @@ public class MetsKitodoWrapperTest {
         KitodoType kitodoType = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType();
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
-            metadataType.getName());
-        Assert.assertEquals("Reading value out of kitodo metadata format was not correct", "Test Publisher",
-            metadataType.getValue());
+        assertEquals("PublisherName", metadataType.getName(), "Reading data of type 'name' out of kitodo format was not correct");
+        assertEquals("Test Publisher", metadataType.getValue(), "Reading value out of kitodo metadata format was not correct");
     }
 
     @Test
@@ -168,10 +167,8 @@ public class MetsKitodoWrapperTest {
         KitodoType kitodoType = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType();
 
         MetadataGroupType metadataGroupType = kitodoType.getMetadataGroup().get(0).getMetadataGroup().get(0);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "subTypIdentifierPPN",
-            metadataGroupType.getMetadata().get(1).getName());
-        Assert.assertEquals("Reading value out of kitodo metadata was not correct", "sub10457187X",
-            metadataGroupType.getMetadata().get(1).getValue());
+        assertEquals("subTypIdentifierPPN", metadataGroupType.getMetadata().get(1).getName(), "Reading data of type 'name' out of kitodo format was not correct");
+        assertEquals("sub10457187X", metadataGroupType.getMetadata().get(1).getValue(), "Reading value out of kitodo metadata was not correct");
     }
 
     @Test
@@ -182,10 +179,8 @@ public class MetsKitodoWrapperTest {
         KitodoType kitodoType = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType();
 
         MetadataType metadataType = kitodoType.getMetadata().get(1);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "PublisherName",
-            metadataType.getName());
-        Assert.assertEquals("Reading value out of kitodo metadata was not correct", "Test Publisher",
-            metadataType.getValue());
+        assertEquals("PublisherName", metadataType.getName(), "Reading data of type 'name' out of kitodo format was not correct");
+        assertEquals("Test Publisher", metadataType.getValue(), "Reading value out of kitodo metadata was not correct");
     }
 
     @Test
@@ -196,10 +191,8 @@ public class MetsKitodoWrapperTest {
         KitodoType kitodoType = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType();
 
         MetadataGroupType metadataGroupType = kitodoType.getMetadataGroup().get(0);
-        Assert.assertEquals("Reading data of type 'name' out of kitodo format was not correct", "typIdentifierPPN",
-            metadataGroupType.getMetadata().get(1).getName());
-        Assert.assertEquals("Reading value out of kitodo metadata was not correct", "10457187X",
-            metadataGroupType.getMetadata().get(1).getValue());
+        assertEquals("typIdentifierPPN", metadataGroupType.getMetadata().get(1).getName(), "Reading data of type 'name' out of kitodo format was not correct");
+        assertEquals("10457187X", metadataGroupType.getMetadata().get(1).getValue(), "Reading value out of kitodo metadata was not correct");
     }
 
     @Test
@@ -215,20 +208,18 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         metsKitodoWrapper.insertMediaFiles(mediaFiles);
 
-        Assert.assertEquals("Wrong number of divs in physical structMap", numberOfFiles,
-                metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
-        Assert.assertEquals("Wrong number of files in fileSec", numberOfFiles,
-                metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
+        assertEquals(numberOfFiles, metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size(), "Wrong number of divs in physical structMap");
+        assertEquals(numberOfFiles, metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size(), "Wrong number of files in fileSec");
 
         DivType divType = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().get(1);
 
-        Assert.assertEquals("Wrong order label at second div", "uncounted", divType.getORDERLABEL());
-        Assert.assertEquals("Wrong order at second div", BigInteger.valueOf(2), divType.getORDER());
-        Assert.assertEquals("Wrong type at second div", "page", divType.getTYPE());
-        Assert.assertEquals("Wrong id at second div", "PHYS_0002", divType.getID());
+        assertEquals("uncounted", divType.getORDERLABEL(), "Wrong order label at second div");
+        assertEquals(BigInteger.valueOf(2), divType.getORDER(), "Wrong order at second div");
+        assertEquals("page", divType.getTYPE(), "Wrong type at second div");
+        assertEquals("PHYS_0002", divType.getID(), "Wrong id at second div");
 
         FileType fileType = (FileType) divType.getFptr().get(0).getFILEID();
-        Assert.assertEquals("Wrong file id at second div", "FILE_0002", fileType.getID());
+        assertEquals("FILE_0002", fileType.getID(), "Wrong file id at second div");
 
     }
 
@@ -243,19 +234,14 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("MultiMedia");
         metsKitodoWrapper.insertMediaFiles(mediaFiles);
 
-        Assert.assertEquals("Wrong number of divs in physical structMap", 3,
-                metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size());
-        Assert.assertEquals("Wrong number of files in fileSec", 3,
-                metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size());
+        assertEquals(3, metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv().size(), "Wrong number of divs in physical structMap");
+        assertEquals(3, metsKitodoWrapper.getMets().getFileSec().getFileGrp().get(0).getFile().size(), "Wrong number of files in fileSec");
 
         List<DivType> divTypes = metsKitodoWrapper.getPhysicalStructMap().getDiv().getDiv();
-        Assert.assertEquals(PhysicalDivision.TYPE_PAGE, divTypes.get(0).getTYPE());
-        Assert.assertEquals(PhysicalDivision.TYPE_TRACK, divTypes.get(1).getTYPE());
-        Assert.assertEquals(PhysicalDivision.TYPE_TRACK, divTypes.get(2).getTYPE());
+        assertEquals(PhysicalDivision.TYPE_PAGE, divTypes.get(0).getTYPE());
+        assertEquals(PhysicalDivision.TYPE_TRACK, divTypes.get(1).getTYPE());
+        assertEquals(PhysicalDivision.TYPE_TRACK, divTypes.get(2).getTYPE());
     }
-
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     @Test
     public void shouldInsertRootLogicalDivAndMdSecAtCreation() throws DatatypeConfigurationException, IOException {
@@ -264,8 +250,8 @@ public class MetsKitodoWrapperTest {
         StructMapType logicalStructMap = metsKitodoWrapper.getLogicalStructMap();
         MdSecType rootDmdSec = (MdSecType) logicalStructMap.getDiv().getDMDID().get(0);
 
-        Assert.assertEquals("Type of logical root div was wrong", documentType, logicalStructMap.getDiv().getTYPE());
-        Assert.assertEquals("Id of root div related DmdSec was wrong", "DMDLOG_ROOT", rootDmdSec.getID());
+        assertEquals(documentType, logicalStructMap.getDiv().getTYPE(), "Type of logical root div was wrong");
+        assertEquals("DMDLOG_ROOT", rootDmdSec.getID(), "Id of root div related DmdSec was wrong");
     }
 
     @Test
@@ -275,18 +261,21 @@ public class MetsKitodoWrapperTest {
 
         DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         KitodoType kitodoTypeOfDiv = metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(rootDiv);
-        Assert.assertEquals("Reading metadata of dmdSec logical root div was wrong", "Test Publisher",
-            kitodoTypeOfDiv.getMetadata().get(1).getValue());
+        assertEquals("Test Publisher",
+            kitodoTypeOfDiv.getMetadata().get(1).getValue(),
+            "Reading metadata of dmdSec logical root div was wrong");
 
         DivType div = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1);
         kitodoTypeOfDiv = metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(div);
-        Assert.assertEquals("Reading metadata of dmdSec logical div was wrong", "Chapter 1",
-            kitodoTypeOfDiv.getMetadata().get(0).getValue());
+        assertEquals("Chapter 1",
+            kitodoTypeOfDiv.getMetadata().get(0).getValue(),
+            "Reading metadata of dmdSec logical div was wrong");
 
         DivType divWithoutMetadata = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0);
-        expectedException.expect(NoSuchElementException.class);
-        expectedException.expectMessage("Div element with id: LOG_0001 does not have metadata!");
-        metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(divWithoutMetadata);
+        Exception exception = assertThrows(NoSuchElementException.class,
+                () -> metsKitodoWrapper.getFirstKitodoTypeOfLogicalDiv(divWithoutMetadata)
+            );
+        assertEquals("Div element with id: LOG_0001 does not have metadata!", exception.getMessage());
     }
 
     @Test
@@ -294,18 +283,24 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
 
-        Assert.assertEquals("Id of first div at logical struct map was wrong", "LOG_0001",
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0).getID());
-        Assert.assertEquals("Id of second div at logical struct map was wrong", "LOG_0005",
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getID());
-        Assert.assertEquals("Id of third div at logical struct map was wrong", "LOG_0006",
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2).getID());
-        Assert.assertEquals("Id of fourth div at logical struct map was wrong", "LOG_0009",
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(3).getID());
-        Assert.assertEquals("Id of second sub div of third div at logical struct map was wrong", "LOG_0012",
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getID());
-        Assert.assertEquals("Id of fifth sub div of third div at logical struct map was wrong", "LOG_0018",
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(4).getID());
+        assertEquals("LOG_0001",
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0).getID(),
+            "Id of first div at logical struct map was wrong");
+        assertEquals("LOG_0005",
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getID(),
+            "Id of second div at logical struct map was wrong");
+        assertEquals("LOG_0006",
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2).getID(),
+            "Id of third div at logical struct map was wrong");
+        assertEquals("LOG_0009",
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(3).getID(),
+            "Id of fourth div at logical struct map was wrong");
+        assertEquals("LOG_0012",
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getID(),
+            "Id of second sub div of third div at logical struct map was wrong");
+        assertEquals("LOG_0018",
+            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(4).getID(),
+            "Id of fifth sub div of third div at logical struct map was wrong");
     }
 
     @Test
@@ -315,7 +310,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter",
             PositionOfNewDiv.FIRST_CHILD_OF_ELEMENT);
-        Assert.assertEquals("New div was not added", "AddedSubChapter", fifthDiv.getDiv().get(0).getTYPE());
+        assertEquals("AddedSubChapter", fifthDiv.getDiv().get(0).getTYPE(), "New div was not added");
     }
 
     @Test
@@ -325,7 +320,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter", PositionOfNewDiv.BEFORE_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
-        Assert.assertEquals("New div was not added", "AddedSubChapter", addedDiv.getTYPE());
+        assertEquals("AddedSubChapter", addedDiv.getTYPE(), "New div was not added");
     }
 
     @Test
@@ -335,7 +330,7 @@ public class MetsKitodoWrapperTest {
         DivType fifthDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4);
         metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthDiv, "AddedSubChapter", PositionOfNewDiv.AFTER_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(5);
-        Assert.assertEquals("New div was not added", "AddedSubChapter", addedDiv.getTYPE());
+        assertEquals("AddedSubChapter", addedDiv.getTYPE(), "New div was not added");
 
     }
 
@@ -349,7 +344,7 @@ public class MetsKitodoWrapperTest {
             PositionOfNewDiv.BEFORE_ELEMENT);
         DivType addedDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1).getDiv()
                 .get(0);
-        Assert.assertEquals("New div was not added", "AddedSubSubChapter", addedDiv.getTYPE());
+        assertEquals("AddedSubSubChapter", addedDiv.getTYPE(), "New div was not added");
     }
 
     @Test
@@ -357,9 +352,9 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("TestType");
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
-        expectedException.expect(UnsupportedOperationException.class);
-        expectedException.expectMessage("Root element cannot have a parent!");
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT);
+        Exception exception = assertThrows(UnsupportedOperationException.class,
+            () -> metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT));
+        assertEquals("Root element cannot have a parent!", exception.getMessage());
     }
 
     private void fillLogicalStructMap(MetsKitodoWrapper metsKitodoWrapper) {
@@ -411,8 +406,7 @@ public class MetsKitodoWrapperTest {
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().get(1);
         metsKitodoWrapper.getLogicalStructMap().removeDiv(fifthSubDiv);
-        Assert.assertEquals("Could not remove div al logical structMap", 4,
-            metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().size());
+        assertEquals(4, metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(4).getDiv().size(), "Could not remove div al logical structMap");
     }
 
     @Test
@@ -426,8 +420,8 @@ public class MetsKitodoWrapperTest {
         List<DivType> movedDivs = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(0).getDiv().get(0)
                 .getDiv();
 
-        Assert.assertEquals("Could not remove div al logical structMap", 3, movedDivs.size());
-        Assert.assertEquals("Could not remove div al logical structMap", "SubSubChapter", movedDivs.get(0).getTYPE());
+        assertEquals(3, movedDivs.size(), "Could not remove div al logical structMap");
+        assertEquals("SubSubChapter", movedDivs.get(0).getTYPE(), "Could not remove div al logical structMap");
     }
 
     @Test
@@ -436,9 +430,10 @@ public class MetsKitodoWrapperTest {
         fillLogicalStructMap(metsKitodoWrapper);
         DivType fifthSubDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         fifthSubDiv.setID("notExisting");
-        expectedException.expect(NoSuchElementException.class);
-        expectedException.expectMessage("Child div element not found");
-        metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT);
+        Exception exception = assertThrows(NoSuchElementException.class,
+                () -> metsKitodoWrapper.getLogicalStructMap().addNewDiv(fifthSubDiv, "AddedRoot", PositionOfNewDiv.BEFORE_ELEMENT)
+            );
+        assertEquals("Child div element not found", exception.getMessage());
     }
 
     @Test
@@ -448,15 +443,13 @@ public class MetsKitodoWrapperTest {
 
         DivType firstSubChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(1).getDiv().get(0);
         List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstSubChapterDiv);
-        Assert.assertEquals("Number of physical divs of first chapter was wrong", 4, physicalDivs.size());
-        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "3",
-            physicalDivs.get(2).getORDERLABEL());
+        assertEquals(4, physicalDivs.size(), "Number of physical divs of first chapter was wrong");
+        assertEquals("3", physicalDivs.get(2).getORDERLABEL(), "Orderlabel of last physical divs of first chapter was wrong");
 
         DivType secondChapterDiv = metsKitodoWrapper.getLogicalStructMap().getDiv().getDiv().get(2);
         physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(secondChapterDiv);
-        Assert.assertEquals("Number of physical divs of second chapter was wrong", 3, physicalDivs.size());
-        Assert.assertEquals("Orderlabel of last physical divs of first chapter was wrong", "9",
-            physicalDivs.get(2).getORDERLABEL());
+        assertEquals(3, physicalDivs.size(), "Number of physical divs of second chapter was wrong");
+        assertEquals("9", physicalDivs.get(2).getORDERLABEL(), "Orderlabel of last physical divs of first chapter was wrong");
     }
 
     @Test
@@ -468,7 +461,7 @@ public class MetsKitodoWrapperTest {
         metsKitodoWrapper.linkLogicalDivByInheritFromChildDivs(firstChapterDiv);
 
         List<DivType> physicalDivs = metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv);
-        Assert.assertEquals("Number of created linked physical divs was wrong", 7, physicalDivs.size());
+        assertEquals(7, physicalDivs.size(), "Number of created linked physical divs was wrong");
     }
 
     @Test
@@ -482,8 +475,9 @@ public class MetsKitodoWrapperTest {
             metsKitodoWrapper.getStructLink().removeSmLink(firstChapterDiv, physicalDiv);
         }
 
-        Assert.assertEquals("Removing of smLinks was not successful", 0,
-            metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv).size());
+        assertEquals(0,
+            metsKitodoWrapper.getPhysicalDivsByLinkingLogicalDiv(firstChapterDiv).size(),
+            "Removing of smLinks was not successful");
     }
 
     @Test
@@ -491,8 +485,7 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         DivType rootDivFromMets = metsKitodoWrapper.getMets().getStructMap().get(0).getDiv();
-        Assert.assertEquals("Div elements from getter and directly from mets objects were not the same", rootDiv,
-            rootDivFromMets);
+        assertEquals(rootDiv, rootDivFromMets, "Div elements from getter and directly from mets objects were not the same");
     }
 
     @Test
@@ -500,15 +493,13 @@ public class MetsKitodoWrapperTest {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper(xmlfile, xsltFile);
         DivType rootDiv = metsKitodoWrapper.getLogicalStructMap().getDiv();
         DivType rootDivFromMets = metsKitodoWrapper.getMets().getStructMap().get(1).getDiv();
-        Assert.assertEquals("Div elements from getter and directly from mets objects were not the same", rootDiv,
-            rootDivFromMets);
+        assertEquals(rootDiv, rootDivFromMets, "Div elements from getter and directly from mets objects were not the same");
     }
 
     @Test
     public void shouldWriteKitodoDataFormatVersion() throws DatatypeConfigurationException, IOException {
         MetsKitodoWrapper metsKitodoWrapper = new MetsKitodoWrapper("Manuscript");
         KitodoType kitodoType = metsKitodoWrapper.getDmdSecs().get(0).getKitodoType();
-        Assert.assertEquals("1.0", kitodoType.getVersion());
-
+        assertEquals("1.0", kitodoType.getVersion());
     }
 }
