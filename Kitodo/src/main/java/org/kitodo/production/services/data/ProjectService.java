@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -199,8 +200,12 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
         ProjectInterface projectInterface = DTOFactory.instance().newProject();
         projectInterface.setId(getIdFromJSONObject(jsonObject));
         projectInterface.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
-        projectInterface.setStartDate(ProjectTypeField.START_DATE.getStringValue(jsonObject));
-        projectInterface.setEndDate(ProjectTypeField.END_DATE.getStringValue(jsonObject));
+        try {
+            projectInterface.setStartTime(ProjectTypeField.START_DATE.getStringValue(jsonObject));
+            projectInterface.setEndTime(ProjectTypeField.END_DATE.getStringValue(jsonObject));
+        } catch (ParseException e) {
+            throw new DataException(e);
+        }
         projectInterface.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
         projectInterface.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
         projectInterface.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));

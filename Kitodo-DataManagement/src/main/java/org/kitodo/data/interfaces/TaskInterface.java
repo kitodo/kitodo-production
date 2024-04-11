@@ -12,7 +12,9 @@
 package org.kitodo.data.interfaces;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -192,8 +194,22 @@ public interface TaskInterface extends DataInterface {
      * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
      * @return the time the task status was last changed
+     * @deprecated Use {@link #getProcessingTime()}.
      */
-    String getProcessingTime();
+    @Deprecated
+    default String getProcessingMoment() {
+        Date processingTime = getProcessingTime();
+        return Objects.nonNull(processingTime) ? DATE_FORMAT.format(processingTime) : null;
+    }
+
+    /**
+     * Returns the time the task status was last changed. This references
+     * <i>any</i> activity on the task that involves a change in status.
+     * {@link Date} is a specific instant in time, with millisecond precision.
+     *
+     * @return the time the task status was last changed
+     */
+    Date getProcessingTime();
 
     /**
      * Sets the time the task status was last changed. The string must be
@@ -203,8 +219,21 @@ public interface TaskInterface extends DataInterface {
      *            time to set
      * @throws ParseException
      *             if the time cannot be converted
+     * @deprecated Use {@link #setProcessingTime(Date)}.
      */
-    void setProcessingTime(String processingTime);
+    @Deprecated
+    default void setProcessingMoment(String processingTime) throws ParseException {
+        setProcessingTime(Objects.nonNull(processingTime) ? DATE_FORMAT.parse(processingTime) : null);
+    }
+
+    /**
+     * Sets the time the task status was last changed. The string must be
+     * parsable with {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     *
+     * @param processingTime
+     *            time to set
+     */
+    void setProcessingTime(Date processingTime);
 
     /**
      * Returns the time when the task was accepted for processing. The string is
@@ -212,8 +241,20 @@ public interface TaskInterface extends DataInterface {
      * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
      * @return the time when the task was accepted for processing
+     * @deprecated Use {@link #getProcessingBegin()}.
      */
-    String getProcessingBegin();
+    @Deprecated
+    default String getProcessingBeginTime() {
+        Date processingBegin = getProcessingBegin();
+        return Objects.nonNull(processingBegin) ? DATE_FORMAT.format(processingBegin) : null;
+    }
+
+    /**
+     * Returns the time when the task was accepted for processing.
+     *
+     * @return the time when the task was accepted for processing
+     */
+    Date getProcessingBegin();
 
     /**
      * Sets the time the task was accepted for processing. The string must be
@@ -223,16 +264,40 @@ public interface TaskInterface extends DataInterface {
      *            time to set
      * @throws ParseException
      *             if the time cannot be converted
+     * @deprecated Use {@link #setProcessingBegin(Date)}.
      */
-    void setProcessingBegin(String processingBegin);
+    @Deprecated
+    default void setProcessingBeginTime(String processingBegin) throws ParseException {
+        setProcessingBegin(Objects.nonNull(processingBegin) ? DATE_FORMAT.parse(processingBegin) : null);
+    }
+
+    /**
+     * Sets the time the task was accepted for processing.
+     *
+     * @param processingTime
+     *            time to set
+     */
+    void setProcessingBegin(Date processingBegin);
 
     /**
      * Returns the time when the task was completed. The string is formatted
      * according to {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
      * @return the time when the task was completed
+     * @deprecated Use {@link #getProcessingEnd()}.
      */
-    String getProcessingEnd();
+    @Deprecated
+    default String getProcessingEndTime() {
+        Date processingEnd = getProcessingEnd();
+        return Objects.nonNull(processingEnd) ? DATE_FORMAT.format(processingEnd) : null;
+    }
+
+    /**
+     * Returns the time when the task was completed.
+     *
+     * @return the time when the task was completed
+     */
+    Date getProcessingEnd();
 
     /**
      * Sets the time the task was completed. The string must be parsable with
@@ -242,8 +307,20 @@ public interface TaskInterface extends DataInterface {
      *            time to set
      * @throws ParseException
      *             if the time cannot be converted
+     * @deprecated Use {@link #setProcessingEnd(Date)}.
      */
-    void setProcessingEnd(String processingEnd);
+    @Deprecated
+    default void setProcessingEndTime(String processingEnd) throws ParseException {
+        setProcessingEnd(Objects.nonNull(processingEnd) ? DATE_FORMAT.parse(processingEnd) : null);
+    }
+
+    /**
+     * Sets the time the task was completed.
+     *
+     * @param processingTime
+     *            time to set
+     */
+    void setProcessingEnd(Date processingEnd);
 
     /**
      * Returns the process this task belongs to. Can be {@code null} if the task

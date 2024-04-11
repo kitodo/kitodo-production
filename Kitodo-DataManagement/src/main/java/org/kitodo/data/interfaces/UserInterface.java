@@ -142,7 +142,9 @@ public interface UserInterface extends DataInterface {
      *            as boolean
      * @throws UnsupportedOperationException
      *             when trying to change this
+     * @deprecated Use servlet container user control.
      */
+    @Deprecated
     default void setActive(boolean active) {
         if (active != isActive()) {
             throw new UnsupportedOperationException(active ? "cannot log user in" : "cannot log user out");
@@ -170,7 +172,9 @@ public interface UserInterface extends DataInterface {
      * Returns the number of saved search queries.
      *
      * @return the number of saved search queries
+     * @deprecated Use {@link #getFilters()}{@code .size()}.
      */
+    @Deprecated
     default Integer getFiltersSize() {
         List<? extends FilterInterface> queries = getFilters();
         return Objects.nonNull(queries) ? queries.size() : null;
@@ -188,7 +192,9 @@ public interface UserInterface extends DataInterface {
      *             when trying to add unspecified filters to this user
      * @throws IndexOutOfBoundsException
      *             for an illegal endpoint index value
+     * @deprecated {@link #getFilters()} and edit them consciously.
      */
+    @Deprecated
     default void setFiltersSize(Integer filtersSize) {
         if (Objects.isNull(filtersSize)) {
             setFilters(null);
@@ -224,7 +230,9 @@ public interface UserInterface extends DataInterface {
      * Returns the number of roles the user has.
      *
      * @return the number of roles
+     * @deprecated Use {@link #getRoles()}{@code .size()}.
      */
+    @Deprecated
     default int getRolesSize() {
         List<? extends RoleInterface> roles = getRoles();
         return Objects.nonNull(roles) ? roles.size() : 0;
@@ -242,7 +250,9 @@ public interface UserInterface extends DataInterface {
      *             when trying to assign unspecified roles to this user
      * @throws IndexOutOfBoundsException
      *             for an illegal endpoint index value
+     * @deprecated {@link #getRoles()} and edit them consciously.
      */
+    @Deprecated
     default void setRolesSize(Integer rolesSize) {
         int newSize = Objects.nonNull(rolesSize) ? rolesSize : 0;
         List<? extends RoleInterface> users = Optional.of(getRoles()).orElse(Collections.emptyList());
@@ -275,7 +285,9 @@ public interface UserInterface extends DataInterface {
      * Returns the number of clients the user interacts with.
      *
      * @return the number of clients
+     * @deprecated Use {@link #getClients()}{@code .size()}.
      */
+    @Deprecated
     default int getClientsSize() {
         List<? extends ClientInterface> clients = getClients();
         return Objects.nonNull(clients) ? clients.size() : 0;
@@ -293,7 +305,9 @@ public interface UserInterface extends DataInterface {
      *             when trying to assign unspecified roles to this user
      * @throws IndexOutOfBoundsException
      *             for an illegal endpoint index value
+     * @deprecated {@link #getClients()} and edit them consciously.
      */
+    @Deprecated
     default void setClientsSize(Integer clientsSize) {
         int newSize = Objects.nonNull(clientsSize) ? clientsSize : 0;
         List<? extends ClientInterface> users = Optional.of(getClients()).orElse(Collections.emptyList());
@@ -326,7 +340,9 @@ public interface UserInterface extends DataInterface {
      * Returns the number of projects the user is working on.
      *
      * @return the number of projects
+     * @deprecated Use {@link #getProjects()}{@code .size()}.
      */
+    @Deprecated
     default int getProjectsSize() {
         List<? extends ProjectInterface> projects = getProjects();
         return Objects.nonNull(projects) ? projects.size() : 0;
@@ -344,7 +360,9 @@ public interface UserInterface extends DataInterface {
      *             when trying to assign unspecified projects to this user
      * @throws IndexOutOfBoundsException
      *             for an illegal endpoint index value
+     * @deprecated {@link #getProjects()} and edit them consciously.
      */
+    @Deprecated
     default void setProjectsSize(Integer projectsSize) {
         int newSize = Objects.nonNull(projectsSize) ? projectsSize : 0;
         List<? extends ProjectInterface> users = Optional.of(getProjects()).orElse(Collections.emptyList());

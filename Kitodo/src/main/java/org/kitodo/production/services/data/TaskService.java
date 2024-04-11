@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -312,9 +313,13 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
         taskInterface.setEditType(TaskEditType.getTypeFromValue(editType));
         taskInterface.setEditTypeTitle(Helper.getTranslation(taskInterface.getEditType().getTitle()));
-        taskInterface.setProcessingTime(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
-        taskInterface.setProcessingBegin(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
-        taskInterface.setProcessingEnd(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
+        try {
+            taskInterface.setProcessingMoment(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
+            taskInterface.setProcessingBeginTime(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
+            taskInterface.setProcessingEndTime(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
+        } catch (ParseException e) {
+            throw new DataException(e);
+        }
         taskInterface.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
         taskInterface.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
         taskInterface.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));

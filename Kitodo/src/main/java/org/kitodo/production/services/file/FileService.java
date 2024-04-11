@@ -906,11 +906,11 @@ public class FileService {
      * @return the URI.
      */
     public String getProcessBaseUriForExistingProcess(ProcessInterface processInterface) {
-        String processBaseUri = processInterface.getProcessBaseUri();
+        String processBaseUri = processInterface.getProcessBase();
         if (Objects.isNull(processBaseUri) && Objects.nonNull(processInterface.getId())) {
-            processInterface.setProcessBaseUri(fileManagementModule.createUriForExistingProcess(processInterface.getId().toString()).toString());
+            processInterface.setProcessBase(fileManagementModule.createUriForExistingProcess(processInterface.getId().toString()).toString());
         }
-        return processInterface.getProcessBaseUri();
+        return processInterface.getProcessBase();
     }
 
     /**

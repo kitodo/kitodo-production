@@ -11,10 +11,12 @@
 
 package org.kitodo.data.interfaces;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.kitodo.data.database.enums.CorrectionComments;
 
@@ -346,8 +348,37 @@ public interface ProcessInterface extends DataInterface {
      * the application's processes directory on the file system.
      *
      * @return the union resource identifier of the process
+     * @deprecated Use {@link #getProcessBaseUri()}.
      */
-    String getProcessBaseUri();
+    @Deprecated
+    default String getProcessBase() {
+        URI processBaseUri = getProcessBaseUri();
+        return Objects.isNull(processBaseUri) ? null : processBaseUri.toString();
+    }
+
+    /**
+     * Returns a process identifier URI. Internally, this is the record number
+     * of the process in the processes table of the database, but for external
+     * data it can also be another identifier that resolves to a directory in
+     * the application's processes directory on the file system.
+     *
+     * @return the union resource identifier of the process
+     */
+    URI getProcessBaseUri();
+
+    /**
+     * Sets the union resource identifier of the process. This should only be
+     * set manually if the data comes from a third party source, otherwise, this
+     * is the process record number set by the database.
+     *
+     * @param processBaseUri
+     *            the identification URI of the process
+     * @deprecated Use {@link #setProcessBaseUri(URI)}.
+     */
+    @Deprecated
+    default void setProcessBase(String processBaseUri) {
+        setProcessBaseUri(Objects.isNull(processBaseUri) ? null : URI.create(processBaseUri));
+    }
 
     /**
      * Sets the union resource identifier of the process. This should only be
@@ -357,7 +388,7 @@ public interface ProcessInterface extends DataInterface {
      * @param processBaseUri
      *            the identification URI of the process
      */
-    void setProcessBaseUri(String processBaseUri);
+    void setProcessBaseUri(URI processBaseUri);
 
     /**
      * Returns all batches to which the process belongs. A comma-space-separated

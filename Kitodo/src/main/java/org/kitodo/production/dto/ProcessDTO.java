@@ -11,6 +11,7 @@
 
 package org.kitodo.production.dto;
 
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -257,8 +258,13 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      *
      * @return process base URI as String.
      */
-    public String getProcessBaseUri() {
+    public String getProcessBase() {
         return processBaseUri;
+    }
+
+    @Override
+    public URI getProcessBaseUri() {
+        return Objects.isNull(processBaseUri) ? null : URI.create(processBaseUri);
     }
 
     /**
@@ -267,8 +273,13 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      * @param processBaseUri
      *            as String
      */
-    public void setProcessBaseUri(String processBaseUri) {
+    public void setProcessBase(String processBaseUri) {
         this.processBaseUri = processBaseUri;
+    }
+
+    @Override
+    public void setProcessBaseUri(URI processBaseUri) {
+        this.processBaseUri = Objects.isNull(processBaseUri) ? null : processBaseUri.toString();
     }
 
     /**

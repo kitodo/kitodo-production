@@ -924,7 +924,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
             processInterface.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
             processInterface.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
             processInterface.setSortHelperStatus(ProcessTypeField.SORT_HELPER_STATUS.getStringValue(jsonObject));
-            processInterface.setProcessBaseUri(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
+            processInterface.setProcessBase(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
             processInterface.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
             processInterface.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
             processInterface.setNumberOfImages(ProcessTypeField.NUMBER_OF_IMAGES.getIntValue(jsonObject));
@@ -1200,10 +1200,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @return path
      */
     public String getProcessDataDirectory(ProcessInterface processInterface) {
-        if (Objects.isNull(processInterface.getProcessBaseUri())) {
-            processInterface.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(processInterface));
+        if (Objects.isNull(processInterface.getProcessBase())) {
+            processInterface.setProcessBase(fileService.getProcessBaseUriForExistingProcess(processInterface));
         }
-        return processInterface.getProcessBaseUri();
+        return processInterface.getProcessBase();
     }
 
     /**

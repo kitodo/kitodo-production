@@ -11,9 +11,13 @@
 
 package org.kitodo.production.dto;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.TemplateInterface;
@@ -62,7 +66,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return start date as String
      */
-    public String getStartDate() {
+    public String getStartTime() {
         return startDate;
     }
 
@@ -72,7 +76,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param startDate
      *            as String
      */
-    public void setStartDate(String startDate) {
+    public void setStartTime(String startDate) {
         this.startDate = startDate;
     }
 
@@ -81,7 +85,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return end date as String
      */
-    public String getEndDate() {
+    public String getEndTime() {
         return endDate;
     }
 
@@ -91,7 +95,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param endDate
      *            as String
      */
-    public void setEndDate(String endDate) {
+    public void setEndTime(String endDate) {
         this.endDate = endDate;
     }
 
@@ -281,5 +285,34 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      */
     public void setHasProcesses(boolean hasProcesses) {
         this.hasProcesses = hasProcesses;
+    }
+
+    @Override
+    public Date getStartDate() {
+        try {
+            return Strings.isNotEmpty(this.startDate) ? DATE_FORMAT.parse(this.startDate) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setStartDate(Date startDate) {
+        this.startDate = Objects.nonNull(startDate) ? DATE_FORMAT.format(startDate) : null;
+    }
+
+    @Override
+    public Date getEndDate() {
+        try {
+            return Strings.isNotEmpty(this.endDate) ? DATE_FORMAT.parse(this.endDate) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setEndDate(Date endDate) {
+        this.endDate = Objects.nonNull(endDate) ? DATE_FORMAT.format(endDate) : null;
+       
     }
 }

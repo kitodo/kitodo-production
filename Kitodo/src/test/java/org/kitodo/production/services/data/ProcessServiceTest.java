@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.net.URI;
+import java.text.ParseException;
 import java.util.List;
 
 import org.junit.Assert;
@@ -26,38 +27,38 @@ import org.kitodo.production.services.ServiceManager;
 public class ProcessServiceTest {
 
     @Test
-    public void shouldGetSortedCorrectionSolutionMessages() {
+    public void shouldGetSortedCorrectionSolutionMessages() throws ParseException {
         final ProcessInterface processInterface = new ProcessDTO();
 
         PropertyInterface firstPropertyInterface = new PropertyDTO();
         firstPropertyInterface.setId(1);
         firstPropertyInterface.setTitle("Korrektur notwendig");
         firstPropertyInterface.setValue("Fix it");
-        firstPropertyInterface.setCreationDate(null);
+        firstPropertyInterface.setCreationTime(null);
 
         PropertyInterface secondPropertyInterface = new PropertyDTO();
         secondPropertyInterface.setId(2);
         secondPropertyInterface.setTitle("Korrektur notwendig");
         secondPropertyInterface.setValue("Fix it also");
-        secondPropertyInterface.setCreationDate(null);
+        secondPropertyInterface.setCreationTime(null);
 
         PropertyInterface thirdPropertyInterface = new PropertyDTO();
         thirdPropertyInterface.setId(3);
         thirdPropertyInterface.setTitle("Other title");
         thirdPropertyInterface.setValue("Other value");
-        thirdPropertyInterface.setCreationDate("2017-12-01");
+        thirdPropertyInterface.setCreationTime("2017-12-01");
 
         PropertyInterface fourthPropertyInterface = new PropertyDTO();
         fourthPropertyInterface.setId(4);
         fourthPropertyInterface.setTitle("Korrektur durchgef\u00FChrt");
         fourthPropertyInterface.setValue("Fixed second");
-        fourthPropertyInterface.setCreationDate("2017-12-05");
+        fourthPropertyInterface.setCreationTime("2017-12-05");
 
         PropertyInterface fifthPropertyInterface = new PropertyDTO();
         fifthPropertyInterface.setId(5);
         fifthPropertyInterface.setTitle("Korrektur durchgef\u00FChrt");
         fifthPropertyInterface.setValue("Fixed first");
-        fifthPropertyInterface.setCreationDate("2017-12-03");
+        fifthPropertyInterface.setCreationTime("2017-12-03");
 
         @SuppressWarnings("unchecked")
         List<PropertyInterface> properties = (List<PropertyInterface>) processInterface.getProperties();

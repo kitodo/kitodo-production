@@ -126,13 +126,13 @@ public class Process extends BaseTemplateBean {
     private List<Map<String, Object>> metadata;
 
     @Transient
-    private int numberOfMetadata;
+    private Integer numberOfMetadata;
 
     @Transient
-    private int numberOfImages;
+    private Integer numberOfImages;
 
     @Transient
-    private int numberOfStructures;
+    private Integer numberOfStructures;
 
     @Transient
     private String baseType;
@@ -606,7 +606,7 @@ public class Process extends BaseTemplateBean {
      *
      * @return Amount of structure elements
      */
-    public int getNumberOfStructures() {
+    public Integer getNumberOfStructures() {
         return numberOfStructures;
     }
 
@@ -615,7 +615,7 @@ public class Process extends BaseTemplateBean {
      *
      * @return Amount of meta data elements
      */
-    public int getNumberOfMetadata() {
+    public Integer getNumberOfMetadata() {
         return numberOfMetadata;
     }
 
@@ -624,7 +624,7 @@ public class Process extends BaseTemplateBean {
      *
      * @param numberOfMetadata Integer value of amount of meta data elements
      */
-    public void setNumberOfMetadata(int numberOfMetadata) {
+    public void setNumberOfMetadata(Integer numberOfMetadata) {
         this.numberOfMetadata = numberOfMetadata;
     }
 
@@ -633,7 +633,7 @@ public class Process extends BaseTemplateBean {
      *
      * @return Integer value of amount of images
      */
-    public int getNumberOfImages() {
+    public Integer getNumberOfImages() {
         return numberOfImages;
     }
 
@@ -642,7 +642,7 @@ public class Process extends BaseTemplateBean {
      *
      * @param numberOfImages Integer value of amount of images
      */
-    public void setNumberOfImages(int numberOfImages) {
+    public void setNumberOfImages(Integer numberOfImages) {
         this.numberOfImages = numberOfImages;
     }
 
@@ -651,7 +651,7 @@ public class Process extends BaseTemplateBean {
      *
      * @param numberOfStructures Integer value of amount of structure elements
      */
-    public void setNumberOfStructures(int numberOfStructures) {
+    public void setNumberOfStructures(Integer numberOfStructures) {
         this.numberOfStructures = numberOfStructures;
     }
 

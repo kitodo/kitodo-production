@@ -11,9 +11,13 @@
 
 package org.kitodo.production.dto;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.interfaces.ProcessInterface;
@@ -210,7 +214,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing time as String
      */
-    public String getProcessingTime() {
+    public String getProcessingMoment() {
         return processingTime;
     }
 
@@ -220,7 +224,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingTime
      *            as String
      */
-    public void setProcessingTime(String processingTime) {
+    public void setProcessingMoment(String processingTime) {
         this.processingTime = processingTime;
     }
 
@@ -229,7 +233,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing begin time as String
      */
-    public String getProcessingBegin() {
+    public String getProcessingBeginTime() {
         return processingBegin;
     }
 
@@ -239,7 +243,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingBegin
      *            as String
      */
-    public void setProcessingBegin(String processingBegin) {
+    public void setProcessingBeginTime(String processingBegin) {
         this.processingBegin = processingBegin;
     }
 
@@ -248,7 +252,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing end time as String
      */
-    public String getProcessingEnd() {
+    public String getProcessingEndTime() {
         return processingEnd;
     }
 
@@ -258,7 +262,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingEnd
      *            as String
      */
-    public void setProcessingEnd(String processingEnd) {
+    public void setProcessingEndTime(String processingEnd) {
         this.processingEnd = processingEnd;
     }
 
@@ -509,4 +513,45 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
         this.correctionCommentStatus = status;
     }
 
+    @Override
+    public Date getProcessingTime() {
+        try {
+            return Strings.isNotEmpty(this.processingTime) ? DATE_FORMAT.parse(this.processingTime) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setProcessingTime(Date processingTime) {
+        this.processingTime = Objects.nonNull(processingTime) ? DATE_FORMAT.format(processingTime) : null;
+    }
+
+    @Override
+    public Date getProcessingBegin() {
+        try {
+            return Strings.isNotEmpty(this.processingBegin) ? DATE_FORMAT.parse(this.processingBegin) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setProcessingBegin(Date processingBegin) {
+        this.processingBegin = Objects.nonNull(processingBegin) ? DATE_FORMAT.format(processingBegin) : null;
+    }
+
+    @Override
+    public Date getProcessingEnd() {
+        try {
+            return Strings.isNotEmpty(this.processingEnd) ? DATE_FORMAT.parse(this.processingEnd) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setProcessingEnd(Date processingEnd) {
+        this.processingEnd = Objects.nonNull(processingEnd) ? DATE_FORMAT.format(processingEnd) : null;
+    }
 }

@@ -11,10 +11,11 @@
 
 package org.kitodo.data.interfaces;
 
-import java.util.List;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.text.ParseException;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * An interface to manage digitization projects.
@@ -45,8 +46,23 @@ public interface ProjectInterface extends DataInterface {
      * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
      * @return the start time
+     * @deprecated Use {@link #getStartDate()}.
      */
-    String getStartDate();
+    @Deprecated
+    default String getStartTime() {
+        Date startDate = getStartDate();
+        return Objects.nonNull(startDate) ? DATE_FORMAT.format(startDate) : null;
+    }
+
+    /**
+     * Returns the start time of the project. {@link Date} is a specific instant
+     * in time, with millisecond precision. It is a freely configurable value,
+     * not the date the project object was created in the database. This can be,
+     * for example, the start of the funding period.
+     *
+     * @return the start time
+     */
+    Date getStartDate();
 
     /**
      * Sets the start time of the project. The string must be parsable with
@@ -56,8 +72,20 @@ public interface ProjectInterface extends DataInterface {
      *            the start time
      * @throws ParseException
      *             if the time cannot be converted
+     * @deprecated Use {@link #setStartDate(Date)}.
      */
-    void setStartDate(String startDate);
+    @Deprecated
+    default void setStartTime(String startDate) throws ParseException {
+        setStartDate(Objects.nonNull(startDate) ? DATE_FORMAT.parse(startDate) : null);
+    }
+
+    /**
+     * Sets the start time of the project.
+     *
+     * @param startDate
+     *            the start time
+     */
+    void setStartDate(Date startDate);
 
     /**
      * Returns the project end time. The value is a {@link Date} (a specific
@@ -72,8 +100,39 @@ public interface ProjectInterface extends DataInterface {
      * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
      * @return the end time
+     * @deprecated Use {@linkplain #getEndDate()}.
      */
-    String getEndDate();
+    @Deprecated
+    default String getEndTime() {
+        Date endDate = getEndDate();
+        return Objects.nonNull(endDate) ? DATE_FORMAT.format(endDate) : null;
+    }
+
+    /**
+     * Returns the project end time. {@link Date} is a specific instant in time,
+     * with millisecond precision. This is a freely configurable value,
+     * regardless of when the project was last actually worked on. For example,
+     * this can be the time at which the project must be completed in order to
+     * be billed. The timing can be used to monitor that the project is on time.
+     *
+     * @return the end time
+     */
+    Date getEndDate();
+
+    /**
+     * Sets the project end time. The string must be parsable with
+     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     *
+     * @param endDate
+     *            the end time
+     * @throws ParseException
+     *             if the time cannot be converted
+     * @deprecated Use {@link #setEndDate(Date)}.
+     */
+    @Deprecated
+    default void setEndTime(String endDate) throws ParseException {
+        setEndDate(Objects.nonNull(endDate) ? DATE_FORMAT.parse(endDate) : null);
+    }
 
     /**
      * Sets the project end time. The string must be parsable with
@@ -84,7 +143,7 @@ public interface ProjectInterface extends DataInterface {
      * @throws ParseException
      *             if the time cannot be converted
      */
-    void setEndDate(String endDate);
+    void setEndDate(Date endDate);
 
     /**
      * Returned the file format for exporting the project's business objects. In
@@ -121,6 +180,7 @@ public interface ProjectInterface extends DataInterface {
      * @deprecated The less suitable formats are no longer supported since
      *             version 3.
      */
+    @Deprecated
     default String getFileFormatInternal() {
         return "";
     }
@@ -132,7 +192,9 @@ public interface ProjectInterface extends DataInterface {
      *            unused
      * @deprecated Functionless today.
      */
-    void setFileFormatInternal(String fileFormatInternal);
+    @Deprecated
+    default void setFileFormatInternal(String fileFormatInternal) {
+    }
 
     /**
      * Returns the name of the copyright holder of the business objects. These

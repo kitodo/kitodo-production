@@ -11,6 +11,11 @@
 
 package org.kitodo.production.dto;
 
+import java.text.ParseException;
+import java.util.Date;
+import java.util.Objects;
+
+import org.apache.logging.log4j.util.Strings;
 import org.kitodo.data.interfaces.PropertyInterface;
 
 /**
@@ -65,7 +70,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      *
      * @return creation date as String.
      */
-    public String getCreationDate() {
+    public String getCreationTime() {
         return creationDate;
     }
 
@@ -75,7 +80,21 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      * @param creationDate
      *            as String
      */
-    public void setCreationDate(String creationDate) {
+    public void setCreationTime(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    @Override
+    public Date getCreationDate() {
+        try {
+            return Strings.isNotEmpty(this.creationDate) ? DATE_FORMAT.parse(this.creationDate) : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = Objects.nonNull(creationDate) ? DATE_FORMAT.format(creationDate) : null;
     }
 }

@@ -11,6 +11,10 @@
 
 package org.kitodo.production.dto;
 
+import java.util.Objects;
+
+import org.apache.logging.log4j.util.Strings;
+import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.interfaces.WorkflowInterface;
 
 public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
@@ -42,7 +46,7 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
      *
      * @return value of status
      */
-    public String getStatus() {
+    public String getWorkflowStatus() {
         return status.toLowerCase();
     }
 
@@ -52,7 +56,17 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
      * @param status
      *            as String
      */
-    public void setStatus(String status) {
+    public void setWorkflowStatus(String status) {
         this.status = status;
+    }
+
+    @Override
+    public WorkflowStatus getStatus() {
+        return Strings.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null;
+    }
+
+    @Override
+    public void setStatus(WorkflowStatus status) {
+        this.status = Objects.nonNull(status) ? status.toString() : null;
     }
 }

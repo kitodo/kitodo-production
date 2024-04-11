@@ -157,7 +157,9 @@ public interface TemplateInterface extends DataInterface {
      *            as boolean
      * @throws UnsupportedOperationException
      *             when trying to set this on the database
+     * @deprecated Avoid creating invalid production templates.
      */
+    @Deprecated
     default void setCanBeUsedForProcess(boolean canBeUsedForProcess) {
         throw new UnsupportedOperationException("not allowed");
     }

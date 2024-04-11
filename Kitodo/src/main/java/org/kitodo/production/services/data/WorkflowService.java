@@ -103,7 +103,7 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowInter
         WorkflowInterface workflowInterface = DTOFactory.instance().newWorkflow();
         workflowInterface.setId(getIdFromJSONObject(jsonObject));
         workflowInterface.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
-        workflowInterface.setStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
+        workflowInterface.setWorkflowStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
         return workflowInterface;
     }
 

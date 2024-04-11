@@ -58,7 +58,9 @@ public interface RoleInterface extends DataInterface {
      * Returns how many users hold this role.
      *
      * @return how many users hold this role
+     * @deprecated Use {@link #getUsers()}{@code .size()}.
      */
+    @Deprecated
     default Integer getUsersSize() {
         List<? extends UserInterface> users = getUsers();
         return Objects.nonNull(users) ? users.size() : null;
@@ -76,7 +78,9 @@ public interface RoleInterface extends DataInterface {
      *             when trying to assign this role to unspecified users
      * @throws IndexOutOfBoundsException
      *             for an illegal endpoint index value
+     * @deprecated {@link #getUsers()} and edit them consciously.
      */
+    @Deprecated
     default void setUsersSize(Integer size) {
         int newSize = Objects.nonNull(size) ? size : 0;
         List<? extends UserInterface> users = Optional.of(getUsers()).orElse(Collections.emptyList());
