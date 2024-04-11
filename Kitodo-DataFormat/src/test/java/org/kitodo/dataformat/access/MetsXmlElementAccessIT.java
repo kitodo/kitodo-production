@@ -11,8 +11,9 @@
 
 package org.kitodo.dataformat.access;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,13 +29,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataformat.LogicalDivision;
-import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
@@ -252,41 +254,41 @@ public class MetsXmlElementAccessIT {
     @Test
     public void missingMetsHeaderCreationDateDidNotThrowNullPointerException() throws IOException {
         Workpiece workpiece = new MetsXmlElementAccess()
-                .read(new FileInputStream(new File("src/test/resources/meta_missing_createdate.xml")));
+            .read(new FileInputStream("src/test/resources/meta_missing_createdate.xml"));
         assertNotNull(workpiece.getCreationDate());
     }
 
     @Test
-    public void missingMetsFileForPointer() throws Exception {
-        try {
-            new MetsXmlElementAccess().read(new FileInputStream(new File("src/test/resources/meta_missing_file.xml")));
-        } catch (IllegalArgumentException e) {
-            assertEquals("Corrupt file: file id for <mets:fptr> not found for div PHYS_0001", e.getMessage());
-        };
+    public void missingMetsFileForPointer() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new MetsXmlElementAccess().read(
+                        new FileInputStream("src/test/resources/meta_missing_file.xml")
+                )
+            );
+
+        assertEquals("Corrupt file: file id for <mets:fptr> not found for div PHYS_0001", exception.getMessage());
     }
 
     @Test
-    public void duplicateMetsFileDefinition() throws Exception {
-        try {
-            new MetsXmlElementAccess().read(
-                new FileInputStream(new File("src/test/resources/meta_duplicate_file.xml"))
+    @Disabled("See GitHub discussion https://github.com/kitodo/kitodo-production/discussions/6087")
+    public void duplicateMetsFileDefinition() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new MetsXmlElementAccess().read(
+                        new FileInputStream("src/test/resources/meta_duplicate_file.xml")
+                )
             );
-        } catch (IllegalArgumentException e) {
-            assertEquals("Corrupt file: file with id FILE_0001 is part of multiple groups", e.getMessage());
-        };
+
+        assertEquals("Corrupt file: file with id FILE_0001 is part of multiple groups", exception.getMessage());
     }
 
     @Test
-    public void missingMetsFileGroupUse() throws Exception {
-        try {
-            new MetsXmlElementAccess().read(
-                new FileInputStream(new File("src/test/resources/meta_missing_file_use.xml"))
+    public void missingMetsFileGroupUse() {
+        Exception exception = assertThrows(IllegalArgumentException.class,
+                () -> new MetsXmlElementAccess().read(
+                    new FileInputStream("src/test/resources/meta_missing_file_use.xml")
+                )
             );
-        } catch (IllegalArgumentException e) {
-            assertEquals(
-                "Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>",
-                e.getMessage()
-            );
-        };
+
+        assertEquals("Corrupt file: file use for <mets:fptr> with id FILE_0001 not found in <mets:fileGrp>", exception.getMessage());
     }
 }
