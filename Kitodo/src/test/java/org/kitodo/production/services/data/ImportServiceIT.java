@@ -29,6 +29,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
@@ -39,6 +42,9 @@ import org.junit.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -46,6 +52,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.production.services.ServiceManager;
 
@@ -59,6 +66,8 @@ public class ImportServiceIT {
     private static final String TEST_FILE_ERROR_RESPONSE_PATH = "src/test/resources/customInterfaceErrorResponse.xml";
     private static final String RECORD_ID = "11111";
     private static final String CUSTOM_INTERFACE_RECORD_ID = "12345";
+    private static final String TITLE = "Title";
+    private static final String PLACE = "Place";
     private static final int PORT = 8888;
     private static final String firstProcess = "First process";
 
@@ -96,6 +105,42 @@ public class ImportServiceIT {
         Assert.assertEquals("Wrong project used", 1, (long) importedProcess.getProject().getId());
         Assert.assertEquals("Wrong template used", 1, (long) importedProcess.getTemplate().getId());
         Assert.assertEquals("Not the correct amount of processes found", 8, (long) processService.count());
+    }
+
+    /**
+     * Tests whether basic catalog metadata import with additional preset metadata to a single process succeeds or not.
+     *
+     * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
+     * @throws ImportException when importing metadata fails
+     * @throws IOException when importing metadata fails
+     */
+    @Test
+    public void testImportProcessWithAdditionalMetadata() throws DAOException, ImportException, IOException, DataException {
+        Map<String, List<String>> presetMetadata = new HashMap<>();
+        presetMetadata.put(TITLE, List.of("Band 1"));
+        presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+                MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
+        HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
+        try {
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
+        } finally {
+            ProcessService.deleteProcess(processWithAdditionalMetadata.getId());
+        }
+    }
+
+    private boolean assertMetadataSetContainsMetadata(HashSet<Metadata> metadataSet, String metadataKey, String metadataValue) {
+        return metadataSet.stream()
+                .filter(metadata -> metadata.getKey().equals(metadataKey))
+                .anyMatch(metadata -> metadata instanceof MetadataEntry &&
+                        ((MetadataEntry) metadata).getValue().equals(metadataValue));
     }
 
     @Test
@@ -155,6 +200,21 @@ public class ImportServiceIT {
         }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, new HashMap<>());
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+        return importedProcess;
+    }
+
+    private Process importProcessWithAdditionalMetadata(String recordId, ImportConfiguration importConfiguration,
+                                                        Map<String, List<String>> presetMetadata)
+            throws IOException, ImportException {
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+        Process importedProcess = importService.importProcess(recordId, 1, 1,
+                importConfiguration, presetMetadata);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
