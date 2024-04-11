@@ -1028,7 +1028,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            list of batches for checkout
      * @return true or false
      */
-    boolean isProcessAssignedToOnlyOneBatch(List<BatchInterface> list) {
+    boolean isProcessAssignedToOnlyOneBatch(List<? extends BatchInterface> list) {
         return list.size() == 1;
     }
 

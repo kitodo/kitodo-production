@@ -230,7 +230,7 @@ public interface ProjectInterface extends DataInterface {
      *
      * @return the active production templates
      */
-    List<TemplateInterface> getActiveTemplates();
+    List<? extends TemplateInterface> getActiveTemplates();
 
     /**
      * Sets the active production templates associated with the project. This
@@ -239,14 +239,14 @@ public interface ProjectInterface extends DataInterface {
      * @param templates
      *            the active production templates
      */
-    void setActiveTemplates(List<TemplateInterface> templates);
+    void setActiveTemplates(List<? extends TemplateInterface> templates);
 
     /**
      * Returns the users contributing to this project.
      *
      * @return the users contributing to this project
      */
-    List<UserInterface> getUsers();
+    List<? extends UserInterface> getUsers();
 
     /**
      * Specifies the users who will contribute to this project.
@@ -254,7 +254,7 @@ public interface ProjectInterface extends DataInterface {
      * @param users
      *            the users contributing to this project
      */
-    void setUsers(List<UserInterface> users);
+    void setUsers(List<? extends UserInterface> users);
 
     /**
      * Returns whether processes exist in the project. A project that contains

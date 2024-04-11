@@ -24,7 +24,7 @@ import org.kitodo.data.interfaces.UserInterface;
 public class RoleDTO extends BaseDTO implements RoleInterface {
 
     private String title;
-    private List<UserInterface> users = new ArrayList<>();
+    private List<? extends UserInterface> users = new ArrayList<>();
     private Integer usersSize;
     private ClientInterface client;
 
@@ -52,7 +52,7 @@ public class RoleDTO extends BaseDTO implements RoleInterface {
      *
      * @return list of users as UserInterface
      */
-    public List<UserInterface> getUsers() {
+    public List<? extends UserInterface> getUsers() {
         return users;
     }
 
@@ -62,7 +62,7 @@ public class RoleDTO extends BaseDTO implements RoleInterface {
      * @param users
      *            list of users as UserInterface
      */
-    public void setUsers(List<UserInterface> users) {
+    public void setUsers(List<? extends UserInterface> users) {
         this.users = users;
     }
 

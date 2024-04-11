@@ -28,8 +28,8 @@ import org.kitodo.data.interfaces.UserInterface;
 public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
 
     private ProjectInterface project;
-    private List<BatchInterface> batches = new ArrayList<>();
-    private List<PropertyInterface> properties = new ArrayList<>();
+    private List<? extends BatchInterface> batches = new ArrayList<>();
+    private List<? extends PropertyInterface> properties = new ArrayList<>();
     private UserInterface blockedUser;
     private Double progressClosed;
     private Double progressInProcessing;
@@ -80,7 +80,7 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      *
      * @return list of batches as BatchInterface
      */
-    public List<BatchInterface> getBatches() {
+    public List<? extends BatchInterface> getBatches() {
         return batches;
     }
 
@@ -99,7 +99,7 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      *
      * @return list of properties as PropertyInterface
      */
-    public List<PropertyInterface> getProperties() {
+    public List<? extends PropertyInterface> getProperties() {
         if (Objects.isNull(this.properties)) {
             properties = new ArrayList<>();
         }
@@ -112,7 +112,7 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      * @param properties
      *            list of properties as PropertyInterface
      */
-    public void setProperties(List<PropertyInterface> properties) {
+    public void setProperties(List<? extends PropertyInterface> properties) {
         this.properties = properties;
     }
 

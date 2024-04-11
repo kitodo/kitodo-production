@@ -44,7 +44,7 @@ public interface RoleInterface extends DataInterface {
      *
      * @return list of users who hold this role
      */
-    List<UserInterface> getUsers();
+    List<? extends UserInterface> getUsers();
 
     /**
      * Sets the list of users who hold this role.
@@ -52,7 +52,7 @@ public interface RoleInterface extends DataInterface {
      * @param users
      *            list of users who hold this role to set
      */
-    void setUsers(List<UserInterface> users);
+    void setUsers(List<? extends UserInterface> users);
 
     /**
      * Returns how many users hold this role.
@@ -60,7 +60,7 @@ public interface RoleInterface extends DataInterface {
      * @return how many users hold this role
      */
     default Integer getUsersSize() {
-        List<UserInterface> users = getUsers();
+        List<? extends UserInterface> users = getUsers();
         return Objects.nonNull(users) ? users.size() : null;
     }
 
@@ -79,7 +79,7 @@ public interface RoleInterface extends DataInterface {
      */
     default void setUsersSize(Integer size) {
         int newSize = Objects.nonNull(size) ? size : 0;
-        List<UserInterface> users = Optional.of(getUsers()).orElse(Collections.emptyList());
+        List<? extends UserInterface> users = Optional.of(getUsers()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;

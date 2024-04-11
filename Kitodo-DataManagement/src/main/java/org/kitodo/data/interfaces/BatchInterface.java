@@ -41,7 +41,7 @@ public interface BatchInterface extends DataInterface {
      *
      * @return the processes belonging to the batch
      */
-    List<ProcessInterface> getProcesses();
+    List<? extends ProcessInterface> getProcesses();
 
     /**
      * Sets the list of processes belonging to the batch. The list should not
@@ -51,6 +51,6 @@ public interface BatchInterface extends DataInterface {
      *            contain the list of processes belonging to the batch to be
      *            determined
      */
-    void setProcesses(List<ProcessInterface> processes);
+    void setProcesses(List<? extends ProcessInterface> processes);
 
 }

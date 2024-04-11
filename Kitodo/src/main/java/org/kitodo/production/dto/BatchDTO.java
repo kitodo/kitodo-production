@@ -23,7 +23,7 @@ import org.kitodo.data.interfaces.ProcessInterface;
 public class BatchDTO extends BaseDTO implements BatchInterface {
 
     private String title;
-    private List<ProcessInterface> processes = new ArrayList<>();
+    private List<? extends ProcessInterface> processes = new ArrayList<>();
 
     /**
      * Get title.
@@ -49,7 +49,7 @@ public class BatchDTO extends BaseDTO implements BatchInterface {
      *
      * @return List of processes as ProcessDTO
      */
-    public List<ProcessInterface> getProcesses() {
+    public List<? extends ProcessInterface> getProcesses() {
         return processes;
     }
 
@@ -59,7 +59,7 @@ public class BatchDTO extends BaseDTO implements BatchInterface {
      * @param processes
      *            as List of processes as ProcessDTO
      */
-    public void setProcesses(List<ProcessInterface> processes) {
+    public void setProcesses(List<? extends ProcessInterface> processes) {
         this.processes = processes;
     }
 }

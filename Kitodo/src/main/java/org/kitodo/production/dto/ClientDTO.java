@@ -21,8 +21,8 @@ import org.kitodo.data.interfaces.UserInterface;
 public class ClientDTO extends BaseDTO implements ClientInterface {
 
     private String name;
-    private List<UserInterface> users = new ArrayList<>();
-    private List<ProjectInterface> projects = new ArrayList<>();
+    private List<? extends UserInterface> users = new ArrayList<>();
+    private List<? extends ProjectInterface> projects = new ArrayList<>();
 
     /**
      * Gets title.
@@ -48,7 +48,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      *
      * @return The users.
      */
-    public List<UserInterface> getUsers() {
+    public List<? extends UserInterface> getUsers() {
         return users;
     }
 
@@ -58,7 +58,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      * @param users
      *            The users.
      */
-    public void setUsers(List<UserInterface> users) {
+    public void setUsers(List<? extends UserInterface> users) {
         this.users = users;
     }
 
@@ -67,7 +67,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      *
      * @return The projects.
      */
-    public List<ProjectInterface> getProjects() {
+    public List<? extends ProjectInterface> getProjects() {
         return projects;
     }
 
@@ -77,7 +77,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      * @param projects
      *            The projects.
      */
-    public void setProjects(List<ProjectInterface> projects) {
+    public void setProjects(List<? extends ProjectInterface> projects) {
         this.projects = projects;
     }
 }

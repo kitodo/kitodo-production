@@ -41,7 +41,7 @@ public interface ClientInterface extends DataInterface {
      *
      * @return the users who work for this client
      */
-    List<UserInterface> getUsers();
+    List<? extends UserInterface> getUsers();
 
     /**
      * Sets the list of users working for this client. The list should not
@@ -50,7 +50,7 @@ public interface ClientInterface extends DataInterface {
      * @param users
      *            The users.
      */
-    void setUsers(List<UserInterface> users);
+    void setUsers(List<? extends UserInterface> users);
 
     /**
      * Returns the client's projects. This list is not guaranteed to be in
@@ -58,7 +58,7 @@ public interface ClientInterface extends DataInterface {
      *
      * @return the client's projects
      */
-    List<ProjectInterface> getProjects();
+    List<? extends ProjectInterface> getProjects();
 
     /**
      * Sets the lists of the client's projects. The list should not contain
@@ -67,5 +67,5 @@ public interface ClientInterface extends DataInterface {
      * @param projects
      *            The projects.
      */
-    void setProjects(List<ProjectInterface> projects);
+    void setProjects(List<? extends ProjectInterface> projects);
 }

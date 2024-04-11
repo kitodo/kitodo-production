@@ -291,7 +291,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
      *            list of tasks for testing
      * @return true or false
      */
-    boolean hasCompleteTasks(List<TaskInterface> list) {
+    boolean hasCompleteTasks(List<? extends TaskInterface> list) {
         if (list.isEmpty()) {
             return false;
         }

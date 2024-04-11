@@ -85,7 +85,7 @@ public interface TemplateInterface extends DataInterface {
      *
      * @return the task list
      */
-    List<TaskInterface> getTasks();
+    List<? extends TaskInterface> getTasks();
 
     /**
      * Sets the task list of this process template.
@@ -93,7 +93,7 @@ public interface TemplateInterface extends DataInterface {
      * @param tasks
      *            the task list
      */
-    void setTasks(List<TaskInterface> tasks);
+    void setTasks(List<? extends TaskInterface> tasks);
 
     /**
      * Returns a read handle for the SVG image of this production template's
@@ -169,7 +169,7 @@ public interface TemplateInterface extends DataInterface {
      *
      * @return the list of all projects that use this production template
      */
-    List<ProjectInterface> getProjects();
+    List<? extends ProjectInterface> getProjects();
 
     /**
      * Sets the list of all projects that use this production template. The list
@@ -178,5 +178,5 @@ public interface TemplateInterface extends DataInterface {
      * @param projects
      *            projects list to set
      */
-    void setProjects(List<ProjectInterface> projects);
+    void setProjects(List<? extends ProjectInterface> projects);
 }

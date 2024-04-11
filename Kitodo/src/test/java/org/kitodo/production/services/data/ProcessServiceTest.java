@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import java.net.URI;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -58,11 +59,13 @@ public class ProcessServiceTest {
         fifthPropertyInterface.setValue("Fixed first");
         fifthPropertyInterface.setCreationDate("2017-12-03");
 
-        processInterface.getProperties().add(firstPropertyInterface);
-        processInterface.getProperties().add(secondPropertyInterface);
-        processInterface.getProperties().add(thirdPropertyInterface);
-        processInterface.getProperties().add(fourthPropertyInterface);
-        processInterface.getProperties().add(fifthPropertyInterface);
+        @SuppressWarnings("unchecked")
+        List<PropertyInterface> properties = (List<PropertyInterface>) processInterface.getProperties();
+        properties.add(firstPropertyInterface);
+        properties.add(secondPropertyInterface);
+        properties.add(thirdPropertyInterface);
+        properties.add(fourthPropertyInterface);
+        properties.add(fifthPropertyInterface);
 
     }
 

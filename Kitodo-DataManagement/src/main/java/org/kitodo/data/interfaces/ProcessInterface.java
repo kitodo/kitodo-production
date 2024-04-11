@@ -99,7 +99,7 @@ public interface ProcessInterface extends DataInterface {
      *
      * @return the task list
      */
-    List<TaskInterface> getTasks();
+    List<? extends TaskInterface> getTasks();
 
     /**
      * Sets the task list of this process.
@@ -107,7 +107,7 @@ public interface ProcessInterface extends DataInterface {
      * @param tasks
      *            the task list
      */
-    void setTasks(List<TaskInterface> tasks);
+    void setTasks(List<? extends TaskInterface> tasks);
 
     /**
      * Returns the project the process belongs to. Digitization processes are
@@ -132,7 +132,7 @@ public interface ProcessInterface extends DataInterface {
      *
      * @return the batches to which the process is assigned
      */
-    List<BatchInterface> getBatches();
+    List<? extends BatchInterface> getBatches();
 
     /**
      * Sets the list that specifies the batches to which the process is
@@ -143,7 +143,7 @@ public interface ProcessInterface extends DataInterface {
      * @param batches
      *            list of batches to which the process is associated
      */
-    void setBatches(List<BatchInterface> batches);
+    void setBatches(List<? extends BatchInterface> batches);
 
     /**
      * Returns the operational properties of the process. Properties are a tool
@@ -153,7 +153,7 @@ public interface ProcessInterface extends DataInterface {
      *
      * @return list of properties
      */
-    List<PropertyInterface> getProperties();
+    List<? extends PropertyInterface> getProperties();
 
     /**
      * Sets the list of operational properties of the process. This list is not
@@ -162,7 +162,7 @@ public interface ProcessInterface extends DataInterface {
      * @param properties
      *            list of properties as PropertyInterface
      */
-    void setProperties(List<PropertyInterface> properties);
+    void setProperties(List<? extends PropertyInterface> properties);
 
     /**
      * Returns the user who is currently blocking the process's business data.

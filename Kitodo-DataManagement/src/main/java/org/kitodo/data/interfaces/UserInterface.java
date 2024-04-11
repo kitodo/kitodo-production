@@ -155,7 +155,7 @@ public interface UserInterface extends DataInterface {
      *
      * @return the saved search queries
      */
-    List<FilterInterface> getFilters();
+    List<? extends FilterInterface> getFilters();
 
     /**
      * Sets a list of the user's saved searches. The list should not contain
@@ -164,7 +164,7 @@ public interface UserInterface extends DataInterface {
      * @param filters
      *            list of saved search queries to set
      */
-    void setFilters(List<FilterInterface> filters);
+    void setFilters(List<? extends FilterInterface> filters);
 
     /**
      * Returns the number of saved search queries.
@@ -172,7 +172,7 @@ public interface UserInterface extends DataInterface {
      * @return the number of saved search queries
      */
     default Integer getFiltersSize() {
-        List<FilterInterface> queries = getFilters();
+        List<? extends FilterInterface> queries = getFilters();
         return Objects.nonNull(queries) ? queries.size() : null;
     }
 
@@ -194,7 +194,7 @@ public interface UserInterface extends DataInterface {
             setFilters(null);
             return;
         }
-        List<FilterInterface> filters = Optional.of(getFilters()).orElse(Collections.emptyList());
+        List<? extends FilterInterface> filters = Optional.of(getFilters()).orElse(Collections.emptyList());
         if (filtersSize == filters.size()) {
             return;
         }
@@ -210,7 +210,7 @@ public interface UserInterface extends DataInterface {
      *
      * @return a list of all roles of the user
      */
-    List<RoleInterface> getRoles();
+    List<? extends RoleInterface> getRoles();
 
     /**
      * Sets a list of all of the user's roles.
@@ -218,7 +218,7 @@ public interface UserInterface extends DataInterface {
      * @param roles
      *            list to set
      */
-    void setRoles(List<RoleInterface> roles);
+    void setRoles(List<? extends RoleInterface> roles);
 
     /**
      * Returns the number of roles the user has.
@@ -226,7 +226,7 @@ public interface UserInterface extends DataInterface {
      * @return the number of roles
      */
     default int getRolesSize() {
-        List<RoleInterface> roles = getRoles();
+        List<? extends RoleInterface> roles = getRoles();
         return Objects.nonNull(roles) ? roles.size() : 0;
     }
 
@@ -245,7 +245,7 @@ public interface UserInterface extends DataInterface {
      */
     default void setRolesSize(Integer rolesSize) {
         int newSize = Objects.nonNull(rolesSize) ? rolesSize : 0;
-        List<RoleInterface> users = Optional.of(getRoles()).orElse(Collections.emptyList());
+        List<? extends RoleInterface> users = Optional.of(getRoles()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;
@@ -261,7 +261,7 @@ public interface UserInterface extends DataInterface {
      *
      * @return the clients
      */
-    List<ClientInterface> getClients();
+    List<? extends ClientInterface> getClients();
 
     /**
      * Sets the list of all clients that the user interacts with.
@@ -269,7 +269,7 @@ public interface UserInterface extends DataInterface {
      * @param clients
      *            clients to set
      */
-    void setClients(List<ClientInterface> clients);
+    void setClients(List<? extends ClientInterface> clients);
 
     /**
      * Returns the number of clients the user interacts with.
@@ -277,7 +277,7 @@ public interface UserInterface extends DataInterface {
      * @return the number of clients
      */
     default int getClientsSize() {
-        List<ClientInterface> clients = getClients();
+        List<? extends ClientInterface> clients = getClients();
         return Objects.nonNull(clients) ? clients.size() : 0;
     }
 
@@ -296,7 +296,7 @@ public interface UserInterface extends DataInterface {
      */
     default void setClientsSize(Integer clientsSize) {
         int newSize = Objects.nonNull(clientsSize) ? clientsSize : 0;
-        List<ClientInterface> users = Optional.of(getClients()).orElse(Collections.emptyList());
+        List<? extends ClientInterface> users = Optional.of(getClients()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;
@@ -312,7 +312,7 @@ public interface UserInterface extends DataInterface {
      *
      * @return all projects
      */
-    List<ProjectInterface> getProjects();
+    List<? extends ProjectInterface> getProjects();
 
     /**
      * Sets the list of all projects the user is working on.
@@ -320,7 +320,7 @@ public interface UserInterface extends DataInterface {
      * @param projects
      *            list of projects to set
      */
-    void setProjects(List<ProjectInterface> projects);
+    void setProjects(List<? extends ProjectInterface> projects);
 
     /**
      * Returns the number of projects the user is working on.
@@ -328,7 +328,7 @@ public interface UserInterface extends DataInterface {
      * @return the number of projects
      */
     default int getProjectsSize() {
-        List<ProjectInterface> projects = getProjects();
+        List<? extends ProjectInterface> projects = getProjects();
         return Objects.nonNull(projects) ? projects.size() : 0;
     }
 
@@ -347,7 +347,7 @@ public interface UserInterface extends DataInterface {
      */
     default void setProjectsSize(Integer projectsSize) {
         int newSize = Objects.nonNull(projectsSize) ? projectsSize : 0;
-        List<ProjectInterface> users = Optional.of(getProjects()).orElse(Collections.emptyList());
+        List<? extends ProjectInterface> users = Optional.of(getProjects()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;
@@ -363,7 +363,7 @@ public interface UserInterface extends DataInterface {
      *
      * @return all tasks the user is working on
      */
-    List<TaskInterface> getProcessingTasks();
+    List<? extends TaskInterface> getProcessingTasks();
 
     /**
      * Sets a list of all tasks that the user should work on.
@@ -371,5 +371,5 @@ public interface UserInterface extends DataInterface {
      * @param processingTasks
      *            list of tasks to set
      */
-    void setProcessingTasks(List<TaskInterface> processingTasks);
+    void setProcessingTasks(List<? extends TaskInterface> processingTasks);
 }
