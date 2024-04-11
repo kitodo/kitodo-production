@@ -197,7 +197,7 @@
                 <o:graphicImage title="#{item.workflow.title}"
                                 styleClass="workflow-diagram"
                                 rendered="#{item.workflow ne null}"
-                                value="#{item.diagramImage}"
+                                value="#{TemplateForm.getDiagramImage(item.workflow.title)}"
                                 dataURI="true" />
             </div>
         </p:rowExpansion>

@@ -11,7 +11,6 @@
 
 package org.kitodo.data.interfaces;
 
-import java.io.InputStream;
 import java.util.List;
 
 public interface TemplateInterface extends DataInterface {
@@ -94,15 +93,6 @@ public interface TemplateInterface extends DataInterface {
      *            the task list
      */
     void setTasks(List<? extends TaskInterface> tasks);
-
-    /**
-     * Returns a read handle for the SVG image of this production template's
-     * workflow. If the file cannot be read (due to an error), returns an empty
-     * input stream.
-     *
-     * @return read file handle for the SVG
-     */
-    InputStream getDiagramImage();
 
     /**
      * Returns whether this production template is active. Production templates

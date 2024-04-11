@@ -11,15 +11,12 @@
 
 package org.kitodo.production.dto;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.TemplateInterface;
 import org.kitodo.data.interfaces.WorkflowInterface;
-import org.kitodo.production.services.ServiceManager;
 
 public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
 
@@ -27,18 +24,6 @@ public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
     private WorkflowInterface workflow;
     private boolean canBeUsedForProcess;
     private List<? extends ProjectInterface> projects = new ArrayList<>();
-
-    /**
-     * Get diagram image.
-     *
-     * @return value of diagramImage
-     */
-    public InputStream getDiagramImage() {
-        if (Objects.nonNull(this.workflow)) {
-            return ServiceManager.getTemplateService().getTasksDiagram(this.workflow.getTitle());
-        }
-        return ServiceManager.getTemplateService().getTasksDiagram("");
-    }
 
     /**
      * Get active.
