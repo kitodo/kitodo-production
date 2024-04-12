@@ -12,6 +12,7 @@
 package org.kitodo.production.dto;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -87,7 +88,8 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
     @Override
     public Date getCreationDate() {
         try {
-            return Strings.isNotEmpty(this.creationDate) ? DATE_FORMAT.parse(this.creationDate) : null;
+            return Strings.isNotEmpty(this.creationDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
+                    : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -95,6 +97,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
 
     @Override
     public void setCreationDate(Date creationDate) {
-        this.creationDate = Objects.nonNull(creationDate) ? DATE_FORMAT.format(creationDate) : null;
+        this.creationDate = Objects.nonNull(creationDate) ? new SimpleDateFormat(DATE_FORMAT).format(creationDate)
+                : null;
     }
 }

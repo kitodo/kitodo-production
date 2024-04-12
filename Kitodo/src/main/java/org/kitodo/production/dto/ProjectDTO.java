@@ -12,6 +12,7 @@
 package org.kitodo.production.dto;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -290,7 +291,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
     @Override
     public Date getStartDate() {
         try {
-            return Strings.isNotEmpty(this.startDate) ? DATE_FORMAT.parse(this.startDate) : null;
+            return Strings.isNotEmpty(this.startDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.startDate) : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -298,13 +299,13 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
 
     @Override
     public void setStartDate(Date startDate) {
-        this.startDate = Objects.nonNull(startDate) ? DATE_FORMAT.format(startDate) : null;
+        this.startDate = Objects.nonNull(startDate) ? new SimpleDateFormat(DATE_FORMAT).format(startDate) : null;
     }
 
     @Override
     public Date getEndDate() {
         try {
-            return Strings.isNotEmpty(this.endDate) ? DATE_FORMAT.parse(this.endDate) : null;
+            return Strings.isNotEmpty(this.endDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.endDate) : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -312,7 +313,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
 
     @Override
     public void setEndDate(Date endDate) {
-        this.endDate = Objects.nonNull(endDate) ? DATE_FORMAT.format(endDate) : null;
+        this.endDate = Objects.nonNull(endDate) ? new SimpleDateFormat(DATE_FORMAT).format(endDate) : null;
        
     }
 }

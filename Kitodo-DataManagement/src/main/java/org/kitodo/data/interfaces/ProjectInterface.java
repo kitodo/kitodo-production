@@ -51,7 +51,7 @@ public interface ProjectInterface extends DataInterface {
     @Deprecated
     default String getStartTime() {
         Date startDate = getStartDate();
-        return Objects.nonNull(startDate) ? DATE_FORMAT.format(startDate) : null;
+        return Objects.nonNull(startDate) ? new SimpleDateFormat(DATE_FORMAT).format(startDate) : null;
     }
 
     /**
@@ -76,7 +76,7 @@ public interface ProjectInterface extends DataInterface {
      */
     @Deprecated
     default void setStartTime(String startDate) throws ParseException {
-        setStartDate(Objects.nonNull(startDate) ? DATE_FORMAT.parse(startDate) : null);
+        setStartDate(Objects.nonNull(startDate) ? new SimpleDateFormat(DATE_FORMAT).parse(startDate) : null);
     }
 
     /**
@@ -105,7 +105,7 @@ public interface ProjectInterface extends DataInterface {
     @Deprecated
     default String getEndTime() {
         Date endDate = getEndDate();
-        return Objects.nonNull(endDate) ? DATE_FORMAT.format(endDate) : null;
+        return Objects.nonNull(endDate) ? new SimpleDateFormat(DATE_FORMAT).format(endDate) : null;
     }
 
     /**
@@ -131,7 +131,7 @@ public interface ProjectInterface extends DataInterface {
      */
     @Deprecated
     default void setEndTime(String endDate) throws ParseException {
-        setEndDate(Objects.nonNull(endDate) ? DATE_FORMAT.parse(endDate) : null);
+        setEndDate(Objects.nonNull(endDate) ? new SimpleDateFormat(DATE_FORMAT).parse(endDate) : null);
     }
 
     /**

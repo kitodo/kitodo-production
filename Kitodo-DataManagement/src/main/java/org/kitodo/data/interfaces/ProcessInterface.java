@@ -55,7 +55,7 @@ public interface ProcessInterface extends DataInterface {
     @Deprecated
     default String getCreationTime() {
         Date creationDate = getCreationDate();
-        return Objects.nonNull(creationDate) ? DATE_FORMAT.format(creationDate) : null;
+        return Objects.nonNull(creationDate) ? new SimpleDateFormat(DATE_FORMAT).format(creationDate) : null;
     }
 
     /**
@@ -78,7 +78,7 @@ public interface ProcessInterface extends DataInterface {
      */
     @Deprecated
     default void setCreationTime(String creationDate) throws ParseException {
-        setCreationDate(Objects.nonNull(creationDate) ? DATE_FORMAT.parse(creationDate) : null);
+        setCreationDate(Objects.nonNull(creationDate) ? new SimpleDateFormat(DATE_FORMAT).parse(creationDate) : null);
     }
 
     /**

@@ -199,7 +199,7 @@ public interface TaskInterface extends DataInterface {
     @Deprecated
     default String getProcessingMoment() {
         Date processingTime = getProcessingTime();
-        return Objects.nonNull(processingTime) ? DATE_FORMAT.format(processingTime) : null;
+        return Objects.nonNull(processingTime) ? new SimpleDateFormat(DATE_FORMAT).format(processingTime) : null;
     }
 
     /**
@@ -223,7 +223,8 @@ public interface TaskInterface extends DataInterface {
      */
     @Deprecated
     default void setProcessingMoment(String processingTime) throws ParseException {
-        setProcessingTime(Objects.nonNull(processingTime) ? DATE_FORMAT.parse(processingTime) : null);
+        setProcessingTime(
+            Objects.nonNull(processingTime) ? new SimpleDateFormat(DATE_FORMAT).parse(processingTime) : null);
     }
 
     /**
@@ -246,7 +247,7 @@ public interface TaskInterface extends DataInterface {
     @Deprecated
     default String getProcessingBeginTime() {
         Date processingBegin = getProcessingBegin();
-        return Objects.nonNull(processingBegin) ? DATE_FORMAT.format(processingBegin) : null;
+        return Objects.nonNull(processingBegin) ? new SimpleDateFormat(DATE_FORMAT).format(processingBegin) : null;
     }
 
     /**
@@ -268,7 +269,8 @@ public interface TaskInterface extends DataInterface {
      */
     @Deprecated
     default void setProcessingBeginTime(String processingBegin) throws ParseException {
-        setProcessingBegin(Objects.nonNull(processingBegin) ? DATE_FORMAT.parse(processingBegin) : null);
+        setProcessingBegin(
+            Objects.nonNull(processingBegin) ? new SimpleDateFormat(DATE_FORMAT).parse(processingBegin) : null);
     }
 
     /**
@@ -289,7 +291,7 @@ public interface TaskInterface extends DataInterface {
     @Deprecated
     default String getProcessingEndTime() {
         Date processingEnd = getProcessingEnd();
-        return Objects.nonNull(processingEnd) ? DATE_FORMAT.format(processingEnd) : null;
+        return Objects.nonNull(processingEnd) ? new SimpleDateFormat(DATE_FORMAT).format(processingEnd) : null;
     }
 
     /**
@@ -311,7 +313,8 @@ public interface TaskInterface extends DataInterface {
      */
     @Deprecated
     default void setProcessingEndTime(String processingEnd) throws ParseException {
-        setProcessingEnd(Objects.nonNull(processingEnd) ? DATE_FORMAT.parse(processingEnd) : null);
+        setProcessingEnd(
+            Objects.nonNull(processingEnd) ? new SimpleDateFormat(DATE_FORMAT).parse(processingEnd) : null);
     }
 
     /**

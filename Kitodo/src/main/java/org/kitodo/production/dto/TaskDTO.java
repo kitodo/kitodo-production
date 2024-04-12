@@ -12,6 +12,7 @@
 package org.kitodo.production.dto;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -516,7 +517,9 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingTime() {
         try {
-            return Strings.isNotEmpty(this.processingTime) ? DATE_FORMAT.parse(this.processingTime) : null;
+            return Strings.isNotEmpty(this.processingTime)
+                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingTime)
+                    : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -524,13 +527,16 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
 
     @Override
     public void setProcessingTime(Date processingTime) {
-        this.processingTime = Objects.nonNull(processingTime) ? DATE_FORMAT.format(processingTime) : null;
+        this.processingTime = Objects.nonNull(processingTime) ? new SimpleDateFormat(DATE_FORMAT).format(processingTime)
+                : null;
     }
 
     @Override
     public Date getProcessingBegin() {
         try {
-            return Strings.isNotEmpty(this.processingBegin) ? DATE_FORMAT.parse(this.processingBegin) : null;
+            return Strings.isNotEmpty(this.processingBegin)
+                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingBegin)
+                    : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -538,13 +544,16 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
 
     @Override
     public void setProcessingBegin(Date processingBegin) {
-        this.processingBegin = Objects.nonNull(processingBegin) ? DATE_FORMAT.format(processingBegin) : null;
+        this.processingBegin = Objects.nonNull(processingBegin)
+                ? new SimpleDateFormat(DATE_FORMAT).format(processingBegin)
+                : null;
     }
 
     @Override
     public Date getProcessingEnd() {
         try {
-            return Strings.isNotEmpty(this.processingEnd) ? DATE_FORMAT.parse(this.processingEnd) : null;
+            return Strings.isNotEmpty(this.processingEnd) ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingEnd)
+                    : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -552,6 +561,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
 
     @Override
     public void setProcessingEnd(Date processingEnd) {
-        this.processingEnd = Objects.nonNull(processingEnd) ? DATE_FORMAT.format(processingEnd) : null;
+        this.processingEnd = Objects.nonNull(processingEnd) ? new SimpleDateFormat(DATE_FORMAT).format(processingEnd)
+                : null;
     }
 }

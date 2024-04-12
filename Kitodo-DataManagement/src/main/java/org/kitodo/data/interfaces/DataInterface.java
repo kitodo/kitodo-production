@@ -11,15 +11,12 @@
 
 package org.kitodo.data.interfaces;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 /**
  * Meta interface over the data interfaces of this interface.
  */
 public interface DataInterface {
 
-    static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     /**
      * Returns the record number of the object in the database. Can be
