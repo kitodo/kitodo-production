@@ -1134,7 +1134,8 @@ public class ProcessForm extends TemplateBaseForm {
      * @return List of filtered tasks as Interface objects
      */
     public List<TaskInterface> getCurrentTasksForUser(ProcessInterface processInterface) {
-        return ServiceManager.getProcessService().getCurrentTasksForUser(processInterface, ServiceManager.getUserService().getCurrentUser());
+        return ServiceManager.getProcessService().getCurrentTasksForUser(processInterface,
+            ServiceManager.getUserService().getCurrentUser());
     }
 
     /**

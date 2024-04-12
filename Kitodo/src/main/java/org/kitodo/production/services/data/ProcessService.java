@@ -18,6 +18,14 @@ import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_CO
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
@@ -166,14 +174,6 @@ import org.primefaces.model.charts.pie.PieChartDataSet;
 import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
 
 public class ProcessService extends ProjectSearchService<Process, ProcessInterface, ProcessDAO> {
     private static final FileService fileService = ServiceManager.getFileService();
@@ -942,19 +942,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
             convertLastProcessingDates(jsonObject, processInterface);
             convertTaskProgress(jsonObject, processInterface);
 
-            List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
-            List<PropertyInterface> properties = new ArrayList<>();
-            for (Map<String, Object> stringObjectMap : jsonArray) {
-                PropertyInterface propertyInterface = DTOFactory.instance().newProperty();
-                Object title = stringObjectMap.get(JSON_TITLE);
-                Object value = stringObjectMap.get(JSON_VALUE);
-                if (Objects.nonNull(title)) {
-                    propertyInterface.setTitle(title.toString());
-                    propertyInterface.setValue(Objects.nonNull(value) ? value.toString() : "");
-                    properties.add(propertyInterface);
-                }
-            }
-            processInterface.setProperties(properties);
+            processInterface.setProperties(convertProperties(jsonObject));
 
             if (!related) {
                 convertRelatedJSONObjects(jsonObject, processInterface);
@@ -968,7 +956,6 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
         }
         return processInterface;
     }
-
 
     /**
      * Parses last processing dates from the jsonObject and adds them to the processInterface bean.
@@ -995,6 +982,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
         processInterface.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
         processInterface.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
         processInterface.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
+    }
+
+    private List<PropertyInterface> convertProperties(Map<String, Object> jsonObject) throws DataException {
+        List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
+        List<PropertyInterface> properties = new ArrayList<>();
+        for (Map<String, Object> stringObjectMap : jsonArray) {
+            PropertyInterface propertyInterface = DTOFactory.instance().newProperty();
+            Object title = stringObjectMap.get(JSON_TITLE);
+            Object value = stringObjectMap.get(JSON_VALUE);
+            if (Objects.nonNull(title)) {
+                propertyInterface.setTitle(title.toString());
+                propertyInterface.setValue(Objects.nonNull(value) ? value.toString() : "");
+                properties.add(propertyInterface);
+            }
+        }
+        return properties;
     }
 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessInterface processInterface) throws DataException {

@@ -188,7 +188,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
         templateInterface.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
         templateInterface.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
         try {
-        templateInterface.setCreationTime(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
+            templateInterface.setCreationTime(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
         } catch (ParseException e) {
             throw new DataException(e);
         }

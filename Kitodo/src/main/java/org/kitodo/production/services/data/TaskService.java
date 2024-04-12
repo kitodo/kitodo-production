@@ -302,33 +302,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
 
     @Override
     public TaskInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        TaskInterface taskInterface = DTOFactory.instance().newTask();
-        taskInterface.setId(getIdFromJSONObject(jsonObject));
-        taskInterface.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
-        taskInterface.setLocalizedTitle(getLocalizedTitle(taskInterface.getTitle()));
-        taskInterface.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
-        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
-        taskInterface.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
-        taskInterface.setProcessingStatusTitle(Helper.getTranslation(taskInterface.getProcessingStatus().getTitle()));
-        int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
-        taskInterface.setEditType(TaskEditType.getTypeFromValue(editType));
-        taskInterface.setEditTypeTitle(Helper.getTranslation(taskInterface.getEditType().getTitle()));
-        try {
-            taskInterface.setProcessingMoment(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
-            taskInterface.setProcessingBeginTime(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
-            taskInterface.setProcessingEndTime(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
-        } catch (ParseException e) {
-            throw new DataException(e);
-        }
-        taskInterface.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
-        taskInterface.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
-        taskInterface.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
-        taskInterface.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
-        taskInterface.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
-        taskInterface.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
-        taskInterface.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
-        taskInterface.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
-        taskInterface.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+        TaskInterface taskInterface = createTaskInterface(jsonObject);
         convertTaskProjectFromJsonObjectToInterface(jsonObject, taskInterface);
 
         /*
@@ -356,13 +330,46 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return taskInterface;
     }
 
+    private TaskInterface createTaskInterface(Map<String, Object> jsonObject) throws DataException {
+        TaskInterface taskInterface = DTOFactory.instance().newTask();
+        taskInterface.setId(getIdFromJSONObject(jsonObject));
+        taskInterface.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
+        taskInterface.setLocalizedTitle(getLocalizedTitle(taskInterface.getTitle()));
+        taskInterface.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
+        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
+        taskInterface.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
+        taskInterface.setProcessingStatusTitle(Helper.getTranslation(taskInterface.getProcessingStatus().getTitle()));
+        int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
+        taskInterface.setEditType(TaskEditType.getTypeFromValue(editType));
+        taskInterface.setEditTypeTitle(Helper.getTranslation(taskInterface.getEditType().getTitle()));
+        try {
+            taskInterface.setProcessingMoment(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
+            taskInterface.setProcessingBeginTime(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
+            taskInterface.setProcessingEndTime(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
+        } catch (ParseException e) {
+            throw new DataException(e);
+        }
+        taskInterface.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
+        taskInterface.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
+        taskInterface.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
+        taskInterface.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
+        taskInterface.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
+        taskInterface.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
+        taskInterface.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
+        taskInterface.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
+        taskInterface.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+        return taskInterface;
+    }
+
     /**
      * Parses and adds properties related to the project of a task to the taskInterface.
      * 
      * @param jsonObject the jsonObject retrieved from the ElasticSearch index for a task
      * @param taskInterface the taskInterface
      */
-    private void convertTaskProjectFromJsonObjectToInterface(Map<String, Object> jsonObject, TaskInterface taskInterface) throws DataException {
+    private void convertTaskProjectFromJsonObjectToInterface(Map<String, Object> jsonObject,
+            TaskInterface taskInterface) throws DataException {
+
         ProjectInterface projectInterface = DTOFactory.instance().newProject();
         projectInterface.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
         projectInterface.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));

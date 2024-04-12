@@ -908,7 +908,8 @@ public class FileService {
     public String getProcessBaseUriForExistingProcess(ProcessInterface processInterface) {
         String processBaseUri = processInterface.getProcessBase();
         if (Objects.isNull(processBaseUri) && Objects.nonNull(processInterface.getId())) {
-            processInterface.setProcessBase(fileManagementModule.createUriForExistingProcess(processInterface.getId().toString()).toString());
+            processInterface.setProcessBase(
+                fileManagementModule.createUriForExistingProcess(processInterface.getId().toString()).toString());
         }
         return processInterface.getProcessBase();
     }

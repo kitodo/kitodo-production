@@ -125,6 +125,11 @@ public abstract class BaseTemplateDTO extends BaseDTO {
         this.tasks = tasks;
     }
 
+    /**
+     * Get creation date.
+     *
+     * @return creation date as Date
+     */
     public Date getCreationDate() {
         try {
             return Strings.isNotEmpty(this.creationDate) ? DATE_FORMAT.parse(this.creationDate) : null;
@@ -133,6 +138,12 @@ public abstract class BaseTemplateDTO extends BaseDTO {
         }
     }
 
+    /**
+     * Set creation date.
+     *
+     * @param creationDate
+     *            as Date
+     */
     public void setCreationDate(Date creationDate) {
         this.creationDate = Objects.nonNull(creationDate) ? DATE_FORMAT.format(creationDate) : null;
     }

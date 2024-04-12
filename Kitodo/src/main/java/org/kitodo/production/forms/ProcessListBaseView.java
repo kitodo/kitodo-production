@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms;
 
+import com.itextpdf.text.DocumentException;
+
 import java.io.IOException;
 import java.net.URI;
 import java.util.ArrayList;
@@ -45,8 +47,6 @@ import org.primefaces.component.datatable.DataTable;
 import org.primefaces.event.data.PageEvent;
 import org.primefaces.model.charts.hbar.HorizontalBarChartModel;
 import org.primefaces.model.charts.pie.PieChartModel;
-
-import com.itextpdf.text.DocumentException;
 
 public class ProcessListBaseView extends BaseForm {
 
