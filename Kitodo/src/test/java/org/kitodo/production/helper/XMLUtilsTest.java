@@ -32,6 +32,8 @@ public class XMLUtilsTest {
     private static final String TEST_ELEMENT = "testElement";
     private static final String TEST_CHILD_ELEMENT = "testChildElement";
     private static final String XML_STRING = "<document><element>Text</element></document>";
+    private static final String EXPECTED_EXCEPTION_MESSAGE = "javax.xml.transform.TransformerException: "
+            + "Nach dem Token \"/\" oder \"//\" wurde ein Verzeichnisschritt erwartet.";
 
     @Test
     public void shouldConvertDocumentToByteArray() throws IOException, TransformerException {
@@ -73,6 +75,8 @@ public class XMLUtilsTest {
 
     @Test
     public void shouldThrowExceptionWhenValidatingInvalidXPathSyntax() {
-        Assertions.assertThrows(XPathExpressionException.class, () -> XMLUtils.validateXPathSyntax(INVALID_XPATH));
+        XPathExpressionException exception = Assertions.assertThrows(XPathExpressionException.class,
+                () -> XMLUtils.validateXPathSyntax(INVALID_XPATH));
+        Assertions.assertEquals(EXPECTED_EXCEPTION_MESSAGE, exception.getMessage());
     }
 }
