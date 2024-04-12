@@ -20,9 +20,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.DocketInterface;
+
 @Entity
 @Table(name = "docket")
-public class Docket extends BaseIndexedBean {
+public class Docket extends BaseIndexedBean implements DocketInterface {
 
     @Column(name = "title")
     private String title;
@@ -37,18 +40,22 @@ public class Docket extends BaseIndexedBean {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_docket_client_id"))
     private Client client;
 
+    @Override
     public String getTitle() {
         return title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
+    @Override
     public String getFile() {
         return file;
     }
 
+    @Override
     public void setFile(String file) {
         this.file = file;
     }
@@ -74,23 +81,14 @@ public class Docket extends BaseIndexedBean {
         this.active = active;
     }
 
-    /**
-     * Get client.
-     *
-     * @return Client object
-     */
+    @Override
     public Client getClient() {
         return this.client;
     }
 
-    /**
-     * Set client.
-     *
-     * @param client
-     *            as Client object
-     */
-    public void setClient(Client client) {
-        this.client = client;
+    @Override
+    public void setClient(ClientInterface client) {
+        this.client = (Client) client;
     }
 
     @Override

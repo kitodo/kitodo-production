@@ -26,10 +26,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.RoleDAO;
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.RoleInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 @Entity
 @Table(name = "role")
-public class Role extends BaseBean implements Comparable<Role> {
+public class Role extends BaseBean implements RoleInterface, Comparable<Role> {
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -60,11 +63,7 @@ public class Role extends BaseBean implements Comparable<Role> {
         this.authorities = new ArrayList<>();
     }
 
-    /**
-     * Gets title.
-     *
-     * @return The title.
-     */
+    @Override
     public String getTitle() {
         if (this.title == null) {
             return "";
@@ -73,12 +72,7 @@ public class Role extends BaseBean implements Comparable<Role> {
         }
     }
 
-    /**
-     * Sets title.
-     *
-     * @param title
-     *            The title.
-     */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -106,11 +100,7 @@ public class Role extends BaseBean implements Comparable<Role> {
         this.authorities = authorities;
     }
 
-    /**
-     * Gets users.
-     *
-     * @return The users.
-     */
+    @Override
     public List<User> getUsers() {
         initialize(new RoleDAO(), this.users);
         if (Objects.isNull(this.users)) {
@@ -119,14 +109,10 @@ public class Role extends BaseBean implements Comparable<Role> {
         return this.users;
     }
 
-    /**
-     * Sets users.
-     *
-     * @param users
-     *            The users.
-     */
-    public void setUsers(List<User> users) {
-        this.users = users;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setUsers(List<? extends UserInterface> users) {
+        this.users = (List<User>) users;
     }
 
     /**
@@ -152,23 +138,14 @@ public class Role extends BaseBean implements Comparable<Role> {
         this.tasks = tasks;
     }
 
-    /**
-     * Get client.
-     *
-     * @return the client bean
-     */
+    @Override
     public Client getClient() {
         return client;
     }
 
-    /**
-     * Set client.
-     *
-     * @param client
-     *            bean
-     */
-    public void setClient(Client client) {
-        this.client = client;
+    @Override
+    public void setClient(ClientInterface client) {
+        this.client = (Client) client;
     }
 
     @Override

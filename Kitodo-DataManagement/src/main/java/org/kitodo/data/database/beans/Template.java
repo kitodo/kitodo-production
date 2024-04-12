@@ -27,11 +27,18 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.kitodo.data.database.persistence.TemplateDAO;
+import org.kitodo.data.interfaces.DocketInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.RulesetInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.WorkflowInterface;
 
 @Entity
 @Table(name = "template")
-public class Template extends BaseTemplateBean {
+public class Template extends BaseTemplateBean implements TemplateInterface {
 
     @Column(name = "active")
     private Boolean active = true;
@@ -77,11 +84,7 @@ public class Template extends BaseTemplateBean {
         this.creationDate = new Date();
     }
 
-    /**
-     * Check if template is active.
-     *
-     * @return true or false
-     */
+    @Override
     public boolean isActive() {
         if (Objects.isNull(this.active)) {
             this.active = true;
@@ -89,11 +92,7 @@ public class Template extends BaseTemplateBean {
         return this.active;
     }
 
-    /**
-     * Set workflow as active.
-     *
-     * @param active as Boolean
-     */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -117,58 +116,34 @@ public class Template extends BaseTemplateBean {
         this.client = client;
     }
 
-    /**
-     * Get docket.
-     *
-     * @return value of docket
-     */
+    @Override
     public Docket getDocket() {
         return docket;
     }
 
-    /**
-     * Set docket.
-     *
-     * @param docket as Docket object
-     */
-    public void setDocket(Docket docket) {
-        this.docket = docket;
+    @Override
+    public void setDocket(DocketInterface docket) {
+        this.docket = (Docket) docket;
     }
 
-    /**
-     * Get ruleset.
-     *
-     * @return value of ruleset
-     */
+    @Override
     public Ruleset getRuleset() {
         return this.ruleset;
     }
 
-    /**
-     * Set ruleset.
-     *
-     * @param ruleset as Ruleset object
-     */
-    public void setRuleset(Ruleset ruleset) {
-        this.ruleset = ruleset;
+    @Override
+    public void setRuleset(RulesetInterface ruleset) {
+        this.ruleset = (Ruleset) ruleset;
     }
 
-    /**
-     * Get workflow.
-     *
-     * @return value of workflow
-     */
+    @Override
     public Workflow getWorkflow() {
         return workflow;
     }
 
-    /**
-     * Set workflow.
-     *
-     * @param workflow as Workflow object
-     */
-    public void setWorkflow(Workflow workflow) {
-        this.workflow = workflow;
+    @Override
+    public void setWorkflow(WorkflowInterface workflow) {
+        this.workflow = (Workflow) workflow;
     }
 
 
@@ -191,11 +166,7 @@ public class Template extends BaseTemplateBean {
         this.ocrdWorkflowId = ocrdWorkflowId;
     }
 
-    /**
-     * Get projects list.
-     *
-     * @return list of projects
-     */
+    @Override
     public List<Project> getProjects() {
         initialize(new TemplateDAO(), this.projects);
         if (Objects.isNull(this.projects)) {
@@ -204,13 +175,10 @@ public class Template extends BaseTemplateBean {
         return this.projects;
     }
 
-    /**
-     * Set list of projects.
-     *
-     * @param projects as Project list
-     */
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setProjects(List<? extends ProjectInterface> projects) {
+        this.projects = (List<Project>) projects;
     }
 
     /**
@@ -235,11 +203,7 @@ public class Template extends BaseTemplateBean {
         this.processes = processes;
     }
 
-    /**
-     * Get list of task.
-     *
-     * @return list of Task objects or empty list
-     */
+    @Override
     public List<Task> getTasks() {
         initialize(new TemplateDAO(), this.tasks);
         if (Objects.isNull(this.tasks)) {
@@ -248,13 +212,10 @@ public class Template extends BaseTemplateBean {
         return this.tasks;
     }
 
-    /**
-     * Set tasks.
-     *
-     * @param tasks as list of task
-     */
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setTasks(List<? extends TaskInterface> tasks) {
+        this.tasks = (List<Task>) tasks;
     }
 
     /**
@@ -283,5 +244,13 @@ public class Template extends BaseTemplateBean {
     @Override
     public int hashCode() {
         return Objects.hash(client, docket, ruleset, workflow);
+    }
+
+    @Override
+    public boolean isCanBeUsedForProcess() {
+        if (Objects.isNull(tasks)) {
+            return false;
+        }
+        return tasks.stream().allMatch(task -> CollectionUtils.isNotEmpty(task.getRoles()));
     }
 }

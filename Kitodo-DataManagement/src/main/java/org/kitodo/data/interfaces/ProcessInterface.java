@@ -238,8 +238,12 @@ public interface ProcessInterface extends DataInterface {
      *
      * @param progressClosed
      *            the percentage of completed tasks
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProgressClosed(Double progressClosed);
+    default void setProgressClosed(Double progressClosed) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns the percentage of tasks in the process that are currently being
@@ -264,8 +268,12 @@ public interface ProcessInterface extends DataInterface {
      *
      * @param progressInProcessing
      *            percentage of tasks currently being processed
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProgressInProcessing(Double progressInProcessing);
+    default void setProgressInProcessing(Double progressInProcessing) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns the percentage of tasks in the process, that cannot yet be
@@ -292,8 +300,12 @@ public interface ProcessInterface extends DataInterface {
      *
      * @param progressLocked
      *            percentage of tasks waiting
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProgressLocked(Double progressLocked);
+    default void setProgressLocked(Double progressLocked) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns the contents of the wiki field as HTML. Wiki means that something
@@ -337,8 +349,12 @@ public interface ProcessInterface extends DataInterface {
      *
      * @param progressOpen
      *            percentage of startable tasks
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProgressOpen(Double progressOpen);
+    default void setProgressOpen(Double progressOpen) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns a coded overview of the progress of the process. The larger the
@@ -366,8 +382,12 @@ public interface ProcessInterface extends DataInterface {
      * @param progressCombined
      *            coded overview of the progress with pattern
      *            <code>([01]\d{2}){4}</code>
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProgressCombined(String progressCombined);
+    default void setProgressCombined(String progressCombined) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns a process identifier URI. Internally, this is the record number
@@ -435,8 +455,12 @@ public interface ProcessInterface extends DataInterface {
      * @param batchID
      *            human-readable information about which batches the process
      *            belongs to
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setBatchID(String batchID);
+    default void setBatchID(String batchID) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns the record number of the parent process, if any. Is {@code null}
@@ -666,42 +690,56 @@ public interface ProcessInterface extends DataInterface {
      *
      * @param lastEditingUser
      *            user name, comma-separated, last name first
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setLastEditingUser(String lastEditingUser);
+    default void setLastEditingUser(String lastEditingUser) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
-     * Returns the day on which a task of this process was last started.
+     * Returns time day on which a task of this process was last started.
      *
-     * @return day on which a task of this process was last started
+     * @return time on which a task of this process was last started
      */
     Date getProcessingBeginLastTask();
 
     /**
-     * Sets the day on which a task of this process was last started. This
+     * Sets the time on which a task of this process was last started. This
      * should only be set if the data comes from a third party; internally, it
      * is determined in the database.
      * 
      * @param processingBeginLastTask
-     *            the day on which a task of this process was last started
+     *            the time on which a task of this process was last started
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProcessingBeginLastTask(Date processingBeginLastTask);
+    default void setProcessingBeginLastTask(Date processingBeginLastTask) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
-     * Returns the day on which a task from this process was last completed.
+     * Returns the time on which a task from this process was last completed.
      *
-     * @return day on which a task from this process was last completed
+     * @return time on which a task from this process was last completed
      */
     Date getProcessingEndLastTask();
 
     /**
-     * Sets the day on which a task of this process was last completed. This
+     * Sets the time on which a task of this process was last completed. This
      * should only be set if the data comes from a third party; internally, it
      * is determined in the database.
      * 
      * @param processingEndLastTask
-     *            the day on which a task of this process was last completed
+     *            the time on which a task of this process was last completed
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setProcessingEndLastTask(Date processingEndLastTask);
+    default void setProcessingEndLastTask(Date processingEndLastTask) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns the error corrections processing state of the process. The value
@@ -717,8 +755,12 @@ public interface ProcessInterface extends DataInterface {
      * 
      * @param status
      *            the error corrections processing state
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setCorrectionCommentStatus(Integer status);
+    default void setCorrectionCommentStatus(Integer status) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns whether the process has any comments.

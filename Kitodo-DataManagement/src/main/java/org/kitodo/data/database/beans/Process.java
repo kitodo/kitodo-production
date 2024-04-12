@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -31,11 +32,23 @@ import javax.persistence.OrderBy;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.interfaces.DocketInterface;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.PropertyInterface;
+import org.kitodo.data.interfaces.RulesetInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 @Entity
 @Table(name = "process")
-public class Process extends BaseTemplateBean {
+public class Process extends BaseTemplateBean implements ProcessInterface {
 
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
@@ -120,7 +133,7 @@ public class Process extends BaseTemplateBean {
     private String ocrdWorkflowId;
 
     @Transient
-    private User blockedUser;
+    private UserInterface blockedUser;
 
     @Transient
     private List<Map<String, Object>> metadata;
@@ -152,10 +165,9 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Get sorting helper for images.
-     *
-     * @return sorting helper as Integer, in case of null it returns 0
+     * {@inheritDoc} In case of {@code null}, it returns 0.
      */
+    @Override
     public Integer getSortHelperImages() {
         if (this.sortHelperImages == null) {
             this.sortHelperImages = 0;
@@ -163,15 +175,15 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperImages;
     }
 
+    @Override
     public void setSortHelperImages(Integer sortHelperImages) {
         this.sortHelperImages = sortHelperImages;
     }
 
     /**
-     * Get sorting helper for articles.
-     *
-     * @return sorting helper as Integer, in case of null it returns 0
+     * {@inheritDoc} In case of {@code null}, it returns 0.
      */
+    @Override
     public Integer getSortHelperArticles() {
         if (this.sortHelperArticles == null) {
             this.sortHelperArticles = 0;
@@ -179,15 +191,15 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperArticles;
     }
 
+    @Override
     public void setSortHelperArticles(Integer sortHelperArticles) {
         this.sortHelperArticles = sortHelperArticles;
     }
 
     /**
-     * Get sorting helper for document structure.
-     *
-     * @return sorting helper as Integer, in case of null it returns 0
+     * {@inheritDoc} In case of {@code null}, it returns 0.
      */
+    @Override
     public Integer getSortHelperDocstructs() {
         if (this.sortHelperDocstructs == null) {
             this.sortHelperDocstructs = 0;
@@ -195,15 +207,15 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperDocstructs;
     }
 
+    @Override
     public void setSortHelperDocstructs(Integer sortHelperDocstructs) {
         this.sortHelperDocstructs = sortHelperDocstructs;
     }
 
     /**
-     * Get sorting helper for metadata.
-     *
-     * @return sorting helper as Integer, in case of null it returns 0
+     * {@inheritDoc} In case of {@code null}, it returns 0.
      */
+    @Override
     public Integer getSortHelperMetadata() {
         if (this.sortHelperMetadata == null) {
             this.sortHelperMetadata = 0;
@@ -211,41 +223,27 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperMetadata;
     }
 
+    @Override
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
     }
 
-    /**
-     * Get wikiField.
-     *
-     * @return value of wikiField
-     */
+    @Override
     public String getWikiField() {
         return this.wikiField;
     }
 
-    /**
-     * Set wikiField.
-     *
-     * @param wikiField as java.lang.String
-     */
+    @Override
     public void setWikiField(String wikiField) {
         this.wikiField = wikiField;
     }
 
-    /**
-     * Gets the process base URI.
-     */
+    @Override
     public URI getProcessBaseUri() {
         return Objects.isNull(processBaseUri) ? null : URI.create(processBaseUri);
     }
 
-    /**
-     * Sets the process base URI.
-     *
-     * @param processBaseUri
-     *            the given process base URI
-     */
+    @Override
     public void setProcessBaseUri(URI processBaseUri) {
         this.processBaseUri = Objects.isNull(processBaseUri) ? null : processBaseUri.toString();
     }
@@ -262,34 +260,41 @@ public class Process extends BaseTemplateBean {
     /**
      * Set ordering.
      *
-     * @param ordering as java.lang.Integer
+     * @param ordering
+     *            as java.lang.Integer
      */
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
 
+    @Override
     public Project getProject() {
         return this.project;
     }
 
-    public void setProject(Project project) {
-        this.project = project;
+    @Override
+    public void setProject(ProjectInterface project) {
+        this.project = (Project) project;
     }
 
+    @Override
     public Ruleset getRuleset() {
         return this.ruleset;
     }
 
-    public void setRuleset(Ruleset ruleset) {
-        this.ruleset = ruleset;
+    @Override
+    public void setRuleset(RulesetInterface ruleset) {
+        this.ruleset = (Ruleset) ruleset;
     }
 
+    @Override
     public Docket getDocket() {
         return docket;
     }
 
-    public void setDocket(Docket docket) {
-        this.docket = docket;
+    @Override
+    public void setDocket(DocketInterface docket) {
+        this.docket = (Docket) docket;
     }
 
     /**
@@ -304,7 +309,8 @@ public class Process extends BaseTemplateBean {
     /**
      * Set template.
      *
-     * @param template as Template object
+     * @param template
+     *            as Template object
      */
     public void setTemplate(Template template) {
         this.template = template;
@@ -322,7 +328,8 @@ public class Process extends BaseTemplateBean {
     /**
      * Set parent.
      *
-     * @param parent as org.kitodo.data.database.beans.Process
+     * @param parent
+     *            as org.kitodo.data.database.beans.Process
      */
     public void setParent(Process parent) {
         this.parent = parent;
@@ -344,17 +351,14 @@ public class Process extends BaseTemplateBean {
     /**
      * Set children.
      *
-     * @param children as List of Process objects
+     * @param children
+     *            as List of Process objects
      */
     public void setChildren(List<Process> children) {
         this.children = children;
     }
 
-    /**
-     * Get list of task.
-     *
-     * @return list of Task objects or empty list
-     */
+    @Override
     public List<Task> getTasks() {
         initialize(new ProcessDAO(), this.tasks);
         if (Objects.isNull(this.tasks)) {
@@ -363,8 +367,10 @@ public class Process extends BaseTemplateBean {
         return this.tasks;
     }
 
-    public void setTasks(List<Task> tasks) {
-        this.tasks = tasks;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setTasks(List<? extends TaskInterface> tasks) {
+        this.tasks = (List<Task>) tasks;
     }
 
     /**
@@ -414,11 +420,7 @@ public class Process extends BaseTemplateBean {
         this.workpieces = workpieces;
     }
 
-    /**
-     * Get list of batches or empty list.
-     *
-     * @return list of batches or empty list
-     */
+    @Override
     public List<Batch> getBatches() {
         initialize(new ProcessDAO(), this.batches);
         if (Objects.isNull(this.batches)) {
@@ -427,18 +429,17 @@ public class Process extends BaseTemplateBean {
         return this.batches;
     }
 
-    /**
-     * Set batches, if list is empty just set, if not first clear and next set.
-     *
-     * @param batches
-     *            list
+    /*
+     * If list is empty just set, if not first clear and next set.
      */
-    public void setBatches(List<Batch> batches) {
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setBatches(List<? extends BatchInterface> batches) {
         if (this.batches == null) {
-            this.batches = batches;
+            this.batches = (List<Batch>) batches;
         } else {
             this.batches.clear();
-            this.batches.addAll(batches);
+            this.batches.addAll((List<? extends Batch>) batches);
         }
     }
 
@@ -458,17 +459,14 @@ public class Process extends BaseTemplateBean {
     /**
      * Set comments.
      *
-     * @param comments as List of Comment objects
+     * @param comments
+     *            as List of Comment objects
      */
     public void setComments(List<Comment> comments) {
         this.comments = comments;
     }
 
-    /**
-     * Get list of properties.
-     *
-     * @return list of Property objects or empty list
-     */
+    @Override
     public List<Property> getProperties() {
         initialize(new ProcessDAO(), this.properties);
         if (Objects.isNull(this.properties)) {
@@ -477,8 +475,10 @@ public class Process extends BaseTemplateBean {
         return this.properties;
     }
 
-    public void setProperties(List<Property> properties) {
-        this.properties = properties;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setProperties(List<? extends PropertyInterface> properties) {
+        this.properties = (List<Property>) properties;
     }
 
     /**
@@ -493,7 +493,8 @@ public class Process extends BaseTemplateBean {
     /**
      * Set exported.
      *
-     * @param exported as boolean
+     * @param exported
+     *            as boolean
      */
     public void setExported(boolean exported) {
         this.exported = exported;
@@ -511,45 +512,29 @@ public class Process extends BaseTemplateBean {
     /**
      * Set metadata.
      *
-     * @param metadata as Map
+     * @param metadata
+     *            as Map
      */
     public void setMetadata(List<Map<String, Object>> metadata) {
         this.metadata = metadata;
     }
 
-    /**
-     * Get blocked user.
-     *
-     * @return User object if this user is blocked
-     */
-    public User getBlockedUser() {
+    @Override
+    public UserInterface getBlockedUser() {
         return blockedUser;
     }
 
-    /**
-     * Set blocked user.
-     *
-     * @param blockedUser
-     *            User object
-     */
-    public void setBlockedUser(User blockedUser) {
+    @Override
+    public void setBlockedUser(UserInterface blockedUser) {
         this.blockedUser = blockedUser;
     }
 
-    /**
-     * Get baseType.
-     *
-     * @return value of baseType
-     */
+    @Override
     public String getBaseType() {
         return baseType;
     }
 
-    /**
-     * Set baseType.
-     *
-     * @param baseType as java.lang.String
-     */
+    @Override
     public void setBaseType(String baseType) {
         this.baseType = baseType;
     }
@@ -566,7 +551,8 @@ public class Process extends BaseTemplateBean {
     /**
      * Set inChoiceListShown.
      *
-     * @param inChoiceListShown as java.lang.Boolean
+     * @param inChoiceListShown
+     *            as java.lang.Boolean
      */
     public void setInChoiceListShown(Boolean inChoiceListShown) {
         this.inChoiceListShown = inChoiceListShown;
@@ -574,8 +560,9 @@ public class Process extends BaseTemplateBean {
 
     /**
      * Determines whether or not two processes are equal. Two instances of
-     * {@code Process} are equal if the values of their {@code Id}, {@code Title},
-     * {@code OutputName} and {@code CreationDate} member fields are the same.
+     * {@code Process} are equal if the values of their {@code Id},
+     * {@code Title}, {@code OutputName} and {@code CreationDate} member fields
+     * are the same.
      *
      * @param object
      *            An object to be compared with this {@code Process}.
@@ -601,56 +588,32 @@ public class Process extends BaseTemplateBean {
         return Objects.hash(this.getId());
     }
 
-    /**
-     * Get amount of structure elements.
-     *
-     * @return Amount of structure elements
-     */
+    @Override
     public Integer getNumberOfStructures() {
         return numberOfStructures;
     }
 
-    /**
-     * Get amount of meta data elements.
-     *
-     * @return Amount of meta data elements
-     */
+    @Override
     public Integer getNumberOfMetadata() {
         return numberOfMetadata;
     }
 
-    /**
-     * Set amount of meta data elements.
-     *
-     * @param numberOfMetadata Integer value of amount of meta data elements
-     */
+    @Override
     public void setNumberOfMetadata(Integer numberOfMetadata) {
         this.numberOfMetadata = numberOfMetadata;
     }
 
-    /**
-     * Get amount of images.
-     *
-     * @return Integer value of amount of images
-     */
+    @Override
     public Integer getNumberOfImages() {
         return numberOfImages;
     }
 
-    /**
-     * Set amount of images.
-     *
-     * @param numberOfImages Integer value of amount of images
-     */
+    @Override
     public void setNumberOfImages(Integer numberOfImages) {
         this.numberOfImages = numberOfImages;
     }
 
-    /**
-     * Set amount of structure elements.
-     *
-     * @param numberOfStructures Integer value of amount of structure elements
-     */
+    @Override
     public void setNumberOfStructures(Integer numberOfStructures) {
         this.numberOfStructures = numberOfStructures;
     }
@@ -668,9 +631,118 @@ public class Process extends BaseTemplateBean {
      * Set the OCR-D workflow identifier.
      *
      * @param ocrdWorkflowId
-     *         The identifier of the OCR-D workflow
+     *            The identifier of the OCR-D workflow
      */
     public void setOcrdWorkflowId(String ocrdWorkflowId) {
         this.ocrdWorkflowId = ocrdWorkflowId;
+    }
+
+    @Override
+    public Double getProgressClosed() {
+        if (CollectionUtils.isEmpty(tasks)) {
+            return 0.0;
+        }
+        return getProgressPercentageExact(TaskStatus.DONE);
+    }
+
+    @Override
+    public Double getProgressInProcessing() {
+        if (CollectionUtils.isEmpty(tasks)) {
+            return 0.0;
+        }
+        return getProgressPercentageExact(TaskStatus.INWORK);
+    }
+
+    @Override
+    public Double getProgressLocked() {
+        if (CollectionUtils.isEmpty(tasks)) {
+            return 100.0;
+        }
+        return getProgressPercentageExact(TaskStatus.LOCKED);
+
+    }
+
+    @Override
+    public Double getProgressOpen() {
+        if (CollectionUtils.isEmpty(tasks)) {
+            return 0.0;
+        }
+        return getProgressPercentageExact(TaskStatus.OPEN);
+    }
+
+    private Double getProgressPercentageExact(TaskStatus status) {
+        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
+        return taskProgress.get(status);
+    }
+
+    @Override
+    public String getProgressCombined() {
+        Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
+        return ProcessConverter.getCombinedProgressFromTaskPercentages(taskProgress);
+    }
+
+    @Override
+    public String getBatchID() {
+        return batches.stream().map(Batch::getTitle).collect(Collectors.joining(", "));
+    }
+
+    @Override
+    public Integer getParentID() {
+        return Objects.nonNull(parent) ? parent.getId() : null;
+    }
+
+    @Override
+    public void setParentID(Integer parentID) {
+        this.parent = HibernateUtil.getSession().get(Process.class, parentID);
+    }
+
+    @Override
+    public boolean hasChildren() {
+        return CollectionUtils.isNotEmpty(children);
+    }
+
+    @Override
+    public void setHasChildren(boolean hasChildren) {
+        if (!hasChildren && Objects.nonNull(children)) {
+            children.forEach(child -> child.setParent(null));
+            children.clear();
+        } else if (hasChildren && CollectionUtils.isEmpty(children)) {
+            throw new UnsupportedOperationException("cannot insert child processes");
+        }
+    }
+
+    @Override
+    public String getLastEditingUser() {
+        return ProcessConverter.getLastEditingUser(this);
+    }
+
+    @Override
+    public Date getProcessingBeginLastTask() {
+        return ProcessConverter.getLastProcessingBegin(this);
+    }
+
+    @Override
+    public Date getProcessingEndLastTask() {
+        return ProcessConverter.getLastProcessingEnd(this);
+    }
+
+    @Override
+    public Integer getCorrectionCommentStatus() {
+        return ProcessConverter.getCorrectionCommentStatus(this).getValue();
+    }
+
+    @Override
+    public boolean hasComments() {
+        return CollectionUtils.isNotEmpty(comments);
+    }
+
+    @Override
+    public void setHasComments(boolean hasComments) {
+        if (!hasComments && Objects.nonNull(comments)) {
+            comments.forEach(comment -> comment.setProcess(null));
+            comments.clear();
+        } else if (hasComments && CollectionUtils.isEmpty(comments)) {
+            throw new UnsupportedOperationException("cannot insert comments");
+        }
     }
 }

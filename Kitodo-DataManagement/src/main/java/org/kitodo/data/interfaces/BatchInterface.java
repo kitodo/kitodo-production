@@ -20,8 +20,8 @@ import java.util.List;
 public interface BatchInterface extends DataInterface {
 
     /**
-     * Returns the title of the batch. If no textual title was assigned, the
-     * title returned is “Batch ‹i›” with its database ID.
+     * Returns the title of the batch. Using titles for batches is optional, the
+     * field may be {@code null}. If so, the function returns null.
      *
      * @return the title of the batch
      */

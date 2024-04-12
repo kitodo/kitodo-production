@@ -26,10 +26,11 @@ import javax.persistence.Table;
 import org.kitodo.data.database.converter.PropertyTypeConverter;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.persistence.PropertyDAO;
+import org.kitodo.data.interfaces.PropertyInterface;
 
 @Entity
 @Table(name = "property")
-public class Property extends BaseIndexedBean implements Comparable<Property> {
+public class Property extends BaseIndexedBean implements PropertyInterface, Comparable<Property> {
 
     @Column(name = "title")
     private String title;
@@ -68,40 +69,22 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
         this.creationDate = new Date();
     }
 
-    /**
-     * Get title.
-     *
-     * @return title as String
-     */
+    @Override
     public String getTitle() {
         return this.title;
     }
 
-    /**
-     * Set title.
-     *
-     * @param title
-     *            as String
-     */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * Get value.
-     *
-     * @return value as String
-     */
+    @Override
     public String getValue() {
         return this.value;
     }
 
-    /**
-     * Set value.
-     *
-     * @param value
-     *            as String
-     */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -147,21 +130,12 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
         this.obligatory = obligatory;
     }
 
-    /**
-     * Get creation date.
-     *
-     * @return creation date as Date
-     */
+    @Override
     public Date getCreationDate() {
         return this.creationDate;
     }
 
-    /**
-     * Set creation date.
-     *
-     * @param creationDate
-     *            as Date
-     */
+    @Override
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }
@@ -264,6 +238,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      *            object
      * @return int
      */
+    @Override
     public int compareTo(Property property) {
         int titleMatch = this.getTitle().toLowerCase().compareTo(property.getTitle().toLowerCase());
         int valueMatch = this.getValue().toLowerCase().compareTo(property.getValue().toLowerCase());

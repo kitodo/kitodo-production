@@ -21,12 +21,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.kitodo.data.interfaces.FilterInterface;
+
 /**
  * Filter bean.
  */
 @Entity
 @Table(name = "filter")
-public class Filter extends BaseIndexedBean {
+public class Filter extends BaseIndexedBean implements FilterInterface {
 
     @Column(name = "value", columnDefinition = "longtext")
     private String value;
@@ -38,21 +40,12 @@ public class Filter extends BaseIndexedBean {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_filter_user_id"))
     private User user;
 
-    /**
-     * Get filter value.
-     *
-     * @return filter value
-     */
+    @Override
     public String getValue() {
         return value;
     }
 
-    /**
-     * Set filter value.
-     *
-     * @param value
-     *            filter
-     */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }

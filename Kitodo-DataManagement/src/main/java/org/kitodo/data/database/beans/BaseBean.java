@@ -23,22 +23,25 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.persistence.BaseDAO;
+import org.kitodo.data.interfaces.DataInterface;
 
 /**
  * Base bean class.
  */
 @MappedSuperclass
-public abstract class BaseBean implements Serializable {
+public abstract class BaseBean implements DataInterface, Serializable {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
+    @Override
     public Integer getId() {
         return id;
     }
 
+    @Override
     public void setId(Integer id) {
         this.id = id;
     }

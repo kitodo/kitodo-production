@@ -35,10 +35,15 @@ import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.RoleInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 @Entity
 @Table(name = "task")
-public class Task extends BaseIndexedBean {
+public class Task extends BaseIndexedBean implements TaskInterface {
 
     @Column(name = "title")
     private String title;
@@ -149,6 +154,12 @@ public class Task extends BaseIndexedBean {
     @Transient
     private String localizedTitle;
 
+    @Transient
+    private String processingStatusTitle;
+
+    @Transient
+    private String editTypeTitle;
+
     /**
      * Constructor.
      */
@@ -191,80 +202,72 @@ public class Task extends BaseIndexedBean {
         this.roles = new ArrayList<>(templateTask.getRoles());
     }
 
+    @Override
     public String getTitle() {
         return this.title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
+    @Override
     public Integer getOrdering() {
         return this.ordering;
     }
 
+    @Override
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
 
-    /**
-     * Get editType as {@link TaskEditType}.
-     *
-     * @return current edit type
-     */
+    @Override
     public TaskEditType getEditType() {
         return this.editType;
     }
 
-    /**
-     * Set editType to specific value from {@link TaskEditType}.
-     *
-     * @param inputType
-     *            as {@link TaskEditType}
-     */
+    @Override
     public void setEditType(TaskEditType inputType) {
         this.editType = inputType;
     }
 
-    /**
-     * Set processing status to specific value from {@link TaskStatus}.
-     *
-     * @param inputStatus
-     *            as {@link TaskStatus}
-     */
+    @Override
     public void setProcessingStatus(TaskStatus inputStatus) {
         this.processingStatus = inputStatus;
     }
 
-    /**
-     * Get processing status as {@link TaskStatus}.
-     *
-     * @return current processing status
-     */
+    @Override
     public TaskStatus getProcessingStatus() {
         return this.processingStatus;
     }
 
+    @Override
     public Date getProcessingTime() {
         return this.processingTime;
     }
 
+    @Override
     public void setProcessingTime(Date processingTime) {
         this.processingTime = processingTime;
     }
 
+    @Override
     public Date getProcessingBegin() {
         return this.processingBegin;
     }
 
+    @Override
     public void setProcessingBegin(Date processingBegin) {
         this.processingBegin = processingBegin;
     }
 
+    @Override
     public Date getProcessingEnd() {
         return this.processingEnd;
     }
 
+    @Override
     public void setProcessingEnd(Date processingEnd) {
         this.processingEnd = processingEnd;
     }
@@ -315,57 +318,44 @@ public class Task extends BaseIndexedBean {
         this.last = last;
     }
 
-    /**
-     * Get correction.
-     *
-     * @return value of correction
-     */
+    @Override
     public boolean isCorrection() {
         return correction;
     }
 
-    /**
-     * Set correction.
-     *
-     * @param correction as boolean
-     */
+    @Override
     public void setCorrection(boolean correction) {
         this.correction = correction;
     }
 
+    @Override
     public User getProcessingUser() {
         return this.processingUser;
     }
 
-    public void setProcessingUser(User processingUser) {
-        this.processingUser = processingUser;
+    @Override
+    public void setProcessingUser(UserInterface processingUser) {
+        this.processingUser = (User) processingUser;
     }
 
+    @Override
     public Process getProcess() {
         return this.process;
     }
 
-    public void setProcess(Process process) {
-        this.process = process;
+    @Override
+    public void setProcess(ProcessInterface process) {
+        this.process = (Process) process;
     }
 
-    /**
-     * Get template.
-     *
-     * @return value of template
-     */
+    @Override
     public Template getTemplate() {
         return this.template;
     }
 
-    /**
-     * Set template.
-     *
-     * @param template
-     *            as Template
-     */
-    public void setTemplate(Template template) {
-        this.template = template;
+    @Override
+    public void setTemplate(TemplateInterface template) {
+        this.template = (Template) template;
     }
 
     /**
@@ -420,25 +410,25 @@ public class Task extends BaseIndexedBean {
         return validationFolders;
     }
 
+    @Override
     public boolean isTypeImagesRead() {
         return this.typeImagesRead;
     }
 
+    @Override
     public void setTypeImagesRead(boolean typeImagesRead) {
         this.typeImagesRead = typeImagesRead;
     }
 
+    @Override
     public boolean isTypeImagesWrite() {
         return this.typeImagesWrite;
     }
 
     /**
-     * Set task type images. If types is true, it also sets type images read to
-     * true.
-     *
-     * @param typeImagesWrite
-     *            true or false
+     * {@inheritDoc} If true, the user is also given file system access.
      */
+    @Override
     public void setTypeImagesWrite(boolean typeImagesWrite) {
         this.typeImagesWrite = typeImagesWrite;
         if (typeImagesWrite) {
@@ -490,10 +480,12 @@ public class Task extends BaseIndexedBean {
         this.typeExportDMS = typeExportDMS;
     }
 
+    @Override
     public boolean isTypeMetadata() {
         return this.typeMetadata;
     }
 
+    @Override
     public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
     }
@@ -506,10 +498,12 @@ public class Task extends BaseIndexedBean {
         this.typeAcceptClose = typeAcceptClose;
     }
 
+    @Override
     public boolean isTypeAutomatic() {
         return this.typeAutomatic;
     }
 
+    @Override
     public void setTypeAutomatic(boolean typeAutomatic) {
         this.typeAutomatic = typeAutomatic;
     }
@@ -578,10 +572,12 @@ public class Task extends BaseIndexedBean {
         this.workflowCondition = workflowCondition;
     }
 
+    @Override
     public boolean isBatchStep() {
         return this.batchStep;
     }
 
+    @Override
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
     }
@@ -604,21 +600,12 @@ public class Task extends BaseIndexedBean {
         this.repeatOnCorrection = repeatOnCorrection;
     }
 
-    /**
-     * Get localized title.
-     *
-     * @return localized title as String
-     */
+    @Override
     public String getLocalizedTitle() {
         return this.localizedTitle;
     }
 
-    /**
-     * Set localized titles as String.
-     *
-     * @param localizedTitle
-     *            as String
-     */
+    @Override
     public void setLocalizedTitle(String localizedTitle) {
         this.localizedTitle = localizedTitle;
     }
@@ -656,5 +643,33 @@ public class Task extends BaseIndexedBean {
     @Override
     public int hashCode() {
         return Objects.hash(title, processingTime, processingBegin, processingEnd, process, template);
+    }
+
+    @Override
+    public String getProcessingStatusTitle() {
+        return processingStatusTitle;
+    }
+
+    @Override
+    public void setProcessingStatusTitle(String processingStatusTitle) {
+        this.processingStatusTitle = processingStatusTitle;
+    }
+
+    @Override
+    public String getEditTypeTitle() {
+        return editTypeTitle;
+    }
+
+    @Override
+    public void setEditTypeTitle(String editTypeTitle) {
+        this.editTypeTitle = editTypeTitle;
+    }
+
+    @Override
+    public List<Integer> getRoleIds() {
+        if (Objects.isNull(roles)) {
+            return null;
+        }
+        return roles.stream().map(RoleInterface::getId).collect(Collectors.toList());
     }
 }

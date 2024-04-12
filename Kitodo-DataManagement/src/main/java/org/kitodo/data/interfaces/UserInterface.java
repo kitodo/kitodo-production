@@ -83,7 +83,16 @@ public interface UserInterface extends DataInterface {
      * @param fullName
      *            full name to set
      */
-    void setFullName(String fullName);
+    default void setFullName(String fullName) {
+        if (Objects.isNull(fullName)) {
+            setName(null);
+            setSurname(null);
+        } else {
+            String[] parts = fullName.split(", ", 2);
+            setName((parts.length == 2) ? parts[1] : "");
+            setSurname(parts[0]);
+        }
+    }
 
     /**
      * Returns the user's location. Users from different locations collaborate
@@ -186,7 +195,7 @@ public interface UserInterface extends DataInterface {
      * whether there are filter objects in the database linked to the user. No
      * additional filters can be added to the process here.
      *
-     * @param size
+     * @param filtersSize
      *            how many users hold this role to set
      * @throws UnsupportedOperationException
      *             when trying to add unspecified filters to this user
@@ -244,7 +253,7 @@ public interface UserInterface extends DataInterface {
      * whether there are role objects in the database linked to the user. No
      * additional roles can be added to the user here.
      *
-     * @param size
+     * @param rolesSize
      *            number of roles to set
      * @throws SecurityException
      *             when trying to assign unspecified roles to this user
@@ -299,8 +308,8 @@ public interface UserInterface extends DataInterface {
      * whether there are role objects in the database linked to the user. No
      * additional roles can be added to the user here.
      *
-     * @param size
-     *            number of roles to set
+     * @param clientsSize
+     *            number of clients to set
      * @throws SecurityException
      *             when trying to assign unspecified roles to this user
      * @throws IndexOutOfBoundsException
@@ -354,8 +363,8 @@ public interface UserInterface extends DataInterface {
      * whether there are role objects in the database linked to the user. No
      * additional roles can be added to the user here.
      *
-     * @param size
-     *            number of roles to set
+     * @param projectsSize
+     *            number of projects to set
      * @throws UnsupportedOperationException
      *             when trying to assign unspecified projects to this user
      * @throws IndexOutOfBoundsException

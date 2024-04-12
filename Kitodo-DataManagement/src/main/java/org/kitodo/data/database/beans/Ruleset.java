@@ -20,9 +20,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.RulesetInterface;
+
 @Entity
 @Table(name = "ruleset")
-public class Ruleset extends BaseIndexedBean {
+public class Ruleset extends BaseIndexedBean implements RulesetInterface {
 
     @Column(name = "title")
     private String title;
@@ -40,27 +43,27 @@ public class Ruleset extends BaseIndexedBean {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ruleset_client_id"))
     private Client client;
 
+    @Override
     public String getTitle() {
         return this.title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
+    @Override
     public String getFile() {
         return this.file;
     }
 
+    @Override
     public void setFile(String file) {
         this.file = file;
     }
 
-    /**
-     * Check if metadata should be ordered by ruleset.
-     *
-     * @return true or false
-     */
+    @Override
     public boolean isOrderMetadataByRuleset() {
         if (this.orderMetadataByRuleset == null) {
             this.orderMetadataByRuleset = false;
@@ -68,21 +71,12 @@ public class Ruleset extends BaseIndexedBean {
         return this.orderMetadataByRuleset;
     }
 
-    /**
-     * Set if metadata should be ordered by ruleset.
-     *
-     * @param orderMetadataByRuleset
-     *            true or false
-     */
+    @Override
     public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
         this.orderMetadataByRuleset = orderMetadataByRuleset;
     }
 
-    /**
-     * Check if ruleset is active.
-     *
-     * @return true or false
-     */
+    @Override
     public Boolean isActive() {
         if (Objects.isNull(this.active)) {
             this.active = true;
@@ -90,32 +84,19 @@ public class Ruleset extends BaseIndexedBean {
         return this.active;
     }
 
-    /**
-     * Set ruleset as active.
-     *
-     * @param active as boolean
-     */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    /**
-     * Get client.
-     *
-     * @return Client object
-     */
+    @Override
     public Client getClient() {
         return this.client;
     }
 
-    /**
-     * Set client.
-     *
-     * @param client
-     *            as Client object
-     */
-    public void setClient(Client client) {
-        this.client = client;
+    @Override
+    public void setClient(ClientInterface client) {
+        this.client = (Client) client;
     }
 
     @Override

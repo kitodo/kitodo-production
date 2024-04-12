@@ -27,10 +27,16 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.UserDAO;
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.FilterInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.RoleInterface;
+import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseBean {
+public class User extends BaseBean implements UserInterface {
 
     @Column(name = "name")
     private String name;
@@ -181,26 +187,32 @@ public class User extends BaseBean {
         }
     }
 
+    @Override
     public String getLogin() {
         return this.login;
     }
 
+    @Override
     public void setLogin(String login) {
         this.login = login;
     }
 
+    @Override
     public String getName() {
         return this.name;
     }
 
+    @Override
     public void setName(String name) {
         this.name = name;
     }
 
+    @Override
     public String getSurname() {
         return this.surname;
     }
 
+    @Override
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -213,10 +225,12 @@ public class User extends BaseBean {
         this.password = inputPassword;
     }
 
+    @Override
     public boolean isActive() {
         return this.active;
     }
 
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -229,10 +243,12 @@ public class User extends BaseBean {
         this.deleted = deleted;
     }
 
+    @Override
     public String getLocation() {
         return this.location;
     }
 
+    @Override
     public void setLocation(String location) {
         this.location = location;
     }
@@ -287,11 +303,7 @@ public class User extends BaseBean {
         this.ldapGroup = ldapGroup;
     }
 
-    /**
-     * Get roles.
-     *
-     * @return list of Role objects
-     */
+    @Override
     public List<Role> getRoles() {
         initialize(new UserDAO(), this.roles);
         if (Objects.isNull(this.roles)) {
@@ -300,21 +312,13 @@ public class User extends BaseBean {
         return this.roles;
     }
 
-    /**
-     * Set roles.
-     *
-     * @param roles
-     *            list of Role objects
-     */
-    public void setRoles(List<Role> roles) {
-        this.roles = roles;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setRoles(List<? extends RoleInterface> roles) {
+        this.roles = (List<Role>) roles;
     }
 
-    /**
-     * Get tasks processed by this user.
-     *
-     * @return tasks processed by this user
-     */
+    @Override
     public List<Task> getProcessingTasks() {
         initialize(new UserDAO(), this.processingTasks);
         if (Objects.isNull(this.processingTasks)) {
@@ -323,15 +327,13 @@ public class User extends BaseBean {
         return this.processingTasks;
     }
 
-    public void setProcessingTasks(List<Task> processingTasks) {
-        this.processingTasks = processingTasks;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setProcessingTasks(List<? extends TaskInterface> processingTasks) {
+        this.processingTasks = (List<Task>) processingTasks;
     }
 
-    /**
-     * Get projects to which user is assigned.
-     *
-     * @return projects to which user is assigned
-     */
+    @Override
     public List<Project> getProjects() {
         initialize(new UserDAO(), this.projects);
         if (Objects.isNull(this.projects)) {
@@ -340,15 +342,13 @@ public class User extends BaseBean {
         return this.projects;
     }
 
-    public void setProjects(List<Project> projects) {
-        this.projects = projects;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setProjects(List<? extends ProjectInterface> projects) {
+        this.projects = (List<Project>) projects;
     }
 
-    /**
-     * Gets clients.
-     *
-     * @return The clients.
-     */
+    @Override
     public List<Client> getClients() {
         initialize(new UserDAO(), this.clients);
         if (Objects.isNull(this.clients)) {
@@ -357,14 +357,10 @@ public class User extends BaseBean {
         return this.clients;
     }
 
-    /**
-     * Sets clients.
-     *
-     * @param clients
-     *            The clients.
-     */
-    public void setClients(List<Client> clients) {
-        this.clients = clients;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setClients(List<? extends ClientInterface> clients) {
+        this.clients = (List<Client>) clients;
     }
 
     public boolean isConfigProductionDateShow() {
@@ -411,19 +407,17 @@ public class User extends BaseBean {
         this.language = language;
     }
 
+    @Override
     public String getLdapLogin() {
         return this.ldapLogin;
     }
 
+    @Override
     public void setLdapLogin(String ldapLogin) {
         this.ldapLogin = ldapLogin;
     }
 
-    /**
-     * Get user filters.
-     *
-     * @return list of user filters
-     */
+    @Override
     public List<Filter> getFilters() {
         initialize(new UserDAO(), this.filters);
         if (Objects.isNull(this.filters)) {
@@ -432,14 +426,10 @@ public class User extends BaseBean {
         return this.filters;
     }
 
-    /**
-     * Set user filters.
-     *
-     * @param filters
-     *            list of user filters
-     */
-    public void setFilters(List<Filter> filters) {
-        this.filters = filters;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setFilters(List<? extends FilterInterface> filters) {
+        this.filters = (List<Filter>) filters;
     }
 
     /**
@@ -540,6 +530,7 @@ public class User extends BaseBean {
     // Here will be methods which should be in UserService but are used by jsp
     // files
 
+    @Override
     public String getFullName() {
         return this.getSurname() + ", " + this.getName();
     }

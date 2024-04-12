@@ -12,9 +12,13 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -28,12 +32,17 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean implements Comparable<Project> {
+public class Project extends BaseIndexedBean implements ProjectInterface, Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
@@ -187,19 +196,17 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportRootPath = "";
     }
 
+    @Override
     public String getTitle() {
         return this.title;
     }
 
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * Returns the list of users of this project.
-     *
-     * @return the folders
-     */
+    @Override
     public List<User> getUsers() {
         initialize(new ProjectDAO(), this.users);
         if (Objects.isNull(this.users)) {
@@ -208,8 +215,10 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setUsers(List<? extends UserInterface> users) {
+        this.users = (List<User>) users;
     }
 
     /**
@@ -283,10 +292,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.folders = folders;
     }
 
+    @Override
     public String getMetsRightsOwner() {
         return this.metsRightsOwner;
     }
 
+    @Override
     public void setMetsRightsOwner(String metsRightsOwner) {
         this.metsRightsOwner = metsRightsOwner;
     }
@@ -361,6 +372,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * @return number of volumes for this project
      */
 
+    @Override
     public Integer getNumberOfVolumes() {
         if (this.numberOfVolumes == null) {
             this.numberOfVolumes = 0;
@@ -375,15 +387,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      *            for this project
      */
 
+    @Override
     public void setNumberOfVolumes(Integer numberOfVolumes) {
         this.numberOfVolumes = numberOfVolumes;
     }
 
-    /**
-     * Get number of pages.
-     *
-     * @return number of pages
-     */
+    @Override
     public Integer getNumberOfPages() {
         if (this.numberOfPages == null) {
             this.numberOfPages = 0;
@@ -391,21 +400,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.numberOfPages;
     }
 
-    /**
-     * Set number of pages.
-     *
-     * @param numberOfPages
-     *            the number of pages to set
-     */
+    @Override
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
 
-    /**
-     * Get start date.
-     *
-     * @return the start date
-     */
+    @Override
     public Date getStartDate() {
         if (this.startDate == null) {
             this.startDate = new Date();
@@ -413,15 +413,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.startDate;
     }
 
+    @Override
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    /**
-     * Get end date.
-     *
-     * @return the end date
-     */
+    @Override
     public Date getEndDate() {
         if (this.endDate == null) {
             this.endDate = new Date();
@@ -429,46 +426,29 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.endDate;
     }
 
+    @Override
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    /**
-     * Set if project is active.
-     *
-     * @param active
-     *            whether project is active
-     */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    /**
-     * Get if project is active.
-     *
-     * @return whether project is active
-     */
+    @Override
     public boolean isActive() {
         return this.active;
     }
 
-    /**
-     * Gets client.
-     *
-     * @return The client.
-     */
+    @Override
     public Client getClient() {
         return client;
     }
 
-    /**
-     * Sets client.
-     *
-     * @param client
-     *            The client.
-     */
-    public void setClient(Client client) {
-        this.client = client;
+    @Override
+    public void setClient(ClientInterface client) {
+        this.client = (Client) client;
     }
 
     /**
@@ -721,4 +701,46 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.title == null ? 0 : this.title.hashCode();
     }
 
+    @Override
+    public List<? extends TemplateInterface> getActiveTemplates() {
+        if (Objects.isNull(templates)) {
+            return null;
+        }
+        return templates.stream().filter(template -> template.isActive()).collect(Collectors.toList());
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public void setActiveTemplates(List<? extends TemplateInterface> activeTemplates) {
+        if (Objects.isNull(activeTemplates)) {
+            activeTemplates = Collections.emptyList();
+        }
+        Map<Integer, ? extends TemplateInterface> activeTemplatesMap = activeTemplates.stream()
+                .collect(Collectors.toMap(TemplateInterface::getId, Function.identity()));
+
+        if (Objects.isNull(this.templates) && CollectionUtils.isNotEmpty(activeTemplates)) {
+            this.templates = new ArrayList<>();
+        }
+        for (Template assignedTemplate : this.templates) {
+            assignedTemplate.setActive(Objects.nonNull(activeTemplatesMap.remove(assignedTemplate.getId())));
+        }
+        for (Template unassignedTemplate : ((Map<Integer, Template>) activeTemplatesMap).values()) {
+            unassignedTemplate.setActive(true);
+            this.templates.add(unassignedTemplate);
+        }
+    }
+
+    @Override
+    public boolean hasProcesses() {
+        return CollectionUtils.isNotEmpty(processes);
+    }
+
+    @Override
+    public void setHasProcesses(boolean hasProcesses) {
+        if (!hasProcesses && CollectionUtils.isNotEmpty(processes)) {
+            processes.clear();
+        } else if (hasProcesses && CollectionUtils.isEmpty(processes)) {
+            throw new UnsupportedOperationException("cannot add processes");
+        }
+    }
 }

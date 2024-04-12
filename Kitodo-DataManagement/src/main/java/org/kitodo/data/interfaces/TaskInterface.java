@@ -118,7 +118,7 @@ public interface TaskInterface extends DataInterface {
      * Sets the translated processing status of the task at runtime. This is a
      * transient value that is not persisted.
      *
-     * @param processingStatus
+     * @param processingStatusTitle
      *            translated processing status to set
      */
     void setProcessingStatusTitle(String processingStatusTitle);
@@ -164,10 +164,10 @@ public interface TaskInterface extends DataInterface {
     String getEditTypeTitle();
 
     /**
-     * Sets the translated processing tipe of the task at runtime. This is a
+     * Sets the translated processing type of the task at runtime. This is a
      * transient value that is not persisted.
      *
-     * @param processingStatus
+     * @param editTypeTitle
      *            translated processing type to set
      */
     void setEditTypeTitle(String editTypeTitle);
@@ -260,7 +260,7 @@ public interface TaskInterface extends DataInterface {
      * Sets the time the task was accepted for processing. The string must be
      * parsable with {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
-     * @param processingTime
+     * @param processingBegin
      *            time to set
      * @throws ParseException
      *             if the time cannot be converted
@@ -274,7 +274,7 @@ public interface TaskInterface extends DataInterface {
     /**
      * Sets the time the task was accepted for processing.
      *
-     * @param processingTime
+     * @param processingBegin
      *            time to set
      */
     void setProcessingBegin(Date processingBegin);
@@ -303,7 +303,7 @@ public interface TaskInterface extends DataInterface {
      * Sets the time the task was completed. The string must be parsable with
      * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
      *
-     * @param processingTime
+     * @param processingEnd
      *            time to set
      * @throws ParseException
      *             if the time cannot be converted
@@ -317,7 +317,7 @@ public interface TaskInterface extends DataInterface {
     /**
      * Sets the time the task was completed.
      *
-     * @param processingTime
+     * @param processingEnd
      *            time to set
      */
     void setProcessingEnd(Date processingEnd);
@@ -343,16 +343,25 @@ public interface TaskInterface extends DataInterface {
      * Returns the project the process belongs to.
      *
      * @return the project the process belongs to
+     * @deprecated Use {@link #getProcess()}{@code .getProject()}.
      */
-    ProjectInterface getProject();
+    @Deprecated
+    default ProjectInterface getProject() {
+        return getProcess().getProject();
+    }
 
     /**
      * Sets the project the process belongs to.
      *
      * @param project
      *            project to set
+     * @deprecated Use
+     *             {@link #getProcess()}{@code .setProject(ProjectInterface)}.
      */
-    void setProject(ProjectInterface project);
+    @Deprecated
+    default void setProject(ProjectInterface project) {
+        getProcess().setProject(project);
+    }
 
     /**
      * Returns the production template this task belongs to. Can be {@code null}
@@ -366,8 +375,8 @@ public interface TaskInterface extends DataInterface {
      * Sets the production template this task belongs to. A task can only ever
      * be assigned to <i>either</i> a production template <i>or</i> a process.
      *
-     * @param process
-     *            process this task belongs to
+     * @param template
+     *            template this task belongs to
      */
     void setTemplate(TemplateInterface template);
 
@@ -388,8 +397,12 @@ public interface TaskInterface extends DataInterface {
      *
      * @param roleIds
      *            list of role IDs
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setRoleIds(List<Integer> roleIds);
+    default void setRoleIds(List<Integer> roleIds) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns how many roles are allowed to take on this task.
@@ -407,7 +420,7 @@ public interface TaskInterface extends DataInterface {
      * depends on, whether there are role objects in the database linked to the
      * process. No additional roles can be added to the process here.
      *
-     * @param size
+     * @param rolesSize
      *            how many users hold this role to set
      * @throws SecurityException
      *             when trying to assign unspecified roles to this process
@@ -525,13 +538,19 @@ public interface TaskInterface extends DataInterface {
     boolean isBatchStep();
 
     /**
-     * Set information if batch is available for task - there is more than one
-     * task with the same title assigned to the batch.).
+     * Sets whether batch automation is possible for this task. The setter can
+     * be used when representing data from a third-party source. Internally it
+     * depends on whether the task's process is assigned to exactly one batch.
+     * Setting this to true cannot fix problems.
      *
      * @param batchAvailable
      *            as boolean
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setBatchAvailable(boolean batchAvailable);
+    default void setBatchAvailable(boolean batchAvailable) {
+        throw new UnsupportedOperationException("not supported");
+    }
 
     /**
      * Returns whether batch automation is possible for this task. For
@@ -540,7 +559,10 @@ public interface TaskInterface extends DataInterface {
      *
      * @return whether batch automation is possible
      */
-    boolean isBatchAvailable();
+    default boolean isBatchAvailable() {
+        var batches = getProcess().getBatches();
+        return Objects.nonNull(batches) && batches.size() == 1;
+    }
 
     /**
      * Sets whether batch automation is possible for this task. The setter can
@@ -569,8 +591,13 @@ public interface TaskInterface extends DataInterface {
      * 
      * @return the status regarding corrections
      * @see org.kitodo.data.database.enums.CorrectionComments
+     * @deprecated Use
+     *             {@link #getProcess()}{@code .getCorrectionCommentStatus()}.
      */
-    Integer getCorrectionCommentStatus();
+    @Deprecated
+    default Integer getCorrectionCommentStatus() {
+        return getProcess().getCorrectionCommentStatus();
+    }
 
     /**
      * Sets the status of the task regarding necessary corrections. Must be a
@@ -579,7 +606,10 @@ public interface TaskInterface extends DataInterface {
      * @param status
      *            the status regarding corrections
      * @see org.kitodo.data.database.enums.CorrectionComments
+     * @throws UnsupportedOperationException
+     *             if setting is not supported
      */
-    void setCorrectionCommentStatus(Integer status);
-
+    default void setCorrectionCommentStatus(Integer status) {
+        throw new UnsupportedOperationException("not supported");
+    }
 }

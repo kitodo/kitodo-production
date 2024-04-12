@@ -22,13 +22,17 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.ClientDAO;
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.ProjectInterface;
+import org.kitodo.data.interfaces.UserInterface;
 
 @Entity
 @Table(name = "client")
-public class Client extends BaseBean {
+public class Client extends BaseBean implements ClientInterface {
 
     @Column(name = "name")
     private String name;
@@ -40,21 +44,18 @@ public class Client extends BaseBean {
                     foreignKey = @ForeignKey(name = "FK_column_id"))})
     private List<ListColumn> listColumns;
 
-    /**
-     * Gets name.
-     *
-     * @return The name.
-     */
+    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    private List<User> users;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Project> projects;
+
+    @Override
     public String getName() {
         return name;
     }
 
-    /**
-     * Sets name.
-     *
-     * @param name
-     *            The name.
-     */
+    @Override
     public void setName(String name) {
         this.name = name;
     }
@@ -98,5 +99,27 @@ public class Client extends BaseBean {
      */
     public void setListColumns(List<ListColumn> columns) {
         this.listColumns = columns;
+    }
+
+    @Override
+    public List<User> getUsers() {
+        return users;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setUsers(List<? extends UserInterface> users) {
+        this.users = (List<User>) users;
+    }
+
+    @Override
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setProjects(List<? extends ProjectInterface> projects) {
+        this.projects = (List<Project>) projects;
     }
 }
