@@ -139,13 +139,13 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     private List<Map<String, Object>> metadata;
 
     @Transient
-    private Integer numberOfMetadata;
+    private int numberOfMetadata;
 
     @Transient
-    private Integer numberOfImages;
+    private int numberOfImages;
 
     @Transient
-    private Integer numberOfStructures;
+    private int numberOfStructures;
 
     @Transient
     private String baseType;
@@ -622,6 +622,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      * Get OCR-D workflow identifier.
      *
      * @return The OCR-D workflow identifier
+     * @see <a href="https://ocr-d.de/en/workflows">OCR-D Workflow Guide</a>
      */
     public String getOcrdWorkflowId() {
         return ocrdWorkflowId;
