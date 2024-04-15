@@ -430,7 +430,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     }
 
     /*
-     * If list is empty just set, if not first clear and next set.
+     * Set batches, if list is empty just set, if not first clear and next set.
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -459,8 +459,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     /**
      * Set comments.
      *
-     * @param comments
-     *            as List of Comment objects
+     * @param comments as List of Comment objects
      */
     public void setComments(List<Comment> comments) {
         this.comments = comments;
@@ -493,8 +492,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     /**
      * Set exported.
      *
-     * @param exported
-     *            as boolean
+     * @param exported as boolean
      */
     public void setExported(boolean exported) {
         this.exported = exported;
@@ -512,8 +510,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     /**
      * Set metadata.
      *
-     * @param metadata
-     *            as Map
+     * @param metadata as Map
      */
     public void setMetadata(List<Map<String, Object>> metadata) {
         this.metadata = metadata;
@@ -551,8 +548,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     /**
      * Set inChoiceListShown.
      *
-     * @param inChoiceListShown
-     *            as java.lang.Boolean
+     * @param inChoiceListShown as java.lang.Boolean
      */
     public void setInChoiceListShown(Boolean inChoiceListShown) {
         this.inChoiceListShown = inChoiceListShown;
@@ -560,9 +556,8 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
 
     /**
      * Determines whether or not two processes are equal. Two instances of
-     * {@code Process} are equal if the values of their {@code Id},
-     * {@code Title}, {@code OutputName} and {@code CreationDate} member fields
-     * are the same.
+     * {@code Process} are equal if the values of their {@code Id}, {@code Title},
+     * {@code OutputName} and {@code CreationDate} member fields are the same.
      *
      * @param object
      *            An object to be compared with this {@code Process}.
@@ -622,7 +617,6 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      * Get OCR-D workflow identifier.
      *
      * @return The OCR-D workflow identifier
-     * @see <a href="https://ocr-d.de/en/workflows">OCR-D Workflow Guide</a>
      */
     public String getOcrdWorkflowId() {
         return ocrdWorkflowId;
@@ -632,7 +626,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      * Set the OCR-D workflow identifier.
      *
      * @param ocrdWorkflowId
-     *            The identifier of the OCR-D workflow
+     *         The identifier of the OCR-D workflow
      */
     public void setOcrdWorkflowId(String ocrdWorkflowId) {
         this.ocrdWorkflowId = ocrdWorkflowId;
