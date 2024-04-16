@@ -498,6 +498,11 @@ public class ProcessesPage extends Page<ProcessesPage> {
         if (isNotAt()) {
             goTo();
         }
+
+        await("Wait for openCalendarLink to be clickable")
+                .pollDelay(100, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS)
+                .until(openCalendarLink::isDisplayed);
         openCalendarLink.click();
     }
 
