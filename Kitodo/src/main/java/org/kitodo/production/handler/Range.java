@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.beans;
+package org.kitodo.production.handler;
 
 public class Range {
     private final long start;
@@ -27,7 +27,7 @@ public class Range {
      * @param total
      *         Total length of the byte source.
      */
-    public Range(long start, long end, long total) {
+    Range(long start, long end, long total) {
         this.start = start;
         this.end = end;
         this.length = end - start + 1;

@@ -33,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.message.ParameterizedMessage;
-import org.kitodo.production.beans.Range;
 import org.primefaces.application.resource.BaseDynamicContentHandler;
 import org.primefaces.model.StreamedContent;
 import org.primefaces.util.Constants;
