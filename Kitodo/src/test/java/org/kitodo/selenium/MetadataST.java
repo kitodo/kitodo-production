@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -21,6 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -40,6 +42,9 @@ import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.interactions.Actions;
 
 /**
  * Tests for functions in the metadata editor.
@@ -227,6 +232,51 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getMetadataEditorPage().acknowledgeRenamingMediaFiles();
         assertEquals("Second child node in structure tree has wrong label AFTER renaming media files",
                 SECOND_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel());
+    }
+
+    @Test
+    public void dragAndDropPageTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        WebElement unstructuredMedia = Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(unstructuredMedia::isDisplayed);
+        // first page in unstructured media
+        WebElement firstThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:0:unstructuredMediaPanel"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(firstThumbnail::isDisplayed);
+        // hover over second thumbnail to verify overlay text before drag'n'drop
+        Actions hoverAction = new Actions(Browser.getDriver());
+        WebElement secondThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel"));
+        hoverAction.moveToElement(secondThumbnail).build().perform();
+        WebElement thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(thumbnailOverlay::isDisplayed);
+        Assert.assertEquals("Last thumbnail has wrong overlay before drag'n'drop action",
+                "Bild 1, Seite -", thumbnailOverlay.getText().strip());
+        // drop position for drag'n'drop action
+        WebElement dropPosition = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:2:unstructuredPageDropArea"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(dropPosition::isDisplayed);
+        // drag'n'drop action
+        Actions dragAndDropAction = new Actions(Browser.getDriver());
+        dragAndDropAction.dragAndDrop(firstThumbnail, dropPosition).build().perform();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
+        Pages.getMetadataEditorPage().saveAndExit();
+        // check whether new position has been saved correctly
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        secondThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel"));
+        hoverAction.moveToElement(secondThumbnail).build().perform();
+        thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(thumbnailOverlay::isDisplayed);
+        Assert.assertEquals("Last thumbnail has wrong overlay after drag'n'drop action",
+                "Bild 2, Seite -", thumbnailOverlay.getText().strip());
     }
 
     /**
