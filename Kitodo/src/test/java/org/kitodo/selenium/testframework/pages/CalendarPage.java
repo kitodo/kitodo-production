@@ -142,14 +142,14 @@ public class CalendarPage extends Page<CalendarPage> {
      */
     public void addBlock() {
         await("Wait for button to be displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(buttonAddBlock.isEnabled()));
         buttonAddBlock.click();
 
         await("Wait for datepicker from being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(datepickerFrom.isEnabled()));
@@ -158,15 +158,15 @@ public class CalendarPage extends Page<CalendarPage> {
         getPageHeader().click();
 
         await("Wait for datepicker to being displayed")
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(200, TimeUnit.MILLISECONDS)
+                .pollDelay(2, TimeUnit.SECONDS)
+                .pollInterval(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(datepickerToLink.isEnabled()));
         datepickerTo.click();
         await("Wait for datepicker to being displayed")
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(200, TimeUnit.MILLISECONDS)
+                .pollDelay(2, TimeUnit.SECONDS)
+                .pollInterval(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(datepickerToLink.isEnabled()));
@@ -179,14 +179,14 @@ public class CalendarPage extends Page<CalendarPage> {
      */
     public void addIssue(String title) {
         await("Wait for issue button being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(buttonAddIssue.isEnabled()));
         buttonAddIssue.click();
 
         await("Wait for issue input being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(inputIssueName.isEnabled()));
@@ -195,13 +195,13 @@ public class CalendarPage extends Page<CalendarPage> {
         headerText.click();
 
         await("Wait for checkbox being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(checkboxMonday.isDisplayed()));
         checkboxMonday.click();
         await("Wait for checkbox being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(checkboxMonday.isDisplayed()));
@@ -229,22 +229,22 @@ public class CalendarPage extends Page<CalendarPage> {
      */
     public List<String> getMetadata(String issueName) {
         await("Wait for calendar entry being displayed")
-                .pollDelay(1, TimeUnit.SECONDS)
-                .pollInterval(200, TimeUnit.MILLISECONDS)
+                .pollDelay(2, TimeUnit.SECONDS)
+                .pollInterval(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue( calendarEntry.isDisplayed()));
         calendarEntryButton.click();
 
         await("Wait for issue '" + issueName + "' being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(getIssue(issueName).isDisplayed()));
         if (Objects.equals(getIssue(issueName).getAttribute("aria-expanded"), "false")) {
             Browser.getDriver().findElementByXPath("//div[@aria-expanded='true']").click();
             await("Wait for issue '" + issueName + "' being displayed")
-                    .pollDelay(200, TimeUnit.MILLISECONDS)
+                    .pollDelay(400, TimeUnit.MILLISECONDS)
                     .atMost(10, TimeUnit.SECONDS)
                     .ignoreExceptions()
                     .untilAsserted(() -> assertTrue(getIssue(issueName).isDisplayed()));
@@ -252,7 +252,7 @@ public class CalendarPage extends Page<CalendarPage> {
         }
 
         await("Wait for issue content for '" + issueName + "' being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(getIssueContent(issueName).isDisplayed()));
@@ -278,20 +278,20 @@ public class CalendarPage extends Page<CalendarPage> {
 
     private void addMetadata(String type, String value, WebElement addButton) {
         await("Wait for calendar entry being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(calendarEntry.isDisplayed()));
         calendarEntryButton.click();
         await("Wait for button to add metadata to this issue being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(addButton.isEnabled()));
         addButton.click();
 
         await("Wait for button to add metadata to this issue being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(metadataType.isEnabled()));
@@ -299,7 +299,7 @@ public class CalendarPage extends Page<CalendarPage> {
         metadataTypePanel.findElement(By.xpath("//li[text()='" + type + "']")).click();
 
         await("Wait for metadata input being displayed")
-                .pollDelay(200, TimeUnit.MILLISECONDS)
+                .pollDelay(400, TimeUnit.MILLISECONDS)
                 .atMost(10, TimeUnit.SECONDS)
                 .ignoreExceptions()
                 .untilAsserted(() -> assertTrue(metadataValue.isEnabled()));
