@@ -190,7 +190,7 @@ public class ProjectDTO extends BaseDTO {
      *
      * @return whether project is active or not
      */
-    public Boolean isActive() {
+    public boolean isActive() {
         return this.active;
     }
 
