@@ -419,10 +419,10 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 .map(entry -> entry.getKey() + EQUALS_OPERAND + entry.getValue())
                 .collect(Collectors.toList());
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            String searchString = URLEncoder.encode(String.join(" AND ", searchOperands), encoding);
+            searchString = URLEncoder.encode(String.join(" AND ", searchOperands), encoding);
         } else {
             searchOperands.replaceAll(s -> !s.equals(EQUALS_OPERAND) ? URLEncoder.encode(s, encoding) : s);
-            String searchString = String.join(" AND ", searchOperands);
+            searchString = String.join(" AND ", searchOperands);
         }
         return searchString;
     }
