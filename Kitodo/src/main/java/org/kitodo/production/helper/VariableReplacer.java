@@ -463,8 +463,8 @@ public class VariableReplacer {
         if (Objects.isNull(stringWithVariables)) {
             return false;
         }
-        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)")
-                | stringWithVariables.contains("(relativepath)");
+        return stringWithVariables.contains("(filename)") || stringWithVariables.contains("(basename)")
+                || stringWithVariables.contains("(relativepath)");
     }
 
     /**

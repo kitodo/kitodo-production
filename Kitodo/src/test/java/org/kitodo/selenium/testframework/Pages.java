@@ -21,6 +21,7 @@ import org.kitodo.selenium.testframework.pages.HelpPage;
 import org.kitodo.selenium.testframework.pages.ImportConfigurationEditPage;
 import org.kitodo.selenium.testframework.pages.LdapGroupEditPage;
 import org.kitodo.selenium.testframework.pages.LoginPage;
+import org.kitodo.selenium.testframework.pages.MassImportPage;
 import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
 import org.kitodo.selenium.testframework.pages.PostLoginChecksPage;
 import org.kitodo.selenium.testframework.pages.ProcessEditPage;
@@ -160,5 +161,9 @@ public class Pages {
 
     public static CalendarPage getCalendarPage() throws InstantiationException, IllegalAccessException {
         return getPage(CalendarPage.class);
+    }
+
+    public static MassImportPage getMassImportPage() throws IllegalAccessException, InstantiationException {
+        return getPage(MassImportPage.class);
     }
 }

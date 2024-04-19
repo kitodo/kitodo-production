@@ -18,9 +18,12 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
+import com.xebialabs.restito.server.StubServer;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -60,6 +63,7 @@ import org.kitodo.test.utils.ProcessTestUtils;
 
 public class AddingST extends BaseTestSelenium {
 
+    private static StubServer server;
     private static ProcessesPage processesPage;
     private static ProjectsPage projectsPage;
     private static UsersPage usersPage;
@@ -68,6 +72,9 @@ public class AddingST extends BaseTestSelenium {
     private static ImportConfigurationEditPage importConfigurationEditPage;
     private static final String TEST_METADATA_FILE = "testMetadataFileServiceTest.xml";
     private static int secondProcessId = -1;
+    private static final String PICA_PPN = "pica.ppn";
+    private static final String PICA_XML = "picaxml";
+    private static final String TEST_FILE_PATH = "src/test/resources/sruTestRecord.xml";
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -88,6 +95,13 @@ public class AddingST extends BaseTestSelenium {
         }
         assertTrue("Should find exactly one second process!", secondProcessId > 0);
         ProcessTestUtils.copyTestMetadataFile(secondProcessId, TEST_METADATA_FILE);
+        server = new StubServer(MockDatabase.PORT).run();
+        setupServer();
+    }
+
+    private static void setupServer() throws IOException {
+        // REST endpoint for testing metadata import
+        MockDatabase.addRestEndPointForSru(server, PICA_PPN + "=test", TEST_FILE_PATH, PICA_XML, 1);
     }
 
     /**
@@ -97,6 +111,7 @@ public class AddingST extends BaseTestSelenium {
     @AfterClass
     public static void removeUnsuitableParentTestProcess() throws DAOException {
         ProcessTestUtils.removeTestProcess(secondProcessId);
+        server.stop();
     }
 
     @Before
@@ -158,12 +173,10 @@ public class AddingST extends BaseTestSelenium {
         assertTrue("Created Process was not listed at processes table!", processAvailable);
 
         ProcessService processService = ServiceManager.getProcessService();
-        // TODO: make processService.findByTitle(generatedTitle) work
-        int recordNumber = 1;
-        Process generatedProcess;
-        do {
-            generatedProcess = processService.getById(recordNumber++);
-        } while (!generatedTitle.equals(generatedProcess.getTitle()));
+        Optional<Process> optionalProcess = processService.getAll().stream().filter(process -> generatedTitle
+                .equals(process.getTitle())).findAny();
+        assertTrue("Generated process not found in database", optionalProcess.isPresent());
+        Process generatedProcess = optionalProcess.get();
         assertNull("Created Process unexpectedly got a parent!", generatedProcess.getParent());
 
         projectsPage.createNewProcess();
@@ -173,12 +186,12 @@ public class AddingST extends BaseTestSelenium {
         boolean childProcessAvailable = processesPage.getProcessTitles().contains(generatedChildTitle);
         assertTrue("Created Process was not listed at processes table!", childProcessAvailable);
 
-        // TODO: make processService.findByTitle(generatedChildTitle) work
-        Process generatedChildProcess;
-        do {
-            generatedChildProcess = processService.getById(recordNumber++);
-        } while (!generatedChildTitle.equals(generatedChildProcess.getTitle()));
+        Optional<Process> optionalChildProcess = processService.getAll().stream().filter(process -> generatedChildTitle
+                .equals(process.getTitle())).findAny();
+        assertTrue("Generated child process not found in database", optionalChildProcess.isPresent());
+        Process generatedChildProcess = optionalChildProcess.get();
         assertEquals("Created Process has a wrong parent!", generatedProcess, generatedChildProcess.getParent());
+        ProcessTestUtils.removeTestProcess(generatedProcess.getId());
     }
 
     @Test
@@ -189,10 +202,9 @@ public class AddingST extends BaseTestSelenium {
         Pages.getProcessFromTemplatePage().cancel();
     }
 
-    @Ignore
     @Test
     public void addProcessFromCatalogTest() throws Exception {
-        assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
+        assumeTrue(!SystemUtils.IS_OS_WINDOWS);
 
         projectsPage.createNewProcess();
         assertEquals("Header for create new process is incorrect", "Einen neuen Vorgang anlegen (Produktionsvorlage: 'First template')",
@@ -201,6 +213,10 @@ public class AddingST extends BaseTestSelenium {
         String generatedTitle = Pages.getProcessFromTemplatePage().createProcessFromCatalog();
         boolean processAvailable = processesPage.getProcessTitles().contains(generatedTitle);
         assertTrue("Created Process was not listed at processes table!", processAvailable);
+        int index = processesPage.getProcessTitles().indexOf(generatedTitle);
+        assertTrue("Process table does not contain ID or new process", index >= 0);
+        int processId = Integer.parseInt(processesPage.getProcessIds().get(index));
+        ProcessTestUtils.removeTestProcess(processId);
     }
 
     @Test

@@ -43,6 +43,8 @@ public class ProjectsPage extends Page<ProjectsPage> {
     private static final String IMPORT_CONFIGURATIONS_TABLE = "configurationTable";
     private static final String MAPPING_FILE_TABLE = "mappingTable";
     private static final String MAPPING_FILE_FORMAT_DIALOG = "mappingFileFormatsDialog";
+    private static final String FIRST_TEMPLATE = "First template";
+    private static final String MASS_IMPORT_LINK = "a.ui-commandlink:has(i.fa-stack-overflow)";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROJECTS_TAB_VIEW)
@@ -655,5 +657,42 @@ public class ProjectsPage extends Page<ProjectsPage> {
         await("Wait for template filter list to be updated").pollDelay(700, TimeUnit.MILLISECONDS)
                         .atMost(3, TimeUnit.SECONDS)
                                 .until(() -> filterMenu.isEnabled());
+    }
+
+    /**
+     * Go to mass import page for a project and select appropriate template.
+     */
+    public void clickMassImportAction() {
+        // click "mass import" icon
+        List<WebElement> massImportLinks = Browser.getDriver().findElementsByCssSelector(MASS_IMPORT_LINK);
+        assert(!massImportLinks.isEmpty());
+        WebElement massImportLink = massImportLinks.get(0);
+        massImportLink.click();
+
+        // open template selection menu
+        WebElement templateSelection = Browser.getDriver().findElement(By.id("selectTemplateForm:templateMenu"));
+        await("Wait for 'template selection dialog' to be displayed").pollDelay(300, TimeUnit.MILLISECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions().until(templateSelection::isDisplayed);
+        templateSelection.click();
+
+        // select template
+        await("Wait for 'template pull down menu' to be displayed")
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> Browser.getDriver()
+                        .findElement(By.cssSelector("li[data-label='" + FIRST_TEMPLATE + "']")).isDisplayed());
+        Browser.getDriver()
+                .findElement(By.cssSelector("li[data-label='" + FIRST_TEMPLATE + "']")).click();
+
+        // submit template selection
+        await("Wait for 'select button' to become displayed")
+                .pollDelay(1, TimeUnit.SECONDS)
+                .pollInterval(1, TimeUnit.SECONDS)
+                .atMost(3, TimeUnit.SECONDS).ignoreExceptions()
+                .until(() -> Browser.getDriver()
+                        .findElement(By.id("selectTemplateForm:setTemplateButton")).isEnabled());
+        Browser.getDriver()
+                .findElement(By.id("selectTemplateForm:setTemplateButton")).click();
     }
 }

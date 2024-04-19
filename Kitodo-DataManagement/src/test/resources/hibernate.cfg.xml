@@ -25,9 +25,11 @@
 
         <property name="hibernate.connection.username">sa</property>
         <property name="hibernate.connection.password"/>
-        <property name="hibernate.connection.url">jdbc:h2:mem:test</property>
+        <property name="hibernate.connection.url">jdbc:h2:mem:test;MODE=MariaDB;DATABASE_TO_LOWER=TRUE;CASE_INSENSITIVE_IDENTIFIERS=TRUE;NON_KEYWORDS=USER</property>
         <property name="hibernate.connection.autoReconnect">true</property>
         <property name="hibernate.connection.autoReconnectForPools">true</property>
+        <property name="hibernate.globally_quoted_identifiers">true</property>
+        <property name="hibernate.globally_quoted_identifiers_skip_column_definitions">true</property>
 
         <!-- connection pool -->
         <property name="hibernate.c3p0.max_size">5000</property>

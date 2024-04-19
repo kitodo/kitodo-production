@@ -153,7 +153,7 @@ public class MassImportForm extends BaseForm {
         importSuccessMap = new HashMap<>();
         PrimeFaces.current().ajax().update("massImportResultDialog");
         try {
-            Map<String, Map<String, String>> presetMetadata = massImportService.prepareMetadata(metadataKeys, records);
+            Map<String, Map<String, List<String>>> presetMetadata = massImportService.prepareMetadata(metadataKeys, records);
             importRecords(presetMetadata);
             PrimeFaces.current().executeScript("PF('massImportResultDialog').show();");
             PrimeFaces.current().ajax().update("massImportResultDialog");
@@ -181,10 +181,10 @@ public class MassImportForm extends BaseForm {
      *
      * @param processMetadata Map containing record IDs as keys and preset metadata lists as values
      */
-    private void importRecords(Map<String, Map<String, String>> processMetadata) {
+    private void importRecords(Map<String, Map<String, List<String>>> processMetadata) {
         ImportService importService = ServiceManager.getImportService();
         PrimeFaces.current().ajax().update("massImportProgressDialog");
-        for (Map.Entry<String, Map<String, String>> entry : processMetadata.entrySet()) {
+        for (Map.Entry<String, Map<String, List<String>>> entry : processMetadata.entrySet()) {
             try {
                 importService.importProcess(entry.getKey(), projectId, templateId, importConfiguration,
                         entry.getValue());

@@ -15,7 +15,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.MonthDay;
@@ -29,8 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import javax.faces.context.FacesContext;
 import javax.faces.view.ViewScoped;
@@ -90,11 +87,6 @@ public class CalendarForm implements Serializable {
     private static final String DEFAULT_REFERER = "processes?" + REDIRECT_PARAMETER;
     private static final String TASK_MANAGER_REFERER = "system.jsf?tabIndex=0&" + REDIRECT_PARAMETER;
     private static final Integer[] MONTHS = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12};
-
-    /**
-     * This is a regular expression to parse date inputs in a flexible way.
-     */
-    private static final Pattern FLEXIBLE_DATE = Pattern.compile("\\D*(\\d+)\\D+(\\d+)\\D+(\\d+)\\D*");
 
     /**
      * The constant field issueColours holds the colors used to represent the
@@ -516,59 +508,6 @@ public class CalendarForm implements Serializable {
         } catch (NullPointerException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    /**
-     * Tries to interpret a string entered by the user as a date as flexible as
-     * possible. Supports two-digit years and imperial date field order
-     * (month/day/year). In case of flexible interpretations, hints will be
-     * displayed to put the user on the right track what happened to his input.
-     *
-     * <p>
-     * If the user clicks the link to upload a course of appearance file, no
-     * warning message shall show. Therefore an alternate white-space character
-     * (U+00A0) will be appended to the value string by Javascript on the user
-     * side because the setter methods will be called by Faces before the link
-     * action will be executed, but we want to skip the error message generation
-     * in that case, too.
-     *
-     * @param value
-     *            value entered by the user
-     * @param input
-     *            input element, one of "firstAppearance" or "lastAppearance"
-     * @return the date if found, or null otherwise
-     */
-    private LocalDate parseDate(String value, String input) {
-        Matcher dateParser = FLEXIBLE_DATE.matcher(value);
-        int[] numbers = new int[3];
-        if (dateParser.matches()) {
-            for (int i = 0; i < 3; i++) {
-                numbers[i] = Integer.parseInt(dateParser.group(i + 1));
-            }
-            if (numbers[2] < 100) {
-                numbers[2] += 100 * Math.floor((double) today.getYear() / 100);
-                if (numbers[2] > today.getYear()) {
-                    numbers[2] -= 100;
-                }
-                Helper.setMessage(Helper.getTranslation(BLOCK + input + ".yearCompleted",
-                    dateParser.group(3), Integer.toString(numbers[2])));
-            }
-            try {
-                return LocalDate.of(numbers[2], numbers[1], numbers[0]);
-            } catch (DateTimeException invalidDate) {
-                try {
-                    LocalDate swapped = LocalDate.of(numbers[2], numbers[0], numbers[1]);
-                    Helper.setMessage(BLOCK + input + ".swapped");
-                    return swapped;
-                } catch (DateTimeException stillInvalid) {
-                    Helper.setErrorMessage(invalidDate.getLocalizedMessage(), logger, stillInvalid);
-                }
-            }
-        }
-        if (!value.contains("\u00A0")) {
-            Helper.setErrorMessage(BLOCK + input + ".invalid");
-        }
-        return null;
     }
 
     /**
