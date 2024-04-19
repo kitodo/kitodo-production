@@ -303,8 +303,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if an error occurs
      */
-    List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
-            String filter, Collection<Integer> excludedProcessIds) throws DataException;
+    List<Process> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects, String filter,
+            Collection<Integer> excludedProcessIds) throws DataException;
 
     /**
      * Determines the number of processes that match the specified filter
@@ -384,22 +384,19 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param process
      *            process for which the data record number should be placed in
      *            the processBaseUri field
-     * @return the record number
+     * @return the record number in a URI object
      */
     /*
      * Since the moment this was introduced, I've never understood why this
      * exists. Nor why property processBaseUri exists at all. See #5856
      */
-    default String getProcessDataDirectory(ProcessInterface process) {
-        return getProcessDataDirectory((Process) process, false).toString();
+    default URI getProcessDataDirectory(ProcessInterface process) {
+        return getProcessDataDirectory((Process) process, false);
     }
 
     /**
      * Sets the record number of the process into the processBaseUri field. Can
      * also save the process.
-     * 
-     * <!-- Since the moment this was introduced, I've never understood why this
-     * exists. Nor why property processBaseUri exists at all. See #5856 -->
      *
      * @param process
      *            process for which the data record number should be placed in
@@ -407,6 +404,10 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param forIndexingAll
      *            whether the process should <b>not</b> be saved
      * @return the record number in a URI object
+     */
+    /*
+     * Since the moment this was introduced, I've never understood why this
+     * exists. Nor why property processBaseUri exists at all. See #5856
      */
     default URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         try {
@@ -485,8 +486,9 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *            maximum number of objects to return
      * @param sortField
      *            by which column the data should be sorted. Must not be
-     *            {@code null} or empty.<br>
-     *            One of:<br>
+     *            {@code null} or empty.
+     *            <p>
+     *            One of:
      *            <ul>
      *            <li>"id": ID</li>
      *            <li>"title.keyword": Process title</li>

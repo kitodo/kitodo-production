@@ -227,7 +227,8 @@ public interface DatabaseTaskServiceInterface extends SearchDatabaseServiceInter
      *            maximum number of objects to return
      * @param sortField
      *            by which column the data should be sorted. Must not be
-     *            {@code null} or empty.<br>
+     *            {@code null} or empty.
+     *            <p>
      *            One of:<br>
      *            <ul>
      *            <li>"title.keyword": Title</li>
