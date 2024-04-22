@@ -16,15 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
+
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.security.SecurityConfig;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.SecurityUserDetails;
+import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class SessionService {
+public class SessionService implements HttpSessionListener {
 
     private static volatile SessionService instance = null;
     private final SessionRegistry sessionRegistry;
@@ -35,6 +39,21 @@ public class SessionService {
     private SessionService() {
         SecurityConfig securityConfig = SecurityConfig.getInstance();
         this.sessionRegistry = securityConfig.getSessionRegistry();
+    }
+
+    /*
+     * This function is called when the session from the servlet container expires.
+     */
+    @Override
+    public void sessionDestroyed(HttpSessionEvent se) {
+        Object securityContextObject = se.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
+        if (securityContextObject instanceof SecurityContextImpl) {
+            SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
+            Object principal = securityContext.getAuthentication().getPrincipal();
+            if (principal instanceof SecurityUserDetails) {
+                expireSessionsOfUser((SecurityUserDetails) principal);
+            }
+        }
     }
 
     /**

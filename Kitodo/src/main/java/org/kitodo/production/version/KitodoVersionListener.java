@@ -22,19 +22,13 @@ import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionAttributeListener;
 import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
-import org.kitodo.production.security.SecurityUserDetails;
-import org.kitodo.production.services.ServiceManager;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 /**
  * Listener to set up Kitodo versioning information from Manifest on application
  * startup.
  */
 @WebListener
-public class KitodoVersionListener implements ServletContextListener, HttpSessionListener {
+public class KitodoVersionListener implements ServletContextListener, HttpSessionAttributeListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -58,19 +52,19 @@ public class KitodoVersionListener implements ServletContextListener, HttpSessio
     }
 
     @Override
-    public void sessionCreated(HttpSessionEvent se) {
+    public void attributeAdded(HttpSessionBindingEvent sbe) {
         // nothing is done here
     }
 
     @Override
-    public void sessionDestroyed(HttpSessionEvent se) {
-        Object securityContextObject = se.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        if (securityContextObject instanceof SecurityContextImpl) {
-            SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
-            Object principal = securityContext.getAuthentication().getPrincipal();
-            if (principal instanceof SecurityUserDetails) {
-                ServiceManager.getSessionService().expireSessionsOfUser((SecurityUserDetails) principal);
-            }
-        }
+
+    public void attributeRemoved(HttpSessionBindingEvent sbe) {
+        // nothing is done here
     }
+
+    @Override
+    public void attributeReplaced(HttpSessionBindingEvent sbe) {
+        // nothing is done here
+    }
+
 }
