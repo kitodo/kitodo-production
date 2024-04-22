@@ -550,4 +550,23 @@ public class Helper {
         }
         return sb.toString();
     }
+
+    /**
+     * Returns an object description for error messages. It consists of the
+     * class name and optionally the {@code toString()}, if {@code toString()}
+     * is overloaded.
+     * 
+     * @param object
+     *            object to be described
+     * @return object description
+     */
+    public static String getObjectDescription(Object object) {
+        if (Objects.isNull(object)) {
+            return "null";
+        }
+        String fullClassName = object.getClass().getName();
+        String objectToString = object.toString();
+        return objectToString.startsWith(fullClassName.concat("@")) ? fullClassName
+                : fullClassName + '(' + objectToString + ')';
+    }
 }

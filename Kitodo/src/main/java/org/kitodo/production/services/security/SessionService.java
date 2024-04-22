@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.security;
 
+import java.text.MessageFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,9 @@ import java.util.Objects;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.security.SecurityConfig;
 import org.kitodo.production.security.SecuritySession;
@@ -30,6 +34,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 public class SessionService implements HttpSessionListener {
 
+    private static final Logger logger = LogManager.getLogger(SessionService.class);
     private static volatile SessionService instance = null;
     private final SessionRegistry sessionRegistry;
 
@@ -52,7 +57,13 @@ public class SessionService implements HttpSessionListener {
             Object principal = securityContext.getAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
                 expireSessionsOfUser((SecurityUserDetails) principal);
+            } else {
+                logger.warn(MessageFormat.format("Cannot expire session: {0} !instanceof SecurityUserDetails",
+                    Helper.getObjectDescription(principal)));
             }
+        } else {
+            logger.warn(MessageFormat.format("Cannot expire session: {0} !instanceof SecurityContextImpl",
+                Helper.getObjectDescription(securityContextObject)));
         }
     }
 
