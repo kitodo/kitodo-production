@@ -32,9 +32,11 @@ import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseWorkflowServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowService extends ClientSearchService<Workflow, WorkflowInterface, WorkflowDAO> {
+public class WorkflowService extends ClientSearchService<Workflow, WorkflowInterface, WorkflowDAO>
+        implements DatabaseWorkflowServiceInterface {
 
     private static volatile WorkflowService instance = null;
 

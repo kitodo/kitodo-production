@@ -353,7 +353,7 @@ public interface SearchDatabaseServiceInterface<T extends BaseBean> {
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    default void removeLooseIndexData(List<Integer> baseIndexedBeansId) {
+    default void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
     }
 
     /**

@@ -14,6 +14,7 @@ package org.kitodo.production.services.data.interfaces;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -27,6 +28,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.primefaces.model.SortOrder;
@@ -303,8 +305,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if an error occurs
      */
-    List<Process> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects, String filter,
-            Collection<Integer> excludedProcessIds) throws DataException;
+    List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
+            String filter, Collection<Integer> excludedProcessIds) throws DataException;
 
     /**
      * Determines the number of processes that match the specified filter
@@ -384,14 +386,14 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param process
      *            process for which the data record number should be placed in
      *            the processBaseUri field
-     * @return the record number in a URI object
+     * @return the record number
      */
     /*
      * Since the moment this was introduced, I've never understood why this
      * exists. Nor why property processBaseUri exists at all. See #5856
      */
-    default URI getProcessDataDirectory(ProcessInterface process) {
-        return getProcessDataDirectory((Process) process, false);
+    default String getProcessDataDirectory(ProcessInterface process) {
+        return getProcessDataDirectory((Process) process, false).toString();
     }
 
     /**
@@ -429,8 +431,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * 
      * <p>
      * <b>API Note:</b><br>
-     * This function counts the data records for the client, for which the
-     * logged in user is currently working.
+     * This function returns the processes for the client, for which the logged
+     * in user is currently working.
      * 
      * <p>
      * <b>Implementation Requirements:</b><br>
@@ -448,8 +450,11 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if an error occurs
      */
-    List<ProcessInterface> getResultsWithFilter(String filter, boolean showClosedProcesses,
-            boolean showInactiveProjects) throws DataException;
+    default List<ProcessInterface> getResultsWithFilter(String filter, boolean showClosedProcesses,
+            boolean showInactiveProjects) throws DataException {
+        return loadData(0, Integer.MAX_VALUE, "id", SortOrder.ASCENDING,
+            Collections.singletonMap(FilterService.FILTER_STRING, filter), showClosedProcesses, showInactiveProjects);
+    }
 
     /**
      * Returns processes to be offered as templates in the selection list. If a

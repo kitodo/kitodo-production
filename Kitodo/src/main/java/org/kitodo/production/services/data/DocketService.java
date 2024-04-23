@@ -32,9 +32,11 @@ import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseDocketServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends ClientSearchService<Docket, DocketInterface, DocketDAO> {
+public class DocketService extends ClientSearchService<Docket, DocketInterface, DocketDAO>
+        implements DatabaseDocketServiceInterface {
 
     private static volatile DocketService instance = null;
 

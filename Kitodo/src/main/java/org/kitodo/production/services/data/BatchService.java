@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -36,9 +37,11 @@ import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseBatchServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends TitleSearchService<Batch, BatchInterface, BatchDAO> {
+public class BatchService extends TitleSearchService<Batch, BatchInterface, BatchDAO>
+        implements DatabaseBatchServiceInterface {
 
     private static volatile BatchService instance = null;
     private static final String BATCH = "batch";
@@ -120,7 +123,7 @@ public class BatchService extends TitleSearchService<Batch, BatchInterface, Batc
      * @param batches
      *            to remove
      */
-    public void removeAll(Iterable<Batch> batches) throws DataException {
+    public void removeAll(Collection<Batch> batches) throws DataException {
         for (Batch batch : batches) {
             remove(batch);
         }

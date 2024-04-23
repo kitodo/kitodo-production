@@ -19,9 +19,11 @@ import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.services.data.interfaces.SearchDatabaseServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
+public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>>
+        implements SearchDatabaseServiceInterface<T> {
 
     protected S dao;
 

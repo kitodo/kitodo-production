@@ -72,6 +72,7 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.base.ProjectSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseTaskServiceInterface;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -82,7 +83,7 @@ import org.primefaces.model.SortOrder;
  * functions on the task because the task itself is a database bean and
  * therefore may not include functionality.
  */
-public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskDAO> {
+public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskDAO> implements DatabaseTaskServiceInterface {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
@@ -173,7 +174,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return countResults(new HashMap<String, String>(filters), false, false, false, null);
     }
 
-    public Long countResults(HashMap<String, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+    public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                              boolean showAutomaticTasks, List<TaskStatus> taskStatus)
             throws DataException {
         return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
@@ -212,7 +213,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      * @return List of loaded tasks
      * @throws DataException if tasks cannot be loaded from search index
      */
-    public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters,
+    public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
             throws DataException {
@@ -704,7 +705,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *            of template
      * @return list of JSON objects with tasks for specific template id
      */
-    List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
+    public List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
         return findDocuments(getQueryForTemplate(id));
     }
 

@@ -125,9 +125,9 @@ public class ProcessListBaseView extends BaseForm {
         ProcessService processService = ServiceManager.getProcessService();
         if (allSelected) {
             try {
-                this.selectedProcessesOrProcessDTOs = processService.findByQuery(processService.getQueryForFilter(
-                                this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter())
-                        .mustNot(processService.createSetQueryForIds(new ArrayList<>(excludedProcessIds))), false);
+                this.selectedProcessesOrProcessDTOs = processService.findSelectedProcesses(
+                    this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter(),
+                    new ArrayList<>(excludedProcessIds));
             } catch (DataException e) {
                 logger.error(e.getMessage());
             }
