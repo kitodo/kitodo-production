@@ -85,15 +85,14 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * If <i>batchMaxSize</i> is configured, at most the configured number of
      * processes will be returned.
      * 
+     * <!-- To replace the existing search functionality in
+     * BatchForm.filterProcesses(). -->
+     * 
      * @param processfilter
      *            substring to search
      * @return all processes whose names contain the comparison string
      * @throws DAOException
      *             in the event of a database connection error
-     */
-    /*
-     * To replace the existing search functionality in
-     * BatchForm.filterProcesses().
      */
     default List<Process> filterProcesses(String processfilter) throws DAOException {
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
@@ -260,13 +259,12 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * <b>Implementation Requirements:</b><br>
      * This function requires that the thread is assigned to a logged-in user.
      *
+     * <!-- Used to check whether a process identifier is already in use. In
+     * both places, the result is only checked for > 0. -->
+     *
      * @param title
      *            process name to be searched for
      * @return number of processes with this title
-     */
-    /*
-     * Used to check whether a process identifier is already in use. In both
-     * cases, the result is only checked for > 0.
      */
     default Long findNumberOfProcessesWithTitle(String title) throws DataException {
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
@@ -399,6 +397,9 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
     /**
      * Sets the record number of the process into the processBaseUri field. Can
      * also save the process.
+     * 
+     * <!-- Since the moment this was introduced, I've never understood why this
+     * exists. Nor why property processBaseUri exists at all. See #5856 -->
      *
      * @param process
      *            process for which the data record number should be placed in
@@ -406,10 +407,6 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param forIndexingAll
      *            whether the process should <b>not</b> be saved
      * @return the record number in a URI object
-     */
-    /*
-     * Since the moment this was introduced, I've never understood why this
-     * exists. Nor why property processBaseUri exists at all. See #5856
      */
     default URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         try {
@@ -488,8 +485,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *            maximum number of objects to return
      * @param sortField
      *            by which column the data should be sorted. Must not be
-     *            {@code null} or empty.
-     *            <p>
+     *            {@code null} or empty.<br>
      *            One of:<br>
      *            <ul>
      *            <li>"id": ID</li>
