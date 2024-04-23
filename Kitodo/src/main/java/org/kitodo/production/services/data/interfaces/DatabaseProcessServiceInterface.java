@@ -303,8 +303,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if an error occurs
      */
-    List<Process> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects, String filter,
-            Collection<Integer> excludedProcessIds) throws DataException;
+    List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
+            String filter, Collection<Integer> excludedProcessIds) throws DataException;
 
     /**
      * Determines the number of processes that match the specified filter
@@ -384,14 +384,14 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param process
      *            process for which the data record number should be placed in
      *            the processBaseUri field
-     * @return the record number in a URI object
+     * @return the record number
      */
     /*
      * Since the moment this was introduced, I've never understood why this
      * exists. Nor why property processBaseUri exists at all. See #5856
      */
-    default URI getProcessDataDirectory(ProcessInterface process) {
-        return getProcessDataDirectory((Process) process, false);
+    default String getProcessDataDirectory(ProcessInterface process) {
+        return getProcessDataDirectory((Process) process, false).toString();
     }
 
     /**
