@@ -23,7 +23,7 @@ import org.kitodo.data.exceptions.DataException;
 import org.primefaces.model.SortOrder;
 
 /**
- * Specifies the functions of the Search Database Service
+ * Specifies the functions of the Search Database Service.
  * 
  * @param <T>
  *            type of database objects
@@ -162,8 +162,20 @@ public interface SearchDatabaseServiceInterface<T extends BaseBean> {
      * @param limit
      *            maximum number of objects to return
      * @param sortField
-     *            by which column the data should be sorted
-     *            <!-- TODO: clarify what is passed here, what if no sorting is selected -->
+     *            by which column the data should be sorted. Must not be
+     *            {@code null} or empty.<br>
+     *            One of:<br>
+     *            <ul>
+     *            <li>"title.keyword": Title [docket, ruleset, process template,
+     *            and workflow]</li>
+     *            <li>"file.keyword": File [docket, and ruleset]</li>
+     *            <li>"orderMetadataByRuleset": Order metadata as in ruleset
+     *            (otherwise alphabetically) [only ruleset]</li>
+     *            <li>"ruleset.title.keyword": Ruleset [only process
+     *            template]</li>
+     *            <li>"active": Active [only process template]</li>
+     *            <li>"status": Status [only workflow]</li>
+     *            </ul>
      * @param sortOrder
      *            sort ascending or descending?
      * @param filters
