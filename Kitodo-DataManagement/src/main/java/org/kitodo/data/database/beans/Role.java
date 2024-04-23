@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.el.PropertyNotWritableException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -146,6 +147,23 @@ public class Role extends BaseBean implements RoleInterface, Comparable<Role> {
     @Override
     public void setClient(ClientInterface client) {
         this.client = (Client) client;
+    }
+
+    /**
+     * Sets the client in whose realm this role grants permissions.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setClient(ClientInterface)} as a setter for the property
+     * {@code client} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param client
+     *            client in whose realm this role grants permissions to set.
+     */
+    public void setClient(Client client) {
+        this.client = client;
     }
 
     @Override

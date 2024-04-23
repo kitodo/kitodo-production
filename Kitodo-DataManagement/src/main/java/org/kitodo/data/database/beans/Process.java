@@ -19,6 +19,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import javax.el.PropertyNotWritableException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -38,6 +39,7 @@ import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
@@ -277,6 +279,23 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
         this.project = (Project) project;
     }
 
+    /**
+     * Specifies the project to which the process belongs.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setProject(ProjectInterface)} as a setter for the
+     * property {@code project} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param project
+     *            project to which the process should belong
+     */
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     @Override
     public Ruleset getRuleset() {
         return this.ruleset;
@@ -287,6 +306,23 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
         this.ruleset = (Ruleset) ruleset;
     }
 
+    /**
+     * Sets the business domain specification this process is using.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setRuleset(RulesetInterface)} as a setter for the
+     * property {@code ruleset} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param ruleset
+     *            the business domain specification
+     */
+    public void setRuleset(Ruleset ruleset) {
+        this.ruleset = ruleset;
+    }
+
     @Override
     public Docket getDocket() {
         return docket;
@@ -295,6 +331,24 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     @Override
     public void setDocket(DocketInterface docket) {
         this.docket = (Docket) docket;
+    }
+
+    /**
+     * Sets the docket generation statement to use when creating a docket for
+     * this process.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setDocket(DocketInterface)} as a setter for the property
+     * {@code docket} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param docket
+     *            the docket generation statement
+     */
+    public void setDocket(Docket docket) {
+        this.docket = docket;
     }
 
     /**

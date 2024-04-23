@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
+import javax.el.PropertyNotWritableException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ import javax.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.kitodo.data.database.persistence.TemplateDAO;
+import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.RulesetInterface;
@@ -126,6 +128,24 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
         this.docket = (Docket) docket;
     }
 
+    /**
+     * Sets the docket generation statement to use when creating dockets for
+     * processes derived from this process template.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setDocket(DocketInterface)} as a setter for the property
+     * {@code docket} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param docket
+     *            the docket generation statement
+     */
+    public void setDocket(Docket docket) {
+        this.docket = docket;
+    }
+
     @Override
     public Ruleset getRuleset() {
         return this.ruleset;
@@ -136,6 +156,24 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
         this.ruleset = (Ruleset) ruleset;
     }
 
+    /**
+     * Sets the business domain specification derived from this process template
+     * template shall be using.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setRuleset(RulesetInterface)} as a setter for the
+     * property {@code ruleset} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param ruleset
+     *            the business domain specification
+     */
+    public void setRuleset(Ruleset ruleset) {
+        this.ruleset = ruleset;
+    }
+    
     @Override
     public Workflow getWorkflow() {
         return workflow;
@@ -146,6 +184,22 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
         this.workflow = (Workflow) workflow;
     }
 
+    /**
+     * Sets the workflow from which the production template was created.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This function exists because Faces does not recognize the more generic
+     * function {@link #setWorkflow(WorkflowInterface)} as a setter for the
+     * property {@code workflow} and otherwise throws a
+     * {@link PropertyNotWritableException}.
+     *
+     * @param workflow
+     *            workflow to set
+     */
+    public void setWorkflow(Workflow workflow) {
+        this.workflow = workflow;
+    }
 
     /**
      * Get OCR-D workflow identifier.
