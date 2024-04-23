@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.commons.configuration.PropertiesConfiguration;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConfigTest {
 

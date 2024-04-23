@@ -22,6 +22,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.test.utils.TestConstants;
 import org.primefaces.model.TreeNode;
 
 public class ProcessDetailIT {
@@ -29,7 +30,7 @@ public class ProcessDetailIT {
     @Test
     public void shouldCopyProcessDetail() throws Exception {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetManagementService().getRulesetManagement();
-        ruleset.load(new File("src/test/resources/rulesets/ruleset_test.xml"));
+        ruleset.load(new File(TestConstants.TEST_RULESET));
         StructuralElementViewInterface divisionView = ruleset.getStructuralElementView("Monograph", "edit",
             Locale.LanguageRange.parse("en"));
         LogicalDivision division = new LogicalDivision();

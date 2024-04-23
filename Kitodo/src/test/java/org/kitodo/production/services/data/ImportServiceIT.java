@@ -27,8 +27,10 @@ import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -73,6 +75,7 @@ import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.helper.XMLUtils;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.kitodo.test.utils.TestConstants;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
@@ -92,7 +95,6 @@ public class ImportServiceIT {
     private static final String PARENT_PROCESS_TEST_FILE = "testMetadataForKalliopeParentProcess.xml";
     private static final String CHILD_RECORDS_PATH = "src/test/resources/importRecords/importMultipleChildRecords.xml";
     private static final String MODS_TEST_RECORD_PATH = "src/test/resources/importRecords/modsTestRecord.xml";
-    private static final String TEST_RULESET = "src/test/resources/rulesets/ruleset_test.xml";
     private static final String TEST_KITODO_METADATA_FILE = "testMetadataFileTempProcess.xml";
     private static final String TEST_METADATA_WITH_AUTHOR_FILE = "testMetadataWithAuthor.xml";
     private static final String TEST_KITODO_METADATA_FILE_PATH = "src/test/resources/metadata/metadataFiles/"
@@ -104,16 +106,15 @@ public class ImportServiceIT {
     private static final List<String> CHILD_RECORD_IDS = Arrays.asList("9991", "9992", "9993");
     private static final String KALLIOPE_RECORD_ID = "999";
     private static final String CUSTOM_INTERFACE_RECORD_ID = "12345";
-    private static final int PORT = 8888;
     private static final int TEMPLATE_ID = 1;
     private static final int PROJECT_ID = 1;
     private static final int RULESET_ID = 1;
+    private static final String TITLE = "Title";
+    private static final String PLACE = "Place";
     private static final int EXPECTED_NR_OF_CHILDREN = 23;
     private static final String PICA_XML = "picaxml";
-    private static final String MODS = "mods";
     private static final String PICA_PPN = "pica.ppn";
     private static final String PICA_PARENT_ID = "pica.parentId";
-    private static final String EAD_PARENT_ID = "context.ead.id";
     private static final String firstProcess = "First process";
     private static final String TEST_PROCESS_TITLE = "Testtitel";
     private static final String KITODO = "kitodo";
@@ -136,7 +137,7 @@ public class ImportServiceIT {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
             return !processService.findByTitle(firstProcess).isEmpty();
         });
-        server = new StubServer(PORT).run();
+        server = new StubServer(MockDatabase.PORT).run();
         setupServer();
     }
 
@@ -169,6 +170,42 @@ public class ImportServiceIT {
         }
     }
 
+    /**
+     * Tests whether basic catalog metadata import with additional preset metadata to a single process succeeds or not.
+     *
+     * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
+     * @throws ImportException when importing metadata fails
+     * @throws IOException when importing metadata fails
+     */
+    @Test
+    public void testImportProcessWithAdditionalMetadata() throws DAOException, ImportException, IOException {
+        Map<String, List<String>> presetMetadata = new HashMap<>();
+        presetMetadata.put(TITLE, List.of("Band 1"));
+        presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+                MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
+        HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
+        try {
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
+        } finally {
+            ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
+        }
+    }
+
+    private boolean assertMetadataSetContainsMetadata(HashSet<Metadata> metadataSet, String metadataKey, String metadataValue) {
+        return metadataSet.stream()
+                .filter(metadata -> metadata.getKey().equals(metadataKey))
+                .anyMatch(metadata -> metadata instanceof MetadataEntry &&
+                        ((MetadataEntry) metadata).getValue().equals(metadataValue));
+    }
+
     @Test
     public void shouldCreateUrlWithCustomParameters() throws DAOException, ImportException, IOException {
         Process importedProcess = importProcess(CUSTOM_INTERFACE_RECORD_ID, MockDatabase.getCustomTypeImportConfiguration());
@@ -198,7 +235,7 @@ public class ImportServiceIT {
     public void shouldTestWhetherRecordIdentifierMetadataIsConfigured() throws IOException {
         RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetManagementService()
                 .getRulesetManagement();
-        rulesetManagement.load(new File(TEST_RULESET));
+        rulesetManagement.load(new File(TestConstants.TEST_RULESET));
         Assert.assertTrue("Should determine that recordIdentifier is configured for all document types",
                 ServiceManager.getImportService().isRecordIdentifierMetadataConfigured(rulesetManagement));
     }
@@ -527,9 +564,9 @@ public class ImportServiceIT {
         // REST endpoint for testing failed import of child records
         MockDatabase.addRestEndPointForSru(server, PICA_PARENT_ID + "=" + RECORD_ID, TEST_FILE_PATH_NUMBER_OF_HITS, PICA_XML, 1);
         // REST endpoint for testing successful import of child records
-        MockDatabase.addRestEndPointForSru(server, EAD_PARENT_ID + "=" + KALLIOPE_RECORD_ID, CHILD_RECORDS_PATH, MODS, 3);
+        MockDatabase.addRestEndPointForSru(server, TestConstants.EAD_PARENT_ID + "=" + KALLIOPE_RECORD_ID, CHILD_RECORDS_PATH, TestConstants.MODS, 3);
         // REST endpoint for testing retrieval of child records given existing parent process
-        MockDatabase.addRestEndPointForSru(server, EAD_PARENT_ID + "=" + PARENT_RECORD_CATALOG_ID, CHILD_RECORDS_PATH, MODS,3);
+        MockDatabase.addRestEndPointForSru(server, TestConstants.EAD_PARENT_ID + "=" + PARENT_RECORD_CATALOG_ID, CHILD_RECORDS_PATH, TestConstants.MODS,3);
         // REST endpoint for successful import from custom search interface
         MockDatabase.addRestEndPointForCustom(server, TEST_FILE_SUCCESS_RESPONSE_PATH, CUSTOM_INTERFACE_RECORD_ID,
                 "firstValue");
@@ -546,6 +583,21 @@ public class ImportServiceIT {
         }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, new HashMap<>());
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setNoExecutePermission(script);
+        }
+        return importedProcess;
+    }
+
+    private Process importProcessWithAdditionalMetadata(String recordId, ImportConfiguration importConfiguration,
+                                                        Map<String, List<String>> presetMetadata)
+            throws IOException, ImportException {
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            ExecutionPermission.setExecutePermission(script);
+        }
+        Process importedProcess = importService.importProcess(recordId, 1, 1,
+                importConfiguration, presetMetadata);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
