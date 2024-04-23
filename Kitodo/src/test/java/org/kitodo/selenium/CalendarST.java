@@ -75,6 +75,7 @@ public class CalendarST extends BaseTestSelenium {
         calendarPage.addBlock();
         calendarPage.addIssue("Morning issue");
         calendarPage.addIssue("Evening issue");
+        assertEquals("Number of issues in the calendar does not match", 4, calendarPage.countIssues());
         calendarPage.addMetadataToThis();
         calendarPage.addMetadataToAll();
         List<String> morningIssueMetadata = calendarPage.getMetadata("Morning issue");
