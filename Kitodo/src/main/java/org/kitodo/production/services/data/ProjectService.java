@@ -52,9 +52,11 @@ import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseProjectServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class ProjectService extends ClientSearchService<Project, ProjectInterface, ProjectDAO> {
+public class ProjectService extends ClientSearchService<Project, ProjectInterface, ProjectDAO>
+        implements DatabaseProjectServiceInterface {
 
     private static volatile ProjectService instance = null;
 

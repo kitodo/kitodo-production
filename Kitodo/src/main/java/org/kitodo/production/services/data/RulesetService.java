@@ -47,9 +47,11 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseRulesetServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class RulesetService extends ClientSearchService<Ruleset, RulesetInterface, RulesetDAO> {
+public class RulesetService extends ClientSearchService<Ruleset, RulesetInterface, RulesetDAO>
+        implements DatabaseRulesetServiceInterface {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
     private static volatile RulesetService instance = null;

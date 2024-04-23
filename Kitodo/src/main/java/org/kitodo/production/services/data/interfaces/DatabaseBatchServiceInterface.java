@@ -27,7 +27,7 @@ public interface DatabaseBatchServiceInterface extends SearchDatabaseServiceInte
      * <p>
      * <b>Implementation Note:</b><br>
      * The function must get all processes from each batch and delete the
-     * batches to be deleted in each process before, it deletes the batches.
+     * batches to be deleted in each process, before it deletes the batches.
      *
      * @param batches
      *            batches to delete

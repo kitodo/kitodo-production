@@ -61,12 +61,14 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseFilterServiceInterface;
 import org.primefaces.model.SortOrder;
 
 /**
  * Service for Filter bean.
  */
-public class FilterService extends SearchService<Filter, FilterInterface, FilterDAO> {
+public class FilterService extends SearchService<Filter, FilterInterface, FilterDAO>
+        implements DatabaseFilterServiceInterface {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;

@@ -159,6 +159,7 @@ import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ProjectSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseProcessServiceInterface;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -175,7 +176,8 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ProcessService extends ProjectSearchService<Process, ProcessInterface, ProcessDAO> {
+public class ProcessService extends ProjectSearchService<Process, ProcessInterface, ProcessDAO>
+        implements DatabaseProcessServiceInterface {
     private static final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
@@ -821,6 +823,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
                 .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
         return findByQuery(query, false);
+    }
+
+    @Override
+    public List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
+            String filter, Collection<Integer> excludedProcessIds) throws DataException {
+        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter)
+                .mustNot(createSetQueryForIds(new ArrayList<>(excludedProcessIds))),
+            false);
     }
 
     /**

@@ -53,9 +53,11 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseTemplateServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class TemplateService extends ClientSearchService<Template, TemplateInterface, TemplateDAO> {
+public class TemplateService extends ClientSearchService<Template, TemplateInterface, TemplateDAO>
+        implements DatabaseTemplateServiceInterface {
 
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private static volatile TemplateService instance = null;
