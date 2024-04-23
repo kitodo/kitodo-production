@@ -56,10 +56,12 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
+    private static final String TEST_METADATA_FILE = "testmeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
     private static int renamingMediaProcessId = -1;
+    private static int dragndropProcessId = -1;
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
     private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
@@ -91,6 +93,11 @@ public class MetadataST extends BaseTestSelenium {
         copyTestFilesForRenamingMediaFiles();
     }
 
+    private static void prepareDragNDropProcess() throws DAOException, DataException, IOException {
+        insertTestProcessForDragAndDrop();
+        copyTestFilesForDragAndDrop();
+    }
+
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
@@ -104,6 +111,7 @@ public class MetadataST extends BaseTestSelenium {
         prepareMediaReferenceProcess();
         prepareProcessHierarchyProcesses();
         prepareMediaRenamingProcess();
+        prepareDragNDropProcess();
     }
 
     /**
@@ -355,6 +363,7 @@ public class MetadataST extends BaseTestSelenium {
         ProcessService.deleteProcess(mediaReferencesProcessId);
         ProcessService.deleteProcess(metadataLockProcessId);
         ProcessService.deleteProcess(renamingMediaProcessId);
+        ProcessService.deleteProcess(dragndropProcessId);
     }
 
     private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {
@@ -372,6 +381,10 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void insertTestProcessForRenamingMediaFiles() throws DAOException, DataException {
         renamingMediaProcessId = MockDatabase.insertTestProcessForRenamingMediaTestIntoSecondProject();
+    }
+
+    private static void insertTestProcessForDragAndDrop() throws DAOException, DataException {
+        dragndropProcessId = MockDatabase.insertTestProcessForDragNDropTestIntoSecondProject();
     }
 
     /**
@@ -403,6 +416,10 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void copyTestFilesForRenamingMediaFiles() throws IOException, DAOException, DataException {
         ProcessTestUtils.copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
+    }
+
+    private static void copyTestFilesForDragAndDrop() throws IOException, DAOException, DataException {
+        ProcessTestUtils.copyTestFiles(dragndropProcessId, TEST_METADATA_FILE);
     }
 
     private static void copyTestParentProcessMetadataFile() throws IOException, DAOException, DataException {
