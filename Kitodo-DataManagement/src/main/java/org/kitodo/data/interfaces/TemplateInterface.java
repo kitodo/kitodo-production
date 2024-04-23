@@ -100,16 +100,16 @@ public interface TemplateInterface extends DataInterface {
     void setDocket(DocketInterface docket);
 
     /**
-     * Returns the business domain specification processes derived from this
-     * process template template shall be using.
+     * Returns the business domain specification derived from this process
+     * template template shall be using.
      *
      * @return the business domain specification
      */
     RulesetInterface getRuleset();
 
     /**
-     * Sets the business domain specification processes derived from this
-     * process template template shall be using.
+     * Sets the business domain specification derived from this process template
+     * template shall be using.
      *
      * @param ruleset
      *            the business domain specification
