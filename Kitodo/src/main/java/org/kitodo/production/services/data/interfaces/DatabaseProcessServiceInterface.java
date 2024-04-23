@@ -397,6 +397,9 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
     /**
      * Sets the record number of the process into the processBaseUri field. Can
      * also save the process.
+     * 
+     * <!-- Since the moment this was introduced, I've never understood why this
+     * exists. Nor why property processBaseUri exists at all. See #5856 -->
      *
      * @param process
      *            process for which the data record number should be placed in
@@ -404,10 +407,6 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param forIndexingAll
      *            whether the process should <b>not</b> be saved
      * @return the record number in a URI object
-     */
-    /*
-     * Since the moment this was introduced, I've never understood why this
-     * exists. Nor why property processBaseUri exists at all. See #5856
      */
     default URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         try {
