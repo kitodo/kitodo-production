@@ -33,6 +33,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.data.interfaces.ClientInterface;
@@ -98,6 +100,7 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<Template> templates;
 
