@@ -45,6 +45,8 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 /**
  * Tests for functions in the metadata editor.
@@ -234,6 +236,10 @@ public class MetadataST extends BaseTestSelenium {
                 SECOND_STRUCTURE_TREE_NODE_LABEL, Pages.getMetadataEditorPage().getSecondRootElementChildLabel());
     }
 
+    /**
+     * Verifies drag and drop functionality in gallery.
+     * @throws Exception when page navigation or process saving fails.
+     */
     @Test
     public void dragAndDropPageTest() throws Exception {
         login("kowal");
@@ -277,6 +283,51 @@ public class MetadataST extends BaseTestSelenium {
                 .until(thumbnailOverlay::isDisplayed);
         Assert.assertEquals("Last thumbnail has wrong overlay after drag'n'drop action",
                 "Bild 2, Seite -", thumbnailOverlay.getText().strip());
+    }
+
+    /**
+     * Verifies functionality of creating structure elements in the metadata editor using the structure tree context
+     * menu.
+     */
+    @Test
+    public void createStructureElementTest() throws Exception {
+        login("kowal");
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id("logicalTree"))::isDisplayed);
+        WebElement structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
+        WebElement logicalRoot = structureTree.findElement(By.className("ui-tree-selectable"));
+        logicalRoot.click();
+        await().ignoreExceptions().pollDelay(1000, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS).until(logicalRoot::isDisplayed);
+        // right click action
+        Actions rightClickAction = new Actions(Browser.getDriver());
+        rightClickAction.contextClick(logicalRoot).build().perform();
+        // wait for loading screen to disappear
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).pollInterval(300, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS).until(Browser.getDriver()
+                        .findElement(By.id("buttonForm:saveExit"))::isDisplayed);
+        WebElement contextMenu = Browser.getDriver().findElement(By.id("contextMenuLogicalTree"));
+        List<WebElement> menuItems = contextMenu.findElements(By.className("ui-menuitem"));
+        assertEquals("Wrong number of context menu items", 3, menuItems.size());
+        // click "add element" option
+        menuItems.get(0).click();
+        // open "structure element type selection" menu
+        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection"), 1000, 1000, 5);
+        // click first option
+        WebElement firstOption = Browser.getDriver().findElement(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"));
+        String structureType = firstOption.getText();
+        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"), 1000, 500, 3);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 3);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1")));
+        // add structure element with selected type by clicking "accept"/"apply" button
+        Thread.sleep(1000);
+        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:addDocStruc"), 500, 500, 5);
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
+        structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
+        WebElement firstChild = structureTree.findElement(By.id("logicalTree:0_0"));
+        Assert.assertEquals("Added structure element has wrong type!", structureType, firstChild.getText());
     }
 
     /**
@@ -367,5 +418,11 @@ public class MetadataST extends BaseTestSelenium {
         xmlContent = xmlContent.replaceAll(FIRST_CHILD_ID, String.valueOf(firstChildId));
         xmlContent = xmlContent.replaceAll(SECOND_CHILD_ID, String.valueOf(secondChildId));
         Files.write(metaXml, xmlContent.getBytes());
+    }
+
+    private void clickItemWhenDisplayed(By selector, long delay, long intervall, long timeout) {
+        await().ignoreExceptions().pollDelay(delay, TimeUnit.MILLISECONDS).pollInterval(intervall, TimeUnit.MILLISECONDS)
+                .atMost(timeout, TimeUnit.SECONDS).until(Browser.getDriver().findElement(selector)::isDisplayed);
+        Browser.getDriver().findElement(selector).click();
     }
 }
