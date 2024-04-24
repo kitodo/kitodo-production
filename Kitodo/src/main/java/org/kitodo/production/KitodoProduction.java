@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.version;
+package org.kitodo.production;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ import org.springframework.security.core.context.SecurityContextImpl;
  * startup.
  */
 @WebListener
-public class KitodoVersionListener implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
+public class KitodoProduction implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
