@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
+import org.springframework.security.core.context.SecurityContextImpl;
 
 /**
  * Kitodo.Production is the workflow management module of the Kitodo suite. It
@@ -49,16 +50,16 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     public void contextInitialized(ServletContextEvent sce) {
         // Retrieve Manifest file as Stream
         context = sce.getServletContext();
-        InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF");
-        // Use Manifest to setup version information
-        if (Objects.nonNull(rs)) {
-            try {
+        try (InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF")){
+            // Use Manifest to setup version information
+            if (Objects.nonNull(rs)) {
                 Manifest m = new Manifest(rs);
                 manifest = Optional.of(m);
                 KitodoVersion.setupFromManifest(m);
-            } catch (IOException e) {
-                context.log(e.getMessage());
             }
+        } catch (IOException e) {
+            logger.error(e.getMessage(), e);
+            context.log(e.getMessage());
         }
     }
 
