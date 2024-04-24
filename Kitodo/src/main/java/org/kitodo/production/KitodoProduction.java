@@ -30,8 +30,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.context.SecurityContextImpl;
 
 /**
- * Listener to set up Kitodo versioning information from Manifest on application
- * startup.
+ * Kitodo.Production is the workflow management module of the Kitodo suite. It
+ * supports the digitization process of various types of materials.
  */
 @WebListener
 public class KitodoProduction implements ServletContextListener, HttpSessionListener {
