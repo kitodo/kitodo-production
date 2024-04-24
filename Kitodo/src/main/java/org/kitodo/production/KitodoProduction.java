@@ -13,7 +13,10 @@ package org.kitodo.production;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.jar.Manifest;
 
 import javax.servlet.ServletContext;
@@ -25,9 +28,10 @@ import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
-import org.springframework.security.core.context.SecurityContextImpl;
 
 /**
  * Kitodo.Production is the workflow management module of the Kitodo suite. It
@@ -35,6 +39,8 @@ import org.springframework.security.core.context.SecurityContextImpl;
  */
 @WebListener
 public class KitodoProduction implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
+    private static final Logger logger = LogManager.getLogger(KitodoProduction.class);
+    private static CompletableFuture<KitodoProduction> instance = new CompletableFuture<>();
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -49,6 +55,23 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
             } catch (IOException e) {
                 context.log(e.getMessage());
             }
+        }
+    }
+
+    /**
+     * Returns the application’s main class.
+     * 
+     * @return the main class
+     * @throws UndeclaredThrowableException
+     *             if the servlet container is shut down before the web
+     *             application is started
+     */
+    public static KitodoProduction getInstance() {
+        try {
+            return instance.get();
+        } catch (InterruptedException | ExecutionException e) {
+            logger.fatal(e);
+            throw new UndeclaredThrowableException(e);
         }
     }
 
