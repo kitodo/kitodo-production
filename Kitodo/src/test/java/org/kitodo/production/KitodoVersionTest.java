@@ -24,36 +24,28 @@ public class KitodoVersionTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void shouldThrowExceptionIfKitodoSectionIsMissingInManifest() {
-        KitodoVersion.setupFromManifest(new Manifest());
+        new KitodoVersion().setupFromManifest(new Manifest());
     }
 
     @Test
     public void attributeVersionShouldBeEqualToImplementationVersion() {
         Manifest manifest = createManifestWithValues();
-        KitodoVersion.setupFromManifest(manifest);
+        KitodoVersion version = new KitodoVersion();
+        version.setupFromManifest(manifest);
 
         assertEquals("Version attribute should be equal to Implementation-Version as specified in the given Manifest.",
-                VERSION, KitodoVersion.getVersion());
-    }
-
-    @Test
-    public void attributeBuildVersionShouldBeEqualToImplementationVersion() {
-        Manifest manifest = createManifestWithValues();
-        KitodoVersion.setupFromManifest(manifest);
-
-        assertEquals(
-                "BuildVersion attribute should be equal to Implementation-Version as specified in the given Manifest.",
-                VERSION, KitodoVersion.getBuildVersion());
+                VERSION, version.getVersion());
     }
 
     @Test
     public void attributeBuildDateShouldBeEqualToImplementationBuildDate() {
         Manifest manifest = createManifestWithValues();
-        KitodoVersion.setupFromManifest(manifest);
+        KitodoVersion version = new KitodoVersion();
+        version.setupFromManifest(manifest);
 
         assertEquals(
                 "BuildDate attribute should be equal to Implementation-Build-Date as specified in the given Manifest.",
-                BUILD_DATE, KitodoVersion.getBuildDate());
+                BUILD_DATE, version.getBuildDate());
     }
 
     private Manifest createManifestWithValues() {
