@@ -43,7 +43,7 @@ public class GuardTest {
     public void canCastShouldNotMiscast() {
         try {
             Object input = new ArrayList<File>();
-            @SuppressWarnings("unused") String uncastable = Guard.canCast("input", input, String.class);
+            Guard.canCast("input", input, String.class);
             fail("should have throws IllegalArgumentException");
         } catch (IllegalArgumentException e) {
             assertEquals("java.util.ArrayList 'input' is not a (subclass of) java.lang.String", e.getMessage());
