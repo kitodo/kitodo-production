@@ -31,6 +31,9 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.interfaces.activemq.ActiveMQDirector;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.context.SecurityContextImpl;
@@ -45,6 +48,7 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     private static CompletableFuture<KitodoProduction> instance = new CompletableFuture<>();
     private ServletContext context;
     private Optional<Manifest> manifest = Optional.empty();
+    private ActiveMQDirector activeMQDirector;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -60,6 +64,20 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             context.log(e.getMessage());
+        }
+        startActiveMQ();
+    }
+
+    /**
+     * Start up the active MQ connection.
+     */
+    private void startActiveMQ() {
+        if (ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_HOST_URL).isPresent()) {
+            activeMQDirector = new ActiveMQDirector();
+            Thread connectAsynchronously = new Thread(activeMQDirector);
+            connectAsynchronously.setName(ActiveMQDirector.class.getSimpleName());
+            connectAsynchronously.setDaemon(true);
+            connectAsynchronously.start();
         }
     }
 
@@ -100,7 +118,9 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
-        // nothing is done here
+        if(Objects.nonNull(activeMQDirector)) {
+            activeMQDirector.shutDown();
+        }
     }
 
     @Override
