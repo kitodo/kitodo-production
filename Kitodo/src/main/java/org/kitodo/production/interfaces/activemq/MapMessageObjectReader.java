@@ -16,7 +16,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -127,11 +126,9 @@ public class MapMessageObjectReader {
      *             can be thrown by MapMessage.getObject(String)
      */
     public Collection<Integer> getCollectionOfInteger(String key) throws JMSException {
-        Collection<String> collectionOfString = getCollectionOfString(key);
-        List<Integer> collectionOfInteger = collectionOfString.stream()
+        return getCollectionOfString(key).stream()
                 .flatMap(string -> Arrays.stream(string.split("\\D+"))).filter(StringUtils::isNumeric)
                 .map(Integer::valueOf).collect(Collectors.toList());
-        return collectionOfInteger;
     }
 
     /**
