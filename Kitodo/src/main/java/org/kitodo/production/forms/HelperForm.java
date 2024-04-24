@@ -18,7 +18,7 @@ import javax.inject.Named;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
-import org.kitodo.production.KitodoVersion;
+import org.kitodo.production.KitodoProduction;
 import org.kitodo.production.helper.Helper;
 
 /**
@@ -30,7 +30,7 @@ import org.kitodo.production.helper.Helper;
 public class HelperForm implements Serializable {
 
     public String getVersion() {
-        return KitodoVersion.getBuildVersion();
+        return KitodoProduction.getInstance().getVersionInformation().getVersion();
     }
 
     public boolean getAnonymized() {
