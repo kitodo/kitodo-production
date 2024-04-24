@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.jar.Manifest;
@@ -41,16 +42,19 @@ import org.kitodo.production.services.ServiceManager;
 public class KitodoProduction implements ServletContextListener, HttpSessionListener, HttpSessionAttributeListener {
     private static final Logger logger = LogManager.getLogger(KitodoProduction.class);
     private static CompletableFuture<KitodoProduction> instance = new CompletableFuture<>();
+    private ServletContext context;
+    private Optional<Manifest> manifest = Optional.empty();
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // Retrieve Manifest file as Stream
-        ServletContext context = sce.getServletContext();
+        context = sce.getServletContext();
         InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF");
         // Use Manifest to setup version information
         if (Objects.nonNull(rs)) {
             try {
                 Manifest m = new Manifest(rs);
+                manifest = Optional.of(m);
                 KitodoVersion.setupFromManifest(m);
             } catch (IOException e) {
                 context.log(e.getMessage());
@@ -73,6 +77,24 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
             logger.fatal(e);
             throw new UndeclaredThrowableException(e);
         }
+    }
+
+    /**
+     * Returns the servlet context.
+     * 
+     * @return the servlet context
+     */
+    public ServletContext getServletContext() {
+        return context;
+    }
+
+    /**
+     * Returns the manifest. If there is one. Otherwise, it can also be empty.
+     * 
+     * @return the manifest
+     */
+    public Optional<Manifest> getManifest() {
+        return manifest;
     }
 
     @Override
