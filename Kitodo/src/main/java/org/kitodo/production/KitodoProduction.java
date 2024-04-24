@@ -33,6 +33,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.interfaces.activemq.ActiveMQDirector;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
@@ -118,6 +119,7 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
 
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
+        TaskManager.shutdownNow();
         if(Objects.nonNull(activeMQDirector)) {
             activeMQDirector.shutDown();
         }
