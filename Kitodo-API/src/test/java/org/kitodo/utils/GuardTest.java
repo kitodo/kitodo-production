@@ -24,27 +24,23 @@ import org.junit.Test;
 
 public class GuardTest {
 
+
     @Test
-    public void canCastTest() {
-        // valid cast
-        try {
-            Object input = "Hello world!";
-            String greet = Guard.canCast("input", input, String.class);
-            assertTrue("should return String", greet instanceof String);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    public void canCastShouldCast() {
+        Object input = "Hello world!";
+        String greet = Guard.canCast("input", input, String.class);
+        assertTrue("should return String", greet instanceof String);
+    }
 
-        // valid cast to superclass
-        try {
-            Object input = new GregorianCalendar();
-            Calendar calendar = Guard.canCast("input", input, Calendar.class);
-            assertTrue("should return Calendar", calendar instanceof Calendar);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    @Test
+    public void canCastShouldCastToSuperclass() {
+        Object input = new GregorianCalendar();
+        Calendar calendar = Guard.canCast("input", input, Calendar.class);
+        assertTrue("should return Calendar", calendar instanceof Calendar);
+    }
 
-        // invalid cast
+    @Test
+    public void canCastShouldNotMiscast() {
         try {
             Object input = new ArrayList<File>();
             @SuppressWarnings("unused") String uncastable = Guard.canCast("input", input, String.class);
@@ -54,90 +50,79 @@ public class GuardTest {
         }
     }
 
+
     @Test
-    public void isInRangeTest() {
-        // input below range
+    public void isInRangeShouldFailBelowLowerBound() {
         try {
-            long input = 0;
-            Guard.isInRange("input", input, 1, 6);
+            long dice = 0;
+            Guard.isInRange("dice", dice, 1, 6);
             fail("should have throws IllegalArgumentException");
         } catch (IllegalArgumentException e) {
-            assertEquals("'input' out of range: 0 not in [1..6]", e.getMessage());
+            assertEquals("'dice' out of range: 0 not in [1..6]", e.getMessage());
         }
+    }
 
-        // input OK (lower bound)
-        try {
-            long input = 1;
-            Guard.isInRange("input", input, 1, 6);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
 
-        // input OK (middle)
-        try {
-            long input = 3;
-            Guard.isInRange("input", input, 1, 6);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    @Test
+    public void isInRangeShouldNotFailOnLowerBound() {
+        long dice = 1;
+        Guard.isInRange("dice", dice, 1, 6);
+    }
 
-        // input OK (upper bound)
-        try {
-            long input = 6;
-            Guard.isInRange("input", input, 1, 6);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    @Test
+    public void isInRangeShouldNotFailInRange() {
+        long dice = 3;
+        Guard.isInRange("dice", dice, 1, 6);
+    }
 
-        // input above range
+    @Test
+    public void isInRangeShouldNotFailOnUpperBound() {
+        long dice = 6;
+        Guard.isInRange("dice", dice, 1, 6);
+    }
+
+    @Test
+    public void isInRangeShouldFailAboveUpperBound() {
         try {
-            long input = 42;
-            Guard.isInRange("input", input, 1, 6);
+            long dice = 7;
+            Guard.isInRange("dice", dice, 1, 6);
             fail("should have throws IllegalArgumentException");
         } catch (IllegalArgumentException e) {
-            assertEquals("'input' out of range: 42 not in [1..6]", e.getMessage());
+            assertEquals("'dice' out of range: 7 not in [1..6]", e.getMessage());
         }
     }
 
     @Test
-    public void isNotNullTest() {
-        // input is not null
-        try {
-            Object input = "Hello world!";
-            Guard.isNotNull("input", input);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    public void isNotNullShouldNotFailForInitializedObjekt() {
+        Object object = "Hello world!";
+        Guard.isNotNull("object", object);
+    }
 
-        // input is null
+    @Test
+    public void isNotNullShouldFailForNullObjekt() {
         try {
-            Object input = null;
-            Guard.isNotNull("input", input);
+            Object object = null;
+            Guard.isNotNull("object", object);
             fail("should have throws IllegalArgumentException");
         } catch (IllegalArgumentException e) {
-            assertEquals("'input' must not be null", e.getMessage());
+            assertEquals("'object' must not be null", e.getMessage());
         }
     }
 
     @Test
-    public void isPositiveDoubleTest() {
-        // input is positive
-        try {
-            double value = 42;
-            Guard.isPositive("value", value);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    public void isPositiveDoubleShouldNotFailForPositiveValue() {
+        double value = 42;
+        Guard.isPositive("value", value);
+    }
 
-        // input is still positive, but very very tiny (boundary)
-        try {
-            double value = Double.MIN_VALUE;
-            Guard.isPositive("value", value);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    @Test
+    public void isPositiveDoubleShouldNotFailForPositiveBoundary() {
+        double value = Double.MIN_VALUE;
+        Guard.isPositive("value", value);
+    }
 
-        // input is zero (boundary)
+    @Test
+    public void isPositiveDoubleShouldFailForZero() {
         try {
             double value = 0;
             Guard.isPositive("value", value);
@@ -145,8 +130,10 @@ public class GuardTest {
         } catch (IllegalArgumentException e) {
             assertEquals("'value' out of range: 0.0 not > 0", e.getMessage());
         }
+    }
 
-        // input is negative light speed
+    @Test
+    public void isPositiveDoubleShouldFailForNegative() {
         try {
             double value = -299_792_458;
             Guard.isPositive("value", value);
@@ -157,24 +144,19 @@ public class GuardTest {
     }
 
     @Test
-    public void isPositiveLongTest() {
-        // input is positive
-        try {
-            long value = Long.MAX_VALUE;
-            Guard.isPositive("value", value);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    public void isPositiveLongShouldNotFailForPositiveUpperBound() {
+        long value = Long.MAX_VALUE;
+        Guard.isPositive("value", value);
+    }
 
-        // input is one (boundary)
-        try {
-            long value = 1;
-            Guard.isPositive("value", value);
-        } catch (IllegalArgumentException e) {
-            fail("should return without exception");
-        }
+    @Test
+    public void isPositiveLongShouldNotFailForPositiveLowerBound() {
+        long value = 1;
+        Guard.isPositive("value", value);
+    }
 
-        // input is zero (boundary)
+    @Test
+    public void isPositiveLongShouldFailForZero() {
         try {
             long value = 0;
             Guard.isPositive("value", value);
@@ -182,10 +164,12 @@ public class GuardTest {
         } catch (IllegalArgumentException e) {
             assertEquals("'value' out of range: 0 not > 0", e.getMessage());
         }
+    }
 
-        // input is negative (due to integer overflow)
+    @Test
+    public void isPositiveLongShouldFailForNegative() {
         try {
-            long value = Long.MAX_VALUE + 1;
+            long value = Long.MAX_VALUE + 1; // is negative due to integer overflow
             Guard.isPositive("value", value);
             fail("should have throws IllegalArgumentException");
         } catch (IllegalArgumentException e) {
