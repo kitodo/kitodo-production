@@ -49,23 +49,25 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     private static CompletableFuture<KitodoProduction> instance = new CompletableFuture<>();
     private ServletContext context;
     private Optional<Manifest> manifest = Optional.empty();
+    private KitodoVersion version = new KitodoVersion();
     private ActiveMQDirector activeMQDirector;
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         // Retrieve Manifest file as Stream
         context = sce.getServletContext();
-        try (InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF")){
+        try (InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF")) {
             // Use Manifest to setup version information
             if (Objects.nonNull(rs)) {
                 Manifest m = new Manifest(rs);
                 manifest = Optional.of(m);
-                KitodoVersion.setupFromManifest(m);
+                version.setupFromManifest(m);
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             context.log(e.getMessage());
         }
+        instance.complete(this);
         startActiveMQ();
     }
 
@@ -117,10 +119,19 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
         return manifest;
     }
 
+    /**
+     * Returns application version information.
+     * 
+     * @return version information
+     */
+    public KitodoVersion getVersionInformation() {
+        return version;
+    }
+
     @Override
     public void contextDestroyed(ServletContextEvent sce) {
         TaskManager.shutdownNow();
-        if(Objects.nonNull(activeMQDirector)) {
+        if (Objects.nonNull(activeMQDirector)) {
             activeMQDirector.shutDown();
         }
     }
