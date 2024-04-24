@@ -18,8 +18,8 @@ import javax.inject.Named;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.production.KitodoVersion;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.version.KitodoVersion;
 
 /**
  * Helper form - used for some single methods which don't match yet to other

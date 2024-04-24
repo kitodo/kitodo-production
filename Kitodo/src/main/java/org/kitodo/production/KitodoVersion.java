@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.version;
+package org.kitodo.production;
 
 import java.util.jar.Attributes;
 import java.util.jar.Manifest;
