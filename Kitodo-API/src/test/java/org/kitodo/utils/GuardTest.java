@@ -12,8 +12,8 @@
 package org.kitodo.utils;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,7 +23,6 @@ import java.util.GregorianCalendar;
 import org.junit.Test;
 
 public class GuardTest {
-
 
     @Test
     public void canCastShouldCast() {
@@ -41,25 +40,21 @@ public class GuardTest {
 
     @Test
     public void canCastShouldNotMiscast() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             Object input = new ArrayList<File>();
             Guard.canCast("input", input, String.class);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("java.util.ArrayList 'input' is not a (subclass of) java.lang.String", e.getMessage());
-        }
+        });
+        assertEquals("java.util.ArrayList 'input' is not a (subclass of) java.lang.String", e.getMessage());
     }
 
 
     @Test
     public void isInRangeShouldFailBelowLowerBound() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long dice = 0;
             Guard.isInRange("dice", dice, 1, 6);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'dice' out of range: 0 not in [1..6]", e.getMessage());
-        }
+        });
+        assertEquals("'dice' out of range: 0 not in [1..6]", e.getMessage());
     }
 
 
@@ -83,13 +78,11 @@ public class GuardTest {
 
     @Test
     public void isInRangeShouldFailAboveUpperBound() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long dice = 7;
             Guard.isInRange("dice", dice, 1, 6);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'dice' out of range: 7 not in [1..6]", e.getMessage());
-        }
+        });
+        assertEquals("'dice' out of range: 7 not in [1..6]", e.getMessage());
     }
 
     @Test
@@ -100,13 +93,11 @@ public class GuardTest {
 
     @Test
     public void isNotNullShouldFailForNullObjekt() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             Object object = null;
             Guard.isNotNull("object", object);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'object' must not be null", e.getMessage());
-        }
+        });
+        assertEquals("'object' must not be null", e.getMessage());
     }
 
     @Test
@@ -123,24 +114,20 @@ public class GuardTest {
 
     @Test
     public void isPositiveDoubleShouldFailForZero() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = 0;
             Guard.isPositive("value", value);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'value' out of range: 0.0 not > 0", e.getMessage());
-        }
+        });
+        assertEquals("'value' out of range: 0.0 not > 0", e.getMessage());
     }
 
     @Test
     public void isPositiveDoubleShouldFailForNegative() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = -299_792_458;
             Guard.isPositive("value", value);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'value' out of range: -2.99792458E8 not > 0", e.getMessage());
-        }
+        });
+        assertEquals("'value' out of range: -2.99792458E8 not > 0", e.getMessage());
     }
 
     @Test
@@ -157,23 +144,19 @@ public class GuardTest {
 
     @Test
     public void isPositiveLongShouldFailForZero() {
-        try {
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = 0;
             Guard.isPositive("value", value);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'value' out of range: 0 not > 0", e.getMessage());
-        }
+        });
+        assertEquals("'value' out of range: 0 not > 0", e.getMessage());
     }
 
     @Test
     public void isPositiveLongShouldFailForNegative() {
-        try {
-            long value = Long.MAX_VALUE + 1; // is negative due to integer overflow
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
+            long value = Long.MAX_VALUE + 1; // negative due to integer overflow
             Guard.isPositive("value", value);
-            fail("should have throws IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            assertEquals("'value' out of range: -9223372036854775808 not > 0", e.getMessage());
-        }
+        });
+        assertEquals("'value' out of range: -9223372036854775808 not > 0", e.getMessage());
     }
 }
