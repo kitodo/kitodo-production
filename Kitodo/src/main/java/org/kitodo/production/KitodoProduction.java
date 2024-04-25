@@ -48,27 +48,29 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     private static final Logger logger = LogManager.getLogger(KitodoProduction.class);
     private static CompletableFuture<KitodoProduction> instance = new CompletableFuture<>();
     private ServletContext context;
-    private Optional<Manifest> manifest = Optional.empty();
+    private Optional<Manifest> manifest;
     private KitodoVersion version = new KitodoVersion();
     private ActiveMQDirector activeMQDirector;
 
     @Override
-    public void contextInitialized(ServletContextEvent sce) {
-        // Retrieve Manifest file as Stream
-        context = sce.getServletContext();
-        try (InputStream rs = context.getResourceAsStream("/META-INF/MANIFEST.MF")) {
-            // Use Manifest to setup version information
-            if (Objects.nonNull(rs)) {
-                Manifest m = new Manifest(rs);
-                manifest = Optional.of(m);
-                version.setupFromManifest(m);
+    public void contextInitialized(ServletContextEvent event) {
+        context = event.getServletContext();
+        manifest = retrieveManifestFileAsStream(context);
+        manifest.ifPresent(version::setupFromManifest);
+        instance.complete(this);
+        startActiveMQ();
+    }
+
+    private static final Optional<Manifest> retrieveManifestFileAsStream(ServletContext context) {
+        try (InputStream manifestResource = context.getResourceAsStream("/META-INF/MANIFEST.MF")) {
+            if (Objects.nonNull(manifestResource)) {
+                return Optional.of(new Manifest(manifestResource));
             }
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
             context.log(e.getMessage());
         }
-        instance.complete(this);
-        startActiveMQ();
+        return Optional.empty();
     }
 
     /**
