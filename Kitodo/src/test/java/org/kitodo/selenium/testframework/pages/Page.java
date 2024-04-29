@@ -70,6 +70,10 @@ public abstract class Page<T> {
     @FindBy(id = "search-form:search")
     private WebElement searchButton;
 
+    @SuppressWarnings("unused")
+    @FindBy(id = "portal-header")
+    private WebElement pageHeader;
+
     private String URL;
 
     Page(String URL) {
@@ -210,6 +214,10 @@ public abstract class Page<T> {
     protected void clickElement(WebElement element) {
         await("Wait for element clicked").pollDelay(500, TimeUnit.MILLISECONDS).atMost(20, TimeUnit.SECONDS)
                 .ignoreExceptions().until(() -> isButtonClicked.test(element));
+    }
+
+    public WebElement getPageHeader() {
+        return pageHeader;
     }
 
     /**

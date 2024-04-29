@@ -31,6 +31,7 @@ public class CalendarST extends BaseTestSelenium {
 
     private static ProcessesPage processesPage;
     private static CalendarPage calendarPage;
+    private static int newspaperTestProcessId = -1;
 
     @BeforeClass
     public static void setup() throws Exception {
@@ -47,11 +48,11 @@ public class CalendarST extends BaseTestSelenium {
     @Test
     public void createProcessFromCalendar() throws Exception {
         // add process to access calendar
-        MockDatabase.insertProcessForCalendarHierarchyTests();
+        newspaperTestProcessId = MockDatabase.insertProcessForCalendarHierarchyTests();
 
         login();
         processesPage.goTo();
-        processesPage.goToCalendar();
+        processesPage.goToCalendar(newspaperTestProcessId);
         calendarPage.addBlock();
         calendarPage.addIssue("Morning issue");
         calendarPage.addIssue("Evening issue");
