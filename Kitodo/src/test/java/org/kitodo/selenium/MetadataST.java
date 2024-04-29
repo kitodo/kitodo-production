@@ -56,12 +56,12 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
-    private static final String TEST_METADATA_FILE = "testmeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
     private static int renamingMediaProcessId = -1;
     private static int dragndropProcessId = -1;
+    private static int createStructureProcessId = -1;
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
     private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
@@ -98,6 +98,11 @@ public class MetadataST extends BaseTestSelenium {
         copyTestFilesForDragAndDrop();
     }
 
+    private static void prepareCreateStructureProcess() throws DAOException, DataException, IOException {
+        insertTestProcessForCreatingStructureElement();
+        copyTestFilesForCreateStructure();
+    }
+
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
@@ -112,6 +117,7 @@ public class MetadataST extends BaseTestSelenium {
         prepareProcessHierarchyProcesses();
         prepareMediaRenamingProcess();
         prepareDragNDropProcess();
+        prepareCreateStructureProcess();
     }
 
     /**
@@ -251,7 +257,7 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void dragAndDropPageTest() throws Exception {
         login("kowal");
-        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
         WebElement unstructuredMedia = Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia"));
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
                 .until(unstructuredMedia::isDisplayed);
@@ -282,7 +288,7 @@ public class MetadataST extends BaseTestSelenium {
                 .until(Browser.getDriver().findElement(By.id("buttonForm:saveExit"))::isEnabled);
         Pages.getMetadataEditorPage().saveAndExit();
         // check whether new position has been saved correctly
-        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
         secondThumbnail = Browser.getDriver()
                 .findElement(By.id("imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel"));
         hoverAction.moveToElement(secondThumbnail).build().perform();
@@ -300,7 +306,7 @@ public class MetadataST extends BaseTestSelenium {
     @Test
     public void createStructureElementTest() throws Exception {
         login("kowal");
-        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.CREATE_STRUCTURE_PROCESS_TITLE);
         await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
                 .until(Browser.getDriver().findElement(By.id("logicalTree"))::isDisplayed);
         WebElement structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
@@ -364,6 +370,7 @@ public class MetadataST extends BaseTestSelenium {
         ProcessService.deleteProcess(metadataLockProcessId);
         ProcessService.deleteProcess(renamingMediaProcessId);
         ProcessService.deleteProcess(dragndropProcessId);
+        ProcessService.deleteProcess(createStructureProcessId);
     }
 
     private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {
@@ -385,6 +392,10 @@ public class MetadataST extends BaseTestSelenium {
 
     private static void insertTestProcessForDragAndDrop() throws DAOException, DataException {
         dragndropProcessId = MockDatabase.insertTestProcessForDragNDropTestIntoSecondProject();
+    }
+
+    private static void insertTestProcessForCreatingStructureElement() throws DAOException, DataException {
+        createStructureProcessId = MockDatabase.insertTestProcessForCreatingStructureElementIntoSecondProject();
     }
 
     /**
@@ -419,7 +430,11 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     private static void copyTestFilesForDragAndDrop() throws IOException, DAOException, DataException {
-        ProcessTestUtils.copyTestFiles(dragndropProcessId, TEST_METADATA_FILE);
+        ProcessTestUtils.copyTestFiles(dragndropProcessId, TEST_RENAME_MEDIA_FILE);
+    }
+
+    private static void copyTestFilesForCreateStructure() throws DAOException, DataException, IOException {
+        ProcessTestUtils.copyTestFiles(createStructureProcessId, TEST_RENAME_MEDIA_FILE);
     }
 
     private static void copyTestParentProcessMetadataFile() throws IOException, DAOException, DataException {
