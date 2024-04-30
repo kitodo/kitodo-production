@@ -31,7 +31,6 @@ public class CalendarST extends BaseTestSelenium {
 
     private static ProcessesPage processesPage;
     private static CalendarPage calendarPage;
-    private static int newspaperTestProcessId = -1;
 
     @BeforeClass
     public static void setup() throws Exception {

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+<mets xmlns="http://www.loc.gov/METS/" xmlns:kitodo="http://meta.kitodo.org/v1/">
+    <metsHdr CREATEDATE="2019-09-02T11:03:56.453+02:00"/>
+    <amdSec>
+        <sourceMD ID="ba64d0f9-d1d5-3ced-a88c-aa780ad9e69c">
+            <mdWrap>
+                <xmlData>
+                    <kitodo:kitodo>
+                        <kitodo:metadata name="ShelfMark">I-5300 II,III,IV</kitodo:metadata>
+                    </kitodo:kitodo>
+                </xmlData>
+            </mdWrap>
+        </sourceMD>
+    </amdSec>
+    <fileSec/>
+    <structMap TYPE="PHYSICAL">
+        <div ID="7f342fdb-71c3-45c9-9918-6b6dd04f3c87" ADMID="ba64d0f9-d1d5-3ced-a88c-aa780ad9e69c"/>
+    </structMap>
+    <structMap TYPE="LOGICAL">
+        <div ID="d0893036-cce5-4232-95c3-772610e31ff1" TYPE="Newspaper"/>
+    </structMap>
+    <structLink/>
+</mets>
