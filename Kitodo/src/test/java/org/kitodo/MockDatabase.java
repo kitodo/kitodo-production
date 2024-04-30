@@ -725,7 +725,7 @@ public class MockDatabase {
     }
 
 
-    public static int insertProcessForCalendarHierarchyTests() throws DAOException, DataException {
+    public static void insertProcessForCalendarHierarchyTests() throws DAOException, DataException {
         Ruleset fivthRuleset = new Ruleset();
         fivthRuleset.setTitle("Newspaper");
         fivthRuleset.setFile("newspaper.xml");
@@ -741,7 +741,6 @@ public class MockDatabase {
         tenthProcess.setRuleset(ServiceManager.getRulesetService().getById(5));
         tenthProcess.setTitle("NewspaperOverallProcess");
         ServiceManager.getProcessService().save(tenthProcess);
-        return tenthProcess.getId();
     }
 
     private static void insertTemplates() throws DAOException, DataException {

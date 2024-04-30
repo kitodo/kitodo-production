@@ -218,7 +218,7 @@ public class NewspaperProcessesGeneratorIT {
         Course course = NewspaperCourse.getDuplicatedCourse();
         course.splitInto(Granularity.DAYS);
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
-        generatesNewspaperProcessesThread.start();
+        generatesNewspaperProcessesThread.run();
 
         ProcessDTO byId = ServiceManager.getProcessService().findById(11);
         Assert.assertNull("Process should not have been created", byId.getTitle());

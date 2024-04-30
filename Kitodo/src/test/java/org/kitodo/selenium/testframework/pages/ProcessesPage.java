@@ -51,7 +51,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
     private static final String MULTI_VOLUME_WORK_PROCESS_TITLE = "Multi volume work test process";
     private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
-    private static final String CALENDER_ACTION_XPATH = "//a[@href='/kitodo/pages/calendarEdit.jsf?id=%s']";
+    private static final String CALENDER_ACTION_XPATH = "//a[@href='/kitodo/pages/calendarEdit.jsf?id=10']";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -494,14 +494,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
             .until(() -> !columnHeader.getAttribute("aria-sort").equals(previousAriaSort));
     }
 
-    /**
-     * Navigate to calendar page to create child processes for process with provided ID 'processId'.
-     * @param processId ID of process for which child processes are created using the calendar
-     * @throws Exception when navigating to the calendar page fails
-     */
-    public void goToCalendar(int processId) throws Exception {
-        String xpath = String.format(CALENDER_ACTION_XPATH, processId);
-        WebElement openCalendarLink = Browser.getDriver().findElementByXPath(xpath);
+    public void goToCalendar() throws Exception {
+        WebElement openCalendarLink = Browser.getDriver().findElementByXPath(CALENDER_ACTION_XPATH);
         if (isNotAt()) {
             goTo();
         }
