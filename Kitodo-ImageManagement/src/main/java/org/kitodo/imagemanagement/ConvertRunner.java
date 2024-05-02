@@ -72,7 +72,7 @@ class ConvertRunner {
         OutputStream outAndErr = new ByteArrayOutputStream();
         executor.setStreamHandler(new PumpStreamHandler(outAndErr));
 
-        long timeoutMillis = 1000 * KitodoConfig.getIntParameter(ParameterImageManagement.TIMEOUT_SEC, DEFAULT_TIMEOUT_MINS);
+        long timeoutMillis = 1000L * KitodoConfig.getIntParameter(ParameterImageManagement.TIMEOUT_SEC, DEFAULT_TIMEOUT_MINS);
         executor.setWatchdog(new ExecuteWatchdog(timeoutMillis));
 
         CommandLine command;
