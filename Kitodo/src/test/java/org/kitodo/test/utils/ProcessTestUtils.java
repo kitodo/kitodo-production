@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -231,7 +232,7 @@ public class ProcessTestUtils {
             String textContent = new String(fileContent.readAllBytes());
             textContent = textContent.replace(ID_PLACEHOLDER, String.valueOf(processId));
             try (OutputStream updatedFileContent = ServiceManager.getFileService().write(metadataFileUri)) {
-                updatedFileContent.write(textContent.getBytes());
+                updatedFileContent.write(textContent.getBytes(StandardCharsets.UTF_8));
                 // re-save process to update index
                 ServiceManager.getProcessService().save(process);
             }
