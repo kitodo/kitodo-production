@@ -66,9 +66,7 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.omnifaces.util.Ajax;
 import org.primefaces.PrimeFaces;
 import org.primefaces.event.SelectEvent;
-import org.primefaces.event.ToggleSelectEvent;
 import org.primefaces.event.UnselectEvent;
-import org.primefaces.model.SortOrder;
 
 @Named("ProcessForm")
 @SessionScoped
@@ -79,7 +77,6 @@ public class ProcessForm extends TemplateBaseForm {
     private Property templateProperty;
     private Property workpieceProperty;
     private String kitodoScriptSelection;
-    private String kitodoScriptAll;
     private String newProcessTitle;
     private List<Property> properties;
     private List<Property> templates;
@@ -143,7 +140,7 @@ public class ProcessForm extends TemplateBaseForm {
      * Return list of process properties configured as custom list columns in kitodo
      * configuration.
      *
-     * @return list of process property names
+     * @return array of process property names
      */
     public String[] getProcessPropertyNames() {
         return initializer.getProcessProperties();
@@ -476,25 +473,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Export PDF.
-     */
-    public void exportPdf() {
-        Helper.setErrorMessage("Not implemented");
-    }
-
-    /**
-     * Download to home for all found processes.
-     */
-    public void downloadToHomeForAll() {
-        try {
-            ProcessService.downloadToHome(getProcessesForActions());
-            Helper.setMessage("createdInUserHomeAll");
-        } catch (DAOException e) {
-            Helper.setErrorMessage("Error downloading all processes to home directory!");
-        }
-    }
-
-    /**
      * Set up processing status selection.
      */
     public void setTaskStatusUpForSelection() {
@@ -502,24 +480,10 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Set up processing status for all found processes.
-     */
-    public void setTaskStatusUpForAll() {
-        workflowControllerService.setTaskStatusUpForProcesses(getProcessesForActions());
-    }
-
-    /**
      * Set down processing status selection.
      */
     public void setTaskStatusDownForSelection() {
         workflowControllerService.setTaskStatusDownForProcesses(getSelectedProcesses());
-    }
-
-    /**
-     * Set down processing status hits.
-     */
-    public void setTaskStatusDownForAll() {
-        workflowControllerService.setTaskStatusDownForProcesses(getProcessesForActions());
     }
 
     /**
@@ -558,21 +522,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public Process getProcess() {
         return this.process;
-    }
-
-    /**
-     * Set process by ID.
-     *
-     * @param processID
-     *            ID of process to set.
-     */
-    public void setProcessByID(int processID) {
-        try {
-            setProcess(ServiceManager.getProcessService().getById(processID));
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                new Object[] {ObjectType.PROCESS.getTranslationSingular(), processID }, logger, e);
-        }
     }
 
     /**
@@ -626,13 +575,6 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
-     * Execute Kitodo script for hits list.
-     */
-    public void executeKitodoScriptAll() {
-        executeKitodoScriptForProcesses(getProcessesForActions(), this.kitodoScriptAll);
-    }
-
-    /**
      * Execute Kitodo script for selected processes.
      */
     public void executeKitodoScriptSelection() {
@@ -648,27 +590,6 @@ public class ProcessForm extends TemplateBaseForm {
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
         }
-    }
-
-    private List<Process> getProcessesForActions() {
-        // TODO: find a way to pass filters
-        List<ProcessDTO> filteredProcesses = new ArrayList<>();
-        for (Object object : lazyDTOModel.load(0, 100000, "",
-                SortOrder.ASCENDING, null)) {
-            if (object instanceof ProcessDTO) {
-                filteredProcesses.add((ProcessDTO) object);
-            }
-        }
-        List<Process> processesForActions = new ArrayList<>();
-
-        try {
-            processesForActions = ServiceManager.getProcessService().convertDtosToBeans(filteredProcesses);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
-                logger, e);
-        }
-
-        return processesForActions;
     }
 
     /**
@@ -688,25 +609,6 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public void setKitodoScriptSelection(String kitodoScriptSelection) {
         this.kitodoScriptSelection = kitodoScriptSelection;
-    }
-
-    /**
-     * Get kitodo script for all results.
-     *
-     * @return kitodo script for all results
-     */
-    public String getKitodoScriptAll() {
-        return this.kitodoScriptAll;
-    }
-
-    /**
-     * Set kitodo script for all results.
-     *
-     * @param kitodoScriptAll
-     *            the kitodoScript
-     */
-    public void setKitodoScriptAll(String kitodoScriptAll) {
-        this.kitodoScriptAll = kitodoScriptAll;
     }
 
     public String getNewProcessTitle() {
@@ -931,7 +833,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Get task statuses for select list.
      *
-     * @return list of task statuses
+     * @return array of task statuses
      */
     public TaskStatus[] getTaskStatuses() {
         return TaskStatus.values();
@@ -1183,7 +1085,7 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @param unselectEvent as UnUnselectEvent
      */
-    public void onRowUnselect(UnselectEvent unselectEvent) {
+    public void onRowUnselect(UnselectEvent<?> unselectEvent) {
         if (allSelected) {
             excludedProcessIds.add(getProcessId(unselectEvent.getObject()));
         }
@@ -1194,7 +1096,7 @@ public class ProcessForm extends TemplateBaseForm {
      *
      * @param selectEvent as SelectEvent
      */
-    public void onRowSelect(SelectEvent selectEvent) {
+    public void onRowSelect(SelectEvent<?> selectEvent) {
         if (allSelected) {
             excludedProcessIds.remove(getProcessId(selectEvent.getObject()));
             PrimeFaces.current().executeScript("PF('processesTable').selection=new Array('@all')");
@@ -1204,10 +1106,8 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Callback function triggered when all processes are selected or unselected in the data table.
-     *
-     * @param toggleSelectEvent as ToggleSelectEvent
      */
-    public void selectAll(ToggleSelectEvent toggleSelectEvent) {
+    public void selectAll() {
         setAllSelected(false);
     }
 
