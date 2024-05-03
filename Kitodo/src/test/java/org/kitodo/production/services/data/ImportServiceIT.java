@@ -131,16 +131,12 @@ public class ImportServiceIT {
         Workpiece workpiece = ServiceManager.getMetsService()
                 .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
         HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
-        try {
-            Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
-            Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
-            Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
-        } finally {
-            ProcessService.deleteProcess(processWithAdditionalMetadata.getId());
-        }
+        Assert.assertTrue("Process does not contain correct metadata",
+                assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
+        Assert.assertTrue("Process does not contain correct metadata",
+                assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
+        Assert.assertTrue("Process does not contain correct metadata",
+                assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
     }
 
     private boolean assertMetadataSetContainsMetadata(HashSet<Metadata> metadataSet, String metadataKey, String metadataValue) {
