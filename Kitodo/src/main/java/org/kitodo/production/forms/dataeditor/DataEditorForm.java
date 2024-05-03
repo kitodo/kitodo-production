@@ -18,10 +18,12 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Locale.LanguageRange;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -62,6 +64,7 @@ import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.LocaleHelper;
 import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
@@ -310,10 +313,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     private void showDataEditorSettingsLoadedMessage() throws DAOException {
-        String taskTitle = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
-        String messageTitle = Helper.getTranslation("dataEditor.layoutLoadedSuccessfullyTitle");
-        String messageText = Helper.getTranslation("dataEditor.layoutLoadedSuccessfullyText", taskTitle);
-        String script = GROWL_MESSAGE.replace("SUMMARY", messageTitle).replace("DETAIL", messageText)
+        String task = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
+        Locale locale = LocaleHelper.getCurrentLocale();
+        String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
+        String text = MessageFormat.format(Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyText"), task);
+        String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript("PF('notifications').removeAll();");
         PrimeFaces.current().executeScript(script);
