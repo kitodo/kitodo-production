@@ -33,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
@@ -70,6 +71,8 @@ public class ImportServiceIT {
     private static final String PLACE = "Place";
     private static final int PORT = 8888;
     private static final String firstProcess = "First process";
+    private static final File ORIGINAL_META_10 = new File("src/test/resources/metadata/10/meta.xml");
+    private static final File BACKUP_META_10 = new File("src/test/resources/metadata/10/meta.xml.1");
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
@@ -88,13 +91,17 @@ public class ImportServiceIT {
         });
         server = new StubServer(PORT).run();
         setupServer();
+        FileUtils.copyFile(ORIGINAL_META_10, BACKUP_META_10);
     }
+
 
     @AfterClass
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         server.stop();
+        FileUtils.deleteQuietly(ORIGINAL_META_10);
+        FileUtils.moveFile(BACKUP_META_10, ORIGINAL_META_10);
     }
 
     @Test
