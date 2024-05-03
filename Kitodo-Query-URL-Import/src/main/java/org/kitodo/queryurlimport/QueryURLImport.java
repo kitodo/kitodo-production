@@ -271,9 +271,9 @@ public class QueryURLImport implements ExternalDataImportInterface {
                 : dataImport.getIdParameter();
         String queryParameter = idParameter + EQUALS_OPERAND + prefix + identifier;
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            fullUrl += URLEncoder.encode(queryParameter, encoding);
+            fullUrl += URLEncoder.encode(idParameter + EQUALS_OPERAND + prefix + identifier, encoding);
         } else {
-            fullUrl += queryParameter;
+            fullUrl += URLEncoder.encode(idParameter, encoding) + EQUALS_OPERAND + URLEncoder.encode(prefix + identifier, encoding);
         }
         try {
             this.reinitializeHttpClient(dataImport.getUsername(), dataImport.getPassword());
@@ -415,15 +415,17 @@ public class QueryURLImport implements ExternalDataImportInterface {
     }
 
     private String createSearchFieldString(SearchInterfaceType interfaceType, LinkedHashMap<String, String> searchFields) {
+        String searchString = "";
         List<String> searchOperands = searchFields.entrySet().stream()
                 .map(entry -> entry.getKey() + EQUALS_OPERAND + entry.getValue())
                 .collect(Collectors.toList());
-        String searchString = String.join(" AND ", searchOperands);
         if (SearchInterfaceType.SRU.equals(interfaceType)) {
-            return URLEncoder.encode(searchString, encoding);
+            searchString = URLEncoder.encode(String.join(" AND ", searchOperands), encoding);
         } else {
-            return searchString;
+            searchOperands.replaceAll(s -> !s.equals(EQUALS_OPERAND) ? URLEncoder.encode(s, encoding) : s);
+            searchString = String.join(" AND ", searchOperands);
         }
+        return searchString;
     }
 
     private Document stringToDocument(String xmlContent) throws ParserConfigurationException, IOException,
