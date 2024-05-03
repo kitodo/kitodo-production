@@ -27,9 +27,11 @@ import java.util.Objects;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.stream.StreamSource;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -149,7 +151,12 @@ public class ExportMets {
          */
         try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
             ServiceManager.getMetsService().save(workpiece, out);
-            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(out.toByteArray())) {
+            byte[] xmlBytes = out.toByteArray();
+            File debugFolder = ConfigCore.getKitodoDebugDirectory();
+            if (Objects.nonNull(debugFolder)) {
+                FileUtils.writeByteArrayToFile(new File(debugFolder, "preExport.xml"), xmlBytes);
+            }
+            try (ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(xmlBytes)) {
                 StreamSource source = new StreamSource(byteArrayInputStream);
                 try (BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(new FileOutputStream(new File(metaFile)))) {
                     URI xslFile = XsltHelper.getXsltFileFromConfig(process);
