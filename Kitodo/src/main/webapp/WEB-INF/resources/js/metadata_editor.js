@@ -29,7 +29,7 @@ metadataEditor.metadataTree = {
         if (event.keyCode === 13 || event.key === "Enter") {
             event.preventDefault();
             let form = element.form;
-            let focusableElements = Array.from(form.elements).filter(element => {
+            let focusableElements = Array.from(form.elements).filter((element) => {
                 return element.tabIndex >= 0;
             });
             let index = focusableElements.indexOf(element);
