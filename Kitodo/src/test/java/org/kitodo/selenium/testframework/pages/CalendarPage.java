@@ -193,12 +193,6 @@ public class CalendarPage extends Page<CalendarPage> {
         getById(BUTTON_CANCEL).click();
     }
 
-    public int countIssues() {
-        await("Wait for calendar issues to be displayed")
-                .untilAsserted(() -> assertTrue(getById(CALENDAR).isDisplayed()));
-        return getById(CALENDAR).findElements(By.cssSelector(CALENDAR_ISSUES)).size();
-    }
-
     private void addMetadata(String type, String value, String addButton) {
         await("Wait for calendar entry being displayed")
                 .pollDelay(400, TimeUnit.MILLISECONDS)
