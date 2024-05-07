@@ -50,8 +50,8 @@ public class ProcessesPage extends Page<ProcessesPage> {
     private static final String WAIT_FOR_ACTIONS_MENU = "Wait for actions menu to open";
     private static final String WAIT_FOR_COLUMN_SORT = "Wait for column sorting";
     private static final String MULTI_VOLUME_WORK_PROCESS_TITLE = "Multi volume work test process";
-
     private static final String WAIT_FOR_SELECTION_MENU = "Wait for process selection menu to open";
+    private static final String CALENDER_ACTION_XPATH = "//a[@href='/kitodo/pages/calendarEdit.jsf?id=10']";
 
     @SuppressWarnings("unused")
     @FindBy(id = PROCESSES_TAB_VIEW)
@@ -495,6 +495,7 @@ public class ProcessesPage extends Page<ProcessesPage> {
     }
 
     public void goToCalendar() throws Exception {
+        WebElement openCalendarLink = Browser.getDriver().findElementByXPath(CALENDER_ACTION_XPATH);
         if (isNotAt()) {
             goTo();
         }
