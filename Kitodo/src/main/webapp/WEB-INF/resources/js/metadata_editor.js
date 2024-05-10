@@ -30,7 +30,7 @@ metadataEditor.metadataTree = {
             event.preventDefault();
             let form = element.form;
             let focusableElements = Array.from(form.elements).filter((element) => {
-                return element.tabIndex >= 0;
+                return element.tabIndex >= 0 && !element.disabled;
             });
             let index = focusableElements.indexOf(element);
             let nextInput = focusableElements[index + 1];
