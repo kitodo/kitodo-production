@@ -63,7 +63,8 @@
                                  value="#{item.value}"
                                  disabled="#{not item.editable or readOnly}"
                                  required="#{item.required and (not empty param['editForm:save'] or not empty param['editForm:saveContinue'])}"
-                                 styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}">
+                                 styleClass="#{not item.editable or readOnly ? 'read-only disabled' : ''}"
+                                 onkeydown="metadataEditor.metadataTree.handleKeyDown(event, this)">
                         <p:ajax event="change"
                                 oncomplete="preserveMetadata(); #{item.leading ? (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadataWithTable();' : 'updateProcessMetadata();') : (request.requestURI.contains('metadataEditor') ? 'updateTitleMetadata();' : '')}"/>
                     </p:inputText>
