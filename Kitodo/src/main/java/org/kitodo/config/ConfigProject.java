@@ -73,7 +73,7 @@ public class ConfigProject {
                         .setListDelimiterHandler(new DefaultListDelimiterHandler('&')));
             // Register an event listener for triggering reloading checks
             builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
-                (EventListener) event -> builder.getReloadingController().checkForReloading(null));
+                event -> builder.getReloadingController().checkForReloading(null));
             this.config = builder.getConfiguration();
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);

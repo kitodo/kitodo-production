@@ -56,7 +56,7 @@ public class ConfigMain {
                                     .setIncludesAllowed(false));
                         // Register an event listener for triggering reloading checks
                         builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
-                            (EventListener) event -> builder.getReloadingController().checkForReloading(null));
+                            event -> builder.getReloadingController().checkForReloading(null));
                         initialized = builder.getConfiguration();
                     } catch (ConfigurationException e) {
                         logger.warn("Loading of {} failed. Trying to start with empty configuration. Exception: {}",

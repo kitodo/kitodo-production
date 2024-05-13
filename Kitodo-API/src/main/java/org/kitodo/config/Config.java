@@ -53,7 +53,7 @@ public abstract class Config {
                                     .setIncludesAllowed(false));
                         // Register an event listener for triggering reloading checks
                         builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
-                            (EventListener) event -> builder.getReloadingController().checkForReloading(null));
+                            event -> builder.getReloadingController().checkForReloading(null));
                         initialized = builder.getConfiguration();
                         if (logger.isDebugEnabled()) {
                             logger.debug("Using configuration from {}", configFile);
