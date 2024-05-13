@@ -11,36 +11,23 @@
 
 package org.kitodo.production.services.data;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.BatchType;
-import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseBatchServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends TitleSearchService<Batch, BatchInterface, BatchDAO>
+public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
         implements DatabaseBatchServiceInterface {
 
     private static volatile BatchService instance = null;
@@ -50,7 +37,7 @@ public class BatchService extends TitleSearchService<Batch, BatchInterface, Batc
      * Constructor with Searcher and Indexer assigning.
      */
     private BatchService() {
-        super(new BatchDAO(), new BatchType(), new Indexer<>(Batch.class), new Searcher(Batch.class));
+        super(new BatchDAO());
     }
 
     /**
@@ -72,48 +59,19 @@ public class BatchService extends TitleSearchService<Batch, BatchInterface, Batc
         return localReference;
     }
 
-    /**
-     * Method saves processes related to modified batch.
-     *
-     * @param batch
-     *            object
-     */
-    @Override
-    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, DataException, IOException {
-        if (batch.getIndexAction() == IndexAction.DELETE) {
-            for (Process process : batch.getProcesses()) {
-                process.getBatches().remove(batch);
-                ServiceManager.getProcessService().saveToIndex(process, false);
-            }
-        } else {
-            for (Process process : batch.getProcesses()) {
-                ServiceManager.getProcessService().saveToIndex(process, false);
-            }
-        }
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Batch");
     }
 
+    // functions countResults() and loadData() are not used in batches
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    public Long countResults(Map<?, String> filters) throws DataException {
+        return (long) 0;
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(QueryBuilders.matchAllQuery());
-    }
-
-    @Override
-    public List<Batch> getAllNotIndexed() {
-        return getByQuery("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters) {
         return new ArrayList<>();
     }
 
@@ -123,51 +81,52 @@ public class BatchService extends TitleSearchService<Batch, BatchInterface, Batc
      * @param batches
      *            to remove
      */
+    @Override
     public void removeAll(Collection<Batch> batches) throws DataException {
         for (Batch batch : batches) {
             remove(batch);
         }
     }
 
-    /**
-     * Find batches by id of process.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with batches for specific process id
-     */
-    public List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("processes.id", id, true);
-        return findDocuments(query);
-    }
+//    /**
+//     * Find batches by id of process.
+//     *
+//     * @param id
+//     *            of process
+//     * @return list of JSON objects with batches for specific process id
+//     */
+//    public List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+//        QueryBuilder query = createSimpleQuery("processes.id", id, true);
+//        return findDocuments(query);
+//    }
 
-    /**
-     * Find batches by title of process.
-     *
-     * @param title
-     *            of process
-     * @return list of JSON objects with batches for specific process title
-     */
-    public List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
-        QueryBuilder query = createSimpleQuery("processes.title", title, true, Operator.AND);
-        return findDocuments(query);
-    }
+//    /**
+//     * Find batches by title of process.
+//     *
+//     * @param title
+//     *            of process
+//     * @return list of JSON objects with batches for specific process title
+//     */
+//    public List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
+//        QueryBuilder query = createSimpleQuery("processes.title", title, true, Operator.AND);
+//        return findDocuments(query);
+//    }
 
-    @Override
-    public BatchInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
-        BatchInterface batch = DTOFactory.instance().newBatch();
-        batch.setId(getIdFromJSONObject(jsonObject));
-        batch.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
-        if (!related) {
-            convertRelatedJSONObjects(jsonObject, batch);
-        }
-        return batch;
-    }
+//    @Override
+//    public BatchInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+//        BatchInterface batchInterface = DTOFactory.instance().newBatch();
+//        batchInterface.setId(getIdFromJSONObject(jsonObject));
+//        batchInterface.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
+//        if (!related) {
+//            convertRelatedJSONObjects(jsonObject, batchInterface);
+//        }
+//        return batchInterface;
+//    }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batch) throws DataException {
-        batch.setProcesses(convertRelatedJSONObjectTo(jsonObject, BatchTypeField.PROCESSES.getKey(),
-            ServiceManager.getProcessService()));
-    }
+//    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batchInterface) throws DataException {
+//        batchInterface.setProcesses(convertRelatedJSONObjectToInterface(jsonObject, BatchTypeField.PROCESSES.getKey(),
+//            ServiceManager.getProcessService()));
+//    }
 
     /**
      * Returns true if the title (if set) or the
