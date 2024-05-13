@@ -639,7 +639,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
             Workpiece workpiece = tempProcess.getWorkpiece();
             workpiece.setId(tempProcess.getProcess().getId().toString());
             if (Objects.nonNull(rulesetManagement)) {
-                setProcessTitleMetadata(workpiece);
+                setProcessTitleMetadata(workpiece, tempProcess.getProcess().getTitle());
             }
             ServiceManager.getMetsService().save(workpiece, out);
         } catch (IOException e) {
@@ -647,10 +647,9 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         }
     }
 
-    private void setProcessTitleMetadata(Workpiece workpiece) {
+    private void setProcessTitleMetadata(Workpiece workpiece, String processTitle) {
         Collection<String> keysForProcessTitle = rulesetManagement.getFunctionalKeys(FunctionalMetadata.PROCESS_TITLE);
         if (!keysForProcessTitle.isEmpty()) {
-            String processTitle = currentProcess.getProcess().getTitle();
             addAllowedMetadataRecursive(workpiece.getLogicalStructure(), keysForProcessTitle, processTitle);
             addAllowedMetadataRecursive(workpiece.getPhysicalStructure(), keysForProcessTitle, processTitle);
         }
