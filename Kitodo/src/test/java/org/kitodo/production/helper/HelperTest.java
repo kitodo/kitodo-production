@@ -16,22 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.Test;
 
-class HelperTest {
+public class HelperTest {
 
     @Test
-    void generateRandomStringOnlyLetters() {
+    public void generateRandomStringOnlyLetters() {
         String randomString = Helper.generateRandomString(10);
         assertTrue(StringUtils.isAlpha(randomString), "Generated string contains not only letters");
     }
 
     @Test
-    void generateRandomStringOnlyNumbers() {
+    public void generateRandomStringOnlyNumbers() {
         String randomString = Helper.generateRandomString(10, false, true);
         assertTrue(StringUtils.isNumeric(randomString), "Generated string contains not only numbers");
     }
 
     @Test
-    void generateRandomStringLettersAndNumbers() {
+    public void generateRandomStringLettersAndNumbers() {
         String randomString = Helper.generateRandomString(10, true, true);
         assertTrue(StringUtils.isAlphanumeric(randomString), "Generated string contains not only letters and numbers");
     }
