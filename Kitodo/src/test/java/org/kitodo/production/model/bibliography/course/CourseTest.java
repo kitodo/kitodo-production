@@ -25,10 +25,10 @@ import org.kitodo.production.helper.XMLUtils;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-class CourseTest {
+public class CourseTest {
 
     @Test
-    void testCloneMethod() throws IOException, ParserConfigurationException, SAXException {
+    public void testCloneMethod() throws IOException, ParserConfigurationException, SAXException {
         String xmlString = new String(Files.readAllBytes(new File("src/test/resources/newspaper-course.xml").toPath()));
         Document xmlDocument = XMLUtils.parseXMLString(xmlString);
         Course course = new Course(xmlDocument);
