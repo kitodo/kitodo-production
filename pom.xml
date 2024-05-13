@@ -47,6 +47,7 @@
         <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-io.version>2.11.0</commons-io.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
         <commons-net.version>3.9.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
@@ -274,7 +275,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
-                <version>3.14.0</version>
+                <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
