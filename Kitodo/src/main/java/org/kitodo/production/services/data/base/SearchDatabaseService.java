@@ -53,7 +53,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *
      * @return loaded data
      */
-    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException;
 
     /**
@@ -138,7 +138,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @throws DataException
      *             that can be caused by ElasticSearch
      */
-    public abstract Long countResults(Map filters) throws DAOException, DataException;
+    public abstract Long countResults(Map<?, String> filters) throws DAOException, DataException;
 
     /**
      * Method necessary for get from database object by id. It is used in removeById
