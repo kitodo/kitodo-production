@@ -11,6 +11,7 @@
 
 package org.kitodo.production.services.data.base;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -24,6 +25,13 @@ import org.primefaces.model.SortOrder;
 
 public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>>
         implements SearchDatabaseServiceInterface<T> {
+
+    protected static final EnumMap<SortOrder, String> SORT_ORDER_MAPPING;
+    static {
+        SORT_ORDER_MAPPING = new EnumMap<>(SortOrder.class);
+        SORT_ORDER_MAPPING.put(SortOrder.ASCENDING, "ASC");
+        SORT_ORDER_MAPPING.put(SortOrder.DESCENDING, "DESC");
+    }
 
     protected S dao;
 

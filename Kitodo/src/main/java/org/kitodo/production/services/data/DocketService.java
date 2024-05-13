@@ -12,31 +12,29 @@
 package org.kitodo.production.services.data;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.DocketType;
-import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.ClientInterface;
-import org.kitodo.data.interfaces.DocketInterface;
-import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseDocketServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends ClientSearchService<Docket, DocketInterface, DocketDAO>
+public class DocketService extends SearchDatabaseService<Docket, DocketDAO>
         implements DatabaseDocketServiceInterface {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("file.keyword", "file");
+    }
 
     private static volatile DocketService instance = null;
 
@@ -44,8 +42,7 @@ public class DocketService extends ClientSearchService<Docket, DocketInterface, 
      * Constructor with Searcher and Indexer assigning.
      */
     private DocketService() {
-        super(new DocketDAO(), new DocketType(), new Indexer<>(Docket.class), new Searcher(Docket.class),
-                DocketTypeField.CLIENT_ID.getKey());
+        super(new DocketDAO());
     }
 
     /**
@@ -73,46 +70,33 @@ public class DocketService extends ClientSearchService<Docket, DocketInterface, 
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    public Long countResults(Map<?, String> filters) throws DataException {
+        try {
+            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
+                ServiceManager.getUserService().getSessionClientId());
+            return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(getDocketsForCurrentUserQuery());
-    }
-
-    @Override
-    public List<DocketInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<Docket> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException {
-        return findByQuery(getDocketsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
-    }
-
-    @Override
-    public List<Docket> getAllNotIndexed() {
-        return getByQuery("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
+        parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
+        parameters.put("limit", pageSize);
+        parameters.put("offset", first);
+        return getByQuery("FROM Docket WHERE client_id = :sessionClientId "
+                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
     }
 
     @Override
     public List<Docket> getAllForSelectedClient() {
         return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
-    }
-
-    @Override
-    public DocketInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
-        DocketInterface docket = DTOFactory.instance().newDocket();
-        docket.setId(getIdFromJSONObject(jsonObject));
-        docket.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
-        docket.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
-
-        ClientInterface client = DTOFactory.instance().newClient();
-        client.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
-        client.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
-
-        docket.setClient(client);
-        return docket;
     }
 
     /**
@@ -122,70 +106,8 @@ public class DocketService extends ClientSearchService<Docket, DocketInterface, 
      *            for get from database
      * @return list of dockets
      */
+    @Override
     public List<Docket> getByTitle(String title) {
         return dao.getByQuery("FROM Docket WHERE title = :title", Collections.singletonMap("title", title));
-    }
-
-    /**
-     * Find docket with exact file name.
-     *
-     * @param file
-     *            of the searched docket
-     * @return search result
-     */
-    Map<String, Object> findByFile(String file) throws DataException {
-        QueryBuilder query = createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND);
-        return findDocument(query);
-    }
-
-    /**
-     * Find dockets for client id.
-     *
-     * @param clientId
-     *            of the searched dockets
-     * @return search result
-     */
-    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
-        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
-        return findDocuments(query);
-    }
-
-    /**
-     * Find docket with exact title and file name.
-     * 
-     * @param title
-     *            of the searched docket
-     * @param file
-     *            of the searched docket
-     * @return search result
-     */
-    Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(DocketTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.must(createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND));
-        return findDocument(query);
-    }
-
-    /**
-     * Find docket with exact title or file name.
-     *
-     * @param title
-     *            of the searched docket
-     * @param file
-     *            of the searched docket
-     * @return search result
-     */
-    List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(DocketTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.should(createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND));
-        return findDocuments(query);
-    }
-
-    private QueryBuilder getDocketsForCurrentUserQuery() {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-                ServiceManager.getUserService().getSessionClientId(), true));
-        return query;
     }
 }
