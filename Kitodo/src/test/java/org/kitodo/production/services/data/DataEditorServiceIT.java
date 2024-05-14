@@ -20,11 +20,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
@@ -53,19 +53,19 @@ public class DataEditorServiceIT {
     private static final String CONTRIBUTOR_PERSON = "ContributorPerson";
     private int testProcessId = 0;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @After
+    @AfterEach
     public void removeTestProcess() throws DAOException {
         if (testProcessId > 0) {
             ProcessTestUtils.removeTestProcess(testProcessId);
@@ -79,8 +79,8 @@ public class DataEditorServiceIT {
     @Test
     public void shouldGetTitleKeys() {
         List<String> titleKeys = DataEditorService.getTitleKeys();
-        Assert.assertTrue(String.format("List of title keys should contain '%s'", TITLE_DOC_MAIN),
-                titleKeys.contains(TITLE_DOC_MAIN));
+        Assertions.assertTrue(titleKeys.contains(TITLE_DOC_MAIN),
+                String.format("List of title keys should contain '%s'", TITLE_DOC_MAIN));
     }
 
     /**
@@ -92,8 +92,8 @@ public class DataEditorServiceIT {
     @Test
     public void shouldGetTitleValue() throws DAOException, DataException, IOException {
         LogicalDivision logicalRoot = getLogicalRoot();
-        Assert.assertEquals(String.format("Title value of logical root should be '%s'", EXPECTED_TITLE), EXPECTED_TITLE,
-                DataEditorService.getTitleValue(logicalRoot, TITLE_DOC_MAIN));
+        Assertions.assertEquals(EXPECTED_TITLE, DataEditorService.getTitleValue(logicalRoot, TITLE_DOC_MAIN),
+                String.format("Title value of logical root should be '%s'", EXPECTED_TITLE));
     }
 
     /**
@@ -116,11 +116,12 @@ public class DataEditorServiceIT {
         DefaultTreeNode treeNode = new DefaultTreeNode();
         treeNode.setData(processFieldedMetadata);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(1);
-        Assert.assertNotNull("Ruleset should not be null", ruleset);
+        Assertions.assertNotNull(ruleset, "Ruleset should not be null");
         List<SelectItem> addableMetadata = DataEditorService.getAddableMetadataForGroup(ruleset, treeNode);
-        Assert.assertFalse("List of addable metadata should not be empty", addableMetadata.isEmpty());
-        Assert.assertTrue(String.format("List of addable metadata should contain '%s'", CONTRIBUTOR_PERSON),
-                addableMetadata.stream().anyMatch(metadata -> CONTRIBUTOR_PERSON.equals(metadata.getValue())));
+        Assertions.assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
+        Assertions.assertTrue(addableMetadata
+                        .stream().anyMatch(metadata -> CONTRIBUTOR_PERSON.equals(metadata.getValue())),
+                String.format("List of addable metadata should contain '%s'", CONTRIBUTOR_PERSON));
     }
 
     /**
@@ -139,10 +140,10 @@ public class DataEditorServiceIT {
         StructuralElementViewInterface divisionView = rulesetManagementInterface.getStructuralElementView(
                 logicalRoot.getType(), EDIT, priorityList);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(1);
-        Assert.assertNotNull("Ruleset should not be null", ruleset);
+        Assertions.assertNotNull(ruleset, "Ruleset should not be null");
         List<SelectItem> addableMetadata = DataEditorService.getAddableMetadataForStructureElement(divisionView,
                 Collections.emptyList(), Collections.emptyList(), ruleset);
-        Assert.assertFalse("List of addable metadata should not be empty", addableMetadata.isEmpty());
+        Assertions.assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
     }
 
     private Process addTestProcess() throws DAOException, DataException, IOException {
@@ -155,9 +156,9 @@ public class DataEditorServiceIT {
         Process testProcess = addTestProcess();
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
-        Assert.assertNotNull(workpiece);
+        Assertions.assertNotNull(workpiece);
         LogicalDivision logicalRoot = workpiece.getLogicalStructure();
-        Assert.assertNotNull(logicalRoot);
+        Assertions.assertNotNull(logicalRoot);
         return logicalRoot;
     }
 }
