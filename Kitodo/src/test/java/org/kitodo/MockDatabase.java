@@ -133,6 +133,8 @@ public class MockDatabase {
     public static final String MEDIA_REFERENCES_TEST_PROCESS_TITLE = "Media";
     public static final String METADATA_LOCK_TEST_PROCESS_TITLE = "Metadata lock";
     public static final String MEDIA_RENAMING_TEST_PROCESS_TITLE = "Rename media";
+    public static final String DRAG_N_DROP_TEST_PROCESS_TITLE = "Drag'n'drop";
+    public static final String CREATE_STRUCTURE_PROCESS_TITLE = "Create_Structure_Element";
     public static final String HIERARCHY_PARENT = "HierarchyParent";
     public static final String HIERARCHY_CHILD_TO_KEEP = "HierarchyChildToKeep";
     public static final String HIERARCHY_CHILD_TO_REMOVE = "HierarchyChildToRemove";
@@ -1105,6 +1107,26 @@ public class MockDatabase {
      */
     public static int insertTestProcessForRenamingMediaTestIntoSecondProject() throws DAOException, DataException {
         return insertTestProcessIntoSecondProject(MEDIA_RENAMING_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for moving pages via mouse drag'n'drop.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForDragNDropTestIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(DRAG_N_DROP_TEST_PROCESS_TITLE);
+    }
+
+    /**
+     * Add test process for creating structure elements.
+     * @return ID of created test process
+     * @throws DAOException when retrieving project fails
+     * @throws DataException when saving test process fails
+     */
+    public static int insertTestProcessForCreatingStructureElementIntoSecondProject() throws DAOException, DataException {
+        return insertTestProcessIntoSecondProject(CREATE_STRUCTURE_PROCESS_TITLE);
     }
 
     /**
