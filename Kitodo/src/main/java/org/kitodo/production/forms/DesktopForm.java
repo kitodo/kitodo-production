@@ -45,7 +45,7 @@ public class DesktopForm extends BaseForm {
     private static final String SORT_ID = "id";
     private List<TaskInterface> taskList = new ArrayList<>();
     private List<ProcessInterface> processList = new ArrayList<>();
-    private List<ProjectInterface> projectList = new ArrayList<>();
+    private List<? extends ProjectInterface> projectList = new ArrayList<>();
 
     /**
      * Default constructor.
@@ -112,7 +112,7 @@ public class DesktopForm extends BaseForm {
      *
      * @return project list
      */
-    public List<ProjectInterface> getProjects() {
+    public List<? extends ProjectInterface> getProjects() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList() && projectList.isEmpty()) {
                 projectList = ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);

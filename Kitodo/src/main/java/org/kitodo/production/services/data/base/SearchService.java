@@ -558,12 +558,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
         if (ids.isEmpty()) {
             return new ArrayList<>();
         }
-        if (service instanceof ProjectService) {
-            BoolQueryBuilder query = new BoolQueryBuilder();
-            query.must(createSetQueryForIds(ids));
-            query.must(((ProjectService)service).getProjectsForCurrentUserQuery());
-            return service.findByQuery(query, true);
-        }
+//        if (service instanceof ProjectService) {
+//            BoolQueryBuilder query = new BoolQueryBuilder();
+//            query.must(createSetQueryForIds(ids));
+//            query.must(((ProjectService)service).getProjectsForCurrentUserQuery());
+//            return service.findByQuery(query, true);
+//        }
         return service.findByQuery(createSetQueryForIds(ids), true);
     }
 

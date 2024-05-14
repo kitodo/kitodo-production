@@ -125,16 +125,16 @@ public class IndexingService {
         if (!searchServices.containsKey(objectType) || Objects.isNull(searchServices.get(objectType))) {
             switch (objectType) {
                 case BATCH:
-                    searchServices.put(objectType, ServiceManager.getBatchService());
+//                  searchServices.put(objectType, ServiceManager.getBatchService());
                     break;
                 case DOCKET:
-                    searchServices.put(objectType, ServiceManager.getDocketService());
+//                  searchServices.put(objectType, ServiceManager.getDocketService());
                     break;
                 case PROCESS:
                     searchServices.put(objectType, ServiceManager.getProcessService());
                     break;
                 case PROJECT:
-                    searchServices.put(objectType, ServiceManager.getProjectService());
+//                  searchServices.put(objectType, ServiceManager.getProjectService());
                     break;
                 case RULESET:
                     searchServices.put(objectType, ServiceManager.getRulesetService());

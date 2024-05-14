@@ -264,6 +264,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
         return countResults(filters, false, false);
     }
 
+    @Override
     public Long countResults(Map filters, boolean showClosedProcesses, boolean showInactiveProjects)
             throws DataException {
         return countDocuments(createUserProcessesQuery(filters, showClosedProcesses, showInactiveProjects));
@@ -404,6 +405,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @return List of loaded processes
      * @throws DataException if processes cannot be loaded from search index
      */
+    @Override
     public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
                                      org.primefaces.model.SortOrder sortOrder, Map filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
@@ -576,6 +578,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @param list
      *            of processes
      */
+    @Override
     public void saveList(List<Process> list) throws DAOException {
         dao.saveList(list);
     }
@@ -610,6 +613,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            online return exact matches
      * @return list of ProcessInterface objects with processes for specific metadata tag
      */
+    @Override
     public List<ProcessInterface> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
         String nameSearchKey = METADATA_SEARCH_KEY + ".name";
         String contentSearchKey = METADATA_SEARCH_KEY + ".content";
@@ -637,6 +641,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @throws DataException
      *             when there is an error on conversion
      */
+    @Override
     public List<ProcessInterface> findByTitle(String title) throws DataException {
         return convertJSONObjectsToInterfaces(findByTitle(title, true), true);
     }
@@ -650,6 +655,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @throws DataException
      *             when accessing the elasticsearch server fails
      */
+    @Override
     public List<ProcessInterface> findByAnything(String searchQuery) throws DataException {
         NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY,
             matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
@@ -715,6 +721,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            id of docket for search
      * @return list of JSON objects with processes for specific docket id
      */
+    @Override
     public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docketId, true);
         return findDocuments(query);
@@ -728,6 +735,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @return list of JSON objects with processes for specific template id
      * @throws DataException if documents cannot be retrieved
      */
+    @Override
     public List<Map<String, Object>> findByTemplate(int templateId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.TEMPLATE_ID.getKey(), templateId, true);
         return findDocuments(query);
@@ -740,6 +748,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            id of ruleset for search
      * @return list of JSON objects with processes for specific ruleset id
      */
+    @Override
     public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
         return findDocuments(query);
@@ -774,6 +783,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @throws DataException
      *             if the search engine fails
      */
+    @Override
     public List<ProcessInterface> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException {
 
@@ -811,6 +821,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @throws DataException
      *             if the search engine fails
      */
+    @Override
     public List<ProcessInterface> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException {
 
@@ -1011,9 +1022,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
     }
 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessInterface process) throws DataException {
+        try {
         int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
         if (project > 0) {
-            process.setProject(ServiceManager.getProjectService().findById(project, true));
+            process.setProject(ServiceManager.getProjectService().getById(project));
         }
         int ruleset = ProcessTypeField.RULESET.getIntValue(jsonObject);
         if (ruleset > 0) {
@@ -1025,6 +1037,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
         // TODO: leave it for now - right now it displays only status
         process.setTasks(convertRelatedJSONObjectTo(jsonObject, ProcessTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     private List<BatchInterface> getBatchesForProcess(Map<String, Object> jsonObject) throws DataException {
@@ -1194,6 +1209,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            if the dataDirectory is created for indexingAll
      * @return path
      */
+    @Override
     public URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         if (Objects.isNull(process.getProcessBaseUri())) {
             process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
@@ -1217,6 +1233,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            process to get the dataDirectory from
      * @return path
      */
+    @Override
     public String getProcessDataDirectory(ProcessInterface process) {
         if (Objects.isNull(process.getProcessBase())) {
             process.setProcessBase(fileService.getProcessBaseUriForExistingProcess(process));
@@ -1721,6 +1738,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *          if the type cannot be found in the index (e.g. because the process
      *          cannot be found in the index)
      */
+    @Override
     public String getBaseType(int processId) throws DataException {
         ProcessInterface process = findById(processId, true);
         if (Objects.nonNull(process)) {
@@ -1762,6 +1780,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      *            as String
      * @return amount as Long
      */
+    @Override
     public Long findNumberOfProcessesWithTitle(String title) throws DataException {
         return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND));
     }
@@ -2234,6 +2253,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @throws DataException
      *             if the process cannot be saved
      */
+    @Override
     public void updateChildrenFromLogicalStructure(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
         removeLinksFromNoLongerLinkedProcesses(process, logicalStructure);
@@ -2314,6 +2334,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * @return number of direct children as int
      * @throws DAOException when query to database fails
      */
+    @Override
     public int getNumberOfChildren(int processId) throws DAOException {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
     }
@@ -2741,6 +2762,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
      * Get template processes sorted by title.
      * @return template processes sorted by title
      */
+    @Override
     public List<Process> getTemplateProcesses() throws DataException, DAOException {
         List<Process> templateProcesses = new ArrayList<>();
         BoolQueryBuilder inChoiceListShownQuery = new BoolQueryBuilder();

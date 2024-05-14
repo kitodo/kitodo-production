@@ -13,8 +13,6 @@ package org.kitodo.production.services.data;
 
 import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
 
-import java.io.IOException;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -23,40 +21,29 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.IdsQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.ProjectType;
-import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.TemplateInterface;
 import org.kitodo.exceptions.ProjectDeletionException;
-import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseProjectServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class ProjectService extends ClientSearchService<Project, ProjectInterface, ProjectDAO>
+public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         implements DatabaseProjectServiceInterface {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+    }
 
     private static volatile ProjectService instance = null;
 
@@ -64,8 +51,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
      * Constructor with Searcher and Indexer assigning.
      */
     private ProjectService() {
-        super(new ProjectDAO(), new ProjectType(), new Indexer<>(Project.class), new Searcher(Project.class),
-                ProjectTypeField.CLIENT_ID.getKey());
+        super(new ProjectDAO());
     }
 
     /**
@@ -87,71 +73,20 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
         return localReference;
     }
 
-    /**
-     * Method saves processes and templates related to modified project.
-     *
-     * @param project
-     *            object
-     */
-    @Override
-    protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
-        manageProcessesDependenciesForIndex(project);
-        manageTemplatesDependenciesForIndex(project);
-    }
-
-    /**
-     * Management of processes for project object.
-     *
-     * @param project
-     *            object
-     */
-    private void manageProcessesDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            for (Process process : project.getProcesses()) {
-                ServiceManager.getProcessService().removeFromIndex(process, false);
-            }
-        }
-    }
-
-    /**
-     * Management of templates for project object.
-     *
-     * @param project
-     *            object
-     */
-    private void manageTemplatesDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            for (Template template : project.getTemplates()) {
-                template.getProjects().remove(project);
-            }
-        }
-
-        for (Template template : project.getTemplates()) {
-            ServiceManager.getTemplateService().saveToIndex(template, false);
-        }
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Project");
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(getProjectsForCurrentUserQuery());
-    }
-
-    @Override
-    public List<Project> getAllNotIndexed() {
-        return getByQuery("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    public Long countResults(Map<?, String> filters) throws DataException {
+        try {
+            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
+                ServiceManager.getUserService().getSessionClientId());
+            return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE client_id = :sessionClientId", parameters);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
@@ -162,10 +97,16 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
     }
 
     @Override
-    public List<ProjectInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException {
-        return findByQuery(getProjectsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
+        parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
+        parameters.put("limit", pageSize);
+        parameters.put("offset", first);
+        return getByQuery("FROM Docket WHERE client_id = :sessionClientId "
+                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
     }
 
     /**
@@ -176,75 +117,62 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
      *            user which is going to be edited
      * @return list of all matching projects
      */
-    public List<ProjectInterface> findAllAvailableForAssignToUser(User user) throws DataException {
-        return findAvailableForAssignToUser(user);
-    }
-
-    private List<ProjectInterface> findAvailableForAssignToUser(User user) throws DataException {
-
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        for (Client client : user.getClients()) {
-            query.should(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), client.getId(), true));
-        }
-
-        List<ProjectInterface> projects = findByQuery(query, true);
-        List<ProjectInterface> alreadyAssigned = new ArrayList<>();
-        for (Project project : user.getProjects()) {
-            alreadyAssigned.addAll(
-                projects.stream().filter(currentProject -> currentProject.getId().equals(project.getId()))
-                        .collect(Collectors.toList()));
-        }
-        projects.removeAll(alreadyAssigned);
-        return projects;
-    }
-
     @Override
-    public ProjectInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
-        ProjectInterface project = DTOFactory.instance().newProject();
-        project.setId(getIdFromJSONObject(jsonObject));
-        project.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
-        try {
-            project.setStartTime(ProjectTypeField.START_DATE.getStringValue(jsonObject));
-            project.setEndTime(ProjectTypeField.END_DATE.getStringValue(jsonObject));
-        } catch (ParseException e) {
-            throw new DataException(e);
-        }
-        project.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
-        project.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
-        project.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
-        project.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
-        ClientInterface client = DTOFactory.instance().newClient();
-        client.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
-        client.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
-        project.setClient(client);
-        project.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
-        if (!related) {
-            convertRelatedJSONObjects(jsonObject, project);
-        } else {
-            project.setActiveTemplates(getTemplatesForProject(jsonObject));
-        }
-        return project;
+    public List<ProjectInterface> findAllAvailableForAssignToUser(User user) throws DataException {
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
-    private List<TemplateInterface> getTemplatesForProject(Map<String, Object> jsonObject) throws DataException {
-        List<TemplateInterface> templates = new ArrayList<>();
-        List<Map<String, Object>> jsonArray = ProjectTypeField.TEMPLATES.getJsonArray(jsonObject);
+//    private List<ProjectInterface> findAvailableForAssignToUser(User user) throws DataException {
+//
+//        BoolQueryBuilder query = new BoolQueryBuilder();
+//        for (Client client : user.getClients()) {
+//            query.should(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), client.getId(), true));
+//        }
+//
+//        List<ProjectInterface> projectInterfaces = findByQuery(query, true);
+//        List<ProjectInterface> alreadyAssigned = new ArrayList<>();
+//        for (Project project : user.getProjects()) {
+//            alreadyAssigned.addAll(projectInterfaces.stream().filter(projectInterface -> projectInterface.getId().equals(project.getId()))
+//                    .collect(Collectors.toList()));
+//        }
+//        projectInterfaces.removeAll(alreadyAssigned);
+//        return projectInterfaces;
+//    }
 
-        for (Map<String, Object> singleObject : jsonArray) {
-            TemplateInterface template = DTOFactory.instance().newTemplate();
-            template.setId(TemplateTypeField.ID.getIntValue(singleObject));
-            template.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
-            templates.add(template);
-        }
-        return templates.stream().filter(TemplateInterface::isActive).collect(Collectors.toList());
-    }
+//    @Override
+//    public ProjectInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
+//        ProjectInterface projectInterface = DTOFactory.instance().newProject();
+//        projectInterface.setId(getIdFromJSONObject(jsonObject));
+//        projectInterface.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
+//        try {
+//            projectInterface.setStartTime(ProjectTypeField.START_DATE.getStringValue(jsonObject));
+//            projectInterface.setEndTime(ProjectTypeField.END_DATE.getStringValue(jsonObject));
+//        } catch (ParseException e) {
+//            throw new DataException(e);
+//        }
+//        projectInterface.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
+//        projectInterface.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
+//        projectInterface.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
+//        projectInterface.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
+//        ClientInterface clientInterface = DTOFactory.instance().newClient();
+//        clientInterface.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
+//        clientInterface.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
+//        projectInterface.setClient(clientInterface);
+//        projectInterface.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
+//        if (!related) {
+//            convertRelatedJSONObjects(jsonObject, projectInterface);
+//        } else {
+//            projectInterface.setActiveTemplates(getTemplatesForProjectInterface(jsonObject));
+//        }
+//        return projectInterface;
+//    }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectInterface project) throws DataException {
-        // TODO: not clear if project lists will need it
-        project.setUsers(new ArrayList<>());
-        project.setActiveTemplates(convertRelatedJSONObjectTo(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-            ServiceManager.getTemplateService()).stream().filter(TemplateInterface::isActive).collect(Collectors.toList()));
-    }
+//    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectInterface projectInterface) throws DataException {
+//        // TODO: not clear if project lists will need it
+//        projectInterface.setUsers(new ArrayList<>());
+//        projectInterface.setActiveTemplates(convertRelatedJSONObjectToInterface(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
+//            ServiceManager.getTemplateService()).stream().filter(TemplateInterface::isActive).collect(Collectors.toList()));
+//    }
 
     /**
      * Checks if a project can be actually used.
@@ -317,27 +245,28 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
         return duplicatedProject;
     }
 
-    /**
-     * Get query for finding projects for current user.
-     *
-     * @return query for finding projects for current user
-     */
-    public QueryBuilder getProjectsForCurrentUserQuery() {
-        List<Project> projects = ServiceManager.getUserService().getAuthenticatedUser().getProjects();
-        IdsQueryBuilder idsQueryBuilder = QueryBuilders.idsQuery();
-        for (Project project : projects) {
-            idsQueryBuilder.addIds(project.getId().toString());
-        }
-        return idsQueryBuilder;
-    }
+//    /**
+//     * Get query for finding projects for current user.
+//     *
+//     * @return query for finding projects for current user
+//     */
+//    public QueryBuilder getProjectsForCurrentUserQuery() {
+//        List<Project> projects = ServiceManager.getUserService().getAuthenticatedUser().getProjects();
+//        IdsQueryBuilder idsQueryBuilder = QueryBuilders.idsQuery();
+//        for (Project project : projects) {
+//            idsQueryBuilder.addIds(project.getId().toString());
+//        }
+//        return idsQueryBuilder;
+//    }
 
     /**
      * Find all Projects for Current User.
      * @return A list of all Projects assigned tot he current user
      * @throws DataException when elasticsearch query is failing
      */
+    @Override
     public List<ProjectInterface> findAllProjectsForCurrentUser() throws DataException {
-        return findByQuery(getProjectsForCurrentUserQuery(), false);
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
     /**
@@ -349,6 +278,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
      *            id of client
      * @return list of all projects templates as Project objects
      */
+    @Override
     public List<Project> getProjectsWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId WHERE p.title = :title";
         Map<String, Object> parameters = new HashMap<>();
@@ -362,6 +292,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
      * @param projects list of roles
      * @return String containing project titles
      */
+    @Override
     public String getProjectTitles(List<Project> projects) throws DataException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
                 && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {

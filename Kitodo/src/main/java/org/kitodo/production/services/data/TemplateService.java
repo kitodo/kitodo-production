@@ -144,6 +144,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
      *            id of project which is going to be edited
      * @return list of all matching templates
      */
+    @Override
     public List<TemplateInterface> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
         return findAvailableForAssignToUser(projectId);
     }
@@ -214,9 +215,9 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
 
     private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateInterface template)
             throws DataException {
-        template.setProjects(convertRelatedJSONObjectTo(jsonObject, TemplateTypeField.PROJECTS.getKey(),
-            ServiceManager.getProjectService()).stream().sorted(Comparator.comparing(ProjectInterface::getTitle))
-                .collect(Collectors.toList()));
+//        templateInterface.setProjects(convertRelatedJSONObjectToInterface(jsonObject, TemplateTypeField.PROJECTS.getKey(),
+//            ServiceManager.getProjectService()).stream().sorted(Comparator.comparing(ProjectInterface::getTitle))
+//                .collect(Collectors.toList()));
     }
 
     /**
@@ -226,6 +227,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
      *            id of docket for search
      * @return list of JSON objects with templates for specific docket id
      */
+    @Override
     public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
         QueryBuilder query = createSimpleQuery(TemplateTypeField.DOCKET.getKey(), docketId, true);
         return findDocuments(query);
@@ -238,6 +240,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
      *            id of ruleset for search
      * @return list of JSON objects with templates for specific ruleset id
      */
+    @Override
     public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         QueryBuilder query = createSimpleQuery(TemplateTypeField.RULESET_ID.getKey(), rulesetId, true);
         return findDocuments(query);
@@ -316,6 +319,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
      * @param showInactiveTemplates
      *            as boolean
      */
+    @Override
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
     }
@@ -478,6 +482,7 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
      *            id of client
      * @return list of all process templates as Template objects
      */
+    @Override
     public List<Template> getTemplatesWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT t FROM Template AS t INNER JOIN t.client AS c WITH c.id = :clientId WHERE t.title = :title";
         Map<String, Object> parameters = new HashMap<>();
