@@ -32,4 +32,5 @@ public final class TestConstants {
     public static final String IDENTIFIER = "Identifier";
     public static final String VALUE = "value";
     public static final String TEST_RULESET = "src/test/resources/rulesets/ruleset_test.xml";
+    public static final String TITLE_DOC_MAIN = "TitleDocMain";
 }
