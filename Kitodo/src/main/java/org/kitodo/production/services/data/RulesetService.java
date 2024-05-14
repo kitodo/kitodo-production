@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -23,9 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.jboss.weld.exceptions.UnsupportedOperationException;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
@@ -46,12 +45,20 @@ import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseRulesetServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class RulesetService extends ClientSearchService<Ruleset, RulesetInterface, RulesetDAO>
+public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO>
         implements DatabaseRulesetServiceInterface {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("file.keyword", "file");
+        SORT_FIELD_MAPPING.put("orderMetadataByRuleset", "orderMetadataByRuleset");
+    }
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
     private static volatile RulesetService instance = null;
@@ -60,8 +67,7 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetInterfac
      * Constructor with Searcher and Indexer assigning.
      */
     private RulesetService() {
-        super(new RulesetDAO(), new RulesetType(), new Indexer<>(Ruleset.class), new Searcher(Ruleset.class),
-                RulesetTypeField.CLIENT_ID.getKey());
+        super(new RulesetDAO());
     }
 
     /**
@@ -89,48 +95,32 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetInterfac
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
     public Long countResults(Map filters) throws DataException {
-        return countDocuments(getRulesetsForCurrentUserQuery());
-    }
+        try {
+            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
+                ServiceManager.getUserService().getSessionClientId());
+            return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }    }
 
     @Override
-    public List<RulesetInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<Ruleset> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
-        return findByQuery(getRulesetsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
-    }
-
-    @Override
-    public List<Ruleset> getAllNotIndexed() {
-        return getByQuery("FROM Ruleset WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
+        parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
+        parameters.put("limit", pageSize);
+        parameters.put("offset", first);
+        return getByQuery("FROM Ruleset WHERE client_id = :sessionClientId "
+                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
     }
 
     @Override
     public List<Ruleset> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Ruleset AS r INNER JOIN r.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
-    }
-
-    @Override
-    public RulesetInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
-        RulesetInterface ruleset = DTOFactory.instance().newRuleset();
-        ruleset.setId(getIdFromJSONObject(jsonObject));
-        ruleset.setTitle(RulesetTypeField.TITLE.getStringValue(jsonObject));
-        ruleset.setFile(RulesetTypeField.FILE.getStringValue(jsonObject));
-        ruleset.setOrderMetadataByRuleset(
-            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(jsonObject));
-
-        ClientInterface client = DTOFactory.instance().newClient();
-        client.setId(RulesetTypeField.CLIENT_ID.getIntValue(jsonObject));
-        client.setName(RulesetTypeField.CLIENT_NAME.getStringValue(jsonObject));
-
-        ruleset.setClient(client);
-        return ruleset;
     }
 
     /**
@@ -140,65 +130,66 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetInterfac
      *            for get from database
      * @return list of rulesets
      */
+    @Override
     public List<Ruleset> getByTitle(String title) {
         return dao.getByQuery("FROM Ruleset WHERE title = :title", Collections.singletonMap("title", title));
     }
 
-    /**
-     * Find ruleset with exact file.
-     *
-     * @param file
-     *            of the searched ruleset
-     * @return search result
-     */
-    public Map<String, Object> findByFile(String file) throws DataException {
-        QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true);
-        return findDocument(queryBuilder);
-    }
+//    /**
+//     * Find ruleset with exact file.
+//     *
+//     * @param file
+//     *            of the searched ruleset
+//     * @return search result
+//     */
+//    public Map<String, Object> findByFile(String file) throws DataException {
+//        QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true);
+//        return findDocument(queryBuilder);
+//    }
 
-    /**
-     * Find rulesets for client id.
-     *
-     * @param clientId
-     *            of the searched rulesets
-     * @return search result
-     */
-    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
-        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
-        return findDocuments(query);
-    }
+//    /**
+//     * Find rulesets for client id.
+//     *
+//     * @param clientId
+//     *            of the searched rulesets
+//     * @return search result
+//     */
+//    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
+//        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
+//        return findDocuments(query);
+//    }
 
-    /**
-     * Find ruleset with exact title and file name.
-     *
-     * @param title
-     *            of the searched ruleset
-     * @param file
-     *            of the searched ruleset
-     * @return search result
-     */
-    public Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.must(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true, Operator.AND));
-        return findDocument(query);
-    }
+//    /**
+//     * Find ruleset with exact title and file name.
+//     *
+//     * @param title
+//     *            of the searched ruleset
+//     * @param file
+//     *            of the searched ruleset
+//     * @return search result
+//     */
+//    public Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
+//        BoolQueryBuilder query = new BoolQueryBuilder();
+//        query.must(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true, Operator.AND));
+//        query.must(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true, Operator.AND));
+//        return findDocument(query);
+//    }
 
-    /**
-     * Find ruleset with exact title or file name.
-     *
-     * @param title
-     *            of the searched ruleset
-     * @param file
-     *            of the searched ruleset
-     * @return search result
-     */
-    public List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true));
-        query.should(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true));
-        return findDocuments(query);
-    }
+//    /**
+//     * Find ruleset with exact title or file name.
+//     *
+//     * @param title
+//     *            of the searched ruleset
+//     * @param file
+//     *            of the searched ruleset
+//     * @return search result
+//     */
+//    public List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
+//        BoolQueryBuilder query = new BoolQueryBuilder();
+//        query.should(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true));
+//        query.should(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true));
+//        return findDocuments(query);
+//    }
 
     /**
      * Get preferences.
@@ -217,12 +208,12 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetInterfac
         return myPreferences;
     }
 
-    private QueryBuilder getRulesetsForCurrentUserQuery() {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-                ServiceManager.getUserService().getSessionClientId(), true));
-        return query;
-    }
+//    private QueryBuilder getRulesetsForCurrentUserQuery() {
+//        BoolQueryBuilder query = new BoolQueryBuilder();
+//        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
+//                ServiceManager.getUserService().getSessionClientId(), true));
+//        return query;
+//    }
 
     /**
      * Acquires a ruleset Management and loads a ruleset into it.

@@ -1029,7 +1029,11 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
         }
         int ruleset = ProcessTypeField.RULESET.getIntValue(jsonObject);
         if (ruleset > 0) {
+<<<<<<< Upstream, based on 5760_1c_2
             process.setRuleset(ServiceManager.getRulesetService().findById(ruleset, true));
+=======
+            processInterface.setRuleset(ServiceManager.getRulesetService().getById(ruleset));
+>>>>>>> d9dc717 Base RulesetService on SearchDatabaseService
         }
 
         process.setBatchID(getBatchID(process));
