@@ -16,9 +16,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration2.XMLConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.event.EventListener;
+import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.enums.KitodoConfigFile;
@@ -43,13 +47,20 @@ public class ConfigOpac {
             throw new FileNotFoundException("File not found: " + opacConfiguration.getAbsolutePath());
         }
         try {
-            config = new XMLConfiguration(opacConfiguration.getFile());
+            // Create and initialize the builder
+            ReloadingFileBasedConfigurationBuilder<XMLConfiguration> builder =
+                new ReloadingFileBasedConfigurationBuilder<>(XMLConfiguration.class)
+                    .configure(new Parameters().xml()
+                        .setFile(opacConfiguration.getFile())
+                        .setListDelimiterHandler(new DefaultListDelimiterHandler('&')));
+            // Register an event listener for triggering reloading checks
+            builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
+                event -> builder.getReloadingController().checkForReloading(null));
+            config = builder.getConfiguration();
         } catch (ConfigurationException e) {
             logger.error(e.getMessage(), e);
             config = new XMLConfiguration();
         }
-        config.setListDelimiter('&');
-        config.setReloadingStrategy(new FileChangedReloadingStrategy());
         return config;
     }
 

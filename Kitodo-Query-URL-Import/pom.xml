@@ -49,10 +49,6 @@
             <artifactId>restito</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-collections</groupId>
-            <artifactId>commons-collections</artifactId>
-        </dependency>
-        <dependency>
             <groupId>commons-net</groupId>
             <artifactId>commons-net</artifactId>
         </dependency>

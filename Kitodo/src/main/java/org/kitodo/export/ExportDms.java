@@ -21,7 +21,6 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,6 +32,7 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.enums.ProcessState;

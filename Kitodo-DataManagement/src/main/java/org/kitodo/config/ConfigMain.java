@@ -13,10 +13,14 @@ package org.kitodo.config;
 
 import java.util.NoSuchElementException;
 
-import org.apache.commons.configuration.ConfigurationException;
-import org.apache.commons.configuration.ConversionException;
-import org.apache.commons.configuration.PropertiesConfiguration;
-import org.apache.commons.configuration.reloading.FileChangedReloadingStrategy;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.builder.ConfigurationBuilderEvent;
+import org.apache.commons.configuration2.builder.ReloadingFileBasedConfigurationBuilder;
+import org.apache.commons.configuration2.builder.fluent.Parameters;
+import org.apache.commons.configuration2.convert.DefaultListDelimiterHandler;
+import org.apache.commons.configuration2.event.EventListener;
+import org.apache.commons.configuration2.ex.ConfigurationException;
+import org.apache.commons.configuration2.ex.ConversionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -42,16 +46,23 @@ public class ConfigMain {
             synchronized (ConfigMain.class) {
                 PropertiesConfiguration initialized = config;
                 if (initialized == null) {
-                    PropertiesConfiguration.setDefaultListDelimiter('&');
                     try {
-                        initialized = new PropertiesConfiguration(CONFIG_FILE);
+                        // Create and initialize the builder
+                        ReloadingFileBasedConfigurationBuilder<PropertiesConfiguration> builder =
+                            new ReloadingFileBasedConfigurationBuilder<>(PropertiesConfiguration.class)
+                                .configure(new Parameters().properties()
+                                    .setFileName(CONFIG_FILE)
+                                    .setListDelimiterHandler(new DefaultListDelimiterHandler('&'))
+                                    .setIncludesAllowed(false));
+                        // Register an event listener for triggering reloading checks
+                        builder.addEventListener(ConfigurationBuilderEvent.CONFIGURATION_REQUEST,
+                            event -> builder.getReloadingController().checkForReloading(null));
+                        initialized = builder.getConfiguration();
                     } catch (ConfigurationException e) {
                         logger.warn("Loading of {} failed. Trying to start with empty configuration. Exception: {}",
                             CONFIG_FILE, e);
                         initialized = new PropertiesConfiguration();
                     }
-                    initialized.setListDelimiter('&');
-                    initialized.setReloadingStrategy(new FileChangedReloadingStrategy());
                     config = initialized;
                 }
             }

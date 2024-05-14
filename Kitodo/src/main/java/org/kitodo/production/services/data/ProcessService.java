@@ -72,7 +72,6 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -133,6 +132,7 @@ import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.BatchDTO;

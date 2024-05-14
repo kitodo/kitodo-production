@@ -17,8 +17,8 @@ import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import org.apache.commons.configuration.ConversionException;
-import org.apache.commons.configuration.PropertiesConfiguration;
+import org.apache.commons.configuration2.PropertiesConfiguration;
+import org.apache.commons.configuration2.ex.ConversionException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

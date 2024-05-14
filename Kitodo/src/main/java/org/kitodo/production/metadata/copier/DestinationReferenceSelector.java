@@ -14,7 +14,7 @@ package org.kitodo.production.metadata.copier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.commons.configuration.ConfigurationException;
+import org.kitodo.exceptions.ConfigurationException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
 
 /**

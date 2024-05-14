@@ -49,13 +49,13 @@ public class KitodoConfigTest {
     @Test
     public void shouldGetStringParameterWithoutDefault() {
         String param = KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG);
-        assertEquals("String", param, "Incorrect param!");
+        assertEquals("src/test/resources/", param, "Incorrect param!");
     }
 
     @Test
     public void shouldGetStringParameterWithDefault() {
         String param = KitodoConfig.getParameter(ParameterAPI.DIR_XML_CONFIG, "test");
-        assertEquals("String", param, "Incorrect param!");
+        assertEquals("src/test/resources/", param, "Incorrect param!");
     }
 
     @Test
