@@ -11,18 +11,21 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Objects;
+
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
 
 public class DataEditorFormTest {
 
@@ -36,13 +39,13 @@ public class DataEditorFormTest {
     public void shouldCheckIfConsecutivePagesAreSelected() {
         DataEditorForm dataEditorForm = new DataEditorForm();
         dataEditorForm.setSelectedMedia(prepareSelectedMedia(true, false));
-        Assertions.assertTrue(dataEditorForm.consecutivePagesSelected(),
+        assertTrue(dataEditorForm.consecutivePagesSelected(),
                 "Should return true when all pages are selected");
         dataEditorForm.setSelectedMedia(prepareSelectedMedia(false, false));
-        Assertions.assertFalse(dataEditorForm.consecutivePagesSelected(),
+        assertFalse(dataEditorForm.consecutivePagesSelected(),
                 "Should return false when only second of three pages is not selected");
         dataEditorForm.setSelectedMedia(prepareSelectedMedia(true, true));
-        Assertions.assertFalse(dataEditorForm.consecutivePagesSelected(),
+        assertFalse(dataEditorForm.consecutivePagesSelected(),
                 "Should return false when pages are selected spanning multiple chapters");
     }
 
@@ -59,9 +62,9 @@ public class DataEditorFormTest {
         selectedMedia.add(new ImmutablePair<>(firstPage, chapter));
         selectedMedia.add(new ImmutablePair<>(firstPage, chapter));
         dataEditorForm.setSelectedMedia(selectedMedia);
-        Assertions.assertTrue(dataEditorForm.isSelected(firstPage, chapter),
+        assertTrue(dataEditorForm.isSelected(firstPage, chapter),
                 "First page in chapter should be recognized as selected");
-        Assertions.assertFalse(dataEditorForm.isSelected(secondPage, chapter),
+        assertFalse(dataEditorForm.isSelected(secondPage, chapter),
                 "Second page in chapter should be recognized as not selected");
     }
 
@@ -79,7 +82,7 @@ public class DataEditorFormTest {
         titleMetadata.setKey(TITLE_METADATA_KEY);
         titleMetadata.setValue(TITLE_METADATA);
         structure.getMetadata().add(titleMetadata);
-        Assertions.assertEquals(TITLE_METADATA, dataEditorForm.getStructureElementTitle(structure),
+        assertEquals(TITLE_METADATA, dataEditorForm.getStructureElementTitle(structure),
                 "Wrong title metadata value retrieved from structure element");
     }
 

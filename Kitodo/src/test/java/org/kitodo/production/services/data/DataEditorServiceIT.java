@@ -11,6 +11,11 @@
 
 package org.kitodo.production.services.data;
 
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kitodo.test.utils.TestConstants.TITLE_DOC_MAIN;
 
 import java.io.File;
@@ -20,9 +25,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
+import javax.faces.model.SelectItem;
+
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
@@ -39,8 +45,6 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.primefaces.model.DefaultTreeNode;
-
-import javax.faces.model.SelectItem;
 
 public class DataEditorServiceIT {
 
@@ -79,7 +83,7 @@ public class DataEditorServiceIT {
     @Test
     public void shouldGetTitleKeys() {
         List<String> titleKeys = DataEditorService.getTitleKeys();
-        Assertions.assertTrue(titleKeys.contains(TITLE_DOC_MAIN),
+        assertTrue(titleKeys.contains(TITLE_DOC_MAIN),
                 String.format("List of title keys should contain '%s'", TITLE_DOC_MAIN));
     }
 
@@ -92,7 +96,7 @@ public class DataEditorServiceIT {
     @Test
     public void shouldGetTitleValue() throws DAOException, DataException, IOException {
         LogicalDivision logicalRoot = getLogicalRoot();
-        Assertions.assertEquals(EXPECTED_TITLE, DataEditorService.getTitleValue(logicalRoot, TITLE_DOC_MAIN),
+        assertEquals(EXPECTED_TITLE, DataEditorService.getTitleValue(logicalRoot, TITLE_DOC_MAIN),
                 String.format("Title value of logical root should be '%s'", EXPECTED_TITLE));
     }
 
@@ -116,10 +120,10 @@ public class DataEditorServiceIT {
         DefaultTreeNode treeNode = new DefaultTreeNode();
         treeNode.setData(processFieldedMetadata);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(1);
-        Assertions.assertNotNull(ruleset, "Ruleset should not be null");
+        assertNotNull(ruleset, "Ruleset should not be null");
         List<SelectItem> addableMetadata = DataEditorService.getAddableMetadataForGroup(ruleset, treeNode);
-        Assertions.assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
-        Assertions.assertTrue(addableMetadata
+        assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
+        assertTrue(addableMetadata
                         .stream().anyMatch(metadata -> CONTRIBUTOR_PERSON.equals(metadata.getValue())),
                 String.format("List of addable metadata should contain '%s'", CONTRIBUTOR_PERSON));
     }
@@ -140,10 +144,10 @@ public class DataEditorServiceIT {
         StructuralElementViewInterface divisionView = rulesetManagementInterface.getStructuralElementView(
                 logicalRoot.getType(), EDIT, priorityList);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(1);
-        Assertions.assertNotNull(ruleset, "Ruleset should not be null");
+        assertNotNull(ruleset, "Ruleset should not be null");
         List<SelectItem> addableMetadata = DataEditorService.getAddableMetadataForStructureElement(divisionView,
                 Collections.emptyList(), Collections.emptyList(), ruleset);
-        Assertions.assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
+        assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
     }
 
     private Process addTestProcess() throws DAOException, DataException, IOException {
@@ -156,9 +160,9 @@ public class DataEditorServiceIT {
         Process testProcess = addTestProcess();
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
-        Assertions.assertNotNull(workpiece);
+        assertNotNull(workpiece);
         LogicalDivision logicalRoot = workpiece.getLogicalStructure();
-        Assertions.assertNotNull(logicalRoot);
+        assertNotNull(logicalRoot);
         return logicalRoot;
     }
 }
