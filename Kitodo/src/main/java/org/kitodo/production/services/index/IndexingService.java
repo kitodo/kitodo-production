@@ -149,7 +149,7 @@ public class IndexingService {
 //                  searchServices.put(objectType, ServiceManager.getWorkflowService());
                     break;
                 case FILTER:
-                    searchServices.put(objectType, ServiceManager.getFilterService());
+//                  searchServices.put(objectType, ServiceManager.getFilterService());
                     break;
                 default:
                     return null;
@@ -278,6 +278,7 @@ public class IndexingService {
     private ExecutorService createDeamonizedExecutorService(int threads) {
         return Executors.newFixedThreadPool(threads,
             new ThreadFactory() {
+                @Override
                 public Thread newThread(Runnable r) {
                     Thread t = Executors.defaultThreadFactory().newThread(r);
                     t.setDaemon(true);

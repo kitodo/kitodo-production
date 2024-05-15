@@ -115,48 +115,48 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return localReference;
     }
 
-    /**
-     * Creates and returns a query to retrieve tasks for which the currently
-     * logged in user is eligible.
-     *
-     * @return query to retrieve tasks for which the user eligible.
-     */
-    private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-                                                 boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(getQueryForTemplate(0));
-        if (Objects.isNull(filter)) {
-            filter = "";
-        }
-        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
-        query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
-
-        query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
-                .map(TaskStatus::getValue).collect(Collectors.toSet())));
-
-        if (onlyOwnTasks) {
-            query.must(getQueryForProcessingUser(user.getId()));
-        } else {
-            BoolQueryBuilder subQuery = new BoolQueryBuilder();
-            subQuery.should(getQueryForProcessingUser(user.getId()));
-            for (Role role : user.getRoles()) {
-                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
-            }
-            query.must(subQuery);
-        }
-
-        if (hideCorrectionTasks) {
-            query.must(createSimpleQuery(TaskTypeField.CORRECTION.getKey(), false, true));
-        }
-
-        if (!showAutomaticTasks) {
-            query.must(getQueryForTypeAutomatic(false));
-        }
-
-        return query;
-    }
+//    /**
+//     * Creates and returns a query to retrieve tasks for which the currently
+//     * logged in user is eligible.
+//     *
+//     * @return query to retrieve tasks for which the user eligible.
+//     */
+//    private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+//                                                 boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
+//        User user = ServiceManager.getUserService().getAuthenticatedUser();
+//
+//        BoolQueryBuilder query = new BoolQueryBuilder();
+//        query.must(getQueryForTemplate(0));
+//        if (Objects.isNull(filter)) {
+//            filter = "";
+//        }
+//        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
+//        query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
+//
+//        query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
+//                .map(TaskStatus::getValue).collect(Collectors.toSet())));
+//
+//        if (onlyOwnTasks) {
+//            query.must(getQueryForProcessingUser(user.getId()));
+//        } else {
+//            BoolQueryBuilder subQuery = new BoolQueryBuilder();
+//            subQuery.should(getQueryForProcessingUser(user.getId()));
+//            for (Role role : user.getRoles()) {
+//                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
+//            }
+//            query.must(subQuery);
+//        }
+//
+//        if (hideCorrectionTasks) {
+//            query.must(createSimpleQuery(TaskTypeField.CORRECTION.getKey(), false, true));
+//        }
+//
+//        if (!showAutomaticTasks) {
+//            query.must(getQueryForTypeAutomatic(false));
+//        }
+//
+//        return query;
+//    }
 
     @Override
     public Long countDatabaseRows() throws DAOException {
@@ -177,8 +177,9 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
     public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                              boolean showAutomaticTasks, List<TaskStatus> taskStatus)
             throws DataException {
-        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
-                onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus));
+        throw new UnsupportedOperationException("not yet implemented");
+//        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
+//                onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus));
     }
 
     @Override
@@ -217,12 +218,13 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
             throws DataException {
-        if ("process.creationDate".equals(sortField)) {
-            sortField = "processForTask.creationDate";
-        }
-        String filter = ServiceManager.getFilterService().parseFilterString(filters);
-        return findByQuery(createUserTaskQuery(filter, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks,
-                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        throw new UnsupportedOperationException("not yet implemented");
+//        if ("process.creationDate".equals(sortField)) {
+//            sortField = "processForTask.creationDate";
+//        }
+//        String filter = ServiceManager.getFilterService().parseFilterString(filters);
+//        return findByQuery(createUserTaskQuery(filter, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks,
+//                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
     /**

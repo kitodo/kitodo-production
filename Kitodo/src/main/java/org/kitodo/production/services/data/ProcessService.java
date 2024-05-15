@@ -409,30 +409,32 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
     public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
                                      org.primefaces.model.SortOrder sortOrder, Map filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
-        String filter = ServiceManager.getFilterService().parseFilterString(filters);
-        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter),
-                getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        throw new UnsupportedOperationException("not yet implemented");
+//        String filter = ServiceManager.getFilterService().parseFilterString(filters);
+//        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter),
+//                getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
-    /**
-     * Gets the query for the current processfilter.
-     * @param showClosedProcesses if closed processes are shown
-     * @param showInactiveProjects if inactive projects are shown
-     * @param filter the filter to build the query for
-     * @return the query for the filter.
-     */
-    public BoolQueryBuilder getQueryForFilter(boolean showClosedProcesses, boolean showInactiveProjects, String filter) {
-        return new SearchResultGeneration(filter, showClosedProcesses,
-                showInactiveProjects).getQueryForFilter(ObjectType.PROCESS);
-    }
+//    /**
+//     * Gets the query for the current processfilter.
+//     * @param showClosedProcesses if closed processes are shown
+//     * @param showInactiveProjects if inactive projects are shown
+//     * @param filter the filter to build the query for
+//     * @return the query for the filter.
+//     */
+//    public BoolQueryBuilder getQueryForFilter(boolean showClosedProcesses, boolean showInactiveProjects, String filter) {
+//        return new SearchResultGeneration(filter, showClosedProcesses,
+//                showInactiveProjects).getQueryForFilter(ObjectType.PROCESS);
+//    }
 
 
     private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
         BoolQueryBuilder query = new BoolQueryBuilder();
 
         for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-            query.must(
-                ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
+//          query.must(
+//              ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
+            throw new UnsupportedOperationException("not yet implemented");
         }
         return query;
     }
@@ -839,9 +841,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessInterfa
     @Override
     public List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
             String filter, Collection<Integer> excludedProcessIds) throws DataException {
-        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter)
-                .mustNot(createSetQueryForIds(new ArrayList<>(excludedProcessIds))),
-            false);
+        throw new UnsupportedOperationException("not yet implemented");
+//        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter)
+//                .mustNot(createSetQueryForIds(new ArrayList<>(excludedProcessIds))),
+//            false);
     }
 
     /**

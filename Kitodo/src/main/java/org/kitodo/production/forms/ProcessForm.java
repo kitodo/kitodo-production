@@ -1143,13 +1143,14 @@ public class ProcessForm extends TemplateBaseForm {
      * @return amount of processes
      */
     public String getAmount() {
-        try {
-            return ServiceManager.getProcessService().count(ServiceManager.getProcessService()
-                    .getQueryForFilter(isShowClosedProcesses(), isShowInactiveProjects(), filter)).toString();
-        } catch (DataException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
+//        try {
+            throw new UnsupportedOperationException("not yet implemented");
+//            return ServiceManager.getProcessService().count(ServiceManager.getProcessService()
+//                    .getQueryForFilter(isShowClosedProcesses(), isShowInactiveProjects(), filter)).toString();
+//        } catch (DataException e) {
+//            Helper.setErrorMessage(e);
+//            return "";
+//        }
     }
 
     /**

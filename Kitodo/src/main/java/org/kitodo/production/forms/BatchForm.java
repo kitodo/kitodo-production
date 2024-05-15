@@ -14,8 +14,10 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.faces.event.ValueChangeEvent;
@@ -24,9 +26,9 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortOrder;
+//import org.elasticsearch.index.query.BoolQueryBuilder;
+//import org.elasticsearch.index.query.QueryBuilder;
+//import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -108,36 +110,21 @@ public class BatchForm extends BaseForm {
      * Filter processes.
      */
     public void filterProcesses() {
-        List<ProcessInterface> processes = new ArrayList<>();
-        QueryBuilder query = new BoolQueryBuilder();
+        Map<String, Object> parameters = new HashMap<>();
+        String query = "FROM Process";
 
         if (Objects.nonNull(this.processfilter)) {
-            try {
-                query = ServiceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
-                    false);
-            } catch (DataException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+            parameters.put("processfilter", this.processfilter);
+            query += " WHERE title LIKE '%:processfilter%'";
         }
-
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
-        try {
-            if (batchMaxSize > 0) {
-                processes = ServiceManager.getProcessService().findByQuery(query,
-                    ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
-            } else {
-                processes = ServiceManager.getProcessService().findByQuery(query,
-                    ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        if (batchMaxSize > 0) {
+            parameters.put("batchMaxSize", batchMaxSize);
+            query += " ORDER BY creationDate DESC LIMIT :batchMaxSize";
+        } else {
+            query += " ORDER BY creationDate DESC";
         }
-        try {
-            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processes);
-        } catch (DAOException e) {
-            this.currentProcesses = new ArrayList<>();
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+        this.currentProcesses = ServiceManager.getProcessService().getByQuery(query, parameters);
     }
 
     /**

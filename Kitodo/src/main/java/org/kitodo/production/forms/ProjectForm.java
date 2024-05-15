@@ -373,7 +373,7 @@ public class ProjectForm extends BaseForm {
      *
      * @return list of assignable templates
      */
-    public List<TemplateInterface> getTemplates() {
+    public List<Template> getTemplates() {
         try {
             return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
         } catch (DataException e) {
