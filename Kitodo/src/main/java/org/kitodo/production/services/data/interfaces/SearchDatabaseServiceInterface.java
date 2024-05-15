@@ -166,14 +166,16 @@ public interface SearchDatabaseServiceInterface<T extends BaseBean> {
      *            {@code null} or empty.<br>
      *            One of:<br>
      *            <ul>
-     *            <li>"title.keyword": Title [docket, ruleset, process template,
-     *            and workflow]</li>
+     *            <li>"title.keyword": Title [docket, ruleset, project, process
+     *            template, and workflow]</li>
      *            <li>"file.keyword": File [docket, and ruleset]</li>
+     *            <li>"metsRightsOwner.keyword": METS rights owner
+     *            [project]</li>
      *            <li>"orderMetadataByRuleset": Order metadata as in ruleset
      *            (otherwise alphabetically) [only ruleset]</li>
      *            <li>"ruleset.title.keyword": Ruleset [only process
      *            template]</li>
-     *            <li>"active": Active [only process template]</li>
+     *            <li>"active": Active [project, process template]</li>
      *            <li>"status": Status [only workflow]</li>
      *            </ul>
      * @param sortOrder

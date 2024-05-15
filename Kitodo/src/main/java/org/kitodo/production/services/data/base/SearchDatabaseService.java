@@ -15,11 +15,15 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.interfaces.SearchDatabaseServiceInterface;
 import org.primefaces.model.SortOrder;
 
@@ -32,6 +36,9 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         SORT_ORDER_MAPPING.put(SortOrder.ASCENDING, "ASC");
         SORT_ORDER_MAPPING.put(SortOrder.DESCENDING, "DESC");
     }
+
+    private static final Logger logger = LogManager.getLogger(SearchDatabaseService.class);
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
 
     protected S dao;
 
@@ -61,6 +68,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *
      * @return loaded data
      */
+    @Override
     public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException;
 
@@ -70,6 +78,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param baseIndexedBean
      *            object
      */
+    @Override
     public void saveToDatabase(T baseIndexedBean) throws DAOException {
         dao.save(baseIndexedBean);
     }
@@ -90,6 +99,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param baseIndexedBean
      *            object
      */
+    @Override
     public void removeFromDatabase(T baseIndexedBean) throws DAOException {
         dao.remove(baseIndexedBean);
     }
@@ -109,6 +119,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *
      * @return amount of all rows
      */
+    @Override
     public abstract Long countDatabaseRows() throws DAOException;
 
     /**
@@ -119,6 +130,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return amount of rows in database according to given query
      */
     public Long countDatabaseRows(String query) throws DAOException {
+        logger.debug(query);
         return dao.count(query);
     }
 
@@ -132,6 +144,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return amount of rows in database according to given query
      */
     public Long countDatabaseRows(String query, Map<String, Object> parameters) throws DAOException {
+        debugLogQuery(query, parameters);
         return dao.count(query, parameters);
     }
 
@@ -146,6 +159,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @throws DataException
      *             that can be caused by ElasticSearch
      */
+    @Override
     public abstract Long countResults(Map<?, String> filters) throws DAOException, DataException;
 
     /**
@@ -156,6 +170,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            of object
      * @return object
      */
+    @Override
     public T getById(Integer id) throws DAOException {
         return dao.getById(id);
     }
@@ -168,7 +183,9 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            as String
      * @return list of exact bean objects
      */
+    @Override
     public List<T> getByQuery(String query) {
+        logger.debug(query);
         return dao.getByQuery(query);
     }
 
@@ -182,6 +199,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return list of beans objects
      */
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters);
         return dao.getByQuery(query, parameters);
     }
 
@@ -190,6 +208,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *
      * @return list of all objects from database
      */
+    @Override
     public List<T> getAll() throws DAOException {
         return dao.getAll();
     }
@@ -203,6 +222,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            amount of results
      * @return list of all objects from database in given range
      */
+    @Override
     public List<T> getAll(int offset, int size) throws DAOException {
         return dao.getAll(offset, size);
     }
@@ -213,6 +233,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param baseBean
      *            bean to evict
      */
+    @Override
     public void evict(T baseBean) {
         this.dao.evict(baseBean);
     }
@@ -234,6 +255,32 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
             return " ORDER BY " + sortField + " DESC";
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters) {
+        if (logger.isDebugEnabled()) {
+            String resolved = PARAMETER_PATTERN.matcher(query).replaceAll(matchResult -> {
+                Object parameter = parameters.get(matchResult.group(1));
+                if (Objects.isNull(parameter)) {
+                    return matchResult.group();
+                }
+                if ((parameter instanceof String)
+                        && (((String) parameter).isEmpty() || ((String) parameter).contains(" "))) {
+                    return '"' + ((String) parameter) + '"';
+                }
+                return Objects.toString(parameter);
+            });
+            logger.debug(resolved);
         }
     }
 }

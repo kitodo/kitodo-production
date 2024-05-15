@@ -43,6 +43,9 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
     private static final Map<String, String> SORT_FIELD_MAPPING;
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("metsRightsOwner.keyword", "metsRightsOwner");
+        SORT_FIELD_MAPPING.put("active", "active");
     }
 
     private static volatile ProjectService instance = null;
@@ -99,80 +102,30 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
     @Override
     public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException {
-        Map<String, Object> parameters = new HashMap<>();
+        Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
         parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
         parameters.put("limit", pageSize);
         parameters.put("offset", first);
-        return getByQuery("FROM Docket WHERE client_id = :sessionClientId "
+        return getByQuery("FROM Project WHERE client_id = :sessionClientId "
                 + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
     }
 
-    /**
-     * Find all projects available to assign to the edited user. It will be
-     * displayed in the addProjectsPopup.
-     *
-     * @param user
-     *            user which is going to be edited
-     * @return list of all matching projects
-     */
     @Override
-    public List<ProjectInterface> findAllAvailableForAssignToUser(User user) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public List<Project> findAllAvailableForAssignToUser(User user) throws DataException {
+        Map<String, Object> parameters = new HashMap<>(7);
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        if (user.getProjects().isEmpty()) {
+            return getByQuery("FROM Project WHERE client_id = :sessionClientId", parameters);
+        } else {
+            String assignedProjects = user.getProjects().stream().map(Project::getId).map(Objects::toString)
+                    .collect(Collectors.joining(COMMA_DELIMITER, "(", ")"));
+            parameters.put("assignedProjects", assignedProjects);
+            return getByQuery("FROM Project WHERE client_id = :sessionClientId AND id NOT IN :assignedProjects",
+                parameters);
+        }
     }
-
-//    private List<ProjectInterface> findAvailableForAssignToUser(User user) throws DataException {
-//
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        for (Client client : user.getClients()) {
-//            query.should(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), client.getId(), true));
-//        }
-//
-//        List<ProjectInterface> projectInterfaces = findByQuery(query, true);
-//        List<ProjectInterface> alreadyAssigned = new ArrayList<>();
-//        for (Project project : user.getProjects()) {
-//            alreadyAssigned.addAll(projectInterfaces.stream().filter(projectInterface -> projectInterface.getId().equals(project.getId()))
-//                    .collect(Collectors.toList()));
-//        }
-//        projectInterfaces.removeAll(alreadyAssigned);
-//        return projectInterfaces;
-//    }
-
-//    @Override
-//    public ProjectInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-//        ProjectInterface projectInterface = DTOFactory.instance().newProject();
-//        projectInterface.setId(getIdFromJSONObject(jsonObject));
-//        projectInterface.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
-//        try {
-//            projectInterface.setStartTime(ProjectTypeField.START_DATE.getStringValue(jsonObject));
-//            projectInterface.setEndTime(ProjectTypeField.END_DATE.getStringValue(jsonObject));
-//        } catch (ParseException e) {
-//            throw new DataException(e);
-//        }
-//        projectInterface.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
-//        projectInterface.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
-//        projectInterface.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
-//        projectInterface.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
-//        ClientInterface clientInterface = DTOFactory.instance().newClient();
-//        clientInterface.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
-//        clientInterface.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
-//        projectInterface.setClient(clientInterface);
-//        projectInterface.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
-//        if (!related) {
-//            convertRelatedJSONObjects(jsonObject, projectInterface);
-//        } else {
-//            projectInterface.setActiveTemplates(getTemplatesForProjectInterface(jsonObject));
-//        }
-//        return projectInterface;
-//    }
-
-//    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectInterface projectInterface) throws DataException {
-//        // TODO: not clear if project lists will need it
-//        projectInterface.setUsers(new ArrayList<>());
-//        projectInterface.setActiveTemplates(convertRelatedJSONObjectToInterface(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-//            ServiceManager.getTemplateService()).stream().filter(TemplateInterface::isActive).collect(Collectors.toList()));
-//    }
 
     /**
      * Checks if a project can be actually used.
@@ -245,28 +198,9 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         return duplicatedProject;
     }
 
-//    /**
-//     * Get query for finding projects for current user.
-//     *
-//     * @return query for finding projects for current user
-//     */
-//    public QueryBuilder getProjectsForCurrentUserQuery() {
-//        List<Project> projects = ServiceManager.getUserService().getAuthenticatedUser().getProjects();
-//        IdsQueryBuilder idsQueryBuilder = QueryBuilders.idsQuery();
-//        for (Project project : projects) {
-//            idsQueryBuilder.addIds(project.getId().toString());
-//        }
-//        return idsQueryBuilder;
-//    }
-
-    /**
-     * Find all Projects for Current User.
-     * @return A list of all Projects assigned tot he current user
-     * @throws DataException when elasticsearch query is failing
-     */
     @Override
-    public List<ProjectInterface> findAllProjectsForCurrentUser() throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public List<Project> findAllProjectsForCurrentUser() throws DataException {
+        return ServiceManager.getUserService().getCurrentUser().getProjects();
     }
 
     /**

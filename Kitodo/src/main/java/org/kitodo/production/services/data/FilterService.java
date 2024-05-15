@@ -37,6 +37,7 @@ import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Filter;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -1100,7 +1101,7 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
      * @return List of String objects containing the project
      */
     public List<String> initProjects() {
-        List<ProjectInterface> projectsSortedByTitle = Collections.emptyList();
+        List<Project> projectsSortedByTitle = Collections.emptyList();
         try {
             projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
         } catch (DataException e) {

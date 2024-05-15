@@ -143,7 +143,7 @@ public class IndexingService {
                     searchServices.put(objectType, ServiceManager.getTaskService());
                     break;
                 case TEMPLATE:
-                    searchServices.put(objectType, ServiceManager.getTemplateService());
+//                  searchServices.put(objectType, ServiceManager.getTemplateService());
                     break;
                 case WORKFLOW:
                     searchServices.put(objectType, ServiceManager.getWorkflowService());
