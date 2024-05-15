@@ -66,7 +66,7 @@ public interface DatabaseTemplateServiceInterface extends SearchDatabaseServiceI
      *            {@code null}.
      * @return process templates that can be assigned
      */
-    List<TemplateInterface> findAllAvailableForAssignToProject(Integer projectId) throws DataException;
+    List<? extends TemplateInterface> findAllAvailableForAssignToProject(Integer projectId) throws DataException;
 
     /**
      * Determines all process templates with a specific ruleset.

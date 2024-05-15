@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -24,6 +26,7 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
+import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
@@ -41,6 +44,14 @@ import org.primefaces.model.SortOrder;
 
 public class TemplateService extends SearchDatabaseService<Template, TemplateDAO>
         implements DatabaseTemplateServiceInterface {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("ruleset.title.keyword", "ruleset_id");
+        SORT_FIELD_MAPPING.put("active", "active");
+    }
 
     private static final Logger logger = LogManager.getLogger(TemplateService.class);
     private static volatile TemplateService instance = null;
@@ -78,27 +89,44 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Long countResults(Map<?, String> filters) throws DataException {
+        try {
+            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
+                ServiceManager.getUserService().getSessionClientId());
+            return countDatabaseRows("SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId", parameters);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
-    public List<TemplateInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<Template> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
+        parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
+        parameters.put("limit", pageSize);
+        parameters.put("offset", first);
+        return getByQuery("FROM Template WHERE client_id = :sessionClientId "
+                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
     }
 
-    /**
-     * Find all templates available to assign to the edited project. It will be
-     * displayed in the templateAddPopup.
-     *
-     * @param projectId
-     *            id of project which is going to be edited
-     * @return list of all matching templates
-     */
     @Override
-    public List<TemplateInterface> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
+        try {
+            Map<String, Object> parameters = new HashMap<>();
+            parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+            List<Template> templates = getByQuery("FROM Template WHERE client_id = :sessionClientId AND active = 1",
+                parameters);
+            if (Objects.nonNull(projectId)) {
+                List<Template> assigned = ServiceManager.getProjectService().getById(projectId).getTemplates();
+                templates.removeAll(assigned);
+            }
+            return templates;
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     /**
@@ -126,28 +154,16 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         return duplicatedTemplate;
     }
 
-    /**
-     * Find templates by docket id.
-     *
-     * @param docketId
-     *            id of docket for search
-     * @return list of JSON objects with templates for specific docket id
-     */
     @Override
-    public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Collection<?> findByDocket(int docketId) throws DataException {
+        Map<String, Object> parameters = Collections.singletonMap("docketId", docketId);
+        return getByQuery("FROM Template WHERE docket_id = :docketId LIMIT 1", parameters);
     }
 
-    /**
-     * Find templates by ruleset id.
-     *
-     * @param rulesetId
-     *            id of ruleset for search
-     * @return list of JSON objects with templates for specific ruleset id
-     */
     @Override
-    public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+    public Collection<?> findByRuleset(int rulesetId) throws DataException {
+        Map<String, Object> parameters = Collections.singletonMap("rulesetId", rulesetId);
+        return getByQuery("FROM Template WHERE ruleset_id = :rulesetId LIMIT 1", parameters);
     }
 
     /**
