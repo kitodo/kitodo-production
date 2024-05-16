@@ -442,7 +442,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if an error occurs
      */
-    default List<ProcessInterface> getResultsWithFilter(String filter, boolean showClosedProcesses,
+    default List<? extends ProcessInterface> getResultsWithFilter(String filter, boolean showClosedProcesses,
             boolean showInactiveProjects) throws DataException {
         return loadData(0, Integer.MAX_VALUE, "id", SortOrder.ASCENDING,
             Collections.singletonMap(FilterService.FILTER_STRING, filter), showClosedProcesses, showInactiveProjects);
@@ -518,7 +518,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * SearchDatabaseServiceInterface. This could be equalized at some point in
      * the future.
      */
-    List<ProcessInterface> loadData(int offset, int limit, String sortField, SortOrder sortOrder,
+    List<? extends ProcessInterface> loadData(int offset, int limit, String sortField, SortOrder sortOrder,
             Map<?, String> filters, boolean showClosedProcesses, boolean showInactiveProjects) throws DataException;
 
     /**

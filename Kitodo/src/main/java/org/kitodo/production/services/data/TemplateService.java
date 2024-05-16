@@ -93,7 +93,10 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         try {
             Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
                 ServiceManager.getUserService().getSessionClientId());
-            return countDatabaseRows("SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId", parameters);
+            return countDatabaseRows(this.showInactiveTemplates
+                    ? "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId"
+                    : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = 1",
+                parameters);
         } catch (DAOException e) {
             throw new DataException(e);
         }
@@ -109,6 +112,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         parameters.put("limit", pageSize);
         parameters.put("offset", first);
         return getByQuery("FROM Template WHERE client_id = :sessionClientId "
+                + (this.showInactiveTemplates ? "" : "AND active = 1 ")
                 + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
     }
 

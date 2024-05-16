@@ -44,7 +44,7 @@ public class DesktopForm extends BaseForm {
     private static final String SORT_TITLE = "title";
     private static final String SORT_ID = "id";
     private List<TaskInterface> taskList = new ArrayList<>();
-    private List<ProcessInterface> processList = new ArrayList<>();
+    private List<? extends ProcessInterface> processList = new ArrayList<>();
     private List<? extends ProjectInterface> projectList = new ArrayList<>();
 
     /**
@@ -95,7 +95,7 @@ public class DesktopForm extends BaseForm {
      *
      * @return process list
      */
-    public List<ProcessInterface> getProcesses() {
+    public List<? extends ProcessInterface> getProcesses() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
                 processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);

@@ -29,6 +29,7 @@ import com.itextpdf.text.pdf.PdfWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
+import java.util.Map.Entry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -62,6 +63,7 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -75,6 +77,7 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.configuration.ConfigurationException;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -165,6 +168,7 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.primefaces.model.SortOrder;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.bar.BarChartOptions;
@@ -178,6 +182,15 @@ import org.xml.sax.SAXException;
 
 public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         implements DatabaseProcessServiceInterface {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+//        SORT_FIELD_MAPPING.put("title.keyword", "title");
+//        SORT_FIELD_MAPPING.put("ruleset.title.keyword", "ruleset_id");
+//        SORT_FIELD_MAPPING.put("active", "active");
+    }
+
     private static final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
@@ -258,9 +271,29 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     @Override
-    public Long countResults(Map filters, boolean showClosedProcesses, boolean showInactiveProjects)
+    public Long countResults(Map<?, String> filters, boolean showClosedProcesses, boolean showInactiveProjects)
             throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
+        try {
+            BeanQuery query = new BeanQuery(Process.class);
+            query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+            Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+            if (filtersIterator.hasNext()) {
+                String filterString = filtersIterator.next().getValue();
+                if (StringUtils.isNotBlank(filterString)) {
+                    query.restrictWithUserFilterString(filterString);
+                }
+            }
+            if (!showClosedProcesses) {
+                query.restrictToNotCompletedProcesses();
+            }
+            Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
+                    .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
+                    .collect(Collectors.toList());
+            query.restrictToProjects(projectIDs);
+            return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
@@ -370,19 +403,32 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     @Override
-    public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
-            org.primefaces.model.SortOrder sortOrder, Map filters) throws DataException {
+    public List<Process> loadData(int first, int pageSize, String sortField,
+            org.primefaces.model.SortOrder sortOrder, Map<?, String> filters) throws DataException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
     }
 
     @Override
-    public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
-                                     org.primefaces.model.SortOrder sortOrder, Map filters,
+    public List<Process> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        String filter = ServiceManager.getFilterService().parseFilterString(filters);
-//        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter),
-//                getSortBuilder(sortField, sortOrder), first, pageSize, false);
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+        if (filtersIterator.hasNext()) {
+            String filterString = filtersIterator.next().getValue();
+            if (StringUtils.isNotBlank(filterString)) {
+                query.restrictWithUserFilterString(filterString);
+            }
+        }
+        if (!showClosedProcesses) {
+            query.restrictToNotCompletedProcesses();
+        }
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
+                .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
+                .collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        return getByQuery(query.formWindowQuery(first, pageSize), query.getQueryParameters());
     }
 
 //    /**
