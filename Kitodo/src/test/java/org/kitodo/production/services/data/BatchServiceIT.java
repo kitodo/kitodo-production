@@ -12,15 +12,12 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -49,7 +46,7 @@ public class BatchServiceIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        given().ignoreExceptions().await().until(() -> Objects.nonNull(batchService.findById(1, true)));
+        given().ignoreExceptions().await().until(() -> Objects.nonNull(batchService.getById(1)));
     }
 
     @AfterClass
@@ -64,12 +61,6 @@ public class BatchServiceIT {
     @Test
     public void shouldCountAllBatches() throws DataException {
         assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count());
-    }
-
-    @Test
-    public void shouldCountAllBatchesAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", "First batch").operator(Operator.AND);
-        assertEquals("Batches were not counted correctly!", Long.valueOf(1), batchService.count(query));
     }
 
     @Test
@@ -117,64 +108,15 @@ public class BatchServiceIT {
         foundBatch = batchService.getById(6);
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
 
-        batchService.remove(6);
+        batchService.remove(foundBatch);
         exception.expect(DAOException.class);
         batchService.getById(6);
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         String expected = "First batch";
-        assertEquals(BATCH_NOT_FOUND, expected, batchService.findById(1).getTitle());
-    }
-
-    @Test
-    public void shouldFindManyByTitle() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 3, batchService.findByTitle("batch", true).size());
-    }
-
-    @Test
-    public void shouldFindOneByTitle() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1,
-                batchService.findByTitle("First batch", true).size());
-    }
-
-    @Test
-    public void shouldNotFindByType() throws DataException {
-        assertEquals("Batch was found in index!", 0, batchService.findByTitle("noBatch", true).size());
-    }
-
-    @Test
-    public void shouldFindManyByProcessId() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 2, batchService.findByProcessId(1).size());
-    }
-
-    @Test
-    public void shouldFindOneByProcessId() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1, batchService.findByProcessId(2).size());
-    }
-
-    @Test
-    public void shouldNotFindByProcessId() throws DataException {
-        assertEquals("Some batches were found in index!", 0, batchService.findByProcessId(3).size());
-    }
-
-    @Test
-    public void shouldFindManyByProcessTitle() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 2,
-                batchService.findByProcessTitle("First process").size());
-    }
-
-    @Test
-    public void shouldFindOneByProcessTitle() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1,
-                batchService.findByProcessTitle("Second process").size());
-    }
-
-    @Test
-    public void shouldNotFindByProcessTitle() throws DataException {
-        assertEquals("Some batches were found in index!", 0,
-                batchService.findByProcessTitle("DBConnectionTest").size());
+        assertEquals(BATCH_NOT_FOUND, expected, batchService.getById(1).getTitle());
     }
 
     @Test

@@ -13,6 +13,8 @@ package org.kitodo.selenium;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.stream.Collectors;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -91,7 +93,8 @@ public class ListingSessionClientST extends BaseTestSelenium {
         int templatesDisplayed = projectsPage.countListedTemplates();
         assertEquals("Displayed wrong number of templates", 2, templatesDisplayed);
 
-        int workflowsInDatabase = ServiceManager.getWorkflowService().getAllForSelectedClient().size();
+        int workflowsInDatabase = ServiceManager.getWorkflowService().getAll().stream()
+                .filter(workflow -> workflow.getClient().getId() == 2).collect(Collectors.counting()).intValue();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 

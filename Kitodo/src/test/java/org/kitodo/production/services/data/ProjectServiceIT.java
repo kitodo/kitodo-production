@@ -12,15 +12,13 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -53,7 +51,7 @@ public class ProjectServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         await().until(() -> {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
-            return !projectService.findByTitle(firstProject, true).isEmpty();
+            return !Collections.singleton(projectService.getById(1)).isEmpty();
         });
     }
 
@@ -72,25 +70,19 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldCountAllProjectsAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", firstProject).operator(Operator.AND);
-        assertEquals("Projects were not counted correctly!", Long.valueOf(1), projectService.count(query));
-    }
-
-    @Test
     public void shouldCountAllDatabaseRowsForProjects() throws Exception {
         Long amount = projectService.countDatabaseRows();
         assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         assertTrue(projectNotFound,
-            projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1));
-        assertTrue(projectNotFound, projectService.findById(1).isActive());
-        assertEquals(projectNotFound, 2, projectService.findById(1).getActiveTemplates().size());
+            projectService.getById(1).getTitle().equals(firstProject) && projectService.getById(1).getId().equals(1));
+        assertTrue(projectNotFound, projectService.getById(1).isActive());
+        assertEquals(projectNotFound, 2, projectService.getById(1).getActiveTemplates().size());
 
-        assertFalse(projectNotFound, projectService.findById(3).isActive());
+        assertFalse(projectNotFound, projectService.getById(3).isActive());
     }
 
     @Test
@@ -150,14 +142,14 @@ public class ProjectServiceIT {
         Project foundProject = projectService.getById(projectId);
         assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
 
-        projectService.remove(projectId);
+        projectService.remove(foundProject);
         exception.expect(DAOException.class);
         projectService.getById(projectId);
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
-        assertEquals(projectNotFound, 1, projectService.findByTitle(firstProject, true).size());
+    public void shouldFindByTitle() throws DAOException {
+        assertEquals(projectNotFound, 1, Collections.singleton(projectService.getById(1)).size());
     }
 
     @Test
@@ -172,13 +164,5 @@ public class ProjectServiceIT {
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
         assertEquals("Client names doesnt match", "First client", project.getClient().getName());
-    }
-
-    @Test
-    public void findByIds() throws DataException {
-        ProjectService projectService = ServiceManager.getProjectService();
-        QueryBuilder projectsForCurrentUserQuery = projectService.getProjectsForCurrentUserQuery();
-        List<ProjectInterface> byQuery = projectService.findByQuery(projectsForCurrentUserQuery, true);
-        assertEquals("Wrong amount of projects found",2,byQuery.size());
     }
 }

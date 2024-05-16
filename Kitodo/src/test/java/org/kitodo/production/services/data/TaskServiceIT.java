@@ -74,7 +74,7 @@ public class TaskServiceIT {
     @Test
     public void shouldFindAllTasks() {
         await().untilAsserted(
-            () -> assertEquals("Not all tasks were found in index!", AMOUNT_TASKS, taskService.findAll().size()));
+            () -> assertEquals("Not all tasks were found in index!", AMOUNT_TASKS, taskService.getAll().size()));
     }
 
     @Test
@@ -152,7 +152,7 @@ public class TaskServiceIT {
         foundTask = taskService.getById(15);
         assertEquals("Additional task was not inserted in database!", "To remove", foundTask.getTitle());
 
-        taskService.remove(15);
+        taskService.remove(foundTask);
         exception.expect(DAOException.class);
         taskService.getById(14);
     }

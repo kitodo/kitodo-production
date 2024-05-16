@@ -52,7 +52,7 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindAll() throws Exception {
-        List<TemplateInterface> templates = templateService.findAll();
+        List<? extends TemplateInterface> templates = templateService.getAll();
         assertEquals("Found incorrect amount of templates!", 4, templates.size());
     }
 
@@ -92,11 +92,11 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldHasCompleteTasks() throws Exception {
-        TemplateInterface template = templateService.findById(1);
+        TemplateInterface template = templateService.getById(1);
         boolean condition = templateService.hasCompleteTasks(template.getTasks());
         assertTrue("Process doesn't have complete tasks!", condition);
 
-        template = templateService.findById(3);
+        template = templateService.getById(3);
         condition = templateService.hasCompleteTasks(template.getTasks());
         assertFalse("Process has complete tasks!", condition);
     }
