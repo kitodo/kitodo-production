@@ -11,9 +11,12 @@
 
 package org.kitodo.production.services.data;
 
+import java.text.CharacterIterator;
+import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -34,21 +37,51 @@ public class BeanQuery {
     }
 
     public void restrictToClient(int sessionClientId) {
-        restrictions.add(varName + ".project.client_id = :sessionClientId");
+        switch (objectClass) {
+            case "Process":
+                restrictions.add(varName + ".project.client_id = :sessionClientId");
+                break;
+            case "Task":
+                restrictions.add(varName + ".process.project.client_id = :sessionClientId");
+                break;
+            default:
+                throw new IllegalStateException("complete switch");
+        }
         parameters.put("sessionClientId", sessionClientId);
+    }
+
+    public void restrictToProjects(Collection<Integer> projectIDs) {
+        switch (objectClass) {
+            case "Process":
+                restrictions.add(varName + ".project_id IN (:projectIDs)");
+                break;
+            case "Task":
+                restrictions.add(varName + ".process.project_id IN (:projectIDs)");
+                break;
+            default:
+                throw new IllegalStateException("complete switch");
+        }
+        parameters.put("projectIDs", projectIDs);
+    }
+
+    public void restrictToNotCompletedProcesses() {
+        restrictions.add(varName + ".sortHelperStatus != '100000000000'");
     }
 
     public void restrictWithUserFilterString(String s) {
         // not yet implemented
     }
 
-    public void restrictToProjects(Collection<Integer> projectIDs) {
-        restrictions.add(varName + ".project_id IN (:projectIDs)");
-        parameters.put("projectIDs", projectIDs);
+    public void addIntegerRestriction(String column, int value) {
+        String parameterName = varName(column);
+        restrictions.add(varName + '.' + column + " = :" + parameterName);
+        parameters.put(parameterName, value);
     }
 
-    public void restrictToNotCompletedProcesses() {
-        restrictions.add(varName + ".sortHelperStatus != '100000000000'");
+    public void addInCollectionRestriction(String column, List<Integer> values) {
+        String parameterName = varName(column);
+        restrictions.add(varName + '.' + column + " IN (:" + parameterName + ')');
+        parameters.put(parameterName, values);
     }
 
     public void defineSorting(String sortField, SortOrder sortOrder) {
@@ -75,5 +108,23 @@ public class BeanQuery {
 
     public Map<String, Object> getQueryParameters() {
         return parameters;
+    }
+
+    private String varName(String input) {
+        StringBuilder result = new StringBuilder();
+        CharacterIterator inputIterator = new StringCharacterIterator(input);
+        boolean upperCase = false;
+        while (inputIterator.current() != CharacterIterator.DONE) {
+            char currentChar = inputIterator.current();
+            if (currentChar < '0' || (currentChar > '9' && currentChar < 'A')
+                    || (currentChar > 'Z' && currentChar < 'a') || currentChar > 'Z') {
+                upperCase = true;
+            } else {
+                result.append(upperCase ? Character.toUpperCase(currentChar) : Character.toLowerCase(currentChar));
+                upperCase = false;
+            }
+            inputIterator.next();
+        }
+        return result.toString();
     }
 }

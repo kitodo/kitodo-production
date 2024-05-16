@@ -13,15 +13,16 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.text.MessageFormat;
-import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -29,14 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -47,22 +44,16 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.TaskType;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.TaskInterface;
-import org.kitodo.data.interfaces.UserInterface;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.enums.GenerationMode;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -71,7 +62,7 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.command.KitodoScriptService;
-import org.kitodo.production.services.data.base.ProjectSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseTaskServiceInterface;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
@@ -83,7 +74,7 @@ import org.primefaces.model.SortOrder;
  * functions on the task because the task itself is a database bean and
  * therefore may not include functionality.
  */
-public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskDAO> implements DatabaseTaskServiceInterface {
+public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements DatabaseTaskServiceInterface {
 
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
@@ -92,8 +83,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      * Constructor with Searcher and Indexer assigning.
      */
     private TaskService() {
-        super(new TaskDAO(), new TaskType(), new Indexer<>(Task.class), new Searcher(Task.class),
-                TaskTypeField.CLIENT_ID.getKey(), TaskTypeField.RELATED_PROJECT_IDS.getKey());
+        super(new TaskDAO());
     }
 
     /**
@@ -164,12 +154,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
-                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
-    }
-
-    @Override
     public Long countResults(Map filters) throws DataException {
         return countResults(new HashMap<String, String>(filters), false, false, false, null);
     }
@@ -184,17 +168,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
     }
 
     @Override
-    public List<Task> getAllNotIndexed() {
-        return getByQuery("FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin")
-                + " AND (indexAction = 'INDEX' OR indexAction IS NULL)");
-    }
-
-    @Override
-    public List<Task> getAllForSelectedClient() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
     public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false,
@@ -202,26 +175,38 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
     }
 
     @Override
-    public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
+    public List<Task> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
             throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        if ("process.creationDate".equals(sortField)) {
-//            sortField = "processForTask.creationDate";
-//        }
-//        String filter = ServiceManager.getFilterService().parseFilterString(filters);
-//        return findByQuery(createUserTaskQuery(filter, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks,
-//                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
-    }
 
-    @Override
-    protected void manageDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
-        if (Objects.nonNull(task.getProcess())) {
-            manageProcessDependenciesForIndex(task);
-        } else if (Objects.nonNull(task.getTemplate())) {
-            manageTemplateDependenciesForIndex(task);
+        BeanQuery query = new BeanQuery(Task.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
+                .filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+        if (filtersIterator.hasNext()) {
+            String filterString = filtersIterator.next().getValue();
+            if (StringUtils.isNotBlank(filterString)) {
+                query.restrictWithUserFilterString(filterString);
+            }
         }
+        if (onlyOwnTasks) {
+            query.addIntegerRestriction("user_id", ServiceManager.getUserService().getCurrentUser().getId());
+        }
+        if (hideCorrectionTasks) {
+            query.addIntegerRestriction("correction", 0);
+        }
+        if (!showAutomaticTasks) {
+            query.addIntegerRestriction("typeAutomatic", 0);
+        }
+        if (!taskStatus.isEmpty()) {
+            List<Integer> tsl = taskStatus.stream().map(s -> s.getValue()).collect(Collectors.toList());
+            query.addInCollectionRestriction("processingStatus", tsl);
+        }
+        query.defineSorting(sortField, sortOrder);
+        return getByQuery(query.formWindowQuery(first, pageSize), query.getQueryParameters());
     }
 
     private void manageProcessDependenciesForIndex(Task task)
@@ -277,72 +262,8 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
 
     @Override
     public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
-        return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
-    }
-
-    @Override
-    public TaskInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
-        TaskInterface task = createTask(jsonObject);
-        convertTaskProjectFromJsonObjectTo(jsonObject, task);
-
-        /*
-         * We read the list of the process but not the list of templates, because only process tasks
-         * are displayed in the task list and reading the template list would result in
-         * never-ending loops as the list of templates reads the list of tasks.
-         */
-        int process = TaskTypeField.PROCESS_ID.getIntValue(jsonObject);
-        if (process > 0 && !related) {
-            try {
-                task.setProcess(ServiceManager.getProcessService().getById(process));
-                task.setBatchAvailable(ServiceManager.getProcessService()
-                        .isProcessAssignedToOnlyOneBatch(task.getProcess().getBatches()));
-            } catch (DAOException e) {
-                throw new DataException(e);
-            }
-        }
-
-        int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(jsonObject);
-        if (processingUser > 0) {
-            UserInterface user = DTOFactory.instance().newUser();
-            user.setId(processingUser);
-            user.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(jsonObject));
-            user.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(jsonObject));
-            user.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(jsonObject));
-            user.setFullName(TaskTypeField.PROCESSING_USER_FULLNAME.getStringValue(jsonObject));
-            task.setProcessingUser(user);
-        }
-        return task;
-    }
-
-    private TaskInterface createTask(Map<String, Object> jsonObject) throws DataException {
-        TaskInterface task = DTOFactory.instance().newTask();
-        task.setId(getIdFromJSONObject(jsonObject));
-        task.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
-        task.setLocalizedTitle(getLocalizedTitle(task.getTitle()));
-        task.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
-        int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
-        task.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
-        task.setProcessingStatusTitle(Helper.getTranslation(task.getProcessingStatus().getTitle()));
-        int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
-        task.setEditType(TaskEditType.getTypeFromValue(editType));
-        task.setEditTypeTitle(Helper.getTranslation(task.getEditType().getTitle()));
-        try {
-            task.setProcessingMoment(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
-            task.setProcessingBeginTime(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
-            task.setProcessingEndTime(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
-        } catch (ParseException e) {
-            throw new DataException(e);
-        }
-        task.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
-        task.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
-        task.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
-        task.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
-        task.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
-        task.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
-        task.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
-        task.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
-        task.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-        return task;
+        throw new UnsupportedOperationException("not yet implemented");
+        // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
     }
 
     /**
@@ -616,87 +537,87 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
     }
 
-    /**
-     * Find tasks by id of process.
-     *
-     * @param id
-     *            of process
-     * @return list of JSON objects with tasks for specific process id
-     */
-    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-        return findDocuments(getQueryForProcess(id));
-    }
+//    /**
+//     * Find tasks by id of process.
+//     *
+//     * @param id
+//     *            of process
+//     * @return list of JSON objects with tasks for specific process id
+//     */
+//    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+//        return findDocuments(getQueryForProcess(id));
+//    }
 
     @Override
     public List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
-        return findDocuments(getQueryForTemplate(id));
+        throw new UnsupportedOperationException("not yet implemented");
     }
 
-    /**
-     * Get query for automatic type of task.
-     *
-     * @param typeAutomatic
-     *            automatic type of task as boolean
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForTypeAutomatic(boolean typeAutomatic) {
-        return createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true);
-    }
+//    /**
+//     * Get query for automatic type of task.
+//     *
+//     * @param typeAutomatic
+//     *            automatic type of task as boolean
+//     * @return query as QueryBuilder
+//     */
+//    private QueryBuilder getQueryForTypeAutomatic(boolean typeAutomatic) {
+//        return createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true);
+//    }
 
-    /**
-     * Get query for process.
-     *
-     * @param processId
-     *            process id as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcess(int processId) {
-        return createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), processId, true);
-    }
+//    /**
+//     * Get query for process.
+//     *
+//     * @param processId
+//     *            process id as int
+//     * @return query as QueryBuilder
+//     */
+//    private QueryBuilder getQueryForProcess(int processId) {
+//        return createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), processId, true);
+//    }
 
-    /**
-     * Get query for processing user.
-     *
-     * @param processingUserId
-     *            processing user id as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingUser(int processingUserId) {
-        return createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUserId, true);
-    }
+//    /**
+//     * Get query for processing user.
+//     *
+//     * @param processingUserId
+//     *            processing user id as int
+//     * @return query as QueryBuilder
+//     */
+//    private QueryBuilder getQueryForProcessingUser(int processingUserId) {
+//        return createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUserId, true);
+//    }
 
-    /**
-     * Get query for processing status.
-     *
-     * @param processingStatus
-     *            processing status as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingStatus(int processingStatus) {
-        return createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-    }
+//    /**
+//     * Get query for processing status.
+//     *
+//     * @param processingStatus
+//     *            processing status as int
+//     * @return query as QueryBuilder
+//     */
+//    private QueryBuilder getQueryForProcessingStatus(int processingStatus) {
+//        return createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
+//    }
 
-    /**
-     * Get query for processing statuses.
-     *
-     * @param processingStatus
-     *            set of processing statuses as Integer
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForProcessingStatuses(Set<Integer> processingStatus) {
-        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-    }
+//    /**
+//     * Get query for processing statuses.
+//     *
+//     * @param processingStatus
+//     *            set of processing statuses as Integer
+//     * @return query as QueryBuilder
+//     */
+//    private QueryBuilder getQueryForProcessingStatuses(Set<Integer> processingStatus) {
+//        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
+//    }
 
-    /**
-     * Get query for template.
-     *
-     * @param templateId
-     *            template id as int
-     * @return query as QueryBuilder
-     */
-    private QueryBuilder getQueryForTemplate(int templateId) {
-        return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
-    }
+//    /**
+//     * Get query for template.
+//     *
+//     * @param templateId
+//     *            template id as int
+//     * @return query as QueryBuilder
+//     */
+//    private QueryBuilder getQueryForTemplate(int templateId) {
+//        return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
+//    }
 
     /**
      * The function determines, from projects, the folders whose contents can be

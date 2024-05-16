@@ -271,9 +271,9 @@ public interface DatabaseTaskServiceInterface extends SearchDatabaseServiceInter
      * SearchDatabaseServiceInterface. This could be equalized at some point in
      * the future.
      */
-    List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
-            boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks, List<TaskStatus> taskStatus)
-            throws DataException;
+    List<? extends TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
+            List<TaskStatus> taskStatus) throws DataException;
 
     // === alternative functions that are no longer required ===
 
