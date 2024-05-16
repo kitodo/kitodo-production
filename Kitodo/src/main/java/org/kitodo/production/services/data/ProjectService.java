@@ -203,15 +203,6 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         return ServiceManager.getUserService().getCurrentUser().getProjects();
     }
 
-    /**
-     * Get all projects templates for given title and client id.
-     *
-     * @param title
-     *            of Project
-     * @param clientId
-     *            id of client
-     * @return list of all projects templates as Project objects
-     */
     @Override
     public List<Project> getProjectsWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId WHERE p.title = :title";
@@ -221,11 +212,6 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         return getByQuery(query, parameters);
     }
 
-    /**
-     * Create and return String containing the titles of all given projects joined by a ", ".
-     * @param projects list of roles
-     * @return String containing project titles
-     */
     @Override
     public String getProjectTitles(List<Project> projects) throws DataException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()

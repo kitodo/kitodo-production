@@ -201,20 +201,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
                 Arrays.asList(TaskStatus.OPEN, TaskStatus.INWORK));
     }
 
-    /**
-     * Load tasks with given parameters.
-     * @param first index of first task to load
-     * @param pageSize number of tasks to load
-     * @param sortField name of field by which tasks are sorted
-     * @param sortOrder SortOrder by which tasks are sorted - either ascending or descending
-     * @param filters filter map
-     * @param onlyOwnTasks boolean controlling whether to load only tasks assigned to current user or not
-     * @param hideCorrectionTasks boolean controlling whether to load correction tasks or not
-     * @param showAutomaticTasks boolean controlling whether to load automatic tasks or not
-     * @param taskStatus list of TaskStatus by which tasks are filtered
-     * @return List of loaded tasks
-     * @throws DataException if tasks cannot be loaded from search index
-     */
     @Override
     public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
@@ -229,13 +215,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
 //                taskStatus), getSortBuilder(sortField, sortOrder), first, pageSize, false);
     }
 
-    /**
-     * Method saves or removes dependencies with process, users and user's
-     * groups related to modified task.
-     *
-     * @param task
-     *            object
-     */
     @Override
     protected void manageDependenciesForIndex(Task task) throws CustomResponseException, DataException, IOException {
         if (Objects.nonNull(task.getProcess())) {
@@ -296,11 +275,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         }
     }
 
-    /**
-     * Find the distinct task titles.
-     *
-     * @return a list of titles
-     */
     @Override
     public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
         return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
@@ -497,17 +471,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return "";
     }
 
-    /**
-     * Execute script for task.
-     *
-     * @param task
-     *            object
-     * @param script
-     *            String
-     * @param automatic
-     *            boolean
-     * @return int
-     */
     @Override
     public boolean executeScript(Task task, String script, boolean automatic) throws DataException {
         if (Objects.isNull(script) || script.isEmpty()) {
@@ -553,14 +516,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return executedSuccessful;
     }
 
-    /**
-     * Execute all scripts for step.
-     *
-     * @param task
-     *            StepObject
-     * @param automatic
-     *            boolean
-     */
     @Override
     public void executeScript(Task task, boolean automatic) throws DataException {
         String script = task.getScriptPath();
@@ -608,18 +563,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         save(task);
     }
 
-    /**
-     * Performs creating images when this happens automatically in a task.
-     *
-     * @param executingThread
-     *            Executing thread (displayed in the taskmanager)
-     * @param task
-     *            Task that generates images
-     * @param automatic
-     *            Whether it is an automatic task
-     * @throws DataException
-     *             if the task cannot be saved
-     */
     @Override
     public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
         try {
@@ -645,31 +588,11 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         new ExportDms(task).startExport(task);
     }
 
-    /**
-     * Get current tasks with exact title for batch with exact id.
-     *
-     * @param title
-     *            of task as String
-     * @param batchId
-     *            id of batch as Integer
-     * @return list of Task objects
-     */
     @Override
     public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
         return dao.getCurrentTasksOfBatch(title, batchId);
     }
 
-    /**
-     * Get all tasks between two given ordering of tasks for given process id.
-     *
-     * @param orderingMax
-     *            as Integer
-     * @param orderingMin
-     *            as Integer
-     * @param processId
-     *            id of process for which tasks are searched as Integer
-     * @return list of Task objects
-     */
     @Override
     public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
         return dao.getAllTasksInBetween(orderingMax, orderingMin, processId);
@@ -688,15 +611,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return dao.getNextTasksForProblemSolution(ordering, processId);
     }
 
-    /**
-     * Get previous tasks for problem solution for given process id.
-     *
-     * @param ordering
-     *            of Task for which it searches previous ones as Integer
-     * @param processId
-     *            id of process for which tasks are searched as Integer
-     * @return list of Task objects
-     */
     @Override
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
@@ -713,13 +627,6 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return findDocuments(getQueryForProcess(id));
     }
 
-    /**
-     * Find tasks by id of template.
-     *
-     * @param id
-     *            of template
-     * @return list of JSON objects with tasks for specific template id
-     */
     @Override
     public List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
         return findDocuments(getQueryForTemplate(id));

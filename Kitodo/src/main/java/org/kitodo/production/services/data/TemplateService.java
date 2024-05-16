@@ -233,12 +233,6 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         return true;
     }
 
-    /**
-     * Set show inactive templates.
-     *
-     * @param showInactiveTemplates
-     *            as boolean
-     */
     @Override
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
@@ -255,15 +249,6 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         return dao.getTemplatesWithTitle(title);
     }
 
-    /**
-     * Get all process templates for given title and client id.
-     *
-     * @param title
-     *            of Template
-     * @param clientId
-     *            id of client
-     * @return list of all process templates as Template objects
-     */
     @Override
     public List<Template> getTemplatesWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT t FROM Template AS t INNER JOIN t.client AS c WITH c.id = :clientId WHERE t.title = :title";

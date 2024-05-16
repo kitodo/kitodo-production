@@ -375,18 +375,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
     }
 
-    /**
-     * Load processes with given parameters.
-     * @param first index of first process to load
-     * @param pageSize number of processes to load
-     * @param sortField name of field by which processes are sorted
-     * @param sortOrder SortOrder by which processes are sorted - either ascending or descending
-     * @param filters filter map
-     * @param showClosedProcesses boolean controlling whether to load closed processes or not
-     * @param showInactiveProjects boolean controlling whether to load processes of closed projects or not
-     * @return List of loaded processes
-     * @throws DataException if processes cannot be loaded from search index
-     */
     @Override
     public List<ProcessInterface> loadData(int first, int pageSize, String sortField,
                                      org.primefaces.model.SortOrder sortOrder, Map filters,
@@ -541,12 +529,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return newList;
     }
 
-    /**
-     * Save list of processes to database.
-     *
-     * @param list
-     *            of processes
-     */
     @Override
     public void saveList(List<Process> list) throws DAOException {
         dao.saveList(list);
@@ -683,13 +665,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 //        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), projectId.toString(), true, Operator.AND);
 //    }
 
-    /**
-     * Find processes by docket id.
-     *
-     * @param docketId
-     *            id of docket for search
-     * @return list of JSON objects with processes for specific docket id
-     */
     @Override
     public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
         throw new UnsupportedOperationException("not yet implemented");
@@ -697,14 +672,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 //        return findDocuments(query);
     }
 
-    /**
-     * Find processes by template id.
-     *
-     * @param templateId
-     *          id of template for search
-     * @return list of JSON objects with processes for specific template id
-     * @throws DataException if documents cannot be retrieved
-     */
     @Override
     public List<Map<String, Object>> findByTemplate(int templateId) throws DataException {
         throw new UnsupportedOperationException("not yet implemented");
@@ -712,13 +679,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 //        return findDocuments(query);
     }
 
-    /**
-     * Find processes by ruleset id.
-     *
-     * @param rulesetId
-     *            id of ruleset for search
-     * @return list of JSON objects with processes for specific ruleset id
-     */
     @Override
     public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
         throw new UnsupportedOperationException("not yet implemented");
@@ -737,24 +697,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 //        return createSimpleQuery(ProcessTypeField.PROJECT_CLIENT_ID.getKey(), id, true);
 //    }
 
-    /**
-     * Searches for linkable processes based on user input. A process can be
-     * linked if it has the same rule set, belongs to the same client, and the
-     * topmost element of the logical outline below the selected parent element
-     * is an allowed child. For the latter, the data file must be read at the
-     * moment. This will be aborted after a timeout so that the user gets an
-     * answer (which may be incomplete) in finite time.
-     *
-     * @param searchInput
-     *            user input
-     * @param rulesetId
-     *            the id of the allowed ruleset
-     * @param allowedStructuralElementTypes
-     *            allowed topmost logical structural elements
-     * @return found processes
-     * @throws DataException
-     *             if the search engine fails
-     */
     @Override
     public List<ProcessInterface> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException {
@@ -776,24 +718,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 //        return linkableProcesses;
     }
 
-    /**
-     * Searches for linkable processes based on user input. A process can be
-     * linked if it has the same rule set, belongs to the same client, and the
-     * topmost element of the logical outline below the selected parent element
-     * is an allowed child. For the latter, the data file must be read at the
-     * moment. This will be aborted after a timeout so that the user gets an
-     * answer (which may be incomplete) in finite time.
-     *
-     * @param searchInput
-     *            user input
-     * @param projectId
-     *            the id of the allowed project
-     * @param rulesetId
-     *            the id of the allowed ruleset
-     * @return found processes
-     * @throws DataException
-     *             if the search engine fails
-     */
     @Override
     public List<ProcessInterface> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException {
@@ -1174,16 +1098,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
     }
 
-    /**
-     * Get process data directory.
-     * Don't save it to the database, if it is for indexingAll.
-     *
-     * @param process
-     *            object
-     * @param forIndexingAll
-     *            if the dataDirectory is created for indexingAll
-     * @return path
-     */
     @Override
     public URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         if (Objects.isNull(process.getProcessBaseUri())) {
@@ -1200,14 +1114,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return process.getProcessBaseUri();
     }
 
-    /**
-     * Get process data directory.
-     * Don't save it to the database, if it is for indexingAll.
-     *
-     * @param process
-     *            process to get the dataDirectory from
-     * @return path
-     */
     @Override
     public String getProcessDataDirectory(ProcessInterface process) {
         if (Objects.isNull(process.getProcessBase())) {
@@ -1702,17 +1608,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
     }
 
-    /**
-     * Returns the type of the top element of the logical structure, and thus the
-     * type of the workpiece of the process.
-     *
-     * @param processId
-     *          id of the process whose root type is to be determined
-     * @return the type of root element of the logical structure of the workpiece
-     * @throws DataException
-     *          if the type cannot be found in the index (e.g. because the process
-     *          cannot be found in the index)
-     */
     @Override
     public String getBaseType(int processId) throws DataException {
         try {
@@ -2216,22 +2111,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
     }
 
-    /**
-     * Updates the linked child processes to the level specified in the root
-     * element. Processes linked in the logical structure are linked in the database.
-     * For processes that are not linked in the logical structure, the link in the
-     * database is removed.
-     *
-     * @param process
-     *            parent process
-     * @param logicalStructure
-     *            the current state of the logical structure
-     * @throws DAOException
-     *             if a process is referenced with a URI whose ID does not
-     *             appear in the database
-     * @throws DataException
-     *             if the process cannot be saved
-     */
     @Override
     public void updateChildrenFromLogicalStructure(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
@@ -2307,12 +2186,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return parents;
     }
 
-    /**
-     * Get the number of direct children of the given process.
-     * @param processId id of the process
-     * @return number of direct children as int
-     * @throws DAOException when query to database fails
-     */
     @Override
     public int getNumberOfChildren(int processId) throws DAOException {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));

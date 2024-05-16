@@ -378,17 +378,12 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
     }
 
     /**
-     * Sets the record number of the process into the processBaseUri field. Can
-     * also save the process.
+     * Sets the record number of the process into the processBase field.
      *
      * @param process
      *            process for which the data record number should be placed in
-     *            the processBaseUri field
+     *            the processBase field
      * @return the record number
-     */
-    /*
-     * Since the moment this was introduced, I've never understood why this
-     * exists. Nor why property processBaseUri exists at all. See #5856
      */
     default String getProcessDataDirectory(ProcessInterface process) {
         return getProcessDataDirectory((Process) process, false).toString();

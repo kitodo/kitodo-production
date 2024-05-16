@@ -86,12 +86,6 @@ public class AuthorityService extends SearchDatabaseService<Authority, Authority
         return CLIENT_AUTHORITY_SUFFIX;
     }
 
-    /**
-     * Refresh user's group object after update.
-     *
-     * @param authority
-     *            object
-     */
     @Override
     public void refresh(Authority authority) {
         dao.refresh(authority);

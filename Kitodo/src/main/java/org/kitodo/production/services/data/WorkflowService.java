@@ -112,21 +112,11 @@ public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO
         return duplicatedWorkflow;
     }
 
-    /**
-     * Get available workflows - available means that workflow has status active
-     * and is assigned to selected session client.
-     *
-     * @return list of available Workflow objects
-     */
     @Override
     public List<Workflow> getAvailableWorkflows() {
         return dao.getAvailableWorkflows(ServiceManager.getUserService().getSessionClientId());
     }
 
-    /**
-     * Get all workflows with status 'active'.
-     * @return a list of active workflows
-     */
     @Override
     public List<Workflow> getAllActiveWorkflows() {
         return dao.getAllActive();

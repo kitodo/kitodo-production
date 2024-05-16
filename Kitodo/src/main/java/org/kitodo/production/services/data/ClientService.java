@@ -72,12 +72,6 @@ public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
         return dao.getByQuery("FROM Client" + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
-    /**
-     * Refresh project object after update.
-     *
-     * @param client
-     *            object
-     */
     @Override
     public void refresh(Client client) {
         dao.refresh(client);

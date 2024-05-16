@@ -99,13 +99,6 @@ public class DocketService extends SearchDatabaseService<Docket, DocketDAO>
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
-    /**
-     * Get list of dockets for given title.
-     * 
-     * @param title
-     *            for get from database
-     * @return list of dockets
-     */
     @Override
     public List<Docket> getByTitle(String title) {
         return dao.getByQuery("FROM Docket WHERE title = :title", Collections.singletonMap("title", title));

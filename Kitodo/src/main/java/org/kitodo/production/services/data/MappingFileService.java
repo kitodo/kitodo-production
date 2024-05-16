@@ -52,40 +52,17 @@ public class MappingFileService extends SearchDatabaseService<MappingFile, Mappi
         return localReference;
     }
 
-    /**
-     * Load data for frontend lists. Data can be loaded from database or index.
-     *
-     * @param first     searched objects
-     * @param pageSize  size of page
-     * @param sortField field by which data should be sorted
-     * @param sortOrder order ascending or descending
-     * @param filters   for search query
-     * @return loaded data
-     */
     @Override
     @SuppressWarnings("unchecked")
     public List<MappingFile> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return dao.getByQuery("FROM MappingFile"  + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
-    /**
-     * Count all rows in database.
-     *
-     * @return amount of all rows
-     */
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM MappingFile");
     }
 
-    /**
-     * This function is used for count amount of results for frontend lists.
-     *
-     * @param filters Map of parameters used for filtering
-     * @return amount of results
-     * @throws DAOException  that can be caused by Hibernate
-     * @throws DataException that can be caused by ElasticSearch
-     */
     @Override
     public Long countResults(Map filters) throws DAOException, DataException {
         return countDatabaseRows();

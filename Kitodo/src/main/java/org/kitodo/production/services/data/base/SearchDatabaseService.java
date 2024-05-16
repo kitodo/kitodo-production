@@ -52,32 +52,10 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         this.dao = dao;
     }
 
-    /**
-     * Load data for frontend lists. Data can be loaded from database or index.
-     * 
-     * @param first
-     *            searched objects
-     * @param pageSize
-     *            size of page
-     * @param sortField
-     *            field by which data should be sorted
-     * @param sortOrder
-     *            order ascending or descending
-     * @param filters
-     *            for search query
-     *
-     * @return loaded data
-     */
     @Override
     public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException;
 
-    /**
-     * Method saves object to database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
     @Override
     public void saveToDatabase(T baseIndexedBean) throws DAOException {
         dao.save(baseIndexedBean);
@@ -93,12 +71,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         dao.saveAsIndexed(baseIndexedBeans);
     }
 
-    /**
-     * Method removes object from database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
     @Override
     public void removeFromDatabase(T baseIndexedBean) throws DAOException {
         dao.remove(baseIndexedBean);
@@ -114,11 +86,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         dao.remove(id);
     }
 
-    /**
-     * Count all rows in database.
-     *
-     * @return amount of all rows
-     */
     @Override
     public abstract Long countDatabaseRows() throws DAOException;
 
@@ -148,41 +115,14 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         return dao.count(query, parameters);
     }
 
-    /**
-     * This function is used for count amount of results for frontend lists.
-     *
-     * @param filters
-     *            Map of parameters used for filtering
-     * @return amount of results
-     * @throws DAOException
-     *             that can be caused by Hibernate
-     * @throws DataException
-     *             that can be caused by ElasticSearch
-     */
     @Override
     public abstract Long countResults(Map<?, String> filters) throws DAOException, DataException;
 
-    /**
-     * Method necessary for get from database object by id. It is used in removeById
-     * method.
-     *
-     * @param id
-     *            of object
-     * @return object
-     */
     @Override
     public T getById(Integer id) throws DAOException {
         return dao.getById(id);
     }
 
-    /**
-     * Method necessary for conversion of JSON objects to exact bean objects called
-     * from database.
-     *
-     * @param query
-     *            as String
-     * @return list of exact bean objects
-     */
     @Override
     public List<T> getByQuery(String query) {
         logger.debug(query);
@@ -203,36 +143,16 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         return dao.getByQuery(query, parameters);
     }
 
-    /**
-     * Get list of all objects from database.
-     *
-     * @return list of all objects from database
-     */
     @Override
     public List<T> getAll() throws DAOException {
         return dao.getAll();
     }
 
-    /**
-     * Get list of all objects from database in given range.
-     *
-     * @param offset
-     *            result - important, numeration starts since 0
-     * @param size
-     *            amount of results
-     * @return list of all objects from database in given range
-     */
     @Override
     public List<T> getAll(int offset, int size) throws DAOException {
         return dao.getAll(offset, size);
     }
 
-    /**
-     * Evict given bean object.
-     *
-     * @param baseBean
-     *            bean to evict
-     */
     @Override
     public void evict(T baseBean) {
         this.dao.evict(baseBean);
