@@ -76,6 +76,21 @@ import org.primefaces.model.SortOrder;
  */
 public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements DatabaseTaskServiceInterface {
 
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("processForTask.id", "process_id");
+        SORT_FIELD_MAPPING.put("processForTask.title.keyword", "process.title");
+        SORT_FIELD_MAPPING.put("processingStatus", "processingStatus");
+        SORT_FIELD_MAPPING.put("processingUser.name.keyword", "task.processingUser.surname");
+        SORT_FIELD_MAPPING.put("processingBegin", "processingBegin");
+        SORT_FIELD_MAPPING.put("processingEnd", "processingEnd");
+        SORT_FIELD_MAPPING.put("correctionCommentStatus", "correction");
+        SORT_FIELD_MAPPING.put("projectForTask.title.keyword", "process.project.title");
+        SORT_FIELD_MAPPING.put("processForTask.creationDate", "process.creationDate");
+    }
+
     private static final Logger logger = LogManager.getLogger(TaskService.class);
     private static volatile TaskService instance = null;
 
@@ -105,49 +120,6 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
         return localReference;
     }
 
-//    /**
-//     * Creates and returns a query to retrieve tasks for which the currently
-//     * logged in user is eligible.
-//     *
-//     * @return query to retrieve tasks for which the user eligible.
-//     */
-//    private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-//                                                 boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
-//        User user = ServiceManager.getUserService().getAuthenticatedUser();
-//
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        query.must(getQueryForTemplate(0));
-//        if (Objects.isNull(filter)) {
-//            filter = "";
-//        }
-//        SearchResultGeneration searchResultGeneration = new SearchResultGeneration(filter, true, true);
-//        query.must(searchResultGeneration.getQueryForFilter(ObjectType.TASK));
-//
-//        query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
-//                .map(TaskStatus::getValue).collect(Collectors.toSet())));
-//
-//        if (onlyOwnTasks) {
-//            query.must(getQueryForProcessingUser(user.getId()));
-//        } else {
-//            BoolQueryBuilder subQuery = new BoolQueryBuilder();
-//            subQuery.should(getQueryForProcessingUser(user.getId()));
-//            for (Role role : user.getRoles()) {
-//                subQuery.should(createSimpleQuery(TaskTypeField.ROLES + ".id", role.getId(), true));
-//            }
-//            query.must(subQuery);
-//        }
-//
-//        if (hideCorrectionTasks) {
-//            query.must(createSimpleQuery(TaskTypeField.CORRECTION.getKey(), false, true));
-//        }
-//
-//        if (!showAutomaticTasks) {
-//            query.must(getQueryForTypeAutomatic(false));
-//        }
-//
-//        return query;
-//    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin"));
@@ -162,9 +134,37 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
     public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                              boolean showAutomaticTasks, List<TaskStatus> taskStatus)
             throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        return countDocuments(createUserTaskQuery(ServiceManager.getFilterService().parseFilterString(filters),
-//                onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus));
+        try {
+            BeanQuery query = new BeanQuery(Task.class);
+            query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+            Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
+                    .filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
+            query.restrictToProjects(projectIDs);
+            Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+            if (filtersIterator.hasNext()) {
+                String filterString = filtersIterator.next().getValue();
+                if (StringUtils.isNotBlank(filterString)) {
+                    query.restrictWithUserFilterString(filterString);
+                }
+            }
+            if (onlyOwnTasks) {
+                query.addIntegerRestriction("user_id", ServiceManager.getUserService().getCurrentUser().getId());
+            }
+            if (hideCorrectionTasks) {
+                query.addIntegerRestriction("correction", 0);
+            }
+            if (!showAutomaticTasks) {
+                query.addIntegerRestriction("typeAutomatic", 0);
+            }
+            if (!taskStatus.isEmpty()) {
+                List<Integer> selectedStatuses = taskStatus.stream().map(status -> status.getValue())
+                        .collect(Collectors.toList());
+                query.addInCollectionRestriction("processingStatus", selectedStatuses);
+            }
+            return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
@@ -202,10 +202,11 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
             query.addIntegerRestriction("typeAutomatic", 0);
         }
         if (!taskStatus.isEmpty()) {
-            List<Integer> tsl = taskStatus.stream().map(s -> s.getValue()).collect(Collectors.toList());
-            query.addInCollectionRestriction("processingStatus", tsl);
+            List<Integer> selectedStatuses = taskStatus.stream().map(status -> status.getValue())
+                    .collect(Collectors.toList());
+            query.addInCollectionRestriction("processingStatus", selectedStatuses);
         }
-        query.defineSorting(sortField, sortOrder);
+        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
         return getByQuery(query.formWindowQuery(first, pageSize), query.getQueryParameters());
     }
 
@@ -537,87 +538,10 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
     }
 
-//    /**
-//     * Find tasks by id of process.
-//     *
-//     * @param id
-//     *            of process
-//     * @return list of JSON objects with tasks for specific process id
-//     */
-//    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-//        return findDocuments(getQueryForProcess(id));
-//    }
-
     @Override
     public List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
         throw new UnsupportedOperationException("not yet implemented");
     }
-
-//    /**
-//     * Get query for automatic type of task.
-//     *
-//     * @param typeAutomatic
-//     *            automatic type of task as boolean
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryForTypeAutomatic(boolean typeAutomatic) {
-//        return createSimpleQuery(TaskTypeField.TYPE_AUTOMATIC.getKey(), typeAutomatic, true);
-//    }
-
-//    /**
-//     * Get query for process.
-//     *
-//     * @param processId
-//     *            process id as int
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryForProcess(int processId) {
-//        return createSimpleQuery(TaskTypeField.PROCESS_ID.getKey(), processId, true);
-//    }
-
-//    /**
-//     * Get query for processing user.
-//     *
-//     * @param processingUserId
-//     *            processing user id as int
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryForProcessingUser(int processingUserId) {
-//        return createSimpleQuery(TaskTypeField.PROCESSING_USER_ID.getKey(), processingUserId, true);
-//    }
-
-//    /**
-//     * Get query for processing status.
-//     *
-//     * @param processingStatus
-//     *            processing status as int
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryForProcessingStatus(int processingStatus) {
-//        return createSimpleQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-//    }
-
-//    /**
-//     * Get query for processing statuses.
-//     *
-//     * @param processingStatus
-//     *            set of processing statuses as Integer
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryForProcessingStatuses(Set<Integer> processingStatus) {
-//        return createSetQuery(TaskTypeField.PROCESSING_STATUS.getKey(), processingStatus, true);
-//    }
-
-//    /**
-//     * Get query for template.
-//     *
-//     * @param templateId
-//     *            template id as int
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryForTemplate(int templateId) {
-//        return createSimpleQuery(TaskTypeField.TEMPLATE_ID.getKey(), templateId, true);
-//    }
 
     /**
      * The function determines, from projects, the folders whose contents can be

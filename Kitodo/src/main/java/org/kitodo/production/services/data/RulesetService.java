@@ -135,62 +135,6 @@ public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO>
         return dao.getByQuery("FROM Ruleset WHERE title = :title", Collections.singletonMap("title", title));
     }
 
-//    /**
-//     * Find ruleset with exact file.
-//     *
-//     * @param file
-//     *            of the searched ruleset
-//     * @return search result
-//     */
-//    public Map<String, Object> findByFile(String file) throws DataException {
-//        QueryBuilder queryBuilder = createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true);
-//        return findDocument(queryBuilder);
-//    }
-
-//    /**
-//     * Find rulesets for client id.
-//     *
-//     * @param clientId
-//     *            of the searched rulesets
-//     * @return search result
-//     */
-//    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
-//        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
-//        return findDocuments(query);
-//    }
-
-//    /**
-//     * Find ruleset with exact title and file name.
-//     *
-//     * @param title
-//     *            of the searched ruleset
-//     * @param file
-//     *            of the searched ruleset
-//     * @return search result
-//     */
-//    public Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        query.must(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true, Operator.AND));
-//        query.must(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true, Operator.AND));
-//        return findDocument(query);
-//    }
-
-//    /**
-//     * Find ruleset with exact title or file name.
-//     *
-//     * @param title
-//     *            of the searched ruleset
-//     * @param file
-//     *            of the searched ruleset
-//     * @return search result
-//     */
-//    public List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        query.should(createSimpleQuery(RulesetTypeField.TITLE.getKey(), title, true));
-//        query.should(createSimpleQuery(RulesetTypeField.FILE.getKey(), file, true));
-//        return findDocuments(query);
-//    }
-
     /**
      * Get preferences.
      *
@@ -207,13 +151,6 @@ public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO>
         }
         return myPreferences;
     }
-
-//    private QueryBuilder getRulesetsForCurrentUserQuery() {
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        query.must(createSimpleQuery(RulesetTypeField.CLIENT_ID.getKey(),
-//                ServiceManager.getUserService().getSessionClientId(), true));
-//        return query;
-//    }
 
     /**
      * Acquires a ruleset Management and loads a ruleset into it.

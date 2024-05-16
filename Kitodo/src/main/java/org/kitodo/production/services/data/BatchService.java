@@ -88,46 +88,6 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
         }
     }
 
-//    /**
-//     * Find batches by id of process.
-//     *
-//     * @param id
-//     *            of process
-//     * @return list of JSON objects with batches for specific process id
-//     */
-//    public List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-//        QueryBuilder query = createSimpleQuery("processes.id", id, true);
-//        return findDocuments(query);
-//    }
-
-//    /**
-//     * Find batches by title of process.
-//     *
-//     * @param title
-//     *            of process
-//     * @return list of JSON objects with batches for specific process title
-//     */
-//    public List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
-//        QueryBuilder query = createSimpleQuery("processes.title", title, true, Operator.AND);
-//        return findDocuments(query);
-//    }
-
-//    @Override
-//    public BatchInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-//        BatchInterface batchInterface = DTOFactory.instance().newBatch();
-//        batchInterface.setId(getIdFromJSONObject(jsonObject));
-//        batchInterface.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
-//        if (!related) {
-//            convertRelatedJSONObjects(jsonObject, batchInterface);
-//        }
-//        return batchInterface;
-//    }
-
-//    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batchInterface) throws DataException {
-//        batchInterface.setProcesses(convertRelatedJSONObjectToInterface(jsonObject, BatchTypeField.PROCESSES.getKey(),
-//            ServiceManager.getProcessService()));
-//    }
-
     /**
      * Returns true if the title (if set) or the
      * id-based label contain the specified sequence of char values.

@@ -227,7 +227,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if the search engine fails
      */
-    List<ProcessInterface> findLinkableChildProcesses(String searchInput, int rulesetId,
+    List<? extends ProcessInterface> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException;
 
     /**
@@ -244,7 +244,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if the search engine fails
      */
-    List<ProcessInterface> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
+    List<? extends ProcessInterface> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException;
 
     /**
@@ -303,7 +303,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             if an error occurs
      */
-    List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
+    List<? extends ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
             String filter, Collection<Integer> excludedProcessIds) throws DataException;
 
     /**

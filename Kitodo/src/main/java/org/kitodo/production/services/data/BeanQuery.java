@@ -36,6 +36,41 @@ public class BeanQuery {
         varName = objectClass.toLowerCase();
     }
 
+    public void addInCollectionRestriction(String column, Collection<Integer> values) {
+        String parameterName = varName(column);
+        restrictions.add(varName + '.' + column + " IN (:" + parameterName + ')');
+        parameters.put(parameterName, values);
+    }
+
+    public void addIntegerRestriction(String column, int value) {
+        String parameterName = varName(column);
+        restrictions.add(varName + '.' + column + " = :" + parameterName);
+        parameters.put(parameterName, value);
+    }
+
+    public void addNotInCollectionRestriction(String column, Collection<Integer> values) {
+        String parameterName = varName(column);
+        restrictions.add(varName + '.' + column + " NOT IN (:" + parameterName + ')');
+        parameters.put(parameterName, values);
+    }
+
+
+    public void addNullRestriction(String column) {
+        restrictions.add(varName + '.' + column + " IS NULL");
+    }
+
+    public void forIdOrInTitle(String searchInput) {
+        try {
+            Integer possibleId = Integer.valueOf(searchInput);
+            restrictions.add('(' + varName + ".id = :possibleId OR " + varName + ".title LIKE '%:searchInput%')");
+            parameters.put("possibleId", possibleId);
+            parameters.put("searchInput", searchInput);
+        } catch (NumberFormatException e) {
+            restrictions.add(varName + ".title LIKE '%:searchInput%'");
+            parameters.put("searchInput", searchInput);
+        }
+    }
+
     public void restrictToClient(int sessionClientId) {
         switch (objectClass) {
             case "Process":
@@ -48,6 +83,10 @@ public class BeanQuery {
                 throw new IllegalStateException("complete switch");
         }
         parameters.put("sessionClientId", sessionClientId);
+    }
+
+    public void restrictToNotCompletedProcesses() {
+        restrictions.add(varName + ".sortHelperStatus != '100000000000'");
     }
 
     public void restrictToProjects(Collection<Integer> projectIDs) {
@@ -64,28 +103,13 @@ public class BeanQuery {
         parameters.put("projectIDs", projectIDs);
     }
 
-    public void restrictToNotCompletedProcesses() {
-        restrictions.add(varName + ".sortHelperStatus != '100000000000'");
-    }
-
     public void restrictWithUserFilterString(String s) {
-        // not yet implemented
-    }
-
-    public void addIntegerRestriction(String column, int value) {
-        String parameterName = varName(column);
-        restrictions.add(varName + '.' + column + " = :" + parameterName);
-        parameters.put(parameterName, value);
-    }
-
-    public void addInCollectionRestriction(String column, List<Integer> values) {
-        String parameterName = varName(column);
-        restrictions.add(varName + '.' + column + " IN (:" + parameterName + ')');
-        parameters.put(parameterName, values);
+        // full user filters not yet implemented
+        forIdOrInTitle(s);
     }
 
     public void defineSorting(String sortField, SortOrder sortOrder) {
-        sorting = Pair.of(sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
+        sorting = Pair.of(varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
     }
 
     public String formCountQuery() {
@@ -96,14 +120,17 @@ public class BeanQuery {
         return query;
     }
 
-    public String formWindowQuery(int offset, int limit) {
-        String query = "SELECT COUNT(*) FROM " + objectClass;
+    public String formQueryForAll() {
+        String query = "SELECT COUNT(*) FROM " + objectClass + " AS " + varName;
         if (!restrictions.isEmpty()) {
-            query += " AS " + varName + " WHERE " + String.join(" AND ", restrictions);
+            query += " WHERE " + String.join(" AND ", restrictions);
         }
-        query += " ORDER BY " + sorting.getKey() + ' ' + sorting.getValue()
-                + " LIMIT " + limit + " OFFSET " + offset;
+        query += " ORDER BY " + sorting.getKey() + ' ' + sorting.getValue();
         return query;
+    }
+
+    public String formWindowQuery(int offset, int limit) {
+        return formQueryForAll() + " LIMIT " + limit + (offset > 0 ? " OFFSET " + offset : "");
     }
 
     public Map<String, Object> getQueryParameters() {

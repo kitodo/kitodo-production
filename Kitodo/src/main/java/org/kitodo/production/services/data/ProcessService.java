@@ -11,25 +11,13 @@
 
 package org.kitodo.production.services.data;
 
-//import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-//import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-//import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
 
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.PageSize;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfWriter;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FilenameFilter;
-import java.util.Map.Entry;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -40,7 +28,6 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -49,21 +36,19 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -81,7 +66,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.lucene.search.join.ScoreMode;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -89,16 +73,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
-//import org.elasticsearch.index.query.BoolQueryBuilder;
-//import org.elasticsearch.index.query.MatchQueryBuilder;
-//import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-//import org.elasticsearch.index.query.NestedQueryBuilder;
-//import org.elasticsearch.index.query.Operator;
-//import org.elasticsearch.index.query.QueryBuilder;
-//import org.elasticsearch.index.query.WildcardQueryBuilder;
-//import org.elasticsearch.search.sort.SortBuilder;
-//import org.elasticsearch.search.sort.SortBuilders;
-//import org.elasticsearch.search.sort.SortOrder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -131,22 +105,16 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.ProcessType;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.BatchInterface;
 import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.PropertyInterface;
 import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.dto.DTOFactory;
-import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
@@ -180,15 +148,29 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.itextpdf.text.Document;
+import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.PageSize;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
+import com.itextpdf.text.pdf.PdfPTable;
+import com.itextpdf.text.pdf.PdfWriter;
+
 public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         implements DatabaseProcessServiceInterface {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
-//        SORT_FIELD_MAPPING.put("title.keyword", "title");
-//        SORT_FIELD_MAPPING.put("ruleset.title.keyword", "ruleset_id");
-//        SORT_FIELD_MAPPING.put("active", "active");
+        SORT_FIELD_MAPPING.put("id", "id");
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("progressCombined", "sortHelperStatus");
+        SORT_FIELD_MAPPING.put("lastEditingUser", "id"); // FIXME
+        SORT_FIELD_MAPPING.put("processingBeginLastTask", "id"); // FIXME
+        SORT_FIELD_MAPPING.put("processingEndLastTask", "id"); // FIXME
+        SORT_FIELD_MAPPING.put("correctionCommentStatus", "id"); // FIXME
+        SORT_FIELD_MAPPING.put("project.title.keyword", "project_id");
+        SORT_FIELD_MAPPING.put("creationDate", "creationDate");
     }
 
     private static final FileService fileService = ServiceManager.getFileService();
@@ -431,50 +413,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return getByQuery(query.formWindowQuery(first, pageSize), query.getQueryParameters());
     }
 
-//    /**
-//     * Gets the query for the current processfilter.
-//     * @param showClosedProcesses if closed processes are shown
-//     * @param showInactiveProjects if inactive projects are shown
-//     * @param filter the filter to build the query for
-//     * @return the query for the filter.
-//     */
-//    public BoolQueryBuilder getQueryForFilter(boolean showClosedProcesses, boolean showInactiveProjects, String filter) {
-//        return new SearchResultGeneration(filter, showClosedProcesses,
-//                showInactiveProjects).getQueryForFilter(ObjectType.PROCESS);
-//    }
-
-
-//    private BoolQueryBuilder readFilters(Map<String, String> filterMap) throws DataException {
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//
-//        for (Map.Entry<String, String> entry : filterMap.entrySet()) {
-////          query.must(
-////              ServiceManager.getFilterService().queryBuilder(entry.getValue(), ObjectType.PROCESS, false, false));
-//            throw new UnsupportedOperationException("not yet implemented");
-//        }
-//        return query;
-//    }
-
-//    @SuppressWarnings("unchecked")
-//    private BoolQueryBuilder createUserProcessesQuery(Map filters, boolean showClosedProcesses,
-//                                                      boolean showInactiveProjects)
-//            throws DataException {
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//
-//        if (Objects.nonNull(filters) && !filters.isEmpty()) {
-//            query.must(readFilters(filters));
-//        }
-//
-//        if (!showClosedProcesses) {
-//            query.mustNot(getQueryForClosedProcesses());
-//        }
-//
-//        if (!showInactiveProjects) {
-//            query.mustNot(getQueryProjectActive(false));
-//        }
-//        return query;
-//    }
-
     /**
      * Check if IndexAction flag is delete. If true remove process from list of
      * processes and re-save batch, if false only re-save batch object.
@@ -522,43 +460,10 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             for (Task task : process.getTasks()) {
                 ServiceManager.getTaskService().removeFromIndex(task, false);
             }
-        } // else {
-//            saveOrRemoveTasksInIndex(process);
-//        }
+        }
     }
 
-//    /**
-//     * Compare index and database, according to comparisons results save or
-//     * remove tasks.
-//     *
-//     * @param process
-//     *            object
-//     */
-//    private void saveOrRemoveTasksInIndex(Process process)
-//            throws CustomResponseException, DAOException, IOException, DataException {
-//        List<Integer> database = new ArrayList<>();
-//        List<Integer> index = new ArrayList<>();
-//
-//        for (Task task : process.getTasks()) {
-//            database.add(task.getId());
-//            ServiceManager.getTaskService().saveToIndex(task, false);
-//        }
-//
-//        List<Map<String, Object>> searchResults = ServiceManager.getTaskService().findByProcessId(process.getId());
-//        for (Map<String, Object> object : searchResults) {
-//            index.add(getIdFromJSONObject(object));
-//        }
-//
-//        List<Integer> missingInIndex = findMissingValues(database, index);
-//        List<Integer> notNeededInIndex = findMissingValues(index, database);
-//        for (Integer missing : missingInIndex) {
-//            ServiceManager.getTaskService().saveToIndex(ServiceManager.getTaskService().getById(missing), false);
-//        }
-//
-//        for (Integer notNeeded : notNeededInIndex) {
-//            ServiceManager.getTaskService().removeFromIndex(notNeeded, false);
-//        }
-//    }
+
 
     /**
      * Compare two list and return difference between them.
@@ -585,11 +490,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         dao.refresh(process);
     }
 
-//    List<Map<String, Object>> findForCurrentSessionClient() throws DataException {
-//        return findDocuments(
-//            getQueryProjectIsAssignedToSelectedClient(ServiceManager.getUserService().getSessionClientId()));
-//    }
-
     /**
      * Find processes by metadata. Matches do not need to be exact.
      *
@@ -601,267 +501,69 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return findByMetadata(metadata, false);
     }
 
-//    /**
-//     * Find processes by metadata.
-//     *
-//     * @param metadata
-//     *            key is metadata tag and value is metadata content
-//     * @param exactMatch
-//     *            online return exact matches
-//     * @return list of ProcessInterface objects with processes for specific metadata tag
-//     */
-//    @Override
-//    public List<ProcessInterface> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
-//        String nameSearchKey = METADATA_SEARCH_KEY + ".name";
-//        String contentSearchKey = METADATA_SEARCH_KEY + ".content";
-//        if (exactMatch) {
-//            nameSearchKey = nameSearchKey + ".keyword";
-//            contentSearchKey = contentSearchKey + ".keyword";
-//        }
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        for (Map.Entry<String, String> entry : metadata.entrySet()) {
-//            BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-//            pairQuery.must(matchQuery(nameSearchKey, entry.getKey()));
-//            pairQuery.must(matchQuery(contentSearchKey, entry.getValue()));
-//            query.must(pairQuery);
-//        }
-//
-//        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
-//    }
-
-//    /**
-//     * Find processes by title.
-//     *
-//     * @param title
-//     *            the title
-//     * @return a list of processes
-//     * @throws DataException
-//     *             when there is an error on conversion
-//     */
-//    @Override
-//    public List<ProcessInterface> findByTitle(String title) throws DataException {
-//        return convertJSONObjectsToInterfaces(findByTitle(title, true), true);
-//    }
-
-//    /**
-//     * Finds processes by searchQuery for a number of fields.
-//     *
-//     * @param searchQuery
-//     *            the query word or phrase
-//     * @return a List of found ProcessInterfaces
-//     * @throws DataException
-//     *             when accessing the elasticsearch server fails
-//     */
-//    @Override
-//    public List<ProcessInterface> findByAnything(String searchQuery) throws DataException {
-//        NestedQueryBuilder nestedQueryForMetadataContent = nestedQuery(METADATA_SEARCH_KEY,
-//            matchQuery(METADATA_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
-//        NestedQueryBuilder nestedQueryForMetadataGroupContent = nestedQuery(METADATA_GROUP_SEARCH_KEY,
-//            matchQuery(METADATA_GROUP_SEARCH_KEY + ".content", searchQuery).operator(Operator.AND), ScoreMode.Total);
-//        MultiMatchQueryBuilder multiMatchQueryForProcessFields = multiMatchQuery(searchQuery,
-//                ProcessTypeField.TITLE.getKey(),
-//                ProcessTypeField.PROJECT_TITLE.getKey(),
-//                ProcessTypeField.COMMENTS.getKey(),
-//                ProcessTypeField.WIKI_FIELD.getKey(),
-//                ProcessTypeField.TEMPLATE_TITLE.getKey()).operator(Operator.AND).lenient(true);
-//
-//        if (searchQuery.matches("^\\d*$")) {
-//            multiMatchQueryForProcessFields.fields().put(ProcessTypeField.ID.getKey(), 1.0f);
-//        }
-//
-//        BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-//        boolQuery.should(nestedQueryForMetadataContent);
-//        boolQuery.should(nestedQueryForMetadataGroupContent);
-//        boolQuery.should(multiMatchQueryForProcessFields);
-//
-//        if (!searchQuery.contains(" ")) {
-//            QueryBuilder wildcardQueryForProcessTitle = createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(),
-//                searchQuery);
-//            QueryBuilder wildcardQueryForProjectTitle = createSimpleWildcardQuery(
-//                ProcessTypeField.PROJECT_TITLE.getKey(), searchQuery);
-//            QueryBuilder wildcardQueryForComments = createSimpleWildcardQuery(
-//                    ProcessTypeField.COMMENTS_MESSAGE.getKey(), searchQuery);
-//            boolQuery.should(wildcardQueryForProcessTitle);
-//            boolQuery.should(wildcardQueryForProjectTitle);
-//            boolQuery.should(wildcardQueryForComments);
-//        }
-//
-//        return findByQuery(boolQuery, false);
-//    }
-
-//    /**
-//     * Get query for find process by project title.
-//     *
-//     * @param title
-//     *            as String
-//     * @return QueryBuilder object
-//     */
-//    public QueryBuilder getQueryProjectTitle(String title) {
-//        return createSimpleQuery(ProcessTypeField.PROJECT_TITLE.getKey(), title, true, Operator.AND);
-//    }
-
-//    /**
-//     * Get query for find process by project id.
-//     *
-//     * @param projectId
-//     *            as Integer
-//     * @return QueryBuilder object
-//     */
-//    public QueryBuilder getQueryProjectId(Integer projectId) {
-//        return createSimpleQuery(ProcessTypeField.PROJECT_ID.getKey(), projectId.toString(), true, Operator.AND);
-//    }
-
     @Override
-    public List<Map<String, Object>> findByDocket(int docketId) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        QueryBuilder query = createSimpleQuery(ProcessTypeField.DOCKET.getKey(), docketId, true);
-//        return findDocuments(query);
+    public List<?> findByDocket(int docketId) throws DataException {
+        BeanQuery query = new BeanQuery(Process.class);
+        query.addIntegerRestriction("docket_id", docketId);
+        return getByQuery(query.formWindowQuery(0, 1), query.getQueryParameters());
     }
 
     @Override
-    public List<Map<String, Object>> findByTemplate(int templateId) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        QueryBuilder query = createSimpleQuery(ProcessTypeField.TEMPLATE_ID.getKey(), templateId, true);
-//        return findDocuments(query);
+    public List<?> findByTemplate(int templateId) throws DataException {
+        BeanQuery query = new BeanQuery(Process.class);
+        query.addIntegerRestriction("template_id", templateId);
+        return getByQuery(query.formWindowQuery(0, 1), query.getQueryParameters());
     }
 
     @Override
-    public List<Map<String, Object>> findByRuleset(int rulesetId) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        QueryBuilder query = createSimpleQuery(ProcessTypeField.RULESET.getKey(), rulesetId, true);
-//        return findDocuments(query);
+    public List<?> findByRuleset(int rulesetId) throws DataException {
+        BeanQuery query = new BeanQuery(Process.class);
+        query.addIntegerRestriction("ruleset_id", rulesetId);
+        return getByQuery(query.formWindowQuery(0, 1), query.getQueryParameters());
     }
 
-//    /**
-//     * Get query for projects assigned to selected client.
-//     *
-//     * @param id
-//     *            of selected client
-//     * @return query as QueryBuilder
-//     */
-//    private QueryBuilder getQueryProjectIsAssignedToSelectedClient(int id) {
-//        return createSimpleQuery(ProcessTypeField.PROJECT_CLIENT_ID.getKey(), id, true);
-//    }
-
     @Override
-    public List<ProcessInterface> findLinkableChildProcesses(String searchInput, int rulesetId,
+    public List<Process> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException {
 
-        throw new UnsupportedOperationException("not yet implemented");
-//        BoolQueryBuilder query = new BoolQueryBuilder()
-//                .must(new BoolQueryBuilder()
-//                        .should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true))
-//                        .should(new WildcardQueryBuilder(ProcessTypeField.TITLE.getKey(), "*" + searchInput + "*")))
-//                .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-//        List<ProcessInterface> linkableProcesses = new LinkedList<>();
-//
-//        List<ProcessInterface> processInterfaces = findByQuery(query, false);
-//        for (ProcessInterface process : processInterfaces) {
-//            if (allowedStructuralElementTypes.contains(getBaseType(process.getId()))) {
-//                linkableProcesses.add(process);
-//            }
-//        }
-//        return linkableProcesses;
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        query.addNullRestriction("parent_id");
+        query.addIntegerRestriction("ruleset_id", rulesetId);
+        query.forIdOrInTitle(searchInput);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
     @Override
-    public List<ProcessInterface> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
+    public List<Process> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException {
 
-        throw new UnsupportedOperationException("not yet implemented");
-//        BoolQueryBuilder processQuery = new BoolQueryBuilder()
-//                .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput));
-//        if (searchInput.matches("\\d*")) {
-//            processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true));
-//        }
-//        BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
-//                .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
-//                .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-//        return findByQuery(query, false);
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        query.addIntegerRestriction("project_id", projectId);
+        query.addIntegerRestriction("ruleset_id", rulesetId);
+        query.forIdOrInTitle(searchInput);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
     @Override
-    public List<ProcessInterface> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
+    public List<Process> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
             String filter, Collection<Integer> excludedProcessIds) throws DataException {
-        throw new UnsupportedOperationException("not yet implemented");
-//        return findByQuery(getQueryForFilter(showClosedProcesses, showInactiveProjects, filter)
-//                .mustNot(createSetQueryForIds(new ArrayList<>(excludedProcessIds))),
-//            false);
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        query.addNotInCollectionRestriction("id", excludedProcessIds);
+        if (StringUtils.isNotBlank(filter)) {
+            query.restrictWithUserFilterString(filter);
+        }
+        if (!showClosedProcesses) {
+            query.restrictToNotCompletedProcesses();
+        }
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
+                .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
+                .collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
-
-//    /**
-//     * Find processes by property.
-//     *
-//     * @param title
-//     *            of property
-//     * @param value
-//     *            of property
-//     * @return list of JSON objects with processes for specific property
-//     */
-//    public List<ProcessInterface> findByProperty(String title, String value) throws DataException {
-//        return findByQuery(createPropertyQuery(title, value), true);
-//    }
-
-//    /**
-//     * Creates the query fpr properties with title and value.
-//     * @param title the property title
-//     * @param value the property value
-//     * @return a query for searching for properties.
-//     */
-//    public QueryBuilder createPropertyQuery(String title, String value) {
-//        String titleSearchKey = ProcessTypeField.PROPERTIES + ".title.keyword";
-//        String valueSearchKey = ProcessTypeField.PROPERTIES + ".value";
-//
-//        BoolQueryBuilder pairQuery = new BoolQueryBuilder();
-//        if (!WILDCARD.equals(title)) {
-//            pairQuery.must(matchQuery(titleSearchKey, title));
-//        }
-//        if (!WILDCARD.equals(value)) {
-//            pairQuery.must(matchQuery(valueSearchKey, value));
-//        }
-//        return nestedQuery(ProcessTypeField.PROPERTIES.toString(), pairQuery, ScoreMode.Total);
-//    }
-
-//    List<ProcessInterface> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
-//        QueryBuilder query = createSetQuery("project.id", projectIds, true);
-//        return findByQuery(query, related);
-//    }
-
-//    /**
-//     * Get Query for closed processes.
-//     *
-//     * @return query as QueryBuilder
-//     */
-//    public QueryBuilder getQueryForClosedProcesses() {
-//        BoolQueryBuilder query = new BoolQueryBuilder();
-//        query.should(createSimpleQuery(
-//            ProcessTypeField.SORT_HELPER_STATUS.getKey(), ProcessState.COMPLETED20.getValue(), true));
-//        query.should(createSimpleQuery(
-//            ProcessTypeField.SORT_HELPER_STATUS.getKey(), ProcessState.COMPLETED.getValue(), true));
-//        return query;
-//    }
-
-//    /**
-//     * Get query for active projects.
-//     *
-//     * @param active
-//     *            true or false
-//     * @return query as QueryBuilder
-//     */
-//    public QueryBuilder getQueryProjectActive(boolean active) {
-//        return createSimpleQuery(ProcessTypeField.PROJECT_ACTIVE.getKey(), active, true);
-//    }
-
-//    /**
-//     * Sort results by creation date.
-//     *
-//     * @param sortOrder
-//     *            ASC or DESC as SortOrder
-//     * @return sort
-//     */
-//    public SortBuilder sortByCreationDate(SortOrder sortOrder) {
-//        return SortBuilders.fieldSort(ProcessTypeField.CREATION_DATE.getKey()).order(sortOrder);
-//    }
 
     /**
      * Convert list of Interfaces to list of beans.
@@ -877,51 +579,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
         return processes;
     }
-
-//    @Override
-//    public ProcessInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-//        ProcessInterface processInterface = DTOFactory.instance().newProcess();
-//        if (!jsonObject.isEmpty()) {
-//            processInterface.setId(getIdFromJSONObject(jsonObject));
-//            processInterface.setTitle(ProcessTypeField.TITLE.getStringValue(jsonObject));
-//            processInterface.setWikiField(ProcessTypeField.WIKI_FIELD.getStringValue(jsonObject));
-//            try {
-//                processInterface.setCreationTime(ProcessTypeField.CREATION_DATE.getStringValue(jsonObject));
-//            } catch (ParseException e) {
-//                throw new DataException(e);
-//            }
-//            processInterface.setSortHelperArticles(ProcessTypeField.SORT_HELPER_ARTICLES.getIntValue(jsonObject));
-//            processInterface.setSortHelperDocstructs(ProcessTypeField.SORT_HELPER_DOCSTRUCTS.getIntValue(jsonObject));
-//            processInterface.setSortHelperImages(ProcessTypeField.SORT_HELPER_IMAGES.getIntValue(jsonObject));
-//            processInterface.setSortHelperMetadata(ProcessTypeField.SORT_HELPER_METADATA.getIntValue(jsonObject));
-//            processInterface.setSortHelperStatus(ProcessTypeField.SORT_HELPER_STATUS.getStringValue(jsonObject));
-//            processInterface.setProcessBase(ProcessTypeField.PROCESS_BASE_URI.getStringValue(jsonObject));
-//            processInterface.setHasChildren(ProcessTypeField.HAS_CHILDREN.getBooleanValue(jsonObject));
-//            processInterface.setParentID(ProcessTypeField.PARENT_ID.getIntValue(jsonObject));
-//            processInterface.setNumberOfImages(ProcessTypeField.NUMBER_OF_IMAGES.getIntValue(jsonObject));
-//            processInterface.setNumberOfMetadata(ProcessTypeField.NUMBER_OF_METADATA.getIntValue(jsonObject));
-//            processInterface.setNumberOfStructures(ProcessTypeField.NUMBER_OF_STRUCTURES.getIntValue(jsonObject));
-//            processInterface.setBaseType(ProcessTypeField.BASE_TYPE.getStringValue(jsonObject));
-//            processInterface.setLastEditingUser(ProcessTypeField.LAST_EDITING_USER.getStringValue(jsonObject));
-//            processInterface.setCorrectionCommentStatus(ProcessTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-//            processInterface.setHasComments(!ProcessTypeField.COMMENTS_MESSAGE.getStringValue(jsonObject).isEmpty());
-//            convertLastProcessingDates(jsonObject, processInterface);
-//            convertTaskProgress(jsonObject, processInterface);
-//
-//            processInterface.setProperties(convertProperties(jsonObject));
-//
-//            if (!related) {
-//                convertRelatedJSONObjects(jsonObject, processInterface);
-//            } else {
-//                ProjectInterface projectInterface = DTOFactory.instance().newProject();
-//                projectInterface.setId(ProcessTypeField.PROJECT_ID.getIntValue(jsonObject));
-//                projectInterface.setTitle(ProcessTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-//                projectInterface.setActive(ProcessTypeField.PROJECT_ACTIVE.getBooleanValue(jsonObject));
-//                processInterface.setProject(projectInterface);
-//            }
-//        }
-//        return processInterface;
-//    }
 
     /**
      * Parses last processing dates from the jsonObject and adds them to the process bean.
@@ -965,27 +622,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
         return properties;
     }
-
-//    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProcessInterface processInterface) throws DataException {
-//        try {
-//        int project = ProcessTypeField.PROJECT_ID.getIntValue(jsonObject);
-//        if (project > 0) {
-//            processInterface.setProject(ServiceManager.getProjectService().getById(project));
-//        }
-//        int ruleset = ProcessTypeField.RULESET.getIntValue(jsonObject);
-//        if (ruleset > 0) {
-//            processInterface.setRuleset(ServiceManager.getRulesetService().getById(ruleset));
-//        }
-//
-//        processInterface.setBatchID(getBatchID(processInterface));
-//        processInterface.setBatches(getBatchesForProcessInterface(jsonObject));
-//        // TODO: leave it for now - right now it displays only status
-//        processInterface.setTasks(convertRelatedJSONObjectToInterface(jsonObject, ProcessTypeField.TASKS.getKey(),
-//            ServiceManager.getTaskService()));
-//        } catch (DAOException e) {
-//            throw new DataException(e);
-//        }
-//    }
 
     private List<BatchInterface> getBatchesForProcess(Map<String, Object> jsonObject) throws DataException {
         List<Map<String, Object>> jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
@@ -1692,18 +1328,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
         return filteredList;
     }
-
-//    /**
-//     * Find amount of processes for given title.
-//     *
-//     * @param title
-//     *            as String
-//     * @return amount as Long
-//     */
-//    @Override
-//    public Long findNumberOfProcessesWithTitle(String title) throws DataException {
-//        return count(createSimpleQuery(ProcessTypeField.TITLE.getKey(), title, true, Operator.AND));
-//    }
 
     /**
      * Sanitizes a possibly dirty reference URI and extracts from it the
@@ -2655,32 +2279,4 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
         return FileService.hasImages(process, generatorSource);
     }
-
-//    /**
-//     * Get template processes sorted by title.
-//     * @return template processes sorted by title
-//     */
-//    @Override
-//    public List<Process> getTemplateProcesses() throws DataException, DAOException {
-//        List<Process> templateProcesses = new ArrayList<>();
-//        BoolQueryBuilder inChoiceListShownQuery = new BoolQueryBuilder();
-//        MatchQueryBuilder matchQuery = matchQuery(ProcessTypeField.IN_CHOICE_LIST_SHOWN.getKey(), true);
-//        inChoiceListShownQuery.must(matchQuery);
-//        for (ProcessInterface processInterface : ServiceManager.getProcessService().findByQuery(matchQuery, true)) {
-//            templateProcesses.add(getById(processInterface.getId()));
-//        }
-//        templateProcesses.sort(Comparator.comparing(Process::getTitle));
-//        return templateProcesses;
-//    }
-
-//    /**
-//     * Sort results by id.
-//     *
-//     * @param order
-//     *            ASC or DESC as SortOrder
-//     * @return sort as String
-//     */
-//    public SortBuilder sortById(SortOrder order) {
-//        return SortBuilders.fieldSort(ProcessTypeField.ID.getKey()).order(order);
-//    }
 }

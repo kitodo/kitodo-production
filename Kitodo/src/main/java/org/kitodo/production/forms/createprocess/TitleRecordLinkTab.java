@@ -307,7 +307,7 @@ public class TitleRecordLinkTab {
             return;
         }
         try {
-            List<ProcessInterface> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
+            List<Process> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
                 createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
                 Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.noHits");
