@@ -18,6 +18,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.exceptions.KitodoScriptExecutionException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 
 public class AddDataScript extends EditDataScript {
@@ -29,7 +30,7 @@ public class AddDataScript extends EditDataScript {
      * @param metadataScript the script to execute
      */
     public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
-            MetadataScript metadataScript) {
+            MetadataScript metadataScript) throws KitodoScriptExecutionException {
         Workpiece workpiece = metadataFile.getWorkpiece();
         Collection<Metadata> metadataCollection = getMetadataCollection(metadataScript, workpiece);
         generateValueForMetadataScript(metadataScript, metadataCollection, process, metadataFile);
