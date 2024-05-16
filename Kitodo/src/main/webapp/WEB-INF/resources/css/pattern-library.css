@@ -1717,6 +1717,13 @@ Popup dialogs
     color: var(--pure-white);
 }
 
+.ui-messages-error.ui-corner-all ul,
+.ui-messages-warn.ui-corner-all ul,
+.ui-messages-info.ui-corner-all ul {
+    max-height: 80px;
+    overflow-y: auto;
+}
+
 .ui-messages-error.ui-corner-all span.ui-icon-close,
 .ui-messages-warn.ui-corner-all span.ui-icon-close,
 .ui-messages-info.ui-corner-all span.ui-icon-close {
