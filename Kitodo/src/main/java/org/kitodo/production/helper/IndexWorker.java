@@ -21,7 +21,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.enums.ObjectType;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 
 public class IndexWorker implements Runnable {
 
@@ -29,7 +29,7 @@ public class IndexWorker implements Runnable {
     
     private final boolean indexAllObjects;
     private final ObjectType objectType;
-    private final SearchService searchService;
+    private final SearchDatabaseService searchService;
     private final IndexWorkerStatus indexWorkerStatus;
 
     /**
@@ -39,7 +39,7 @@ public class IndexWorker implements Runnable {
      * @param searchService
      *            SearchService instance used for indexing
      */
-    public IndexWorker(SearchService searchService, ObjectType objectType, IndexWorkerStatus indexWorkerStatus, boolean indexAllObjects) {
+    public IndexWorker(SearchDatabaseService searchService, ObjectType objectType, IndexWorkerStatus indexWorkerStatus, boolean indexAllObjects) {
         this.searchService = searchService;
         this.indexWorkerStatus = indexWorkerStatus;
         this.indexAllObjects = indexAllObjects;
