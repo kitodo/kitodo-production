@@ -131,7 +131,7 @@ public class IndexingService {
 //                  searchServices.put(objectType, ServiceManager.getDocketService());
                     break;
                 case PROCESS:
-                    searchServices.put(objectType, ServiceManager.getProcessService());
+//                  searchServices.put(objectType, ServiceManager.getProcessService());
                     break;
                 case PROJECT:
 //                  searchServices.put(objectType, ServiceManager.getProjectService());

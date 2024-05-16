@@ -174,6 +174,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
         return countResults(new HashMap<String, String>(filters), false, false, false, null);
     }
 
+    @Override
     public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                              boolean showAutomaticTasks, List<TaskStatus> taskStatus)
             throws DataException {
@@ -214,6 +215,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      * @return List of loaded tasks
      * @throws DataException if tasks cannot be loaded from search index
      */
+    @Override
     public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
@@ -299,6 +301,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *
      * @return a list of titles
      */
+    @Override
     public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
         return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
     }
@@ -315,9 +318,13 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
          */
         int process = TaskTypeField.PROCESS_ID.getIntValue(jsonObject);
         if (process > 0 && !related) {
-            task.setProcess(ServiceManager.getProcessService().findById(process, true));
-            task.setBatchAvailable(ServiceManager.getProcessService()
-                    .isProcessAssignedToOnlyOneBatch(task.getProcess().getBatches()));
+            try {
+                task.setProcess(ServiceManager.getProcessService().getById(process));
+                task.setBatchAvailable(ServiceManager.getProcessService()
+                        .isProcessAssignedToOnlyOneBatch(task.getProcess().getBatches()));
+            } catch (DAOException e) {
+                throw new DataException(e);
+            }
         }
 
         int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(jsonObject);
@@ -501,6 +508,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *            boolean
      * @return int
      */
+    @Override
     public boolean executeScript(Task task, String script, boolean automatic) throws DataException {
         if (Objects.isNull(script) || script.isEmpty()) {
             return false;
@@ -553,6 +561,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      * @param automatic
      *            boolean
      */
+    @Override
     public void executeScript(Task task, boolean automatic) throws DataException {
         String script = task.getScriptPath();
         boolean scriptFinishedSuccessful = true;
@@ -611,6 +620,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      * @throws DataException
      *             if the task cannot be saved
      */
+    @Override
     public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
         try {
             Process process = task.getProcess();
@@ -644,6 +654,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *            id of batch as Integer
      * @return list of Task objects
      */
+    @Override
     public List<Task> getCurrentTasksOfBatch(String title, Integer batchId) {
         return dao.getCurrentTasksOfBatch(title, batchId);
     }
@@ -659,6 +670,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *            id of process for which tasks are searched as Integer
      * @return list of Task objects
      */
+    @Override
     public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
         return dao.getAllTasksInBetween(orderingMax, orderingMin, processId);
     }
@@ -685,6 +697,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *            id of process for which tasks are searched as Integer
      * @return list of Task objects
      */
+    @Override
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
     }
@@ -707,6 +720,7 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
      *            of template
      * @return list of JSON objects with tasks for specific template id
      */
+    @Override
     public List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
         return findDocuments(getQueryForTemplate(id));
     }
