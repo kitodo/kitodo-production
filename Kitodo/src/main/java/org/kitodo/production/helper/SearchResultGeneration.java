@@ -11,7 +11,6 @@
 
 package org.kitodo.production.helper;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -20,15 +19,9 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.sort.SortOrder;
-import org.kitodo.data.database.beans.*;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 
 public class SearchResultGeneration {
