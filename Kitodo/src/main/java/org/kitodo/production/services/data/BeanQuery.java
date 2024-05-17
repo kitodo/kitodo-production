@@ -36,18 +36,44 @@ public class BeanQuery {
         varName = objectClass.toLowerCase();
     }
 
+    /**
+     * Requires that the hits must correspond to any of the specified values in
+     * the specified database column.
+     * 
+     * @param column
+     *            column in which the value must be
+     * @param values
+     *            value that the column must accept one of
+     */
     public void addInCollectionRestriction(String column, Collection<Integer> values) {
         String parameterName = varName(column);
         restrictions.add(varName + '.' + column + " IN (:" + parameterName + ')');
         parameters.put(parameterName, values);
     }
 
+    /**
+     * Requires that the hits in a specific column must have a specific value.
+     * 
+     * @param column
+     *            column that must have the specified value
+     * @param value
+     *            value that the column must have
+     */
     public void addIntegerRestriction(String column, int value) {
         String parameterName = varName(column);
         restrictions.add(varName + '.' + column + " = :" + parameterName);
         parameters.put(parameterName, value);
     }
 
+    /**
+     * Requires that the hits do not correspond to any of the specified values
+     * in the specified database column ​​(exclusion).
+     * 
+     * @param column
+     *            column in which the value must not be
+     * @param values
+     *            value that the column must not accept
+     */
     public void addNotInCollectionRestriction(String column, Collection<Integer> values) {
         String parameterName = varName(column);
         restrictions.add(varName + '.' + column + " NOT IN (:" + parameterName + ')');
@@ -59,6 +85,15 @@ public class BeanQuery {
         restrictions.add(varName + '.' + column + " IS NULL");
     }
 
+    /**
+     * Requires that the search only finds objects where the user input either
+     * matches the record number, or is part of the <i>title</i>. Title here
+     * means the label. If the input is not a number, the first option is
+     * omitted.
+     * 
+     * @param searchInput
+     *            single line input by the user
+     */
     public void forIdOrInTitle(String searchInput) {
         try {
             Integer possibleId = Integer.valueOf(searchInput);
@@ -71,6 +106,12 @@ public class BeanQuery {
         }
     }
 
+    /**
+     * Requires that the query only find objects owned by the specified client.
+     * 
+     * @param sessionClientId
+     *            client record number
+     */
     public void restrictToClient(int sessionClientId) {
         switch (objectClass) {
             case "Process":
@@ -89,6 +130,13 @@ public class BeanQuery {
         restrictions.add(varName + ".sortHelperStatus != '100000000000'");
     }
 
+    /**
+     * Requires that the search only find items that belong to one of the
+     * specified projects.
+     * 
+     * @param projectIDs
+     *            record numbers of the projects to which the hits may belong
+     */
     public void restrictToProjects(Collection<Integer> projectIDs) {
         switch (objectClass) {
             case "Process":
@@ -112,6 +160,11 @@ public class BeanQuery {
         sorting = Pair.of(varName + '.' + sortField, SortOrder.DESCENDING.equals(sortOrder) ? "DESC" : "ASC");
     }
 
+    /**
+     * Forms and returns a query to count all objects.
+     * 
+     * @return a query to count all objects
+     */
     public String formCountQuery() {
         String query = "SELECT COUNT(*) FROM " + objectClass;
         if (!restrictions.isEmpty()) {
@@ -120,6 +173,11 @@ public class BeanQuery {
         return query;
     }
 
+    /**
+     * Forms and returns a query for all objects.
+     * 
+     * @return a query for all objects
+     */
     public String formQueryForAll() {
         String query = "SELECT COUNT(*) FROM " + objectClass + " AS " + varName;
         if (!restrictions.isEmpty()) {

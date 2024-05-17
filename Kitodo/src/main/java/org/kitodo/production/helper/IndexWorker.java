@@ -39,7 +39,8 @@ public class IndexWorker implements Runnable {
      * @param searchService
      *            SearchService instance used for indexing
      */
-    public IndexWorker(SearchDatabaseService searchService, ObjectType objectType, IndexWorkerStatus indexWorkerStatus, boolean indexAllObjects) {
+    public IndexWorker(SearchDatabaseService searchService, ObjectType objectType, IndexWorkerStatus indexWorkerStatus,
+            boolean indexAllObjects) {
         this.searchService = searchService;
         this.indexWorkerStatus = indexWorkerStatus;
         this.indexAllObjects = indexAllObjects;

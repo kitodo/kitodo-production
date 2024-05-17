@@ -1140,17 +1140,11 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Gets the amount of processes for the current filter.
+     * 
      * @return amount of processes
      */
-    public String getAmount() {
-//        try {
-            throw new UnsupportedOperationException("not yet implemented");
-//            return ServiceManager.getProcessService().count(ServiceManager.getProcessService()
-//                    .getQueryForFilter(isShowClosedProcesses(), isShowInactiveProjects(), filter)).toString();
-//        } catch (DataException e) {
-//            Helper.setErrorMessage(e);
-//            return "";
-//        }
+    public String getAmount() throws DAOException {
+        return ServiceManager.getProcessService().countDatabaseRows().toString();
     }
 
     /**

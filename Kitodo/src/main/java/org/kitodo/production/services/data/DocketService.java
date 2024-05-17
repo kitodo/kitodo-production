@@ -26,10 +26,10 @@ import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseDocketServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends SearchDatabaseService<Docket, DocketDAO>
-        implements DatabaseDocketServiceInterface {
+public class DocketService extends SearchDatabaseService<Docket, DocketDAO> implements DatabaseDocketServiceInterface {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
+
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title.keyword", "title");
@@ -90,7 +90,8 @@ public class DocketService extends SearchDatabaseService<Docket, DocketDAO>
         parameters.put("limit", pageSize);
         parameters.put("offset", first);
         return getByQuery("FROM Docket WHERE client_id = :sessionClientId "
-                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
+                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset",
+            parameters);
     }
 
     @Override

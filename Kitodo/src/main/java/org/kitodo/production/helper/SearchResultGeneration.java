@@ -73,7 +73,7 @@ public class SearchResultGeneration {
     public String getQueryForFilter(Class<? extends BaseBean> objectType) {
         String query = "FROM Process AS process";
         String operator = " WHERE";
-        if(!StringUtils.isBlank(filter)) {
+        if (!StringUtils.isBlank(filter)) {
             query += operator + " process.title LIKE '%" + filter + "%'";
             operator = " AND";
         }

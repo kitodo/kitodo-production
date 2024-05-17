@@ -53,6 +53,7 @@ public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO>
         implements DatabaseRulesetServiceInterface {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
+
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title.keyword", "title");
@@ -102,7 +103,8 @@ public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO>
             return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
         } catch (DAOException e) {
             throw new DataException(e);
-        }    }
+        }
+    }
 
     @Override
     public List<Ruleset> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)

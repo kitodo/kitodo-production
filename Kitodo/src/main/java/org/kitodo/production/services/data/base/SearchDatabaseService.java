@@ -31,6 +31,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         implements SearchDatabaseServiceInterface<T> {
 
     protected static final EnumMap<SortOrder, String> SORT_ORDER_MAPPING;
+
     static {
         SORT_ORDER_MAPPING = new EnumMap<>(SortOrder.class);
         SORT_ORDER_MAPPING.put(SortOrder.ASCENDING, "ASC");

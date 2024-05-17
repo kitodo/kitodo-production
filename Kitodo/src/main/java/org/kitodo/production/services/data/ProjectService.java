@@ -41,6 +41,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         implements DatabaseProjectServiceInterface {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
+
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title.keyword", "title");

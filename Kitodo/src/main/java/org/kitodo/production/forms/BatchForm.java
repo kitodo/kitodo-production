@@ -26,9 +26,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-//import org.elasticsearch.index.query.BoolQueryBuilder;
-//import org.elasticsearch.index.query.QueryBuilder;
-//import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -37,7 +34,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
