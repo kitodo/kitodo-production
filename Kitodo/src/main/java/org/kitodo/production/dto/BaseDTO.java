@@ -13,7 +13,9 @@ package org.kitodo.production.dto;
 
 import java.io.Serializable;
 
-public abstract class BaseDTO implements Serializable {
+import org.kitodo.data.interfaces.DataInterface;
+
+public abstract class BaseDTO implements Serializable, DataInterface {
 
     private Integer id;
 

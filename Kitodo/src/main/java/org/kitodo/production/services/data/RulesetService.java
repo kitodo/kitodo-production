@@ -39,16 +39,17 @@ import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.RulesetInterface;
 import org.kitodo.exceptions.RulesetNotFoundException;
-import org.kitodo.production.dto.ClientDTO;
-import org.kitodo.production.dto.RulesetDTO;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, RulesetDAO> {
+public class RulesetService extends ClientSearchService<Ruleset, RulesetInterface, RulesetDAO> {
 
     private static final Logger logger = LogManager.getLogger(RulesetService.class);
     private static volatile RulesetService instance = null;
@@ -96,7 +97,7 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
     }
 
     @Override
-    public List<RulesetDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<RulesetInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         return findByQuery(getRulesetsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
@@ -114,20 +115,20 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
     }
 
     @Override
-    public RulesetDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        RulesetDTO rulesetDTO = new RulesetDTO();
-        rulesetDTO.setId(getIdFromJSONObject(jsonObject));
-        rulesetDTO.setTitle(RulesetTypeField.TITLE.getStringValue(jsonObject));
-        rulesetDTO.setFile(RulesetTypeField.FILE.getStringValue(jsonObject));
-        rulesetDTO.setOrderMetadataByRuleset(
+    public RulesetInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        RulesetInterface ruleset = DTOFactory.instance().newRuleset();
+        ruleset.setId(getIdFromJSONObject(jsonObject));
+        ruleset.setTitle(RulesetTypeField.TITLE.getStringValue(jsonObject));
+        ruleset.setFile(RulesetTypeField.FILE.getStringValue(jsonObject));
+        ruleset.setOrderMetadataByRuleset(
             RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(jsonObject));
 
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(RulesetTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientDTO.setName(RulesetTypeField.CLIENT_NAME.getStringValue(jsonObject));
+        ClientInterface client = DTOFactory.instance().newClient();
+        client.setId(RulesetTypeField.CLIENT_ID.getIntValue(jsonObject));
+        client.setName(RulesetTypeField.CLIENT_NAME.getStringValue(jsonObject));
 
-        rulesetDTO.setClientDTO(clientDTO);
-        return rulesetDTO;
+        ruleset.setClient(client);
+        return ruleset;
     }
 
     /**

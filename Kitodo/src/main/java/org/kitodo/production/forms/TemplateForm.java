@@ -240,6 +240,20 @@ public class TemplateForm extends TemplateBaseForm {
     }
 
     /**
+     * Returns a read handle for the SVG image of this production template's
+     * workflow. If the file cannot be read (due to an error), returns an empty
+     * input stream.
+     *
+     * @return read file handle for the SVG
+     */
+    public InputStream getDiagramImage(String title) {
+        if (Objects.nonNull(title)) {
+            return ServiceManager.getTemplateService().getTasksDiagram(title);
+        }
+        return ServiceManager.getTemplateService().getTasksDiagram("");
+    }
+
+    /**
      * Get list of dockets for select list.
      *
      * @return list of dockets

@@ -11,10 +11,18 @@
 
 package org.kitodo.production.dto;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
+
+import org.apache.commons.lang3.StringUtils;
+import org.kitodo.data.interfaces.PropertyInterface;
+
 /**
  * Property DTO object.
  */
-public class PropertyDTO extends BaseDTO {
+public class PropertyDTO extends BaseDTO implements PropertyInterface {
 
     private String title;
     private String value;
@@ -25,6 +33,7 @@ public class PropertyDTO extends BaseDTO {
      *
      * @return title as String
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -35,6 +44,7 @@ public class PropertyDTO extends BaseDTO {
      * @param title
      *            as String
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -44,6 +54,7 @@ public class PropertyDTO extends BaseDTO {
      *
      * @return value as String
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -54,6 +65,7 @@ public class PropertyDTO extends BaseDTO {
      * @param value
      *            as String
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -63,7 +75,8 @@ public class PropertyDTO extends BaseDTO {
      *
      * @return creation date as String.
      */
-    public String getCreationDate() {
+    @Override
+    public String getCreationTime() {
         return creationDate;
     }
 
@@ -73,7 +86,25 @@ public class PropertyDTO extends BaseDTO {
      * @param creationDate
      *            as String
      */
-    public void setCreationDate(String creationDate) {
+    @Override
+    public void setCreationTime(String creationDate) {
         this.creationDate = creationDate;
+    }
+
+    @Override
+    public Date getCreationDate() {
+        try {
+            return StringUtils.isNotBlank(this.creationDate)
+                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
+                    : null;
+        } catch (ParseException e) {
+            throw new IllegalStateException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void setCreationDate(Date creationDate) {
+        this.creationDate = Objects.nonNull(creationDate) ? new SimpleDateFormat(DATE_FORMAT).format(creationDate)
+                : null;
     }
 }

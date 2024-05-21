@@ -48,11 +48,11 @@ import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.helper.CustomListColumnInitializer;
@@ -151,28 +151,28 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Retrieve and return process property value of property with given name
-     * 'propertyName' from given ProcessDTO 'process'.
+     * 'propertyName' from given ProcessInterface 'process'.
      *
      * @param process
-     *            the ProcessDTO object from which the property value is retrieved
+     *            the ProcessInterface object from which the property value is retrieved
      * @param propertyName
      *            name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName',
      *         empty String otherwise
      */
-    public static String getPropertyValue(ProcessDTO process, String propertyName) {
+    public static String getPropertyValue(ProcessInterface process, String propertyName) {
         return ProcessService.getPropertyValue(process, propertyName);
     }
 
     /**
      * Calculate and return age of given process as a String.
      *
-     * @param processDTO
-     *            ProcessDTO object whose duration/age is calculated
+     * @param process
+     *            ProcessInterface object whose duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessDTO processDTO) {
-        return ProcessService.getProcessDuration(processDTO);
+    public static String getProcessDuration(ProcessInterface process) {
+        return ProcessService.getProcessDuration(process);
     }
 
     /**
@@ -202,15 +202,15 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Create Child for given Process.
-     * @param processDTO the process to create a child for.
+     * @param process the process to create a child for.
      * @return path to createProcessForm
      */
-    public String createProcessAsChild(ProcessDTO processDTO) {
+    public String createProcessAsChild(ProcessInterface process) {
         try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
-                return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
-                        + process.getProject().getId() + "&parentId=" + process.getId();
+            Process processBean = ServiceManager.getProcessService().getById(process.getId());
+            if (Objects.nonNull(processBean.getTemplate()) && Objects.nonNull(processBean.getProject())) {
+                return CREATE_PROCESS_PATH + "&templateId=" + processBean.getTemplate().getId() + "&projectId="
+                        + processBean.getProject().getId() + "&parentId=" + processBean.getId();
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
@@ -652,11 +652,11 @@ public class ProcessForm extends TemplateBaseForm {
 
     private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
-        List<ProcessDTO> filteredProcesses = new ArrayList<>();
+        List<ProcessInterface> filteredProcesses = new ArrayList<>();
         for (Object object : lazyDTOModel.load(0, 100000, "",
                 SortOrder.ASCENDING, null)) {
-            if (object instanceof ProcessDTO) {
-                filteredProcesses.add((ProcessDTO) object);
+            if (object instanceof ProcessInterface) {
+                filteredProcesses.add((ProcessInterface) object);
             }
         }
         List<Process> processesForActions = new ArrayList<>();
@@ -1059,7 +1059,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private String filterList() {
-        this.selectedProcessesOrProcessDTOs.clear();
+        this.selectedProcesses.clear();
         return processesPage;
     }
 
@@ -1073,12 +1073,12 @@ public class ProcessForm extends TemplateBaseForm {
      * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
      * "INWORK".
      *
-     * @param processDTO
+     * @param process
      *          process for which current task titles are returned
      * @return String containing titles of current tasks of given process
      */
-    public String getCurrentTaskTitles(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().createProgressTooltip(processDTO);
+    public String getCurrentTaskTitles(ProcessInterface process) {
+        return ServiceManager.getProcessService().createProgressTooltip(process);
     }
 
     /**
@@ -1130,11 +1130,12 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * @param processDTO process as DTO object
-     * @return List of filtered tasks as DTO objects
+     * @param process process as Interface object
+     * @return List of filtered tasks as Interface objects
      */
-    public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getCurrentTasksForUser(processDTO, ServiceManager.getUserService().getCurrentUser());
+    public List<TaskInterface> getCurrentTasksForUser(ProcessInterface process) {
+        return ServiceManager.getProcessService().getCurrentTasksForUser(process,
+            ServiceManager.getUserService().getCurrentUser());
     }
 
     /**
@@ -1215,7 +1216,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (process instanceof Process) {
             return ((Process) process).getId();
         } else {
-            return ((ProcessDTO) process).getId();
+            return ((ProcessInterface) process).getId();
         }
     }
 

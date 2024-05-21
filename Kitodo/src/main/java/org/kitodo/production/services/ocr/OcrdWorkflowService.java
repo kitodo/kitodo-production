@@ -63,7 +63,7 @@ public class OcrdWorkflowService {
      */
     public List<Pair<?, ?>> getOcrdWorkflows() {
         String ocrdWorkflowsDirectoryConfig = ConfigCore.getParameterOrDefaultValue(ParameterCore.OCRD_WORKFLOWS_DIR);
-        if (StringUtils.isNotEmpty(ocrdWorkflowsDirectoryConfig)) {
+        if (StringUtils.isNotBlank(ocrdWorkflowsDirectoryConfig)) {
             Path ocrdWorkflowsDirectory = Path.of(ocrdWorkflowsDirectoryConfig);
             if (Files.isDirectory(ocrdWorkflowsDirectory)) {
                 try (Stream<Path> ocrProfilePaths = Files.walk(ocrdWorkflowsDirectory, FileVisitOption.FOLLOW_LINKS)) {
@@ -92,7 +92,7 @@ public class OcrdWorkflowService {
      * @return The OCR-D workflow
      */
     public Pair<?, ?> getOcrdWorkflow(String ocrdWorkflowId) {
-        if (StringUtils.isNotEmpty(ocrdWorkflowId)) {
+        if (StringUtils.isNotBlank(ocrdWorkflowId)) {
             return getOcrdWorkflows().stream().filter(pair -> pair.getKey().equals(ocrdWorkflowId)).findFirst()
                     .orElse(null);
         }

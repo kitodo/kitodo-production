@@ -32,8 +32,8 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.DataInterface;
 import org.kitodo.exceptions.FilterException;
-import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.PrimeFaces;
@@ -82,8 +82,8 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     @Override
     public Object getRowKey(Object inObject) {
-        if (inObject instanceof BaseDTO) {
-            BaseDTO dto = (BaseDTO) inObject;
+        if (inObject instanceof DataInterface) {
+            DataInterface dto = (DataInterface) inObject;
             return dto.getId();
         } else if (inObject instanceof BaseBean) {
             BaseBean bean = (BaseBean) inObject;

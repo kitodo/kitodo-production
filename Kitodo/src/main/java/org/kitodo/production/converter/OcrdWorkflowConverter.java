@@ -28,7 +28,7 @@ public class OcrdWorkflowConverter extends BeanConverter implements Converter<Ob
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (StringUtils.isNotEmpty(value)) {
+        if (StringUtils.isNotBlank(value)) {
             return ServiceManager.getOcrdWorkflowService().getOcrdWorkflow(value);
         }
         return null;

@@ -28,10 +28,11 @@ import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
+import org.kitodo.data.interfaces.WorkflowInterface;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BaseIndexedBean {
+public class Workflow extends BaseIndexedBean implements WorkflowInterface {
 
     @Column(name = "title")
     private String title;
@@ -66,39 +67,22 @@ public class Workflow extends BaseIndexedBean {
         this.title = title;
     }
 
-    /**
-     * Get title.
-     *
-     * @return value of title
-     */
+    @Override
     public String getTitle() {
         return title;
     }
 
-    /**
-     * Set title.
-     *
-     * @param title
-     *            as String
-     */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
 
-    /**
-     * Get status of the workflow.
-     *
-     * @return value of status
-     */
+    @Override
     public WorkflowStatus getStatus() {
         return status;
     }
 
-    /**
-     * Set status of the workflow.
-     *
-     * @param status as org.kitodo.data.database.beans.Workflow.Status
-     */
+    @Override
     public void setStatus(WorkflowStatus status) {
         this.status = status;
     }
