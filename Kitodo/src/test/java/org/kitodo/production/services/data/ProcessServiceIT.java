@@ -597,14 +597,14 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessInterface processInterface = processService.findById(2);
-        assertTrue(processService.isProcessAssignedToOnlyOneBatch(processInterface.getBatches()));
+        ProcessInterface process = processService.findById(2);
+        assertTrue(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
     public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessInterface processInterface = processService.findById(1);
-        assertFalse(processService.isProcessAssignedToOnlyOneBatch(processInterface.getBatches()));
+        ProcessInterface process = processService.findById(1);
+        assertFalse(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test

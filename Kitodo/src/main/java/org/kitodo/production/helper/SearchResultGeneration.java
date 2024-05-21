@@ -61,15 +61,15 @@ public class SearchResultGeneration {
     }
 
     private List<ProcessInterface> getResultsWithFilter() {
-        List<ProcessInterface> processInterfaces = new ArrayList<>();
+        List<ProcessInterface> processes = new ArrayList<>();
         try {
-            processInterfaces = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
+            processes = ServiceManager.getProcessService().findByQuery(getQueryForFilter(ObjectType.PROCESS),
                 ServiceManager.getProcessService().sortById(SortOrder.ASC), true);
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
 
-        return processInterfaces;
+        return processes;
     }
 
     /**
@@ -121,26 +121,26 @@ public class SearchResultGeneration {
             Long numberOfExpectedProcesses = ServiceManager.getProcessService()
                     .count(getQueryForFilter(ObjectType.PROCESS));
             if (numberOfExpectedProcesses > elasticsearchLimit) {
-                List<ProcessInterface> processInterfaces;
+                List<ProcessInterface> processes;
                 int queriedIds = 0;
                 while (numberOfProcessedProcesses < numberOfExpectedProcesses) {
                     RangeQueryBuilder rangeQueryBuilder = new RangeQueryBuilder(ProcessTypeField.ID.toString());
                     rangeQueryBuilder.gte(queriedIds).lt(queriedIds + elasticsearchLimit);
                     BoolQueryBuilder queryForFilter = getQueryForFilter(ObjectType.PROCESS);
                     queryForFilter.must(rangeQueryBuilder);
-                    processInterfaces = ServiceManager.getProcessService().findByQuery(queryForFilter,
+                    processes = ServiceManager.getProcessService().findByQuery(queryForFilter,
                         ServiceManager.getProcessService().sortById(SortOrder.ASC), true);
                     queriedIds += elasticsearchLimit;
-                    for (ProcessInterface processDTO : processInterfaces) {
-                        prepareRow(rowCounter, sheet, processDTO);
+                    for (ProcessInterface process : processes) {
+                        prepareRow(rowCounter, sheet, process);
                         rowCounter++;
                     }
-                    numberOfProcessedProcesses += processInterfaces.size();
+                    numberOfProcessedProcesses += processes.size();
                 }
             } else {
                 List<ProcessInterface> resultsWithFilter = getResultsWithFilter();
-                for (ProcessInterface processDTO : resultsWithFilter) {
-                    prepareRow(rowCounter, sheet, processDTO);
+                for (ProcessInterface process : resultsWithFilter) {
+                    prepareRow(rowCounter, sheet, process);
                     rowCounter++;
                 }
             }
@@ -161,15 +161,15 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
-    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessInterface processInterface) {
+    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessInterface process) {
         HSSFRow row = sheet.createRow(rowCounter);
-        row.createCell(0).setCellValue(processInterface.getTitle());
-        row.createCell(1).setCellValue(processInterface.getId());
-        row.createCell(2).setCellValue(processInterface.getCreationTime());
-        row.createCell(3).setCellValue(processInterface.getNumberOfImages());
-        row.createCell(4).setCellValue(processInterface.getNumberOfStructures());
-        row.createCell(5).setCellValue(processInterface.getNumberOfMetadata());
-        row.createCell(6).setCellValue(processInterface.getProject().getTitle());
-        row.createCell(7).setCellValue(processInterface.getSortHelperStatus());
+        row.createCell(0).setCellValue(process.getTitle());
+        row.createCell(1).setCellValue(process.getId());
+        row.createCell(2).setCellValue(process.getCreationTime());
+        row.createCell(3).setCellValue(process.getNumberOfImages());
+        row.createCell(4).setCellValue(process.getNumberOfStructures());
+        row.createCell(5).setCellValue(process.getNumberOfMetadata());
+        row.createCell(6).setCellValue(process.getProject().getTitle());
+        row.createCell(7).setCellValue(process.getSortHelperStatus());
     }
 }

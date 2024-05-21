@@ -956,15 +956,15 @@ public class ImportService {
                 HashMap<String, String> parentIDMetadata = new HashMap<>();
                 parentIDMetadata.put(identifierMetadata, parentId);
                 try {
-                    for (ProcessInterface processInterface : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                        Process process = ServiceManager.getProcessService().getById(processInterface.getId());
-                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                    for (ProcessInterface process : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
+                        Process processBean = ServiceManager.getProcessService().getById(process.getId());
+                        if (Objects.isNull(processBean.getRuleset()) || Objects.isNull(processBean.getRuleset().getId())) {
                             throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                                    + process.getId() + " is null!");
+                                    + processBean.getId() + " is null!");
                         }
-                        if (process.getProject().getId() == projectId
-                                && process.getRuleset().getId().equals(ruleset.getId())) {
-                            parentProcess = process;
+                        if (processBean.getProject().getId() == projectId
+                                && processBean.getRuleset().getId().equals(ruleset.getId())) {
+                            parentProcess = processBean;
                             break;
                         }
                     }

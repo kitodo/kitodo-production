@@ -69,11 +69,11 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
     /**
      * Set project.
      *
-     * @param projectInterface
+     * @param project
      *            as ProjectInterface
      */
-    public void setProject(ProjectInterface projectInterface) {
-        this.project = (ProjectInterface) projectInterface;
+    public void setProject(ProjectInterface project) {
+        this.project = (ProjectInterface) project;
     }
 
     /**

@@ -182,37 +182,37 @@ public class TemplateService extends ClientSearchService<Template, TemplateInter
     }
 
     @Override
-    public TemplateInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        TemplateInterface templateInterface = DTOFactory.instance().newTemplate();
-        templateInterface.setId(getIdFromJSONObject(jsonObject));
-        templateInterface.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
-        templateInterface.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
+    public TemplateInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        TemplateInterface template = DTOFactory.instance().newTemplate();
+        template.setId(getIdFromJSONObject(jsonObject));
+        template.setTitle(TemplateTypeField.TITLE.getStringValue(jsonObject));
+        template.setActive(TemplateTypeField.ACTIVE.getBooleanValue(jsonObject));
         try {
-            templateInterface.setCreationTime(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
+            template.setCreationTime(TemplateTypeField.CREATION_DATE.getStringValue(jsonObject));
         } catch (ParseException e) {
             throw new DataException(e);
         }
-        templateInterface.setDocket(
+        template.setDocket(
             ServiceManager.getDocketService().findById(TemplateTypeField.DOCKET.getIntValue(jsonObject)));
-        templateInterface.setRuleset(
+        template.setRuleset(
             ServiceManager.getRulesetService().findById(TemplateTypeField.RULESET_ID.getIntValue(jsonObject)));
-        WorkflowInterface workflowInterface = DTOFactory.instance().newWorkflow();
-        workflowInterface.setTitle(TemplateTypeField.WORKFLOW_TITLE.getStringValue(jsonObject));
-        templateInterface.setWorkflow(workflowInterface);
-        templateInterface.setTasks(convertRelatedJSONObjectToInterface(jsonObject, TemplateTypeField.TASKS.getKey(),
+        WorkflowInterface workflow = DTOFactory.instance().newWorkflow();
+        workflow.setTitle(TemplateTypeField.WORKFLOW_TITLE.getStringValue(jsonObject));
+        template.setWorkflow(workflow);
+        template.setTasks(convertRelatedJSONObjectTo(jsonObject, TemplateTypeField.TASKS.getKey(),
             ServiceManager.getTaskService()));
-        templateInterface.setCanBeUsedForProcess(hasCompleteTasks(templateInterface.getTasks()));
+        template.setCanBeUsedForProcess(hasCompleteTasks(template.getTasks()));
 
         if (!related) {
-            convertRelatedJSONObjects(jsonObject, templateInterface);
+            convertRelatedJSONObjects(jsonObject, template);
         }
 
-        return templateInterface;
+        return template;
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateInterface templateInterface)
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, TemplateInterface template)
             throws DataException {
-        templateInterface.setProjects(convertRelatedJSONObjectToInterface(jsonObject, TemplateTypeField.PROJECTS.getKey(),
+        template.setProjects(convertRelatedJSONObjectTo(jsonObject, TemplateTypeField.PROJECTS.getKey(),
             ServiceManager.getProjectService()).stream().sorted(Comparator.comparing(ProjectInterface::getTitle))
                 .collect(Collectors.toList()));
     }

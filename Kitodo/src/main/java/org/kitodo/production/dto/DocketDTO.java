@@ -84,7 +84,7 @@ public class DocketDTO extends BaseDTO implements DocketInterface {
     /**
      * Get client object.
      *
-     * @return value of clientInterface
+     * @return value of client
      */
     public ClientInterface getClient() {
         return client;

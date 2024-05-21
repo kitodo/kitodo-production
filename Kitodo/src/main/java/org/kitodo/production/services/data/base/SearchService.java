@@ -100,7 +100,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *            true or false
      * @return Interface object
      */
-    public abstract S convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException;
+    public abstract S convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException;
 
     /**
      * Count all not indexed rows in database. Not indexed means that row has index
@@ -452,7 +452,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      */
     public S findById(Integer id, boolean related) throws DataException {
         try {
-            return convertJSONObjectToInterface(searcher.findDocument(id), related);
+            return convertJSONObjectTo(searcher.findDocument(id), related);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
@@ -537,7 +537,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
         List<S> results = new ArrayList<>();
 
         for (Map<String, Object> jsonObject : jsonObjects) {
-            results.add(convertJSONObjectToInterface(jsonObject, related));
+            results.add(convertJSONObjectTo(jsonObject, related));
         }
 
         return results;
@@ -552,9 +552,9 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *            name of related property
      * @return bean object
      */
-    protected <O extends DataInterface> List<O> convertRelatedJSONObjectToInterface(Map<String, Object> jsonObject, String key,
+    protected <O extends DataInterface> List<O> convertRelatedJSONObjectTo(Map<String, Object> jsonObject, String key,
             SearchService<?, O, ?> service) throws DataException {
-        List<Integer> ids = getRelatedPropertyForInterface(jsonObject, key);
+        List<Integer> ids = getRelatedPropertyFor(jsonObject, key);
         if (ids.isEmpty()) {
             return new ArrayList<>();
         }
@@ -905,7 +905,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      * @return display properties as list of Integers
      */
     @SuppressWarnings("unchecked")
-    private List<Integer> getRelatedPropertyForInterface(Map<String, Object> object, String key) {
+    private List<Integer> getRelatedPropertyFor(Map<String, Object> object, String key) {
         if (Objects.nonNull(object)) {
             List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
             List<Integer> ids = new ArrayList<>();

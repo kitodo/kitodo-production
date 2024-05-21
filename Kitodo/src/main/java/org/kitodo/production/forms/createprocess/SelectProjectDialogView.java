@@ -39,26 +39,26 @@ public class SelectProjectDialogView implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(SelectProjectDialogView.class);
     private int selectedProjectId = 0;
-    private TemplateInterface templateInterface;
+    private TemplateInterface template;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
 
     /**
      * Get template.
      *
-     * @return value of templateInterface
+     * @return value of template
      */
     public TemplateInterface getTemplate() {
-        return templateInterface;
+        return template;
     }
 
     /**
-     * Set templateInterface.
+     * Set template.
      *
-     * @param templateInterface as org.kitodo.production.dto.TemplateInterface
+     * @param template as org.kitodo.data.interfaces.TemplateInterface
      */
-    public void setTemplateInterface(TemplateInterface templateInterface) {
-        this.templateInterface = templateInterface;
+    public void setTemplate(TemplateInterface template) {
+        this.template = template;
     }
 
     /**
@@ -86,12 +86,12 @@ public class SelectProjectDialogView implements Serializable {
      */
     public List<Project> getTemplateProjects() {
         try {
-            Template template = ServiceManager.getTemplateService().getById(this.templateInterface.getId());
+            Template template = ServiceManager.getTemplateService().getById(this.template.getId());
             return template.getProjects().stream().sorted(Comparator.comparing(Project::getTitle))
                     .collect(Collectors.toList());
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TEMPLATE.getTranslationSingular(),
-                    this.templateInterface.getId()}, logger, e);
+                    this.template.getId()}, logger, e);
         }
         return Collections.emptyList();
     }
@@ -103,20 +103,20 @@ public class SelectProjectDialogView implements Serializable {
      * Display error message if the current template is not used in any project.
      */
     public void createProcessFromTemplate() {
-        if (this.templateInterface.getProjects().size() == 1) {
-            this.selectedProjectId = this.templateInterface.getProjects().get(0).getId();
+        if (this.template.getProjects().size() == 1) {
+            this.selectedProjectId = this.template.getProjects().get(0).getId();
         }
         if (this.selectedProjectId > 0) {
             try {
                 FacesContext context = FacesContext.getCurrentInstance();
                 String path = context.getExternalContext().getRequestContextPath() + CREATE_PROCESS_PATH
-                        + "&templateId=" + this.templateInterface.getId() + "&projectId=" + this.selectedProjectId
+                        + "&templateId=" + this.template.getId() + "&projectId=" + this.selectedProjectId
                         + "&referrer=" + context.getViewRoot().getViewId();
                 context.getExternalContext().redirect(path);
             } catch (IOException e) {
                 Helper.setErrorMessage(e.getLocalizedMessage());
             }
-        } else if (templateInterface.getProjects().size() > 1) {
+        } else if (template.getProjects().size() > 1) {
             PrimeFaces.current().ajax().update("selectProjectDialog");
             PrimeFaces.current().executeScript("PF('selectProjectDialog').show();");
         } else {

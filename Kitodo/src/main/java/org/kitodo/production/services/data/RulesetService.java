@@ -115,20 +115,20 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetInterfac
     }
 
     @Override
-    public RulesetInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        RulesetInterface rulesetInterface = DTOFactory.instance().newRuleset();
-        rulesetInterface.setId(getIdFromJSONObject(jsonObject));
-        rulesetInterface.setTitle(RulesetTypeField.TITLE.getStringValue(jsonObject));
-        rulesetInterface.setFile(RulesetTypeField.FILE.getStringValue(jsonObject));
-        rulesetInterface.setOrderMetadataByRuleset(
+    public RulesetInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        RulesetInterface ruleset = DTOFactory.instance().newRuleset();
+        ruleset.setId(getIdFromJSONObject(jsonObject));
+        ruleset.setTitle(RulesetTypeField.TITLE.getStringValue(jsonObject));
+        ruleset.setFile(RulesetTypeField.FILE.getStringValue(jsonObject));
+        ruleset.setOrderMetadataByRuleset(
             RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(jsonObject));
 
-        ClientInterface clientInterface = DTOFactory.instance().newClient();
-        clientInterface.setId(RulesetTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientInterface.setName(RulesetTypeField.CLIENT_NAME.getStringValue(jsonObject));
+        ClientInterface client = DTOFactory.instance().newClient();
+        client.setId(RulesetTypeField.CLIENT_ID.getIntValue(jsonObject));
+        client.setName(RulesetTypeField.CLIENT_NAME.getStringValue(jsonObject));
 
-        rulesetInterface.setClient(clientInterface);
-        return rulesetInterface;
+        ruleset.setClient(client);
+        return ruleset;
     }
 
     /**

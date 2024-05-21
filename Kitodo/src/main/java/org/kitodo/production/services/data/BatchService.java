@@ -151,18 +151,18 @@ public class BatchService extends TitleSearchService<Batch, BatchInterface, Batc
     }
 
     @Override
-    public BatchInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        BatchInterface batchInterface = DTOFactory.instance().newBatch();
-        batchInterface.setId(getIdFromJSONObject(jsonObject));
-        batchInterface.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
+    public BatchInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        BatchInterface batch = DTOFactory.instance().newBatch();
+        batch.setId(getIdFromJSONObject(jsonObject));
+        batch.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
         if (!related) {
-            convertRelatedJSONObjects(jsonObject, batchInterface);
+            convertRelatedJSONObjects(jsonObject, batch);
         }
-        return batchInterface;
+        return batch;
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batchInterface) throws DataException {
-        batchInterface.setProcesses(convertRelatedJSONObjectToInterface(jsonObject, BatchTypeField.PROCESSES.getKey(),
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batch) throws DataException {
+        batch.setProcesses(convertRelatedJSONObjectTo(jsonObject, BatchTypeField.PROCESSES.getKey(),
             ServiceManager.getProcessService()));
     }
 

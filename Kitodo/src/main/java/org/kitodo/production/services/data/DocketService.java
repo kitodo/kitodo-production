@@ -99,18 +99,18 @@ public class DocketService extends ClientSearchService<Docket, DocketInterface, 
     }
 
     @Override
-    public DocketInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        DocketInterface docketInterface = DTOFactory.instance().newDocket();
-        docketInterface.setId(getIdFromJSONObject(jsonObject));
-        docketInterface.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
-        docketInterface.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
+    public DocketInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        DocketInterface docket = DTOFactory.instance().newDocket();
+        docket.setId(getIdFromJSONObject(jsonObject));
+        docket.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
+        docket.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
 
-        ClientInterface clientInterface = DTOFactory.instance().newClient();
-        clientInterface.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientInterface.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
+        ClientInterface client = DTOFactory.instance().newClient();
+        client.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
+        client.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
 
-        docketInterface.setClient(clientInterface);
-        return docketInterface;
+        docket.setClient(client);
+        return docket;
     }
 
     /**

@@ -167,12 +167,12 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Calculate and return age of given process as a String.
      *
-     * @param processInterface
+     * @param process
      *            ProcessInterface object whose duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessInterface processInterface) {
-        return ProcessService.getProcessDuration(processInterface);
+    public static String getProcessDuration(ProcessInterface process) {
+        return ProcessService.getProcessDuration(process);
     }
 
     /**
@@ -202,15 +202,15 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Create Child for given Process.
-     * @param processInterface the process to create a child for.
+     * @param process the process to create a child for.
      * @return path to createProcessForm
      */
-    public String createProcessAsChild(ProcessInterface processInterface) {
+    public String createProcessAsChild(ProcessInterface process) {
         try {
-            Process process = ServiceManager.getProcessService().getById(processInterface.getId());
-            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
-                return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
-                        + process.getProject().getId() + "&parentId=" + process.getId();
+            Process processBean = ServiceManager.getProcessService().getById(process.getId());
+            if (Objects.nonNull(processBean.getTemplate()) && Objects.nonNull(processBean.getProject())) {
+                return CREATE_PROCESS_PATH + "&templateId=" + processBean.getTemplate().getId() + "&projectId="
+                        + processBean.getProject().getId() + "&parentId=" + processBean.getId();
             }
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
@@ -1059,7 +1059,7 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private String filterList() {
-        this.selectedProcessesOrProcessDTOs.clear();
+        this.selectedProcesses.clear();
         return processesPage;
     }
 
@@ -1073,12 +1073,12 @@ public class ProcessForm extends TemplateBaseForm {
      * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
      * "INWORK".
      *
-     * @param processInterface
+     * @param process
      *          process for which current task titles are returned
      * @return String containing titles of current tasks of given process
      */
-    public String getCurrentTaskTitles(ProcessInterface processInterface) {
-        return ServiceManager.getProcessService().createProgressTooltip(processInterface);
+    public String getCurrentTaskTitles(ProcessInterface process) {
+        return ServiceManager.getProcessService().createProgressTooltip(process);
     }
 
     /**
@@ -1130,11 +1130,11 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * @param processInterface process as Interface object
+     * @param process process as Interface object
      * @return List of filtered tasks as Interface objects
      */
-    public List<TaskInterface> getCurrentTasksForUser(ProcessInterface processInterface) {
-        return ServiceManager.getProcessService().getCurrentTasksForUser(processInterface,
+    public List<TaskInterface> getCurrentTasksForUser(ProcessInterface process) {
+        return ServiceManager.getProcessService().getCurrentTasksForUser(process,
             ServiceManager.getUserService().getCurrentUser());
     }
 

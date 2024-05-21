@@ -99,12 +99,12 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowInter
     }
 
     @Override
-    public WorkflowInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        WorkflowInterface workflowInterface = DTOFactory.instance().newWorkflow();
-        workflowInterface.setId(getIdFromJSONObject(jsonObject));
-        workflowInterface.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
-        workflowInterface.setWorkflowStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
-        return workflowInterface;
+    public WorkflowInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        WorkflowInterface workflow = DTOFactory.instance().newWorkflow();
+        workflow.setId(getIdFromJSONObject(jsonObject));
+        workflow.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
+        workflow.setWorkflowStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
+        return workflow;
     }
 
     private QueryBuilder getWorkflowsForCurrentUserQuery() {

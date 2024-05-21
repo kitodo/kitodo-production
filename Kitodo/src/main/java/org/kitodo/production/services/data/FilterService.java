@@ -140,11 +140,11 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
     }
 
     @Override
-    public FilterInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        FilterInterface filterInterface = DTOFactory.instance().newFilter();
-        filterInterface.setId(getIdFromJSONObject(jsonObject));
-        filterInterface.setValue(FilterTypeField.VALUE.getStringValue(jsonObject));
-        return filterInterface;
+    public FilterInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        FilterInterface filter = DTOFactory.instance().newFilter();
+        filter.setId(getIdFromJSONObject(jsonObject));
+        filter.setValue(FilterTypeField.VALUE.getStringValue(jsonObject));
+        return filter;
     }
 
     /**
@@ -275,8 +275,8 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
 
     Set<Integer> collectIds(List<? extends DataInterface> dtos) {
         Set<Integer> ids = new HashSet<>();
-        for (DataInterface processInterface : dtos) {
-            ids.add(processInterface.getId());
+        for (DataInterface process : dtos) {
+            ids.add(process.getId());
         }
         return ids;
     }
@@ -552,9 +552,9 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
         if (objectType == ObjectType.PROCESS) {
             return createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), negate);
         } else if (objectType == ObjectType.TASK) {
-            List<ProcessInterface> processInterfaces = ServiceManager.getProcessService().findByQuery(
+            List<ProcessInterface> processes = ServiceManager.getProcessService().findByQuery(
                 createSetQuery("batches.id", filterValuesAsIntegers(filter, FilterString.BATCH), negate), true);
-            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processInterfaces), negate);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processes), negate);
         }
         return new BoolQueryBuilder();
     }
@@ -851,20 +851,20 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
         /*
          * filtering by a certain done step, which the current user finished
          */
-        /*List<TaskInterface> taskInterfaces = new ArrayList<>();
+        /*List<TaskInterface> tasks = new ArrayList<>();
         String login = getFilterValueFromFilterString(filter, FilterString.TASKDONEUSER);
         try {
             Map<String, Object> user = ServiceManager.getUserService().findByLogin(login);
-            UserInterface userInterface = ServiceManager.getUserService().convertJSONObjectToInterface(user, false);
-            taskInterfaces = userInterface.getProcessingTasks();
+            UserInterface user = ServiceManager.getUserService().convertJSONObjectTo(user, false);
+            tasks = user.getProcessingTasks();
         } catch (DataException e) {
             logger.error(e.getMessage(), e);
         }
 
         if (objectType == ObjectType.PROCESS) {
-            return createSetQuery("tasks.id", collectIds(taskInterfaces), true);
+            return createSetQuery("tasks.id", collectIds(tasks), true);
         } else if (objectType == ObjectType.TASK) {
-            return createSetQuery("_id", collectIds(taskInterfaces), true);
+            return createSetQuery("_id", collectIds(tasks), true);
         }*/
         return new BoolQueryBuilder();
     }
@@ -964,8 +964,8 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
     private QueryBuilder getQueryAccordingToObjectTypeAndSearchInTask(ObjectType objectType, QueryBuilder query)
             throws DataException {
         if (objectType == ObjectType.PROCESS) {
-            List<TaskInterface> taskInterfaces = ServiceManager.getTaskService().findByQuery(query, true);
-            return createSetQuery("tasks.id", collectIds(taskInterfaces), true);
+            List<TaskInterface> tasks = ServiceManager.getTaskService().findByQuery(query, true);
+            return createSetQuery("tasks.id", collectIds(tasks), true);
         } else if (objectType == ObjectType.TASK) {
             return query;
         }
@@ -977,8 +977,8 @@ public class FilterService extends SearchService<Filter, FilterInterface, Filter
         if (objectType == ObjectType.PROCESS) {
             return query;
         } else if (objectType == ObjectType.TASK) {
-            List<ProcessInterface> processInterfaces = ServiceManager.getProcessService().findByQuery(query, true);
-            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processInterfaces), true);
+            List<ProcessInterface> processes = ServiceManager.getProcessService().findByQuery(query, true);
+            return createSetQuery(TaskTypeField.PROCESS_ID.getKey(), collectIds(processes), true);
         }
         return new BoolQueryBuilder();
     }

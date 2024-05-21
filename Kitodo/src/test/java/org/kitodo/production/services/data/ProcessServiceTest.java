@@ -28,45 +28,45 @@ public class ProcessServiceTest {
 
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() throws ParseException {
-        final ProcessInterface processInterface = new ProcessDTO();
+        final ProcessInterface process = new ProcessDTO();
 
-        PropertyInterface firstPropertyInterface = new PropertyDTO();
-        firstPropertyInterface.setId(1);
-        firstPropertyInterface.setTitle("Korrektur notwendig");
-        firstPropertyInterface.setValue("Fix it");
-        firstPropertyInterface.setCreationTime(null);
+        PropertyInterface firstProperty = new PropertyDTO();
+        firstProperty.setId(1);
+        firstProperty.setTitle("Korrektur notwendig");
+        firstProperty.setValue("Fix it");
+        firstProperty.setCreationTime(null);
 
-        PropertyInterface secondPropertyInterface = new PropertyDTO();
-        secondPropertyInterface.setId(2);
-        secondPropertyInterface.setTitle("Korrektur notwendig");
-        secondPropertyInterface.setValue("Fix it also");
-        secondPropertyInterface.setCreationTime(null);
+        PropertyInterface secondProperty = new PropertyDTO();
+        secondProperty.setId(2);
+        secondProperty.setTitle("Korrektur notwendig");
+        secondProperty.setValue("Fix it also");
+        secondProperty.setCreationTime(null);
 
-        PropertyInterface thirdPropertyInterface = new PropertyDTO();
-        thirdPropertyInterface.setId(3);
-        thirdPropertyInterface.setTitle("Other title");
-        thirdPropertyInterface.setValue("Other value");
-        thirdPropertyInterface.setCreationTime("2017-12-01");
+        PropertyInterface thirdProperty = new PropertyDTO();
+        thirdProperty.setId(3);
+        thirdProperty.setTitle("Other title");
+        thirdProperty.setValue("Other value");
+        thirdProperty.setCreationTime("2017-12-01");
 
-        PropertyInterface fourthPropertyInterface = new PropertyDTO();
-        fourthPropertyInterface.setId(4);
-        fourthPropertyInterface.setTitle("Korrektur durchgef\u00FChrt");
-        fourthPropertyInterface.setValue("Fixed second");
-        fourthPropertyInterface.setCreationTime("2017-12-05");
+        PropertyInterface fourthProperty = new PropertyDTO();
+        fourthProperty.setId(4);
+        fourthProperty.setTitle("Korrektur durchgef\u00FChrt");
+        fourthProperty.setValue("Fixed second");
+        fourthProperty.setCreationTime("2017-12-05");
 
-        PropertyInterface fifthPropertyInterface = new PropertyDTO();
-        fifthPropertyInterface.setId(5);
-        fifthPropertyInterface.setTitle("Korrektur durchgef\u00FChrt");
-        fifthPropertyInterface.setValue("Fixed first");
-        fifthPropertyInterface.setCreationTime("2017-12-03");
+        PropertyInterface fifthProperty = new PropertyDTO();
+        fifthProperty.setId(5);
+        fifthProperty.setTitle("Korrektur durchgef\u00FChrt");
+        fifthProperty.setValue("Fixed first");
+        fifthProperty.setCreationTime("2017-12-03");
 
         @SuppressWarnings("unchecked")
-        List<PropertyInterface> properties = (List<PropertyInterface>) processInterface.getProperties();
-        properties.add(firstPropertyInterface);
-        properties.add(secondPropertyInterface);
-        properties.add(thirdPropertyInterface);
-        properties.add(fourthPropertyInterface);
-        properties.add(fifthPropertyInterface);
+        List<PropertyInterface> properties = (List<PropertyInterface>) process.getProperties();
+        properties.add(firstProperty);
+        properties.add(secondProperty);
+        properties.add(thirdProperty);
+        properties.add(fourthProperty);
+        properties.add(fifthProperty);
 
     }
 

@@ -104,7 +104,7 @@ public class RulesetDTO extends BaseDTO implements RulesetInterface {
     /**
      * Get client object.
      *
-     * @return value of clientInterface
+     * @return value of client
      */
     public ClientInterface getClient() {
         return client;

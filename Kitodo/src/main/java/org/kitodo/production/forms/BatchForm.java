@@ -108,7 +108,7 @@ public class BatchForm extends BaseForm {
      * Filter processes.
      */
     public void filterProcesses() {
-        List<ProcessInterface> processInterfaces = new ArrayList<>();
+        List<ProcessInterface> processes = new ArrayList<>();
         QueryBuilder query = new BoolQueryBuilder();
 
         if (Objects.nonNull(this.processfilter)) {
@@ -123,17 +123,17 @@ public class BatchForm extends BaseForm {
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
         try {
             if (batchMaxSize > 0) {
-                processInterfaces = ServiceManager.getProcessService().findByQuery(query,
+                processes = ServiceManager.getProcessService().findByQuery(query,
                     ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
             } else {
-                processInterfaces = ServiceManager.getProcessService().findByQuery(query,
+                processes = ServiceManager.getProcessService().findByQuery(query,
                     ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
             }
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         try {
-            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processInterfaces);
+            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processes);
         } catch (DAOException e) {
             this.currentProcesses = new ArrayList<>();
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);

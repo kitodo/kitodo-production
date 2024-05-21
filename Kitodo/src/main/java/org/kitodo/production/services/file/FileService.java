@@ -724,14 +724,14 @@ public class FileService {
     }
 
     /**
-     * Gets the URI of the metadata.xml of a given processInterface.
+     * Gets the URI of the metadata.xml of a given process.
      *
-     * @param processInterface
+     * @param process
      *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(ProcessInterface processInterface) throws IOException {
-        return getMetadataFilePath(processInterface, true);
+    public URI getMetadataFilePath(ProcessInterface process) throws IOException {
+        return getMetadataFilePath(process, true);
     }
 
     /**
@@ -752,16 +752,16 @@ public class FileService {
     }
 
     /**
-     * Gets the URI of the metadata.xml of a given processInterface.
+     * Gets the URI of the metadata.xml of a given process.
      *
-     * @param processInterface
+     * @param process
      *            the process to get the metadata.xml for.
      * @param mustExist
      *            whether the file must exist
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(ProcessInterface processInterface, boolean mustExist) throws IOException {
-        URI metadataFilePath = getProcessSubTypeURI(processInterface, ProcessSubType.META_XML, null);
+    public URI getMetadataFilePath(ProcessInterface process, boolean mustExist) throws IOException {
+        URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
         if (mustExist && !fileExist(metadataFilePath)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound", metadataFilePath.getPath()));
         }
@@ -901,17 +901,17 @@ public class FileService {
      * to the correct URI. File.separator doesn't work because on Windows it
      * appends backslash to URI.
      *
-     * @param processInterface
+     * @param process
      *            the process, the uri is needed for.
      * @return the URI.
      */
-    public String getProcessBaseUriForExistingProcess(ProcessInterface processInterface) {
-        String processBaseUri = processInterface.getProcessBase();
-        if (Objects.isNull(processBaseUri) && Objects.nonNull(processInterface.getId())) {
-            processInterface.setProcessBase(
-                fileManagementModule.createUriForExistingProcess(processInterface.getId().toString()).toString());
+    public String getProcessBaseUriForExistingProcess(ProcessInterface process) {
+        String processBaseUri = process.getProcessBase();
+        if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
+            process.setProcessBase(
+                fileManagementModule.createUriForExistingProcess(process.getId().toString()).toString());
         }
-        return processInterface.getProcessBase();
+        return process.getProcessBase();
     }
 
     /**
@@ -996,7 +996,7 @@ public class FileService {
      * Gets the URI for a Process Sub-location. Possible Locations are listed
      * in ProcessSubType
      *
-     * @param processInterface
+     * @param process
      *            the process to get the sublocation for.
      * @param processSubType
      *            The subType.
@@ -1005,15 +1005,15 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    private URI getProcessSubTypeURI(ProcessInterface processInterface, ProcessSubType processSubType, String resourceName) {
+    private URI getProcessSubTypeURI(ProcessInterface process, ProcessSubType processSubType, String resourceName) {
 
-        String processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(processInterface);
+        String processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
 
         if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
         return fileManagementModule.getProcessSubTypeUri(URI.create(processDataDirectory),
-                Helper.getNormalizedTitle(processInterface.getTitle()), processSubType, resourceName);
+                Helper.getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
 
     /**

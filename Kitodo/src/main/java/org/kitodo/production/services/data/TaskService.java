@@ -301,9 +301,9 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
     }
 
     @Override
-    public TaskInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        TaskInterface taskInterface = createTaskInterface(jsonObject);
-        convertTaskProjectFromJsonObjectToInterface(jsonObject, taskInterface);
+    public TaskInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        TaskInterface task = createTask(jsonObject);
+        convertTaskProjectFromJsonObjectTo(jsonObject, task);
 
         /*
          * We read the list of the process but not the list of templates, because only process tasks
@@ -312,68 +312,68 @@ public class TaskService extends ProjectSearchService<Task, TaskInterface, TaskD
          */
         int process = TaskTypeField.PROCESS_ID.getIntValue(jsonObject);
         if (process > 0 && !related) {
-            taskInterface.setProcess(ServiceManager.getProcessService().findById(process, true));
-            taskInterface.setBatchAvailable(ServiceManager.getProcessService()
-                    .isProcessAssignedToOnlyOneBatch(taskInterface.getProcess().getBatches()));
+            task.setProcess(ServiceManager.getProcessService().findById(process, true));
+            task.setBatchAvailable(ServiceManager.getProcessService()
+                    .isProcessAssignedToOnlyOneBatch(task.getProcess().getBatches()));
         }
 
         int processingUser = TaskTypeField.PROCESSING_USER_ID.getIntValue(jsonObject);
         if (processingUser > 0) {
-            UserInterface userInterface = DTOFactory.instance().newUser();
-            userInterface.setId(processingUser);
-            userInterface.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(jsonObject));
-            userInterface.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(jsonObject));
-            userInterface.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(jsonObject));
-            userInterface.setFullName(TaskTypeField.PROCESSING_USER_FULLNAME.getStringValue(jsonObject));
-            taskInterface.setProcessingUser(userInterface);
+            UserInterface user = DTOFactory.instance().newUser();
+            user.setId(processingUser);
+            user.setLogin(TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(jsonObject));
+            user.setName(TaskTypeField.PROCESSING_USER_NAME.getStringValue(jsonObject));
+            user.setSurname(TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(jsonObject));
+            user.setFullName(TaskTypeField.PROCESSING_USER_FULLNAME.getStringValue(jsonObject));
+            task.setProcessingUser(user);
         }
-        return taskInterface;
+        return task;
     }
 
-    private TaskInterface createTaskInterface(Map<String, Object> jsonObject) throws DataException {
-        TaskInterface taskInterface = DTOFactory.instance().newTask();
-        taskInterface.setId(getIdFromJSONObject(jsonObject));
-        taskInterface.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
-        taskInterface.setLocalizedTitle(getLocalizedTitle(taskInterface.getTitle()));
-        taskInterface.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
+    private TaskInterface createTask(Map<String, Object> jsonObject) throws DataException {
+        TaskInterface task = DTOFactory.instance().newTask();
+        task.setId(getIdFromJSONObject(jsonObject));
+        task.setTitle(TaskTypeField.TITLE.getStringValue(jsonObject));
+        task.setLocalizedTitle(getLocalizedTitle(task.getTitle()));
+        task.setOrdering(TaskTypeField.ORDERING.getIntValue(jsonObject));
         int taskStatus = TaskTypeField.PROCESSING_STATUS.getIntValue(jsonObject);
-        taskInterface.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
-        taskInterface.setProcessingStatusTitle(Helper.getTranslation(taskInterface.getProcessingStatus().getTitle()));
+        task.setProcessingStatus(TaskStatus.getStatusFromValue(taskStatus));
+        task.setProcessingStatusTitle(Helper.getTranslation(task.getProcessingStatus().getTitle()));
         int editType = TaskTypeField.EDIT_TYPE.getIntValue(jsonObject);
-        taskInterface.setEditType(TaskEditType.getTypeFromValue(editType));
-        taskInterface.setEditTypeTitle(Helper.getTranslation(taskInterface.getEditType().getTitle()));
+        task.setEditType(TaskEditType.getTypeFromValue(editType));
+        task.setEditTypeTitle(Helper.getTranslation(task.getEditType().getTitle()));
         try {
-            taskInterface.setProcessingMoment(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
-            taskInterface.setProcessingBeginTime(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
-            taskInterface.setProcessingEndTime(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
+            task.setProcessingMoment(TaskTypeField.PROCESSING_TIME.getStringValue(jsonObject));
+            task.setProcessingBeginTime(TaskTypeField.PROCESSING_BEGIN.getStringValue(jsonObject));
+            task.setProcessingEndTime(TaskTypeField.PROCESSING_END.getStringValue(jsonObject));
         } catch (ParseException e) {
             throw new DataException(e);
         }
-        taskInterface.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
-        taskInterface.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
-        taskInterface.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
-        taskInterface.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
-        taskInterface.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
-        taskInterface.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
-        taskInterface.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
-        taskInterface.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
-        taskInterface.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
-        return taskInterface;
+        task.setCorrection(TaskTypeField.CORRECTION.getBooleanValue(jsonObject));
+        task.setTypeAutomatic(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(jsonObject));
+        task.setTypeMetadata(TaskTypeField.TYPE_METADATA.getBooleanValue(jsonObject));
+        task.setTypeImagesWrite(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(jsonObject));
+        task.setTypeImagesRead(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(jsonObject));
+        task.setBatchStep(TaskTypeField.BATCH_STEP.getBooleanValue(jsonObject));
+        task.setRoleIds(convertJSONValuesToList(TaskTypeField.ROLES.getJsonArray(jsonObject)));
+        task.setRolesSize(TaskTypeField.ROLES.getSizeOfProperty(jsonObject));
+        task.setCorrectionCommentStatus(TaskTypeField.CORRECTION_COMMENT_STATUS.getIntValue(jsonObject));
+        return task;
     }
 
     /**
-     * Parses and adds properties related to the project of a task to the taskInterface.
+     * Parses and adds properties related to the project of a task to the task.
      * 
      * @param jsonObject the jsonObject retrieved from the ElasticSearch index for a task
-     * @param taskInterface the taskInterface
+     * @param task the task
      */
-    private void convertTaskProjectFromJsonObjectToInterface(Map<String, Object> jsonObject,
-            TaskInterface taskInterface) throws DataException {
+    private void convertTaskProjectFromJsonObjectTo(Map<String, Object> jsonObject,
+            TaskInterface task) throws DataException {
 
-        ProjectInterface projectInterface = DTOFactory.instance().newProject();
-        projectInterface.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
-        projectInterface.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-        taskInterface.setProject(projectInterface);
+        ProjectInterface project = DTOFactory.instance().newProject();
+        project.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
+        project.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
+        task.setProject(project);
     }
 
     private List<Integer> convertJSONValuesToList(List<Map<String, Object>> jsonObject) {

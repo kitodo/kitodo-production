@@ -43,16 +43,16 @@ public class CommentTooltipView {
     /**
      * Get comments of given process.
      *
-     * @param processInterface process as ProcessInterface
+     * @param process process as ProcessInterface
      * @return List of Comment objects
      */
-    public List<Comment> getComments(ProcessInterface processInterface) {
-        if (comments.containsKey(processInterface)) {
-            return comments.get(processInterface);
+    public List<Comment> getComments(ProcessInterface process) {
+        if (comments.containsKey(process)) {
+            return comments.get(process);
         }
         try {
-            comments.put(processInterface, ServiceManager.getProcessService().getComments(processInterface));
-            return comments.get(processInterface);
+            comments.put(process, ServiceManager.getProcessService().getComments(process));
+            return comments.get(process);
         } catch (DAOException e) {
             Helper.setErrorMessage(e);
             return Collections.emptyList();
@@ -62,10 +62,10 @@ public class CommentTooltipView {
     /**
      * Get comments of process containing the given task.
      *
-     * @param taskInterface task as TaskInterface
+     * @param task task as TaskInterface
      * @return List of Comment objects
      */
-    public List<Comment> getComments(TaskInterface taskInterface) {
-        return getComments(taskInterface.getProcess());
+    public List<Comment> getComments(TaskInterface task) {
+        return getComments(task.getProcess());
     }
 }

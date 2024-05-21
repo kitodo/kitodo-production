@@ -68,8 +68,8 @@ public class SearchResultForm extends ProcessListBaseView {
         List<ProcessInterface> results;
         try {
             results = processService.findByAnything(searchQuery);
-            for (ProcessInterface processInterface : results) {
-                resultHash.put(processInterface.getId(), processInterface);
+            for (ProcessInterface process : results) {
+                resultHash.put(process.getId(), process);
             }
             this.resultList = new ArrayList<>(resultHash.values());
             refreshFilteredList();
@@ -99,9 +99,9 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     void filterListByTaskAndStatus() {
         if (Objects.nonNull(currentTaskFilter) && Objects.nonNull(currentTaskStatusFilter)) {
-            for (ProcessInterface processInterface : new ArrayList<>(this.filteredList)) {
+            for (ProcessInterface process : new ArrayList<>(this.filteredList)) {
                 boolean remove = true;
-                for (TaskInterface task : processInterface.getTasks()) {
+                for (TaskInterface task : process.getTasks()) {
                     if (task.getTitle().equalsIgnoreCase(currentTaskFilter)
                             && task.getProcessingStatus().getValue().equals(currentTaskStatusFilter)) {
                         remove = false;
@@ -109,7 +109,7 @@ public class SearchResultForm extends ProcessListBaseView {
                     }
                 }
                 if (remove) {
-                    this.filteredList.remove(processInterface);
+                    this.filteredList.remove(process);
                 }
 
             }
@@ -146,8 +146,8 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     public Collection<TaskInterface> getTasksForFiltering() {
         HashMap<String, TaskInterface> tasksForFiltering = new HashMap<>();
-        for (ProcessInterface processInterface : this.resultList) {
-            for (TaskInterface currentTask : processInterface.getTasks()) {
+        for (ProcessInterface process : this.resultList) {
+            for (TaskInterface currentTask : process.getTasks()) {
                 tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
         }
@@ -170,24 +170,24 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Delete Process.
      *
-     * @param processInterface
+     * @param process
      *            process to delete.
      */
     @Override
-    public void delete(ProcessInterface processInterface) {
+    public void delete(ProcessInterface process) {
         try {
-            Process process = ServiceManager.getProcessService().getById(processInterface.getId());
-            if (process.getChildren().isEmpty()) {
+            Process processBean = ServiceManager.getProcessService().getById(process.getId());
+            if (processBean.getChildren().isEmpty()) {
                 try {
-                    ProcessService.deleteProcess(process);
-                    this.filteredList.remove(processInterface);
+                    ProcessService.deleteProcess(processBean);
+                    this.filteredList.remove(processBean);
                 } catch (DataException | IOException e) {
                     Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                             logger, e);
                 }
             } else {
                 this.deleteProcessDialog = new DeleteProcessDialog();
-                this.deleteProcessDialog.setProcess(process);
+                this.deleteProcessDialog.setProcess(processBean);
                 PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
             }
         } catch (DAOException e) {

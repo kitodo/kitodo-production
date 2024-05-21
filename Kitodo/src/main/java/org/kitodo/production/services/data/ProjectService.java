@@ -185,61 +185,62 @@ public class ProjectService extends ClientSearchService<Project, ProjectInterfac
             query.should(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), client.getId(), true));
         }
 
-        List<ProjectInterface> projectInterfaces = findByQuery(query, true);
+        List<ProjectInterface> projects = findByQuery(query, true);
         List<ProjectInterface> alreadyAssigned = new ArrayList<>();
         for (Project project : user.getProjects()) {
-            alreadyAssigned.addAll(projectInterfaces.stream().filter(projectInterface -> projectInterface.getId().equals(project.getId()))
-                    .collect(Collectors.toList()));
+            alreadyAssigned.addAll(
+                projects.stream().filter(currentProject -> currentProject.getId().equals(project.getId()))
+                        .collect(Collectors.toList()));
         }
-        projectInterfaces.removeAll(alreadyAssigned);
-        return projectInterfaces;
+        projects.removeAll(alreadyAssigned);
+        return projects;
     }
 
     @Override
-    public ProjectInterface convertJSONObjectToInterface(Map<String, Object> jsonObject, boolean related) throws DataException {
-        ProjectInterface projectInterface = DTOFactory.instance().newProject();
-        projectInterface.setId(getIdFromJSONObject(jsonObject));
-        projectInterface.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
+    public ProjectInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        ProjectInterface project = DTOFactory.instance().newProject();
+        project.setId(getIdFromJSONObject(jsonObject));
+        project.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
         try {
-            projectInterface.setStartTime(ProjectTypeField.START_DATE.getStringValue(jsonObject));
-            projectInterface.setEndTime(ProjectTypeField.END_DATE.getStringValue(jsonObject));
+            project.setStartTime(ProjectTypeField.START_DATE.getStringValue(jsonObject));
+            project.setEndTime(ProjectTypeField.END_DATE.getStringValue(jsonObject));
         } catch (ParseException e) {
             throw new DataException(e);
         }
-        projectInterface.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
-        projectInterface.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
-        projectInterface.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
-        projectInterface.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
-        ClientInterface clientInterface = DTOFactory.instance().newClient();
-        clientInterface.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientInterface.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
-        projectInterface.setClient(clientInterface);
-        projectInterface.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
+        project.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
+        project.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
+        project.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
+        project.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
+        ClientInterface client = DTOFactory.instance().newClient();
+        client.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
+        client.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
+        project.setClient(client);
+        project.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
         if (!related) {
-            convertRelatedJSONObjects(jsonObject, projectInterface);
+            convertRelatedJSONObjects(jsonObject, project);
         } else {
-            projectInterface.setActiveTemplates(getTemplatesForProjectInterface(jsonObject));
+            project.setActiveTemplates(getTemplatesForProject(jsonObject));
         }
-        return projectInterface;
+        return project;
     }
 
-    private List<TemplateInterface> getTemplatesForProjectInterface(Map<String, Object> jsonObject) throws DataException {
-        List<TemplateInterface> templateInterfaces = new ArrayList<>();
+    private List<TemplateInterface> getTemplatesForProject(Map<String, Object> jsonObject) throws DataException {
+        List<TemplateInterface> templates = new ArrayList<>();
         List<Map<String, Object>> jsonArray = ProjectTypeField.TEMPLATES.getJsonArray(jsonObject);
 
         for (Map<String, Object> singleObject : jsonArray) {
-            TemplateInterface templateInterface = DTOFactory.instance().newTemplate();
-            templateInterface.setId(TemplateTypeField.ID.getIntValue(singleObject));
-            templateInterface.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
-            templateInterfaces.add(templateInterface);
+            TemplateInterface template = DTOFactory.instance().newTemplate();
+            template.setId(TemplateTypeField.ID.getIntValue(singleObject));
+            template.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
+            templates.add(template);
         }
-        return templateInterfaces.stream().filter(TemplateInterface::isActive).collect(Collectors.toList());
+        return templates.stream().filter(TemplateInterface::isActive).collect(Collectors.toList());
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectInterface projectInterface) throws DataException {
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectInterface project) throws DataException {
         // TODO: not clear if project lists will need it
-        projectInterface.setUsers(new ArrayList<>());
-        projectInterface.setActiveTemplates(convertRelatedJSONObjectToInterface(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
+        project.setUsers(new ArrayList<>());
+        project.setActiveTemplates(convertRelatedJSONObjectTo(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
             ServiceManager.getTemplateService()).stream().filter(TemplateInterface::isActive).collect(Collectors.toList()));
     }
 

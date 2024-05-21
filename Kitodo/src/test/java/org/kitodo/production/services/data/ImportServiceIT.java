@@ -353,14 +353,14 @@ public class ImportServiceIT {
             InvalidMetadataValueException, NoSuchMetadataFieldException, ParserConfigurationException, SAXException,
             TransformerException {
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
+        RulesetManagementInterface management = ServiceManager.getRulesetService().openRuleset(ruleset);
         ImportConfiguration importConfiguration = MockDatabase.getK10PlusImportConfiguration();
         try (InputStream inputStream = Files.newInputStream(Paths.get(TEST_KITODO_METADATA_FILE_PATH))) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            ImportService.processTempProcess(tempProcess, managementInterface,
+            ImportService.processTempProcess(tempProcess, management,
                     ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
                             .getCurrentMetadataLanguage(), null);
             Assert.assertFalse("Process should have some properties",
@@ -507,13 +507,13 @@ public class ImportServiceIT {
             NoSuchMetadataFieldException, ParserConfigurationException, SAXException {
         ImportConfiguration importConfiguration = MockDatabase.getK10PlusImportConfiguration();
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
-        RulesetManagementInterface managementInterface = ServiceManager.getRulesetService().openRuleset(ruleset);
+        RulesetManagementInterface management = ServiceManager.getRulesetService().openRuleset(ruleset);
         try (InputStream inputStream = Files.newInputStream(Paths.get(filepath))) {
             String fileContent = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
             Document xmlDocument = XMLUtils.parseXMLString(fileContent);
             TempProcess tempProcess = ServiceManager.getImportService().createTempProcessFromDocument(
                     importConfiguration, xmlDocument, TEMPLATE_ID, PROJECT_ID);
-            return ProcessHelper.transformToProcessDetails(tempProcess, managementInterface,
+            return ProcessHelper.transformToProcessDetails(tempProcess, management,
                     ImportService.ACQUISITION_STAGE_CREATE, ServiceManager.getUserService()
                             .getCurrentMetadataLanguage());
         }
