@@ -29,7 +29,6 @@ import javax.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.kitodo.data.database.persistence.TemplateDAO;
-import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.RulesetInterface;
