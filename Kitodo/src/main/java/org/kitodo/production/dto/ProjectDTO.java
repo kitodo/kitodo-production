@@ -317,7 +317,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
     @Override
     public Date getStartDate() {
         try {
-            return StringUtils.isNotEmpty(this.startDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.startDate)
+            return StringUtils.isNotBlank(this.startDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.startDate)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
@@ -332,7 +332,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
     @Override
     public Date getEndDate() {
         try {
-            return StringUtils.isNotEmpty(this.endDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.endDate) : null;
+            return StringUtils.isNotBlank(this.endDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.endDate) : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }

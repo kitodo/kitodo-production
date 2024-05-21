@@ -66,7 +66,7 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
 
     @Override
     public WorkflowStatus getStatus() {
-        return StringUtils.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null;
+        return StringUtils.isNotBlank(status) ? WorkflowStatus.valueOf(status) : null;
     }
 
     @Override

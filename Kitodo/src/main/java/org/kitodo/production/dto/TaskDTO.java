@@ -565,7 +565,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingTime() {
         try {
-            return StringUtils.isNotEmpty(this.processingTime)
+            return StringUtils.isNotBlank(this.processingTime)
                     ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingTime)
                     : null;
         } catch (ParseException e) {
@@ -582,7 +582,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingBegin() {
         try {
-            return StringUtils.isNotEmpty(this.processingBegin)
+            return StringUtils.isNotBlank(this.processingBegin)
                     ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingBegin)
                     : null;
         } catch (ParseException e) {
@@ -600,7 +600,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingEnd() {
         try {
-            return StringUtils.isNotEmpty(this.processingEnd)
+            return StringUtils.isNotBlank(this.processingEnd)
                     ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingEnd)
                     : null;
         } catch (ParseException e) {

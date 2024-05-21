@@ -82,7 +82,7 @@ public interface WorkflowInterface extends DataInterface {
      */
     @Deprecated
     default void setWorkflowStatus(String status) {
-        setStatus(StringUtils.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null);
+        setStatus(StringUtils.isNotBlank(status) ? WorkflowStatus.valueOf(status) : null);
     }
 
     /**

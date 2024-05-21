@@ -133,7 +133,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public Date getCreationDate() {
         try {
-            return StringUtils.isNotEmpty(this.creationDate)
+            return StringUtils.isNotBlank(this.creationDate)
                     ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
                     : null;
         } catch (ParseException e) {
