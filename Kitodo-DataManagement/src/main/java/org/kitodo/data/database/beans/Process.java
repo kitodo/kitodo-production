@@ -19,7 +19,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.el.PropertyNotWritableException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -287,7 +286,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      * This function exists because Faces does not recognize the more generic
      * function {@link #setProject(ProjectInterface)} as a setter for the
      * property {@code project} and otherwise throws a
-     * {@link PropertyNotWritableException}.
+     * {@code PropertyNotWritableException}.
      *
      * @param project
      *            project to which the process should belong
@@ -314,7 +313,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      * This function exists because Faces does not recognize the more generic
      * function {@link #setRuleset(RulesetInterface)} as a setter for the
      * property {@code ruleset} and otherwise throws a
-     * {@link PropertyNotWritableException}.
+     * {@code PropertyNotWritableException}.
      *
      * @param ruleset
      *            the business domain specification
@@ -342,7 +341,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      * This function exists because Faces does not recognize the more generic
      * function {@link #setDocket(DocketInterface)} as a setter for the property
      * {@code docket} and otherwise throws a
-     * {@link PropertyNotWritableException}.
+     * {@code PropertyNotWritableException}.
      *
      * @param docket
      *            the docket generation statement

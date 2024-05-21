@@ -16,7 +16,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.el.PropertyNotWritableException;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -137,7 +136,7 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
      * This function exists because Faces does not recognize the more generic
      * function {@link #setDocket(DocketInterface)} as a setter for the property
      * {@code docket} and otherwise throws a
-     * {@link PropertyNotWritableException}.
+     * {@code PropertyNotWritableException}.
      *
      * @param docket
      *            the docket generation statement
@@ -165,7 +164,7 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
      * This function exists because Faces does not recognize the more generic
      * function {@link #setRuleset(RulesetInterface)} as a setter for the
      * property {@code ruleset} and otherwise throws a
-     * {@link PropertyNotWritableException}.
+     * {@code PropertyNotWritableException}.
      *
      * @param ruleset
      *            the business domain specification
@@ -192,7 +191,7 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
      * This function exists because Faces does not recognize the more generic
      * function {@link #setWorkflow(WorkflowInterface)} as a setter for the
      * property {@code workflow} and otherwise throws a
-     * {@link PropertyNotWritableException}.
+     * {@code PropertyNotWritableException}.
      *
      * @param workflow
      *            workflow to set
