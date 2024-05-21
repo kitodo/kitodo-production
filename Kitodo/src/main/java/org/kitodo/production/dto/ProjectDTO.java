@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.TemplateInterface;
@@ -48,6 +48,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return title as String
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -58,6 +59,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param title
      *            as String
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -67,6 +69,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return start date as String
      */
+    @Override
     public String getStartTime() {
         return startDate;
     }
@@ -77,6 +80,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param startDate
      *            as String
      */
+    @Override
     public void setStartTime(String startDate) {
         this.startDate = startDate;
     }
@@ -86,6 +90,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return end date as String
      */
+    @Override
     public String getEndTime() {
         return endDate;
     }
@@ -96,6 +101,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param endDate
      *            as String
      */
+    @Override
     public void setEndTime(String endDate) {
         this.endDate = endDate;
     }
@@ -105,6 +111,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return DMS export file format as String
      */
+    @Override
     public String getFileFormatDmsExport() {
         return this.fileFormatDmsExport;
     }
@@ -115,6 +122,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param fileFormatDmsExport
      *            as String
      */
+    @Override
     public void setFileFormatDmsExport(String fileFormatDmsExport) {
         this.fileFormatDmsExport = fileFormatDmsExport;
     }
@@ -124,6 +132,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return internal file format as String
      */
+    @Override
     public String getFileFormatInternal() {
         return this.fileFormatInternal;
     }
@@ -134,6 +143,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param fileFormatInternal
      *            as String
      */
+    @Override
     public void setFileFormatInternal(String fileFormatInternal) {
         this.fileFormatInternal = fileFormatInternal;
     }
@@ -143,6 +153,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return metsRightsOwner as String
      */
+    @Override
     public String getMetsRightsOwner() {
         return metsRightsOwner;
     }
@@ -153,6 +164,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param metsRightsOwner
      *            as String
      */
+    @Override
     public void setMetsRightsOwner(String metsRightsOwner) {
         this.metsRightsOwner = metsRightsOwner;
     }
@@ -162,6 +174,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return number of pages as Integer
      */
+    @Override
     public Integer getNumberOfPages() {
         return numberOfPages;
     }
@@ -172,6 +185,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param numberOfPages
      *            as Integer
      */
+    @Override
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
@@ -181,6 +195,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return number of volumes as Integer
      */
+    @Override
     public Integer getNumberOfVolumes() {
         return numberOfVolumes;
     }
@@ -191,6 +206,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param numberOfVolumes
      *            as Integer
      */
+    @Override
     public void setNumberOfVolumes(Integer numberOfVolumes) {
         this.numberOfVolumes = numberOfVolumes;
     }
@@ -200,6 +216,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return whether project is active or not
      */
+    @Override
     public boolean isActive() {
         return Boolean.TRUE.equals(this.active);
     }
@@ -210,6 +227,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param active
      *            whether project is active or not
      */
+    @Override
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -219,6 +237,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return The client.
      */
+    @Override
     public ClientInterface getClient() {
         return client;
     }
@@ -228,6 +247,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @param client The client.
      */
+    @Override
     public void setClient(ClientInterface client) {
         this.client = client;
     }
@@ -237,6 +257,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return list of active templates as TemplateDTO
      */
+    @Override
     public List<? extends TemplateInterface> getActiveTemplates() {
         return templates;
     }
@@ -247,6 +268,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param templates
      *            as list of TemplateDTO
      */
+    @Override
     public void setActiveTemplates(List<? extends TemplateInterface> templates) {
         this.templates = templates;
     }
@@ -256,6 +278,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return list of users as UserDTO
      */
+    @Override
     public List<? extends UserInterface> getUsers() {
         return users;
     }
@@ -266,6 +289,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @param users
      *            as list of UserDTO
      */
+    @Override
     public void setUsers(List<? extends UserInterface> users) {
         this.users = users;
     }
@@ -275,6 +299,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @return value of hasProcesses
      */
+    @Override
     public boolean hasProcesses() {
         return hasProcesses;
     }
@@ -284,6 +309,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *
      * @param hasProcesses as boolean
      */
+    @Override
     public void setHasProcesses(boolean hasProcesses) {
         this.hasProcesses = hasProcesses;
     }
@@ -291,7 +317,8 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
     @Override
     public Date getStartDate() {
         try {
-            return Strings.isNotEmpty(this.startDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.startDate) : null;
+            return StringUtils.isNotEmpty(this.startDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.startDate)
+                    : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
@@ -305,7 +332,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
     @Override
     public Date getEndDate() {
         try {
-            return Strings.isNotEmpty(this.endDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.endDate) : null;
+            return StringUtils.isNotEmpty(this.endDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.endDate) : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }

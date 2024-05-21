@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.RulesetInterface;
 import org.kitodo.data.interfaces.TaskInterface;
@@ -133,7 +133,8 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      */
     public Date getCreationDate() {
         try {
-            return Strings.isNotEmpty(this.creationDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
+            return StringUtils.isNotEmpty(this.creationDate)
+                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);

@@ -13,7 +13,7 @@ package org.kitodo.production.dto;
 
 import java.util.Objects;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.interfaces.WorkflowInterface;
 
@@ -27,6 +27,7 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
      *
      * @return value of title
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -37,6 +38,7 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
      * @param title
      *            as String
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -46,6 +48,7 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
      *
      * @return value of status
      */
+    @Override
     public String getWorkflowStatus() {
         return status.toLowerCase();
     }
@@ -56,13 +59,14 @@ public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
      * @param status
      *            as String
      */
+    @Override
     public void setWorkflowStatus(String status) {
         this.status = status;
     }
 
     @Override
     public WorkflowStatus getStatus() {
-        return Strings.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null;
+        return StringUtils.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null;
     }
 
     @Override

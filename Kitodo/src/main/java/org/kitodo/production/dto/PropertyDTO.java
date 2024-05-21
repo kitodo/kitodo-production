@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.interfaces.PropertyInterface;
 
 /**
@@ -33,6 +33,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      *
      * @return title as String
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -43,6 +44,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      * @param title
      *            as String
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -52,6 +54,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      *
      * @return value as String
      */
+    @Override
     public String getValue() {
         return value;
     }
@@ -62,6 +65,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      * @param value
      *            as String
      */
+    @Override
     public void setValue(String value) {
         this.value = value;
     }
@@ -71,6 +75,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      *
      * @return creation date as String.
      */
+    @Override
     public String getCreationTime() {
         return creationDate;
     }
@@ -81,6 +86,7 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
      * @param creationDate
      *            as String
      */
+    @Override
     public void setCreationTime(String creationDate) {
         this.creationDate = creationDate;
     }
@@ -88,7 +94,8 @@ public class PropertyDTO extends BaseDTO implements PropertyInterface {
     @Override
     public Date getCreationDate() {
         try {
-            return Strings.isNotEmpty(this.creationDate) ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
+            return StringUtils.isNotEmpty(this.creationDate)
+                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);

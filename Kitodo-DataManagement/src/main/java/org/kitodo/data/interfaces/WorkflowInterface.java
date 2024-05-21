@@ -13,7 +13,7 @@ package org.kitodo.data.interfaces;
 
 import java.util.Objects;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.WorkflowStatus;
 
 public interface WorkflowInterface extends DataInterface {
@@ -82,7 +82,7 @@ public interface WorkflowInterface extends DataInterface {
      */
     @Deprecated
     default void setWorkflowStatus(String status) {
-        setStatus(Strings.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null);
+        setStatus(StringUtils.isNotEmpty(status) ? WorkflowStatus.valueOf(status) : null);
     }
 
     /**

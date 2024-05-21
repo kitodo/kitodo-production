@@ -18,7 +18,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.apache.logging.log4j.util.Strings;
+import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.interfaces.ProcessInterface;
@@ -63,6 +63,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return title as String
      */
+    @Override
     public String getTitle() {
         return title;
     }
@@ -73,6 +74,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param title
      *            as String
      */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -82,6 +84,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return localized title as String
      */
+    @Override
     public String getLocalizedTitle() {
         return localizedTitle;
     }
@@ -92,6 +95,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param localizedTitle
      *            as String
      */
+    @Override
     public void setLocalizedTitle(String localizedTitle) {
         this.localizedTitle = localizedTitle;
     }
@@ -101,6 +105,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return ordering as Integer
      */
+    @Override
     public Integer getOrdering() {
         return this.ordering;
     }
@@ -111,6 +116,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param ordering
      *            as Integer
      */
+    @Override
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
@@ -120,6 +126,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing status as TaskStatus object
      */
+    @Override
     public TaskStatus getProcessingStatus() {
         return processingStatus;
     }
@@ -130,6 +137,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingStatus
      *            as TaskStatus object
      */
+    @Override
     public void setProcessingStatus(TaskStatus processingStatus) {
         this.processingStatus = processingStatus;
     }
@@ -139,6 +147,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing status title as String
      */
+    @Override
     public String getProcessingStatusTitle() {
         return processingStatusTitle;
     }
@@ -149,6 +158,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingStatusTitle
      *            as String
      */
+    @Override
     public void setProcessingStatusTitle(String processingStatusTitle) {
         this.processingStatusTitle = processingStatusTitle;
     }
@@ -158,6 +168,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return current edit type
      */
+    @Override
     public TaskEditType getEditType() {
         return editType;
     }
@@ -168,6 +179,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param editType
      *            as {@link TaskEditType}
      */
+    @Override
     public void setEditType(TaskEditType editType) {
         this.editType = editType;
     }
@@ -177,6 +189,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return current edit type title as String
      */
+    @Override
     public String getEditTypeTitle() {
         return editTypeTitle;
     }
@@ -187,6 +200,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param editTypeTitle
      *            as String
      */
+    @Override
     public void setEditTypeTitle(String editTypeTitle) {
         this.editTypeTitle = editTypeTitle;
     }
@@ -196,6 +210,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing user as UserInterface
      */
+    @Override
     public UserInterface getProcessingUser() {
         return processingUser;
     }
@@ -206,6 +221,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingUser
      *            as UserInterface
      */
+    @Override
     public void setProcessingUser(UserInterface processingUser) {
         this.processingUser = processingUser;
     }
@@ -215,6 +231,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing time as String
      */
+    @Override
     public String getProcessingMoment() {
         return processingTime;
     }
@@ -225,6 +242,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingTime
      *            as String
      */
+    @Override
     public void setProcessingMoment(String processingTime) {
         this.processingTime = processingTime;
     }
@@ -234,6 +252,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing begin time as String
      */
+    @Override
     public String getProcessingBeginTime() {
         return processingBegin;
     }
@@ -244,6 +263,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingBegin
      *            as String
      */
+    @Override
     public void setProcessingBeginTime(String processingBegin) {
         this.processingBegin = processingBegin;
     }
@@ -253,6 +273,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return processing end time as String
      */
+    @Override
     public String getProcessingEndTime() {
         return processingEnd;
     }
@@ -263,6 +284,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param processingEnd
      *            as String
      */
+    @Override
     public void setProcessingEndTime(String processingEnd) {
         this.processingEnd = processingEnd;
     }
@@ -272,6 +294,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return process as ProcessInterface
      */
+    @Override
     public ProcessInterface getProcess() {
         return process;
     }
@@ -282,6 +305,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param process
      *            as ProcessInterface
      */
+    @Override
     public void setProcess(ProcessInterface process) {
         this.process = process;
     }
@@ -291,6 +315,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return project as ProjectInterface
      */
+    @Override
     public ProjectInterface getProject() {
         return project;
     }
@@ -301,6 +326,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param project
      *            as ProjectInterface
      */
+    @Override
     public void setProject(ProjectInterface project) {
         this.project = project;
     }
@@ -310,6 +336,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return template as TemplateInterface
      */
+    @Override
     public TemplateInterface getTemplate() {
         return template;
     }
@@ -320,6 +347,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param template
      *            as TemplateInterface
      */
+    @Override
     public void setTemplate(TemplateInterface template) {
         this.template = template;
     }
@@ -329,6 +357,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return list of role ids as Integer
      */
+    @Override
     public List<Integer> getRoleIds() {
         return roleIds;
     }
@@ -339,6 +368,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param roleIds
      *            list of role ids as Integer
      */
+    @Override
     public void setRoleIds(List<Integer> roleIds) {
         this.roleIds = roleIds;
     }
@@ -348,6 +378,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return the size of the roles list
      */
+    @Override
     public int getRolesSize() {
         return this.rolesSize;
     }
@@ -358,6 +389,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param rolesSize
      *            as int
      */
+    @Override
     public void setRolesSize(int rolesSize) {
         this.rolesSize = rolesSize;
     }
@@ -367,6 +399,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return value of correction
      */
+    @Override
     public boolean isCorrection() {
         return correction;
     }
@@ -376,6 +409,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @param correction as boolean
      */
+    @Override
     public void setCorrection(boolean correction) {
         this.correction = correction;
     }
@@ -385,6 +419,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return true or false
      */
+    @Override
     public boolean isTypeAutomatic() {
         return typeAutomatic;
     }
@@ -395,6 +430,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param typeAutomatic
      *            as boolean
      */
+    @Override
     public void setTypeAutomatic(boolean typeAutomatic) {
         this.typeAutomatic = typeAutomatic;
     }
@@ -404,6 +440,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return true or false
      */
+    @Override
     public boolean isTypeMetadata() {
         return typeMetadata;
     }
@@ -414,6 +451,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param typeMetadata
      *            as boolean
      */
+    @Override
     public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
     }
@@ -423,6 +461,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return true or false
      */
+    @Override
     public boolean isTypeImagesRead() {
         return typeImagesRead;
     }
@@ -433,6 +472,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param typeImagesRead
      *            as boolean
      */
+    @Override
     public void setTypeImagesRead(boolean typeImagesRead) {
         this.typeImagesRead = typeImagesRead;
     }
@@ -442,6 +482,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return true or false
      */
+    @Override
     public boolean isTypeImagesWrite() {
         return typeImagesWrite;
     }
@@ -452,6 +493,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param typeImagesWrite
      *            as boolean
      */
+    @Override
     public void setTypeImagesWrite(boolean typeImagesWrite) {
         this.typeImagesWrite = typeImagesWrite;
     }
@@ -461,6 +503,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return true or false
      */
+    @Override
     public boolean isBatchStep() {
         return batchStep;
     }
@@ -472,6 +515,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param batchAvailable
      *            as boolean
      */
+    @Override
     public void setBatchAvailable(boolean batchAvailable) {
         this.batchAvailable = batchAvailable;
     }
@@ -482,6 +526,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      *
      * @return true or false
      */
+    @Override
     public boolean isBatchAvailable() {
         return batchAvailable;
     }
@@ -492,6 +537,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * @param batchStep
      *            as boolean
      */
+    @Override
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
     }
@@ -501,6 +547,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * 
      * @return the correction comment status as integer
      */
+    @Override
     public Integer getCorrectionCommentStatus() {
         return this.correctionCommentStatus;
     }
@@ -510,6 +557,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
      * 
      * @param status the status as integer
      */
+    @Override
     public void setCorrectionCommentStatus(Integer status) {
         this.correctionCommentStatus = status;
     }
@@ -517,7 +565,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingTime() {
         try {
-            return Strings.isNotEmpty(this.processingTime)
+            return StringUtils.isNotEmpty(this.processingTime)
                     ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingTime)
                     : null;
         } catch (ParseException e) {
@@ -534,7 +582,7 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingBegin() {
         try {
-            return Strings.isNotEmpty(this.processingBegin)
+            return StringUtils.isNotEmpty(this.processingBegin)
                     ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingBegin)
                     : null;
         } catch (ParseException e) {
@@ -552,7 +600,8 @@ public class TaskDTO extends BaseDTO implements TaskInterface {
     @Override
     public Date getProcessingEnd() {
         try {
-            return Strings.isNotEmpty(this.processingEnd) ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingEnd)
+            return StringUtils.isNotEmpty(this.processingEnd)
+                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingEnd)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
