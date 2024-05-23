@@ -11,9 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -22,7 +22,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
@@ -119,51 +119,35 @@ public class TaskTypeTest {
         Task task = prepareData().get(0);
         Map<String, Object> actual = taskType.createDocument(task);
 
-        assertEquals("Key title doesn't match to given value!", "Testing", TaskTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key ordering doesn't match to given value!", 1, TaskTypeField.ORDERING.getIntValue(actual));
-        assertEquals("Key editType doesn't match to given value!", 1, TaskTypeField.EDIT_TYPE.getIntValue(actual));
-        assertEquals("Key processingStatus doesn't match to given value!", 3,
-            TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
-        assertEquals("Key processingUser doesn't match to given value!", 1,
-            TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "testOne",
-                TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "Test",
-                TaskTypeField.PROCESSING_USER_NAME.getStringValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "One",
-                TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-01 00:00:00",
-            TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
-        assertEquals("Key processingEnd doesn't match to given value!", "2017-02-17 00:00:00",
-            TaskTypeField.PROCESSING_END.getStringValue(actual));
-        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17 00:00:00",
-            TaskTypeField.PROCESSING_TIME.getStringValue(actual));
-        assertEquals("Key homeDirectory doesn't match to given value!", "1",
-            TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
-        assertTrue("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
-        assertFalse("Key correction doesn't match to given value!",
-                TaskTypeField.CORRECTION.getBooleanValue(actual));
-        assertFalse("Key typeAutomatic doesn't match to given value!",
-            TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
-        assertTrue("Key typeMetadata doesn't match to given value!",
-            TaskTypeField.TYPE_METADATA.getBooleanValue(actual));
-        assertFalse("Key typeImagesWrite doesn't match to given value!",
-            TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual));
-        assertFalse("Key typeImagesRead doesn't match to given value!",
-            TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual));
-        assertEquals("Key processForTask.id doesn't match to given value!", 1,
-            TaskTypeField.PROCESS_ID.getIntValue(actual));
-        assertEquals("Key processForTask.title doesn't match to given value!", "First",
-            TaskTypeField.PROCESS_TITLE.getStringValue(actual));
+        assertEquals("Testing", TaskTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals(1, TaskTypeField.ORDERING.getIntValue(actual), "Key ordering doesn't match to given value!");
+        assertEquals(1, TaskTypeField.EDIT_TYPE.getIntValue(actual), "Key editType doesn't match to given value!");
+        assertEquals(3, TaskTypeField.PROCESSING_STATUS.getIntValue(actual), "Key processingStatus doesn't match to given value!");
+        assertEquals(1, TaskTypeField.PROCESSING_USER_ID.getIntValue(actual), "Key processingUser doesn't match to given value!");
+        assertEquals("testOne", TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("Test", TaskTypeField.PROCESSING_USER_NAME.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("One", TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("2017-02-01 00:00:00", TaskTypeField.PROCESSING_BEGIN.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("2017-02-17 00:00:00", TaskTypeField.PROCESSING_END.getStringValue(actual), "Key processingEnd doesn't match to given value!");
+        assertEquals("2017-02-17 00:00:00", TaskTypeField.PROCESSING_TIME.getStringValue(actual), "Key processingTime doesn't match to given value!");
+        assertEquals("1", TaskTypeField.HOME_DIRECTORY.getStringValue(actual), "Key homeDirectory doesn't match to given value!");
+        assertTrue(TaskTypeField.BATCH_STEP.getBooleanValue(actual), "Key batchStep doesn't match to given value!");
+        assertFalse(TaskTypeField.CORRECTION.getBooleanValue(actual), "Key correction doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual), "Key typeAutomatic doesn't match to given value!");
+        assertTrue(TaskTypeField.TYPE_METADATA.getBooleanValue(actual), "Key typeMetadata doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual), "Key typeImagesWrite doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual), "Key typeImagesRead doesn't match to given value!");
+        assertEquals(1, TaskTypeField.PROCESS_ID.getIntValue(actual), "Key processForTask.id doesn't match to given value!");
+        assertEquals("First", TaskTypeField.PROCESS_TITLE.getStringValue(actual), "Key processForTask.title doesn't match to given value!");
 
         List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
-        assertEquals("Size roles doesn't match to given value!", 2, roles.size());
+        assertEquals(2, roles.size(), "Size roles doesn't match to given value!");
 
         Map<String, Object> role = roles.get(0);
-        assertEquals("Key roles.id doesn't match to given value!", 1, RoleTypeField.ID.getIntValue(role));
+        assertEquals(1, RoleTypeField.ID.getIntValue(role), "Key roles.id doesn't match to given value!");
 
         role = roles.get(1);
-        assertEquals("Key roles.id doesn't match to given value!", 2, RoleTypeField.ID.getIntValue(role));
+        assertEquals(2, RoleTypeField.ID.getIntValue(role), "Key roles.id doesn't match to given value!");
     }
 
     @Test
@@ -173,52 +157,35 @@ public class TaskTypeTest {
         Task task = prepareData().get(1);
         Map<String, Object> actual = taskType.createDocument(task);
 
-        assertEquals("Key title doesn't match to given value!", "Rendering",
-            TaskTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key ordering doesn't match to given value!", 2, TaskTypeField.ORDERING.getIntValue(actual));
-        assertEquals("Key editType doesn't match to given value!", 0, TaskTypeField.EDIT_TYPE.getIntValue(actual));
-        assertEquals("Key processingStatus doesn't match to given value!", 2,
-            TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
-        assertEquals("Key processingUser doesn't match to given value!", 2,
-                TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "testTwo",
-                TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "Test",
-                TaskTypeField.PROCESSING_USER_NAME.getStringValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "Two",
-                TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "2017-02-10 00:00:00",
-            TaskTypeField.PROCESSING_BEGIN.getStringValue(actual));
-        assertEquals("Key processingEnd doesn't match to given value!", "",
-            actual.get(TaskTypeField.PROCESSING_END.getKey()));
-        assertEquals("Key processingTime doesn't match to given value!", "2017-02-17 00:00:00",
-            TaskTypeField.PROCESSING_TIME.getStringValue(actual));
-        assertEquals("Key homeDirectory doesn't match to given value!", "0",
-            TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
-        assertFalse("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
-        assertFalse("Key correction doesn't match to given value!",
-                TaskTypeField.CORRECTION.getBooleanValue(actual));
-        assertFalse("Key typeAutomatic doesn't match to given value!",
-            TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
-        assertFalse("Key typeMetadata doesn't match to given value!",
-            TaskTypeField.TYPE_METADATA.getBooleanValue(actual));
-        assertFalse("Key typeImagesWrite doesn't match to given value!",
-            TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual));
-        assertFalse("Key typeImagesRead doesn't match to given value!",
-            TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual));
-        assertEquals("Key processForTask.id doesn't match to given value!", 0,
-            TaskTypeField.PROCESS_ID.getIntValue(actual));
-        assertEquals("Key processForTask.title doesn't match to given value!", "",
-            TaskTypeField.PROCESS_TITLE.getStringValue(actual));
+        assertEquals("Rendering", TaskTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals(2, TaskTypeField.ORDERING.getIntValue(actual), "Key ordering doesn't match to given value!");
+        assertEquals(0, TaskTypeField.EDIT_TYPE.getIntValue(actual), "Key editType doesn't match to given value!");
+        assertEquals(2, TaskTypeField.PROCESSING_STATUS.getIntValue(actual), "Key processingStatus doesn't match to given value!");
+        assertEquals(2, TaskTypeField.PROCESSING_USER_ID.getIntValue(actual), "Key processingUser doesn't match to given value!");
+        assertEquals("testTwo", TaskTypeField.PROCESSING_USER_LOGIN.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("Test", TaskTypeField.PROCESSING_USER_NAME.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("Two", TaskTypeField.PROCESSING_USER_SURNAME.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("2017-02-10 00:00:00", TaskTypeField.PROCESSING_BEGIN.getStringValue(actual), "Key processingBegin doesn't match to given value!");
+        assertEquals("", actual.get(TaskTypeField.PROCESSING_END.getKey()), "Key processingEnd doesn't match to given value!");
+        assertEquals("2017-02-17 00:00:00", TaskTypeField.PROCESSING_TIME.getStringValue(actual), "Key processingTime doesn't match to given value!");
+        assertEquals("0", TaskTypeField.HOME_DIRECTORY.getStringValue(actual), "Key homeDirectory doesn't match to given value!");
+        assertFalse(TaskTypeField.BATCH_STEP.getBooleanValue(actual), "Key batchStep doesn't match to given value!");
+        assertFalse(TaskTypeField.CORRECTION.getBooleanValue(actual), "Key correction doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual), "Key typeAutomatic doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_METADATA.getBooleanValue(actual), "Key typeMetadata doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual), "Key typeImagesWrite doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual), "Key typeImagesRead doesn't match to given value!");
+        assertEquals(0, TaskTypeField.PROCESS_ID.getIntValue(actual), "Key processForTask.id doesn't match to given value!");
+        assertEquals("", TaskTypeField.PROCESS_TITLE.getStringValue(actual), "Key processForTask.title doesn't match to given value!");
 
         List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
-        assertEquals("Size roles doesn't match to given value!", 2, roles.size());
+        assertEquals(2, roles.size(), "Size roles doesn't match to given value!");
 
         Map<String, Object>role = roles.get(0);
-        assertEquals("Key roles.id doesn't match to given value!", 1, RoleTypeField.ID.getIntValue(role));
+        assertEquals(1, RoleTypeField.ID.getIntValue(role), "Key roles.id doesn't match to given value!");
 
         role = roles.get(1);
-        assertEquals("Key roles.id doesn't match to given value!", 2, RoleTypeField.ID.getIntValue(role));
+        assertEquals(2, RoleTypeField.ID.getIntValue(role), "Key roles.id doesn't match to given value!");
     }
 
     @Test
@@ -228,40 +195,26 @@ public class TaskTypeTest {
         Task task = prepareData().get(2);
         Map<String, Object> actual = taskType.createDocument(task);
 
-        assertEquals("Key title doesn't match to given value!", "Incomplete",
-            TaskTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key ordering doesn't match to given value!", 0, TaskTypeField.ORDERING.getIntValue(actual));
-        assertEquals("Key editType doesn't match to given value!", 0, TaskTypeField.EDIT_TYPE.getIntValue(actual));
-        assertEquals("Key processingStatus doesn't match to given value!", 1,
-            TaskTypeField.PROCESSING_STATUS.getIntValue(actual));
-        assertEquals("Key processingUser doesn't match to given value!", 0,
-                TaskTypeField.PROCESSING_USER_ID.getIntValue(actual));
-        assertEquals("Key processingBegin doesn't match to given value!", "",
-            actual.get(TaskTypeField.PROCESSING_BEGIN.getKey()));
-        assertEquals("Key processingEnd doesn't match to given value!", "",
-            actual.get(TaskTypeField.PROCESSING_END.getKey()));
-        assertEquals("Key processingTime doesn't match to given value!", "",
-            actual.get(TaskTypeField.PROCESSING_TIME.getKey()));
-        assertEquals("Key homeDirectory doesn't match to given value!", "0",
-            TaskTypeField.HOME_DIRECTORY.getStringValue(actual));
-        assertFalse("Key batchStep doesn't match to given value!", TaskTypeField.BATCH_STEP.getBooleanValue(actual));
-        assertFalse("Key correction doesn't match to given value!",
-                TaskTypeField.CORRECTION.getBooleanValue(actual));
-        assertFalse("Key typeAutomatic doesn't match to given value!",
-            TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual));
-        assertFalse("Key typeMetadata doesn't match to given value!",
-            TaskTypeField.TYPE_METADATA.getBooleanValue(actual));
-        assertFalse("Key typeImagesWrite doesn't match to given value!",
-            TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual));
-        assertFalse("Key typeImagesRead doesn't match to given value!",
-            TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual));
-        assertEquals("Key processForTask.id doesn't match to given value!", 0,
-            TaskTypeField.PROCESS_ID.getIntValue(actual));
-        assertEquals("Key processForTask.title doesn't match to given value!", "",
-            TaskTypeField.PROCESS_TITLE.getStringValue(actual));
+        assertEquals("Incomplete", TaskTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals(0, TaskTypeField.ORDERING.getIntValue(actual), "Key ordering doesn't match to given value!");
+        assertEquals(0, TaskTypeField.EDIT_TYPE.getIntValue(actual), "Key editType doesn't match to given value!");
+        assertEquals(1, TaskTypeField.PROCESSING_STATUS.getIntValue(actual), "Key processingStatus doesn't match to given value!");
+        assertEquals(0, TaskTypeField.PROCESSING_USER_ID.getIntValue(actual), "Key processingUser doesn't match to given value!");
+        assertEquals("", actual.get(TaskTypeField.PROCESSING_BEGIN.getKey()), "Key processingBegin doesn't match to given value!");
+        assertEquals("", actual.get(TaskTypeField.PROCESSING_END.getKey()), "Key processingEnd doesn't match to given value!");
+        assertEquals("", actual.get(TaskTypeField.PROCESSING_TIME.getKey()), "Key processingTime doesn't match to given value!");
+        assertEquals("0", TaskTypeField.HOME_DIRECTORY.getStringValue(actual), "Key homeDirectory doesn't match to given value!");
+        assertFalse(TaskTypeField.BATCH_STEP.getBooleanValue(actual), "Key batchStep doesn't match to given value!");
+        assertFalse(TaskTypeField.CORRECTION.getBooleanValue(actual), "Key correction doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_AUTOMATIC.getBooleanValue(actual), "Key typeAutomatic doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_METADATA.getBooleanValue(actual), "Key typeMetadata doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_IMAGES_WRITE.getBooleanValue(actual), "Key typeImagesWrite doesn't match to given value!");
+        assertFalse(TaskTypeField.TYPE_IMAGES_READ.getBooleanValue(actual), "Key typeImagesRead doesn't match to given value!");
+        assertEquals(0, TaskTypeField.PROCESS_ID.getIntValue(actual), "Key processForTask.id doesn't match to given value!");
+        assertEquals("", TaskTypeField.PROCESS_TITLE.getStringValue(actual), "Key processForTask.title doesn't match to given value!");
 
         List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
-        assertEquals("Size roles doesn't match to given value!", 0, roles.size());
+        assertEquals(0, roles.size(), "Size roles doesn't match to given value!");
     }
 
     @Test
@@ -271,11 +224,11 @@ public class TaskTypeTest {
         Task task = prepareData().get(0);
         Map<String, Object> actual = taskType.createDocument(task);
 
-        assertEquals("Amount of keys is incorrect!", 30, actual.keySet().size());
+        assertEquals(30, actual.keySet().size(), "Amount of keys is incorrect!");
 
         List<Map<String, Object>> roles = TaskTypeField.ROLES.getJsonArray(actual);
         Map<String, Object> role = roles.get(0);
-        assertEquals("Amount of keys in roles is incorrect!", 1, role.keySet().size());
+        assertEquals(1, role.keySet().size(), "Amount of keys in roles is incorrect!");
     }
 
     @Test
@@ -284,6 +237,6 @@ public class TaskTypeTest {
 
         List<Task> tasks = prepareData();
         Map<Integer, Map<String, Object>> documents = taskType.createDocuments(tasks);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+        assertEquals(3, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 }

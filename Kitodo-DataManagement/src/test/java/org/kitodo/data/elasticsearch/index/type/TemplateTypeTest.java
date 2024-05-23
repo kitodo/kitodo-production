@@ -11,6 +11,10 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -20,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
@@ -29,10 +33,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class TemplateTypeTest {
 
@@ -95,37 +95,30 @@ public class TemplateTypeTest {
         Template template = prepareData().get(0);
         Map<String, Object> actual = templateType.createDocument(template);
 
-        assertEquals("Key title doesn't match to given value!", "Testing",
-            TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", "2017-01-01 00:00:00",
-            TemplateTypeField.CREATION_DATE.getStringValue(actual));
-        assertEquals("Key sortHelperStatus doesn't match to given value!", "",
-            TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
-        assertFalse("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
-        assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
-        assertEquals("Key ruleset doesn't match to given value!", 1, TemplateTypeField.RULESET_ID.getIntValue(actual));
+        assertEquals("Testing", TemplateTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals("2017-01-01 00:00:00", TemplateTypeField.CREATION_DATE.getStringValue(actual), "Key creationDate doesn't match to given value!");
+        assertEquals("", TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual), "Key sortHelperStatus doesn't match to given value!");
+        assertFalse(TemplateTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
+        assertEquals(0, TemplateTypeField.DOCKET.getIntValue(actual), "Key docket doesn't match to given value!");
+        assertEquals(1, TemplateTypeField.RULESET_ID.getIntValue(actual), "Key ruleset doesn't match to given value!");
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
-        assertEquals("Size projects doesn't match to given value!", 1, projects.size());
+        assertEquals(1, projects.size(), "Size projects doesn't match to given value!");
 
         Map<String, Object> project = projects.get(0);
-        assertEquals("Key projects.id doesn't match to given value!", 1,
-                ProjectTypeField.ID.getIntValue(project));
-        assertEquals("Key projects.title doesn't match to given value!", "Project",
-                ProjectTypeField.TITLE.getStringValue(project));
+        assertEquals(1, ProjectTypeField.ID.getIntValue(project), "Key projects.id doesn't match to given value!");
+        assertEquals("Project", ProjectTypeField.TITLE.getStringValue(project), "Key projects.title doesn't match to given value!");
 
         List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
-        assertEquals("Size tasks doesn't match to given value!", 2, tasks.size());
+        assertEquals(2, tasks.size(), "Size tasks doesn't match to given value!");
 
         Map<String, Object> task = tasks.get(0);
-        assertEquals("Key tasks.id doesn't match to given value!", 1, TaskTypeField.ID.getIntValue(task));
-        assertEquals("Key tasks.title doesn't match to given value!", "Task one",
-            TaskTypeField.TITLE.getStringValue(task));
+        assertEquals(1, TaskTypeField.ID.getIntValue(task), "Key tasks.id doesn't match to given value!");
+        assertEquals("Task one", TaskTypeField.TITLE.getStringValue(task), "Key tasks.title doesn't match to given value!");
 
         task = tasks.get(1);
-        assertEquals("Key tasks.id doesn't match to given value!", 2, TaskTypeField.ID.getIntValue(task));
-        assertEquals("Key tasks.title doesn't match to given value!", "Task two",
-            TaskTypeField.TITLE.getStringValue(task));
+        assertEquals(2, TaskTypeField.ID.getIntValue(task), "Key tasks.id doesn't match to given value!");
+        assertEquals("Task two", TaskTypeField.TITLE.getStringValue(task), "Key tasks.title doesn't match to given value!");
     }
 
     @Test
@@ -135,27 +128,22 @@ public class TemplateTypeTest {
         Template template = prepareData().get(1);
         Map<String, Object> actual = templateType.createDocument(template);
 
-        assertEquals("Key title doesn't match to given value!", "Rendering",
-            TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
-            TemplateTypeField.CREATION_DATE.getStringValue(actual));
-        assertEquals("Key sortHelperStatus doesn't match to given value!", "",
-            TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
-        assertEquals("Key docket doesn't match to given value!", 1, TemplateTypeField.DOCKET.getIntValue(actual));
-        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET_ID.getIntValue(actual));
+        assertEquals("Rendering", TemplateTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals(formatDate(template.getCreationDate()), TemplateTypeField.CREATION_DATE.getStringValue(actual), "Key creationDate doesn't match to given value!");
+        assertEquals("", TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual), "Key sortHelperStatus doesn't match to given value!");
+        assertTrue(TemplateTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
+        assertEquals(1, TemplateTypeField.DOCKET.getIntValue(actual), "Key docket doesn't match to given value!");
+        assertEquals(0, TemplateTypeField.RULESET_ID.getIntValue(actual), "Key ruleset doesn't match to given value!");
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
-        assertEquals("Size projects doesn't match to given value!", 1, projects.size());
+        assertEquals(1, projects.size(), "Size projects doesn't match to given value!");
 
         Map<String, Object> project = projects.get(0);
-        assertEquals("Key projects.id doesn't match to given value!", 1,
-                ProjectTypeField.ID.getIntValue(project));
-        assertEquals("Key projects.title doesn't match to given value!", "Project",
-                ProjectTypeField.TITLE.getStringValue(project));
+        assertEquals(1, ProjectTypeField.ID.getIntValue(project), "Key projects.id doesn't match to given value!");
+        assertEquals("Project", ProjectTypeField.TITLE.getStringValue(project), "Key projects.title doesn't match to given value!");
 
         List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
-        assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
+        assertEquals(0, tasks.size(), "Size tasks doesn't match to given value!");
     }
 
     @Test
@@ -165,21 +153,18 @@ public class TemplateTypeTest {
         Template template = prepareData().get(2);
         Map<String, Object> actual = templateType.createDocument(template);
 
-        assertEquals("Key title doesn't match to given value!", "Incomplete",
-            TemplateTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key creationDate doesn't match to given value!", formatDate(template.getCreationDate()),
-            TemplateTypeField.CREATION_DATE.getStringValue(actual));
-        assertEquals("Key sortHelperStatus doesn't match to given value!", "",
-            TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", TemplateTypeField.ACTIVE.getBooleanValue(actual));
-        assertEquals("Key docket doesn't match to given value!", 0, TemplateTypeField.DOCKET.getIntValue(actual));
-        assertEquals("Key ruleset doesn't match to given value!", 0, TemplateTypeField.RULESET_ID.getIntValue(actual));
+        assertEquals("Incomplete", TemplateTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals(formatDate(template.getCreationDate()), TemplateTypeField.CREATION_DATE.getStringValue(actual), "Key creationDate doesn't match to given value!");
+        assertEquals("", TemplateTypeField.SORT_HELPER_STATUS.getStringValue(actual), "Key sortHelperStatus doesn't match to given value!");
+        assertTrue(TemplateTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
+        assertEquals(0, TemplateTypeField.DOCKET.getIntValue(actual), "Key docket doesn't match to given value!");
+        assertEquals(0, TemplateTypeField.RULESET_ID.getIntValue(actual), "Key ruleset doesn't match to given value!");
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
-        assertEquals("Size projects doesn't match to given value!", 0, projects.size());
+        assertEquals(0, projects.size(), "Size projects doesn't match to given value!");
 
         List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
-        assertEquals("Size tasks doesn't match to given value!", 0, tasks.size());
+        assertEquals(0, tasks.size(), "Size tasks doesn't match to given value!");
     }
 
     @Test
@@ -189,15 +174,15 @@ public class TemplateTypeTest {
         Template template = prepareData().get(0);
         Map<String, Object> actual = templateType.createDocument(template);
 
-        assertEquals("Amount of keys is incorrect!", 12, actual.keySet().size());
+        assertEquals(12, actual.keySet().size(), "Amount of keys is incorrect!");
 
         List<Map<String, Object>> projects = TemplateTypeField.PROJECTS.getJsonArray(actual);
         Map<String, Object> project = projects.get(0);
-        assertEquals("Amount of keys in projects is incorrect!", 3, project.keySet().size());
+        assertEquals(3, project.keySet().size(), "Amount of keys in projects is incorrect!");
 
         List<Map<String, Object>> tasks = TemplateTypeField.TASKS.getJsonArray(actual);
         Map<String, Object> task = tasks.get(0);
-        assertEquals("Amount of keys in tasks is incorrect!", 2, task.keySet().size());
+        assertEquals(2, task.keySet().size(), "Amount of keys in tasks is incorrect!");
     }
 
     @Test
@@ -206,7 +191,7 @@ public class TemplateTypeTest {
 
         List<Template> templates = prepareData();
         Map<Integer, Map<String, Object>> documents = templateType.createDocuments(templates);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+        assertEquals(3, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 
     private String formatDate(Date date) {

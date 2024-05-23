@@ -11,17 +11,17 @@
 
 package org.kitodo.data.elasticsearch.index;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
 import org.elasticsearch.node.Node;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.MockEntity;
 import org.kitodo.data.elasticsearch.search.Searcher;
@@ -38,7 +38,7 @@ public class IndexRestClientIT {
     private static final Searcher searcher = new Searcher(testTypeName);
     private static final String DOCUMENT_EXISTS = "Document exists!";
 
-    @BeforeClass
+    @BeforeAll
     public static void startElasticSearch() throws Exception {
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
         restClient = initializeRestClient();
@@ -47,17 +47,17 @@ public class IndexRestClientIT {
         node.start();
     }
 
-    @AfterClass
+    @AfterAll
     public static void stopElasticSearch() throws Exception {
         node.close();
     }
 
-    @Before
+    @BeforeEach
     public void createIndex() throws Exception {
         restClient.createIndex(null, testTypeName);
     }
 
-    @After
+    @AfterEach
     public void deleteIndex() throws Exception {
         restClient.deleteIndex(testTypeName);
     }
@@ -65,43 +65,43 @@ public class IndexRestClientIT {
     @Test
     public void shouldAddDocument() throws Exception {
         Map<String, Object> response = searcher.findDocument(1);
-        assertFalse(DOCUMENT_EXISTS, isFound(response));
+        assertFalse(isFound(response), DOCUMENT_EXISTS);
 
         restClient.addDocument(testTypeName, MockEntity.createEntities().get(1), 1, false);
 
         response = searcher.findDocument(1);
-        assertTrue("Add of document has failed!", isFound(response));
+        assertTrue(isFound(response), "Add of document has failed!");
     }
 
     @Test
     public void shouldAddTypeAsync() throws Exception {
         Map<String, Object> response = searcher.findDocument(1);
-        assertFalse(DOCUMENT_EXISTS, isFound(response));
+        assertFalse(isFound(response), DOCUMENT_EXISTS);
         response = searcher.findDocument(2);
-        assertFalse(DOCUMENT_EXISTS, isFound(response));
+        assertFalse(isFound(response), DOCUMENT_EXISTS);
 
         restClient.addTypeSync(testTypeName, MockEntity.createEntities());
 
         response = searcher.findDocument(1);
-        assertTrue("Add of type has failed - document id 1!", isFound(response));
+        assertTrue(isFound(response), "Add of type has failed - document id 1!");
         response = searcher.findDocument(2);
-        assertTrue("Add of type has failed - document id 2!", isFound(response));
+        assertTrue(isFound(response), "Add of type has failed - document id 2!");
 
     }
 
     @Test
     public void shouldAddTypeSync() throws Exception {
         Map<String, Object> response = searcher.findDocument(1);
-        assertFalse(DOCUMENT_EXISTS, isFound(response));
+        assertFalse(isFound(response), DOCUMENT_EXISTS);
         response = searcher.findDocument(2);
-        assertFalse(DOCUMENT_EXISTS, isFound(response));
+        assertFalse(isFound(response), DOCUMENT_EXISTS);
 
         restClient.addTypeAsync(testTypeName, MockEntity.createEntities());
 
         response = searcher.findDocument(1);
-        assertTrue("Add of type has failed - document id 1!", isFound(response));
+        assertTrue(isFound(response), "Add of type has failed - document id 1!");
         response = searcher.findDocument(2);
-        assertTrue("Add of type has failed - document id 2!", isFound(response));
+        assertTrue(isFound(response), "Add of type has failed - document id 2!");
 
     }
 
@@ -110,16 +110,16 @@ public class IndexRestClientIT {
         restClient.addTypeSync(testTypeName, MockEntity.createEntities());
 
         Map<String, Object> response = searcher.findDocument(1);
-        assertTrue("Document doesn't exist!", isFound(response));
+        assertTrue(isFound(response), "Document doesn't exist!");
 
         restClient.deleteDocument(testTypeName, 1, false);
         response = searcher.findDocument(1);
-        assertFalse("Delete of document has failed!", isFound(response));
+        assertFalse(isFound(response), "Delete of document has failed!");
 
         // remove even if document doesn't exist should be possible
         restClient.deleteDocument(testTypeName, 100, false);
         response = searcher.findDocument(100);
-        assertFalse("Delete of document has failed!", isFound(response));
+        assertFalse(isFound(response), "Delete of document has failed!");
     }
 
     @Test

@@ -11,22 +11,18 @@
 
 package org.kitodo.data.database.persistence;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class FilterDaoIT {
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
@@ -37,17 +33,17 @@ public class FilterDaoIT {
         filterDAO.save(filters.get(1));
         filterDAO.save(filters.get(2));
 
-        assertEquals("Objects were not saved or not found!", 3, filterDAO.getAll().size());
-        assertEquals("Objects were not saved or not found!", 2, filterDAO.getAll(1,2).size());
-        assertEquals("Object was not saved or not found!", "first_filter", filterDAO.getById(1).getValue());
+        assertEquals(3, filterDAO.getAll().size(), "Objects were not saved or not found!");
+        assertEquals(2, filterDAO.getAll(1,2).size(), "Objects were not saved or not found!");
+        assertEquals("first_filter", filterDAO.getById(1).getValue(), "Object was not saved or not found!");
 
         filterDAO.remove(1);
         filterDAO.remove(filters.get(1));
-        assertEquals("Objects were not removed or not found!", 1, filterDAO.getAll().size());
+        assertEquals(1, filterDAO.getAll().size(), "Objects were not removed or not found!");
 
-        exception.expect(DAOException.class);
-        exception.expectMessage("Object cannot be found in database");
-        filterDAO.getById(1);
+        Exception exception = assertThrows(DAOException.class,
+                () -> filterDAO.getById(1));
+        assertEquals("Object cannot be found in database", exception.getMessage());
     }
 
     private List<Filter> getAuthorities() {

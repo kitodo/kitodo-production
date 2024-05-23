@@ -12,16 +12,16 @@
 package org.kitodo.data.elasticsearch.search;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.node.Node;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.elasticsearch.MockEntity;
 import org.kitodo.data.elasticsearch.index.IndexRestClient;
@@ -37,7 +37,7 @@ public class SearchRestClientIT {
     private static final String testTypeName = "testsearchclient";
     private static final QueryBuilder query = QueryBuilders.matchAllQuery();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareIndex() throws Exception {
         MockEntity.setUpAwaitility();
 
@@ -56,7 +56,7 @@ public class SearchRestClientIT {
         indexRestClient.addDocument(testTypeName, MockEntity.createEntities().get(4), 4, false);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanIndex() throws Exception {
         searchRestClient.deleteIndex(testTypeName);
         node.close();
@@ -64,35 +64,35 @@ public class SearchRestClientIT {
 
     @Test
     public void shouldCountDocuments() {
-        await().untilAsserted(() -> assertTrue("Count of documents has failed!",
-            searchRestClient.countDocuments(testTypeName, query).contains("\"count\" : 4")));
+        await().untilAsserted(() ->
+            assertTrue(searchRestClient.countDocuments(testTypeName, query).contains("\"count\" : 4"), "Count of documents has failed!"));
     }
 
     @Test
     public void shouldGetDocumentById() {
-        await().untilAsserted(() -> assertFalse("Get of document has failed - source is empty!",
-            searchRestClient.getDocument(testTypeName, 1).isEmpty()));
+        await().untilAsserted(() ->
+            assertFalse(searchRestClient.getDocument(testTypeName, 1).isEmpty(), "Get of document has failed - source is empty!"));
 
-        await().untilAsserted(() -> assertEquals("Get of document has failed - id is incorrect!", 1,
-                Integer.parseInt((String) searchRestClient.getDocument(testTypeName, 1).get("id"))));
+        await().untilAsserted(() ->
+            assertEquals(1, Integer.parseInt((String) searchRestClient.getDocument(testTypeName, 1).get("id")), "Get of document has failed - id is incorrect!"));
     }
 
     @Test
     public void shouldGetDocumentByQuery() {
-        await().untilAsserted(() -> assertEquals("Get of document has failed!", 4,
-            searchRestClient.getDocument(testTypeName, query, null, null, null).getHits().length));
+        await().untilAsserted(() ->
+            assertEquals(4, searchRestClient.getDocument(testTypeName, query, null, null, null).getHits().length, "Get of document has failed!"));
     }
 
     @Test
     public void shouldGetDocumentByQueryWithSize() {
-        await().untilAsserted(() -> assertEquals("Get of document has failed!", 3,
-            searchRestClient.getDocument(testTypeName, query, null, null, 3).getHits().length));
+        await().untilAsserted(() ->
+            assertEquals(3, searchRestClient.getDocument(testTypeName, query, null, null, 3).getHits().length, "Get of document has failed!"));
     }
 
     @Test
     public void shouldGetDocumentByQueryWithOffsetAndSize() {
-        await().untilAsserted(() -> assertEquals("Get of document has failed!", 2,
-            searchRestClient.getDocument(testTypeName, query, null, 2, 3).getHits().length));
+        await().untilAsserted(() ->
+            assertEquals(2, searchRestClient.getDocument(testTypeName, query, null, 2, 3).getHits().length, "Get of document has failed!"));
     }
 
     private static SearchRestClient initializeSearchRestClient() {

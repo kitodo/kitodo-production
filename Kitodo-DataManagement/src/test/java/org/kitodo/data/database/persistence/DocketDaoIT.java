@@ -11,22 +11,18 @@
 
 package org.kitodo.data.database.persistence;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class DocketDaoIT {
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {
@@ -37,17 +33,17 @@ public class DocketDaoIT {
         docketDAO.save(dockets.get(1));
         docketDAO.save(dockets.get(2));
 
-        assertEquals("Objects were not saved or not found!", 3, docketDAO.getAll().size());
-        assertEquals("Objects were not saved or not found!", 2, docketDAO.getAll(1,2).size());
-        assertEquals("Object was not saved or not found!", "first_docket", docketDAO.getById(1).getTitle());
+        assertEquals(3, docketDAO.getAll().size(), "Objects were not saved or not found!");
+        assertEquals(2, docketDAO.getAll(1,2).size(), "Objects were not saved or not found!");
+        assertEquals("first_docket", docketDAO.getById(1).getTitle(), "Object was not saved or not found!");
 
         docketDAO.remove(1);
         docketDAO.remove(dockets.get(1));
-        assertEquals("Objects were not removed or not found!", 1, docketDAO.getAll().size());
+        assertEquals(1, docketDAO.getAll().size(), "Objects were not removed or not found!");
 
-        exception.expect(DAOException.class);
-        exception.expectMessage("Object cannot be found in database");
-        docketDAO.getById(1);
+        Exception exception = assertThrows(DAOException.class,
+            () -> docketDAO.getById(1));
+        assertEquals("Object cannot be found in database", exception.getMessage());
     }
 
     private List<Docket> getAuthorities() {
