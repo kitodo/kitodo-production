@@ -28,6 +28,8 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.KitodoScriptExecutionException;
+import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.services.ServiceManager;
@@ -42,7 +44,8 @@ public abstract class EditDataScript {
      * @param process - the process to run the script on
      * @param script - the script to run
      */
-    public void process(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process, String script) {
+    public void process(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process, String script)
+            throws KitodoScriptExecutionException {
         List<MetadataScript> scripts = parseScript(script);
         for (MetadataScript metadataScript : scripts) {
             executeScript(metadataFile, process, metadataScript);
@@ -56,7 +59,7 @@ public abstract class EditDataScript {
      * @param metadataScript the script to execute
      */
     public abstract void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
-                                       MetadataScript metadataScript);
+                                       MetadataScript metadataScript) throws KitodoScriptExecutionException;
 
     /**
      * Parses the given input to MetadataScripts.
@@ -134,13 +137,20 @@ public abstract class EditDataScript {
      * @param workpiece the workpiece to get the collection from.
      * @return the metadataCollection.
      */
-    public Collection<Metadata> getMetadataCollection(MetadataScript metadataScript, Workpiece workpiece) {
+    public Collection<Metadata> getMetadataCollection(MetadataScript metadataScript, Workpiece workpiece)
+            throws KitodoScriptExecutionException {
         Collection<Metadata> metadataCollection;
 
         if (Objects.nonNull(metadataScript.getTypeTarget())) {
             LogicalDivision structuralElement = getLogicalDivisionWithType(metadataScript.getTypeTarget(),
                 workpiece.getLogicalStructure());
-            metadataCollection = Objects.isNull(structuralElement) ? null : structuralElement.getMetadata();
+            if (Objects.nonNull(structuralElement)) {
+                metadataCollection = structuralElement.getMetadata();
+            } else {
+                throw new KitodoScriptExecutionException(
+                        Helper.getTranslation("kitodoScript.noStructureOfTypeFound",
+                                metadataScript.getTypeTarget()));
+            }
         } else {
             metadataCollection = workpiece.getLogicalStructure().getMetadata();
         }
