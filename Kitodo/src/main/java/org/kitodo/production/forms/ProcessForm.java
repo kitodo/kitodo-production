@@ -18,7 +18,9 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.annotation.PostConstruct;
@@ -60,6 +62,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -96,6 +99,7 @@ public class ProcessForm extends TemplateBaseForm {
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
     private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
     private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
+    private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -1168,5 +1172,22 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public String getErrorMessage() {
         return errorMessage;
+    }
+
+    /**
+     * Check and return whether process with ID 'processId' belongs to a project assigned to the current user or not.
+     * @param processId ID of process to check
+     * @return whether process belongs to project assigned to current user or not
+     */
+    public boolean processInAssignedProject(int processId) {
+        try {
+            if (!assignedProcesses.containsKey(processId)) {
+                assignedProcesses.put(processId, ImportService.processInAssignedProject(processId));
+            }
+            return assignedProcesses.get(processId);
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+        }
+        return false;
     }
 }

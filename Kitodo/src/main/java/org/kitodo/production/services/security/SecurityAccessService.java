@@ -1086,4 +1086,13 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToRenameMediaFiles() {
         return hasAnyAuthorityForClient("renameMedia");
     }
+
+    /**
+     * Check if the current user has the permission to link processes to parent processes of unassigned projects.
+     *
+     * @return true if the current user has the permission to link processes to parent processes of unassigned projects.
+     */
+    public boolean hasAuthorityToLinkToProcessesOfUnassignedProjects() {
+        return hasAnyAuthorityForClient("linkToProcessesOfUnassignedProjects");
+    }
 }
