@@ -11,7 +11,7 @@
 
 package org.kitodo.longtermpreservationvalidation;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.URI;
@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.validation.State;
 import org.kitodo.api.validation.ValidationResult;
 import org.kitodo.api.validation.longtermpreservation.FileType;
@@ -53,8 +53,7 @@ public class LongTermPreservationValidationIT {
         LongTermPreservationValidationInterface validator = new LongTermPreservationValidation();
         ValidationResult validationResult = validator.validate(CORRUPTED_TIF_URI, FileType.TIFF);
         assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "IFD offset not word-aligned:  110423"),
-            validationResult.getResultMessages());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "IFD offset not word-aligned:  110423"), validationResult.getResultMessages());
     }
 
     @Test
@@ -64,23 +63,19 @@ public class LongTermPreservationValidationIT {
 
         ValidationResult validationResult = validator.validate(JAVA_URI, FileType.PDF);
         assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No PDF header", offset),
-            validationResult.getResultMessages());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No PDF header", offset), validationResult.getResultMessages());
 
         validationResult = validator.validate(PDF_URI, FileType.GIF);
         assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid GIF header", offset),
-            validationResult.getResultMessages());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid GIF header", offset), validationResult.getResultMessages());
 
         validationResult = validator.validate(JP2_URI, FileType.JPEG);
         assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid JPEG header", offset),
-            validationResult.getResultMessages());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "Invalid JPEG header", offset), validationResult.getResultMessages());
 
         validationResult = validator.validate(PNG_URI, FileType.JPEG_2000);
         assertEquals(State.ERROR, validationResult.getState());
-        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No JPEG 2000 header", offset),
-            validationResult.getResultMessages());
+        assertEquals(Arrays.asList(NEITHER_WELL_FORMED_NOR_VALID, "No JPEG 2000 header", offset), validationResult.getResultMessages());
     }
 
     @Test
