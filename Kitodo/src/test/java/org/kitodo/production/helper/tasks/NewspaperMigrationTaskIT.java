@@ -11,15 +11,19 @@
 
 package org.kitodo.production.helper.tasks;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -47,7 +51,7 @@ public class NewspaperMigrationTaskIT {
 
     private static final File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
 
         if (!SystemUtils.IS_OS_WINDOWS) {
@@ -94,43 +98,38 @@ public class NewspaperMigrationTaskIT {
     public void testNewspaperMigrationTask() throws Exception {
 
         Process issueOne = processService.getById(1);
-        Assert.assertNull("should not yet have parent", issueOne.getParent());
+        assertNull(issueOne.getParent(), "should not yet have parent");
         Process issueTwo = processService.getById(2);
-        Assert.assertNull("should not yet have parent", issueTwo.getParent());
-        Assert.assertEquals("should not yet have created year process", 0,
-            processService.findByTitle("NewsMiTe_1850").size());
-        Assert.assertEquals("should not yet have created overall process", 0,
-            processService.findByTitle("NewsMiTe").size());
+        assertNull(issueTwo.getParent(), "should not yet have parent");
+        assertEquals(0, processService.findByTitle("NewsMiTe_1850").size(), "should not yet have created year process");
+        assertEquals(0, processService.findByTitle("NewsMiTe").size(), "should not yet have created overall process");
 
         NewspaperMigrationTask underTest = new NewspaperMigrationTask(batchService.getById(5));
         underTest.start();
-        Assert.assertTrue("should be running", underTest.isAlive());
+        assertTrue(underTest.isAlive(), "should be running");
         underTest.join();
-        Assert.assertFalse("should have finished", underTest.isAlive());
-        Assert.assertEquals("should have completed", 100, underTest.getProgress());
+        assertFalse(underTest.isAlive(), "should have finished");
+        assertEquals(100, underTest.getProgress(), "should have completed");
 
         Workpiece workpiece = ServiceManager.getMetsService()
                 .loadWorkpiece(processService.getMetadataFileUri(issueOne));
         LogicalDivision logicalStructure = workpiece.getLogicalStructure();
-        Assert.assertEquals("should have modified METS file", "NewspaperMonth", logicalStructure.getType());
-        Assert.assertEquals("should have added date for month", "1850-03", logicalStructure.getOrderlabel());
-        Assert.assertEquals("should have added date for day", "1850-03-12",
-            logicalStructure.getChildren().get(0).getOrderlabel());
+        assertEquals("NewspaperMonth", logicalStructure.getType(), "should have modified METS file");
+        assertEquals("1850-03", logicalStructure.getOrderlabel(), "should have added date for month");
+        assertEquals("1850-03-12", logicalStructure.getChildren().get(0).getOrderlabel(), "should have added date for day");
 
         Process newspaperProcess = processService.getById(4);
         processService.save(newspaperProcess);
         Process yearProcess = processService.getById(5);
         processService.save(yearProcess);
-        Assert.assertEquals("should have created year process", 1, processService.findByTitle("NewsMiTe-1850").size());
-        Assert.assertEquals("should have created overall process", 1, processService.findByTitle("NewsMiTe", true, true).size());
-        Assert.assertTrue("should have added link from newspaper process to year process",
-            newspaperProcess.getChildren().contains(yearProcess));
+        assertEquals(1, processService.findByTitle("NewsMiTe-1850").size(), "should have created year process");
+        assertEquals(1, processService.findByTitle("NewsMiTe", true, true).size(), "should have created overall process");
+        assertTrue(newspaperProcess.getChildren().contains(yearProcess), "should have added link from newspaper process to year process");
         List<Process> linksInYear = yearProcess.getChildren();
-        Assert.assertTrue("should have added links from year process to issues",
-            linksInYear.contains(issueOne) && linksInYear.contains(issueTwo));
+        assertTrue(linksInYear.contains(issueOne) && linksInYear.contains(issueTwo), "should have added links from year process to issues");
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();

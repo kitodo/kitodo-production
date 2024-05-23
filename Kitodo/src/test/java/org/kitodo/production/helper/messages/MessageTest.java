@@ -11,16 +11,15 @@
 
 package org.kitodo.production.helper.messages;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import org.junit.jupiter.api.Test;
 
 public class MessageTest {
 
@@ -41,25 +40,19 @@ public class MessageTest {
             }
         }
 
-        assertTrue("Keys set doesn't contain searched key!", containsKey);
+        assertTrue(containsKey, "Keys set doesn't contain searched key!");
     }
 
     @Test
     public void shouldGetStringFromDefaultBundle() {
         // in case custom bundle does not exist
-        assertEquals(
-            "Ready", 
-            Message.getResourceBundle(defaultBundle, "non-existent-bundle", locale).getString("ready")
-        );
+        assertEquals("Ready", Message.getResourceBundle(defaultBundle, "non-existent-bundle", locale).getString("ready"));
     }
 
     @Test
     public void shouldGetStringFromCustomBundle() throws Exception {
         // in case custom bundle exists, and also contains definition for the requested key
-        assertEquals(
-            "Test custom message", 
-            Message.getResourceBundle(defaultBundle, customBundle, locale).getString("ready")
-        );
+        assertEquals("Test custom message", Message.getResourceBundle(defaultBundle, customBundle, locale).getString("ready"));
     }
 
     @Test

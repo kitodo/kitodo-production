@@ -11,13 +11,16 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -32,7 +35,7 @@ public class MigrationFormIT {
      * @throws Exception
      *             If databaseConnection failed.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -44,7 +47,7 @@ public class MigrationFormIT {
      * @throws Exception
      *             if elasticsearch could not been stopped.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -52,16 +55,16 @@ public class MigrationFormIT {
 
     @Test
     public void testShowPossibleProjects() {
-        Assert.assertEquals("Projectslist should be empty", Collections.emptyList(), migrationForm.getAllProjects());
-        Assert.assertFalse("Projectslist should not be shown", migrationForm.isProjectListRendered());
+        assertEquals(Collections.emptyList(), migrationForm.getAllProjects(), "Projectslist should be empty");
+        assertFalse(migrationForm.isProjectListRendered(), "Projectslist should not be shown");
         migrationForm.showPossibleProjects();
-        Assert.assertEquals("Should get all Projects", 3, migrationForm.getAllProjects().size());
-        Assert.assertTrue("Projectslist should be shown", migrationForm.isProjectListRendered());
+        assertEquals(3, migrationForm.getAllProjects().size(), "Should get all Projects");
+        assertTrue(migrationForm.isProjectListRendered(), "Projectslist should be shown");
     }
 
     @Test
     public void testShowProcessesForProjects() throws DAOException {
-        Assert.assertEquals(Collections.emptyList(), migrationForm.getAggregatedTasks());
+        assertEquals(Collections.emptyList(), migrationForm.getAggregatedTasks());
 
         ArrayList<Project> selectedProjects = new ArrayList<>();
         selectedProjects.add(ServiceManager.getProjectService().getById(1));
@@ -69,26 +72,26 @@ public class MigrationFormIT {
         migrationForm.showAggregatedProcesses();
 
         String processesShouldBeFound = "Processes should be found";
-        Assert.assertEquals(processesShouldBeFound, 0, migrationForm.getAggregatedTasks().size());
+        assertEquals(0, migrationForm.getAggregatedTasks().size(), processesShouldBeFound);
 
         selectedProjects.add(ServiceManager.getProjectService().getById(2));
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals(processesShouldBeFound, 1, migrationForm.getAggregatedTasks().size());
+        assertEquals(1, migrationForm.getAggregatedTasks().size(), processesShouldBeFound);
 
         selectedProjects.add(ServiceManager.getProjectService().getById(2));
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals(processesShouldBeFound, 1, migrationForm.getAggregatedTasks().size());
+        assertEquals(1, migrationForm.getAggregatedTasks().size(), processesShouldBeFound);
 
         selectedProjects.remove(2);
         selectedProjects.remove(1);
         migrationForm.setSelectedProjects(selectedProjects);
         migrationForm.showAggregatedProcesses();
 
-        Assert.assertEquals(processesShouldBeFound, 0, migrationForm.getAggregatedTasks().size());
+        assertEquals(0, migrationForm.getAggregatedTasks().size(), processesShouldBeFound);
     }
 
 }

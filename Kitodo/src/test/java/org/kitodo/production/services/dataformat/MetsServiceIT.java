@@ -11,14 +11,14 @@
 
 package org.kitodo.production.services.dataformat;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.net.URI;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.production.services.ServiceManager;

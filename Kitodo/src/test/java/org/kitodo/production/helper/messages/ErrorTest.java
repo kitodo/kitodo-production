@@ -11,16 +11,15 @@
 
 package org.kitodo.production.helper.messages;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.MissingResourceException;
 
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
+import org.junit.jupiter.api.Test;
 
 public class ErrorTest {
 
@@ -41,32 +40,26 @@ public class ErrorTest {
             }
         }
 
-        assertTrue("Keys set doesn't contain searched key!", containsKey);
+        assertTrue(containsKey, "Keys set doesn't contain searched key!");
     }
 
     @Test
     public void shouldGetStringFromDefaultBundle() {
         // in case custom bundle does not exist
-        assertEquals(
-            "Error...", 
-            Error.getResourceBundle(defaultBundle, "non-existent-bundle", locale).getString("error")
-        );
+        assertEquals("Error...", Error.getResourceBundle(defaultBundle, "non-existent-bundle", locale).getString("error"));
     }
 
     @Test
     public void shouldGetStringFromCustomBundle() {      
         // in case custom bundle exists, and also contains definition for the requested key
-        assertEquals(
-            "Test custom error", 
-            Error.getResourceBundle(defaultBundle, customBundle, locale).getString("error")
-        );
+        assertEquals("Test custom error", Error.getResourceBundle(defaultBundle, customBundle, locale).getString("error"));
     }
 
     @Test
     public void shouldThrowMissingRessourceExceptionForNonExistentKey() {
         // in case custom bundle is loaded, but key does not exist in either resource bundles 
         assertThrows(
-            MissingResourceException.class, 
+            MissingResourceException.class,
             () -> Error.getResourceBundle(defaultBundle, customBundle, locale).getString("non-existent-key")
         );
 

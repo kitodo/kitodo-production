@@ -11,10 +11,6 @@
 
 package org.kitodo.production.services.command;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -22,11 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.api.command.CommandResult;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandServiceTest {
     private static String scriptExtension;
@@ -41,7 +39,7 @@ public class CommandServiceTest {
     private static File longWorkingScript1s = new File(
             System.getProperty("user.dir") + "/" + scriptPath + "long_working_script_1s.sh");
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
 
         if (SystemUtils.IS_OS_WINDOWS) {
@@ -58,7 +56,7 @@ public class CommandServiceTest {
 
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         if (!windows) {
             ExecutionPermission.setNoExecutePermission(workingScript);
@@ -81,7 +79,7 @@ public class CommandServiceTest {
         }
         expectedMessages.add("Hello World");
 
-        assertEquals("result messages are not identical", expectedMessages, result.getMessages());
+        assertEquals(expectedMessages, result.getMessages(), "result messages are not identical");
     }
 
     @Test
@@ -98,8 +96,8 @@ public class CommandServiceTest {
         }
         expectedMessages.add("Hello World");
 
-        assertEquals("result messages are not identical", expectedMessages, result.getMessages());
-        assertTrue("successful booleans are not matching", result.isSuccessful());
+        assertEquals(expectedMessages, result.getMessages(), "result messages are not identical");
+        assertTrue(result.isSuccessful(), "successful booleans are not matching");
     }
 
     @Test
@@ -118,15 +116,15 @@ public class CommandServiceTest {
         }
         expectedMessages.add("HelloWorld");
 
-        assertEquals("result messages are not identical", expectedMessages, result.getMessages());
-        assertTrue("successful booleans are not matching", result.isSuccessful());
+        assertEquals(expectedMessages, result.getMessages(), "result messages are not identical");
+        assertTrue(result.isSuccessful(), "successful booleans are not matching");
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void runNotExistingScript() throws IOException {
         String commandString = scriptPath + "not_existing_script" + scriptExtension;
         CommandService service = new CommandService();
-        service.runCommand(commandString);
+        assertThrows(IOException.class, () -> service.runCommand(commandString));
     }
 
     @Test
@@ -136,8 +134,8 @@ public class CommandServiceTest {
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertNotNull("There were not results!", result);
-        assertEquals("path to scripts are not identical", result.getCommand(), commandString);
+        assertNotNull(result, "There were not results!");
+        assertEquals(result.getCommand(), commandString, "path to scripts are not identical");
     }
 
     @Test
@@ -149,8 +147,8 @@ public class CommandServiceTest {
         service.runCommandAsync(commandString1s);
         Thread.sleep(3000); // wait for async thread to finish;
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertNotNull("There were no results!", result);
-        assertEquals("latest finished command should be the 2 s one", result.getCommand(), commandString2s);
+        assertNotNull(result, "There were no results!");
+        assertEquals(result.getCommand(), commandString2s, "latest finished command should be the 2 s one");
     }
 
     @Test
@@ -160,9 +158,8 @@ public class CommandServiceTest {
         service.runCommandAsync(commandString);
         Thread.sleep(1000); // wait for async thread to finish;
         CommandResult result = getLastFinishedCommandResult(service.getFinishedCommandResults());
-        assertNotNull("There were no results!", result);
-        assertTrue("result message should contain IOException",
-                result.getMessages().get(0).contains("IOException"));
+        assertNotNull(result, "There were no results!");
+        assertTrue(result.getMessages().get(0).contains("IOException"), "result message should contain IOException");
     }
 
     @Test
@@ -183,9 +180,9 @@ public class CommandServiceTest {
         }
         expectedMessages.add("HelloWorld");
 
-        assertNotNull("There were no results!", result);
-        assertEquals("result messages are not identical", expectedMessages, result.getMessages());
-        assertTrue("successful booleans are not identical", result.isSuccessful());
+        assertNotNull(result, "There were no results!");
+        assertEquals(expectedMessages, result.getMessages(), "result messages are not identical");
+        assertTrue(result.isSuccessful(), "successful booleans are not identical");
     }
 
     /**

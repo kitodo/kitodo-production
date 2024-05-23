@@ -11,9 +11,9 @@
 
 package org.kitodo.config;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConfigCoreTest {
 
@@ -21,13 +21,13 @@ public class ConfigCoreTest {
     public void shouldGetKitodoConfigDirectory() {
         String expected = "src/test/resources/";
 
-        assertEquals("Directory was queried incorrectly!", expected, ConfigCore.getKitodoConfigDirectory());
+        assertEquals(expected, ConfigCore.getKitodoConfigDirectory(), "Directory was queried incorrectly!");
     }
 
     @Test
     public void shouldGetKitodoDataDirectory() {
         String expected = "src/test/resources/metadata/";
 
-        assertEquals("Directory was queried incorrectly!", expected, ConfigCore.getKitodoDataDirectory());
+        assertEquals(expected, ConfigCore.getKitodoDataDirectory(), "Directory was queried incorrectly!");
     }
 }

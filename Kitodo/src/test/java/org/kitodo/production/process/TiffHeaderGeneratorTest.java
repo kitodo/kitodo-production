@@ -11,9 +11,9 @@
 
 package org.kitodo.production.process;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TiffHeaderGeneratorTest {
 
@@ -26,9 +26,7 @@ public class TiffHeaderGeneratorTest {
                     + "'|[[JAHR]]'+PublicationYear+'|[[ERSCHEINUNGSORT]]'+PlaceOfPublication+'|[[VERZ_STRCT]]'+"
                     + "TSL_ATS+'_'+CatalogIDDigital+'|'",
             "monograph");
-        assertEquals("Created hash doesn't match the precomputed one!",
-            "|<DOC_TYPE>Monographie|<HAUPTTITEL>Test|<AUTOREN/HERAUSGEBER>TestAuthor|<JAHR>|<ERSCHEINUNGSORT>|"
-                    + "<VERZ_STRCT>TestTest_123|",
-            created);
+        assertEquals("|<DOC_TYPE>Monographie|<HAUPTTITEL>Test|<AUTOREN/HERAUSGEBER>TestAuthor|<JAHR>|<ERSCHEINUNGSORT>|"
+                + "<VERZ_STRCT>TestTest_123|", created, "Created hash doesn't match the precomputed one!");
     }
 }

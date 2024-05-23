@@ -11,15 +11,15 @@
 
 package org.kitodo.production.migration;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Template;
@@ -27,13 +27,13 @@ import org.kitodo.production.services.ServiceManager;
 
 public class TasksToWorkflowConverterIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -47,7 +47,7 @@ public class TasksToWorkflowConverterIT {
         templateConverter.convertTasksToWorkflowFile(template.getTitle(), template.getTasks());
 
         File xmlDiagram = new File(ConfigCore.getKitodoDiagramDirectory() + template.getTitle() + ".bpmn20.xml");
-        assertTrue("Template was not converted to xml file!", xmlDiagram.exists());
+        assertTrue(xmlDiagram.exists(), "Template was not converted to xml file!");
 
         assertTrue(FileUtils.readFileToString(xmlDiagram, StandardCharsets.UTF_8)
                 .contains("<bpmn2:process id=\"First template\" name=\"First template\" isExecutable=\"false\"\n"

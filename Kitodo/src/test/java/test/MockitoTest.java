@@ -11,6 +11,7 @@
 
 package test;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -18,17 +19,16 @@ import static org.mockito.Mockito.when;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.converter.ProcessConverter;
 import org.kitodo.production.services.data.ProcessService;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class MockitoTest {
 
     private static Process process1;
@@ -40,7 +40,7 @@ public class MockitoTest {
     @Mock
     private ProcessConverter mockedProcessConverter;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         process1 = new Process();
         process1.setTitle("testProcess1");
@@ -54,13 +54,13 @@ public class MockitoTest {
         when(mockedProcessService.getAll()).thenReturn(Arrays.asList(process1, process2));
         List<Process> allProcesses = mockedProcessService.getAll();
         Process testProcess = allProcesses.get(1);
-        Assert.assertEquals("testProcess2", testProcess.getTitle());
+        assertEquals("testProcess2", testProcess.getTitle());
     }
 
     @Test
     public void testGenericMock() {
         when(mockedProcessConverter.getAsObject(eq(null), eq(null), any(String.class))).thenReturn(process2);
         Object object = mockedProcessConverter.getAsObject(null, null, "1");
-        Assert.assertEquals(process2, object);
+        assertEquals(process2, object);
     }
 }

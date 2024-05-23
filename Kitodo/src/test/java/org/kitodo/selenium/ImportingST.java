@@ -12,20 +12,21 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.xebialabs.restito.server.StubServer;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import com.xebialabs.restito.server.StubServer;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
@@ -50,7 +51,7 @@ public class ImportingST extends BaseTestSelenium {
     private static ProcessesPage processesPage;
     private static int multiVolumeWorkId = -1;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         projectsPage = Pages.getProjectsPage();
         processesPage = Pages.getProcessesPage();
@@ -64,12 +65,12 @@ public class ImportingST extends BaseTestSelenium {
         setupServer();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
         if (Browser.isAlertPresent()) {
@@ -77,7 +78,7 @@ public class ImportingST extends BaseTestSelenium {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() throws DAOException, DataException, IOException {
         ProcessService.deleteProcess(multiVolumeWorkId);
         server.stop();
@@ -99,13 +100,11 @@ public class ImportingST extends BaseTestSelenium {
     public void checkDefaultValuesTest() throws Exception {
         projectsPage.createNewProcess();
         Select catalogSelectMenu = new Select(importPage.getCatalogMenu());
-        assertEquals("Wrong default catalog selected", TestConstants.K10PLUS,
-                catalogSelectMenu.getFirstSelectedOption().getAttribute("label"));
+        assertEquals(TestConstants.K10PLUS, catalogSelectMenu.getFirstSelectedOption().getAttribute("label"), "Wrong default catalog selected");
 
         importPage.selectGBV();
         Select searchFieldSelectMenu = new Select(importPage.getSearchFieldMenu());
-        assertEquals("Wrong default search field selected", TestConstants.PPN,
-                searchFieldSelectMenu.getFirstSelectedOption().getAttribute("label"));
+        assertEquals(TestConstants.PPN, searchFieldSelectMenu.getFirstSelectedOption().getAttribute("label"), "Wrong default search field selected");
     }
 
     /**
@@ -116,14 +115,14 @@ public class ImportingST extends BaseTestSelenium {
     @Test
     public void checkSearchButtonActivatedText() throws Exception {
         projectsPage.createNewProcess();
-        assertFalse("'Search' button should be deactivated until import configuration, search field and "
-                + "search term have been selected", importPage.getSearchButton().isEnabled());
+        assertFalse(importPage.getSearchButton().isEnabled(), "'Search' button should be deactivated until import configuration, search field and "
+                + "search term have been selected");
         importPage.enterTestSearchValue("12345");
         await("Wait for 'Search' button to be enabled").pollDelay(700, TimeUnit.MILLISECONDS)
                 .atMost(30, TimeUnit.SECONDS).ignoreExceptions()
                 .until(() -> importPage.getSearchButton().isEnabled());
-        assertTrue("'Search' button should be activated when import configuration, search field and "
-                + "search term have been selected", importPage.getSearchButton().isEnabled());
+        assertTrue(importPage.getSearchButton().isEnabled(), "'Search' button should be activated when import configuration, search field and "
+                + "search term have been selected");
     }
 
     /**
@@ -138,20 +137,18 @@ public class ImportingST extends BaseTestSelenium {
         await("Wait for filter to be applied")
                 .pollDelay(100, TimeUnit.MILLISECONDS)
                 .atMost(5, TimeUnit.SECONDS).ignoreExceptions()
-                .untilAsserted(() -> assertEquals("Wrong number of filtered processes", 1,
-                        processesPage.getProcessTitles().size()));
+                .untilAsserted(() -> assertEquals(1, processesPage.getProcessTitles().size(), "Wrong number of filtered processes"));
         processesPage.createChildProcess();
         Select templateProcessMenu = new Select(importPage.getTemplateProcessMenu());
-        assertEquals("Wrong default child import configuration selected", TEST_VOLUME,
-                templateProcessMenu.getFirstSelectedOption().getAttribute("label"));
+        assertEquals(TEST_VOLUME, templateProcessMenu.getFirstSelectedOption().getAttribute("label"), "Wrong default child import configuration selected");
     }
 
     @Test
     public void checkOrderOfImportConfigurations() throws Exception {
         projectsPage.createNewProcess();
         List<String> importConfigurationNames = importPage.getImportConfigurationsTitles();
-        assertEquals("Wrong title of first import configuration", TestConstants.GBV, importConfigurationNames.get(1));
-        assertEquals("Wrong title of second import configuration", TestConstants.K10PLUS, importConfigurationNames.get(2));
+        assertEquals(TestConstants.GBV, importConfigurationNames.get(1), "Wrong title of first import configuration");
+        assertEquals(TestConstants.K10PLUS, importConfigurationNames.get(2), "Wrong title of second import configuration");
     }
 
     /**
@@ -161,29 +158,26 @@ public class ImportingST extends BaseTestSelenium {
     public void checkHierarchyImport() throws Exception {
         projectsPage.createNewProcess();
         Select catalogSelectMenu = new Select(importPage.getCatalogMenu());
-        assertEquals("Wrong default catalog selected", TestConstants.K10PLUS,
-                catalogSelectMenu.getFirstSelectedOption().getAttribute("label"));
+        assertEquals(TestConstants.K10PLUS, catalogSelectMenu.getFirstSelectedOption().getAttribute("label"), "Wrong default catalog selected");
         importPage.selectKalliope();
         Select searchFieldSelectMenu = new Select(importPage.getSearchFieldMenu());
-        assertEquals("Wrong default search field selected", TestConstants.IDENTIFIER,
-                searchFieldSelectMenu.getFirstSelectedOption().getAttribute("label"));
+        assertEquals(TestConstants.IDENTIFIER, searchFieldSelectMenu.getFirstSelectedOption().getAttribute("label"), "Wrong default search field selected");
         importPage.enterTestSearchValue(TestConstants.KALLIOPE_PARENT_ID);
         importPage.activateChildProcessImport();
         importPage.decreaseImportDepth();
         importPage.getSearchButton().click();
-        assertTrue("Hierarchy panel should be visible", importPage.isHierarchyPanelVisible());
+        assertTrue(importPage.isHierarchyPanelVisible(), "Hierarchy panel should be visible");
         importPage.addPpnAndTitle();
         String parentTitle = importPage.getProcessTitle();
         Pages.getProcessFromTemplatePage().save();
         processesPage.applyFilter(parentTitle);
-        assertEquals("Exactly one imported parent process should be displayed", 1,
-                processesPage.countListedProcesses());
+        assertEquals(1, processesPage.countListedProcesses(), "Exactly one imported parent process should be displayed");
         List<String> processIds = processesPage.getProcessIds();
-        assertEquals("Exactly one process ID should be visible", 1, processIds.size());
+        assertEquals(1, processIds.size(), "Exactly one process ID should be visible");
         int processId = Integer.parseInt(processIds.get(0));
         processesPage.filterByChildren();
         List<String> childProcessIds = processesPage.getProcessIds();
-        assertEquals("Wrong number of child processes", 3, childProcessIds.size());
+        assertEquals(3, childProcessIds.size(), "Wrong number of child processes");
         ProcessTestUtils.removeTestProcess(processId);
     }
 }
