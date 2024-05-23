@@ -137,7 +137,7 @@ public class MetsKitodoWriterTest {
 
         assertEquals(2,
             metsKitodoWrapper.getMets().getMetsHdr().getAgent().get(0).getNote().size(),
-            "Conversation note was not inserted to mets header");
+            "Conversion note was not inserted to mets header");
     }
 
     @Test
