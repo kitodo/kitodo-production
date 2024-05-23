@@ -19,10 +19,11 @@ import static org.hamcrest.Matchers.empty;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.is;
 import static org.hamcrest.Matchers.not;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +42,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -105,37 +106,37 @@ public class RulesetManagementIT {
 
         MetadataViewInterface booleanMvi = mvwviList.get(0).getMetadata().get();
         assertFalse(booleanMvi.isComplex());
-        assertTrue(booleanMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, booleanMvi);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
         assertTrue(booleanSmvi.getBooleanDefaultValue());
 
         MetadataViewInterface dateMvi = mvwviList.get(1).getMetadata().get();
         assertFalse(dateMvi.isComplex());
-        assertTrue(dateMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, dateMvi);
         SimpleMetadataViewInterface dateSmvi = (SimpleMetadataViewInterface) dateMvi;
         assertEquals("1993-09-01", dateSmvi.getDefaultValue());
 
         MetadataViewInterface defaultStringMvi = mvwviList.get(2).getMetadata().get();
         assertFalse(defaultStringMvi.isComplex());
-        assertTrue(defaultStringMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, defaultStringMvi);
         SimpleMetadataViewInterface defaultStringSmvi = (SimpleMetadataViewInterface) defaultStringMvi;
         assertEquals(HELLO_WORLD, defaultStringSmvi.getDefaultValue());
 
         MetadataViewInterface namespaceDefaultAnyURIMvi = mvwviList.get(3).getMetadata().get();
         assertFalse(namespaceDefaultAnyURIMvi.isComplex());
-        assertTrue(namespaceDefaultAnyURIMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, namespaceDefaultAnyURIMvi);
         SimpleMetadataViewInterface namespaceDefaultAnyURISmvi = (SimpleMetadataViewInterface) namespaceDefaultAnyURIMvi;
         assertEquals("http://test.example/non-existent-namespace/", namespaceDefaultAnyURISmvi.getDefaultValue());
 
         MetadataViewInterface namespaceStringMvi = mvwviList.get(4).getMetadata().get();
         assertFalse(namespaceStringMvi.isComplex());
-        assertTrue(namespaceStringMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, namespaceStringMvi);
         SimpleMetadataViewInterface namespaceStringSmvi = (SimpleMetadataViewInterface) namespaceStringMvi;
         assertEquals("http://test.example/non-existent-namespace/", namespaceStringSmvi.getDefaultValue());
 
         MetadataViewInterface anyURIMvi = mvwviList.get(5).getMetadata().get();
         assertFalse(anyURIMvi.isComplex());
-        assertTrue(anyURIMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, anyURIMvi);
         SimpleMetadataViewInterface anyURISmvi = (SimpleMetadataViewInterface) anyURIMvi;
         assertEquals("https://en.wikipedia.org/wiki/%22Hello,_World!%22_program", anyURISmvi.getDefaultValue());
     }
@@ -156,7 +157,7 @@ public class RulesetManagementIT {
         assertEquals("contributor", contributorMvi.getId());
         assertEquals("Contributor ‹person›", contributorMvi.getLabel());
         assertTrue(contributorMvi.isComplex());
-        assertTrue(contributorMvi instanceof ComplexMetadataViewInterface);
+        assertInstanceOf(ComplexMetadataViewInterface.class, contributorMvi);
         ComplexMetadataViewInterface contributorCmvi = (ComplexMetadataViewInterface) contributorMvi;
 
         Collection<MetadataViewInterface> mvic = contributorCmvi.getAddableMetadata(Collections.emptyList(),
@@ -170,7 +171,7 @@ public class RulesetManagementIT {
             MetadataViewInterface mvi = mvici.next();
 
             assertFalse(mvi.isComplex());
-            assertTrue(mvi instanceof SimpleMetadataViewInterface);
+            assertInstanceOf(SimpleMetadataViewInterface.class, mvi);
             SimpleMetadataViewInterface smvi = (SimpleMetadataViewInterface) mvi;
 
             /*
@@ -290,7 +291,7 @@ public class RulesetManagementIT {
 
         MetadataViewInterface booleanMvi = mvwviList.get(0).getMetadata().get();
         assertFalse(booleanMvi.isComplex());
-        assertTrue(booleanMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, booleanMvi);
         SimpleMetadataViewInterface booleanSmvi = (SimpleMetadataViewInterface) booleanMvi;
         assertTrue(booleanSmvi.isValid(booleanSmvi.convertBoolean(true).get(), Collections.emptyList()));
         assertFalse(booleanSmvi.isValid("", Collections.emptyList()));
@@ -298,7 +299,7 @@ public class RulesetManagementIT {
 
         MetadataViewInterface dateMvi = mvwviList.get(1).getMetadata().get();
         assertFalse(dateMvi.isComplex());
-        assertTrue(dateMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, dateMvi);
         SimpleMetadataViewInterface dateSmvi = (SimpleMetadataViewInterface) dateMvi;
         assertFalse(dateSmvi.isValid("", Collections.emptyList()));
         assertFalse(dateSmvi.isValid("1803-05-12", Collections.emptyList()));
@@ -306,21 +307,21 @@ public class RulesetManagementIT {
 
         MetadataViewInterface defaultStringMvi = mvwviList.get(2).getMetadata().get();
         assertFalse(defaultStringMvi.isComplex());
-        assertTrue(defaultStringMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, defaultStringMvi);
         SimpleMetadataViewInterface defaultStringSmvi = (SimpleMetadataViewInterface) defaultStringMvi;
         assertFalse(defaultStringSmvi.isValid(HELLO_WORLD, Collections.emptyList()));
         assertTrue(defaultStringSmvi.isValid("1234567X", Collections.emptyList()));
 
         MetadataViewInterface integerMvi = mvwviList.get(3).getMetadata().get();
         assertFalse(integerMvi.isComplex());
-        assertTrue(integerMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, integerMvi);
         SimpleMetadataViewInterface integerSmvi = (SimpleMetadataViewInterface) integerMvi;
         assertFalse(integerSmvi.isValid("22", Collections.emptyList()));
         assertTrue(integerSmvi.isValid("1748", Collections.emptyList()));
 
         MetadataViewInterface namespaceDefaultAnyURIMvi = mvwviList.get(4).getMetadata().get();
         assertFalse(namespaceDefaultAnyURIMvi.isComplex());
-        assertTrue(namespaceDefaultAnyURIMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, namespaceDefaultAnyURIMvi);
         SimpleMetadataViewInterface namespaceDefaultAnyURISmvi = (SimpleMetadataViewInterface) namespaceDefaultAnyURIMvi;
         assertFalse(namespaceDefaultAnyURISmvi
                 .isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program",
@@ -331,7 +332,7 @@ public class RulesetManagementIT {
 
         MetadataViewInterface namespaceStringMvi = mvwviList.get(5).getMetadata().get();
         assertFalse(namespaceStringMvi.isComplex());
-        assertTrue(namespaceStringMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, namespaceStringMvi);
         SimpleMetadataViewInterface namespaceStringSmvi = (SimpleMetadataViewInterface) namespaceStringMvi;
         assertFalse(
             namespaceStringSmvi.isValid("http://test.example/non-existent-namespace/%22Hello,_World!%22_program",
@@ -341,14 +342,14 @@ public class RulesetManagementIT {
 
         MetadataViewInterface optionsMvi = mvwviList.get(6).getMetadata().get();
         assertFalse(optionsMvi.isComplex());
-        assertTrue(optionsMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, optionsMvi);
         SimpleMetadataViewInterface optionsSmvi = (SimpleMetadataViewInterface) optionsMvi;
         assertFalse(optionsSmvi.isValid("opt88", Collections.emptyList()));
         assertTrue(optionsSmvi.isValid("opt2", Collections.emptyList()));
 
         MetadataViewInterface anyURIMvi = mvwviList.get(7).getMetadata().get();
         assertFalse(anyURIMvi.isComplex());
-        assertTrue(anyURIMvi instanceof SimpleMetadataViewInterface);
+        assertInstanceOf(SimpleMetadataViewInterface.class, anyURIMvi);
         SimpleMetadataViewInterface anyURISmvi = (SimpleMetadataViewInterface) anyURIMvi;
         assertFalse(anyURISmvi.isValid("mailto:e-mail@example.org", Collections.emptyList()));
         assertTrue(
