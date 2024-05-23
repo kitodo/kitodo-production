@@ -1,4 +1,14 @@
 {
+  "settings": {
+     "analysis": {
+       "normalizer": {
+         "lowercase": {
+           "type": "custom",
+           "filter": ["lowercase"]
+         }
+       }
+     }
+   },
   "mappings": {
     "dynamic": "strict",
     "properties": {
