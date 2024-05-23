@@ -13,10 +13,10 @@ package org.kitodo.selenium;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -31,7 +31,7 @@ public class ProcessesSelectingST extends BaseTestSelenium {
      * Set up process selecting tests.
      * @throws Exception as exception
      */
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
 
         User user = ServiceManager.getUserService().getById(1);
@@ -40,12 +40,12 @@ public class ProcessesSelectingST extends BaseTestSelenium {
         processesPage = Pages.getProcessesPage();
     }
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         Pages.getTopNavigation().logout();
     }

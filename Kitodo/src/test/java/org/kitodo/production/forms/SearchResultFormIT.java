@@ -11,12 +11,14 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.production.dto.ProcessDTO;
@@ -26,7 +28,7 @@ public class SearchResultFormIT {
 
     private final SearchResultForm searchResultForm = new SearchResultForm();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -39,7 +41,7 @@ public class SearchResultFormIT {
      * @throws Exception
      *             if elasticsearch could not been stopped.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -52,49 +54,49 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(3, resultList.size());
+        assertEquals(3, resultList.size());
 
         searchResultForm.setSearchQuery("process");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.setSearchQuery("First process");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(1, resultList.size());
+        assertEquals(1, resultList.size());
 
         searchResultForm.setSearchQuery("Not Existing");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(0, resultList.size());
+        assertEquals(0, resultList.size());
 
         searchResultForm.setSearchQuery("First project");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.setSearchQuery("proc");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.setSearchQuery("problem");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(1, resultList.size());
+        assertEquals(1, resultList.size());
 
         searchResultForm.setSearchQuery("2");
         searchResultForm.searchForProcessesBySearchQuery();
         resultList = searchResultForm.getFilteredList();
 
-        Assert.assertEquals(1, resultList.size());
+        assertEquals(1, resultList.size());
     }
 
     @Test
@@ -105,17 +107,17 @@ public class SearchResultFormIT {
         searchResultForm.setCurrentProjectFilter(1000);
         searchResultForm.filterList();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(0, resultList.size());
+        assertEquals(0, resultList.size());
 
         searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(3, resultList.size());
+        assertEquals(3, resultList.size());
 
     }
 
@@ -125,9 +127,9 @@ public class SearchResultFormIT {
         searchResultForm.searchForProcessesBySearchQuery();
         searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.filterListByProject();
-        Assert.assertEquals(1, searchResultForm.getCurrentProjectFilter().intValue());
+        assertEquals(1, searchResultForm.getCurrentProjectFilter().intValue());
         searchResultForm.searchForProcessesBySearchQuery();
-        Assert.assertNull(searchResultForm.getCurrentProjectFilter());
+        assertNull(searchResultForm.getCurrentProjectFilter());
     }
 
     @Test
@@ -139,17 +141,17 @@ public class SearchResultFormIT {
         searchResultForm.setCurrentTaskStatusFilter(0);
         searchResultForm.filterList();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(0, resultList.size());
+        assertEquals(0, resultList.size());
 
         searchResultForm.setCurrentTaskFilter("Progress");
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(0, resultList.size());
+        assertEquals(0, resultList.size());
 
         searchResultForm.setCurrentTaskStatusFilter(2);
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(1, resultList.size());
+        assertEquals(1, resultList.size());
     }
 
     @Test
@@ -160,24 +162,22 @@ public class SearchResultFormIT {
         searchResultForm.setCurrentProjectFilter(1);
         searchResultForm.filterList();
         List<ProcessDTO> resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.setCurrentTaskFilter("");
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.setCurrentTaskFilter("TaskNotExistent");
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(2, resultList.size());
+        assertEquals(2, resultList.size());
 
         searchResultForm.setCurrentTaskFilter("TaskNotExistent");
         searchResultForm.setCurrentTaskStatusFilter(0);
         searchResultForm.filterList();
         resultList = searchResultForm.getFilteredList();
-        Assert.assertEquals(0, resultList.size());
-
+        assertEquals(0, resultList.size());
     }
-
 }

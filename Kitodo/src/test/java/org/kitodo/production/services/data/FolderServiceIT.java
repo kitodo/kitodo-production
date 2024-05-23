@@ -11,15 +11,15 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Project;
@@ -30,13 +30,13 @@ import org.kitodo.production.services.ServiceManager;
  */
 public class FolderServiceIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -48,7 +48,7 @@ public class FolderServiceIT {
 
         Folder folder = folderService.getById(1);
         boolean condition = folder.getFileGroup().equals("MAX") && folder.getMimeType().equals("image/jpeg");
-        assertTrue("Folder was not found in database!", condition);
+        assertTrue(condition, "Folder was not found in database!");
     }
 
     @Test
@@ -56,16 +56,16 @@ public class FolderServiceIT {
         FolderService folderService = new FolderService();
 
         List<Folder> folders = folderService.getAll();
-        assertEquals("Folder was not found in database!", 6, folders.size());
+        assertEquals(6, folders.size(), "Folder was not found in database!");
         for (Folder folder : folders) {
-            assertNotEquals("No project assigned", null, folder.getProject());
+            assertNotEquals(null, folder.getProject(), "No project assigned");
         }
 
         Project project = ServiceManager.getProjectService().getById(1);
-        assertEquals("No project assigned", 6, project.getFolders().size());
+        assertEquals(6, project.getFolders().size(), "No project assigned");
         for (Folder folder : project.getFolders()) {
-            assertNotEquals("No project assigned", null, folder.getProject());
-            assertEquals("No project assigned", project.getTitle(), folder.getProject().getTitle());
+            assertNotEquals(null, folder.getProject(), "No project assigned");
+            assertEquals(project.getTitle(), folder.getProject().getTitle(), "No project assigned");
         }
     }
 }

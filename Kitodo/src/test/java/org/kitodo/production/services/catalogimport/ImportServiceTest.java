@@ -11,13 +11,17 @@
 
 package org.kitodo.production.services.catalogimport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -46,8 +50,7 @@ public class ImportServiceTest {
     @Test
     public void shouldSkipHitListForOaiImportConfiguration() {
         ImportConfiguration oaiConfiguration = createImportConfiguration(SearchInterfaceType.OAI);
-        Assert.assertTrue("'Skip hit list' should return 'true' for OAI configurations",
-                ImportService.skipHitlist(oaiConfiguration, null));
+        assertTrue(ImportService.skipHitlist(oaiConfiguration, null), "'Skip hit list' should return 'true' for OAI configurations");
     }
 
     /**
@@ -56,8 +59,7 @@ public class ImportServiceTest {
     @Test
     public void shouldNotSkipHitListForFtpImportConfiguration() {
         ImportConfiguration ftpConfiguration = createImportConfiguration(SearchInterfaceType.FTP);
-        Assert.assertFalse("'Skip hit list' should return 'false' for FTP configurations",
-                ImportService.skipHitlist(ftpConfiguration, null));
+        assertFalse(ImportService.skipHitlist(ftpConfiguration, null), "'Skip hit list' should return 'false' for FTP configurations");
     }
 
     /**
@@ -68,9 +70,9 @@ public class ImportServiceTest {
         ImportConfiguration sruConfiguration = createImportConfiguration(SearchInterfaceType.SRU);
         sruConfiguration.setSearchFields(createSearchFields(sruConfiguration));
         List<String> visibleSearchFields = ServiceManager.getImportService().getAvailableSearchFields(sruConfiguration);
-        Assert.assertEquals("Wrong number of visible search fields in SRU configuration", 2, visibleSearchFields.size());
-        Assert.assertTrue("Title search field should be visible", visibleSearchFields.contains(TITLE));
-        Assert.assertFalse("Parent ID search field should be invisible", visibleSearchFields.contains(PARENT_ID));
+        assertEquals(2, visibleSearchFields.size(), "Wrong number of visible search fields in SRU configuration");
+        assertTrue(visibleSearchFields.contains(TITLE), "Title search field should be visible");
+        assertFalse(visibleSearchFields.contains(PARENT_ID), "Parent ID search field should be invisible");
     }
 
     /**
@@ -81,9 +83,9 @@ public class ImportServiceTest {
         ImportConfiguration oaiConfiguration = createImportConfiguration(SearchInterfaceType.OAI);
         oaiConfiguration.setSearchFields(createSearchFields(oaiConfiguration));
         List<String> visibleSearchFields = ServiceManager.getImportService().getAvailableSearchFields(oaiConfiguration);
-        Assert.assertEquals("Wrong number of visible search fields in OAI configuration", 1, visibleSearchFields.size());
-        Assert.assertFalse("Title search field is not allowed in OAI configuration", visibleSearchFields.contains(TITLE));
-        Assert.assertTrue("OAI configuration should only contain 'recordId' search field", visibleSearchFields.contains(RECORD_ID_LABEL));
+        assertEquals(1, visibleSearchFields.size(), "Wrong number of visible search fields in OAI configuration");
+        assertFalse(visibleSearchFields.contains(TITLE), "Title search field is not allowed in OAI configuration");
+        assertTrue(visibleSearchFields.contains(RECORD_ID_LABEL), "OAI configuration should only contain 'recordId' search field");
     }
 
     /**
@@ -94,9 +96,9 @@ public class ImportServiceTest {
         ImportConfiguration ftpConfiguration = createImportConfiguration(SearchInterfaceType.FTP);
         ftpConfiguration.setSearchFields(createSearchFields(ftpConfiguration));
         List<String> visibleSearchFields = ServiceManager.getImportService().getAvailableSearchFields(ftpConfiguration);
-        Assert.assertEquals("Wrong number of visible search fields in FTP configuration", 1, visibleSearchFields.size());
-        Assert.assertFalse("Title search field is not allowed in FTP configuration", visibleSearchFields.contains(TITLE));
-        Assert.assertTrue("OAI configuration should only contain 'filename' search field", visibleSearchFields.contains(FILENAME_LABEL));
+        assertEquals(1, visibleSearchFields.size(), "Wrong number of visible search fields in FTP configuration");
+        assertFalse(visibleSearchFields.contains(TITLE), "Title search field is not allowed in FTP configuration");
+        assertTrue(visibleSearchFields.contains(FILENAME_LABEL), "OAI configuration should only contain 'filename' search field");
     }
 
     /**
@@ -106,7 +108,7 @@ public class ImportServiceTest {
     public void shouldRetrieveOaiDefaultSearchField() {
         ImportConfiguration oaiConfiguration = createImportConfiguration(SearchInterfaceType.OAI);
         String defaultSearchField = ImportService.getDefaultSearchField(oaiConfiguration);
-        Assert.assertEquals("OAI configuration should have 'recordId' as default search field", RECORD_ID_LABEL, defaultSearchField);
+        assertEquals(RECORD_ID_LABEL, defaultSearchField, "OAI configuration should have 'recordId' as default search field");
     }
 
     /**
@@ -116,7 +118,7 @@ public class ImportServiceTest {
     public void shouldRetrieveFtpDefaultSearchField() {
         ImportConfiguration ftpConfiguration = createImportConfiguration(SearchInterfaceType.FTP);
         String defaultSearchField = ImportService.getDefaultSearchField(ftpConfiguration);
-        Assert.assertEquals("FTP configuration should have 'filename' as default search field", FILENAME_LABEL, defaultSearchField);
+        assertEquals(FILENAME_LABEL, defaultSearchField, "FTP configuration should have 'filename' as default search field");
     }
 
     /**
@@ -128,10 +130,10 @@ public class ImportServiceTest {
         configurationWithDelimiter.setQueryDelimiter(DELIMITER);
         String delimited = DELIMITER + SEARCH_TERM + DELIMITER;
         String searchTermOfConfigurationWithDelimiter = ServiceManager.getImportService().getSearchTermWithDelimiter(SEARCH_TERM, configurationWithDelimiter);
-        Assert.assertEquals(String.format("Delimited search term should be %s", SEARCH_TERM), delimited, searchTermOfConfigurationWithDelimiter);
+        assertEquals(delimited, searchTermOfConfigurationWithDelimiter, String.format("Delimited search term should be %s", SEARCH_TERM));
         ImportConfiguration configurationWithoutDelimiter = createImportConfiguration(SearchInterfaceType.SRU);
         String searchTermOfConfigurationWithoutDelimiter = ServiceManager.getImportService().getSearchTermWithDelimiter(SEARCH_TERM, configurationWithoutDelimiter);
-        Assert.assertEquals("Search term should not be delimited", searchTermOfConfigurationWithoutDelimiter, SEARCH_TERM);
+        assertEquals(searchTermOfConfigurationWithoutDelimiter, SEARCH_TERM, "Search term should not be delimited");
     }
 
     /**
@@ -153,15 +155,11 @@ public class ImportServiceTest {
         tasks.add(secondTask);
         tasks.add(thirdTask);
         process.setTasks(tasks);
-        Assert.assertEquals("Wrong processing end for closed task before update", date,
-                process.getTasks().get(0).getProcessingEnd());
+        assertEquals(date, process.getTasks().get(0).getProcessingEnd(), "Wrong processing end for closed task before update");
         ImportService.updateTasks(process);
-        Assert.assertTrue("Processing end of CLOSED task should have been updated",
-                process.getTasks().get(0).getProcessingEnd().after(date));
-        Assert.assertNull("Processing end of OPEN task should remain null after update",
-                process.getTasks().get(1).getProcessingEnd());
-        Assert.assertNull("Processing end of LOCKED task should remain null after update",
-                process.getTasks().get(2).getProcessingEnd());
+        assertTrue(process.getTasks().get(0).getProcessingEnd().after(date), "Processing end of CLOSED task should have been updated");
+        assertNull(process.getTasks().get(1).getProcessingEnd(), "Processing end of OPEN task should remain null after update");
+        assertNull(process.getTasks().get(2).getProcessingEnd(), "Processing end of LOCKED task should remain null after update");
     }
 
     /**

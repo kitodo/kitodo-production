@@ -11,13 +11,13 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -28,7 +28,7 @@ public class ImportConfigurationIT {
     /**
      * Insert test mapping files and import configurations into database.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertMappingFiles();
@@ -43,15 +43,15 @@ public class ImportConfigurationIT {
     @Test
     public void shouldGetAllImportConfigurationsSortedAlphabetically() throws DAOException {
         List<ImportConfiguration> configs = ServiceManager.getImportConfigurationService().getAll();
-        assertEquals("Wrong number of import configurations", Long.valueOf(3), Long.valueOf(configs.size()));
-        assertEquals("Wrong first import configuration", "GBV", configs.get(0).getTitle());
-        assertEquals("Wrong last import configuration", "Kalliope", configs.get(2).getTitle());
+        assertEquals(Long.valueOf(3), Long.valueOf(configs.size()), "Wrong number of import configurations");
+        assertEquals("GBV", configs.get(0).getTitle(), "Wrong first import configuration");
+        assertEquals("Kalliope", configs.get(2).getTitle(), "Wrong last import configuration");
     }
 
     /**
      * Clean up test database.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();

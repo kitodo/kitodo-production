@@ -12,17 +12,15 @@
 package org.kitodo.production.forms.copyprocess;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.util.Objects;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
@@ -39,7 +37,7 @@ public class TitleRecordLinkTabIT {
     /**
      * Is running before the class runs.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -56,27 +54,23 @@ public class TitleRecordLinkTabIT {
     /**
      * Is running after the class has run.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldChooseParentProcess() {
         TitleRecordLinkTab testedTitleRecordLinkTab = new TitleRecordLinkTab(null);
         testedTitleRecordLinkTab.setChosenParentProcess("1");
         testedTitleRecordLinkTab.chooseParentProcess();
-        assertFalse("titleRecordProcess is null!", Objects.isNull(testedTitleRecordLinkTab.getTitleRecordProcess()));
-        assertEquals("titleRecordProcess has wrong ID!", (Integer) 1,
-            testedTitleRecordLinkTab.getTitleRecordProcess().getId());
+        assertFalse(Objects.isNull(testedTitleRecordLinkTab.getTitleRecordProcess()), "titleRecordProcess is null!");
+        assertEquals((Integer) 1, testedTitleRecordLinkTab.getTitleRecordProcess().getId(), "titleRecordProcess has wrong ID!");
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void shouldSearchForParentProcesses() throws Exception {
         CreateProcessForm createProcessForm = new CreateProcessForm();
         createProcessForm.setProject(ServiceManager.getProjectService().getById(1));
@@ -85,9 +79,7 @@ public class TitleRecordLinkTabIT {
         testedTitleRecordLinkTab.setSearchQuery("HierarchyParent");
         testedTitleRecordLinkTab.searchForParentProcesses();
 
-        assertEquals("Wrong number of possibleParentProcesses found!", 1,
-            testedTitleRecordLinkTab.getPossibleParentProcesses().size());
-        assertEquals("Wrong possibleParentProcesses found!", "4",
-            testedTitleRecordLinkTab.getPossibleParentProcesses().get(0).getValue());
+        assertEquals(1, testedTitleRecordLinkTab.getPossibleParentProcesses().size(), "Wrong number of possibleParentProcesses found!");
+        assertEquals("4", testedTitleRecordLinkTab.getPossibleParentProcesses().get(0).getValue(), "Wrong possibleParentProcesses found!");
     }
 }

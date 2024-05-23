@@ -11,12 +11,12 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapGroup;
 
@@ -25,12 +25,12 @@ import org.kitodo.data.database.beans.LdapGroup;
  */
 public class LdapGroupServiceIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.insertLdapGroups();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() {
         MockDatabase.cleanDatabase();
     }
@@ -41,8 +41,8 @@ public class LdapGroupServiceIT {
 
         LdapGroup ldapGroup = ldapGroupService.getById(1);
         boolean condition = ldapGroup.getTitle().equals("LG") && ldapGroup.getDisplayName().equals("Name");
-        assertTrue("LDAP group was not found in database!", condition);
+        assertTrue(condition, "LDAP group was not found in database!");
 
-        assertEquals("Title of Ldap server is not matching", "FirstLdapServer", ldapGroup.getLdapServer().getTitle());
+        assertEquals("FirstLdapServer", ldapGroup.getLdapServer().getTitle(), "Title of Ldap server is not matching");
     }
 }

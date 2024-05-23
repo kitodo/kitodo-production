@@ -11,11 +11,12 @@
 
 package org.kitodo.production.forms.createprocess;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.File;
 import java.util.Locale;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -45,6 +46,6 @@ public class ProcessDetailIT {
         ProcessDetail processDetail = (ProcessDetail) treeNode.getChildren().get(0).getData();
         int beforeCopying = treeNode.getChildCount();
         processDetail.copy();
-        Assert.assertEquals("Should have copied metadata", beforeCopying + 1, treeNode.getChildCount());
+        assertEquals(beforeCopying + 1, treeNode.getChildCount(), "Should have copied metadata");
     }
 }

@@ -13,19 +13,18 @@ package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Project;
@@ -44,7 +43,7 @@ public class ProjectServiceIT {
     private static final String firstProject = "First project";
     private static final String projectNotFound = "Project was not found in index!";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -57,61 +56,57 @@ public class ProjectServiceIT {
         });
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllProjects() throws DataException {
-        assertEquals("Projects were not counted correctly!", Long.valueOf(3), projectService.count());
+        assertEquals(Long.valueOf(3), projectService.count(), "Projects were not counted correctly!");
     }
 
     @Test
     public void shouldCountAllProjectsAccordingToQuery() throws DataException {
         QueryBuilder query = matchQuery("title", firstProject).operator(Operator.AND);
-        assertEquals("Projects were not counted correctly!", Long.valueOf(1), projectService.count(query));
+        assertEquals(Long.valueOf(1), projectService.count(query), "Projects were not counted correctly!");
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForProjects() throws Exception {
         Long amount = projectService.countDatabaseRows();
-        assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
+        assertEquals(Long.valueOf(3), amount, "Projects were not counted correctly!");
     }
 
     @Test
     public void shouldFindById() throws DataException {
-        assertTrue(projectNotFound,
-            projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1));
-        assertTrue(projectNotFound, projectService.findById(1).isActive());
-        assertEquals(projectNotFound, 2, projectService.findById(1).getTemplates().size());
+        assertTrue(projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1), projectNotFound);
+        assertTrue(projectService.findById(1).isActive(), projectNotFound);
+        assertEquals(2, projectService.findById(1).getTemplates().size(), projectNotFound);
 
-        assertFalse(projectNotFound, projectService.findById(3).isActive());
+        assertFalse(projectService.findById(3).isActive(), projectNotFound);
     }
 
     @Test
     public void shouldFindAllProjects() throws DataException {
-        assertEquals("Not all projects were found in index!", 3, projectService.findAll().size());
+        assertEquals(3, projectService.findAll().size(), "Not all projects were found in index!");
     }
 
     @Test
     public void shouldGetProject() throws Exception {
         Project project = projectService.getById(1);
         boolean condition = project.getTitle().equals(firstProject) && project.getId().equals(1);
-        assertTrue("Project was not found in database!", condition);
+        assertTrue(condition, "Project was not found in database!");
 
-        assertEquals("Project was found but templates were not inserted!", 2, project.getTemplates().size());
-        assertEquals("Project was found but templates were not inserted!", 2, project.getProcesses().size());
+        assertEquals(2, project.getTemplates().size(), "Project was found but templates were not inserted!");
+        assertEquals(2, project.getProcesses().size(), "Project was found but templates were not inserted!");
     }
 
     @Test
     public void shouldGetAllProjects() throws Exception {
         List<Project> projects = projectService.getAll();
-        assertEquals("Not all projects were found in database!", 3, projects.size());
+        assertEquals(3, projects.size(), "Not all projects were found in database!");
     }
 
     @Test
@@ -124,7 +119,7 @@ public class ProjectServiceIT {
     @Test
     public void shouldGetAllProjectsInGivenRange() throws Exception {
         List<Project> projects = projectService.getAll(2, 10);
-        assertEquals("Not all projects were found in database!", 1, projects.size());
+        assertEquals(1, projects.size(), "Not all projects were found in database!");
     }
 
     @Test
@@ -134,11 +129,10 @@ public class ProjectServiceIT {
         projectService.save(project);
         Integer projectId = project.getId();
         Project foundProject = projectService.getById(projectId);
-        assertEquals("Additional project was not inserted in database!", "To Remove", foundProject.getTitle());
+        assertEquals("To Remove", foundProject.getTitle(), "Additional project was not inserted in database!");
 
         projectService.remove(foundProject);
-        exception.expect(DAOException.class);
-        projectService.getById(projectId);
+        assertThrows(DAOException.class, () -> projectService.getById(projectId));
     }
 
     @Test
@@ -148,30 +142,28 @@ public class ProjectServiceIT {
         projectService.save(project);
         Integer projectId = project.getId();
         Project foundProject = projectService.getById(projectId);
-        assertEquals("Additional project was not inserted in database!", "To remove", foundProject.getTitle());
+        assertEquals("To remove", foundProject.getTitle(), "Additional project was not inserted in database!");
 
         projectService.remove(projectId);
-        exception.expect(DAOException.class);
-        projectService.getById(projectId);
+        assertThrows(DAOException.class, () -> projectService.getById(projectId));
     }
 
     @Test
     public void shouldFindByTitle() throws DataException {
-        assertEquals(projectNotFound, 1, projectService.findByTitle(firstProject, true).size());
+        assertEquals(1, projectService.findByTitle(firstProject, true).size(), projectNotFound);
     }
 
     @Test
-    public void shouldNotSaveProjectWithAlreadyExistingTitle() throws DataException {
+    public void shouldNotSaveProjectWithAlreadyExistingTitle() {
         Project project = new Project();
         project.setTitle(firstProject);
-        exception.expect(DataException.class);
-        projectService.save(project);
+        assertThrows(DataException.class,  () -> projectService.save(project));
     }
 
     @Test
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
-        assertEquals("Client names doesnt match", "First client", project.getClient().getName());
+        assertEquals("First client", project.getClient().getName(), "Client names doesnt match");
     }
 
     @Test
@@ -179,6 +171,6 @@ public class ProjectServiceIT {
         ProjectService projectService = ServiceManager.getProjectService();
         QueryBuilder projectsForCurrentUserQuery = projectService.getProjectsForCurrentUserQuery();
         List<ProjectDTO> byQuery = projectService.findByQuery(projectsForCurrentUserQuery, true);
-        assertEquals("Wrong amount of projects found",2,byQuery.size());
+        assertEquals(2, byQuery.size(), "Wrong amount of projects found");
     }
 }

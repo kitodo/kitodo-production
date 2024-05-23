@@ -11,21 +11,20 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.net.URI;
 import java.util.List;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -47,7 +46,7 @@ public class UserServiceIT {
     private static final FileService fileService = ServiceManager.getFileService();
     private static final UserService userService = ServiceManager.getUserService();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -56,16 +55,13 @@ public class UserServiceIT {
         fileService.createDirectory(URI.create(""), "users");
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
 
         fileService.delete(URI.create("users"));
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldCountUsersAccordingToQuery() {
@@ -93,28 +89,28 @@ public class UserServiceIT {
     @Test
     public void shouldCountAllDatabaseRowsForUsers() throws Exception {
         Long amount = userService.countDatabaseRows();
-        assertEquals("Users were not counted correctly!", Long.valueOf(7), amount);
+        assertEquals(Long.valueOf(7), amount, "Users were not counted correctly!");
     }
 
     @Test
     public void shouldGetUser() throws Exception {
         User user = userService.getById(1);
         boolean condition = user.getName().equals("Jan") && user.getSurname().equals("Kowalski");
-        assertTrue("User was not found in database!", condition);
+        assertTrue(condition, "User was not found in database!");
 
-        assertEquals("User was found but tasks were not inserted!", 3, user.getProcessingTasks().size());
+        assertEquals(3, user.getProcessingTasks().size(), "User was found but tasks were not inserted!");
     }
 
     @Test
     public void shouldGetAllUsers() throws Exception {
         List<User> users = userService.getAll();
-        assertEquals("Not all users were found in database!", 7, users.size());
+        assertEquals(7, users.size(), "Not all users were found in database!");
     }
 
     @Test
     public void shouldGetAllUsersInGivenRange() throws Exception {
         List<User> users = userService.getAll(2, 10);
-        assertEquals("Not all users were found in database!", 5, users.size());
+        assertEquals(5, users.size(), "Not all users were found in database!");
     }
 
     @Test
@@ -123,21 +119,21 @@ public class UserServiceIT {
         user.setLogin("Remove");
         userService.saveToDatabase(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Remove' ORDER BY id DESC").get(0);
-        assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
+        assertEquals("Remove", foundUser.getLogin(), "Additional user was not inserted in database!");
 
         userService.removeFromDatabase(foundUser);
         foundUser = userService.getById(foundUser.getId());
-        assertNull("Additional user was not removed from database!", foundUser.getLogin());
+        assertNull(foundUser.getLogin(), "Additional user was not removed from database!");
 
         user = new User();
         user.setLogin("remove");
         userService.saveToDatabase(user);
         foundUser = userService.getByQuery("FROM User WHERE login = 'remove' ORDER BY id DESC").get(0);
-        assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
+        assertEquals("remove", foundUser.getLogin(), "Additional user was not inserted in database!");
 
         userService.removeFromDatabase(foundUser.getId());
         foundUser = userService.getById(foundUser.getId());
-        assertNull("Additional user was not removed from database!", foundUser.getLogin());
+        assertNull(foundUser.getLogin(), "Additional user was not removed from database!");
     }
 
     @Test
@@ -153,14 +149,14 @@ public class UserServiceIT {
         user.getRoles().add(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
         userService.saveToDatabase(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
-        assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
+        assertEquals("Cascade", foundUser.getLogin(), "Additional user was not inserted in database!");
 
         userService.removeFromDatabase(foundUser);
         int size = userService.getByQuery("FROM User WHERE login = 'Cascade'").size();
-        assertEquals("Additional user was not removed from database!", 0, size);
+        assertEquals(0, size, "Additional user was not removed from database!");
 
         size = roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").size();
-        assertEquals("Role was removed from database!", 1, size);
+        assertEquals(1, size, "Role was removed from database!");
 
         roleService.removeFromDatabase(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
     }
@@ -169,18 +165,18 @@ public class UserServiceIT {
     public void shouldGetTableSize() throws Exception {
         User user = userService.getById(1);
         int actual = user.getTableSize();
-        assertEquals("Table size is incorrect!", 20, actual);
+        assertEquals(20, actual, "Table size is incorrect!");
 
         user = userService.getById(2);
         actual = user.getTableSize();
-        assertEquals("Table size is incorrect!", 10, actual);
+        assertEquals(10, actual, "Table size is incorrect!");
     }
 
     @Test
     public void shouldGetFullName() throws Exception {
         User user = userService.getById(1);
         boolean condition = userService.getFullName(user).equals("Kowalski, Jan");
-        assertTrue("Full name of user is incorrect!", condition);
+        assertTrue(condition, "Full name of user is incorrect!");
     }
 
     @Test
@@ -195,12 +191,12 @@ public class UserServiceIT {
 
         URI homeDirectoryForUser = userService.getHomeDirectory(user);
         boolean condition = homeDirectoryForUser.getRawPath().contains(homeDirectory + user.getLogin());
-        assertTrue("Home directory of user is incorrect!", condition);
+        assertTrue(condition, "Home directory of user is incorrect!");
 
         user = userService.getById(2);
         homeDirectoryForUser = userService.getHomeDirectory(user);
         condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
-        assertTrue("Home directory of user is incorrect!", condition);
+        assertTrue(condition, "Home directory of user is incorrect!");
 
         ExecutionPermission.setNoExecutePermission(script);
     }
@@ -208,55 +204,53 @@ public class UserServiceIT {
     @Test
     public void shouldGetAuthorityOfUser() throws Exception {
         Authority authority = userService.getByLogin("kowal").getRoles().get(0).getAuthorities().get(1);
-        assertEquals("Authority title is incorrect!", "viewClient_globalAssignable", authority.getTitle());
+        assertEquals("viewClient_globalAssignable", authority.getTitle(), "Authority title is incorrect!");
     }
 
     @Test
     public void shouldNotSaveUserWithSameLogin() throws Exception {
         User newUser = new User();
         newUser.setLogin("kowal");
-        exception.expect(DAOException.class);
-        userService.saveToDatabase(newUser);
+        assertThrows(DAOException.class, () -> userService.saveToDatabase(newUser));
     }
 
     @Test
     public void shouldGetLdapServerOfUser() throws DAOException {
         User user = userService.getById(2);
-        assertEquals("LdapServer title is incorrect!", "FirstLdapServer",
-            user.getLdapGroup().getLdapServer().getTitle());
+        assertEquals("FirstLdapServer", user.getLdapGroup().getLdapServer().getTitle(), "LdapServer title is incorrect!");
     }
 
     @Test
     public void shouldGetUserByLdapLogin() throws DAOException {
         User user = userService.getByLdapLoginOrLogin("kowalLDP");
-        assertEquals("User surname is incorrect!", "Kowalski", user.getSurname());
+        assertEquals("Kowalski", user.getSurname(), "User surname is incorrect!");
     }
 
     @Test
     public void shouldGetUserTasksInProgress() throws DAOException {
         User user = userService.getByLdapLoginOrLogin("nowakLDP");
         List<Task> tasks = userService.getTasksInProgress(user);
-        assertEquals("Number of tasks in process is incorrect!", 1, tasks.size());
-        assertEquals("Title of task is incorrect!", "Progress", tasks.get(0).getTitle());
+        assertEquals(1, tasks.size(), "Number of tasks in process is incorrect!");
+        assertEquals("Progress", tasks.get(0).getTitle(), "Title of task is incorrect!");
     }
 
     @Test
     public void shouldGetAuthenticatedUser() throws DAOException {
         SecurityTestUtils.addUserDataToSecurityContext(userService.getById(1), 1);
         User authenticatedUser = userService.getAuthenticatedUser();
-        assertEquals("Returned authenticated user was wrong", "kowal", authenticatedUser.getLogin());
+        assertEquals("kowal", authenticatedUser.getLogin(), "Returned authenticated user was wrong");
         SecurityTestUtils.cleanSecurityContext();
     }
 
     @Test
     public void returnCorrectUserIndependentOfLoginOrLdapLoginByLogin() {
         User user = userService.getByLdapLoginOrLogin("verylast");
-        assertEquals("Returned user was wrong", "User, Very last", user.getFullName());
+        assertEquals("User, Very last", user.getFullName(), "Returned user was wrong");
     }
 
     @Test
     public void returnCorrectUserIndependentOfLoginOrLdapLoginByLdapLogin() {
         User user = userService.getByLdapLoginOrLogin("doraLDP");
-        assertEquals("Returned user was wrong", "Dora, Anna", user.getFullName());
+        assertEquals("Dora, Anna", user.getFullName(), "Returned user was wrong");
     }
 }

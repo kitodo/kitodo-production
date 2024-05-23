@@ -11,13 +11,13 @@
 
 package org.kitodo.production.forms;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.net.URI;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
@@ -41,7 +41,7 @@ public class CurrenTaskFormIT {
      * @throws Exception
      *             If databaseConnection failed.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
@@ -54,7 +54,7 @@ public class CurrenTaskFormIT {
      * @throws Exception
      *             if elasticsearch could not been stopped.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -77,9 +77,8 @@ public class CurrenTaskFormIT {
         Task taskTypeAcceptCloseUpdated = taskService.getById(taskTypeAcceptClose.getId());
         Task followingTaskUpdated = taskService.getById(followingTask.getId());
 
-        assertEquals("Task of type typeAcceptClose was closed!", TaskStatus.DONE,
-            taskTypeAcceptCloseUpdated.getProcessingStatus());
-        assertEquals("Following task is open!", TaskStatus.OPEN, followingTaskUpdated.getProcessingStatus());
+        assertEquals(TaskStatus.DONE, taskTypeAcceptCloseUpdated.getProcessingStatus(), "Task of type typeAcceptClose was closed!");
+        assertEquals(TaskStatus.OPEN, followingTaskUpdated.getProcessingStatus(), "Following task is open!");
 
     }
 

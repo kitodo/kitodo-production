@@ -11,19 +11,19 @@
 
 package org.kitodo.production.helper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -53,7 +53,7 @@ public class ProcessHelperIT {
      * @throws Exception
      *         the exception when set up test
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -63,19 +63,19 @@ public class ProcessHelperIT {
         priorityList = ServiceManager.getUserService().getCurrentMetadataLanguage();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Before
+    @BeforeEach
     public void prepareTestProcess() throws DAOException, DataException, IOException {
         processHelperTestProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processHelperTestProcessId, metadataTestfile);
     }
 
-    @After
+    @AfterEach
     public void removeTestProcess() throws DAOException {
         ProcessTestUtils.removeTestProcess(processHelperTestProcessId);
         processHelperTestProcessId = -1;
