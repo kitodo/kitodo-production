@@ -11,10 +11,12 @@
 
 package org.kitodo.production.dto;
 
+import org.kitodo.data.interfaces.FilterInterface;
+
 /**
  * Filter DTO object.
  */
-public class FilterDTO extends BaseDTO {
+public class FilterDTO extends BaseDTO implements FilterInterface {
 
     private String value;
 

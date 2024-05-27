@@ -27,13 +27,16 @@ import org.kitodo.data.elasticsearch.index.type.DocketType;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ClientDTO;
-import org.kitodo.production.dto.DocketDTO;
+import org.kitodo.data.interfaces.ClientInterface;
+import org.kitodo.data.interfaces.DocketInterface;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseDocketServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends ClientSearchService<Docket, DocketDTO, DocketDAO> {
+public class DocketService extends ClientSearchService<Docket, DocketInterface, DocketDAO>
+        implements DatabaseDocketServiceInterface {
 
     private static volatile DocketService instance = null;
 
@@ -80,7 +83,7 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
     }
 
     @Override
-    public List<DocketDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<DocketInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         return findByQuery(getDocketsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
             false);
@@ -98,18 +101,18 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
     }
 
     @Override
-    public DocketDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        DocketDTO docketDTO = new DocketDTO();
-        docketDTO.setId(getIdFromJSONObject(jsonObject));
-        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
-        docketDTO.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
+    public DocketInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        DocketInterface docket = DTOFactory.instance().newDocket();
+        docket.setId(getIdFromJSONObject(jsonObject));
+        docket.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
+        docket.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
 
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
+        ClientInterface client = DTOFactory.instance().newClient();
+        client.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
+        client.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
 
-        docketDTO.setClientDTO(clientDTO);
-        return docketDTO;
+        docket.setClient(client);
+        return docket;
     }
 
     /**

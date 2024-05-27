@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -31,13 +32,16 @@ import org.kitodo.data.elasticsearch.index.type.BatchType;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
 import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BatchDTO;
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.TitleSearchService;
+import org.kitodo.production.services.data.interfaces.DatabaseBatchServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
+public class BatchService extends TitleSearchService<Batch, BatchInterface, BatchDAO>
+        implements DatabaseBatchServiceInterface {
 
     private static volatile BatchService instance = null;
     private static final String BATCH = "batch";
@@ -119,7 +123,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @param batches
      *            to remove
      */
-    public void removeAll(Iterable<Batch> batches) throws DataException {
+    public void removeAll(Collection<Batch> batches) throws DataException {
         for (Batch batch : batches) {
             remove(batch);
         }
@@ -150,18 +154,18 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     @Override
-    public BatchDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        BatchDTO batchDTO = new BatchDTO();
-        batchDTO.setId(getIdFromJSONObject(jsonObject));
-        batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
+    public BatchInterface convertJSONObjectTo(Map<String, Object> jsonObject, boolean related) throws DataException {
+        BatchInterface batch = DTOFactory.instance().newBatch();
+        batch.setId(getIdFromJSONObject(jsonObject));
+        batch.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
         if (!related) {
-            convertRelatedJSONObjects(jsonObject, batchDTO);
+            convertRelatedJSONObjects(jsonObject, batch);
         }
-        return batchDTO;
+        return batch;
     }
 
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchDTO batchDTO) throws DataException {
-        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getKey(),
+    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchInterface batch) throws DataException {
+        batch.setProcesses(convertRelatedJSONObjectTo(jsonObject, BatchTypeField.PROCESSES.getKey(),
             ServiceManager.getProcessService()));
     }
 
@@ -211,7 +215,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *
      * @return a readable label for the batch
      */
-    public String getLabel(BatchDTO batch) {
+    public String getLabel(BatchInterface batch) {
         return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
     }
 
@@ -233,7 +237,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *
      * @return a readable label for the batch
      */
-    private String getNumericLabel(BatchDTO batch) {
+    private String getNumericLabel(BatchInterface batch) {
         return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 

@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProjectDTO;
+import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -88,7 +88,7 @@ public class ProjectServiceIT {
         assertTrue(projectNotFound,
             projectService.findById(1).getTitle().equals(firstProject) && projectService.findById(1).getId().equals(1));
         assertTrue(projectNotFound, projectService.findById(1).isActive());
-        assertEquals(projectNotFound, 2, projectService.findById(1).getTemplates().size());
+        assertEquals(projectNotFound, 2, projectService.findById(1).getActiveTemplates().size());
 
         assertFalse(projectNotFound, projectService.findById(3).isActive());
     }
@@ -178,7 +178,7 @@ public class ProjectServiceIT {
     public void findByIds() throws DataException {
         ProjectService projectService = ServiceManager.getProjectService();
         QueryBuilder projectsForCurrentUserQuery = projectService.getProjectsForCurrentUserQuery();
-        List<ProjectDTO> byQuery = projectService.findByQuery(projectsForCurrentUserQuery, true);
+        List<ProjectInterface> byQuery = projectService.findByQuery(projectsForCurrentUserQuery, true);
         assertEquals("Wrong amount of projects found",2,byQuery.size());
     }
 }
