@@ -87,11 +87,8 @@ public class DocketService extends SearchDatabaseService<Docket, DocketDAO> impl
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
         parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
-        parameters.put("limit", pageSize);
-        parameters.put("offset", first);
-        return getByQuery("FROM Docket WHERE client_id = :sessionClientId "
-                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset",
-            parameters);
+        return getByQuery("FROM Docket WHERE client_id = :sessionClientId ORDER BY :sortBy :direction", parameters,
+            first, pageSize);
     }
 
     @Override
