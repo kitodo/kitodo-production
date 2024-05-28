@@ -19,11 +19,11 @@ import java.util.regex.Pattern;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.interfaces.SearchDatabaseServiceInterface;
 import org.primefaces.model.SortOrder;
 
@@ -144,6 +144,11 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         return dao.getByQuery(query, parameters);
     }
 
+    public List<T> getByQuery(String query, Map<String, Object> parameters, int max) {
+        debugLogQuery(query, parameters, 0, max);
+        return dao.getByQuery(query, parameters, 0, max);
+    }
+
     @Override
     public List<T> getAll() throws DAOException {
         return dao.getAll();
@@ -189,6 +194,25 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            parameter values
      */
     private static void debugLogQuery(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     * @param initPointer
+     *            can initialize the object pointer to a later object (sets
+     *            {@linkplain Query#setFirstResult(int)})
+     * @param stopCount
+     *            the search stops after count hits (sets
+     *            {@linkplain Query#setMaxResults(int)})
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters, int initPointer, int stopCount) {
         if (logger.isDebugEnabled()) {
             String resolved = PARAMETER_PATTERN.matcher(query).replaceAll(matchResult -> {
                 Object parameter = parameters.get(matchResult.group(1));
@@ -201,6 +225,13 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
                 }
                 return Objects.toString(parameter);
             });
+            if (initPointer != Integer.MIN_VALUE || stopCount != Integer.MIN_VALUE) {
+                if (stopCount != Integer.MIN_VALUE) {
+                    resolved = String.format("%s (limit=%d)", resolved, stopCount);
+                } else {
+                    resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
+                }
+            }
             logger.debug(resolved);
         }
     }

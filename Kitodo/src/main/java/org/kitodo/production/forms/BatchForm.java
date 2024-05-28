@@ -113,14 +113,13 @@ public class BatchForm extends BaseForm {
             parameters.put("processfilter", this.processfilter);
             query += " WHERE title LIKE '%:processfilter%'";
         }
+        query += " ORDER BY creationDate DESC";
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
         if (batchMaxSize > 0) {
-            parameters.put("batchMaxSize", batchMaxSize);
-            query += " ORDER BY creationDate DESC LIMIT :batchMaxSize";
+            this.currentProcesses = ServiceManager.getProcessService().getByQuery(query, parameters, batchMaxSize);
         } else {
-            query += " ORDER BY creationDate DESC";
+            this.currentProcesses = ServiceManager.getProcessService().getByQuery(query, parameters);
         }
-        this.currentProcesses = ServiceManager.getProcessService().getByQuery(query, parameters);
     }
 
     /**
