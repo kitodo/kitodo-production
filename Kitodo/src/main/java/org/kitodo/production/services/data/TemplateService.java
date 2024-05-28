@@ -110,11 +110,9 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
         parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
-        parameters.put("limit", pageSize);
-        parameters.put("offset", first);
         return getByQuery("FROM Template WHERE client_id = :sessionClientId "
                 + (this.showInactiveTemplates ? "" : "AND active = 1 ")
-                + "ORDER BY :sortBy :direction LIMIT :limit OFFSET :offset", parameters);
+                + "ORDER BY :sortBy :direction", parameters, first, pageSize);
     }
 
     @Override
@@ -162,13 +160,13 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
     @Override
     public Collection<?> findByDocket(int docketId) throws DataException {
         Map<String, Object> parameters = Collections.singletonMap("docketId", docketId);
-        return getByQuery("FROM Template WHERE docket_id = :docketId LIMIT 1", parameters);
+        return getByQuery("FROM Template WHERE docket_id = :docketId", parameters, 1);
     }
 
     @Override
     public Collection<?> findByRuleset(int rulesetId) throws DataException {
         Map<String, Object> parameters = Collections.singletonMap("rulesetId", rulesetId);
-        return getByQuery("FROM Template WHERE ruleset_id = :rulesetId LIMIT 1", parameters);
+        return getByQuery("FROM Template WHERE ruleset_id = :rulesetId", parameters, 1);
     }
 
     /**
