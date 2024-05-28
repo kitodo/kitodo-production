@@ -96,9 +96,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      */
     default List<Process> filterProcesses(String processfilter) throws DAOException {
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
-        String query = "FROM Process WHERE title LIKE '%" + processfilter + "%'"
-                + (batchMaxSize > 0 ? " LIMIT " + batchMaxSize : "");
-        return getByQuery(query);
+        String query = "FROM Process WHERE title LIKE '%" + processfilter + "%'";
+        return batchMaxSize < 1 ? getByQuery(query) : getByQuery(query, Collections.emptyMap(), batchMaxSize);
     }
 
     /**

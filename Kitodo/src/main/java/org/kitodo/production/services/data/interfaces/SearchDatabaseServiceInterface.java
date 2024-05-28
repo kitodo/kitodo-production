@@ -128,11 +128,26 @@ public interface SearchDatabaseServiceInterface<T extends BaseBean> {
      * Gets a set of objects based on a search query.
      *
      * @param query
-     *            search query
-     *            <!-- TODO: clarify what exactly is passed here -->
+     *            query in Hibernate Query Language
      * @return list of exact bean objects
      */
     public List<T> getByQuery(String query);
+
+    /**
+     * Gets a set of objects based on a search query.
+     *
+     * @param query
+     *            query in Hibernate Query Language
+     * @param parameters
+     *            used in query. If the query string contains a placeholder
+     *            "{@code :joker}", this mapping must contain a mapping for the
+     *            string "{@code joker}" to a value for it. A replacement for
+     *            injection into the SQL query, to prevent attacks.
+     * @param max
+     *            maximum count of beans to return
+     * @return list of exact bean objects
+     */
+    public List<T> getByQuery(String query, Map<String, Object> parameters, int max);
 
     /**
      * Provides a window onto the data objects of the implementing type. This
