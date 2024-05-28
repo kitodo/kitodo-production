@@ -187,10 +187,6 @@ public class BeanQuery {
         return query;
     }
 
-    public String formWindowQuery(int offset, int limit) {
-        return formQueryForAll() + " LIMIT " + limit + (offset > 0 ? " OFFSET " + offset : "");
-    }
-
     public Map<String, Object> getQueryParameters() {
         return parameters;
     }

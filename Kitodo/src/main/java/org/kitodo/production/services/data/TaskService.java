@@ -207,7 +207,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
             query.addInCollectionRestriction("processingStatus", selectedStatuses);
         }
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        return getByQuery(query.formWindowQuery(first, pageSize), query.getQueryParameters());
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
 
     private void manageProcessDependenciesForIndex(Task task)

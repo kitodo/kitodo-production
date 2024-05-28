@@ -411,7 +411,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        return getByQuery(query.formWindowQuery(first, pageSize), query.getQueryParameters());
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
 
     /**
@@ -506,21 +506,21 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     public List<?> findByDocket(int docketId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("docket_id", docketId);
-        return getByQuery(query.formWindowQuery(0, 1), query.getQueryParameters());
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
     @Override
     public List<?> findByTemplate(int templateId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("template_id", templateId);
-        return getByQuery(query.formWindowQuery(0, 1), query.getQueryParameters());
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
     @Override
     public List<?> findByRuleset(int rulesetId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("ruleset_id", rulesetId);
-        return getByQuery(query.formWindowQuery(0, 1), query.getQueryParameters());
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
     @Override

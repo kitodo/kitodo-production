@@ -144,6 +144,11 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         return dao.getByQuery(query, parameters);
     }
 
+    public List<T> getByQuery(String query, Map<String, Object> parameters, int begin, int max) {
+        debugLogQuery(query, parameters, begin, max);
+        return dao.getByQuery(query, parameters, begin, max);
+    }
+
     @Override
     public List<T> getByQuery(String query, Map<String, Object> parameters, int max) {
         debugLogQuery(query, parameters, 0, max);
