@@ -44,6 +44,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
 
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title", "title");
         SORT_FIELD_MAPPING.put("title.keyword", "title");
         SORT_FIELD_MAPPING.put("metsRightsOwner.keyword", "metsRightsOwner");
         SORT_FIELD_MAPPING.put("active", "active");
