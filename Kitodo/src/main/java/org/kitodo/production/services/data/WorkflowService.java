@@ -88,10 +88,9 @@ public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO
             Map<?, String> filters) throws DataException {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        parameters.put("sortBy", SORT_FIELD_MAPPING.get(sortField));
-        parameters.put("direction", SORT_ORDER_MAPPING.get(sortOrder));
-        return getByQuery("FROM Workflow WHERE client_id = :sessionClientId ORDER BY :sortBy :direction", parameters,
-            first, pageSize);
+        parameters.put("desiredOrder", SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder));
+        return getByQuery("FROM Workflow WHERE client_id = :sessionClientId ORDER BY :desiredOrder", parameters, first,
+            pageSize);
     }
 
     /**
