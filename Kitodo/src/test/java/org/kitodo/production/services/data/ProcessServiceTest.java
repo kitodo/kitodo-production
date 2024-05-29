@@ -12,10 +12,14 @@
 package org.kitodo.production.services.data;
 
 import java.net.URI;
+import java.text.ParseException;
+import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.PropertyInterface;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.services.ServiceManager;
@@ -23,44 +27,46 @@ import org.kitodo.production.services.ServiceManager;
 public class ProcessServiceTest {
 
     @Test
-    public void shouldGetSortedCorrectionSolutionMessages() {
-        final ProcessDTO processDTO = new ProcessDTO();
+    public void shouldGetSortedCorrectionSolutionMessages() throws ParseException {
+        final ProcessInterface process = new ProcessDTO();
 
-        PropertyDTO firstPropertyDTO = new PropertyDTO();
-        firstPropertyDTO.setId(1);
-        firstPropertyDTO.setTitle("Korrektur notwendig");
-        firstPropertyDTO.setValue("Fix it");
-        firstPropertyDTO.setCreationDate(null);
+        PropertyInterface firstProperty = new PropertyDTO();
+        firstProperty.setId(1);
+        firstProperty.setTitle("Korrektur notwendig");
+        firstProperty.setValue("Fix it");
+        firstProperty.setCreationTime(null);
 
-        PropertyDTO secondPropertyDTO = new PropertyDTO();
-        secondPropertyDTO.setId(2);
-        secondPropertyDTO.setTitle("Korrektur notwendig");
-        secondPropertyDTO.setValue("Fix it also");
-        secondPropertyDTO.setCreationDate(null);
+        PropertyInterface secondProperty = new PropertyDTO();
+        secondProperty.setId(2);
+        secondProperty.setTitle("Korrektur notwendig");
+        secondProperty.setValue("Fix it also");
+        secondProperty.setCreationTime(null);
 
-        PropertyDTO thirdPropertyDTO = new PropertyDTO();
-        thirdPropertyDTO.setId(3);
-        thirdPropertyDTO.setTitle("Other title");
-        thirdPropertyDTO.setValue("Other value");
-        thirdPropertyDTO.setCreationDate("2017-12-01");
+        PropertyInterface thirdProperty = new PropertyDTO();
+        thirdProperty.setId(3);
+        thirdProperty.setTitle("Other title");
+        thirdProperty.setValue("Other value");
+        thirdProperty.setCreationTime("2017-12-01");
 
-        PropertyDTO fourthPropertyDTO = new PropertyDTO();
-        fourthPropertyDTO.setId(4);
-        fourthPropertyDTO.setTitle("Korrektur durchgef\u00FChrt");
-        fourthPropertyDTO.setValue("Fixed second");
-        fourthPropertyDTO.setCreationDate("2017-12-05");
+        PropertyInterface fourthProperty = new PropertyDTO();
+        fourthProperty.setId(4);
+        fourthProperty.setTitle("Korrektur durchgef\u00FChrt");
+        fourthProperty.setValue("Fixed second");
+        fourthProperty.setCreationTime("2017-12-05");
 
-        PropertyDTO fifthPropertyDTO = new PropertyDTO();
-        fifthPropertyDTO.setId(5);
-        fifthPropertyDTO.setTitle("Korrektur durchgef\u00FChrt");
-        fifthPropertyDTO.setValue("Fixed first");
-        fifthPropertyDTO.setCreationDate("2017-12-03");
+        PropertyInterface fifthProperty = new PropertyDTO();
+        fifthProperty.setId(5);
+        fifthProperty.setTitle("Korrektur durchgef\u00FChrt");
+        fifthProperty.setValue("Fixed first");
+        fifthProperty.setCreationTime("2017-12-03");
 
-        processDTO.getProperties().add(firstPropertyDTO);
-        processDTO.getProperties().add(secondPropertyDTO);
-        processDTO.getProperties().add(thirdPropertyDTO);
-        processDTO.getProperties().add(fourthPropertyDTO);
-        processDTO.getProperties().add(fifthPropertyDTO);
+        @SuppressWarnings("unchecked")
+        List<PropertyInterface> properties = (List<PropertyInterface>) process.getProperties();
+        properties.add(firstProperty);
+        properties.add(secondProperty);
+        properties.add(thirdProperty);
+        properties.add(fourthProperty);
+        properties.add(fifthProperty);
 
     }
 

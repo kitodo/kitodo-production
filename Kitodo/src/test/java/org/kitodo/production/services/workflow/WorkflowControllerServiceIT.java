@@ -53,6 +53,8 @@ public class WorkflowControllerServiceIT {
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
     private static final File scriptCreateSymLink = new File(
             ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_SYMLINK));
+    private static final File scriptDeleteSymLink = new File(
+            ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
     private static final File scriptNotWorking = new File("src/test/resources/scripts/not_working_script.sh");
     private static final File scriptWorking = new File("src/test/resources/scripts/working_script.sh");
     private static final File usersDirectory = new File("src/test/resources/users");
@@ -79,6 +81,7 @@ public class WorkflowControllerServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setExecutePermission(scriptCreateSymLink);
+            ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
             ExecutionPermission.setExecutePermission(scriptNotWorking);
             ExecutionPermission.setExecutePermission(scriptWorking);
         }
@@ -95,6 +98,7 @@ public class WorkflowControllerServiceIT {
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
             ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
+            ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
             ExecutionPermission.setNoExecutePermission(scriptNotWorking);
             ExecutionPermission.setNoExecutePermission(scriptWorking);
         }

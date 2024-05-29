@@ -11,17 +11,35 @@
 
 package org.kitodo.production.services.data.base;
 
+import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.production.services.data.interfaces.SearchDatabaseServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
+public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>>
+        implements SearchDatabaseServiceInterface<T> {
+
+    protected static final EnumMap<SortOrder, String> SORT_ORDER_MAPPING;
+
+    static {
+        SORT_ORDER_MAPPING = new EnumMap<>(SortOrder.class);
+        SORT_ORDER_MAPPING.put(SortOrder.ASCENDING, "ASC");
+        SORT_ORDER_MAPPING.put(SortOrder.DESCENDING, "DESC");
+    }
+
+    private static final Logger logger = LogManager.getLogger(SearchDatabaseService.class);
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
 
     protected S dao;
 
@@ -35,31 +53,11 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         this.dao = dao;
     }
 
-    /**
-     * Load data for frontend lists. Data can be loaded from database or index.
-     * 
-     * @param first
-     *            searched objects
-     * @param pageSize
-     *            size of page
-     * @param sortField
-     *            field by which data should be sorted
-     * @param sortOrder
-     *            order ascending or descending
-     * @param filters
-     *            for search query
-     *
-     * @return loaded data
-     */
-    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    @Override
+    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException;
 
-    /**
-     * Method saves object to database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
+    @Override
     public void saveToDatabase(T baseIndexedBean) throws DAOException {
         dao.save(baseIndexedBean);
     }
@@ -74,12 +72,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         dao.saveAsIndexed(baseIndexedBeans);
     }
 
-    /**
-     * Method removes object from database.
-     *
-     * @param baseIndexedBean
-     *            object
-     */
+    @Override
     public void removeFromDatabase(T baseIndexedBean) throws DAOException {
         dao.remove(baseIndexedBean);
     }
@@ -94,11 +87,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         dao.remove(id);
     }
 
-    /**
-     * Count all rows in database.
-     *
-     * @return amount of all rows
-     */
+    @Override
     public abstract Long countDatabaseRows() throws DAOException;
 
     /**
@@ -109,6 +98,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return amount of rows in database according to given query
      */
     public Long countDatabaseRows(String query) throws DAOException {
+        logger.debug(query);
         return dao.count(query);
     }
 
@@ -122,43 +112,21 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return amount of rows in database according to given query
      */
     public Long countDatabaseRows(String query, Map<String, Object> parameters) throws DAOException {
+        debugLogQuery(query, parameters);
         return dao.count(query, parameters);
     }
 
-    /**
-     * This function is used for count amount of results for frontend lists.
-     *
-     * @param filters
-     *            Map of parameters used for filtering
-     * @return amount of results
-     * @throws DAOException
-     *             that can be caused by Hibernate
-     * @throws DataException
-     *             that can be caused by ElasticSearch
-     */
-    public abstract Long countResults(Map filters) throws DAOException, DataException;
+    @Override
+    public abstract Long countResults(Map<?, String> filters) throws DAOException, DataException;
 
-    /**
-     * Method necessary for get from database object by id. It is used in removeById
-     * method.
-     *
-     * @param id
-     *            of object
-     * @return object
-     */
+    @Override
     public T getById(Integer id) throws DAOException {
         return dao.getById(id);
     }
 
-    /**
-     * Method necessary for conversion of JSON objects to exact bean objects called
-     * from database.
-     *
-     * @param query
-     *            as String
-     * @return list of exact bean objects
-     */
+    @Override
     public List<T> getByQuery(String query) {
+        logger.debug(query);
         return dao.getByQuery(query);
     }
 
@@ -172,37 +140,32 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return list of beans objects
      */
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters);
         return dao.getByQuery(query, parameters);
     }
 
-    /**
-     * Get list of all objects from database.
-     *
-     * @return list of all objects from database
-     */
+    public List<T> getByQuery(String query, Map<String, Object> parameters, int begin, int max) {
+        debugLogQuery(query, parameters, begin, max);
+        return dao.getByQuery(query, parameters, begin, max);
+    }
+
+    @Override
+    public List<T> getByQuery(String query, Map<String, Object> parameters, int max) {
+        debugLogQuery(query, parameters, 0, max);
+        return dao.getByQuery(query, parameters, 0, max);
+    }
+
+    @Override
     public List<T> getAll() throws DAOException {
         return dao.getAll();
     }
 
-    /**
-     * Get list of all objects from database in given range.
-     *
-     * @param offset
-     *            result - important, numeration starts since 0
-     * @param size
-     *            amount of results
-     * @return list of all objects from database in given range
-     */
+    @Override
     public List<T> getAll(int offset, int size) throws DAOException {
         return dao.getAll(offset, size);
     }
 
-    /**
-     * Evict given bean object.
-     *
-     * @param baseBean
-     *            bean to evict
-     */
+    @Override
     public void evict(T baseBean) {
         this.dao.evict(baseBean);
     }
@@ -224,6 +187,58 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
             return " ORDER BY " + sortField + " DESC";
         } else {
             return "";
+        }
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     * @param initPointer
+     *            can initialize the object pointer to a later object (sets
+     *            {@linkplain Query#setFirstResult(int)})
+     * @param stopCount
+     *            the search stops after count hits (sets
+     *            {@linkplain Query#setMaxResults(int)})
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters, int initPointer, int stopCount) {
+        if (logger.isDebugEnabled()) {
+            String resolved = PARAMETER_PATTERN.matcher(query).replaceAll(matchResult -> {
+                Object parameter = parameters.get(matchResult.group(1));
+                if (Objects.isNull(parameter)) {
+                    return matchResult.group();
+                }
+                if ((parameter instanceof String)
+                        && (((String) parameter).isEmpty() || ((String) parameter).contains(" "))) {
+                    return '"' + ((String) parameter) + '"';
+                }
+                return Objects.toString(parameter);
+            });
+            if (initPointer != Integer.MIN_VALUE || stopCount != Integer.MIN_VALUE) {
+                if (stopCount != Integer.MIN_VALUE) {
+                    resolved = String.format("%s (limit=%d)", resolved, stopCount);
+                } else {
+                    resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
+                }
+            }
+            logger.debug(resolved);
         }
     }
 }

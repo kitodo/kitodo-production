@@ -45,8 +45,8 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.UserInterface;
 import org.kitodo.exceptions.FilterException;
-import org.kitodo.production.dto.UserDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
@@ -325,7 +325,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      *            object as UserDTo
      * @return full name of the user as String
      */
-    public String getFullName(UserDTO user) {
+    public String getFullName(UserInterface user) {
         return user.getSurname() + ", " + user.getName();
     }
 

@@ -37,7 +37,7 @@
                         <f:selectItem itemValue="#{null}"
                                       itemLabel="#{msgs['selectTemplate']}"
                                       noSelectionOption="true"/>
-                        <f:selectItems value="#{SelectTemplateDialogView.project.templates}"
+                        <f:selectItems value="#{SelectTemplateDialogView.project.activeTemplates}"
                                        var="template"
                                        itemLabel="#{template.title}"
                                        itemValue="#{template.id}"/>

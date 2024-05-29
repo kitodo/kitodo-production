@@ -23,6 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.interfaces.TaskInterface;
 
 @Entity
 @Table(name = "comment")
@@ -216,10 +217,10 @@ public class Comment extends BaseBean {
     /**
      * Set currentTask.
      *
-     * @param currentTask as org.kitodo.data.database.beans.Task
+     * @param currentTask as org.kitodo.data.interfaces.TaskInterface
      */
-    public void setCurrentTask(Task currentTask) {
-        this.currentTask = currentTask;
+    public void setCurrentTask(TaskInterface currentTask) {
+        this.currentTask = (Task) currentTask;
     }
 
     /**

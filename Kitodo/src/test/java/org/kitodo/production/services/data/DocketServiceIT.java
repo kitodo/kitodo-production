@@ -12,15 +12,12 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Rule;
@@ -55,7 +52,7 @@ public class DocketServiceIT {
         MockDatabase.insertDockets();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(new User(), 1);
-        given().ignoreExceptions().await().until(() -> Objects.nonNull(docketService.findByTitle(defaultDocket, true)));
+        given().ignoreExceptions().await().until(() -> Objects.nonNull(docketService.getByTitle(defaultDocket)));
     }
 
     @AfterClass
@@ -70,12 +67,6 @@ public class DocketServiceIT {
     @Test
     public void shouldCountAllDockets() throws DataException {
         assertEquals("Dockets were not counted correctly!", Long.valueOf(4), docketService.count());
-    }
-
-    @Test
-    public void shouldCountAllDocketsAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", defaultDocket).operator(Operator.AND);
-        assertEquals("Dockets were not counted correctly!", Long.valueOf(1), docketService.count(query));
     }
 
     @Test
@@ -111,59 +102,7 @@ public class DocketServiceIT {
 
     @Test
     public void shouldFindByTitle() throws DataException {
-        assertEquals(docketNotFound, 1, docketService.findByTitle(defaultDocket, true).size());
-    }
-
-    @Test
-    public void shouldFindByFile() throws DataException {
-        String expected = fileName;
-        assertEquals(docketNotFound, expected,
-            docketService.findByFile(fileName).get(DocketTypeField.FILE.getKey()));
-    }
-
-    @Test
-    public void shouldFindManyByClientId() throws DataException {
-        assertEquals("Dockets were not found in index!", 3, docketService.findByClientId(1).size());
-    }
-
-    @Test
-    public void shouldNotFindByClientId() throws DataException {
-        assertEquals("Docket was found in index!", 0, docketService.findByClientId(3).size());
-    }
-
-    @Test
-    public void shouldFindByTitleAndFile() throws DataException {
-        Integer expected = 1;
-        assertEquals(docketNotFound, expected,
-            docketService.getIdFromJSONObject(docketService.findByTitleAndFile(defaultDocket, fileName)));
-    }
-
-    @Test
-    public void shouldNotFindByTitleAndFile() throws DataException {
-        Integer expected = 0;
-        assertEquals("Docket was found in index!", expected,
-            docketService.getIdFromJSONObject(docketService.findByTitleAndFile(defaultDocket, none)));
-    }
-
-    @Test
-    public void shouldFindManyByTitleOrFile() throws DataException {
-        assertEquals("Dockets were not found in index!", 2,
-            docketService.findByTitleOrFile(defaultDocket, fileName).size());
-    }
-
-    @Test
-    public void shouldFindOneByTitleOrFile() throws DataException {
-        assertEquals(docketNotFound, 1, docketService.findByTitleOrFile(defaultDocket, none).size());
-    }
-
-    @Test
-    public void shouldNotFindByTitleOrFile() throws DataException {
-        assertEquals("Some dockets were found in index!", 0, docketService.findByTitleOrFile(none, none).size());
-    }
-
-    @Test
-    public void shouldFindAllDocketsDocuments() throws DataException {
-        assertEquals("Not all dockets were found in index!", 4, docketService.findAllDocuments().size());
+        assertEquals(docketNotFound, 1, docketService.getByTitle(defaultDocket).size());
     }
 
     @Test
@@ -184,7 +123,7 @@ public class DocketServiceIT {
         foundDocket = docketService.getById(6);
         assertEquals("Additional docket was not inserted in database!", "To remove", foundDocket.getTitle());
 
-        docketService.remove(6);
+        docketService.remove(foundDocket);
         exception.expect(DAOException.class);
         docketService.getById(6);
     }

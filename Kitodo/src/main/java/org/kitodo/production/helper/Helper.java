@@ -33,6 +33,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.regex.Pattern;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
@@ -308,7 +309,7 @@ public class Helper {
 
         String compoundMessage = msg.replaceFirst(":\\s*$", "");
         if (createCompoundMessage) {
-            if (StringUtils.isNotEmpty(descript)) {
+            if (StringUtils.isNotBlank(descript)) {
                 compoundMessage += ": " + descript;
             }
             detail = null;

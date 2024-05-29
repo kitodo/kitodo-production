@@ -50,7 +50,7 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.IndexWorker;
 import org.kitodo.production.helper.IndexWorkerStatus;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 
 public class IndexingService {
 
@@ -59,7 +59,7 @@ public class IndexingService {
     private static volatile IndexingService instance = null;
 
     private static final List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
-    private final Map<ObjectType, SearchService> searchServices = new EnumMap<>(ObjectType.class);
+    private final Map<ObjectType, SearchDatabaseService> searchServices = new EnumMap<>(ObjectType.class);
     private final Map<ObjectType, IndexStates> objectIndexingStates = new EnumMap<>(ObjectType.class);
     private final Map<ObjectType, Integer> countDatabaseObjects = new EnumMap<>(ObjectType.class);
 
@@ -121,7 +121,7 @@ public class IndexingService {
         }
     }
 
-    private SearchService getService(ObjectType objectType) {
+    private SearchDatabaseService getService(ObjectType objectType) {
         if (!searchServices.containsKey(objectType) || Objects.isNull(searchServices.get(objectType))) {
             switch (objectType) {
                 case BATCH:
@@ -230,7 +230,7 @@ public class IndexingService {
      */
     public IndexWorkerStatus runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) 
             throws DataException, CustomResponseException, DAOException {
-        SearchService searchService = searchServices.get(type);
+        SearchDatabaseService searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
 
         if (countDatabaseObjects.get(type) > 0) {
@@ -268,7 +268,7 @@ public class IndexingService {
      * @return number of database objects
      */
     private int getNumberOfDatabaseObjects(ObjectType objectType) throws DAOException {
-        SearchService searchService = searchServices.get(objectType);
+        SearchDatabaseService searchService = searchServices.get(objectType);
         if (Objects.nonNull(searchService)) {
             return toIntExact(searchService.countDatabaseRows());
         }
@@ -278,6 +278,7 @@ public class IndexingService {
     private ExecutorService createDeamonizedExecutorService(int threads) {
         return Executors.newFixedThreadPool(threads,
             new ThreadFactory() {
+                @Override
                 public Thread newThread(Runnable r) {
                     Thread t = Executors.defaultThreadFactory().newThread(r);
                     t.setDaemon(true);

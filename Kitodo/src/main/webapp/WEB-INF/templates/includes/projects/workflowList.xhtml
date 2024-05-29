@@ -81,11 +81,11 @@
                     </h:commandLink>
 
                     <h:panelGroup styleClass="action"
-                                  title="#{item.status eq 'active' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
+                                  title="#{item.status eq 'ACTIVE' ? msgs['archive'] : msgs['workflowUnableToArchive']}">
                         <p:commandLink id="archiveWorkflow"
                                        action="#{WorkflowForm.archive}"
-                                       disabled="#{item.status ne 'active'}"
-                                       styleClass="#{item.status ne 'active' ? 'disabled' : ''}"
+                                       disabled="#{item.status ne 'ACTIVE'}"
+                                       styleClass="#{item.status ne 'ACTIVE' ? 'disabled' : ''}"
                                        rendered="#{SecurityAccessController.hasAuthorityToEditWorkflow()}"
                                        update="workflowTable">
                             <h:outputText title="#{msgs.archive}"><i class="fa fa-archive"/></h:outputText>

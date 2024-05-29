@@ -13,7 +13,6 @@ package org.kitodo.production.services.data;
 
 import static org.kitodo.constants.StringConstants.COMMA_DELIMITER;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -22,37 +21,34 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.IdsQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.config.enums.KitodoConfigFile;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.ProjectType;
-import org.kitodo.data.elasticsearch.index.type.enums.ProjectTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.TemplateTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.exceptions.ProjectDeletionException;
-import org.kitodo.production.dto.ClientDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.kitodo.production.services.data.interfaces.DatabaseProjectServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class ProjectService extends ClientSearchService<Project, ProjectDTO, ProjectDAO> {
+public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
+        implements DatabaseProjectServiceInterface {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title", "title");
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("metsRightsOwner.keyword", "metsRightsOwner");
+        SORT_FIELD_MAPPING.put("active", "active");
+    }
 
     private static volatile ProjectService instance = null;
 
@@ -60,8 +56,7 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
      * Constructor with Searcher and Indexer assigning.
      */
     private ProjectService() {
-        super(new ProjectDAO(), new ProjectType(), new Indexer<>(Project.class), new Searcher(Project.class),
-                ProjectTypeField.CLIENT_ID.getKey());
+        super(new ProjectDAO());
     }
 
     /**
@@ -83,71 +78,20 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         return localReference;
     }
 
-    /**
-     * Method saves processes and templates related to modified project.
-     *
-     * @param project
-     *            object
-     */
-    @Override
-    protected void manageDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
-        manageProcessesDependenciesForIndex(project);
-        manageTemplatesDependenciesForIndex(project);
-    }
-
-    /**
-     * Management of processes for project object.
-     *
-     * @param project
-     *            object
-     */
-    private void manageProcessesDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            for (Process process : project.getProcesses()) {
-                ServiceManager.getProcessService().removeFromIndex(process, false);
-            }
-        }
-    }
-
-    /**
-     * Management of templates for project object.
-     *
-     * @param project
-     *            object
-     */
-    private void manageTemplatesDependenciesForIndex(Project project)
-            throws CustomResponseException, DataException, IOException {
-        if (project.getIndexAction() == IndexAction.DELETE) {
-            for (Template template : project.getTemplates()) {
-                template.getProjects().remove(project);
-            }
-        }
-
-        for (Template template : project.getTemplates()) {
-            ServiceManager.getTemplateService().saveToIndex(template, false);
-        }
-    }
-
     @Override
     public Long countDatabaseRows() throws DAOException {
         return countDatabaseRows("SELECT COUNT(*) FROM Project");
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(getProjectsForCurrentUserQuery());
-    }
-
-    @Override
-    public List<Project> getAllNotIndexed() {
-        return getByQuery("FROM Project WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    public Long countResults(Map<?, String> filters) throws DataException {
+        try {
+            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
+                ServiceManager.getUserService().getSessionClientId());
+            return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE client_id = :sessionClientId", parameters);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 
     @Override
@@ -158,83 +102,28 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
     }
 
     @Override
-    public List<ProjectDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException {
-        return findByQuery(getProjectsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
-    }
-
-    /**
-     * Find all projects available to assign to the edited user. It will be
-     * displayed in the addProjectsPopup.
-     *
-     * @param user
-     *            user which is going to be edited
-     * @return list of all matching projects
-     */
-    public List<ProjectDTO> findAllAvailableForAssignToUser(User user) throws DataException {
-        return findAvailableForAssignToUser(user);
-    }
-
-    private List<ProjectDTO> findAvailableForAssignToUser(User user) throws DataException {
-
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        for (Client client : user.getClients()) {
-            query.should(createSimpleQuery(ProjectTypeField.CLIENT_ID.getKey(), client.getId(), true));
-        }
-
-        List<ProjectDTO> projectDTOS = findByQuery(query, true);
-        List<ProjectDTO> alreadyAssigned = new ArrayList<>();
-        for (Project project : user.getProjects()) {
-            alreadyAssigned.addAll(projectDTOS.stream().filter(projectDTO -> projectDTO.getId().equals(project.getId()))
-                    .collect(Collectors.toList()));
-        }
-        projectDTOS.removeAll(alreadyAssigned);
-        return projectDTOS;
+        Map<String, Object> parameters = new HashMap<>(7);
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        parameters.put("desiredOrder", SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder));
+        return getByQuery("FROM Project WHERE client_id = :sessionClientId ORDER BY :desiredOrder", parameters, first,
+            pageSize);
     }
 
     @Override
-    public ProjectDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        ProjectDTO projectDTO = new ProjectDTO();
-        projectDTO.setId(getIdFromJSONObject(jsonObject));
-        projectDTO.setTitle(ProjectTypeField.TITLE.getStringValue(jsonObject));
-        projectDTO.setStartDate(ProjectTypeField.START_DATE.getStringValue(jsonObject));
-        projectDTO.setEndDate(ProjectTypeField.END_DATE.getStringValue(jsonObject));
-        projectDTO.setMetsRightsOwner(ProjectTypeField.METS_RIGTS_OWNER.getStringValue(jsonObject));
-        projectDTO.setNumberOfPages(ProjectTypeField.NUMBER_OF_PAGES.getIntValue(jsonObject));
-        projectDTO.setNumberOfVolumes(ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(jsonObject));
-        projectDTO.setActive(ProjectTypeField.ACTIVE.getBooleanValue(jsonObject));
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(ProjectTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientDTO.setName(ProjectTypeField.CLIENT_NAME.getStringValue(jsonObject));
-        projectDTO.setClient(clientDTO);
-        projectDTO.setHasProcesses(ProjectTypeField.HAS_PROCESSES.getBooleanValue(jsonObject));
-        if (!related) {
-            convertRelatedJSONObjects(jsonObject, projectDTO);
+    public List<Project> findAllAvailableForAssignToUser(User user) throws DataException {
+        Map<String, Object> parameters = new HashMap<>(7);
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        if (user.getProjects().isEmpty()) {
+            return getByQuery("FROM Project WHERE client_id = :sessionClientId", parameters);
         } else {
-            projectDTO.setTemplates(getTemplatesForProjectDTO(jsonObject));
+            String assignedProjects = user.getProjects().stream().map(Project::getId).map(Objects::toString)
+                    .collect(Collectors.joining(COMMA_DELIMITER, "(", ")"));
+            parameters.put("assignedProjects", assignedProjects);
+            return getByQuery("FROM Project WHERE client_id = :sessionClientId AND id NOT IN :assignedProjects",
+                parameters);
         }
-        return projectDTO;
-    }
-
-    private List<TemplateDTO> getTemplatesForProjectDTO(Map<String, Object> jsonObject) throws DataException {
-        List<TemplateDTO> templateDTOS = new ArrayList<>();
-        List<Map<String, Object>> jsonArray = ProjectTypeField.TEMPLATES.getJsonArray(jsonObject);
-
-        for (Map<String, Object> singleObject : jsonArray) {
-            TemplateDTO templateDTO = new TemplateDTO();
-            templateDTO.setId(TemplateTypeField.ID.getIntValue(singleObject));
-            templateDTO.setTitle(TemplateTypeField.TITLE.getStringValue(singleObject));
-            templateDTOS.add(templateDTO);
-        }
-        return templateDTOS.stream().filter(TemplateDTO::isActive).collect(Collectors.toList());
-    }
-
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, ProjectDTO projectDTO) throws DataException {
-        // TODO: not clear if project lists will need it
-        projectDTO.setUsers(new ArrayList<>());
-        projectDTO.setTemplates(convertRelatedJSONObjectToDTO(jsonObject, ProjectTypeField.TEMPLATES.getKey(),
-            ServiceManager.getTemplateService()).stream().filter(TemplateDTO::isActive).collect(Collectors.toList()));
     }
 
     /**
@@ -308,38 +197,12 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         return duplicatedProject;
     }
 
-    /**
-     * Get query for finding projects for current user.
-     *
-     * @return query for finding projects for current user
-     */
-    public QueryBuilder getProjectsForCurrentUserQuery() {
-        List<Project> projects = ServiceManager.getUserService().getAuthenticatedUser().getProjects();
-        IdsQueryBuilder idsQueryBuilder = QueryBuilders.idsQuery();
-        for (Project project : projects) {
-            idsQueryBuilder.addIds(project.getId().toString());
-        }
-        return idsQueryBuilder;
+    @Override
+    public List<Project> findAllProjectsForCurrentUser() throws DataException {
+        return ServiceManager.getUserService().getCurrentUser().getProjects();
     }
 
-    /**
-     * Find all Projects for Current User.
-     * @return A list of all Projects assigned tot he current user
-     * @throws DataException when elasticsearch query is failing
-     */
-    public List<ProjectDTO> findAllProjectsForCurrentUser() throws DataException {
-        return findByQuery(getProjectsForCurrentUserQuery(), false);
-    }
-
-    /**
-     * Get all projects templates for given title and client id.
-     *
-     * @param title
-     *            of Project
-     * @param clientId
-     *            id of client
-     * @return list of all projects templates as Project objects
-     */
+    @Override
     public List<Project> getProjectsWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId WHERE p.title = :title";
         Map<String, Object> parameters = new HashMap<>();
@@ -348,17 +211,13 @@ public class ProjectService extends ClientSearchService<Project, ProjectDTO, Pro
         return getByQuery(query, parameters);
     }
 
-    /**
-     * Create and return String containing the titles of all given projects joined by a ", ".
-     * @param projects list of roles
-     * @return String containing project titles
-     */
+    @Override
     public String getProjectTitles(List<Project> projects) throws DataException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
                 && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
             return projects.stream().map(Project::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
         } else {
-            List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(ProjectDTO::getId)
+            List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(ProjectInterface::getId)
                     .collect(Collectors.toList());
             return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
                     .collect(Collectors.joining(COMMA_DELIMITER));

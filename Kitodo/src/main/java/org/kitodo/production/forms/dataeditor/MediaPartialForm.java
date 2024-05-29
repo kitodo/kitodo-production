@@ -14,6 +14,7 @@ package org.kitodo.production.forms.dataeditor;
 import static org.kitodo.production.helper.metadata.MediaPartialHelper.addMediaPartialToMediaSelection;
 import static org.kitodo.production.helper.metadata.MediaPartialHelper.calculateExtentAndSortMediaPartials;
 import static org.kitodo.production.helper.metadata.MediaPartialHelper.convertFormattedTimeToMilliseconds;
+import static org.kitodo.production.helper.metadata.MediaPartialHelper.convertTimeToFormattedTime;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -78,7 +79,7 @@ public class MediaPartialForm implements Serializable {
      * @return True if validation error is not empty.
      */
     public boolean hasValidationError() {
-        return StringUtils.isNotEmpty(validationError);
+        return StringUtils.isNotBlank(validationError);
     }
 
     /**
@@ -166,6 +167,7 @@ public class MediaPartialForm implements Serializable {
             validationError = "mediaPartialFormStartEmpty";
             return false;
         }
+        setBegin(convertTimeToFormattedTime(getBegin()));
         if (!MediaPartialHelper.FORMATTED_TIME_PATTERN.matcher(getBegin()).matches()) {
             validationError = "mediaPartialFormStartWrongTimeFormat";
             return false;

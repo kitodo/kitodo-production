@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -32,8 +31,6 @@ import java.util.Map;
 import java.util.OptionalInt;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -58,7 +55,8 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -121,13 +119,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldCountProcessesAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", firstProcess).operator(Operator.AND);
-        assertEquals("Process was not found!", processService.count(query),
-            processService.findNumberOfProcessesWithTitle(firstProcess));
-    }
-
-    @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.countDatabaseRows();
         assertEquals("Processes were not counted correctly!", Long.valueOf(7), amount);
@@ -161,7 +152,7 @@ public class ProcessServiceIT {
         foundProcess.setParent(null);
 
         processService.remove(foundProcess);
-        processService.remove(foundParent.getId());
+        processService.remove(foundParent);
     }
 
     @Test
@@ -203,7 +194,7 @@ public class ProcessServiceIT {
         foundProcess = processService.getById(9);
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(9);
+        processService.remove(foundProcess);
         exception.expect(DAOException.class);
         processService.getById(9);
     }
@@ -216,7 +207,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldFindByTitle() throws DataException {
-        assertEquals(processNotFound, 1, processService.findByTitle(firstProcess, true).size());
+        assertEquals(processNotFound, 1, processService.findByTitle(firstProcess).size());
     }
 
     @Test
@@ -261,11 +252,11 @@ public class ProcessServiceIT {
         process.setTitle(processTitle);
         ServiceManager.getProcessService().save(process);
 
-        List<ProcessDTO> byAnything = processService.findByAnything("ith-hyphen_an");
+        List<ProcessInterface> byAnything = processService.findByAnything("ith-hyphen_an");
         assertFalse("nothing found", byAnything.isEmpty());
         assertEquals("wrong process found", processTitle, byAnything.get(0).getTitle());
 
-        ServiceManager.getProcessService().remove(process.getId());
+        ServiceManager.getProcessService().remove(process);
     }
 
     @Test
@@ -284,36 +275,6 @@ public class ProcessServiceIT {
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         assertEquals(processNotFound, 1, processService.findByAnything("August").size());
         ProcessTestUtils.removeTestProcess(testProcessId);
-    }
-
-    @Test
-    public void shouldFindByProperty() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Process Property", "first value");
-        assertEquals(1, processByProperty.size());
-    }
-
-    @Test
-    public void shouldNotFindByWrongPropertyTitle() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "first value");
-        assertTrue(processByProperty.isEmpty());
-    }
-
-    @Test
-    public void shouldNotFindByWrongPropertyTitleAndValue() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "test value");
-        assertTrue(processByProperty.isEmpty());
-    }
-
-    @Test
-    public void shouldNotFindByTokenizedPropertyTitle() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "first value");
-        assertTrue(processByProperty.isEmpty());
-    }
-
-    @Test
-    public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "test value");
-        assertTrue(processByProperty.isEmpty());
     }
 
     @Test
@@ -434,7 +395,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetBatchId() throws Exception {
-        ProcessDTO process = processService.findById(1);
+        ProcessInterface process = processService.findById(1);
         String batchId = processService.getBatchID(process);
         boolean condition = batchId.equals("First batch, Third batch");
         assertTrue("BatchId doesn't match to given plain text!", condition);
@@ -443,7 +404,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
-        Task actual = processService.getCurrentTask(process);
+        TaskInterface actual = processService.getCurrentTask(process);
         assertEquals("Task doesn't match to given task!", 8, actual.getId().intValue());
     }
 
@@ -469,22 +430,6 @@ public class ProcessServiceIT {
 
         double condition = ProcessConverter.getTaskProgressPercentageOfProcess(process, true).get(TaskStatus.INWORK);
         assertEquals("Progress doesn't match given plain text!", 20, condition, 0);
-    }
-
-    @Test
-    public void testGetQueryForClosedProcesses() throws DataException, DAOException {
-        ProcessService processService = ServiceManager.getProcessService();
-        Process secondProcess = processService.getById(2);
-        final String sortHelperStatusOld = secondProcess.getSortHelperStatus();
-        secondProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
-        processService.save(secondProcess);
-
-        QueryBuilder querySortHelperStatusTrue = processService.getQueryForClosedProcesses();
-        List<ProcessDTO> byQuery = processService.findByQuery(querySortHelperStatusTrue, true);
-
-        Assert.assertEquals("Found the wrong amount of Processes", 1 ,byQuery.size());
-        secondProcess.setSortHelperStatus(sortHelperStatusOld);
-        processService.save(secondProcess);
     }
 
     @Test
@@ -597,14 +542,14 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(2);
-        assertTrue(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
+        ProcessInterface process = processService.findById(2);
+        assertTrue(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
     public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(1);
-        assertFalse(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
+        ProcessInterface process = processService.findById(1);
+        assertFalse(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
@@ -631,26 +576,6 @@ public class ProcessServiceIT {
             assertEquals("Child should have parent as parent", process, child.getParent());
         }
         assertNull("Process to remove should have no parent", processService.getById(6).getParent());
-    }
-
-    @Test
-    public void testFindAllIDs() throws DataException {
-        List<Integer> allIDs = ServiceManager.getProcessService().findAllIDs();
-        Assert.assertEquals("Wrong amount of id's in index", 7, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 6, 4, 1, 7, 3)));
-
-        allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
-        Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
-        Assert.assertEquals("Duplicate ids in index", allIDs.size(), new HashSet<>(allIDs).size());
-        OptionalInt maxStream = allIDs.stream().mapToInt(Integer::intValue).max();
-        assertTrue("Unable to find largest ID in stream of all process IDs!", maxStream.isPresent());
-        int maxId = maxStream.getAsInt();
-        int minId = allIDs.stream().mapToInt(Integer::intValue).min().getAsInt();
-        Assert.assertTrue("Ids should all be smaller than 8", maxId < 8);
-        Assert.assertTrue("Ids should all be larger than 0", minId > 0);
-        
-        allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
-        Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
     }
 
     @Test
