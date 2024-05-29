@@ -867,23 +867,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     /**
-     * Get current task.
-     *
-     * @param process
-     *            object
-     * @return current task
-     */
-    public Task getCurrentTask(Process process) {
-        for (Task task : process.getTasks()) {
-            if (task.getProcessingStatus().equals(TaskStatus.OPEN)
-                    || task.getProcessingStatus().equals(TaskStatus.INWORK)) {
-                return task;
-            }
-        }
-        return null;
-    }
-
-    /**
      * Get current tasks.
      *
      * @param process
@@ -2232,7 +2215,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     public Map<String, Integer> getProcessTaskStates(List<Process> processes) {
         Map<String, Integer> processTaskStates = new LinkedHashMap<>();
         for (Process process : processes) {
-            Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+            TaskInterface currentTask = ServiceManager.getProcessService().getCurrentTask(process);
             if (Objects.nonNull(currentTask)) {
                 String currentTaskTitle = currentTask.getTitle();
                 if (processTaskStates.containsKey(currentTaskTitle)) {

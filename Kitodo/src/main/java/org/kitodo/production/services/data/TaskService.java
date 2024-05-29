@@ -77,6 +77,7 @@ import org.primefaces.model.SortOrder;
 public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements DatabaseTaskServiceInterface {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
+
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
         SORT_FIELD_MAPPING.put("title", "title");

@@ -480,6 +480,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @param sortField
      *            by which column the data should be sorted. Must not be
      *            {@code null} or empty.
+     *
      *            <p>
      *            One of:
      *            <ul>

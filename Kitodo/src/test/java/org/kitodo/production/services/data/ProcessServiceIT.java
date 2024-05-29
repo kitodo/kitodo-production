@@ -56,6 +56,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -403,7 +404,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
-        Task actual = processService.getCurrentTask(process);
+        TaskInterface actual = processService.getCurrentTask(process);
         assertEquals("Task doesn't match to given task!", 8, actual.getId().intValue());
     }
 

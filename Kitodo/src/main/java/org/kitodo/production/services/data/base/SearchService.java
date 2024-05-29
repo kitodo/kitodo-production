@@ -128,6 +128,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *            amount of results
      * @return list of all not indexed objects from database in given range
      */
+    @Override
     public List<T> getAllNotIndexed(int offset, int size) throws DAOException {
         return dao.getAllNotIndexed(offset, size);
     }
@@ -169,6 +170,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *
      * @return List of ids in given range
      */
+    @Override
     public List<Integer> findAllIDs(Long startIndex, int limit) throws DataException {
         List<Integer> allIds = new ArrayList<>();
         for (Map<String, Object> document : findAllDocuments(Math.toIntExact(startIndex), limit)) {
@@ -187,6 +189,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void saveToIndex(T baseIndexedBean, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
@@ -203,6 +206,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      * @param baseIndexedBeans
      *            List of BaseIndexedBean objects
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException, IOException {
         indexer.setMethod(HttpMethod.PUT);
@@ -221,6 +225,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
+    @Override
     @SuppressWarnings("unchecked")
     public void removeFromIndex(T baseIndexedBean, boolean forceRefresh)
             throws CustomResponseException, DataException, IOException {
@@ -239,6 +244,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *            force index refresh - if true, time of execution is longer but
      *            object is right after that available for display
      */
+    @Override
     public void removeFromIndex(Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
         indexer.setMethod(HttpMethod.DELETE);
         indexer.performSingleRequest(id, forceRefresh);
@@ -259,6 +265,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      * calls save method with default updateRelatedObjectsInIndex=false.
      * @param object the object to save
      */
+    @Override
     public void save(T object) throws DataException {
         save(object, false);
     }
@@ -284,6 +291,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *
      * @param updateRelatedObjectsInIndex if relatedObjects need to be updated in Index
      */
+    @Override
     public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.INDEX);
@@ -345,6 +353,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      * @param baseIndexedBean
      *            object
      */
+    @Override
     public void remove(T baseIndexedBean) throws DataException {
         try {
             baseIndexedBean.setIndexAction(IndexAction.DELETE);
@@ -382,6 +391,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      *
      * @return amount of all objects
      */
+    @Override
     public Long count() throws DataException {
         try {
             return searcher.countDocuments();
@@ -558,12 +568,12 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
         if (ids.isEmpty()) {
             return new ArrayList<>();
         }
-//        if (service instanceof ProjectService) {
-//            BoolQueryBuilder query = new BoolQueryBuilder();
-//            query.must(createSetQueryForIds(ids));
-//            query.must(((ProjectService)service).getProjectsForCurrentUserQuery());
-//            return service.findByQuery(query, true);
-//        }
+        // if (service instanceof ProjectService) {
+        //     BoolQueryBuilder query = new BoolQueryBuilder();
+        //     query.must(createSetQueryForIds(ids));
+        //     query.must(((ProjectService)service).getProjectsForCurrentUserQuery());
+        //     return service.findByQuery(query, true);
+        // }
         return service.findByQuery(createSetQueryForIds(ids), true);
     }
 
@@ -932,6 +942,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      * @param baseIndexedBeansId the list of beans to check for missing db eintries.
      *
      */
+    @Override
     public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
         for (Integer baseIndexedBeanId : baseIndexedBeansId) {
             try {
