@@ -33,12 +33,13 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
@@ -92,6 +93,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
     private Process parent;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST)
     private List<Process> children;
 
@@ -99,6 +101,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     @OrderBy("ordering")
     private List<Task> tasks;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST, orphanRemoval = true)
     private List<Comment> comments;
 

@@ -97,6 +97,7 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<User> users;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
