@@ -37,17 +37,31 @@ public class BeanQuery {
     }
 
     /**
-     * Requires that the hits must correspond to any of the specified values in
-     * the specified database column.
+     * Requires that the hits in a specific column must have a specific value.
      * 
-     * @param column
-     *            column in which the value must be
-     * @param values
-     *            value that the column must accept one of
+     * @param fieldName
+     *            class field that must have the specified value
+     * @param value
+     *            value that the field must have
      */
-    public void addInCollectionRestriction(String column, Collection<Integer> values) {
-        String parameterName = varName(column);
-        restrictions.add(varName + '.' + column + " IN (:" + parameterName + ')');
+    public void addBooleanRestriction(String fieldName, Boolean value) {
+        String joker = varName(fieldName);
+        restrictions.add(varName + '.' + fieldName + " = :" + joker);
+        parameters.put(joker, value);
+    }
+
+    /**
+     * Requires that the hits must correspond to any of the specified values in
+     * the specified class field.
+     * 
+     * @param fieldName
+     *            class field in which the value must be
+     * @param values
+     *            value that the class field must accept one of
+     */
+    public void addInCollectionRestriction(String fieldName, Collection<?> values) {
+        String parameterName = varName(fieldName);
+        restrictions.add(varName + '.' + fieldName + " IN (:" + parameterName + ')');
         parameters.put(parameterName, values);
     }
 
@@ -115,10 +129,10 @@ public class BeanQuery {
     public void restrictToClient(int sessionClientId) {
         switch (objectClass) {
             case "Process":
-                restrictions.add(varName + ".project.client_id = :sessionClientId");
+                restrictions.add(varName + ".project.client.id = :sessionClientId");
                 break;
             case "Task":
-                restrictions.add(varName + ".process.project.client_id = :sessionClientId");
+                restrictions.add(varName + ".process.project.client.id = :sessionClientId");
                 break;
             default:
                 throw new IllegalStateException("complete switch");
@@ -140,10 +154,10 @@ public class BeanQuery {
     public void restrictToProjects(Collection<Integer> projectIDs) {
         switch (objectClass) {
             case "Process":
-                restrictions.add(varName + ".project_id IN (:projectIDs)");
+                restrictions.add(varName + ".project.id IN (:projectIDs)");
                 break;
             case "Task":
-                restrictions.add(varName + ".process.project_id IN (:projectIDs)");
+                restrictions.add(varName + ".process.project.id IN (:projectIDs)");
                 break;
             default:
                 throw new IllegalStateException("complete switch");
@@ -179,7 +193,7 @@ public class BeanQuery {
      * @return a query for all objects
      */
     public String formQueryForAll() {
-        String query = "SELECT COUNT(*) FROM " + objectClass + " AS " + varName;
+        String query = "FROM " + objectClass + " AS " + varName;
         if (!restrictions.isEmpty()) {
             query += " WHERE " + String.join(" AND ", restrictions);
         }
@@ -198,7 +212,7 @@ public class BeanQuery {
         while (inputIterator.current() != CharacterIterator.DONE) {
             char currentChar = inputIterator.current();
             if (currentChar < '0' || (currentChar > '9' && currentChar < 'A')
-                    || (currentChar > 'Z' && currentChar < 'a') || currentChar > 'Z') {
+                    || (currentChar > 'Z' && currentChar < 'a') || currentChar > 'z') {
                 upperCase = true;
             } else {
                 result.append(upperCase ? Character.toUpperCase(currentChar) : Character.toLowerCase(currentChar));

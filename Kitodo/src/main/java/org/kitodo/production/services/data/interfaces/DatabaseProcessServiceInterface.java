@@ -498,7 +498,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *            sort ascending or descending?
      * @param filters
      *            a map with exactly one entry, only the value is important, in
-     *            which the content of the filter field is passed
+     *            which the content of the filter field is passed. May be
+     *            {@code null} if there is no filter input, like on dashboard.
      * @param showClosedProcesses
      *            whether completed processes should be displayed (usually not)
      * @param showInactiveProjects

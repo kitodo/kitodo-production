@@ -79,6 +79,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
     private static final Map<String, String> SORT_FIELD_MAPPING;
     static {
         SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title", "title");
         SORT_FIELD_MAPPING.put("title.keyword", "title");
         SORT_FIELD_MAPPING.put("processForTask.id", "process_id");
         SORT_FIELD_MAPPING.put("processForTask.title.keyword", "process.title");
@@ -154,7 +155,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
                 query.addIntegerRestriction("correction", 0);
             }
             if (!showAutomaticTasks) {
-                query.addIntegerRestriction("typeAutomatic", 0);
+                query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
             }
             if (!taskStatus.isEmpty()) {
                 List<Integer> selectedStatuses = taskStatus.stream().map(status -> status.getValue())
@@ -199,12 +200,12 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
             query.addIntegerRestriction("correction", 0);
         }
         if (!showAutomaticTasks) {
-            query.addIntegerRestriction("typeAutomatic", 0);
+            query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
         }
         if (!taskStatus.isEmpty()) {
             List<Integer> selectedStatuses = taskStatus.stream().map(status -> status.getValue())
                     .collect(Collectors.toList());
-            query.addInCollectionRestriction("processingStatus", selectedStatuses);
+            query.addInCollectionRestriction("processingStatus", taskStatus);
         }
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
