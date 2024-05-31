@@ -28,7 +28,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.production.forms.CalendarForm;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.helper.Helper;
@@ -51,13 +50,13 @@ public class CountableMetadata {
      * access to the other issues, which—together with the start value and step
      * size—define the value of the counter on a given day.
      */
-    private Block block;
+    private final Block block;
 
     /**
      * Date and issue this counter appears the first time,
      * boolean to check if this metadata counter is only associated to issue or not.
      */
-    private Triple<LocalDate, Issue, Boolean> create;
+    private final Triple<LocalDate, Issue, Boolean> create;
 
     /**
      * Date and issue this counter does no longer appear on. May be null, indicating that no end issue has been set.
@@ -211,7 +210,7 @@ public class CountableMetadata {
         assert new IssueComparator(block).compare(selectedIssue, Pair.of(this.create.getLeft(), this.create.getMiddle())) >= 0;
         Paginator values = new Paginator(startValue);
         int breakMark = 0;
-        for (LocalDate i = create.getLeft(); i.compareTo(selectedIssue.getLeft()) <= 0; i = i.plusDays(1)) {
+        for (LocalDate i = create.getLeft(); !i.isAfter(selectedIssue.getLeft()); i = i.plusDays(1)) {
             boolean first = i.equals(create.getLeft());
             for (IndividualIssue issue : block.getIndividualIssues(i)) {
                 if (first && block.getIssueIndex(issue.getIssue()) < block.getIssueIndex(create.getMiddle())) {
@@ -329,12 +328,14 @@ public class CountableMetadata {
     /**
      * Returns the list of selectable metadata types.
      *
-     * @return the map of metadata types
+     * @param processId ID of process for which metadata types are determined
+     *
+     * @return the list of metadata types
      */
-    public List<ProcessDetail> getAllMetadataTypes() {
+    public List<ProcessDetail> getAllMetadataTypes(Integer processId) {
         if (Objects.isNull(allMetadataTypes)) {
             try {
-                Process process = ServiceManager.getProcessService().getById(CalendarForm.getParentId());
+                Process process = ServiceManager.getProcessService().getById(processId);
                 allMetadataTypes = new ArrayList<>(CalendarService.getAddableMetadataTable(process));
 
             } catch (DAOException | DataException | IOException e) {

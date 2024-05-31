@@ -122,7 +122,7 @@ public class CalendarForm implements Serializable {
      * done once on form creation.
      */
     private final LocalDate today = LocalDate.now();
-    private static Integer parentId;
+    private Integer parentId;
 
     private String activeIndexes = "0";
 
@@ -195,7 +195,7 @@ public class CalendarForm implements Serializable {
      *
      * @return value of parentId
      */
-    public static Integer getParentId() {
+    public Integer getParentId() {
         return parentId;
     }
 
@@ -721,8 +721,9 @@ public class CalendarForm implements Serializable {
         if (!selectedBlock.getIssues().isEmpty() && Objects.nonNull(selectedIssue)) {
             CountableMetadata metadata = new CountableMetadata(selectedBlock,
                     Triple.of(selectedIssue.getDate(), selectedIssue.getIssue(), onlyThisIssue));
-            if (!metadata.getAllMetadataTypes().isEmpty()) {
-                metadata.setMetadataDetail(metadata.getAllMetadataTypes().get(0));
+            List<ProcessDetail> metadataTypes = metadata.getAllMetadataTypes(getParentId());
+            if (!metadataTypes.isEmpty()) {
+                metadata.setMetadataDetail(metadataTypes.get(0));
             }
             selectedBlock.addMetadata(metadata);
         } else {
