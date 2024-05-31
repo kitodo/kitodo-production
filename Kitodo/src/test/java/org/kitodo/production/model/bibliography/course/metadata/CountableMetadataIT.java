@@ -146,7 +146,7 @@ public class CountableMetadataIT {
         List<ProcessDetail> allMetadataTypes = getMetadataTypes();
         assertEquals(EXPECTED_NUMBER_OF_METADATA_TYPES, allMetadataTypes.size());
         List<String> labels = allMetadataTypes.stream().map(ProcessDetail::getLabel).collect(Collectors.toList());
-        assertTrue(labels.contains(TestConstants.HAUPT_TITEL));
+        assertTrue(labels.contains(TestConstants.TITLE_MAIN));
         assertTrue(labels.contains(TestConstants.METS_LABEL));
     }
 

@@ -328,12 +328,14 @@ public class CountableMetadata {
     /**
      * Returns the list of selectable metadata types.
      *
+     * @param processId ID of process for which metadata types are determined
+     *
      * @return the list of metadata types
      */
-    public List<ProcessDetail> getAllMetadataTypes(Integer parentProcessId) {
+    public List<ProcessDetail> getAllMetadataTypes(Integer processId) {
         if (Objects.isNull(allMetadataTypes)) {
             try {
-                Process process = ServiceManager.getProcessService().getById(parentProcessId);
+                Process process = ServiceManager.getProcessService().getById(processId);
                 allMetadataTypes = new ArrayList<>(CalendarService.getAddableMetadataTable(process));
 
             } catch (DAOException | DataException | IOException e) {
