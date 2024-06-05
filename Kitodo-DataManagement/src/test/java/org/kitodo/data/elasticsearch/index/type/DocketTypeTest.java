@@ -11,14 +11,14 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
 
@@ -53,11 +53,9 @@ public class DocketTypeTest {
 
         Map<String, Object> actual = docketType.createDocument(docket);
 
-        assertEquals("Key title doesn't match to given value!", "default",
-            DocketTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key file doesn't match to given value!", "docket.xsl",
-            DocketTypeField.FILE.getStringValue(actual));
-        assertTrue("Key file doesn't match to given value!", DocketTypeField.ACTIVE.getBooleanValue(actual));
+        assertEquals("default", DocketTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals("docket.xsl", DocketTypeField.FILE.getStringValue(actual), "Key file doesn't match to given value!");
+        assertTrue(DocketTypeField.ACTIVE.getBooleanValue(actual), "Key file doesn't match to given value!");
     }
 
     @Test
@@ -67,7 +65,7 @@ public class DocketTypeTest {
 
         Map<String, Object> actual = docketType.createDocument(docket);
 
-        assertEquals("Amount of keys is incorrect!", 5, actual.keySet().size());
+        assertEquals(5, actual.keySet().size(), "Amount of keys is incorrect!");
     }
 
     @Test
@@ -76,6 +74,6 @@ public class DocketTypeTest {
 
         List<Docket> dockets = prepareData();
         Map<Integer, Map<String, Object>> documents = docketType.createDocuments(dockets);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
+        assertEquals(2, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 }

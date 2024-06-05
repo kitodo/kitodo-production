@@ -11,15 +11,15 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.elasticsearch.index.type.enums.RulesetTypeField;
 
@@ -54,13 +54,10 @@ public class RulesetTypeTest {
 
         Map<String, Object> actual = rulesetType.createDocument(ruleset);
 
-        assertEquals("Key title doesn't match to given value!", "SLUBDD",
-            RulesetTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key file doesn't match to given value!", "ruleset_slubdd.xml",
-            RulesetTypeField.FILE.getStringValue(actual));
-        assertFalse("Key orderMetadataByRuleset doesn't match to given value!",
-            RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(actual));
-        assertTrue("Key active doesn't match to given value!", RulesetTypeField.ACTIVE.getBooleanValue(actual));
+        assertEquals("SLUBDD", RulesetTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals("ruleset_slubdd.xml", RulesetTypeField.FILE.getStringValue(actual), "Key file doesn't match to given value!");
+        assertFalse(RulesetTypeField.ORDER_METADATA_BY_RULESET.getBooleanValue(actual), "Key orderMetadataByRuleset doesn't match to given value!");
+        assertTrue(RulesetTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
     }
 
     @Test
@@ -70,7 +67,7 @@ public class RulesetTypeTest {
 
         Map<String, Object> actual = rulesetType.createDocument(ruleset);
 
-        assertEquals("Amount of keys is incorrect!", 6, actual.keySet().size());
+        assertEquals(6, actual.keySet().size(), "Amount of keys is incorrect!");
     }
 
     @Test
@@ -79,6 +76,6 @@ public class RulesetTypeTest {
 
         List<Ruleset> rulesets = prepareData();
         Map<Integer, Map<String, Object>> documents = rulesetType.createDocuments(rulesets);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
+        assertEquals(2, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 }

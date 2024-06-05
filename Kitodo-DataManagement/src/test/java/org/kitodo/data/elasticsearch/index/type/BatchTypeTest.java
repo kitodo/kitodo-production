@@ -11,13 +11,13 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
@@ -69,20 +69,18 @@ public class BatchTypeTest {
         Batch batch = prepareData().get(0);
         Map<String, Object> actual = batchType.createDocument(batch);
 
-        assertEquals("Key title doesn't match to given value!", "Batch1", BatchTypeField.TITLE.getStringValue(actual));
+        assertEquals("Batch1", BatchTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
 
         List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
-        assertEquals("Size processes doesn't match to given value!", 2, processes.size());
+        assertEquals(2, processes.size(), "Size processes doesn't match to given value!");
 
         Map<String, Object> process = processes.get(0);
-        assertEquals("Key processes.id doesn't match to given value!", 1, ProcessTypeField.ID.getIntValue(process));
-        assertEquals("Key processes.title doesn't match to given value!", "First",
-            ProcessTypeField.TITLE.getStringValue(process));
+        assertEquals(1, ProcessTypeField.ID.getIntValue(process), "Key processes.id doesn't match to given value!");
+        assertEquals("First", ProcessTypeField.TITLE.getStringValue(process), "Key processes.title doesn't match to given value!");
 
         process = processes.get(1);
-        assertEquals("Key processes.id doesn't match to given value!", 2, ProcessTypeField.ID.getIntValue(process));
-        assertEquals("Key processes.title doesn't match to given value!", "Second",
-            ProcessTypeField.TITLE.getStringValue(process));
+        assertEquals(2, ProcessTypeField.ID.getIntValue(process), "Key processes.id doesn't match to given value!");
+        assertEquals("Second", ProcessTypeField.TITLE.getStringValue(process), "Key processes.title doesn't match to given value!");
     }
 
     @Test
@@ -92,10 +90,10 @@ public class BatchTypeTest {
         Batch batch = prepareData().get(1);
         Map<String, Object> actual = batchType.createDocument(batch);
 
-        assertEquals("Key title doesn't match to given value!", "Batch2", BatchTypeField.TITLE.getStringValue(actual));
+        assertEquals("Batch2", BatchTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
 
         List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
-        assertEquals("Size processes doesn't match to given value!", 0, processes.size());
+        assertEquals(0, processes.size(), "Size processes doesn't match to given value!");
     }
 
     @Test
@@ -105,11 +103,11 @@ public class BatchTypeTest {
         Batch batch = prepareData().get(0);
         Map<String, Object> actual = batchType.createDocument(batch);
 
-        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
+        assertEquals(2, actual.keySet().size(), "Amount of keys is incorrect!");
 
         List<Map<String, Object>> processes = BatchTypeField.PROCESSES.getJsonArray(actual);
         Map<String, Object> process = processes.get(0);
-        assertEquals("Amount of keys in processes is incorrect!", 2, process.keySet().size());
+        assertEquals(2, process.keySet().size(), "Amount of keys in processes is incorrect!");
     }
 
     @Test
@@ -118,6 +116,6 @@ public class BatchTypeTest {
 
         List<Batch> batches = prepareData();
         Map<Integer, Map<String, Object>> documents = batchType.createDocuments(batches);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+        assertEquals(3, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 }

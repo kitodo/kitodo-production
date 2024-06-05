@@ -11,13 +11,13 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.elasticsearch.index.type.enums.FilterTypeField;
@@ -56,9 +56,8 @@ public class FilterTypeTest {
         Filter filter = prepareData().get(0);
         Map<String, Object> actual = filterType.createDocument(filter);
 
-        assertEquals("Key value doesn't match to given value!", "\"id:1\"",
-            FilterTypeField.VALUE.getStringValue(actual));
-        assertEquals("Key user doesn't match to given value!", 1, FilterTypeField.USER.getIntValue(actual));
+        assertEquals("\"id:1\"", FilterTypeField.VALUE.getStringValue(actual), "Key value doesn't match to given value!");
+        assertEquals(1, FilterTypeField.USER.getIntValue(actual), "Key user doesn't match to given value!");
     }
 
     @Test
@@ -68,9 +67,8 @@ public class FilterTypeTest {
         Filter filter = prepareData().get(1);
         Map<String, Object> actual = filterType.createDocument(filter);
 
-        assertEquals("Key value doesn't match to given value!", "\"id:2\"",
-            FilterTypeField.VALUE.getStringValue(actual));
-        assertEquals("Key user doesn't match to given value!", 1, FilterTypeField.USER.getIntValue(actual));
+        assertEquals("\"id:2\"", FilterTypeField.VALUE.getStringValue(actual), "Key value doesn't match to given value!");
+        assertEquals(1, FilterTypeField.USER.getIntValue(actual), "Key user doesn't match to given value!");
     }
 
     @Test
@@ -80,7 +78,7 @@ public class FilterTypeTest {
         Filter filter = prepareData().get(0);
         Map<String, Object> actual = filterType.createDocument(filter);
 
-        assertEquals("Amount of keys is incorrect!", 2, actual.keySet().size());
+        assertEquals(2, actual.keySet().size(), "Amount of keys is incorrect!");
     }
 
     @Test
@@ -89,6 +87,6 @@ public class FilterTypeTest {
 
         List<Filter> filters = prepareData();
         Map<Integer, Map<String, Object>> documents = filterType.createDocuments(filters);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 2, documents.size());
+        assertEquals(2, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 }

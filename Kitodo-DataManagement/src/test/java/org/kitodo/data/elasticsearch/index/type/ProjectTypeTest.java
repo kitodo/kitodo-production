@@ -11,8 +11,9 @@
 
 package org.kitodo.data.elasticsearch.index.type;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -23,7 +24,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -179,111 +180,78 @@ public class ProjectTypeTest {
         Project project = prepareData().get(0);
         Map<String, Object> actual = processType.createDocument(project);
 
-        assertEquals("Key title doesn't match to given value!", "Testing",
-            ProjectTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key startDate doesn't match to given value!", "2017-01-01 00:00:00",
-            ProjectTypeField.START_DATE.getStringValue(actual));
-        assertEquals("Key endDate doesn't match to given value!", "2017-03-01 00:00:00",
-            ProjectTypeField.END_DATE.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", ProjectTypeField.ACTIVE.getBooleanValue(actual));
-        assertEquals("Key metsRightsOwner doesn't match to given value!", "",
-            ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual));
-        assertEquals("Key numberOfVolumes doesn't match to given value!", 10,
-            ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
-        assertEquals("Key numberOfPages doesn't match to given value!", 100,
-            ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual));
+        assertEquals("Testing", ProjectTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals("2017-01-01 00:00:00", ProjectTypeField.START_DATE.getStringValue(actual), "Key startDate doesn't match to given value!");
+        assertEquals("2017-03-01 00:00:00", ProjectTypeField.END_DATE.getStringValue(actual), "Key endDate doesn't match to given value!");
+        assertTrue(ProjectTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
+        assertEquals("", ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual), "Key metsRightsOwner doesn't match to given value!");
+        assertEquals(10, ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual), "Key numberOfVolumes doesn't match to given value!");
+        assertEquals(100, ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual), "Key numberOfPages doesn't match to given value!");
 
-        assertEquals("Key client.id doesn't match to given value!", 1, ProjectTypeField.CLIENT_ID.getIntValue(actual));
-        assertEquals("Key client.clientName doesn't match to given value!", "TestClient",
-            ProjectTypeField.CLIENT_NAME.getStringValue(actual));
+        assertEquals(1, ProjectTypeField.CLIENT_ID.getIntValue(actual), "Key client.id doesn't match to given value!");
+        assertEquals("TestClient", ProjectTypeField.CLIENT_NAME.getStringValue(actual), "Key client.clientName doesn't match to given value!");
 
-        Boolean hasProcesses = ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual);
-        assertEquals("Has processes can only be false, because property is queried from db", false, hasProcesses);
+        assertFalse(ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual), "Has processes can only be false, because property is queried from db");
 
         List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
-        assertEquals("Size templates doesn't match to given value!", 1, templates.size());
+        assertEquals(1, templates.size(), "Size templates doesn't match to given value!");
 
         Map<String, Object> template = templates.get(0);
-        assertEquals("Key templates.id doesn't match to given value!", 1, TemplateTypeField.ID.getIntValue(template));
-        assertEquals("Key templates.title doesn't match to given value!", "First",
-            TemplateTypeField.TITLE.getStringValue(template));
+        assertEquals(1, TemplateTypeField.ID.getIntValue(template), "Key templates.id doesn't match to given value!");
+        assertEquals("First", TemplateTypeField.TITLE.getStringValue(template), "Key templates.title doesn't match to given value!");
 
         List<Map<String, Object>> folders = ProjectTypeField.FOLDER.getJsonArray(actual);
-        assertEquals("Size folders doesn't match to given value!", 5, folders.size());
+        assertEquals(5, folders.size(), "Size folders doesn't match to given value!");
 
         Map<String, Object> folder = folders.get(0);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "MAX",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("MAX", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "jpgs/max",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("jpgs/max", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("image/jpeg", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(1);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "DEFAULT",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("DEFAULT", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "jpgs/default",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("jpgs/default", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("image/jpeg", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(2);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "THUMBS",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("THUMBS", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "jpgs/thumbs",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("jpgs/thumbs", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("image/jpeg", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(3);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "FULLTEXT",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("FULLTEXT", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "ocr/alto",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "text/xml",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("ocr/alto", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("text/xml", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(4);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "DOWNLOAD",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("DOWNLOAD", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "pdf",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("pdf", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("application/pdf", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
-        assertEquals("Size users doesn't match to given value!", 2, users.size());
+        assertEquals(2, users.size(), "Size users doesn't match to given value!");
 
         Map<String, Object> user = users.get(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, UserTypeField.ID.getIntValue(user));
-        assertEquals("Key users.name doesn't match to given value!", "Tic", UserTypeField.NAME.getStringValue(user));
-        assertEquals("Key users.surname doesn't match to given value!", "Tac",
-            UserTypeField.SURNAME.getStringValue(user));
-        assertEquals("Key users.login doesn't match to given value!", "first",
-            UserTypeField.LOGIN.getStringValue(user));
+        assertEquals(1, UserTypeField.ID.getIntValue(user), "Key users.id doesn't match to given value!");
+        assertEquals("Tic", UserTypeField.NAME.getStringValue(user), "Key users.name doesn't match to given value!");
+        assertEquals("Tac", UserTypeField.SURNAME.getStringValue(user), "Key users.surname doesn't match to given value!");
+        assertEquals("first", UserTypeField.LOGIN.getStringValue(user), "Key users.login doesn't match to given value!");
 
         user = users.get(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
-        assertEquals("Key users.name doesn't match to given value!", "Ted", UserTypeField.NAME.getStringValue(user));
-        assertEquals("Key users.surname doesn't match to given value!", "Barney",
-            UserTypeField.SURNAME.getStringValue(user));
-        assertEquals("Key users.login doesn't match to given value!", "second",
-            UserTypeField.LOGIN.getStringValue(user));
+        assertEquals(2, UserTypeField.ID.getIntValue(user), "Key users.id doesn't match to given value!");
+        assertEquals("Ted", UserTypeField.NAME.getStringValue(user), "Key users.name doesn't match to given value!");
+        assertEquals("Barney", UserTypeField.SURNAME.getStringValue(user), "Key users.surname doesn't match to given value!");
+        assertEquals("second", UserTypeField.LOGIN.getStringValue(user), "Key users.login doesn't match to given value!");
     }
 
     @Test
@@ -293,111 +261,78 @@ public class ProjectTypeTest {
         Project project = prepareData().get(1);
         Map<String, Object> actual = processType.createDocument(project);
 
-        assertEquals("Key title doesn't match to given value!", "Rendering",
-            ProjectTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key startDate doesn't match to given value!", "2017-01-10 00:00:00",
-            ProjectTypeField.START_DATE.getStringValue(actual));
-        assertEquals("Key endDate doesn't match to given value!", "2017-09-10 00:00:00",
-            ProjectTypeField.END_DATE.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", ProjectTypeField.ACTIVE.getBooleanValue(actual));
-        assertEquals("Key metsRightsOwner doesn't match to given value!", "",
-            ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual));
-        assertEquals("Key numberOfVolumes doesn't match to given value!", 20,
-            ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
-        assertEquals("Key numberOfPages doesn't match to given value!", 2000,
-            ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual));
+        assertEquals("Rendering", ProjectTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals("2017-01-10 00:00:00", ProjectTypeField.START_DATE.getStringValue(actual), "Key startDate doesn't match to given value!");
+        assertEquals("2017-09-10 00:00:00", ProjectTypeField.END_DATE.getStringValue(actual), "Key endDate doesn't match to given value!");
+        assertTrue(ProjectTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
+        assertEquals("", ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual), "Key metsRightsOwner doesn't match to given value!");
+        assertEquals(20, ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual), "Key numberOfVolumes doesn't match to given value!");
+        assertEquals(2000, ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual), "Key numberOfPages doesn't match to given value!");
 
-        assertEquals("Key client.id doesn't match to given value!", 0, ProjectTypeField.CLIENT_ID.getIntValue(actual));
-        assertEquals("Key client.clientName doesn't match to given value!", "",
-            ProjectTypeField.CLIENT_NAME.getStringValue(actual));
+        assertEquals(0, ProjectTypeField.CLIENT_ID.getIntValue(actual), "Key client.id doesn't match to given value!");
+        assertEquals("", ProjectTypeField.CLIENT_NAME.getStringValue(actual), "Key client.clientName doesn't match to given value!");
 
-        Boolean hasProcesses = ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual);
-        assertEquals("Has processes can only be false, because property is queried from db", false, hasProcesses);
+        assertFalse(ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual), "Has processes can only be false, because property is queried from db");
 
         List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
-        assertEquals("Size templates doesn't match to given value!", 1, templates.size());
+        assertEquals(1, templates.size(), "Size templates doesn't match to given value!");
 
         Map<String, Object> template = templates.get(0);
-        assertEquals("Key templates.id doesn't match to given value!", 1, TemplateTypeField.ID.getIntValue(template));
-        assertEquals("Key templates.title doesn't match to given value!", "First",
-            TemplateTypeField.TITLE.getStringValue(template));
+        assertEquals(1, TemplateTypeField.ID.getIntValue(template), "Key templates.id doesn't match to given value!");
+        assertEquals("First", TemplateTypeField.TITLE.getStringValue(template), "Key templates.title doesn't match to given value!");
 
         List<Map<String, Object>> folders = ProjectTypeField.FOLDER.getJsonArray(actual);
-        assertEquals("Size folders doesn't match to given value!", 5, folders.size());
+        assertEquals(5, folders.size(), "Size folders doesn't match to given value!");
 
         Map<String, Object> folder = folders.get(0);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "MAX",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("MAX", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         String path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/max/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "jpgs/max",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("jpgs/max", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("image/jpeg", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(1);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "DEFAULT",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("DEFAULT", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/default/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "jpgs/default",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("jpgs/default", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("image/jpeg", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(2);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "THUMBS",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("THUMBS", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/jpgs/thumbs/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "jpgs/thumbs",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "image/jpeg",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("jpgs/thumbs", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("image/jpeg", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(3);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "FULLTEXT",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("FULLTEXT", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/ocr/alto/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "ocr/alto",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "text/xml",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("ocr/alto", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("text/xml", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         folder = folders.get(4);
-        assertEquals("Key folders.fileGroup doesn't match to given value!", "DOWNLOAD",
-            ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder));
+        assertEquals("DOWNLOAD", ProjectTypeField.FOLDER_FILE_GROUP.getStringValue(folder), "Key folders.fileGroup doesn't match to given value!");
         path = "http://www.example.com/content/$(meta.CatalogIDDigital)/pdf/";
-        assertEquals("Key folders.urlStructure doesn't match to given value!", path,
-            ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder));
-        assertEquals("Key folders.path doesn't match to given value!", "pdf",
-            ProjectTypeField.FOLDER_PATH.getStringValue(folder));
-        assertEquals("Key folders.mimeType doesn't match to given value!", "application/pdf",
-            ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder));
+        assertEquals(path, ProjectTypeField.FOLDER_URL_STRUCTURE.getStringValue(folder), "Key folders.urlStructure doesn't match to given value!");
+        assertEquals("pdf", ProjectTypeField.FOLDER_PATH.getStringValue(folder), "Key folders.path doesn't match to given value!");
+        assertEquals("application/pdf", ProjectTypeField.FOLDER_MIME_TYPE.getStringValue(folder), "Key folders.mimeType doesn't match to given value!");
 
         List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
-        assertEquals("Size users doesn't match to given value!", 2, users.size());
+        assertEquals(2, users.size(), "Size users doesn't match to given value!");
 
         Map<String, Object> user = users.get(0);
-        assertEquals("Key users.id doesn't match to given value!", 1, UserTypeField.ID.getIntValue(user));
-        assertEquals("Key users.name doesn't match to given value!", "Tic", UserTypeField.NAME.getStringValue(user));
-        assertEquals("Key users.surname doesn't match to given value!", "Tac",
-            UserTypeField.SURNAME.getStringValue(user));
-        assertEquals("Key users.login doesn't match to given value!", "first",
-            UserTypeField.LOGIN.getStringValue(user));
+        assertEquals(1, UserTypeField.ID.getIntValue(user), "Key users.id doesn't match to given value!");
+        assertEquals("Tic", UserTypeField.NAME.getStringValue(user), "Key users.name doesn't match to given value!");
+        assertEquals("Tac", UserTypeField.SURNAME.getStringValue(user), "Key users.surname doesn't match to given value!");
+        assertEquals("first", UserTypeField.LOGIN.getStringValue(user), "Key users.login doesn't match to given value!");
 
         user = users.get(1);
-        assertEquals("Key users.id doesn't match to given value!", 2, UserTypeField.ID.getIntValue(user));
-        assertEquals("Key users.name doesn't match to given value!", "Ted", UserTypeField.NAME.getStringValue(user));
-        assertEquals("Key users.surname doesn't match to given value!", "Barney",
-            UserTypeField.SURNAME.getStringValue(user));
-        assertEquals("Key users.login doesn't match to given value!", "second",
-            UserTypeField.LOGIN.getStringValue(user));
+        assertEquals(2, UserTypeField.ID.getIntValue(user), "Key users.id doesn't match to given value!");
+        assertEquals("Ted", UserTypeField.NAME.getStringValue(user), "Key users.name doesn't match to given value!");
+        assertEquals("Barney", UserTypeField.SURNAME.getStringValue(user), "Key users.surname doesn't match to given value!");
+        assertEquals("second", UserTypeField.LOGIN.getStringValue(user), "Key users.login doesn't match to given value!");
     }
 
     @Test
@@ -408,32 +343,24 @@ public class ProjectTypeTest {
         Project project = prepareData().get(2);
         Map<String, Object> actual = processType.createDocument(project);
 
-        assertEquals("Key title doesn't match to given value!", "Incomplete",
-            ProjectTypeField.TITLE.getStringValue(actual));
-        assertEquals("Key startDate doesn't match to given value!", dateFormat.format(project.getStartDate()),
-            ProjectTypeField.START_DATE.getStringValue(actual));
-        assertEquals("Key endDate doesn't match to given value!", dateFormat.format(project.getEndDate()),
-            ProjectTypeField.END_DATE.getStringValue(actual));
-        assertTrue("Key active doesn't match to given value!", ProjectTypeField.ACTIVE.getBooleanValue(actual));
-        assertEquals("Key metsRightsOwner doesn't match to given value!", "",
-            ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual));
-        assertEquals("Key numberOfVolumes doesn't match to given value!", 0,
-            ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual));
-        assertEquals("Key numberOfPages doesn't match to given value!", 0,
-            ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual));
+        assertEquals("Incomplete", ProjectTypeField.TITLE.getStringValue(actual), "Key title doesn't match to given value!");
+        assertEquals(dateFormat.format(project.getStartDate()), ProjectTypeField.START_DATE.getStringValue(actual), "Key startDate doesn't match to given value!");
+        assertEquals(dateFormat.format(project.getEndDate()), ProjectTypeField.END_DATE.getStringValue(actual), "Key endDate doesn't match to given value!");
+        assertTrue(ProjectTypeField.ACTIVE.getBooleanValue(actual), "Key active doesn't match to given value!");
+        assertEquals("", ProjectTypeField.METS_RIGTS_OWNER.getStringValue(actual), "Key metsRightsOwner doesn't match to given value!");
+        assertEquals(0, ProjectTypeField.NUMBER_OF_VOLUMES.getIntValue(actual), "Key numberOfVolumes doesn't match to given value!");
+        assertEquals(0, ProjectTypeField.NUMBER_OF_PAGES.getIntValue(actual), "Key numberOfPages doesn't match to given value!");
 
-        assertEquals("Key client.id doesn't match to given value!", 0, ProjectTypeField.CLIENT_ID.getIntValue(actual));
-        assertEquals("Key client.clientName doesn't match to given value!", "",
-            ProjectTypeField.CLIENT_NAME.getStringValue(actual));
+        assertEquals(0, ProjectTypeField.CLIENT_ID.getIntValue(actual), "Key client.id doesn't match to given value!");
+        assertEquals("", ProjectTypeField.CLIENT_NAME.getStringValue(actual), "Key client.clientName doesn't match to given value!");
 
-        Boolean hasProcesses = ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual);
-        assertEquals("Has processes can only be false, because property is queried from db", false, hasProcesses);
+        assertFalse(ProjectTypeField.HAS_PROCESSES.getBooleanValue(actual), "Has processes can only be false, because property is queried from db");
 
         List<Map<String, Object>> folder = ProjectTypeField.FOLDER.getJsonArray(actual);
-        assertEquals("Size projectFileGroups doesn't match to given value!", 0, folder.size());
+        assertEquals(0, folder.size(), "Size projectFileGroups doesn't match to given value!");
 
         List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
-        assertEquals("Size users doesn't match to given value!", 0, users.size());
+        assertEquals(0, users.size(), "Size users doesn't match to given value!");
     }
 
     @Test
@@ -443,19 +370,19 @@ public class ProjectTypeTest {
         Project project = prepareData().get(0);
         Map<String, Object> actual = processType.createDocument(project);
 
-        assertEquals("Amount of keys is incorrect!", 13, actual.keySet().size());
+        assertEquals(13, actual.keySet().size(), "Amount of keys is incorrect!");
 
         List<Map<String, Object>> templates = ProjectTypeField.TEMPLATES.getJsonArray(actual);
         Map<String, Object> template = templates.get(0);
-        assertEquals("Amount of keys in templates is incorrect!", 2, template.keySet().size());
+        assertEquals(2, template.keySet().size(), "Amount of keys in templates is incorrect!");
 
         List<Map<String, Object>> folders = ProjectTypeField.FOLDER.getJsonArray(actual);
         Map<String, Object> folder = folders.get(0);
-        assertEquals("Amount of keys in folders is incorrect!", 4, folder.keySet().size());
+        assertEquals(4, folder.keySet().size(), "Amount of keys in folders is incorrect!");
 
         List<Map<String, Object>> users = ProjectTypeField.USERS.getJsonArray(actual);
         Map<String, Object> user = users.get(0);
-        assertEquals("Amount of keys in users is incorrect!", 4, user.keySet().size());
+        assertEquals(4, user.keySet().size(), "Amount of keys in users is incorrect!");
     }
 
     @Test
@@ -464,6 +391,6 @@ public class ProjectTypeTest {
 
         List<Project> processes = prepareData();
         Map<Integer, Map<String, Object>> documents = processType.createDocuments(processes);
-        assertEquals("HashMap of documents doesn't contain given amount of elements!", 3, documents.size());
+        assertEquals(3, documents.size(), "HashMap of documents doesn't contain given amount of elements!");
     }
 }
