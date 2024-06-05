@@ -19,7 +19,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
@@ -31,9 +33,12 @@ public class ImportConfigurationIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertRolesFull();
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
         MockDatabase.setUpAwaitility();
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
     /**

@@ -28,7 +28,6 @@ import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -44,7 +43,6 @@ public class ImportConfigurationListView extends BaseForm {
      */
     public ImportConfigurationListView() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getImportConfigurationService()));
     }
 
     /**

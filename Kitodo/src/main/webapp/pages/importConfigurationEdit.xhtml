@@ -175,6 +175,26 @@
                     </p:row>
                 </p:panelGrid>
             </p:tab>
+
+            <p:tab id="clientsTab" title="#{msgs.clients}">
+                <p:panelGrid columns="1"
+                             layout="grid"
+                             id="clients-grid">
+                    <p:selectManyCheckbox id="clientsList"
+                                          layout="grid"
+                                          columns="1"
+                                          collectionType="java.util.ArrayList"
+                                          value="#{importConfigurationEditView.assignedClients}"
+                                          converter="#{clientConverter}">
+                        <f:selectItems value="#{importConfigurationEditView.availableClients}"
+                                       var="client"
+                                       itemLabel="#{client.name}"
+                                       itemValue="#{client}"/>
+                        <p:ajax event="change"
+                                oncomplete="toggleSave()"/>
+                    </p:selectManyCheckbox>
+                </p:panelGrid>
+            </p:tab>
         </p:tabView>
     </ui:define>
 

@@ -1706,6 +1706,7 @@ public class MockDatabase {
     }
 
     public static void insertImportConfigurations() throws DAOException, DataException {
+        Client firstClient = ServiceManager.getClientService().getById(1);
 
         // add GBV import configuration, including id and default search fields
         ImportConfiguration gbvConfiguration = new ImportConfiguration();
@@ -1729,6 +1730,7 @@ public class MockDatabase {
         gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
         gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
+        gbvConfiguration.setClients(Collections.singletonList(firstClient));
         ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
 
         // add Kalliope import configuration, including id search field
@@ -1767,6 +1769,7 @@ public class MockDatabase {
 
         kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
         kalliopeConfiguration.setParentSearchField(kalliopeConfiguration.getSearchFields().get(1));
+        kalliopeConfiguration.setClients(Collections.singletonList(firstClient));
         ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
 
         // add K10Plus import configuration, including id search field
@@ -1806,6 +1809,7 @@ public class MockDatabase {
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
         k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
+        k10plusConfiguration.setClients(Collections.singletonList(firstClient));
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {

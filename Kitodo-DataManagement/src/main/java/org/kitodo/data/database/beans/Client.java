@@ -40,6 +40,9 @@ public class Client extends BaseBean {
                     foreignKey = @ForeignKey(name = "FK_column_id"))})
     private List<ListColumn> listColumns;
 
+    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    private List<ImportConfiguration> importConfigurations;
+
     /**
      * Gets name.
      *
@@ -98,5 +101,27 @@ public class Client extends BaseBean {
      */
     public void setListColumns(List<ListColumn> columns) {
         this.listColumns = columns;
+    }
+
+    /**
+     * Get import configuration.
+     *
+     * @return import configurations
+     */
+    public List<ImportConfiguration> getImportConfigurations() {
+        initialize(new ClientDAO(), this.importConfigurations);
+        if (Objects.isNull(this.importConfigurations)) {
+            this.importConfigurations = new ArrayList<>();
+        }
+        return importConfigurations;
+    }
+
+    /**
+     * Set import configurations.
+     *
+     * @param configurations import configurations
+     */
+    public void setImportConfigurations(List<ImportConfiguration> configurations) {
+        this.importConfigurations = configurations;
     }
 }

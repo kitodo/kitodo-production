@@ -125,11 +125,11 @@ public class ImportServiceIT {
     @BeforeClass
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
+        MockDatabase.insertProcessesFull();
+        MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.insertMappingFiles();
         MockDatabase.insertImportConfigurations();
         MockDatabase.insertImportconfigurationWithCustomUrlParameters();
-        MockDatabase.insertProcessesFull();
-        MockDatabase.insertProcessesForHierarchyTests();
         MockDatabase.setUpAwaitility();
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
