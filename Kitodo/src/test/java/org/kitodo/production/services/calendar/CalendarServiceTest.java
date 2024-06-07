@@ -11,15 +11,15 @@
 
 package org.kitodo.production.services.calendar;
 
+import java.time.LocalDate;
+import java.time.Month;
+
 import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Issue;
-
-import java.time.LocalDate;
-import java.time.Month;
 
 public class CalendarServiceTest {
 
@@ -47,26 +47,6 @@ public class CalendarServiceTest {
     }
 
     @Test
-    public void shouldGetAddableMetadata() {
-        // TODO implement
-    }
-
-    @Test
-    public void shouldGetMetadataTranslation() {
-        // TODO implement
-    }
-
-    @Test
-    public void shouldGetMetadata() {
-        // TODO implement
-    }
-
-    @Test
-    public void shouldGetMetadataSummary() {
-        // TODO implement
-    }
-
-    @Test
     public void shouldConvertDateIssueToString() {
         Course course = new Course();
         LocalDate date = LocalDate.of(2024, Month.MARCH, 15);
@@ -83,10 +63,5 @@ public class CalendarServiceTest {
         Assert.assertEquals("", CalendarService.dateIssueToString(pairThree));
         Assert.assertEquals("", CalendarService.dateIssueToString(pairFour));
         Assert.assertEquals("", CalendarService.dateIssueToString(pairFive));
-    }
-
-    @Test
-    public void shouldGetAddableMetadataTable() {
-        // TODO implement
     }
 }
