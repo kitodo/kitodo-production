@@ -10,6 +10,8 @@
  */
 package org.kitodo.production.services.calendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.Month;
@@ -18,10 +20,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
@@ -43,7 +44,7 @@ public class CalendarServiceIT {
     private static final String NEWSPAPER_TEST_PROCESS_TITLE = "NewspaperOverallProcess";
 
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -53,7 +54,7 @@ public class CalendarServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         ProcessTestUtils.removeTestProcess(newspaperTestProcessId);
         MockDatabase.stopNode();
@@ -66,7 +67,7 @@ public class CalendarServiceIT {
         List<MetadataViewInterface> actualMetadata = CalendarService.getAddableMetadata(process);
 
         List<String> expectedMetadata = Arrays.asList("ORDERLABEL", "LABEL", "CONTENTIDS", "ProcessTitle", "ShelfMark");
-        Assert.assertEquals(expectedMetadata, actualMetadata.stream()
+        assertEquals(expectedMetadata, actualMetadata.stream()
                 .map(MetadataViewInterface::getId)
                 .collect(Collectors.toList()));
     }
@@ -94,11 +95,11 @@ public class CalendarServiceIT {
         shelfMark.setMetadataType("ShelfMark");
         block.addMetadata(shelfMark);
 
-        Assert.assertEquals(1,
+        assertEquals(1,
                 CalendarService.getMetadata(block, LocalDate.of(2024, Month.MARCH, 4), firstIssue).size());
-        Assert.assertEquals(2,
+        assertEquals(2,
                 CalendarService.getMetadata(block, LocalDate.of(2024, Month.MARCH, 5), secondIssue).size());
-        Assert.assertEquals(2,
+        assertEquals(2,
                 CalendarService.getMetadata(block, LocalDate.of(2024, Month.MARCH, 12), secondIssue).size());
     }
 
@@ -133,7 +134,7 @@ public class CalendarServiceIT {
                 .map(entry -> entry.getKey().getLabel() + " - " + entry.getValue().toString())
                 .collect(Collectors.toList());
         List<String> expectedMetadataSummary = Arrays.asList("Process title - 2024-03-04", "Signatur - 2024-03-05");
-        Assert.assertEquals(expectedMetadataSummary, actualMetadataSummary);
+        assertEquals(expectedMetadataSummary, actualMetadataSummary);
     }
 
     @Test
@@ -143,6 +144,6 @@ public class CalendarServiceIT {
 
         List<String> expectedMetadata = Arrays.asList(
                 "METS Reihenfolge-Etikett", "METS-Beschriftung", "METS-Inhalts-ID", "Process title", "Signatur");
-        Assert.assertEquals(expectedMetadata, actualMetadata.stream().map(ProcessDetail::getLabel).collect(Collectors.toList()));
+        assertEquals(expectedMetadata, actualMetadata.stream().map(ProcessDetail::getLabel).collect(Collectors.toList()));
     }
 }

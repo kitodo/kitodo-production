@@ -11,12 +11,13 @@
 
 package org.kitodo.production.services.calendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.time.LocalDate;
 import java.time.Month;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.production.model.bibliography.course.Block;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Issue;
@@ -32,18 +33,18 @@ public class CalendarServiceTest {
         firstIssue.setMonday(true);
         firstIssue.setTuesday(true);
         secondIssue.setSaturday(true);
-        Assert.assertEquals(0, CalendarService.getIndividualIssues(block).size());
+        assertEquals(0, CalendarService.getIndividualIssues(block).size());
 
         block.setFirstAppearance(LocalDate.of(2024, Month.MARCH, 1));
         block.setLastAppearance(LocalDate.of(2024, Month.MARCH, 15));
-        Assert.assertEquals(6, CalendarService.getIndividualIssues(block).size());
+        assertEquals(6, CalendarService.getIndividualIssues(block).size());
 
         firstIssue.addExclusion(LocalDate.of(2024, Month.MARCH, 11));
         firstIssue.addExclusion(LocalDate.of(2024, Month.MARCH, 12));
-        Assert.assertEquals(4, CalendarService.getIndividualIssues(block).size());
+        assertEquals(4, CalendarService.getIndividualIssues(block).size());
 
         secondIssue.addAddition(LocalDate.of(2024, Month.MARCH, 1));
-        Assert.assertEquals(5, CalendarService.getIndividualIssues(block).size());
+        assertEquals(5, CalendarService.getIndividualIssues(block).size());
     }
 
     @Test
@@ -58,10 +59,10 @@ public class CalendarServiceTest {
         Pair<LocalDate, Issue> pairFour = Pair.of(null, null);
         Pair<LocalDate, Issue> pairFive = null;
 
-        Assert.assertEquals("2024-03-15, Issue One", CalendarService.dateIssueToString(pairOne));
-        Assert.assertEquals("2024-03-15", CalendarService.dateIssueToString(pairTwo));
-        Assert.assertEquals("", CalendarService.dateIssueToString(pairThree));
-        Assert.assertEquals("", CalendarService.dateIssueToString(pairFour));
-        Assert.assertEquals("", CalendarService.dateIssueToString(pairFive));
+        assertEquals("2024-03-15, Issue One", CalendarService.dateIssueToString(pairOne));
+        assertEquals("2024-03-15", CalendarService.dateIssueToString(pairTwo));
+        assertEquals("", CalendarService.dateIssueToString(pairThree));
+        assertEquals("", CalendarService.dateIssueToString(pairFour));
+        assertEquals("", CalendarService.dateIssueToString(pairFive));
     }
 }
