@@ -132,7 +132,7 @@ public class CalendarServiceIT {
 
         List<String> actualMetadataSummary = CalendarService.getMetadataSummary(block).stream()
                 .map(entry -> entry.getKey().getLabel() + " - " + entry.getValue().toString())
-                .collect(Collectors.toList());
+                .sorted().collect(Collectors.toList());
         List<String> expectedMetadataSummary = Arrays.asList("Process title - 2024-03-04", "Signatur - 2024-03-05");
         assertEquals(expectedMetadataSummary, actualMetadataSummary);
     }
