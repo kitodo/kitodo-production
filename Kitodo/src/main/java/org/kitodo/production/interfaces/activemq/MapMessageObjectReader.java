@@ -11,6 +11,7 @@
 
 package org.kitodo.production.interfaces.activemq;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,10 +19,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.utils.Guard;
@@ -107,6 +110,51 @@ public class MapMessageObjectReader {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         return mandatoryString;
+    }
+
+    /**
+     * Fetches a {@code Collection<Integer>} from a MapMessage. This is a loose
+     * implementation for an optional object with optional content. The
+     * collection content is filtered through {@code toString()} and split on
+     * non-digits, dealing generously with list variants and separators. If not
+     * found, returns an empty collection, never {@code null}.
+     *
+     * @param key
+     *            the name of the set to return
+     * @return the set requested
+     * @throws JMSException
+     *             can be thrown by MapMessage.getObject(String)
+     */
+    public Collection<Integer> getCollectionOfInteger(String key) throws JMSException {
+        return getCollectionOfString(key).stream()
+                .flatMap(string -> Arrays.stream(string.split("\\D+"))).filter(StringUtils::isNumeric)
+                .map(Integer::valueOf).collect(Collectors.toList());
+    }
+
+    /**
+     * Fetches a {@code Collection<String>} from a MapMessage. This is a loose
+     * implementation for an optional object with optional content. The
+     * collection content is filtered through {@code toString()}, {@code null}
+     * objects will be skipped. If not found, returns an empty collection, never
+     * {@code null}.
+     *
+     * @param key
+     *            the name of the set to return
+     * @return the set requested
+     * @throws JMSException
+     *             can be thrown by MapMessage.getObject(String)
+     */
+    public Collection<String> getCollectionOfString(String key) throws JMSException {
+
+        Object collectionObject = ticket.getObject(key);
+        if (Objects.isNull(collectionObject)) {
+            return Collections.emptyList();
+        }
+        if (!(collectionObject instanceof Collection<?>)) {
+            return Collections.singletonList(collectionObject.toString());
+        }
+        return ((Collection<?>) collectionObject).stream().filter(Objects::nonNull).map(Object::toString)
+                .collect(Collectors.toList());
     }
 
     /**
