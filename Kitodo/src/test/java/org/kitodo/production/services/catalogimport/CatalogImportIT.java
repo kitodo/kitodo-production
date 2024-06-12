@@ -11,16 +11,17 @@
 
 package org.kitodo.production.services.catalogimport;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import com.xebialabs.restito.server.StubServer;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedList;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.production.helper.TempProcess;
@@ -37,7 +38,7 @@ public class CatalogImportIT {
     private static final int TEMPLATE_ID = 1;
     private static final int IMPORT_DEPTH = 2;
 
-    @BeforeClass
+    @BeforeAll
     public static void setup() throws Exception {
         setupServer();
         MockDatabase.startNode();
@@ -48,7 +49,7 @@ public class CatalogImportIT {
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @AfterClass
+    @AfterAll
     public static void shutdown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -60,7 +61,7 @@ public class CatalogImportIT {
         LinkedList<TempProcess> processes = ServiceManager.getImportService().importProcessHierarchy(CHILD_RECORD_ID,
                 MockDatabase.getKalliopeImportConfiguration(), PROJECT_ID, TEMPLATE_ID, IMPORT_DEPTH,
                 Collections.singleton("CatalogIDPredecessorPeriodical"));
-        Assert.assertEquals(IMPORT_DEPTH, processes.size());
+        assertEquals(IMPORT_DEPTH, processes.size());
     }
 
     private static void setupServer() throws IOException {

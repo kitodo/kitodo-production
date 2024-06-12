@@ -11,14 +11,14 @@
 
 package org.kitodo.production.security.password;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import javax.validation.ConstraintValidatorContext;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class PasswordConstraintValidatorTest {
 
@@ -26,7 +26,7 @@ public class PasswordConstraintValidatorTest {
     private ConstraintValidatorContext.ConstraintViolationBuilder builder;
     private PasswordConstraintValidator passwordConstraintValidator = new PasswordConstraintValidator();
 
-    @Before
+    @BeforeEach
     public void setup() {
         // mock the context
         context = Mockito.mock(ConstraintValidatorContext.class);
@@ -43,16 +43,14 @@ public class PasswordConstraintValidatorTest {
 
     @Test
     public void passwordsShouldBeValid() {
-        assertTrue("Password 'Random_2425!' was incorrect!",
-            passwordConstraintValidator.isValid("Random_2425!", context));
-        assertTrue("Password 'teRand3435!' was incorrect!",
-            passwordConstraintValidator.isValid("teRand3435!", context));
+        assertTrue(passwordConstraintValidator.isValid("Random_2425!", context), "Password 'Random_2425!' was incorrect!");
+        assertTrue(passwordConstraintValidator.isValid("teRand3435!", context), "Password 'teRand3435!' was incorrect!");
     }
 
     @Test
     public void passwordsShouldBeInvalid() {
-        assertFalse("Password 'password' was correct!", passwordConstraintValidator.isValid("password", context));
-        assertFalse("Password 'white space' was correct!", passwordConstraintValidator.isValid("white space", context));
-        assertFalse("Password 'short' was correct!", passwordConstraintValidator.isValid("short", context));
+        assertFalse(passwordConstraintValidator.isValid("password", context), "Password 'password' was correct!");
+        assertFalse(passwordConstraintValidator.isValid("white space", context), "Password 'white space' was correct!");
+        assertFalse(passwordConstraintValidator.isValid("short", context), "Password 'short' was correct!");
     }
 }

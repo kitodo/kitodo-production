@@ -11,18 +11,18 @@
 
 package org.kitodo.production.process;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
@@ -39,14 +39,14 @@ public class ProcessValidatorIT {
 
     private static final String NON_EXISTENT = "NonExistentTitle";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -55,38 +55,38 @@ public class ProcessValidatorIT {
     @Test
     public void contentShouldBeValid() throws Exception {
         boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createProcessDetailsList(), true);
-        assertTrue("Process content is invalid!", valid);
+        assertTrue(valid, "Process content is invalid!");
     }
 
     @Test
     public void contentShouldBeInvalidTitle() throws Exception {
         boolean valid = ProcessValidator.isContentValid("First process", createProcessDetailsList(), true);
-        assertFalse("Process content is valid - title should be invalid!", valid);
+        assertFalse(valid, "Process content is valid - title should be invalid!");
     }
 
-    @Ignore("find ou values for which it fails")
+    @Disabled("find ou values for which it fails")
     @Test
     public void contentShouldBeInvalidAdditionalFields() throws Exception {
         boolean valid = ProcessValidator.isContentValid(NON_EXISTENT, createProcessDetailsList(), true);
-        assertTrue("Process content is valid - additional fields should be invalid!", valid);
+        assertTrue(valid, "Process content is valid - additional fields should be invalid!");
     }
 
     @Test
     public void processTitleShouldBeCorrect() {
         boolean valid = ProcessValidator.isProcessTitleCorrect(NON_EXISTENT);
-        assertTrue("Process title is invalid!", valid);
+        assertTrue(valid, "Process title is invalid!");
     }
 
     @Test
     public void processTitleShouldBeIncorrectWhiteSpaces() {
         boolean valid = ProcessValidator.isProcessTitleCorrect("First process");
-        assertFalse("Process content is valid - title should be invalid!", valid);
+        assertFalse(valid, "Process content is valid - title should be invalid!");
     }
 
     @Test
     public void processTitleShouldBeIncorrectNotUnique() {
         boolean valid = ProcessValidator.isProcessTitleCorrect("DBConnectionTest");
-        assertFalse("Process content is valid - title should be invalid!", valid);
+        assertFalse(valid, "Process content is valid - title should be invalid!");
     }
 
     @Test
@@ -95,7 +95,7 @@ public class ProcessValidatorIT {
         Property property = new Property();
         property.setTitle("Korrektur notwendig");
         boolean exists = ProcessValidator.existsProperty(process.getProperties(), property);
-        assertTrue("Property doesn't exist!", exists);
+        assertTrue(exists, "Property doesn't exist!");
     }
 
     @Test
@@ -104,7 +104,7 @@ public class ProcessValidatorIT {
         Property property = new Property();
         property.setTitle("Korrektur");
         boolean exists = ProcessValidator.existsProperty(process.getProperties(), property);
-        assertFalse("Property exists!", exists);
+        assertFalse(exists, "Property exists!");
     }
 
     private List<ProcessDetail> createProcessDetailsList() throws IOException {

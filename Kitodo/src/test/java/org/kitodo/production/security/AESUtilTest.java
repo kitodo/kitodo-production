@@ -11,12 +11,14 @@
 
 package org.kitodo.production.security;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import com.itextpdf.xmp.impl.Base64;
-import org.junit.Assert;
-import org.junit.Test;
 
+import org.junit.jupiter.api.Test;
 
 public class AESUtilTest {
 
@@ -30,7 +32,7 @@ public class AESUtilTest {
 
         String potentialInput = AESUtil.decrypt(base64CipherCombined, secretInConfig);
 
-        assertEquals("Decrypted text does not match the original text", input, potentialInput);
+        assertEquals(input, potentialInput, "Decrypted text does not match the original text");
     }
 
     @Test
@@ -39,15 +41,15 @@ public class AESUtilTest {
 
         String secondEncrypt = AESUtil.encrypt(input, secretInConfig);
 
-        Assert.assertNotEquals("The encrypted value results are the same. IV does not work.", firstEncrypt, secondEncrypt);
+        assertNotEquals(firstEncrypt, secondEncrypt, "The encrypted value results are the same. IV does not work.");
 
         String firstDecrypt = AESUtil.decrypt(firstEncrypt, secretInConfig);
 
-        assertEquals("First decrypted text does not match the original text", input, firstDecrypt);
+        assertEquals(input, firstDecrypt, "First decrypted text does not match the original text");
 
         String secondDecrypt = AESUtil.decrypt(secondEncrypt, secretInConfig);
 
-        assertEquals("Secound decrypted text does not match the original text", input, secondDecrypt);
+        assertEquals(input, secondDecrypt, "Secound decrypted text does not match the original text");
     }
 
 

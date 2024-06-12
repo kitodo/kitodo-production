@@ -11,14 +11,14 @@
 
 package org.kitodo.production.helper;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.net.URI;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.data.database.beans.Folder;
@@ -39,7 +39,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-title (processtitle) -hardcoded test");
         String expected = "-title Replacement -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -49,7 +49,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-prefs (prefs) -hardcoded test");
         String expected = "-prefs src/test/resources/rulesets/ruleset_test.xml -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -59,7 +59,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-processpath (processpath) -hardcoded test");
         String expected = "-processpath 2 -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -69,7 +69,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-processpath (projectid) -hardcoded test");
         String expected = "-processpath " + projectId + " -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -82,7 +82,7 @@ public class VariableReplacerTest {
                 "-title (processtitle) -filename (filename) -hardcoded test", testFilenameWithPath);
         String expected = "-title Replacement -filename " + testFilename + " -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -96,7 +96,7 @@ public class VariableReplacerTest {
                 testFilenameWithPath);
         String expected = "-filename " + testFilename + " -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -108,7 +108,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replaceWithFilename("-basename (basename) -hardcoded test", testFilename);
         String expected = "-basename testFilename -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
     
     @Test
@@ -121,7 +121,7 @@ public class VariableReplacerTest {
                 testFilenameWithPath);
         String expected = "-filename " + testFilenameWithPath + " -hardcoded test";
 
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -130,7 +130,7 @@ public class VariableReplacerTest {
 
         String toBeMatched = "src/(basename)/test.txt";
 
-        assertTrue("String does not match as containing file variables!", variableReplacer.containsFiles(toBeMatched));
+        assertTrue(variableReplacer.containsFiles(toBeMatched), "String does not match as containing file variables!");
     }
 
     @Test
@@ -139,8 +139,7 @@ public class VariableReplacerTest {
 
         String toBeMatched = "src/(projectid)/test.txt";
 
-        assertFalse("String should not match as containing file variables!",
-                variableReplacer.containsFiles(toBeMatched));
+        assertFalse(variableReplacer.containsFiles(toBeMatched), "String should not match as containing file variables!");
     }
 
     @Test
@@ -149,8 +148,7 @@ public class VariableReplacerTest {
 
         String replaced = variableReplacer.replace("-filename (generatorsource) -hardcoded test");
         String expected = "-filename " + "images/Replacementscans" + " -hardcoded test";
-        assertEquals("String should not match as containing file variables!", expected,
-                replaced);
+        assertEquals(expected, replaced, "String should not match as containing file variables!");
     }
 
     @Test
@@ -159,8 +157,7 @@ public class VariableReplacerTest {
 
         String replaced = variableReplacer.replace("-filename (generatorsourcepath) -hardcoded test");
         String expected = "-filename " + KitodoConfig.getKitodoDataDirectory() + "2/" + "images/Replacementscans" + " -hardcoded test";
-        assertEquals("String should not match as containing file variables!", expected,
-                replaced);
+        assertEquals(expected, replaced, "String should not match as containing file variables!");
     }
 
     @Test
@@ -173,13 +170,13 @@ public class VariableReplacerTest {
         VariableReplacer variableReplacerTemplate = new VariableReplacer(null, process, null);
         String replaced = variableReplacerTemplate.replace("-title (ocrdworkflowid) -hardcoded test");
         String expected = "-title " + template.getOcrdWorkflowId() + " -hardcoded test";
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
 
         process.setOcrdWorkflowId("/process-ocrd-workflow.sh");
         VariableReplacer variableReplacerProcess = new VariableReplacer(null, process, null);
         replaced = variableReplacerProcess.replace("-title (ocrdworkflowid) -hardcoded test");
         expected = "-title " + process.getOcrdWorkflowId() + " -hardcoded test";
-        assertEquals("String was replaced incorrectly!", expected, replaced);
+        assertEquals(expected, replaced, "String was replaced incorrectly!");
     }
 
     @Test
@@ -190,7 +187,7 @@ public class VariableReplacerTest {
 
         String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
         String expected = "-language ger -scriptType Antiqua";
-        assertEquals("String should contain expected metadata!", expected, replaced);
+        assertEquals(expected, replaced, "String should contain expected metadata!");
     }
 
     @Test
@@ -201,7 +198,7 @@ public class VariableReplacerTest {
 
         String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
         String expected = "-language ger -scriptType Fraktur";
-        assertEquals("String should contain expected metadata!", expected, replaced);
+        assertEquals(expected, replaced, "String should contain expected metadata!");
     }
 
     @Test
@@ -213,7 +210,7 @@ public class VariableReplacerTest {
         String replaced = variableReplacer.replace("-language $(meta.DocLanguage) -scriptType $(meta.slub_script)");
         // missing meta data element will be replaced by emtpy string and a warning message appear in the log
         String expected = "-language  -scriptType keine_OCR";
-        assertEquals("String should contain expected metadata!", expected, replaced);
+        assertEquals(expected, replaced, "String should contain expected metadata!");
     }
 
     private Process prepareProcess(int processId, String processFolder) {

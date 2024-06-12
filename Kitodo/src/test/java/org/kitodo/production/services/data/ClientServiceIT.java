@@ -11,15 +11,13 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.production.services.ServiceManager;
@@ -28,25 +26,22 @@ public class ClientServiceIT {
 
     private static final ClientService clientService = ServiceManager.getClientService();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldGetAllClients() throws Exception {
         List<Client> clients = clientService.getAll();
-        assertEquals("Clients were not found database!", 4, clients.size());
+        assertEquals(4, clients.size(), "Clients were not found database!");
     }
 }

@@ -11,6 +11,10 @@
 
 package org.kitodo.production.services.validation;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -18,7 +22,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
@@ -47,15 +50,15 @@ public class MetadataValidationServiceIT {
     public void shouldValidateMetadataByURIAndWarnAboutMissingMedia() {
         ValidationResult result = getValidationResultByURI(TEST_META);
         List<String> validationMessages = new ArrayList<>(result.getResultMessages());
-        Assertions.assertEquals(1, validationMessages.size(), WRONG_NUMBER_MESSAGE);
-        Assertions.assertTrue(validationMessages.contains(NO_MEDIA_ASSIGNED_MESSAGE), WRONG_VALIDATION_MESSAGE);
-        Assertions.assertEquals(State.WARNING, result.getState(), WRONG_STATE_MESSAGE);
+        assertEquals(1, validationMessages.size(), WRONG_NUMBER_MESSAGE);
+        assertTrue(validationMessages.contains(NO_MEDIA_ASSIGNED_MESSAGE), WRONG_VALIDATION_MESSAGE);
+        assertEquals(State.WARNING, result.getState(), WRONG_STATE_MESSAGE);
     }
 
     @Test
     public void shouldValidateMetadataByURIAndRaiseError() {
         ValidationResult result = getValidationResultByURI(TEST_KALLIOPE_PARENT);
-        Assertions.assertEquals(State.ERROR, result.getState(), WRONG_STATE_MESSAGE);
+        assertEquals(State.ERROR, result.getState(), WRONG_STATE_MESSAGE);
     }
 
     @Test
@@ -68,10 +71,10 @@ public class MetadataValidationServiceIT {
         List<String> validationMessages = new ArrayList<>(result.getResultMessages());
         // the number of expected warnings is 2 instead of 1 here because validating by workpiece additionally adds a
         // warning for missing process IDs in the workpiece
-        Assertions.assertEquals(2, validationMessages.size(), WRONG_NUMBER_MESSAGE);
-        Assertions.assertTrue(validationMessages.contains(NO_MEDIA_ASSIGNED_MESSAGE), WRONG_VALIDATION_MESSAGE);
-        Assertions.assertTrue(validationMessages.contains(MISSING_ID_MESSAGE), WRONG_VALIDATION_MESSAGE);
-        Assertions.assertEquals(State.WARNING, result.getState(), WRONG_STATE_MESSAGE);
+        assertEquals(2, validationMessages.size(), WRONG_NUMBER_MESSAGE);
+        assertTrue(validationMessages.contains(NO_MEDIA_ASSIGNED_MESSAGE), WRONG_VALIDATION_MESSAGE);
+        assertTrue(validationMessages.contains(MISSING_ID_MESSAGE), WRONG_VALIDATION_MESSAGE);
+        assertEquals(State.WARNING, result.getState(), WRONG_STATE_MESSAGE);
     }
 
     @Test
@@ -81,8 +84,8 @@ public class MetadataValidationServiceIT {
         ruleset.load(new File(TestConstants.TEST_RULESET));
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metsUri);
         ValidationResult result = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset, false);
-        Assertions.assertTrue(result.getResultMessages().isEmpty(), SHOULD_NOT_PRODUCE_WARNINGS_MESSAGE);
-        Assertions.assertEquals(State.SUCCESS, result.getState(), SHOULD_SUCCEED_MESSAGE);
+        assertTrue(result.getResultMessages().isEmpty(), SHOULD_NOT_PRODUCE_WARNINGS_MESSAGE);
+        assertEquals(State.SUCCESS, result.getState(), SHOULD_SUCCEED_MESSAGE);
     }
 
     @Test
@@ -92,8 +95,8 @@ public class MetadataValidationServiceIT {
         ruleset.load(new File(TestConstants.TEST_RULESET));
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(metsUri);
         ValidationResult result = ServiceManager.getMetadataValidationService().validate(workpiece, ruleset, false);
-        Assertions.assertFalse(result.getResultMessages().isEmpty(), SHOULD_PRODUCE_ERRORS_MESSAGE);
-        Assertions.assertEquals(State.ERROR, result.getState(), SHOULD_FAIL_MESSAGE);
+        assertFalse(result.getResultMessages().isEmpty(), SHOULD_PRODUCE_ERRORS_MESSAGE);
+        assertEquals(State.ERROR, result.getState(), SHOULD_FAIL_MESSAGE);
     }
 
     private ValidationResult getValidationResultByURI(String metadataFile) {

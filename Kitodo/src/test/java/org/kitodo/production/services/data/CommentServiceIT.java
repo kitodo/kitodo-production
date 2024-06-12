@@ -11,14 +11,14 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Date;
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
@@ -36,7 +36,7 @@ public class CommentServiceIT {
      * @throws Exception
      *             when saving of dummy or test processes fails.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -49,7 +49,7 @@ public class CommentServiceIT {
      * @throws Exception
      *             when cleaning up database fails.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -73,10 +73,10 @@ public class CommentServiceIT {
         comment.setType(CommentType.INFO);
         commentService.saveToDatabase(comment);
         Comment newComment = commentService.getAll().get(0);
-        assertEquals("Comment was not found in database!", newComment.getMessage(), "TEST_MESSAGE");
+        assertEquals(newComment.getMessage(), "TEST_MESSAGE", "Comment was not found in database!");
 
         commentService.removeComment(newComment);
         List<Comment> comments = commentService.getAll();
-        assertEquals("Comments were found in database!", comments.size(), 0);
+        assertEquals(comments.size(), 0, "Comments were found in database!");
     }
 }

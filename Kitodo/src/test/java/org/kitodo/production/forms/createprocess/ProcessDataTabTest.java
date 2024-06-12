@@ -11,11 +11,11 @@
 
 package org.kitodo.production.forms.createprocess;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.helper.TempProcess;
@@ -57,8 +57,7 @@ public class ProcessDataTabTest {
         createProcessForm.getProcessMetadata().setProcessDetails(processDetails);
 
         underTest.generateAtstslFields();
-        assertEquals("TSL/ATS does not match expected value", "Titl",
-                createProcessForm.getCurrentProcess().getAtstsl());
+        assertEquals("Titl", createProcessForm.getCurrentProcess().getAtstsl(), "TSL/ATS does not match expected value");
 
     }
 
@@ -94,7 +93,6 @@ public class ProcessDataTabTest {
 
         underTest.generateAtstslFields();
 
-        assertEquals("Process title could not be build", "TitlOfPa_1234567X_8888",
-                createProcessForm.getCurrentProcess().getTiffHeaderDocumentName());
+        assertEquals("TitlOfPa_1234567X_8888", createProcessForm.getCurrentProcess().getTiffHeaderDocumentName(), "Process title could not be build");
     }
 }

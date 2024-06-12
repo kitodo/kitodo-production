@@ -11,10 +11,19 @@
 
 package org.kitodo.production.services.data;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.io.IOException;
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.stream.Collectors;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
@@ -25,13 +34,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.services.ServiceManager;
 
-import java.io.IOException;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.stream.Collectors;
-
 public class MassImportServiceIT {
 
     /**
@@ -39,7 +41,7 @@ public class MassImportServiceIT {
      *
      * @throws Exception when preparing database fails
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -50,7 +52,7 @@ public class MassImportServiceIT {
      *
      * @throws Exception when cleaning up database fails
      */
-    @AfterClass
+    @AfterAll
     public static void cleanupDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -68,10 +70,8 @@ public class MassImportServiceIT {
         Collection<Metadata> enteredMetadata = createPresetMetadata();
         List<StructuralElementViewInterface> divisions = retrieveDivisions();
         List<ProcessDetail> addableMetadata = ServiceManager.getMassImportService().getAddableMetadataTable(divisions, enteredMetadata);
-        Assert.assertFalse("List of addable metadata should not be empty",
-                addableMetadata.isEmpty());
-        Assert.assertTrue("List of addable metadata should contain 'TSL/ATS'",
-                addableMetadata.stream().anyMatch(m -> "TSL/ATS".equals(m.getLabel())));
+        assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
+        assertTrue(addableMetadata.stream().anyMatch(m -> "TSL/ATS".equals(m.getLabel())), "List of addable metadata should contain 'TSL/ATS'");
     }
 
     private List<StructuralElementViewInterface> retrieveDivisions() throws DAOException, IOException {

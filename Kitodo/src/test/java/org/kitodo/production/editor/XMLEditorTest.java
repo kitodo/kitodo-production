@@ -11,6 +11,7 @@
 
 package org.kitodo.production.editor;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -19,10 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.KitodoConfigFile;
 
@@ -37,7 +37,7 @@ public class XMLEditorTest {
     private static String absolutePath = ConfigCore.getKitodoConfigDirectory() + KitodoConfigFile.PROJECT_CONFIGURATION;
     private static XMLEditor xmlEditor = null;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         List<String> lines = new ArrayList<>();
         lines.add(LOAD_XML);
@@ -46,7 +46,7 @@ public class XMLEditorTest {
         xmlEditor.loadInitialConfiguration();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         Files.deleteIfExists(Paths.get(absolutePath));
     }
@@ -54,7 +54,7 @@ public class XMLEditorTest {
     @Test
     public void shouldLoadXMLConfiguration() {
         xmlEditor.loadXMLConfiguration(KitodoConfigFile.PROJECT_CONFIGURATION.getName());
-        Assert.assertEquals(LOAD_XML, xmlEditor.getXMLConfiguration().replace("\n", "").replace("\r", ""));
+        assertEquals(LOAD_XML, xmlEditor.getXMLConfiguration().replace("\n", "").replace("\r", ""));
     }
 
     @Test
@@ -63,6 +63,6 @@ public class XMLEditorTest {
         xmlEditor.setXMLConfiguration(SAVE_XML);
         xmlEditor.saveXMLConfiguration();
         String savedString = FileUtils.readFileToString(KitodoConfigFile.PROJECT_CONFIGURATION.getFile(), "utf-8");
-        Assert.assertEquals(SAVE_XML, savedString);
+        assertEquals(SAVE_XML, savedString);
     }
 }

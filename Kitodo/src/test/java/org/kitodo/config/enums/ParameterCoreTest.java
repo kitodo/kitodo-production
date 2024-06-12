@@ -11,23 +11,21 @@
 
 package org.kitodo.config.enums;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ParameterCoreTest {
 
     @Test
     public void shouldGetParameterWithoutDefaultValueTest() {
-        assertNull("Default value for param exists!",
-            ParameterCore.DIR_USERS.getParameter().getDefaultValue());
+        assertNull(ParameterCore.DIR_USERS.getParameter().getDefaultValue(), "Default value for param exists!");
     }
 
     @Test
     public void shouldOverrideToStringWithParameterKeyTests() {
         ParameterCore parameterCore = ParameterCore.DIR_USERS;
-        assertEquals("Methods toString() was not overridden!", parameterCore.getParameter().getKey(),
-                String.valueOf(parameterCore));
+        assertEquals(parameterCore.getParameter().getKey(), String.valueOf(parameterCore), "Methods toString() was not overridden!");
     }
 }

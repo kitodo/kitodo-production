@@ -11,20 +11,21 @@
 
 package org.kitodo.production.version;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.jar.Manifest;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class KitodoVersionTest {
 
     private static final String VERSION = "1.2.3";
     private static final String BUILD_DATE = "17-Februrary-2011";
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionIfKitodoSectionIsMissingInManifest() {
-        KitodoVersion.setupFromManifest(new Manifest());
+        assertThrows(IllegalArgumentException.class, () -> KitodoVersion.setupFromManifest(new Manifest()));
     }
 
     @Test
@@ -32,8 +33,7 @@ public class KitodoVersionTest {
         Manifest manifest = createManifestWithValues();
         KitodoVersion.setupFromManifest(manifest);
 
-        assertEquals("Version attribute should be equal to Implementation-Version as specified in the given Manifest.",
-                VERSION, KitodoVersion.getVersion());
+        assertEquals(VERSION, KitodoVersion.getVersion(), "Version attribute should be equal to Implementation-Version as specified in the given Manifest.");
     }
 
     @Test
@@ -41,9 +41,7 @@ public class KitodoVersionTest {
         Manifest manifest = createManifestWithValues();
         KitodoVersion.setupFromManifest(manifest);
 
-        assertEquals(
-                "BuildVersion attribute should be equal to Implementation-Version as specified in the given Manifest.",
-                VERSION, KitodoVersion.getBuildVersion());
+        assertEquals(VERSION, KitodoVersion.getBuildVersion(), "BuildVersion attribute should be equal to Implementation-Version as specified in the given Manifest.");
     }
 
     @Test
@@ -51,9 +49,7 @@ public class KitodoVersionTest {
         Manifest manifest = createManifestWithValues();
         KitodoVersion.setupFromManifest(manifest);
 
-        assertEquals(
-                "BuildDate attribute should be equal to Implementation-Build-Date as specified in the given Manifest.",
-                BUILD_DATE, KitodoVersion.getBuildDate());
+        assertEquals(BUILD_DATE, KitodoVersion.getBuildDate(), "BuildDate attribute should be equal to Implementation-Build-Date as specified in the given Manifest.");
     }
 
     private Manifest createManifestWithValues() {
