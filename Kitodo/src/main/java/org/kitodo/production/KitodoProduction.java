@@ -24,8 +24,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
@@ -52,6 +50,8 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     private KitodoVersion version = new KitodoVersion();
     private ActiveMQDirector activeMQDirector;
 
+    /* This is the main() function. The class is instantiated by the servlet
+     * container, which then calls this function. */
     @Override
     public void contextInitialized(ServletContextEvent event) {
         context = event.getServletContext();
