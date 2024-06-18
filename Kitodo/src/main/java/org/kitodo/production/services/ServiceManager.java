@@ -13,6 +13,8 @@ package org.kitodo.production.services;
 
 import java.util.Objects;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.command.KitodoScriptService;
 import org.kitodo.production.services.data.AuthorityService;
@@ -57,6 +59,7 @@ import org.kitodo.production.services.validation.LongTermPreservationValidationS
 import org.kitodo.production.services.validation.MetadataValidationService;
 
 public class ServiceManager {
+    private static final Logger logger = LogManager.getLogger(ServiceManager.class);
 
     private static AuthorityService authorityService;
     private static BatchService batchService;
@@ -109,252 +112,294 @@ public class ServiceManager {
 
     private static void initializeAuthorizationService() {
         if (Objects.isNull(authorityService)) {
+            logServiceInitialization();
             authorityService = AuthorityService.getInstance();
         }
     }
 
     private static void initializeBatchService() {
         if (Objects.isNull(batchService)) {
+            logServiceInitialization();
             batchService = BatchService.getInstance();
         }
     }
 
     private static void initializeClientService() {
         if (Objects.isNull(clientService)) {
+            logServiceInitialization();
             clientService = ClientService.getInstance();
         }
     }
 
     private static void initializeDataEditorService() {
         if (Objects.isNull(dataEditorService)) {
+            logServiceInitialization();
             dataEditorService = new DataEditorService();
         }
     }
 
     private static void initializeDocketService() {
         if (Objects.isNull(docketService)) {
+            logServiceInitialization();
             docketService = DocketService.getInstance();
         }
     }
 
     private static void initializeFilterService() {
         if (Objects.isNull(filterService)) {
+            logServiceInitialization();
             filterService = FilterService.getInstance();
         }
     }
 
     private static void initializeKitodoScriptService() {
         if (Objects.isNull(kitodoScriptService)) {
+            logServiceInitialization();
             kitodoScriptService = KitodoScriptService.getInstance();
         }
     }
 
     private static void initializeImageService() {
         if (Objects.isNull(imageService)) {
+            logServiceInitialization();
             imageService = ImageService.getInstance();
         }
     }
 
     private static void initializeImportService() {
         if (Objects.isNull(importService)) {
+            logServiceInitialization();
             importService = ImportService.getInstance();
         }
     }
 
     private static void initializeLdapGroupService() {
         if (Objects.isNull(ldapGroupService)) {
+            logServiceInitialization();
             ldapGroupService = new LdapGroupService();
         }
     }
 
     private static void initializeLdapServerService() {
         if (Objects.isNull(ldapServerService)) {
+            logServiceInitialization();
             ldapServerService = LdapServerService.getInstance();
         }
     }
 
     private static void initializeMetsService() {
         if (Objects.isNull(metsService)) {
+            logServiceInitialization();
             metsService = MetsService.getInstance();
         }
     }
 
     private static void initializeMassImportService() {
         if (Objects.isNull(massImportService)) {
+            logServiceInitialization();
             massImportService = MassImportService.getInstance();
         }
     }
 
     private static void initializePropertyService() {
         if (Objects.isNull(propertyService)) {
+            logServiceInitialization();
             propertyService = PropertyService.getInstance();
         }
     }
 
     private static void initializeProcessService() {
         if (Objects.isNull(processService)) {
+            logServiceInitialization();
             processService = ProcessService.getInstance();
         }
     }
 
     private static void initializeFolderService() {
         if (Objects.isNull(folderService)) {
+            logServiceInitialization();
             folderService = new FolderService();
         }
     }
 
     private static void initializeOcrdWorkflowService() {
         if (Objects.isNull(ocrdWorkflowService)) {
+            logServiceInitialization();
             ocrdWorkflowService = OcrdWorkflowService.getInstance();
         }
     }
 
     private static void initializeProjectService() {
         if (Objects.isNull(projectService)) {
+            logServiceInitialization();
             projectService = ProjectService.getInstance();
         }
     }
 
     private static void initializeRulesetService() {
         if (Objects.isNull(rulesetService)) {
+            logServiceInitialization();
             rulesetService = RulesetService.getInstance();
         }
     }
 
     private static void initializeSessionService() {
         if (Objects.isNull(sessionService)) {
+            logServiceInitialization();
             sessionService = SessionService.getInstance();
         }
     }
 
     private static void initializeSecurityAccessService() {
         if (Objects.isNull(securityAccessService)) {
+            logServiceInitialization();
             securityAccessService = SecurityAccessService.getInstance();
         }
     }
 
     private static void initializeTaskService() {
         if (Objects.isNull(taskService)) {
+            logServiceInitialization();
             taskService = TaskService.getInstance();
         }
     }
 
     private static void initializeTemplateService() {
         if (Objects.isNull(templateService)) {
+            logServiceInitialization();
             templateService = TemplateService.getInstance();
         }
     }
 
     private static void initializeRoleService() {
         if (Objects.isNull(roleService)) {
+            logServiceInitialization();
             roleService = RoleService.getInstance();
         }
     }
 
     private static void initializeUserService() {
         if (Objects.isNull(userService)) {
+            logServiceInitialization();
             userService = UserService.getInstance();
         }
     }
 
     private static void initializeWorkflowService() {
         if (Objects.isNull(workflowService)) {
+            logServiceInitialization();
             workflowService = WorkflowService.getInstance();
         }
     }
 
     private static void initializeWorkflowConditionService() {
         if (Objects.isNull(workflowConditionService)) {
+            logServiceInitialization();
             workflowConditionService = WorkflowConditionService.getInstance();
         }
     }
 
     private static void initializeFileService() {
         if (Objects.isNull(fileService)) {
+            logServiceInitialization();
             fileService = new FileService();
         }
     }
 
     private static void initializeCommandService() {
         if (Objects.isNull(commandService)) {
+            logServiceInitialization();
             commandService = new CommandService();
         }
     }
 
     private static void initializeSchemaService() {
         if (Objects.isNull(schemaService)) {
+            logServiceInitialization();
             schemaService = new SchemaService();
         }
     }
 
     private static void initializeFileStructureValidationService() {
         if (Objects.isNull(fileStructureValidationService)) {
+            logServiceInitialization();
             fileStructureValidationService = new FileStructureValidationService();
         }
     }
 
     private static void initializeLongTermPreservationValidationService() {
         if (Objects.isNull(longTermPreservationValidationService)) {
+            logServiceInitialization();
             longTermPreservationValidationService = new LongTermPreservationValidationService();
         }
     }
 
     private static void initializeMetadataValidationService() {
         if (Objects.isNull(metadataValidationService)) {
+            logServiceInitialization();
             metadataValidationService = new MetadataValidationService();
         }
     }
 
     private static void initializeMigrationService() {
         if (Objects.isNull(migrationService)) {
+            logServiceInitialization();
             migrationService = new MigrationService();
         }
     }
 
     private static void initializeRulesetManagementService() {
         if (Objects.isNull(rulesetManagementService)) {
+            logServiceInitialization();
             rulesetManagementService = RulesetManagementService.getInstance();
         }
     }
 
     private static void initializeListColumnService() {
         if (Objects.isNull(listColumnService)) {
+            logServiceInitialization();
             listColumnService = ListColumnService.getInstance();
         }
     }
 
     private static void initializeCommentService() {
         if (Objects.isNull(commentService)) {
+            logServiceInitialization();
             commentService = CommentService.getInstance();
         }
     }
 
     private static void initializeIndexingService() {
         if (Objects.isNull(indexingService)) {
+            logServiceInitialization();
             indexingService = IndexingService.getInstance();
         }
     }
 
     private static void initializeDataEditorSettingService() {
         if (Objects.isNull(dataEditorSettingService)) {
+            logServiceInitialization();
             dataEditorSettingService = DataEditorSettingService.getInstance();
         }
     }
 
     private static void initializeOpacConfigurationService() {
         if (Objects.isNull(importConfigurationService)) {
+            logServiceInitialization();
             importConfigurationService = ImportConfigurationService.getInstance();
         }
     }
 
     private static void initializeSearchFieldService() {
         if (Objects.isNull(searchFieldService)) {
+            logServiceInitialization();
             searchFieldService = SearchFieldService.getInstance();
         }
     }
 
     private static void initializeMappingFileService() {
         if (Objects.isNull(mappingFileService)) {
+            logServiceInitialization();
             mappingFileService = MappingFileService.getInstance();
         }
     }
@@ -367,6 +412,7 @@ public class ServiceManager {
      */
     public static AuthorityService getAuthorityService() {
         initializeAuthorizationService();
+        logServiceDelivery();
         return authorityService;
     }
 
@@ -377,6 +423,7 @@ public class ServiceManager {
      */
     public static BatchService getBatchService() {
         initializeBatchService();
+        logServiceDelivery();
         return batchService;
     }
 
@@ -387,6 +434,7 @@ public class ServiceManager {
      */
     public static ClientService getClientService() {
         initializeClientService();
+        logServiceDelivery();
         return clientService;
     }
 
@@ -398,6 +446,7 @@ public class ServiceManager {
      */
     public static DataEditorService getDataEditorService() {
         initializeDataEditorService();
+        logServiceDelivery();
         return dataEditorService;
     }
 
@@ -408,6 +457,7 @@ public class ServiceManager {
      */
     public static DocketService getDocketService() {
         initializeDocketService();
+        logServiceDelivery();
         return docketService;
     }
 
@@ -418,15 +468,18 @@ public class ServiceManager {
      */
     public static FilterService getFilterService() {
         initializeFilterService();
+        logServiceDelivery();
         return filterService;
     }
 
     /**
      * Initialize ImportService if it is not yet initialized and return it.
+     * 
      * @return ImportService object
      */
     public static ImportService getImportService() {
         initializeImportService();
+        logServiceDelivery();
         return importService;
     }
 
@@ -438,6 +491,7 @@ public class ServiceManager {
      */
     public static LdapGroupService getLdapGroupService() {
         initializeLdapGroupService();
+        logServiceDelivery();
         return ldapGroupService;
     }
 
@@ -449,6 +503,7 @@ public class ServiceManager {
      */
     public static LdapServerService getLdapServerService() {
         initializeLdapServerService();
+        logServiceDelivery();
         return ldapServerService;
     }
 
@@ -460,6 +515,7 @@ public class ServiceManager {
      */
     public static ImageService getImageService() {
         initializeImageService();
+        logServiceDelivery();
         return imageService;
     }
 
@@ -470,6 +526,7 @@ public class ServiceManager {
      */
     public static MetsService getMetsService() {
         initializeMetsService();
+        logServiceDelivery();
         return metsService;
     }
 
@@ -480,6 +537,7 @@ public class ServiceManager {
      */
     public static MassImportService getMassImportService() {
         initializeMassImportService();
+        logServiceDelivery();
         return massImportService;
     }
 
@@ -491,6 +549,7 @@ public class ServiceManager {
      */
     public static PropertyService getPropertyService() {
         initializePropertyService();
+        logServiceDelivery();
         return propertyService;
     }
 
@@ -502,6 +561,7 @@ public class ServiceManager {
      */
     public static ProcessService getProcessService() {
         initializeProcessService();
+        logServiceDelivery();
         return processService;
     }
 
@@ -512,6 +572,7 @@ public class ServiceManager {
      */
     public static FolderService getFolderService() {
         initializeFolderService();
+        logServiceDelivery();
         return folderService;
     }
 
@@ -523,6 +584,7 @@ public class ServiceManager {
      */
     public static OcrdWorkflowService getOcrdWorkflowService() {
         initializeOcrdWorkflowService();
+        logServiceDelivery();
         return ocrdWorkflowService;
     }
 
@@ -534,6 +596,7 @@ public class ServiceManager {
      */
     public static ProjectService getProjectService() {
         initializeProjectService();
+        logServiceDelivery();
         return projectService;
     }
 
@@ -545,6 +608,7 @@ public class ServiceManager {
      */
     public static RulesetService getRulesetService() {
         initializeRulesetService();
+        logServiceDelivery();
         return rulesetService;
     }
 
@@ -556,6 +620,7 @@ public class ServiceManager {
      */
     public static SessionService getSessionService() {
         initializeSessionService();
+        logServiceDelivery();
         return sessionService;
     }
 
@@ -567,6 +632,7 @@ public class ServiceManager {
      */
     public static SecurityAccessService getSecurityAccessService() {
         initializeSecurityAccessService();
+        logServiceDelivery();
         return securityAccessService;
     }
 
@@ -577,6 +643,7 @@ public class ServiceManager {
      */
     public static TaskService getTaskService() {
         initializeTaskService();
+        logServiceDelivery();
         return taskService;
     }
 
@@ -588,6 +655,7 @@ public class ServiceManager {
      */
     public static TemplateService getTemplateService() {
         initializeTemplateService();
+        logServiceDelivery();
         return templateService;
     }
 
@@ -598,6 +666,7 @@ public class ServiceManager {
      */
     public static RoleService getRoleService() {
         initializeRoleService();
+        logServiceDelivery();
         return roleService;
     }
 
@@ -608,6 +677,7 @@ public class ServiceManager {
      */
     public static UserService getUserService() {
         initializeUserService();
+        logServiceDelivery();
         return userService;
     }
 
@@ -619,6 +689,7 @@ public class ServiceManager {
      */
     public static WorkflowService getWorkflowService() {
         initializeWorkflowService();
+        logServiceDelivery();
         return workflowService;
     }
 
@@ -630,6 +701,7 @@ public class ServiceManager {
      */
     public static WorkflowConditionService getWorkflowConditionService() {
         initializeWorkflowConditionService();
+        logServiceDelivery();
         return workflowConditionService;
     }
 
@@ -640,6 +712,7 @@ public class ServiceManager {
      */
     public static FileService getFileService() {
         initializeFileService();
+        logServiceDelivery();
         return fileService;
     }
 
@@ -651,6 +724,7 @@ public class ServiceManager {
      */
     public static CommandService getCommandService() {
         initializeCommandService();
+        logServiceDelivery();
         return commandService;
     }
 
@@ -661,6 +735,7 @@ public class ServiceManager {
      */
     public static SchemaService getSchemaService() {
         initializeSchemaService();
+        logServiceDelivery();
         return schemaService;
     }
 
@@ -672,6 +747,7 @@ public class ServiceManager {
      */
     public static FileStructureValidationService getFileStructureValidationService() {
         initializeFileStructureValidationService();
+        logServiceDelivery();
         return fileStructureValidationService;
     }
 
@@ -683,6 +759,7 @@ public class ServiceManager {
      */
     public static KitodoScriptService getKitodoScriptService() {
         initializeKitodoScriptService();
+        logServiceDelivery();
         return kitodoScriptService;
     }
 
@@ -694,6 +771,7 @@ public class ServiceManager {
      */
     public static LongTermPreservationValidationService getLongTermPreservationValidationService() {
         initializeLongTermPreservationValidationService();
+        logServiceDelivery();
         return longTermPreservationValidationService;
     }
 
@@ -705,6 +783,7 @@ public class ServiceManager {
      */
     public static MetadataValidationService getMetadataValidationService() {
         initializeMetadataValidationService();
+        logServiceDelivery();
         return metadataValidationService;
     }
 
@@ -716,6 +795,7 @@ public class ServiceManager {
      */
     public static MigrationService getMigrationService() {
         initializeMigrationService();
+        logServiceDelivery();
         return migrationService;
     }
 
@@ -727,6 +807,7 @@ public class ServiceManager {
      */
     public static RulesetManagementService getRulesetManagementService() {
         initializeRulesetManagementService();
+        logServiceDelivery();
         return rulesetManagementService;
     }
 
@@ -737,6 +818,7 @@ public class ServiceManager {
      */
     public static ListColumnService getListColumnService() {
         initializeListColumnService();
+        logServiceDelivery();
         return listColumnService;
     }
 
@@ -747,6 +829,7 @@ public class ServiceManager {
      */
     public static CommentService getCommentService() {
         initializeCommentService();
+        logServiceDelivery();
         return commentService;
     }
 
@@ -757,6 +840,7 @@ public class ServiceManager {
      */
     public static IndexingService getIndexingService() {
         initializeIndexingService();
+        logServiceDelivery();
         return indexingService;
     }
 
@@ -767,6 +851,7 @@ public class ServiceManager {
      */
     public static DataEditorSettingService getDataEditorSettingService() {
         initializeDataEditorSettingService();
+        logServiceDelivery();
         return dataEditorSettingService;
     }
 
@@ -777,6 +862,7 @@ public class ServiceManager {
      */
     public static ImportConfigurationService getImportConfigurationService() {
         initializeOpacConfigurationService();
+        logServiceDelivery();
         return importConfigurationService;
     }
 
@@ -787,6 +873,7 @@ public class ServiceManager {
      */
     public static SearchFieldService getSearchFieldService() {
         initializeSearchFieldService();
+        logServiceDelivery();
         return searchFieldService;
     }
 
@@ -797,6 +884,25 @@ public class ServiceManager {
      */
     public static MappingFileService getMappingFileService() {
         initializeMappingFileService();
+        logServiceDelivery();
         return mappingFileService;
+    }
+
+    private static void logServiceInitialization() {
+        if (logger.isTraceEnabled()) {
+            logger.trace(new RuntimeException().getStackTrace()[1].getMethodName()
+                .replace("initialize", "Initializing "));
+        }
+    }
+
+    private static void logServiceDelivery() {
+        if (logger.isTraceEnabled()) {
+            StackTraceElement[] callStack = new Exception().getStackTrace();
+            String serviceName = callStack[1].getMethodName().substring(3);
+            String fullClassName = callStack[2].getClassName();
+            int lastDotPos = fullClassName.lastIndexOf('.');
+            String requestingClass = fullClassName.substring(lastDotPos + 1);
+            logger.trace(String.format("Providing %s to %s", serviceName, requestingClass));
+        }
     }
 }
