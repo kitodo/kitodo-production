@@ -2604,7 +2604,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         renameImageDirectories(process, newProcessTitle);
         renameOcrDirectories(process, newProcessTitle);
         renameDefinedDirectories(process, newProcessTitle);
-        
+
         process.setTitle(newProcessTitle);
     }
 
@@ -2616,7 +2616,16 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
         }
     }
 
-    // TODO: is it really a case that title is empty?
+    /**
+     * Removes properties with empty title.
+     * 
+     * TODO: is it really a case that title is empty?
+     * 
+     * @param properties
+     *            property list to be checked
+     * @param process
+     *            process from which the properties are to be deleted
+     */
     public void removePropertiesWithEmptyTitle(List<Property> properties, Process process) {
         for (Property processProperty : properties) {
             if (Objects.isNull(processProperty.getTitle()) || processProperty.getTitle().isEmpty()) {
