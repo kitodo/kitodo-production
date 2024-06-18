@@ -2587,6 +2587,85 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Renames a process.
+     * 
+     * @param process
+     *            process to be renamed
+     * @param newProcessTitle
+     *            new process name
+     * @throws IOException
+     *             if an error occurs while accessing the file system
+     */
+    public void renameProcess(Process process, String newProcessTitle) throws IOException {
+        renamePropertiesValuesForProcessTitle(process.getProperties(), process.getTitle(), newProcessTitle);
+        renamePropertiesValuesForProcessTitle(process.getTemplates(), process.getTitle(), newProcessTitle);
+        removePropertiesWithEmptyTitle(process.getWorkpieces(), process);
+
+        renameImageDirectories(process, newProcessTitle);
+        renameOcrDirectories(process, newProcessTitle);
+        renameDefinedDirectories(process, newProcessTitle);
+        
+        process.setTitle(newProcessTitle);
+    }
+
+    private void renamePropertiesValuesForProcessTitle(List<Property> properties, String processTitle, String newProcessTitle) {
+        for (Property property : properties) {
+            if (Objects.nonNull(property.getValue()) && property.getValue().contains(processTitle)) {
+                property.setValue(property.getValue().replaceAll(processTitle, newProcessTitle));
+            }
+        }
+    }
+
+    // TODO: is it really a case that title is empty?
+    public void removePropertiesWithEmptyTitle(List<Property> properties, Process process) {
+        for (Property processProperty : properties) {
+            if (Objects.isNull(processProperty.getTitle()) || processProperty.getTitle().isEmpty()) {
+                processProperty.getProcesses().clear();
+                process.getProperties().remove(processProperty);
+            }
+        }
+    }
+
+    private void renameImageDirectories(Process process, String newProcessTitle) throws IOException {
+        URI imageDirectory = fileService.getImagesDirectory(process);
+        renameDirectories(imageDirectory, process, newProcessTitle);
+    }
+
+    private void renameOcrDirectories(Process process, String newProcessTitle) throws IOException {
+        URI ocrDirectory = fileService.getOcrDirectory(process);
+        renameDirectories(ocrDirectory, process, newProcessTitle);
+    }
+
+    private void renameDirectories(URI directory, Process process, String newProcessTitle) throws IOException {
+        if (fileService.isDirectory(directory)) {
+            List<URI> subDirs = fileService.getSubUris(directory);
+            for (URI imageDir : subDirs) {
+                if (fileService.isDirectory(imageDir)) {
+                    fileService.renameFile(imageDir, imageDir.toString().replace(process.getTitle(), newProcessTitle));
+                }
+            }
+        }
+    }
+
+    private void renameDefinedDirectories(Process process, String newProcessTitle) {
+        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
+        for (String processDir : processDirs) {
+            // TODO: check it out
+            URI processDirAbsolute = ServiceManager.getProcessService().getProcessDataDirectory(process)
+                    .resolve(processDir.replace("(processtitle)", process.getTitle()));
+
+            File dir = new File(processDirAbsolute);
+            boolean renamed;
+            if (dir.isDirectory()) {
+                renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
+                if (!renamed) {
+                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName() });
+                }
+            }
+        }
+    }
+
+    /**
      * Create and return PieChartModel for given process values.
      *
      * @param processValues Map containing process values
