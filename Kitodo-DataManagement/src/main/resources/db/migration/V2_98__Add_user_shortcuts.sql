@@ -5,7 +5,7 @@
 --
 -- It is licensed under GNU General Public License version 3 or later.
 --
--- For the full copyright and license information, please read the
--- GPL3-License.txt file that was distributed with this source code.
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ALTER TABLE user ADD COLUMN shortcuts VARCHAR(1024) DEFAULT '{"detailView":"Control Shift BracketRight","help":"Shift Minus","nextItem":"Control ArrowDown","nextItemMulti":"Control Shift ArrowDown","previousItem":"Control ArrowUp","previousItemMulti":"Control Shift ArrowUp","structuredView":"Control Shift Slash"}';

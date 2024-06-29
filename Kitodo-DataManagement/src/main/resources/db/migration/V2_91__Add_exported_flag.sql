@@ -5,7 +5,7 @@
 --
 -- It is licensed under GNU General Public License version 3 or later.
 --
--- For the full copyright and license information, please read the
--- GPL3-License.txt file that was distributed with this source code.
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ALTER TABLE process ADD COLUMN exported TINYINT(1) DEFAULT 0;
