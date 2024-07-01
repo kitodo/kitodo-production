@@ -25,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -47,10 +46,6 @@ public class HierarchyMigrationTaskIT {
      */
     @BeforeClass
     public static void prepareDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
-
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
 
@@ -66,10 +61,6 @@ public class HierarchyMigrationTaskIT {
      */
     @AfterClass
     public static void cleanDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
-
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         cleanUp();

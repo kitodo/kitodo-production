@@ -30,7 +30,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.NewspaperCourse;
@@ -76,9 +75,6 @@ public class NewspaperProcessesGeneratorIT {
      */
     @BeforeClass
     public static void setUp() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         FileLoader.createConfigProjectsFileForCalendarHierarchyTests();
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -101,10 +97,6 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
     }
 
     /**

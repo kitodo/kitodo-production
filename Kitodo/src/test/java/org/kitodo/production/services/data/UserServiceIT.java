@@ -26,7 +26,6 @@ import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
@@ -191,7 +190,6 @@ public class UserServiceIT {
         String homeDirectory = ConfigCore.getParameter(ParameterCore.DIR_USERS);
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-        ExecutionPermission.setExecutePermission(script);
 
         URI homeDirectoryForUser = userService.getHomeDirectory(user);
         boolean condition = homeDirectoryForUser.getRawPath().contains(homeDirectory + user.getLogin());
@@ -201,8 +199,6 @@ public class UserServiceIT {
         homeDirectoryForUser = userService.getHomeDirectory(user);
         condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
         assertTrue("Home directory of user is incorrect!", condition);
-
-        ExecutionPermission.setNoExecutePermission(script);
     }
 
     @Test

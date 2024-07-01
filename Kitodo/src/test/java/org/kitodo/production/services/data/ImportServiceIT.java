@@ -41,7 +41,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.Metadata;
@@ -578,14 +577,8 @@ public class ImportServiceIT {
     private Process importProcess(String recordId, ImportConfiguration importConfiguration)
             throws IOException, ImportException {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, new HashMap<>());
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
         return importedProcess;
     }
 
@@ -593,14 +586,8 @@ public class ImportServiceIT {
                                                         Map<String, List<String>> presetMetadata)
             throws IOException, ImportException {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, presetMetadata);
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
         return importedProcess;
     }
 }
