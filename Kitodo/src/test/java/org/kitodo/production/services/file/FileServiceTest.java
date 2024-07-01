@@ -33,7 +33,6 @@ import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -70,12 +69,10 @@ public class FileServiceTest {
         assumeTrue(!SystemUtils.IS_OS_WINDOWS && !SystemUtils.IS_OS_MAC);
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        ExecutionPermission.setExecutePermission(script);
 
         URI parentFolderUri = URI.create("fileServiceTest");
         URI result = fileService.createMetaDirectory(parentFolderUri, "testMetaScript");
         File file = fileService.getFile((URI.create("fileServiceTest/testMetaScript")));
-        ExecutionPermission.setNoExecutePermission(script);
 
         assertEquals(URI.create((parentFolderUri.getPath()
                 + '/' + "testMetaScript")), result, "Result of execution was incorrect!");
@@ -589,15 +586,11 @@ public class FileServiceTest {
         fileService.createResource(directory, "meta.xml");
         User user = new User();
         user.setLogin(SystemUtils.USER_NAME);
-        ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
-        ExecutionPermission.setNoExecutePermission(script);
         assertTrue(result, "Create symbolic link has failed!");
 
         File scriptClean = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
-        ExecutionPermission.setExecutePermission(scriptClean);
         fileService.deleteSymLink(symLinkTarget);
-        ExecutionPermission.setNoExecutePermission(scriptClean);
         fileService.delete(symLinkSource);
         fileService.delete(symLinkTarget);
     }
@@ -614,14 +607,10 @@ public class FileServiceTest {
         fileService.createResource(directory, "meta.xml");
         User user = new User();
         user.setLogin(SystemUtils.USER_NAME);
-        ExecutionPermission.setExecutePermission(scriptPrepare);
         fileService.createSymLink(symLinkSource, symLinkTarget, false, user);
-        ExecutionPermission.setNoExecutePermission(scriptPrepare);
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_DELETE_SYMLINK));
-        ExecutionPermission.setExecutePermission(script);
         boolean result = fileService.deleteSymLink(symLinkTarget);
-        ExecutionPermission.setNoExecutePermission(script);
         assertTrue(result, "Delete symbolic link has failed!");
 
         fileService.delete(symLinkSource);

@@ -26,7 +26,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.api.command.CommandResult;
 
 public class CommandServiceTest {
@@ -50,23 +49,12 @@ public class CommandServiceTest {
             windows = true;
         } else {
             scriptExtension = ".sh";
-
-            ExecutionPermission.setExecutePermission(workingScript);
-            ExecutionPermission.setExecutePermission(workingScriptWithParameters);
-            ExecutionPermission.setExecutePermission(longWorkingScript2s);
-            ExecutionPermission.setExecutePermission(longWorkingScript1s);
         }
 
     }
 
     @AfterAll
     public static void tearDown() throws IOException {
-        if (!windows) {
-            ExecutionPermission.setNoExecutePermission(workingScript);
-            ExecutionPermission.setNoExecutePermission(workingScriptWithParameters);
-            ExecutionPermission.setNoExecutePermission(longWorkingScript2s);
-            ExecutionPermission.setNoExecutePermission(longWorkingScript1s);
-        }
     }
 
     @Test
