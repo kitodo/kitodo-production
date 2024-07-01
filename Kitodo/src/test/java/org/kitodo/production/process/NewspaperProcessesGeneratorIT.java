@@ -32,7 +32,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.NewspaperCourse;
@@ -75,9 +74,6 @@ public class NewspaperProcessesGeneratorIT {
      */
     @BeforeAll
     public static void setUp() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         FileLoader.createConfigProjectsFileForCalendarHierarchyTests();
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -100,10 +96,6 @@ public class NewspaperProcessesGeneratorIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         KitodoConfigFile.PROJECT_CONFIGURATION.getFile().delete();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
     }
 
     /**

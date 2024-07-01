@@ -27,7 +27,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
@@ -59,8 +58,6 @@ public class TaskActionProcessorIT {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
-        ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
     }
 
     /**
@@ -74,8 +71,6 @@ public class TaskActionProcessorIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
-        ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
-        ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
     }
 
     @Test

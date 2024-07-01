@@ -35,7 +35,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
@@ -98,6 +97,7 @@ public class ImportProcessesIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
+<<<<<<< HEAD
     @BeforeAll
     public static void setScriptPermission() throws Exception {
         if (!SystemUtils.IS_OS_WINDOWS) {
@@ -107,6 +107,9 @@ public class ImportProcessesIT {
     }
 
     @BeforeEach
+=======
+    @Before
+>>>>>>> 932f57916 (Simplify more test code)
     public void createOutputDirectories() throws Exception {
         Files.createDirectories(ERRORS_DIR_PATH);
     }

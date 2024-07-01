@@ -27,7 +27,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -49,10 +48,6 @@ public class HierarchyMigrationTaskIT {
      */
     @BeforeAll
     public static void prepareDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
-
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
 
@@ -68,10 +63,6 @@ public class HierarchyMigrationTaskIT {
      */
     @AfterAll
     public static void cleanDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
-
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         cleanUp();

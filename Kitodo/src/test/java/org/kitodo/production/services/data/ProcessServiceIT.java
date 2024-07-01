@@ -39,7 +39,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -82,9 +81,6 @@ public class ProcessServiceIT {
 
     @BeforeAll
     public static void prepareDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
@@ -105,9 +101,6 @@ public class ProcessServiceIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create("1"));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
     }
 
     @Test

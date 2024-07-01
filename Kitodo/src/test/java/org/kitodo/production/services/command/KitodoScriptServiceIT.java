@@ -29,7 +29,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
@@ -102,10 +101,6 @@ public class KitodoScriptServiceIT {
 
     @Test
     public void shouldCreateProcessFolders() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
-        }
-
         Process process = ServiceManager.getProcessService().getById(1);
         process.setTitle("FirstProcess");
         ServiceManager.getFileService().createProcessLocation(process);
@@ -122,10 +117,6 @@ public class KitodoScriptServiceIT {
         kitodoScript.execute(processes, script);
 
         assertTrue(max.isDirectory(), max + ": There is no such directory!");
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
-        }
 
         TreeDeleter.deltree(processHome);
     }
