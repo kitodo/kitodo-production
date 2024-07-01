@@ -34,7 +34,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameEndsWithFilter;
 import org.kitodo.config.KitodoConfig;
@@ -57,7 +56,6 @@ public class FileManagementTest {
         fileManagement.create(URI.create(""), DIRECTORY_SIZE, false);
         URI directory = fileManagement.create(URI.create(""), "2", false);
         fileManagement.create(directory, "meta.xml", true);
-        ExecutionPermission.setExecutePermission(script);
     }
 
     @AfterAll
@@ -65,7 +63,6 @@ public class FileManagementTest {
         fileManagement.delete(URI.create(FILE_TEST));
         fileManagement.delete(URI.create(DIRECTORY_SIZE));
         fileManagement.delete(URI.create("2"));
-        ExecutionPermission.setNoExecutePermission(script);
     }
 
     @Test
@@ -318,15 +315,11 @@ public class FileManagementTest {
         File script = new File(KitodoConfig.getParameter("script_createSymLink"));
         URI directory = fileManagement.create(URI.create(""), SYMLINK_SOURCE, false);
         fileManagement.create(directory, "meta.xml", true);
-        setFileExecutable(script);
         boolean result = fileManagement.createSymLink(symLinkSource, symLinkTarget, false, SystemUtils.USER_NAME);
-        setFileNotExecutable(script);
         assertTrue(result, "Create symbolic link has failed!");
 
         File scriptClean = new File(KitodoConfig.getParameter("script_deleteSymLink"));
-        setFileExecutable(scriptClean);
         fileManagement.deleteSymLink(symLinkTarget);
-        setFileNotExecutable(scriptClean);
         fileManagement.delete(symLinkSource);
         fileManagement.delete(symLinkTarget);
     }
@@ -341,50 +334,13 @@ public class FileManagementTest {
         File scriptPrepare = new File(KitodoConfig.getParameter("script_createSymLink"));
         URI directory =  fileManagement.create(URI.create(""), SYMLINK_SOURCE, false);
         fileManagement.create(directory, "meta.xml", true);
-        setFileExecutable(scriptPrepare);
         fileManagement.createSymLink(symLinkSource, symLinkTarget, false, SystemUtils.USER_NAME);
-        setFileNotExecutable(scriptPrepare);
 
         File script = new File(KitodoConfig.getParameter("script_deleteSymLink"));
-        setFileExecutable(script);
         boolean result = fileManagement.deleteSymLink(symLinkTarget);
-        setFileNotExecutable(script);
         assertTrue(result, "Delete symbolic link has failed!");
 
         fileManagement.delete(symLinkSource);
         fileManagement.delete(symLinkTarget);
-    }
-
-    private static void setFileExecutable(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-        perms.add(PosixFilePermission.OTHERS_EXECUTE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-        perms.add(PosixFilePermission.GROUP_EXECUTE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
-    }
-
-    private static void setFileNotExecutable(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
     }
 }
