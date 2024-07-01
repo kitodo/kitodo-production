@@ -41,7 +41,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -84,9 +83,6 @@ public class ProcessServiceIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
@@ -107,9 +103,6 @@ public class ProcessServiceIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create("1"));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
     }
 
     @Rule

@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
@@ -43,8 +42,6 @@ public class BaseTestSelenium {
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             File scriptCreateDirUserHome = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-            ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
-            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
 
         Browser.Initialize();
@@ -61,8 +58,6 @@ public class BaseTestSelenium {
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             File scriptCreateDirUserHome = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
         }
 
         FileLoader.deleteConfigProjectsFile();

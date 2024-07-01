@@ -20,7 +20,6 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.TreeDeleter;
@@ -49,11 +48,6 @@ public class NewspaperMigrationTaskIT {
 
     @BeforeClass
     public static void prepareDatabase() throws Exception {
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
-
         moveOriginMetadataDirectoryAside();
         FileUtils.copyDirectory(TEST_DATAFILES_DIRECTORY, METADATA_DIRECTORY);
         MockDatabase.startNode();
@@ -136,10 +130,6 @@ public class NewspaperMigrationTaskIT {
         MockDatabase.cleanDatabase();
         restoreMetadataDirectoryContents();
         SecurityTestUtils.cleanSecurityContext();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
     }
 
     private static void restoreMetadataDirectoryContents() throws Exception {

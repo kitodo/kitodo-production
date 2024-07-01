@@ -28,7 +28,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
@@ -77,14 +76,6 @@ public class WorkflowControllerServiceIT {
         ProcessTestUtils.copyTestMetadataFile(workflowTestProcessId2, METADATA_TEST_FILENAME);
 
         usersDirectory.mkdir();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
-            ExecutionPermission.setExecutePermission(scriptCreateSymLink);
-            ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
-            ExecutionPermission.setExecutePermission(scriptNotWorking);
-            ExecutionPermission.setExecutePermission(scriptWorking);
-        }
     }
 
     @After
@@ -94,14 +85,6 @@ public class WorkflowControllerServiceIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
-            ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
-            ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
-            ExecutionPermission.setNoExecutePermission(scriptNotWorking);
-            ExecutionPermission.setNoExecutePermission(scriptWorking);
-        }
 
         usersDirectory.delete();
     }
