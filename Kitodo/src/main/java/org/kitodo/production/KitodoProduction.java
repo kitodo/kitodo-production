@@ -50,6 +50,8 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     private KitodoVersion version = new KitodoVersion();
     private ActiveMQDirector activeMQDirector;
 
+    /* This is the main() function. The class is instantiated by the servlet
+     * container, which then calls this function. */
     @Override
     public void contextInitialized(ServletContextEvent event) {
         context = event.getServletContext();
