@@ -900,8 +900,8 @@ public class ServiceManager {
             StackTraceElement[] callStack = new Exception().getStackTrace();
             String serviceName = callStack[1].getMethodName().substring(3);
             String fullClassName = callStack[2].getClassName();
-            int lastDotPos = fullClassName.lastIndexOf('.');
-            String requestingClass = fullClassName.substring(lastDotPos + 1);
+            int lastDotIndex = fullClassName.lastIndexOf('.');
+            String requestingClass = fullClassName.substring(lastDotIndex + 1);
             logger.trace(String.format("Providing %s to %s", serviceName, requestingClass));
         }
     }
