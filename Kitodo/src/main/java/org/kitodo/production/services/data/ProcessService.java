@@ -2599,6 +2599,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     /**
      * Removes properties with empty title.
      * 
+     * <p>
      * TODO: is it really a case that title is empty?
      * 
      * @param properties
