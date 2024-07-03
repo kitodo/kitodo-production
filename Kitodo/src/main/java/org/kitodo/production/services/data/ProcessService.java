@@ -280,11 +280,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     @Override
-    public void save(Process process) throws DataException {
-        this.save(process, false);
-    }
-
-    @Override
     public void save(Process process, boolean updateRelatedObjectsInIndex) throws DataException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
         
