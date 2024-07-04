@@ -104,6 +104,7 @@ import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
@@ -1855,16 +1856,22 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     public static void deleteProcess(Process processToDelete) throws DataException, IOException {
         deleteMetadataDirectory(processToDelete);
 
-        if (Objects.nonNull(processToDelete.getProject())
-                && Objects.nonNull(processToDelete.getProject().getProcesses())) {
-            processToDelete.getProject().getProcesses().remove(processToDelete);
+        Project project = processToDelete.getProject();
+        if(Objects.nonNull(project)) {
+            processToDelete.setProject(null);
+            if(Objects.nonNull(project.getProcesses())) {
+                project.getProcesses().remove(processToDelete);
+                ServiceManager.getProjectService().save(project);
+            }
         }
-        processToDelete.setProject(null);
-        if (Objects.nonNull(processToDelete.getTemplate())
-                && Objects.nonNull(processToDelete.getTemplate().getProcesses())) {
-            processToDelete.getTemplate().getProcesses().remove(processToDelete);
+        Template template = processToDelete.getTemplate();
+        if (Objects.nonNull(template)) {
+            processToDelete.setTemplate(null);
+            if(Objects.nonNull(template.getProcesses())) {
+                template.getProcesses().remove(processToDelete);
+                ServiceManager.getTemplateService().save(template);
+            }
         }
-        processToDelete.setTemplate(null);
         Process parent = processToDelete.getParent();
         if (Objects.nonNull(parent)) {
             parent.getChildren().remove(processToDelete);
