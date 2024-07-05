@@ -64,10 +64,8 @@
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
         <junit.version>5.9.2</junit.version>
-        <opensearch.version>2.11.1</opensearch.version>
-<!--
-        <opensearch.version>1.0.0</opensearch.version>
--->
+        <opensearch.version>2.15.0</opensearch.version>
+        <opensearch-java.version>2.11.1</opensearch-java.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
 
         <!-- maven-resources-plugin versions greater 3.2.0 introduce changes that
@@ -459,8 +457,6 @@ from system library in Java 11+ -->
                 <artifactId>opensearch-core</artifactId>
                 <version>${opensearch.version}</version>
             </dependency>
-<!--
--->
             <dependency>
                 <groupId>org.opensearch.client</groupId>
                 <artifactId>opensearch-rest-high-level-client</artifactId>
@@ -474,12 +470,20 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.opensearch.client</groupId>
                 <artifactId>opensearch-java</artifactId>
-                <version>${opensearch.version}</version>
+                <version>${opensearch-java.version}</version>
             </dependency>
+<!--
             <dependency>
                 <groupId>org.opensearch.client</groupId>
                 <artifactId>transport</artifactId>
                 <version>${opensearch.version}</version>
+            </dependency>
+-->
+            <dependency>
+                <groupId>org.opensearch.plugin</groupId>
+                <artifactId>transport-netty4-client</artifactId>
+                <version>${opensearch.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <!-- hibernate caching dependency -->
