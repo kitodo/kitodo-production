@@ -21,7 +21,7 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.OpenSearchStatusException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -214,7 +214,7 @@ public class DesktopForm extends BaseForm {
                     return 0L;
             }
 
-        } catch (DAOException | JsonException | ElasticsearchStatusException e) {
+        } catch (DAOException | JsonException | OpenSearchStatusException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;

@@ -24,6 +24,11 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.opensearch.OpenSearchStatusException;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.sort.SortBuilders;
+import org.opensearch.search.sort.SortOrder;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
@@ -476,7 +481,7 @@ public class FilterServiceIT {
         // empty condition is not allowed and throws Exception in ElasticSearch 7
         query = filterService.queryBuilder("\"id:\"", ObjectType.PROCESS, false, false);
         QueryBuilder finalQuery = query;
-        assertThrows(ElasticsearchStatusException.class,
+        assertThrows(OpenSearchStatusException.class,
                 () -> processService.findByQuery(finalQuery, true));
     }
 }

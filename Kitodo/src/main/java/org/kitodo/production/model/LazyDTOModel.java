@@ -23,7 +23,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.OpenSearchStatusException;
 import org.opensearch.index.query.QueryShardException;
 import org.hibernate.exception.SQLGrammarException;
 import org.kitodo.config.ConfigMain;
@@ -106,7 +106,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
                 logger.info("{} entities loaded!", entities.size());
                 return entities;
-            } catch (DAOException | DataException | ElasticsearchStatusException | QueryShardException
+            } catch (DAOException | DataException | OpenSearchStatusException | QueryShardException
                     | SQLGrammarException e) {
                 setRowCount(0);
                 logger.error(e.getMessage(), e);
