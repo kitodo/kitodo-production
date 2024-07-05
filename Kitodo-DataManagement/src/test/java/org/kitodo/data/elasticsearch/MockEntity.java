@@ -23,10 +23,10 @@ import java.util.function.Supplier;
 
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.transport.Netty4Plugin;
+import org.opensearch.common.io.FileSystemUtils;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.node.Node;
+import org.opensearch.transport.Netty4Plugin;
 import org.kitodo.config.ConfigMain;
 
 

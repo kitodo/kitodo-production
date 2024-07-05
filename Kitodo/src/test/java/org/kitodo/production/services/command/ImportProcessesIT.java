@@ -97,19 +97,7 @@ public class ImportProcessesIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
-<<<<<<< HEAD
-    @BeforeAll
-    public static void setScriptPermission() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission
-                    .setExecutePermission(new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META)));
-        }
-    }
-
     @BeforeEach
-=======
-    @Before
->>>>>>> 932f57916 (Simplify more test code)
     public void createOutputDirectories() throws Exception {
         Files.createDirectories(ERRORS_DIR_PATH);
     }

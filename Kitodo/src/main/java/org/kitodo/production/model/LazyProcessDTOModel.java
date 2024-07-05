@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
-import org.elasticsearch.ElasticsearchStatusException;
-import org.elasticsearch.index.query.QueryShardException;
+import org.opensearch.ElasticsearchStatusException;
+import org.opensearch.index.query.QueryShardException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;

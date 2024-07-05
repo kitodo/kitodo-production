@@ -194,13 +194,7 @@ public class UserServiceIT {
         user = userService.getById(2);
         homeDirectoryForUser = userService.getHomeDirectory(user);
         condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
-<<<<<<< HEAD
         assertTrue(condition, "Home directory of user is incorrect!");
-
-        ExecutionPermission.setNoExecutePermission(script);
-=======
-        assertTrue("Home directory of user is incorrect!", condition);
->>>>>>> 932f57916 (Simplify more test code)
     }
 
     @Test
