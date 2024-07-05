@@ -21,9 +21,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 
+import org.apache.commons.io.FileUtils;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
-import org.opensearch.common.io.FileSystemUtils;
 import org.opensearch.common.settings.Settings;
 import org.opensearch.node.Node;
 import org.opensearch.transport.Netty4Plugin;
@@ -54,7 +54,7 @@ public class MockEntity {
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {
         File dataDir = new File(dataDirectory);
         if (dataDir.exists()) {
-            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
+            FileUtils.deleteDirectory(dataDir);
         }
     }
 
