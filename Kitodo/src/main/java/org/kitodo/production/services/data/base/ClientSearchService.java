@@ -18,10 +18,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.opensearch.index.query.BoolQueryBuilder;
-import org.opensearch.index.query.Operator;
-import org.opensearch.index.query.QueryBuilder;
-import org.opensearch.search.sort.SortBuilder;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.persistence.BaseDAO;
@@ -32,6 +28,10 @@ import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.services.ServiceManager;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.search.sort.SortBuilder;
 
 public abstract class ClientSearchService<T extends BaseIndexedBean, S extends BaseDTO, V extends BaseDAO<T>>
         extends TitleSearchService<T, S, V> {

@@ -20,6 +20,9 @@ import javax.ws.rs.HttpMethod;
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
+import org.kitodo.data.elasticsearch.KitodoRestClient;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.opensearch.action.bulk.BulkRequest;
 import org.opensearch.action.bulk.BulkResponse;
 import org.opensearch.action.delete.DeleteRequest;
@@ -30,9 +33,6 @@ import org.opensearch.client.Request;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.Response;
 import org.opensearch.client.ResponseException;
-import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Implementation of ElasticSearch REST Client for index package.

@@ -21,7 +21,6 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.opensearch.OpenSearchStatusException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -34,6 +33,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
+import org.opensearch.OpenSearchStatusException;
 import org.primefaces.model.SortOrder;
 
 import jakarta.json.JsonException;

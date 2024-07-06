@@ -30,6 +30,9 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.config.ConfigMain;
+import org.kitodo.data.elasticsearch.api.RestClientInterface;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.opensearch.client.Request;
 import org.opensearch.client.RequestOptions;
 import org.opensearch.client.Requests;
@@ -40,9 +43,6 @@ import org.opensearch.client.RestClientBuilder;
 import org.opensearch.client.RestHighLevelClient;
 import org.opensearch.client.core.MainResponse;
 import org.opensearch.core.rest.RestStatus;
-import org.kitodo.config.ConfigMain;
-import org.kitodo.data.elasticsearch.api.RestClientInterface;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 
 /**
  * Implementation of ElasticSearch REST Client for Index Module.

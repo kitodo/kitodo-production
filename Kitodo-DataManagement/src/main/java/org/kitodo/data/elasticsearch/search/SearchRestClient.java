@@ -23,6 +23,9 @@ import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;
 import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
+import org.kitodo.data.elasticsearch.KitodoRestClient;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.opensearch.action.get.GetRequest;
 import org.opensearch.action.get.GetResponse;
 import org.opensearch.action.search.SearchRequest;
@@ -37,9 +40,6 @@ import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.Aggregations;
 import org.opensearch.search.builder.SearchSourceBuilder;
 import org.opensearch.search.sort.SortBuilder;
-import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 
 /**
  * Extension of KitodoRestClient for search package.

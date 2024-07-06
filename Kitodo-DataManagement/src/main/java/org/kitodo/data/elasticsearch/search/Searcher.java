@@ -18,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.kitodo.data.elasticsearch.Index;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
+import org.kitodo.data.exceptions.DataException;
 import org.opensearch.index.query.QueryBuilder;
 import org.opensearch.index.query.QueryBuilders;
 import org.opensearch.search.SearchHit;
@@ -25,9 +28,6 @@ import org.opensearch.search.SearchHits;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.Aggregations;
 import org.opensearch.search.sort.SortBuilder;
-import org.kitodo.data.elasticsearch.Index;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.exceptions.DataException;
 
 import jakarta.json.Json;
 import jakarta.json.JsonObject;
