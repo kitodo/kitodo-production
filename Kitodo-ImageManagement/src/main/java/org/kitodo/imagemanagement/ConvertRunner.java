@@ -40,7 +40,7 @@ class ConvertRunner {
     /**
      * {@code convert} command without path.
      */
-    private static final String CONVERT_COMMAND = "convert";
+    private static final String CONVERT_COMMAND = "magick";
 
     /**
      * Randomness generator used to distribute the requests evenly on several
