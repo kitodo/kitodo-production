@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.persistence;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -161,6 +163,17 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void evict(T baseBean) {
         evictObject(baseBean);
+    }
+
+    /**
+     * Merge given bean object.
+     *
+     * @param baseBean
+     *            bean to Merge
+     */
+    @CheckReturnValue
+    public T merge(T baseBean) {
+        return mergeObject(baseBean);
     }
 
     /**
@@ -410,6 +423,20 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     private void evictObject(T object) {
         try (Session session = HibernateUtil.getSession()) {
             session.evict(object);
+        }
+    }
+
+    /**
+     * Merge object into the session.
+     *
+     * @param object
+     *            to be associated with the session
+     */
+    @SuppressWarnings("unchecked")
+    @CheckReturnValue
+    private T mergeObject(T object) {
+        try (Session session = HibernateUtil.getSession()) {
+            return (T) session.merge(object);
         }
     }
 

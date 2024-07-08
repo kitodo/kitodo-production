@@ -1877,9 +1877,10 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             parent.getChildren().remove(processToDelete);
             processToDelete.setParent(null);
             MetadataEditor.removeLink(parent, processToDelete.getId());
-            ServiceManager.getProcessService().save(processToDelete);
+            processToDelete = ServiceManager.getProcessService().merge(processToDelete);
             ServiceManager.getProcessService().save(parent);
         }
+        processToDelete = ServiceManager.getProcessService().merge(processToDelete);
         List<Batch> batches = new CopyOnWriteArrayList<>(processToDelete.getBatches());
         for (Batch batch : batches) {
             batch.getProcesses().remove(processToDelete);

@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.data.base;
 
+import io.reactivex.annotations.CheckReturnValue;
+
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -170,6 +172,11 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         this.dao.evict(baseBean);
     }
 
+    @CheckReturnValue
+    public T merge(T baseBean) {
+        return this.dao.merge(baseBean);
+    }
+    
     /**
      * Refresh given bean object.
      *
