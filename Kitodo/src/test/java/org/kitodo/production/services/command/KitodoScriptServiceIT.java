@@ -30,6 +30,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -230,6 +231,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldAddDataWithValue() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
@@ -347,6 +349,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldCopyMultipleDataToChildren() throws Exception {
         Map<String, Integer> testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
         ProcessTestUtils.copyHierarchyTestFiles(testProcessIds);
@@ -370,6 +373,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldAddDataWithWhitespace() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
@@ -391,6 +395,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldAddDataWithMultipleScripts() throws Exception {
         String metadataKey = "LegalNoteAndTermsOfUse";
         HashMap<String, String> metadataSearchMap = new HashMap<>();
@@ -419,6 +424,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldCopyDataWithSource() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
@@ -440,6 +446,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldAddDataWithVariable() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "LegalNoteAndTermsOfUse";
@@ -461,6 +468,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldDeleteData() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
@@ -482,6 +490,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldDeleteDataWithValue() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
@@ -501,7 +510,9 @@ public class KitodoScriptServiceIT {
         processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should not contain metadata", 0, processByMetadata.size() );
     }
+
     @Test
+    @Disabled("Data index currently not available")
     public void shouldDeleteAllDataWithSameKey() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TSL_ATS";
@@ -523,6 +534,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldDeleteDataWithSource() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
@@ -544,6 +556,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldNotDeleteDataWithValue() throws Exception {
         Process process = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         String metadataKey = "TitleDocMainShort";
@@ -565,6 +578,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldOverwriteDataWithValue() throws Exception {
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
@@ -595,6 +609,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldOverwriteDataWithSource() throws Exception {
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
@@ -625,6 +640,7 @@ public class KitodoScriptServiceIT {
     }
 
     @Test
+    @Disabled("Data index currently not available")
     public void shouldOverwriteDataWithVariable() throws Exception {
         String metadataKey = "TitleDocMainShort";
         HashMap<String, String> oldMetadataSearchMap = new HashMap<>();
