@@ -1857,9 +1857,9 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         deleteMetadataDirectory(processToDelete);
 
         Project project = processToDelete.getProject();
-        if(Objects.nonNull(project)) {
+        if (Objects.nonNull(project)) {
             processToDelete.setProject(null);
-            if(Objects.nonNull(project.getProcesses())) {
+            if (Objects.nonNull(project.getProcesses())) {
                 project.getProcesses().remove(processToDelete);
                 ServiceManager.getProjectService().save(project);
             }
@@ -1867,7 +1867,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         Template template = processToDelete.getTemplate();
         if (Objects.nonNull(template)) {
             processToDelete.setTemplate(null);
-            if(Objects.nonNull(template.getProcesses())) {
+            if (Objects.nonNull(template.getProcesses())) {
                 template.getProcesses().remove(processToDelete);
                 ServiceManager.getTemplateService().save(template);
             }
