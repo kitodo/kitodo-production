@@ -89,7 +89,8 @@ public class CreateProcessFormIT {
         Workpiece newWorkPiece = new Workpiece();
         TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
         underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
-        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
+        Project project = ServiceManager.getProjectService().getById(1);
+        underTest.getMainProcess().setProject(project);
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
 
@@ -99,6 +100,8 @@ public class CreateProcessFormIT {
         }
         long before = processService.count();
         underTest.createNewProcess();
+        project.getProcesses().add(newProcess);
+        ServiceManager.getProjectService().save(project);
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setNoExecutePermission(script);
         }
