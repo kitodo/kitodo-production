@@ -136,6 +136,8 @@ public class ProcessServiceIT {
         Process parent = new Process();
         parent.setTitle("Parent");
 
+        processService.save(parent);
+
         Process process = new Process();
         process.setTitle("Child");
         process.setParent(parent);
@@ -151,6 +153,8 @@ public class ProcessServiceIT {
 
         foundParent.getChildren().clear();
         foundProcess.setParent(null);
+        processService.save(foundParent);
+        processService.save(foundProcess);
 
         processService.remove(foundProcess);
         processService.remove(foundParent);
