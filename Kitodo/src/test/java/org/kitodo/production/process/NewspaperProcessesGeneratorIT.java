@@ -11,6 +11,8 @@
 
 package org.kitodo.production.process;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -241,9 +243,11 @@ public class NewspaperProcessesGeneratorIT {
         course.splitInto(Granularity.DAYS);
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
         generatesNewspaperProcessesThread.start();
-
-        ProcessInterface byId = ServiceManager.getProcessService().findById(11);
-        Assert.assertNull("Process should not have been created", byId.getTitle());
+        DataException dataException = assertThrows(DataException.class,
+                () -> ServiceManager.getProcessService().findById(11));
+        Assert.assertEquals("Process should not have been created",
+            "org.kitodo.data.database.exceptions.DAOException: Process 11 cannot be found in database",
+            dataException.getMessage());
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {
