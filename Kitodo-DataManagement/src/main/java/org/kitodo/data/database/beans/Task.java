@@ -670,6 +670,6 @@ public class Task extends BaseIndexedBean implements TaskInterface {
         if (Objects.isNull(roles)) {
             return null;
         }
-        return roles.stream().map(RoleInterface::getId).collect(Collectors.toList());
+        return getRoles().stream().map(RoleInterface::getId).collect(Collectors.toList());
     }
 }
