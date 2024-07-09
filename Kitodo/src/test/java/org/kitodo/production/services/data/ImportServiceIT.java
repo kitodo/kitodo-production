@@ -39,6 +39,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -220,14 +221,15 @@ public class ImportServiceIT {
     }
 
     /**
-     * Tests whether parent process with provided process ID exists and created parent TempProcess from it.
+     * Tests whether the parent process with the provided process ID exists and whether the parent TempProcess was
+     * created from it.
      *
      * @throws DAOException when test ruleset cannot be loaded from database
      * @throws ProcessGenerationException when checking for parent process fails
      * @throws IOException when checking for parent process fails
      * @throws DataException when copying test metadata file fails
      */
-    @Test
+    @Disabled("index currently not available")
     public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException, DataException {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
