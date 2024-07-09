@@ -141,7 +141,8 @@ public class BeanQuery {
     }
 
     public void restrictToNotCompletedProcesses() {
-        restrictions.add(varName + ".sortHelperStatus != '100000000000'");
+        restrictions.add('(' + varName + ".sortHelperStatus IS NULL OR " + varName
+                + ".sortHelperStatus != '100000000000')");
     }
 
     /**

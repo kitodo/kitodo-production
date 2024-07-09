@@ -550,7 +550,9 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             String filter, Collection<Integer> excludedProcessIds) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        query.addNotInCollectionRestriction("id", excludedProcessIds);
+        if (!excludedProcessIds.isEmpty()) {
+            query.addNotInCollectionRestriction("id", excludedProcessIds);
+        }
         if (StringUtils.isNotBlank(filter)) {
             query.restrictWithUserFilterString(filter);
         }
