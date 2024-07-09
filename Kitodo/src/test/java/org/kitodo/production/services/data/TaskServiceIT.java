@@ -265,7 +265,6 @@ public class TaskServiceIT {
      * ElasticSearch, e.g., a lower-case filter) and not the actual original task titles.
      * Accordingly, task titles are checked against their lower-case transformation.</p>
      */
-    @Test
     @Disabled("currently not implemented")
     public void shouldFindDistinctTitles() throws Exception {
         List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();

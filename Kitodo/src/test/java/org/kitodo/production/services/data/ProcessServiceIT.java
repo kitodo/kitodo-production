@@ -211,14 +211,12 @@ public class ProcessServiceIT {
         assertEquals(processNotFound, 1, processService.findByTitle(firstProcess).size());
     }
 
-    @Test
     @Disabled("Data index currently not available")
     public void shouldFindByMetadata() throws DataException {
         assertEquals(processNotFound, 3,
             processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
-    @Test
     @Disabled("Data index currently not available")
     public void shouldNotFindByMetadata() throws DataException {
         assertEquals("Process was found in index!", 0,
@@ -233,7 +231,6 @@ public class ProcessServiceIT {
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
-    @Test
     @Disabled("Data index currently not available")
     public void shouldFindByLongNumberInMetadata() throws DataException, DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
