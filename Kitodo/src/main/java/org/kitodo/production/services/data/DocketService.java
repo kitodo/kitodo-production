@@ -85,9 +85,10 @@ public class DocketService extends SearchDatabaseService<Docket, DocketDAO> impl
             throws DataException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        parameters.put("desiredOrder", SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder));
-        return getByQuery("FROM Docket WHERE client_id = :sessionClientId ORDER BY :desiredOrder", parameters, first,
-            pageSize);
+        String desiredOrder = SORT_FIELD_MAPPING.getOrDefault(sortField, sortField) + ' '
+            + SORT_ORDER_MAPPING.get(sortOrder);
+        return getByQuery("FROM Docket WHERE client_id = :sessionClientId ORDER BY ".concat(desiredOrder), parameters,
+            first, pageSize);
     }
 
     @Override
