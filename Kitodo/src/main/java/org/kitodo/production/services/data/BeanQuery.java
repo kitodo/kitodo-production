@@ -16,7 +16,6 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -109,14 +108,15 @@ public class BeanQuery {
      *            single line input by the user
      */
     public void forIdOrInTitle(String searchInput) {
+        String searchInputAnywhere = '%' + searchInput + '%';
         try {
             Integer possibleId = Integer.valueOf(searchInput);
-            restrictions.add('(' + varName + ".id = :possibleId OR " + varName + ".title LIKE '%:searchInput%')");
+            restrictions.add('(' + varName + ".id = :possibleId OR " + varName + ".title LIKE :searchInput)");
             parameters.put("possibleId", possibleId);
-            parameters.put("searchInput", searchInput);
+            parameters.put("searchInput", searchInputAnywhere);
         } catch (NumberFormatException e) {
-            restrictions.add(varName + ".title LIKE '%:searchInput%'");
-            parameters.put("searchInput", searchInput);
+            restrictions.add(varName + ".title LIKE :searchInput");
+            parameters.put("searchInput", searchInputAnywhere);
         }
     }
 

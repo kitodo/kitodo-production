@@ -232,9 +232,8 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
                 if (Objects.isNull(parameter)) {
                     return matchResult.group();
                 }
-                if ((parameter instanceof String)
-                        && (((String) parameter).isEmpty() || ((String) parameter).contains(" "))) {
-                    return '"' + ((String) parameter) + '"';
+                if (parameter instanceof String) {
+                    return '\'' + ((String) parameter) + '\'';
                 }
                 return Objects.toString(parameter);
             });

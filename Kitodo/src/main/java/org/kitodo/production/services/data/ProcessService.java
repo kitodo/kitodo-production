@@ -539,8 +539,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        query.addIntegerRestriction("project_id", projectId);
-        query.addIntegerRestriction("ruleset_id", rulesetId);
+        query.addIntegerRestriction("project.id", projectId);
+        query.addIntegerRestriction("ruleset.id", rulesetId);
         query.forIdOrInTitle(searchInput);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
