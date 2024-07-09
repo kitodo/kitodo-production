@@ -34,6 +34,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.helper.TempProcess;
@@ -106,7 +107,7 @@ public class CreateProcessFormIT {
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();
-        processService.remove(newProcess);
+        processService.deleteProcess(newProcess);
         fileService.delete(URI.create(processId.toString()));
     }
 
@@ -121,7 +122,8 @@ public class CreateProcessFormIT {
         Workpiece newWorkPiece = new Workpiece();
         TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
         underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
-        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
+        Project project = ServiceManager.getProjectService().getById(1);
+        underTest.getMainProcess().setProject(project);
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
 
@@ -129,6 +131,8 @@ public class CreateProcessFormIT {
         ExecutionPermission.setExecutePermission(script);
         long before = processService.count();
         underTest.createNewProcess();
+        project.getProcesses().add(newProcess);
+        ServiceManager.getProjectService().save(project);
         ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals("No process was created!", before + 1, after);
@@ -138,7 +142,7 @@ public class CreateProcessFormIT {
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();
-        processService.remove(newProcess);
+        processService.deleteProcess(newProcess);
         fileService.delete(URI.create(processId.toString()));
     }
 }
