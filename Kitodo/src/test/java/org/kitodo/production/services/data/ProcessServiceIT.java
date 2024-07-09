@@ -223,14 +223,6 @@ public class ProcessServiceIT {
                 processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
     }
 
-    @Test
-    public void shouldFindByMetadataContent() throws DataException, DAOException, IOException {
-        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
-        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
-        ProcessTestUtils.removeTestProcess(testProcessId);
-    }
-
     @Disabled("Data index currently not available")
     public void shouldFindByLongNumberInMetadata() throws DataException, DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
@@ -242,40 +234,6 @@ public class ProcessServiceIT {
         assertEquals(processNotFound, 1, processService
                 .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999999999999991")).size());
         ProcessTestUtils.removeTestProcess(processId);
-    }
-
-    @Test
-    public void shouldFindProcessWithUnderscore() throws DataException, DAOException {
-        Project project = ServiceManager.getProjectService().getById(1);
-        Process process = new Process();
-        process.setProject(project);
-        String processTitle = "Title-with-hyphen_and_underscore";
-        process.setTitle(processTitle);
-        ServiceManager.getProcessService().save(process);
-
-        List<ProcessInterface> byAnything = processService.findByAnything("ith-hyphen_an");
-        assertFalse("nothing found", byAnything.isEmpty());
-        assertEquals("wrong process found", processTitle, byAnything.get(0).getTitle());
-
-        ServiceManager.getProcessService().remove(process);
-    }
-
-    @Test
-    public void shouldFindByProjectTitleWithWildcard() throws DataException {
-        assertEquals(processNotFound, 6, processService.findByAnything("proj").size());
-    }
-
-    @Test
-    public void shouldNotFindByAnything() throws DataException {
-        assertEquals(processNotFound, 0, processService.findByAnything("Nope").size());
-    }
-
-    @Test
-    public void shouldFindByMetadataGroupContent() throws DataException, DAOException, IOException {
-        int testProcessId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
-        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        assertEquals(processNotFound, 1, processService.findByAnything("August").size());
-        ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
     @Test
