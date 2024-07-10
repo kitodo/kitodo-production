@@ -11,6 +11,7 @@
 
 package org.kitodo.dataformat.access;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -30,8 +31,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.junit.jupiter.api.Disabled;
+import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
@@ -41,7 +43,12 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.ProcessingNote;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.config.KitodoConfig;
+import org.mockito.MockedStatic;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+@ExtendWith(MockitoExtension.class)
 public class MetsXmlElementAccessIT {
 
     private static final File OUT_FILE = new File("src/test/resources/out.xml");
@@ -273,8 +280,23 @@ public class MetsXmlElementAccessIT {
     }
 
     @Test
-    @Disabled("See GitHub discussion https://github.com/kitodo/kitodo-production/discussions/6087")
-    public void duplicateMetsFileDefinition() {
+    public void duplicateMetsFileDefinitionWithoutStrictFileIdCheck() throws IOException {
+        try (InputStream fileContent = new FileInputStream("src/test/resources/meta_duplicate_file.xml")) {
+            assertDoesNotThrow(
+                () -> new MetsXmlElementAccess().read(fileContent)
+            );
+        }
+    }
+
+    @Test
+    public void duplicateMetsFileDefinitionWithStrictFileIdCheck() {
+        // mock access to KitodoConfig usage
+        PropertiesConfiguration propertiesConfiguration = Mockito.mock(PropertiesConfiguration.class);
+        MockedStatic<KitodoConfig> mockedConfig = Mockito.mockStatic(KitodoConfig.class);
+        mockedConfig.when(KitodoConfig::getConfig).thenReturn(propertiesConfiguration);
+        // mock getBoolean method call like in the main class
+        Mockito.when(propertiesConfiguration.getBoolean("useStrictMetsFileIdCheck", false)).thenReturn(true);
+
         Exception exception = assertThrows(IllegalArgumentException.class,
                 () -> new MetsXmlElementAccess().read(
                         new FileInputStream("src/test/resources/meta_duplicate_file.xml")
