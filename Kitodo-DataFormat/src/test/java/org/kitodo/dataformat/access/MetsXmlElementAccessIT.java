@@ -19,6 +19,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.file.Files;
@@ -253,9 +254,11 @@ public class MetsXmlElementAccessIT {
 
     @Test
     public void missingMetsHeaderCreationDateDidNotThrowNullPointerException() throws IOException {
-        Workpiece workpiece = new MetsXmlElementAccess()
-            .read(new FileInputStream("src/test/resources/meta_missing_createdate.xml"));
-        assertNotNull(workpiece.getCreationDate());
+        try (InputStream fileContent = new FileInputStream("src/test/resources/meta_missing_createdate.xml")) {
+            Workpiece workpiece = new MetsXmlElementAccess()
+                    .read(fileContent);
+            assertNotNull(workpiece.getCreationDate());
+        }
     }
 
     @Test
