@@ -40,10 +40,13 @@ public class MassImportTest {
     private static final List<String> CSV_LINES = Arrays.asList(CSV_FIRST_LINE, CSV_SECOND_LINE, CSV_THIRD_LINE);
     private static final List<String> CSV_LINES_WITH_COMMA = Arrays.asList(CSV_FIRST_LINE_WITH_COMMA, CSV_SECOND_LINE, CSV_THIRD_LINE);
     private static final List<String> METADATA_KEYS_MUTLIPLE_VALUES  = Arrays.asList(ID, TITLE, PLACE, PLACE);
-    private static final String CSV_FIRST_LINE_MUTLIPLE_VALUES  = "321, Band 1, Hamburg, Berlin";
-    private static final String CSV_SECOND_LINE_MUTLIPLE_VALUES  = "654, Band 2, Dresden, Hannover";
-    private static final List<String> CSV_LINES_MUTLIPLE_VALUES = Arrays.asList(CSV_FIRST_LINE_MUTLIPLE_VALUES,
-            CSV_SECOND_LINE_MUTLIPLE_VALUES);
+    private static final String CSV_FIRST_LINE_MULTIPLE_VALUES  = "321, Band 1, Hamburg, Berlin";
+    private static final String CSV_FIRST_LINE_MULTIPLE_VALUES_WITH_COMMA  = "978, Band 1, Hamburg, \"Berlin, Kopenhagen\"";
+    private static final String CSV_SECOND_LINE_MULTIPLE_VALUES  = "654, Band 2, Dresden, Hannover";
+    private static final List<String> CSV_LINES_MULTIPLE_VALUES = Arrays.asList(CSV_FIRST_LINE_MULTIPLE_VALUES,
+            CSV_SECOND_LINE_MULTIPLE_VALUES);
+    private static final List<String> CSV_LINES_MULTIPLE_VALUES_WITH_COMMA = Arrays.asList(CSV_FIRST_LINE_MULTIPLE_VALUES_WITH_COMMA,
+            CSV_SECOND_LINE_MULTIPLE_VALUES);
 
     /**
      * Tests parsing CSV lines into CSV records with multiple cells.
@@ -141,13 +144,13 @@ public class MassImportTest {
         Assert.assertEquals("Metadata for record with ID 123 contains wrong place", "Hamburg",
                 metadataSet.get(PLACE).get(0));
 
-        List<CsvRecord> csvRecordsMultipleValues = service.parseLines(CSV_LINES_MUTLIPLE_VALUES,
+        List<CsvRecord> csvRecordsMultipleValues = service.parseLines(CSV_LINES_MULTIPLE_VALUES,
                 StringConstants.COMMA_DELIMITER);
         Map<String, Map<String, List<String>>> metadataMultipleValues = service.
                 prepareMetadata(METADATA_KEYS_MUTLIPLE_VALUES, csvRecordsMultipleValues);
         Map<String, List<String>> metadataSetMultipleValues = metadataMultipleValues.get("321");
         Assert.assertNotNull("Metadata for record with ID 321 is null", metadataSetMultipleValues);
-        Assert.assertEquals("Metadata for record with ID 321 contains wrong title", 2,
+        Assert.assertEquals("Wrong number of metadata sets prepared", 2,
                 metadataSetMultipleValues.size());
         Assert.assertTrue("Metadata for record with ID 321 does not contain place metadata",
                 metadataSetMultipleValues.containsKey(PLACE));
@@ -157,5 +160,24 @@ public class MassImportTest {
                 metadataSetMultipleValues.get(PLACE).get(0));
         Assert.assertEquals("Metadata for record with ID 321 contains wrong place", "Berlin",
                 metadataSetMultipleValues.get(PLACE).get(1));
+
+        List<CsvRecord> csvRecordsMultipleValuesWithComma = service.parseLines(CSV_LINES_MULTIPLE_VALUES_WITH_COMMA,
+                StringConstants.COMMA_DELIMITER);
+        Map<String, Map<String, List<String>>> metadataMultipleValuesWithComma = service.
+                prepareMetadata(METADATA_KEYS_MUTLIPLE_VALUES, csvRecordsMultipleValuesWithComma);
+
+        Map<String, List<String>> metadataSetMultipleValuesWithComma = metadataMultipleValuesWithComma.get("978");
+        Assert.assertNotNull("Metadata for record with ID 978 is null", metadataSetMultipleValuesWithComma);
+        Assert.assertEquals("Wrong number of metadata sets prepared", 2,
+                metadataSetMultipleValuesWithComma.size());
+        Assert.assertTrue("Metadata for record with ID 978 does not contain place metadata",
+                metadataSetMultipleValuesWithComma.containsKey(PLACE));
+        Assert.assertEquals("Metadata for record with ID 978 has wrong size of place list", 2,
+                metadataSetMultipleValuesWithComma.get(PLACE).size());
+        Assert.assertEquals("Metadata for record with ID 978 contains wrong place", "Hamburg",
+                metadataSetMultipleValuesWithComma.get(PLACE).get(0));
+        Assert.assertEquals("Metadata for record with ID 978 contains wrong place", "Berlin, Kopenhagen",
+                metadataSetMultipleValuesWithComma.get(PLACE).get(1));
+
     }
 }
