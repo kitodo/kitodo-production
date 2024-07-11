@@ -198,6 +198,14 @@ public class ProcessFromTemplatePage extends EditPage<ProcessFromTemplatePage> {
     }
 
     /**
+     * Add metadata values for PPN and title.
+     */
+    public void addPpnAndTitle() {
+        titleSortInput.sendKeys("TestProcess");
+        ppnDigitalInput.sendKeys("12345");
+    }
+
+    /**
      * Creates a process as child.
      *
      * @param parentProcessTitle
