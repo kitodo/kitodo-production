@@ -19,9 +19,9 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.rules.ExpectedException;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Task;
@@ -265,7 +265,8 @@ public class TaskServiceIT {
      * ElasticSearch, e.g., a lower-case filter) and not the actual original task titles.
      * Accordingly, task titles are checked against their lower-case transformation.</p>
      */
-    @Disabled("currently not implemented")
+    @Test
+    @Ignore("currently not implemented")
     public void shouldFindDistinctTitles() throws Exception {
         List<String> taskTitlesDistinct = taskService.findTaskTitlesDistinct();
         int size = taskTitlesDistinct.size();

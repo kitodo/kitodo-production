@@ -38,8 +38,8 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -229,7 +229,8 @@ public class ImportServiceIT {
      * @throws IOException when checking for parent process fails
      * @throws DataException when copying test metadata file fails
      */
-    @Disabled("index currently not available")
+    @Test
+    @Ignore("index currently not available")
     public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException, DataException {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);

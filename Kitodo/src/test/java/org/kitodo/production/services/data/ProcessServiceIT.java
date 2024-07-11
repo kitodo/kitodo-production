@@ -37,7 +37,6 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.jupiter.api.Disabled;
 import org.junit.rules.ExpectedException;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
@@ -215,19 +214,22 @@ public class ProcessServiceIT {
         assertEquals(processNotFound, 1, processService.findByTitle(firstProcess).size());
     }
 
-    @Disabled("Data index currently not available")
+    @Test
+    @Ignore("Data index currently not available")
     public void shouldFindByMetadata() throws DataException {
         assertEquals(processNotFound, 3,
             processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
-    @Disabled("Data index currently not available")
+    @Test
+    @Ignore("Data index currently not available")
     public void shouldNotFindByMetadata() throws DataException {
         assertEquals("Process was found in index!", 0,
                 processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
     }
 
-    @Disabled("Data index currently not available")
+    @Test
+    @Ignore("Data index currently not available")
     public void shouldFindByLongNumberInMetadata() throws DataException, DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
