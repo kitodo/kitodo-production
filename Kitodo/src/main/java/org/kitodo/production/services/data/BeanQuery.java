@@ -111,6 +111,9 @@ public class BeanQuery {
      *            single line input by the user
      */
     public void forIdOrInTitle(String searchInput) {
+        if (searchInput.startsWith("\"") && searchInput.endsWith("\"")) {
+            searchInput = searchInput.substring(1, searchInput.length() - 1);
+        }
         String searchInputAnywhere = '%' + searchInput + '%';
         try {
             Integer possibleId = Integer.valueOf(searchInput);
