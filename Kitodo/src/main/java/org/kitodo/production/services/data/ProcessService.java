@@ -503,21 +503,21 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     @Override
     public List<?> findByDocket(int docketId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
-        query.addIntegerRestriction("docket_id", docketId);
+        query.addIntegerRestriction("docket.id", docketId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
     @Override
     public List<?> findByTemplate(int templateId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
-        query.addIntegerRestriction("template_id", templateId);
+        query.addIntegerRestriction("template.id", templateId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
     @Override
     public List<?> findByRuleset(int rulesetId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
-        query.addIntegerRestriction("ruleset_id", rulesetId);
+        query.addIntegerRestriction("ruleset.id", rulesetId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
@@ -527,8 +527,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        query.addNullRestriction("parent_id");
-        query.addIntegerRestriction("ruleset_id", rulesetId);
+        query.addNullRestriction("parent.id");
+        query.addIntegerRestriction("ruleset.id", rulesetId);
         query.forIdOrInTitle(searchInput);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }

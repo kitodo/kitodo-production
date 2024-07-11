@@ -150,7 +150,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
                 }
             }
             if (onlyOwnTasks) {
-                query.addIntegerRestriction("user_id", ServiceManager.getUserService().getCurrentUser().getId());
+                query.addIntegerRestriction("user.id", ServiceManager.getUserService().getCurrentUser().getId());
             }
             if (hideCorrectionTasks) {
                 query.addIntegerRestriction("correction", 0);
@@ -195,7 +195,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
             }
         }
         if (onlyOwnTasks) {
-            query.addIntegerRestriction("user_id", ServiceManager.getUserService().getCurrentUser().getId());
+            query.addIntegerRestriction("user.id", ServiceManager.getUserService().getCurrentUser().getId());
         }
         if (hideCorrectionTasks) {
             query.addIntegerRestriction("correction", 0);
