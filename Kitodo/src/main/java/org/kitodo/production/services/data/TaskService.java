@@ -159,9 +159,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
                 query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
             }
             if (!taskStatus.isEmpty()) {
-                List<Integer> selectedStatuses = taskStatus.stream().map(status -> status.getValue())
-                        .collect(Collectors.toList());
-                query.addInCollectionRestriction("processingStatus", selectedStatuses);
+                query.addInCollectionRestriction("processingStatus", taskStatus);
             }
             return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
         } catch (DAOException e) {
