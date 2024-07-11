@@ -16,10 +16,13 @@ import java.text.StringCharacterIterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
 import org.primefaces.model.SortOrder;
 
 public class BeanQuery {
@@ -164,6 +167,42 @@ public class BeanQuery {
                 throw new IllegalStateException("complete switch");
         }
         parameters.put("projectIDs", projectIDs);
+    }
+
+    /**
+     * Requires that the search only finds tasks that are allowed to be
+     * processed by one of the specified roles.
+     * 
+     * <!-- As far as I can tell, there is no way to formulate an is-one-in
+     * relationship in HQL. So this has to be expanded into an OR query. That's
+     * possible, but if there's a nicer query solution, that would be nice too.
+     * Cf. https://stackoverflow.com/a/14020432/1503237 -->
+     * 
+     * @param roles
+     *            roles of the task
+     */
+    public void restrictToRoles(List<Role> roles) {
+        int rolesSize = roles.size();
+        boolean multipleRoles = rolesSize > 1;
+        StringBuilder restriction = new StringBuilder();
+        for (int i = 0; i < rolesSize; i++) {
+            String roleVarName = "role" + (i + 1);
+            if (multipleRoles) {
+                boolean firstIteration = (i == 0);
+                restriction.append(firstIteration ? "(" : " OR ");
+            }
+            restriction.append(':');
+            restriction.append(roleVarName);
+            restriction.append(" IN elements(");
+            restriction.append(varName);
+            restriction.append(".roles)");
+            boolean lastIteration = (i == rolesSize - 1);
+            if (multipleRoles && lastIteration) {
+                restriction.append(')');
+            }
+            parameters.put(roleVarName, roles.get(i));
+        }
+        restrictions.add(restriction.toString());
     }
 
     public void restrictWithUserFilterString(String s) {

@@ -189,4 +189,8 @@ public class Role extends BaseBean implements RoleInterface, Comparable<Role> {
         return this.getTitle().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return title + '[' + client.getName() + ']';
+    }
 }

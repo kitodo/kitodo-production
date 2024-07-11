@@ -31,9 +31,11 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.command.CommandResult;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
@@ -137,30 +139,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
                              boolean showAutomaticTasks, List<TaskStatus> taskStatus)
             throws DataException {
         try {
-            BeanQuery query = new BeanQuery(Task.class);
-            query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-            Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
-                    .filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
-            query.restrictToProjects(projectIDs);
-            Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
-            if (filtersIterator.hasNext()) {
-                String filterString = filtersIterator.next().getValue();
-                if (StringUtils.isNotBlank(filterString)) {
-                    query.restrictWithUserFilterString(filterString);
-                }
-            }
-            if (onlyOwnTasks) {
-                query.addIntegerRestriction("user.id", ServiceManager.getUserService().getCurrentUser().getId());
-            }
-            if (hideCorrectionTasks) {
-                query.addIntegerRestriction("correction", 0);
-            }
-            if (!showAutomaticTasks) {
-                query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
-            }
-            if (!taskStatus.isEmpty()) {
-                query.addInCollectionRestriction("processingStatus", taskStatus);
-            }
+            BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
             return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
         } catch (DAOException e) {
             throw new DataException(e);
@@ -180,11 +159,23 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
                                   List<TaskStatus> taskStatus)
             throws DataException {
 
+        BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
+        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+    }
+
+    private BeanQuery formBeanQuery(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
+            boolean showAutomaticTasks, List<TaskStatus> taskStatus) {
         BeanQuery query = new BeanQuery(Task.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
-                .filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects()
+                .stream().filter(Project::isActive).map(Project::getId).collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
+        List<Role> userRoles = ServiceManager.getUserService().getCurrentUser().getRoles();
+        final Client currentClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
+        List<Role> userClientRoles = userRoles.stream().filter(ρ -> Objects.equals(ρ.getClient(), currentClient))
+                .collect(Collectors.toList());
+        query.restrictToRoles(userClientRoles);
         Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
         if (filtersIterator.hasNext()) {
             String filterString = filtersIterator.next().getValue();
@@ -202,12 +193,9 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
             query.addBooleanRestriction("typeAutomatic", Boolean.FALSE);
         }
         if (!taskStatus.isEmpty()) {
-            List<Integer> selectedStatuses = taskStatus.stream().map(status -> status.getValue())
-                    .collect(Collectors.toList());
             query.addInCollectionRestriction("processingStatus", taskStatus);
         }
-        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+        return query;
     }
 
     private void manageProcessDependenciesForIndex(Task task)
