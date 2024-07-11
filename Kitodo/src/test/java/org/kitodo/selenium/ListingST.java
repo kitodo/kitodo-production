@@ -15,6 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -180,7 +181,8 @@ public class ListingST extends BaseTestSelenium {
         assertEquals("Displayed wrong number of project's templates", 2, templatesProject.size());
         assertEquals("Displayed wrong project's template", "Fourth template", templatesProject.get(0));
 
-        int templatesInDatabase = ServiceManager.getTemplateService().getAllForSelectedClient().size();
+        int templatesInDatabase = ServiceManager.getTemplateService().getAll().stream()
+                .filter(template -> template.getClient().getId() == 1).collect(Collectors.counting()).intValue();
         int templatesDisplayed = projectsPage.countListedTemplates();
 
         List<String> detailsTemplate =  projectsPage.getTemplateDetails();
@@ -191,7 +193,8 @@ public class ListingST extends BaseTestSelenium {
         //assertEquals("Displayed wrong template's docket", "second", detailsTemplate.get(2));
         //assertEquals("Displayed wrong template's project", "First project", detailsTemplate.get(2));
 
-        int workflowsInDatabase = ServiceManager.getWorkflowService().getAllForSelectedClient().size();
+        int workflowsInDatabase = ServiceManager.getWorkflowService().getAll().stream()
+                .filter(workflow -> workflow.getClient().getId() == 1).collect(Collectors.counting()).intValue();
         int workflowsDisplayed = projectsPage.countListedWorkflows();
         assertEquals("Displayed wrong number of workflows", workflowsInDatabase, workflowsDisplayed);
 

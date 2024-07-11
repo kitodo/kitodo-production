@@ -45,10 +45,10 @@ import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.InsertionPosition;
 import org.kitodo.production.metadata.MetadataEditor;
@@ -631,7 +631,7 @@ public class AddDocStrucTypeDialog {
                     .getAllowedSubstructuralElements().keySet();
             List<Integer> ids = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
                 dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements)
-                    .stream().map(ProcessDTO::getId).collect(Collectors.toList());
+                    .stream().map(ProcessInterface::getId).collect(Collectors.toList());
             if (ids.isEmpty()) {
                 alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));
             }

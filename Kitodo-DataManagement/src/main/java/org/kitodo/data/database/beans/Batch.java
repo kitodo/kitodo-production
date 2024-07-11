@@ -29,6 +29,8 @@ import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
+import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.interfaces.ProcessInterface;
 
 /**
  * A user-definable, unordered collection of processes whose batch-type tasks
@@ -39,7 +41,7 @@ import org.kitodo.data.database.persistence.BatchDAO;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseIndexedBean {
+public class Batch extends BaseIndexedBean implements BatchInterface {
 
     /**
      * The batch title. Using titles for batches is optional, the field may be
@@ -105,22 +107,12 @@ public class Batch extends BaseIndexedBean {
         this.processes = new ArrayList<>(processes);
     }
 
-    /**
-     * Returns the batch title. Using titles for batches is optional, the field
-     * may be {@code null}. If so, the function returns null.
-     *
-     * @return the batch title
-     */
+    @Override
     public String getTitle() {
         return title;
     }
 
-    /**
-     * Sets a batch title.
-     *
-     * @param title
-     *            title of the batch
-     */
+    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -134,11 +126,7 @@ public class Batch extends BaseIndexedBean {
         return type;
     }
 
-    /**
-     * Return the processes that belong to the batch.
-     *
-     * @return the processes of the batch
-     */
+    @Override
     public List<Process> getProcesses() {
         initialize(new BatchDAO(), this.processes);
         if (Objects.isNull(this.processes)) {
@@ -147,18 +135,14 @@ public class Batch extends BaseIndexedBean {
         return this.processes;
     }
 
-    /**
-     * Sets the processes that belong to the batch.
-     *
-     * @param processes
-     *            processes of the batch
-     */
-    public void setProcesses(List<Process> processes) {
+    @Override
+    @SuppressWarnings("unchecked")
+    public void setProcesses(List<? extends ProcessInterface> processes) {
         if (this.processes == null) {
-            this.processes = processes;
+            this.processes = (List<Process>) processes;
         } else {
             this.processes.clear();
-            this.processes.addAll(processes);
+            this.processes.addAll((List<? extends Process>) processes);
         }
     }
 

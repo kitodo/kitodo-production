@@ -2528,6 +2528,18 @@ form#metadata div label,
     color: var(--medium-gray);
 }
 
+.columnHeadingWrapper .columnHeading {
+    color: var(--medium-gray);
+}
+
+.columnHeadingWrapper .columnHeading.icon-media-partial {
+    margin-right: 5px;
+}
+
+.columnHeadingWrapper .columnHeading.mediaPartialHeading {
+    margin-left: 5px;
+}
+
 .collapsibleWrapper > .columnExpandButton + .columnHeadingWrapper .columnHeading {
     color: var(--carbon-blue);
 }
@@ -3189,6 +3201,12 @@ Column content
     min-width: 60px;
 }
 
+#imagePreviewForm\:mediaDetailMediaPartial .icon-media-partial {
+    top: 50px;
+    left: 10px;
+    position: absolute;
+}
+
 #imagePreviewForm\:mediaPartialList {
     height: 100%;
     overflow-y: scroll;
@@ -3465,23 +3483,26 @@ Column content
     width: 100%;
 }
 
-
-.thumbnail-container .icon-media-partial {
-    top: 5px;
-    color: var(--carbon-blue);
-    left: 5px;
-    position: absolute;
-    background: rgb(from var(--pure-white) r g b / 0.8);
+.icon-media-partial {
     width: 18px;
-    display: block;
     text-align: center;
     padding: 3px;
-    border-radius: 18px;
+
 }
 
-.thumbnail-container .icon-media-partial::before {
+.icon-media-partial::before {
     content: "\f08d";
     font-family: FontAwesome;
+}
+
+.thumbnail-container .icon-media-partial {
+    color: var(--carbon-blue);
+    top: 5px;
+    left: 5px;
+    position: absolute;
+    display: block;
+    border-radius: 18px;
+    background: rgb(from var(--pure-white) r g b / 0.8);
 }
 
 .thumbnail-container .assigned-several-times {

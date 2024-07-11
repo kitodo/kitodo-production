@@ -28,6 +28,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
+import org.kitodo.test.utils.TestConstants;
 
 public class ImportServiceTest {
 
@@ -181,8 +182,8 @@ public class ImportServiceTest {
     private List<SearchField> createSearchFields(ImportConfiguration importConfiguration) {
         List<SearchField> SearchFields = new ArrayList<>();
         SearchFields.add(addSearchField(TITLE, "ead.tit", importConfiguration, true));
-        SearchFields.add(addSearchField(RECORD_ID, "ead.id", importConfiguration, true));
-        SearchFields.add(addSearchField(PARENT_ID, "context.ead.id", importConfiguration, false));
+        SearchFields.add(addSearchField(RECORD_ID, TestConstants.EAD_ID, importConfiguration, true));
+        SearchFields.add(addSearchField(PARENT_ID, TestConstants.EAD_PARENT_ID, importConfiguration, false));
         importConfiguration.setSearchFields(SearchFields);
         return SearchFields;
     }

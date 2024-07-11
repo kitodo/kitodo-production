@@ -119,12 +119,6 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
 
     }
 
-    /**
-     * Refresh user's role object after update.
-     *
-     * @param role
-     *            object
-     */
     @Override
     public void refresh(Role role) {
         dao.refresh(role);

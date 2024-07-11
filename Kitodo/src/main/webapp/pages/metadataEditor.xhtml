@@ -208,23 +208,34 @@
                                     <h:outputText styleClass="columnHeading" value="#{msgs.gallery}"/>
                                 </ui:fragment>
                                 <ui:fragment rendered="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview'}">
+                                    <ui:param name="selectedGalleryMediaContent"
+                                              value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
+                                    <h:outputText styleClass="columnHeading icon-media-partial"
+                                                  rendered="#{selectedGalleryMediaContent.isMediaPartial()}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('audio')}"
                                                   value="#{msgs.audio}
-                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                                  #{selectedGalleryMediaContent.shortId}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('video')}"
                                                   value="#{msgs.video}
-                                                  #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId}"/>
+                                                  #{selectedGalleryMediaContent.shortId}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.hasMediaViewMimeTypePrefix('image')}"
                                                   value="#{msgs.image}
-                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).shortId},
+                                                 #{selectedGalleryMediaContent.shortId},
                                                  #{msgs.page}
-                                                 #{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).orderlabel}"/>
+                                                 #{selectedGalleryMediaContent.orderlabel}"/>
                                     <h:outputText styleClass="columnHeading"
                                                   rendered="#{DataEditorForm.galleryPanel.lastSelection eq null}"
                                                   value="#{msgs.notSelected}"/>
+                                    <ui:param name="mediaPartial"
+                                              value="#{selectedGalleryMediaContent.getMediaPartial()}"/>
+                                    <h:outputText styleClass="columnHeading mediaPartialHeading"
+                                                  value="(#{msgs.start}:#{mediaPartial.begin}, #{msgs.duration}:#{mediaPartial.extent})"
+                                                  rendered="#{selectedGalleryMediaContent.isMediaPartial() and mediaPartial ne null}"
+                                                  a:data-media-partial-start="#{mediaPartial.begin}"
+                                                  a:data-media-partial-duration="#{mediaPartial.extent}"/>
                                 </ui:fragment>
                             </h:panelGroup>
                         </div>

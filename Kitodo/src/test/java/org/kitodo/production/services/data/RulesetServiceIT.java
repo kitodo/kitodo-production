@@ -12,14 +12,12 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Collections;
 import java.util.List;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
@@ -54,7 +52,7 @@ public class RulesetServiceIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         await().until(() -> {
             SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
-            return !rulesetService.findByTitle(slubDD, true).isEmpty();
+            return !Collections.singleton(rulesetService.getByTitle(slubDD)).isEmpty();
         });
     }
 
@@ -70,12 +68,6 @@ public class RulesetServiceIT {
     @Test
     public void shouldCountAllRulesets() throws DataException {
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), rulesetService.count());
-    }
-
-    @Test
-    public void shouldCountAllRulesetsAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", slubDD).operator(Operator.AND);
-        assertEquals("Rulesets were not counted correctly!", Long.valueOf(1), rulesetService.count(query));
     }
 
     @Test
@@ -110,65 +102,12 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldFindByTitle() throws DataException {
-        assertEquals(rulesetNotFound, 1, rulesetService.findByTitle(slubDD, true).size());
+        assertEquals(rulesetNotFound, 1, rulesetService.getByTitle(slubDD).size());
     }
 
     @Test
-    public void shouldFindByFile() throws DataException {
-        String expected = "ruleset_test.xml";
-        assertEquals(rulesetNotFound, expected,
-            rulesetService.findByFile("ruleset_test.xml").get(RulesetTypeField.FILE.getKey()));
-    }
-
-    @Test
-    public void shouldFindManyByClientId() throws DataException {
-        assertEquals("Rulesets were not found in index!", 2, rulesetService.findByClientId(1).size());
-    }
-
-    @Test
-    public void shouldFindOneByClientId() throws DataException, DAOException {
-        SecurityTestUtils.addUserDataToSecurityContext(new User(), 2);
-        assertEquals(rulesetNotFound, 1, rulesetService.findByClientId(2).size());
-    }
-
-    @Test
-    public void shouldNotFindByClientId() throws DataException {
-        assertEquals("Ruleset was found in index!", 0, rulesetService.findByClientId(3).size());
-    }
-
-    @Test
-    public void shouldFindByTitleAndFile() throws DataException {
-        Integer expected = 2;
-        assertEquals(rulesetNotFound, expected,
-            rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile("SUBHH", "ruleset_subhh.xml")));
-    }
-
-    @Test
-    public void shouldNotFindByTitleAndFile() throws DataException {
-        Integer expected = 0;
-        assertEquals("Ruleset was found in index!", expected,
-            rulesetService.getIdFromJSONObject(rulesetService.findByTitleAndFile(slubDD, "none")));
-    }
-
-    @Test
-    public void shouldFindManyByTitleOrFile() throws DataException {
-        assertEquals("Rulesets were not found in index!", 2,
-            rulesetService.findByTitleOrFile(slubDD, "ruleset_subhh.xml").size());
-    }
-
-    @Test
-    public void shouldFindOneByTitleOrFile() throws DataException {
-        assertEquals(rulesetNotFound, 1, rulesetService.findByTitleOrFile("default", "ruleset_subhh.xml").size());
-    }
-
-    @Test
-    public void shouldNotFindByTitleOrFile() throws DataException {
-        assertEquals("Some rulesets were found in index!", 0, rulesetService.findByTitleOrFile("none", "none").size());
-    }
-
-    @Test
-    public void shouldFindAllRulesetsDocuments() throws DataException {
-        assertEquals("Not all rulesets were found in index!", 3, rulesetService.findAllDocuments().size());
+    public void shouldFindAllRulesetsDocuments() throws DAOException {
+        assertEquals("Not all rulesets were found in index!", 3, rulesetService.getAll().size());
     }
 
     @Test
@@ -189,7 +128,7 @@ public class RulesetServiceIT {
         foundRuleset = rulesetService.getById(5);
         assertEquals("Additional ruleset was not inserted in database!", "To remove", foundRuleset.getTitle());
 
-        rulesetService.remove(5);
+        rulesetService.remove(foundRuleset);
         exception.expect(DAOException.class);
         rulesetService.getById(5);
     }

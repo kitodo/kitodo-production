@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Client;
-import org.kitodo.production.dto.DocketDTO;
+import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
 import org.primefaces.model.SortOrder;
@@ -80,11 +80,11 @@ public class LazyDTOModelIT {
         List dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
         assertEquals(2, dockets.size());
 
-        DocketDTO docket = (DocketDTO) dockets.get(0);
+        DocketInterface docket = (DocketInterface) dockets.get(0);
         assertEquals("default", docket.getTitle());
 
         dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
-        docket = (DocketDTO) dockets.get(0);
+        docket = (DocketInterface) dockets.get(0);
         assertEquals("tester", docket.getTitle());
     }
 }

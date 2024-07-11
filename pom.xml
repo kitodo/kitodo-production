@@ -44,7 +44,7 @@
         <tomcat.baseversion>9</tomcat.baseversion>
         <tomcat.version>9.0.65</tomcat.version>
         <awaitility.version>4.0.1</awaitility.version>
-        <com.h2database.h2.version>1.4.199</com.h2database.h2.version>
+        <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-configuration.version>1.10</commons-configuration.version>
         <commons-io.version>2.11.0</commons-io.version>
@@ -68,7 +68,11 @@
         <junit.version>5.9.2</junit.version>
         <elasticsearch.version>7.17.10</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+
+        <!-- maven-resources-plugin versions greater 3.2.0 introduce changes that
+             stop the build in Eclipse on Windows from using "config-local" -->
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
         <mockito.version>5.0.0</mockito.version>

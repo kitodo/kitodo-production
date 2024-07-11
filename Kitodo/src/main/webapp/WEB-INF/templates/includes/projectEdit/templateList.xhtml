@@ -17,7 +17,7 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:dataTable id="templateTable" var="template" value="#{ProjectForm.project.templates}" sortBy="#{template.title}">
+    <p:dataTable id="templateTable" var="template" value="#{ProjectForm.project.activeTemplates}" sortBy="#{template.title}">
         <p:column headerText="#{msgs.template}" id="taskTitle">
             <h:outputText value="#{template.title}"/>
         </p:column>

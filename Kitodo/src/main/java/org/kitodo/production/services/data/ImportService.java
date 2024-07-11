@@ -77,6 +77,7 @@ import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
@@ -89,7 +90,6 @@ import org.kitodo.exceptions.ParameterNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.UnsupportedFormatException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.forms.createprocess.ProcessBooleanMetadata;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
@@ -956,15 +956,15 @@ public class ImportService {
                 HashMap<String, String> parentIDMetadata = new HashMap<>();
                 parentIDMetadata.put(identifierMetadata, parentId);
                 try {
-                    for (ProcessDTO processDTO : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                        Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
+                    for (ProcessInterface process : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
+                        Process processBean = ServiceManager.getProcessService().getById(process.getId());
+                        if (Objects.isNull(processBean.getRuleset()) || Objects.isNull(processBean.getRuleset().getId())) {
                             throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                                    + process.getId() + " is null!");
+                                    + processBean.getId() + " is null!");
                         }
-                        if (process.getProject().getId() == projectId
-                                && process.getRuleset().getId().equals(ruleset.getId())) {
-                            parentProcess = process;
+                        if (processBean.getProject().getId() == projectId
+                                && processBean.getRuleset().getId().equals(ruleset.getId())) {
+                            parentProcess = processBean;
                             break;
                         }
                     }
@@ -1174,7 +1174,7 @@ public class ImportService {
      * @return the importedProcess
      */
     public Process importProcess(String ppn, int projectId, int templateId, ImportConfiguration importConfiguration,
-                                 Map<String, String> presetMetadata) throws ImportException {
+                                 Map<String, List<String>> presetMetadata) throws ImportException {
         LinkedList<TempProcess> processList = new LinkedList<>();
         TempProcess tempProcess;
         Template template;
@@ -1257,14 +1257,16 @@ public class ImportService {
         return rulesetManagement.getFunctionalKeys(metadata);
     }
 
-    private List<MetadataEntry> createMetadata(Map<String, String> presetMetadata) {
+    private List<MetadataEntry> createMetadata(Map<String, List<String>> presetMetadata) {
         List<MetadataEntry> metadata = new LinkedList<>();
-        for (Map.Entry<String, String> presetMetadataEntry : presetMetadata.entrySet()) {
-            MetadataEntry metadataEntry = new MetadataEntry();
-            metadataEntry.setKey(presetMetadataEntry.getKey());
-            metadataEntry.setValue(presetMetadataEntry.getValue());
-            metadataEntry.setDomain(MdSec.DMD_SEC);
-            metadata.add(metadataEntry);
+        for (Map.Entry<String, List<String>> presetMetadataEntry : presetMetadata.entrySet()) {
+            for (String presetMetadataEntryValue : presetMetadataEntry.getValue()) {
+                MetadataEntry metadataEntry = new MetadataEntry();
+                metadataEntry.setKey(presetMetadataEntry.getKey());
+                metadataEntry.setValue(presetMetadataEntryValue);
+                metadataEntry.setDomain(MdSec.DMD_SEC);
+                metadata.add(metadataEntry);
+            }
         }
         return metadata;
     }

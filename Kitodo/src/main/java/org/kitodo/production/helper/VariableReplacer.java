@@ -289,7 +289,7 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
 
-        if (StringUtils.isNotEmpty(process.getOcrdWorkflowId())) {
+        if (StringUtils.isNotBlank(process.getOcrdWorkflowId())) {
             return variableFinder.group(1) + process.getOcrdWorkflowId();
         }
 
@@ -463,8 +463,8 @@ public class VariableReplacer {
         if (Objects.isNull(stringWithVariables)) {
             return false;
         }
-        return stringWithVariables.contains("(filename)") | stringWithVariables.contains("(basename)")
-                | stringWithVariables.contains("(relativepath)");
+        return stringWithVariables.contains("(filename)") || stringWithVariables.contains("(basename)")
+                || stringWithVariables.contains("(relativepath)");
     }
 
     /**

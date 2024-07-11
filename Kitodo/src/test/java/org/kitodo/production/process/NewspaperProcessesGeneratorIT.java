@@ -11,6 +11,8 @@
 
 package org.kitodo.production.process;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -45,7 +47,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
+import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -241,9 +243,11 @@ public class NewspaperProcessesGeneratorIT {
         course.splitInto(Granularity.DAYS);
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
         generatesNewspaperProcessesThread.start();
-
-        ProcessDTO byId = ServiceManager.getProcessService().findById(11);
-        Assert.assertNull("Process should not have been created", byId.getTitle());
+        DataException dataException = assertThrows(DataException.class,
+                () -> ServiceManager.getProcessService().findById(11));
+        Assert.assertEquals("Process should not have been created",
+            "org.kitodo.data.database.exceptions.DAOException: Process 11 cannot be found in database",
+            dataException.getMessage());
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {

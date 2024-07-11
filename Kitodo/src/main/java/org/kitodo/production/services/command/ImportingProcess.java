@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toList;
 // base Java
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -476,6 +477,8 @@ final class ImportingProcess {
         Process process = processGenerator.getGeneratedProcess();
         process.setTitle(title);
         process.setBaseType(baseType);
+        processService.save(process);
+        process.setProcessBaseUri(URI.create(process.getId().toString()));
         processService.save(process);
         for (Task task : process.getTasks()) {
             taskService.save(task);

@@ -25,14 +25,12 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.test.utils.TestConstants;
 
 public class CatalogImportIT {
 
     private static StubServer server;
     private static final int PORT = 8888;
-    private static final String HITLIST_RECORD_PATH = "src/test/resources/importRecords/importHitlist.xml";
-    private static final String CHILD_RECORD_PATH = "src/test/resources/importRecords/importChildRecord.xml";
-    private static final String PARENT_RECORD_PATH = "src/test/resources/importRecords/importParentRecord.xml";
     private static final String CHILD_RECORD_ID = "1";
     private static final String PARENT_RECORD_ID = "2";
     private static final int PROJECT_ID = 1;
@@ -67,8 +65,8 @@ public class CatalogImportIT {
 
     private static void setupServer() throws IOException {
         server = new StubServer(PORT).run();
-        MockDatabase.addRestEndPointForSru(server, "ead.id=" + CHILD_RECORD_ID, CHILD_RECORD_PATH, "mods", 1);
-        MockDatabase.addRestEndPointForSru(server, "ead.id=" + PARENT_RECORD_ID, PARENT_RECORD_PATH, "mods",  1);
-        MockDatabase.addRestEndPointForSru(server, "ead.title=test", HITLIST_RECORD_PATH, "mods",10);
+        MockDatabase.addRestEndPointForSru(server, "ead.id=" + CHILD_RECORD_ID, TestConstants.CHILD_RECORD_PATH, "mods", 1);
+        MockDatabase.addRestEndPointForSru(server, "ead.id=" + PARENT_RECORD_ID, TestConstants.PARENT_RECORD_PATH, "mods",  1);
+        MockDatabase.addRestEndPointForSru(server, "ead.title=test", TestConstants.HITLIST_RECORD_PATH, "mods",10);
     }
 }
