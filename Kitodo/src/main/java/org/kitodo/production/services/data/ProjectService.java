@@ -106,9 +106,9 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
             throws DataException {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        parameters.put("desiredOrder", SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder));
-        return getByQuery("FROM Project WHERE client_id = :sessionClientId ORDER BY :desiredOrder", parameters, first,
-            pageSize);
+        String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
+        return getByQuery("FROM Project WHERE client_id = :sessionClientId ORDER BY ".concat(desiredOrder), parameters,
+            first, pageSize);
     }
 
     @Override

@@ -108,10 +108,10 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
             throws DataException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        parameters.put("desiredOrder", SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder));
+        String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
         return getByQuery("FROM Template WHERE client_id = :sessionClientId "
-                + (this.showInactiveTemplates ? "" : "AND active = 1 ")
-                + "ORDER BY :desiredOrder", parameters, first, pageSize);
+                + (this.showInactiveTemplates ? "" : "AND active = 1 ") + "ORDER BY " + desiredOrder,
+                parameters, first, pageSize);
     }
 
     @Override
