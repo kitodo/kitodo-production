@@ -303,7 +303,7 @@ public class MetsXmlElementAccessIT {
                 )
             );
 
-        assertEquals("Corrupt file: file with id FILE_0001 is part of multiple groups", exception.getMessage());
+        assertEquals("Corrupt file: each METS file ID has to be unique but FILE_0001 is used multiple times!", exception.getMessage());
     }
 
     @Test

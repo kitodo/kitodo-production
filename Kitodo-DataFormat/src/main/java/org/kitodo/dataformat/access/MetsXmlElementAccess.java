@@ -461,7 +461,7 @@ public class MetsXmlElementAccess implements MetsXmlElementAccessInterface {
                 for (FileType file : fileGrp.getFile()) {
                     if (strictCheck && usedFileId.contains(file.getID())) {
                         throw new IllegalArgumentException(
-                            "Corrupt file: file with id " + file.getID() + " is part of multiple groups"
+                            "Corrupt file: each METS file ID has to be unique but " + file.getID() + " is used multiple times!"
                         );
                     } else {
                         usedFileId.add(file.getID());
