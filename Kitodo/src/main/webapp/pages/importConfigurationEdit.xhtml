@@ -176,12 +176,15 @@
                 </p:panelGrid>
             </p:tab>
 
-            <p:tab id="clientsTab" title="#{msgs.clients}">
+            <p:tab id="clientsTab"
+                   title="#{msgs.clients}"
+                   rendered="#{SecurityAccessController.hasAuthorityToAssignImportConfigurationToClient()}">
                 <p:panelGrid columns="1"
                              layout="grid"
                              id="clients-grid">
                     <p:selectManyCheckbox id="clientsList"
                                           layout="grid"
+                                          validator="ImportConfigurationClientValidator"
                                           columns="1"
                                           collectionType="java.util.ArrayList"
                                           value="#{importConfigurationEditView.assignedClients}"

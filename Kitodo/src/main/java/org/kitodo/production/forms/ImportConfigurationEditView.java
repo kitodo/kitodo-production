@@ -38,7 +38,6 @@ import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.controller.SessionClientController;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -463,8 +462,12 @@ public class ImportConfigurationEditView extends BaseForm {
      */
     public List<Client> getAvailableClients() {
         if (Objects.isNull(availableClients) || availableClients.isEmpty()) {
-            SessionClientController controller = new SessionClientController();
-            availableClients =  controller.getAvailableClientsOfCurrentUserSortedByName();
+            try {
+                availableClients = ServiceManager.getClientService().getAllSortedByName();
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e);
+                availableClients = new ArrayList<>();
+            }
         }
         return availableClients;
     }

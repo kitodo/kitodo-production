@@ -11,31 +11,29 @@
 
 package org.kitodo.production.forms.validators;
 
+import org.kitodo.constants.StringConstants;
+
 import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.validator.FacesValidator;
 import javax.faces.validator.Validator;
 import javax.faces.validator.ValidatorException;
+import java.util.ArrayList;
 
-import org.apache.commons.lang3.StringUtils;
-import org.kitodo.constants.StringConstants;
-
-@FacesValidator("AbsolutePathValidator")
-public class AbsolutePathValidator implements Validator<String> {
-
-
+@FacesValidator("ImportConfigurationClientValidator")
+public class ImportConfigurationClientValidator implements Validator<ArrayList<?>> {
 
     @Override
-    public void validate(FacesContext facesContext, UIComponent uiComponent, String pathString)
+    public void validate(FacesContext context, UIComponent component, ArrayList<?> clientList)
             throws ValidatorException {
         // only validate when saving
-        if (!facesContext.getExternalContext().getRequestParameterMap().containsKey(StringConstants.SAVE)) {
+        if (!context.getExternalContext().getRequestParameterMap().containsKey(StringConstants.SAVE)) {
             return;
         }
-        if (StringUtils.isNotBlank(pathString) && !pathString.startsWith("/")) {
+        if (clientList.isEmpty()) {
             throw new ValidatorException(new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                    "Non empty URL path must be absolute, e.g. start with a '/'!", null));
+                    "The import configuration must be assigned to at least one client", null));
         }
     }
 }

@@ -1086,4 +1086,13 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToRenameMediaFiles() {
         return hasAnyAuthorityForClient("renameMedia");
     }
+
+    /**
+     * Check if the current user has the permission to assign import configurations to clients.
+     *
+     * @return true if the current user has the permission to assign import configurations to clients.
+     */
+    public boolean hasAuthorityToAssignImportConfigurationToClient() {
+        return hasAuthorityGlobal("assignImportConfigurationToClient");
+    }
 }
