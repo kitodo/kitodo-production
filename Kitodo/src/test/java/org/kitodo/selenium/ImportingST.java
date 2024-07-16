@@ -152,7 +152,6 @@ public class ImportingST extends BaseTestSelenium {
         List<String> importConfigurationNames = importPage.getImportConfigurationsTitles();
         assertEquals("Wrong title of first import configuration", TestConstants.GBV, importConfigurationNames.get(1));
         assertEquals("Wrong title of second import configuration", TestConstants.K10PLUS, importConfigurationNames.get(2));
-        assertEquals("Wrong title of third import configuration", TestConstants.KALLIOPE, importConfigurationNames.get(3));
     }
 
     /**

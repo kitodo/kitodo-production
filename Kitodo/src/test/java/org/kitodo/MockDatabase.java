@@ -449,6 +449,9 @@ public class MockDatabase {
         authorities.add(new Authority("renameMedia" + GLOBAL_ASSIGNABLE));
         authorities.add(new Authority("renameMedia" + CLIENT_ASSIGNABLE));
 
+        // Assign import configurations to clients
+        authorities.add(new Authority("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE));
+
         for (Authority authority : authorities) {
             ServiceManager.getAuthorityService().saveToDatabase(authority);
         }
@@ -1442,6 +1445,7 @@ public class MockDatabase {
         Role metadataRole = ServiceManager.getRoleService().getById(6);
         Role databaseRole = ServiceManager.getRoleService().getById(7);
         Role renameMediaRole = ServiceManager.getRoleService().getById(8);
+        Role clientAdminRole = ServiceManager.getRoleService().getById(9);
 
         User firstUser = new User();
         firstUser.setName("Jan");
@@ -1484,6 +1488,8 @@ public class MockDatabase {
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         thirdUser.getRoles().add(adminRole);
+        thirdUser.getRoles().add(clientAdminRole);
+        thirdUser.getClients().add(secondClient);
         ServiceManager.getUserService().saveToDatabase(thirdUser);
 
         User fourthUser = new User();
@@ -1522,11 +1528,12 @@ public class MockDatabase {
 
     private static void insertRoles() throws DAOException {
         List<Authority> allAuthorities = ServiceManager.getAuthorityService().getAll();
-        Client client = ServiceManager.getClientService().getById(1);
+        Client firstClient = ServiceManager.getClientService().getById(1);
+        Client secondClient = ServiceManager.getClientService().getById(2);
 
         Role firstRole = new Role();
         firstRole.setTitle("Admin");
-        firstRole.setClient(client);
+        firstRole.setClient(firstClient);
 
         // insert administration authorities
         for (int i = 0; i < 34; i++) {
@@ -1537,7 +1544,7 @@ public class MockDatabase {
 
         Role secondRole = new Role();
         secondRole.setTitle("General");
-        secondRole.setClient(client);
+        secondRole.setClient(firstClient);
 
         // insert general authorities
         for (int i = 34; i < allAuthorities.size(); i++) {
@@ -1548,7 +1555,7 @@ public class MockDatabase {
 
         Role thirdRole = new Role();
         thirdRole.setTitle("Random for first");
-        thirdRole.setClient(client);
+        thirdRole.setClient(firstClient);
 
         // insert authorities for view on projects page
         List<Authority> userAuthoritiesForFirst = new ArrayList<>();
@@ -1578,12 +1585,12 @@ public class MockDatabase {
 
         Role fifthUserGroup = new Role();
         fifthUserGroup.setTitle("Without authorities");
-        fifthUserGroup.setClient(client);
+        fifthUserGroup.setClient(firstClient);
         ServiceManager.getRoleService().saveToDatabase(fifthUserGroup);
 
         Role sixthRole = new Role();
         sixthRole.setTitle("With partial metadata editor authorities");
-        sixthRole.setClient(client);
+        sixthRole.setClient(firstClient);
 
         // insert authorities to view metadata and gallery in metadata editor, but not structure data
         List<Authority> userMetadataAuthorities = new ArrayList<>();
@@ -1597,7 +1604,7 @@ public class MockDatabase {
         // insert database authority
         Role databaseStatisticsRole = new Role();
         databaseStatisticsRole.setTitle("Database management role");
-        databaseStatisticsRole.setClient(client);
+        databaseStatisticsRole.setClient(firstClient);
 
         List<Authority> databaseStatisticAuthorities = new ArrayList<>();
         databaseStatisticAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
@@ -1608,11 +1615,19 @@ public class MockDatabase {
         // insert media renaming role
         Role renameMediaRole = new Role();
         renameMediaRole.setTitle("Rename process media files");
-        renameMediaRole.setClient(client);
+        renameMediaRole.setClient(firstClient);
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + GLOBAL_ASSIGNABLE)));
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + CLIENT_ASSIGNABLE)));
 
         ServiceManager.getRoleService().saveToDatabase(renameMediaRole);
+
+        // insert client admin role
+        Role clientAdminRole = new Role();
+        clientAdminRole.setTitle("Client administrator");
+        clientAdminRole.setClient(secondClient);
+        clientAdminRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE)));
+
+        ServiceManager.getRoleService().saveToDatabase(clientAdminRole);
     }
 
     private static void insertUserFilters() throws DAOException, DataException {
@@ -1707,6 +1722,8 @@ public class MockDatabase {
 
     public static void insertImportConfigurations() throws DAOException, DataException {
         Client firstClient = ServiceManager.getClientService().getById(1);
+        Client secondClient = ServiceManager.getClientService().getById(2);
+        List<Client> clients = Arrays.asList(firstClient, secondClient);
 
         // add GBV import configuration, including id and default search fields
         ImportConfiguration gbvConfiguration = new ImportConfiguration();
@@ -1730,7 +1747,7 @@ public class MockDatabase {
         gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
         gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
-        gbvConfiguration.setClients(Collections.singletonList(firstClient));
+        gbvConfiguration.setClients(clients);
         ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
 
         // add Kalliope import configuration, including id search field
@@ -1809,7 +1826,7 @@ public class MockDatabase {
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
         k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
-        k10plusConfiguration.setClients(Collections.singletonList(firstClient));
+        k10plusConfiguration.setClients(clients);
         ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {
