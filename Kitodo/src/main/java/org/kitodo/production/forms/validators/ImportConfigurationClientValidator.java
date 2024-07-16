@@ -29,7 +29,7 @@ public class ImportConfigurationClientValidator implements Validator<ArrayList<?
     public void validate(FacesContext context, UIComponent component, ArrayList<?> clientList)
             throws ValidatorException {
         // only validate when saving
-        if (!context.getExternalContext().getRequestParameterMap().containsKey(StringConstants.SAVE)) {
+        if (!context.getExternalContext().getRequestParameterMap().containsKey(StringConstants.EDIT_FORM_SAVE)) {
             return;
         }
         if (clientList.isEmpty()) {

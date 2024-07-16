@@ -30,7 +30,7 @@ public class AbsolutePathValidator implements Validator<String> {
     public void validate(FacesContext facesContext, UIComponent uiComponent, String pathString)
             throws ValidatorException {
         // only validate when saving
-        if (!facesContext.getExternalContext().getRequestParameterMap().containsKey(StringConstants.SAVE)) {
+        if (!facesContext.getExternalContext().getRequestParameterMap().containsKey(StringConstants.EDIT_FORM_SAVE)) {
             return;
         }
         if (StringUtils.isNotBlank(pathString) && !pathString.startsWith("/")) {
