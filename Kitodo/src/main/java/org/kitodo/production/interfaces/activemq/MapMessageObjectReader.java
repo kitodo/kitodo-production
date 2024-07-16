@@ -29,6 +29,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.utils.Guard;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 public class MapMessageObjectReader {
 
     private MapMessage ticket;
@@ -169,6 +171,7 @@ public class MapMessageObjectReader {
      *             can be thrown by MapMessage.getString(String)
      */
 
+    @CheckForNull
     public String getString(String key) throws JMSException {
         return ticket.getString(key);
     }
