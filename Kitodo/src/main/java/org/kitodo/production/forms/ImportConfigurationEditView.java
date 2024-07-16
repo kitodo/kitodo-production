@@ -105,6 +105,8 @@ public class ImportConfigurationEditView extends BaseForm {
                 importConfiguration = ServiceManager.getImportConfigurationService().getById(id);
             } else {
                 importConfiguration = new ImportConfiguration();
+                importConfiguration.setClients(Collections.singletonList(ServiceManager.getUserService()
+                        .getSessionClientOfAuthenticatedUser()));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
