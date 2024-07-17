@@ -30,6 +30,7 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.beans.Process;
@@ -49,6 +50,7 @@ public class ImportConfigurationEditView extends BaseForm {
     private static final Logger logger = LogManager.getLogger(ImportConfigurationEditView.class);
     private ImportConfiguration importConfiguration = new ImportConfiguration();
     private List<SelectItem> searchFields = new ArrayList<>();
+    private List<Client> availableClients = new ArrayList<>();
     private static final List<String> SRU_VERSIONS = List.of("1.1", "1.2", "2.0");
     private static final List<String> SCHEMES = List.of("https", "http", "ftp");
     private static final List<String> PARENT_ELEMENT_TYPES = Collections.singletonList("reference");
@@ -103,6 +105,8 @@ public class ImportConfigurationEditView extends BaseForm {
                 importConfiguration = ServiceManager.getImportConfigurationService().getById(id);
             } else {
                 importConfiguration = new ImportConfiguration();
+                importConfiguration.setClients(Collections.singletonList(ServiceManager.getUserService()
+                        .getSessionClientOfAuthenticatedUser()));
             }
             setSaveDisabled(true);
         } catch (DAOException e) {
@@ -434,5 +438,39 @@ public class ImportConfigurationEditView extends BaseForm {
      */
     public void setParentIdSearchField(String parentIdSearchField) {
         importConfiguration.setParentSearchField(getSearchFieldMap().get(parentIdSearchField));
+    }
+
+    /**
+     * Get assigned clients.
+     *
+     * @return assigned clients
+     */
+    public List<Client> getAssignedClients() {
+        return new ArrayList<>(importConfiguration.getClients());
+    }
+
+    /**
+     * Set assigned clients.
+     *
+     * @param clients assigned clients
+     */
+    public void setAssignedClients(List<Client> clients) {
+        this.importConfiguration.setClients(clients);
+    }
+
+    /**
+     * Get list of available clients.
+     * @return list of available clients
+     */
+    public List<Client> getAvailableClients() {
+        if (Objects.isNull(availableClients) || availableClients.isEmpty()) {
+            try {
+                availableClients = ServiceManager.getClientService().getAllSortedByName();
+            } catch (DAOException e) {
+                Helper.setErrorMessage(e);
+                availableClients = new ArrayList<>();
+            }
+        }
+        return availableClients;
     }
 }

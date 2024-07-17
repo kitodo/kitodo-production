@@ -15,5 +15,6 @@ public class StringConstants {
 
     public static final String COMMA_DELIMITER = ", ";
     public static final String SEMICOLON_DELIMITER = "; ";
+    public static final String EDIT_FORM_SAVE = "editForm:save";
 
 }

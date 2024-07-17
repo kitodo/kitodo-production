@@ -11,8 +11,10 @@
 
 package org.kitodo.production.controller;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.enterprise.context.RequestScoped;
 import javax.faces.context.FacesContext;
@@ -149,7 +151,7 @@ public class SessionClientController {
      *
      * @return The list of clients.
      */
-    public List<Client> getAvailableClientsOfCurrentUser()  {
+    public List<Client> getAvailableClientsOfCurrentUser() {
         User currentUser = ServiceManager.getUserService().getCurrentUser();
         List<Client> clients = currentUser.getClients();
         for (Project project : currentUser.getProjects()) {
@@ -158,5 +160,14 @@ public class SessionClientController {
             }
         }
         return clients;
+    }
+
+    /**
+     * Get list of available clients of current user sorted by name.
+     * @return list of available clients of current user sorted by name
+     */
+    public List<Client> getAvailableClientsOfCurrentUserSortedByName() {
+        return getAvailableClientsOfCurrentUser().stream().sorted(Comparator.comparing(Client::getName))
+                .collect(Collectors.toList());
     }
 }

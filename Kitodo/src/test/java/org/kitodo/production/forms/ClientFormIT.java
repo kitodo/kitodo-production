@@ -21,7 +21,7 @@ import org.kitodo.production.services.ServiceManager;
 
 public class ClientFormIT {
 
-    private ClientForm clientForm = new ClientForm();
+    private final ClientForm clientForm = new ClientForm();
 
     /**
      * Setup Database and start elasticsearch.
@@ -64,7 +64,7 @@ public class ClientFormIT {
                 .size();
         int numberOfNewAuthorities = ServiceManager.getRoleService().getAllRolesByClientId(1).get(8).getAuthorities()
                 .size();
-        Assert.assertEquals("Role was not added", 9, numberOfRolesForFirstClient);
+        Assert.assertEquals("Role was not added", 10, numberOfRolesForFirstClient);
         Assert.assertEquals("Authorities were not added", numberOfOldAuthorities, numberOfNewAuthorities);
         Assert.assertEquals("Authorities were removed from second client", numberOfAuthoritiesToCopy,
                 numberOfOldAuthorities);
