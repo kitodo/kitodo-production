@@ -21,9 +21,6 @@ import javax.faces.push.Push;
 import javax.faces.push.PushContext;
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.json.Json;
-import javax.json.JsonArray;
-import javax.json.JsonArrayBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +33,10 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
 import org.omnifaces.util.Ajax;
+
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
 
 @Named
 @ApplicationScoped

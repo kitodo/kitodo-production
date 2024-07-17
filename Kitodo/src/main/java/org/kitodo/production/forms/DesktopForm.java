@@ -18,7 +18,6 @@ import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -36,6 +35,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.model.SortOrder;
+
+import jakarta.json.JsonException;
 
 @Named("DesktopForm")
 @ViewScoped
