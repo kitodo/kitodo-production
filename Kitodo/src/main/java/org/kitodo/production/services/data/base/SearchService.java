@@ -26,7 +26,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.json.JsonObject;
 import javax.ws.rs.HttpMethod;
 
 import org.apache.logging.log4j.LogManager;
@@ -57,6 +56,8 @@ import org.kitodo.production.dto.BaseDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.model.SortOrder;
+
+import jakarta.json.JsonObject;
 
 /**
  * Class for implementing methods used by all service classes which search in
