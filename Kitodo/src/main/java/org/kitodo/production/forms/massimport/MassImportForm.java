@@ -125,6 +125,8 @@ public class MassImportForm extends BaseForm {
         metadataKeys = new LinkedList<>();
         records = new LinkedList<>();
         importSuccessMap = new HashMap<>();
+        importedCsvHeaderLine = "";
+        importedCsvLines = new LinkedList<>();
     }
 
     /**
