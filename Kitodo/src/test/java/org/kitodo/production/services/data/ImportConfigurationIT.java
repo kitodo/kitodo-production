@@ -52,7 +52,7 @@ public class ImportConfigurationIT {
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         List<ImportConfiguration> configs = ServiceManager.getImportConfigurationService().getAll();
-        assertEquals("Wrong number of import configurations", Long.valueOf(3), Long.valueOf(configs.size()));
+        assertEquals("Wrong number of import configurations", 3, configs.size());
         assertEquals("Wrong first import configuration", GBV, configs.get(0).getTitle());
         assertEquals("Wrong last import configuration", KALLIOPE, configs.get(2).getTitle());
     }
@@ -67,7 +67,7 @@ public class ImportConfigurationIT {
         User userThree = ServiceManager.getUserService().getById(3);
         SecurityTestUtils.addUserDataToSecurityContext(userThree, 2);
         List<ImportConfiguration> configs = ServiceManager.getImportConfigurationService().getAll();
-        assertEquals("Wrong number of import configurations", Long.valueOf(2), Long.valueOf(configs.size()));
+        assertEquals("Wrong number of import configurations",2, configs.size());
         assertFalse("User should not have access to import configuration 'Kalliope' of unassigned client",
                 configs.stream().anyMatch(config -> KALLIOPE.equals(config.getTitle())));
     }
