@@ -80,7 +80,7 @@
         <spring.security.version>5.7.11</spring.security.version>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
         <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
-        <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.8.6.2</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
