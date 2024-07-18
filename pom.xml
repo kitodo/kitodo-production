@@ -900,6 +900,46 @@ from system library in Java 11+ -->
                         </dependency>
                     </dependencies>
                 </plugin>
+                <plugin>
+                  <groupId>com.github.spotbugs</groupId>
+                  <artifactId>spotbugs-maven-plugin</artifactId>
+                  <version>${spotbugs-maven-plugin.version}</version>
+<!--
+                  <dependencies>
+                    <dependency>
+                      <groupId>com.github.spotbugs</groupId>
+                      <artifactId>spotbugs</artifactId>
+                      <version>4.7.3</version>
+                    </dependency>
+                  </dependencies>
+-->
+                  <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+<!--
+                    <findbugsXmlOutputDirectory>${project.build.directory}/target/spotbugs</findbugsXmlOutputDirectory>
+                    <includeFilterFile>spotbugs-include.xml</includeFilterFile>
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+-->
+                    <plugins>
+                      <plugin>
+                        <groupId>com.h3xstream.findsecbugs</groupId>
+                        <artifactId>findsecbugs-plugin</artifactId>
+                        <version>1.12.0</version>
+                      </plugin>
+                    </plugins>
+                  </configuration>
+                  <executions>
+                    <execution>
+                      <id>analyze-compile</id>
+                      <phase>compile</phase>
+                      <goals>
+                        <goal>check</goal>
+                      </goals>
+                    </execution>
+                  </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
