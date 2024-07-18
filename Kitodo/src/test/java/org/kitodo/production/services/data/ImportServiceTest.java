@@ -12,12 +12,13 @@
 
 package org.kitodo.production.services.data;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.dto.ProjectDTO;
 
@@ -51,7 +52,6 @@ public class ImportServiceTest {
 
         int projectIdOfFirstProcess = sortedProcesses.get(0).getProject().getId();
 
-        Assert.assertEquals("Process not sorted based on provided projectId",9,
-                projectIdOfFirstProcess);
+        assertEquals(9, projectIdOfFirstProcess, "Process not sorted based on provided projectId");
     }
 }
