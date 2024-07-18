@@ -1042,9 +1042,9 @@ from system library in Java 11+ -->
                         <configuration>
                             <configFiles>
                                 <!-- local configuration file -->
-                                <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
+                                <!--<configFile>${main.basedir}/config-local/flyway.properties</configFile>-->
                                 <configFile>
-                                    ${basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+                                    ${main.basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
                                 </configFile>
                             </configFiles>
                         </configuration>
