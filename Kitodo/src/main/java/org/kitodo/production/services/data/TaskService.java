@@ -120,8 +120,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                                                  boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForTemplate(0));
         if (Objects.isNull(filter)) {
@@ -132,6 +130,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
         query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
                 .map(TaskStatus::getValue).collect(Collectors.toSet())));
+
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         if (onlyOwnTasks) {
             query.must(getQueryForProcessingUser(user.getId()));

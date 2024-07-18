@@ -160,8 +160,6 @@ public class MapMessageObjectReader {
      *             type String.
      */
     public Map<String, String> getMapOfStringToString(String key) {
-        Map<String, String> mapOfStringToString = new HashMap<>();
-
         Object mapObject = null;
         try {
             mapObject = ticket.getObject(key);
@@ -176,6 +174,8 @@ public class MapMessageObjectReader {
             throw new IllegalArgumentException(
                     "Incompatible types: \"" + key + WRONG_TYPE + "Map<?, ?>.");
         }
+
+        Map<String, String> mapOfStringToString = new HashMap<>();
         for (Object keyObject : ((Map<?, ?>) mapObject).keySet()) {
             Object valueObject = ((Map<?, ?>) mapObject).get(keyObject);
             if (!(keyObject instanceof String)) {
