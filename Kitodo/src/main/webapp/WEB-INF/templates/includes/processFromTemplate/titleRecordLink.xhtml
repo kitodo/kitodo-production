@@ -50,6 +50,7 @@
                                value="#{msgs.selectProcess}"
                                rendered="#{not empty CreateProcessForm.titleRecordLinkTab.possibleParentProcesses}"/>
                 <p:selectOneMenu id="chooseParent"
+                                 autoWidth="false"
                                  value="#{CreateProcessForm.titleRecordLinkTab.chosenParentProcess}"
                                  rendered="#{not empty CreateProcessForm.titleRecordLinkTab.possibleParentProcesses}">
                     <f:selectItem itemLabel="#{msgs.selectPlease}"

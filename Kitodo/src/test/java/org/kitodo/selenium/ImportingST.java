@@ -172,6 +172,7 @@ public class ImportingST extends BaseTestSelenium {
         importPage.decreaseImportDepth();
         importPage.getSearchButton().click();
         assertTrue("Hierarchy panel should be visible", importPage.isHierarchyPanelVisible());
+        importPage.addPpnAndTitle();
         String parentTitle = importPage.getProcessTitle();
         Pages.getProcessFromTemplatePage().save();
         processesPage.applyFilter(parentTitle);

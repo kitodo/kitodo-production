@@ -607,6 +607,23 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * @return list of ProcessDTO objects with processes for specific metadata tag
      */
     public List<ProcessDTO> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        QueryBuilder query = constructMetadataQuery(metadata, exactMatch);
+        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
+    }
+
+    /**
+     * Find processes by metadata across all projects of the current client.
+     *
+     * @param metadata
+     *            key is metadata tag and value is metadata content
+     * @return list of ProcessDTO objects with processes for specific metadata tag
+     */
+    public List<ProcessDTO> findByMetadataInAllProjects(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        QueryBuilder query = constructMetadataQuery(metadata, exactMatch);
+        return findByQueryInAllProjects(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
+    }
+
+    private BoolQueryBuilder constructMetadataQuery(Map<String, String> metadata, boolean exactMatch) {
         String nameSearchKey = METADATA_SEARCH_KEY + ".name";
         String contentSearchKey = METADATA_SEARCH_KEY + ".content";
         if (exactMatch) {
@@ -620,8 +637,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             pairQuery.must(matchQuery(contentSearchKey, entry.getValue()));
             query.must(pairQuery);
         }
-
-        return findByQuery(nestedQuery(METADATA_SEARCH_KEY, query, ScoreMode.Total), true);
+        return query;
     }
 
     /**
@@ -799,16 +815,15 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      *
      * @param searchInput
      *            user input
-     * @param projectId
-     *            the id of the allowed project
      * @param rulesetId
      *            the id of the allowed ruleset
      * @return found processes
-     * @throws DataException
-     *             if the search engine fails
+     * @throws DataException if the search engine fails
+     * @throws DAOException when loading ruleset from database fails
+     * @throws IOException when opening ruleset file fails
      */
-    public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
-            throws DataException {
+    public List<ProcessDTO> findLinkableParentProcesses(String searchInput, int rulesetId)
+            throws DataException, DAOException, IOException {
 
         BoolQueryBuilder processQuery = new BoolQueryBuilder()
                 .should(createSimpleWildcardQuery(ProcessTypeField.TITLE.getKey(), searchInput));
@@ -816,9 +831,14 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             processQuery.should(new MatchQueryBuilder(ProcessTypeField.ID.getKey(), searchInput).lenient(true));
         }
         BoolQueryBuilder query = new BoolQueryBuilder().must(processQuery)
-                .must(new MatchQueryBuilder(ProcessTypeField.PROJECT_ID.getKey(), projectId))
                 .must(new MatchQueryBuilder(ProcessTypeField.RULESET.getKey(), rulesetId));
-        return findByQuery(query, false);
+        List<ProcessDTO> filteredProcesses = new ArrayList<>();
+        for (ProcessDTO process : findByQueryInAllProjects(query, false)) {
+            if (ProcessService.canCreateChildProcess(process) || ProcessService.canCreateProcessWithCalendar(process)) {
+                filteredProcesses.add(process);
+            }
+        }
+        return filteredProcesses;
     }
 
     /**

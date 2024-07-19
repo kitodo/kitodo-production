@@ -16,6 +16,7 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
@@ -23,6 +24,7 @@ import java.util.Locale.LanguageRange;
 import java.util.Objects;
 import java.util.Optional;
 
+import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.StringUtils;
@@ -40,6 +42,7 @@ import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.omnifaces.util.Ajax;
@@ -53,6 +56,7 @@ public class TitleRecordLinkTab {
     private static final Logger logger = LogManager.getLogger(TitleRecordLinkTab.class);
 
     static final String INSERTION_TREE = "editForm:processFromTemplateTabView:insertionTree";
+    static final String PARENT_PROCESS_SELECTION = "editForm:processFromTemplateTabView:chooseParentGroup";
     private static final MetsService metsService = ServiceManager.getMetsService();
     private static final ProcessService processService = ServiceManager.getProcessService();
 
@@ -160,12 +164,12 @@ public class TitleRecordLinkTab {
             priorityList);
         logicalStructure.setExpanded(true);
 
-        if (!selectableInsertionPositions.isEmpty()) {
-            selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
-                    .getValue();
-        } else {
+        if (selectableInsertionPositions.isEmpty()) {
             selectedInsertionPosition = null;
             Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.noInsertionPosition");
+        } else {
+            selectedInsertionPosition = (String) ((LinkedList<SelectItem>) selectableInsertionPositions).getLast()
+                    .getValue();
         }
     }
 
@@ -308,20 +312,30 @@ public class TitleRecordLinkTab {
         }
         try {
             List<ProcessDTO> processes = ServiceManager.getProcessService().findLinkableParentProcesses(searchQuery,
-                createProcessForm.getProject().getId(), createProcessForm.getTemplate().getRuleset().getId());
+                    createProcessForm.getTemplate().getRuleset().getId());
             if (processes.isEmpty()) {
                 Helper.setMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.noHits");
             }
             indicationOfMoreHitsVisible = processes.size() > MAXIMUM_NUMBER_OF_HITS;
-            possibleParentProcesses = new ArrayList<>();
-            for (ProcessDTO process : processes.subList(0, Math.min(processes.size(), MAXIMUM_NUMBER_OF_HITS))) {
-                possibleParentProcesses.add(new SelectItem(process.getId().toString(), process.getTitle()));
-            }
-        } catch (DataException e) {
+            possibleParentProcesses = ServiceManager.getImportService()
+                    .getPotentialParentProcesses(processes, MAXIMUM_NUMBER_OF_HITS);
+        } catch (DataException | DAOException | IOException e) {
             Helper.setErrorMessage("createProcessForm.titleRecordLinkTab.searchButtonClick.error", e.getMessage(),
-                logger, e);
+                    logger, e);
             indicationOfMoreHitsVisible = false;
             possibleParentProcesses = Collections.emptyList();
+        }
+        possibleParentProcesses.sort(Comparator.comparing(SelectItem::getLabel));
+        for (SelectItem selectItem : possibleParentProcesses) {
+            if (!selectItem.isDisabled()) {
+                try {
+                    int processId = Integer.parseInt(selectItem.getValue().toString());
+                    setParentAsTitleRecord(ServiceManager.getProcessService().getById(processId));
+                    break;
+                } catch (DAOException | NumberFormatException e) {
+                    logger.error(e);
+                }
+            }
         }
     }
 
@@ -429,15 +443,25 @@ public class TitleRecordLinkTab {
 
     /**
      * Set given process "parentProcess" as parent title record of new process.
+     *
      * @param parentProcess process to set as parent title record
      */
     public void setParentAsTitleRecord(Process parentProcess) {
         createProcessForm.setEditActiveTabIndex(CreateProcessForm.TITLE_RECORD_LINK_TAB_INDEX);
-        ArrayList<SelectItem> parentCandidates = new ArrayList<>();
-        parentCandidates.add(new SelectItem(parentProcess.getId().toString(), parentProcess.getTitle()));
-        createProcessForm.getTitleRecordLinkTab().setPossibleParentProcesses(parentCandidates);
-        createProcessForm.getTitleRecordLinkTab().setChosenParentProcess((String)parentCandidates.get(0).getValue());
-        createProcessForm.getTitleRecordLinkTab().chooseParentProcess();
-        Ajax.update(INSERTION_TREE);
+        try {
+            if (ImportService.userMayLinkToParent(parentProcess.getId())) {
+                setChosenParentProcess(String.valueOf(parentProcess.getId()));
+            } else {
+                setChosenParentProcess(null);
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+        }
+        chooseParentProcess();
+        // only update UI components if FacesContext exists (not the case during integration tests, for example)
+        if (Objects.nonNull(FacesContext.getCurrentInstance())) {
+            Ajax.update(PARENT_PROCESS_SELECTION);
+            Ajax.update(INSERTION_TREE);
+        }
     }
 }

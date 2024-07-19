@@ -145,6 +145,15 @@
                 </permit>
             </permit>
         </restriction>
+        <restriction division="MultiVolumeWork" unspecified="forbidden">
+            <permit division="Volume"/>
+            <permit key="TitleDocMain" minOccurs="1"/>
+            <permit key="TitleDocMainShort" minOccurs="1"/>
+            <permit key="CatalogIDDigital" minOccurs="1"/>
+            <permit key="CatalogIDSource" minOccurs="1"/>
+            <permit key="TSL_ATS"/>
+            <permit key="ContributorPerson"/>
+        </restriction>
         <restriction division="ContainedWork" unspecified="forbidden">
                 <permit key="TitleDocMain" minOccurs="1"/>
                 <permit key="TitleDocMainShort" minOccurs="1"/>
