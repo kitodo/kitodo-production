@@ -54,7 +54,7 @@
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-xc</artifactId>
+            <artifactId>jackson-core-asl</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-beanutils</groupId>

@@ -422,7 +422,7 @@ from system library in Java 11+ -->
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
-                <artifactId>jackson-xc</artifactId>
+                <artifactId>jackson-core-asl</artifactId>
                 <version>1.9.13</version>
             </dependency>
             <dependency>
