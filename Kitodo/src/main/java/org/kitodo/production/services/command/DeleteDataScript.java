@@ -30,6 +30,7 @@ public class DeleteDataScript extends EditDataScript {
      * @param process the related process
      * @param metadataScript the script to execute
      */
+    @Override
     public void executeScript(LegacyMetsModsDigitalDocumentHelper metadataFile, Process process,
                                MetadataScript metadataScript) throws KitodoScriptExecutionException {
         Workpiece workpiece = metadataFile.getWorkpiece();
