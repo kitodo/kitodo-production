@@ -29,6 +29,10 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>
         </dependency>
