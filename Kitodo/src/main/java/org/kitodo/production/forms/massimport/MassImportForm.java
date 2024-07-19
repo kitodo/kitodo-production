@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms.massimport;
 
+import com.opencsv.exceptions.CsvException;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -54,9 +56,10 @@ public class MassImportForm extends BaseForm {
     private ImportConfiguration importConfiguration;
     private UploadedFile file;
     private String csvSeparator = ";";
-    private String previousCsvSeparator = null;
     private List<String> metadataKeys = new LinkedList<>(Collections.singletonList("ID"));
     private List<CsvRecord> records = new LinkedList<>();
+    private String importedCsvHeaderLine = "";
+    private List<String> importedCsvLines = new LinkedList<>();
     private final List<Character> csvSeparatorCharacters = Arrays.asList(',', ';');
     private final MassImportService massImportService = ServiceManager.getMassImportService();
     private final AddMetadataDialog addMetadataDialog = new AddMetadataDialog(this);
@@ -106,12 +109,14 @@ public class MassImportForm extends BaseForm {
             List<String> csvLines = massImportService.getLines(file);
             resetValues();
             if (!csvLines.isEmpty()) {
+                importedCsvHeaderLine = csvLines.get(0);
                 metadataKeys = new LinkedList<>(Arrays.asList(csvLines.get(0).split(csvSeparator, -1)));
                 if (csvLines.size() > 1) {
-                    records = massImportService.parseLines(csvLines.subList(1, csvLines.size()), csvSeparator);
+                    importedCsvLines = csvLines.subList(1, csvLines.size());
+                    records = massImportService.parseLines(importedCsvLines, csvSeparator);
                 }
             }
-        } catch (IOException e) {
+        } catch (IOException | CsvException e) {
             Helper.setErrorMessage(e);
         }
     }
@@ -120,14 +125,20 @@ public class MassImportForm extends BaseForm {
         metadataKeys = new LinkedList<>();
         records = new LinkedList<>();
         importSuccessMap = new HashMap<>();
+        importedCsvHeaderLine = "";
+        importedCsvLines = new LinkedList<>();
     }
 
     /**
      * Event listender function called when user switches CSV separator character used to split text lines into cells.
      */
     public void changeSeparator() {
-        metadataKeys = List.of(String.join(previousCsvSeparator, metadataKeys).split(csvSeparator));
-        records = massImportService.updateSeparator(records, previousCsvSeparator, csvSeparator);
+        metadataKeys = new LinkedList<>(Arrays.asList(importedCsvHeaderLine.split(csvSeparator, -1)));
+        try {
+            records = massImportService.parseLines(importedCsvLines, csvSeparator);
+        } catch (IOException | CsvException e) {
+            Helper.setErrorMessage(e);
+        }
     }
 
     /**
@@ -300,7 +311,6 @@ public class MassImportForm extends BaseForm {
      * @param csvSeparator as java.lang.String
      */
     public void setCsvSeparator(String csvSeparator) {
-        this.previousCsvSeparator = this.csvSeparator;
         this.csvSeparator = csvSeparator;
     }
 
