@@ -8,3 +8,7 @@
 /javadoc
 # local build of docs with mkdocs
 /site
+# Eclipse directories and files
+.classpath
+.project
+.settings
