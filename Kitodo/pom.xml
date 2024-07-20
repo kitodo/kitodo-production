@@ -409,7 +409,7 @@
             </resource>
             <resource>
                 <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
-                <directory>../config-local</directory>
+                <directory>${main.basedir}/config-local</directory>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
@@ -520,13 +520,6 @@
 
                             <!-- Tomcat configuration -->
                             <configuration>
-                                <type>existing</type>
-                                <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
-                                </home>
-                                <properties>
-                                    <cargo.logging>low</cargo.logging>
-                                </properties>
                             </configuration>
                             <deployables>
                                 <deployable>
@@ -636,13 +629,6 @@
 
                             <!-- Tomcat configuration -->
                             <configuration>
-                                <type>existing</type>
-                                <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
-                                </home>
-                                <properties>
-                                    <cargo.logging>low</cargo.logging>
-                                </properties>
                             </configuration>
                             <deployables>
                                 <deployable>
