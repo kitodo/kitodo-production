@@ -10,6 +10,77 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
+[WARNING] Used undeclared dependencies found:
+[WARNING]    org.springframework.security:spring-security-config:jar:5.7.11:compile
+[WARNING]    org.springframework.security:spring-security-web:jar:5.7.11:compile
+[WARNING]    org.springframework.security:spring-security-ldap:jar:5.7.11:compile
+[WARNING]    org.apache.poi:poi:jar:5.2.2:compile
+[WARNING]    org.springframework:spring-web:jar:5.3.29:compile
+[WARNING]    org.apache.myfaces.core:myfaces-api:jar:2.3.10:compile
+[WARNING]    org.apache.lucene:lucene-join:jar:9.10.0:compile
+[WARNING]    org.jboss.weld.servlet:weld-servlet:jar:2.4.8.Final:compile
+[WARNING]    org.springframework.security:spring-security-crypto:jar:5.7.11:compile
+[WARNING]    org.primefaces:primefaces:jar:8.0:compile
+[WARNING]    commons-io:commons-io:jar:2.11.0:compile
+[WARNING]    org.seleniumhq.selenium:selenium-api:jar:3.141.59:test
+[WARNING]    javax.ws.rs:javax.ws.rs-api:jar:2.1.1:compile
+[WARNING]    jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[WARNING]    org.springframework.ldap:spring-ldap-core:jar:2.4.1:compile
+[WARNING]    commons-codec:commons-codec:jar:1.15:compile
+[WARNING]    junit:junit:jar:4.13.2:test
+[WARNING]    org.hamcrest:hamcrest-core:jar:1.3:compile
+[WARNING]    org.apache.commons:commons-collections4:jar:4.4:compile
+[WARNING]    org.apache.logging.log4j:log4j-1.2-api:jar:2.19.0:compile
+[WARNING]    org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar:1.1.1:compile
+[WARNING]    org.junit.platform:junit-platform-commons:jar:1.9.2:test
+[WARNING]    org.springframework:spring-beans:jar:5.3.29:compile
+[WARNING]    org.camunda.bpm.model:camunda-xml-model:jar:7.17.0:compile
+[WARNING]    jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[WARNING]    org.hamcrest:hamcrest:jar:2.2-rc1:test
+[WARNING]    org.springframework.security:spring-security-core:jar:5.7.11:compile
+[WARNING]    org.junit.jupiter:junit-jupiter-api:jar:5.9.2:test
+[WARNING]    org.springframework:spring-context:jar:5.3.29:compile
+[WARNING]    org.seleniumhq.selenium:selenium-remote-driver:jar:3.141.59:test
+[WARNING] Unused declared dependencies found:
+[WARNING]    org.codehaus.jackson:jackson-xc:jar:1.9.13:compile
+[WARNING]    commons-beanutils:commons-beanutils:jar:1.9.4:compile
+[WARNING]    commons-cli:commons-cli:jar:1.5.0:compile
+[WARNING]    org.apache.commons:commons-math3:jar:3.6.1:compile
+[WARNING]    javax.ws.rs:jsr311-api:jar:1.1.1:compile
+[WARNING]    com.mysql:mysql-connector-j:jar:8.0.33:runtime
+[WARNING]    org.mariadb.jdbc:mariadb-java-client:jar:2.7.6:runtime
+[WARNING]    net.sf.barcode4j:barcode4j-fop-ext:jar:2.1:compile
+[WARNING]    org.codehaus.plexus:plexus-container-default:jar:1.7.1:test
+[WARNING]    org.eclipse.parsson:jakarta.json:jar:1.1.6:compile
+[WARNING]    commons-net:commons-net:jar:3.9.0:compile
+[WARNING]    org.apache.logging.log4j:log4j-web:jar:2.19.0:compile
+[WARNING]    org.apache.pdfbox:pdfbox:jar:2.0.26:test
+[WARNING]    org.apache.poi:poi-ooxml:jar:5.2.2:compile
+[WARNING]    org.apache.poi:poi-scratchpad:jar:5.2.2:compile
+[WARNING]    org.apache.xmlgraphics:xmlgraphics-commons:jar:2.8:compile
+[WARNING]    org.apache.xmlgraphics:fop:jar:2.8:compile
+[WARNING]    org.apache.avalon.framework:avalon-framework-api:jar:4.3.1:compile
+[WARNING]    org.apache.avalon.framework:avalon-framework-impl:jar:4.3.1:compile
+[WARNING]    org.jdom:jdom2:jar:2.0.6.1:compile
+[WARNING]    org.hibernate.validator:hibernate-validator:jar:6.2.4.Final:compile
+[WARNING]    xml-apis:xml-apis-ext:jar:1.3.04:compile
+[WARNING]    org.im4java:im4java:jar:1.4.0:compile
+[WARNING]    org.apache.commons:commons-exec:jar:1.3:compile
+[WARNING]    org.openpreservation.jhove:jhove-core:jar:1.20.1:compile
+[WARNING]    org.openpreservation.jhove:jhove-modules:jar:1.20.1:compile
+[WARNING]    org.openpreservation.jhove:jhove-ext-modules:jar:1.20.1:compile
+[WARNING]    se.jiderhamn.classloader-leak-prevention:classloader-leak-prevention-servlet3:jar:2.7.0:runtime
+[WARNING]    org.junit.jupiter:junit-jupiter-engine:jar:5.9.2:test
+[WARNING]    org.junit.vintage:junit-vintage-engine:jar:5.9.2:test
+[WARNING]    org.xmlunit:xmlunit-core:jar:2.10.0:compile
+[WARNING]    org.primefaces.extensions:primefaces-extensions:jar:8.0.5:compile
+[WARNING]    org.primefaces.extensions:resources-codemirror:jar:6.1.1:compile
+[WARNING]    org.webjars:uikit:jar:2.26.3:compile
+[WARNING]    org.jvnet.jaxb2_commons:jaxb2-basics-runtime:jar:1.11.1:compile
+[WARNING]    org.webjars:openlayers:jar:5.2.0:compile
+[WARNING] Non-test scoped test only dependencies found:
+[WARNING]    org.xmlunit:xmlunit-matchers:jar:2.9.0:compile
+[WARNING]    org.hamcrest:hamcrest-core:jar:1.3:compile
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -80,6 +151,10 @@
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -190,12 +265,20 @@
             <artifactId>avalon-framework-impl</artifactId>
         </dependency>
         <dependency>
+            <groupId>org.opensearch</groupId>
+            <artifactId>opensearch</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.opensearch.plugin</groupId>
             <artifactId>transport-netty4-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
