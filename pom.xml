@@ -931,23 +931,22 @@ from system library in Java 11+ -->
     <build>
         <pluginManagement>
             <plugins>
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-source-plugin</artifactId>
-    <version>3.2.1</version>
-    <executions>
-        <execution>
-            <id>analyze</id>
-            <phase>verify</phase>
-            <goals>
-                <goal>analyze</goal>
-            </goals>
-            <configuration>
-                <failOnViolation>true</failOnViolation>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <id>analyze</id>
+                            <phase>verify</phase>
+                            <goals>
+                            </goals>
+                            <configuration>
+                                <failOnViolation>true</failOnViolation>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -1124,7 +1123,6 @@ from system library in Java 11+ -->
                                 <id>checkstyle-check</id>
                                 <phase>validate</phase>
                                 <configuration>
-                                    <encoding>UTF-8</encoding>
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
                                     <logViolationsToConsole>true</logViolationsToConsole>
