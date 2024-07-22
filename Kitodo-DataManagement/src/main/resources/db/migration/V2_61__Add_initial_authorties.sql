@@ -73,7 +73,7 @@ DELETE FROM authority WHERE title LIKE '%Batch_globalAssignable';
 --
 SET SQL_SAFE_UPDATES = 1;
 
--- 7. Add initial roles if they don not exists yet
+-- 7. Add initial roles if they do not exist yet
 --
 INSERT IGNORE INTO role (title, client_id) VALUES ('Administration', 1);
 INSERT IGNORE INTO role (title, client_id) VALUES ('ClientManagement', 1);

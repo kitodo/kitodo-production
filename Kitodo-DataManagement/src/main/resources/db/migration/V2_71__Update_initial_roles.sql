@@ -11,7 +11,7 @@
 
 -- Update roles and authorities.
 
--- 1. Add initial roles if they don not exists yet
+-- 1. Add initial roles if they do not exist yet
 --
 INSERT IGNORE INTO role (title, client_id) VALUES ('WorkflowManagement', 1);
 
