@@ -85,7 +85,7 @@ INSERT INTO listColumn (title) VALUES ('ldapgroup.ldapgroup');
 INSERT INTO listColumn (title) VALUES ('ldapgroup.home_directory');
 INSERT INTO listColumn (title) VALUES ('ldapgroup.gidNumber');
 
--- 3. Create client_x_listcolumn table
+-- 3. Create client_x_listColumn table
 CREATE TABLE client_x_listColumn (
   client_id INT(11) NOT NULL,
   column_id INT(11) NOT NULL,
