@@ -9,8 +9,13 @@
 -- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 --
 
-ALTER TABLE client_x_listColumn RENAME TO client_x_listcolumn;
-ALTER TABLE ldapGroup RENAME TO ldapgroup;
-ALTER TABLE ldapServer RENAME TO ldapserver;
-ALTER TABLE listColumn RENAME TO listcolumn;
-ALTER TABLE workflowCondition RENAME TO workflowcondition;
+ALTER TABLE client_x_listColumn RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO client_x_listcolumn;
+ALTER TABLE ldapGroup RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO ldapgroup;
+ALTER TABLE ldapServer RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO ldapserver;
+ALTER TABLE listColumn RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO listcolumn;
+ALTER TABLE workflowCondition RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO workflowcondition;
