@@ -24,6 +24,9 @@
         </File>
     </Appenders>
     <Loggers>
+        <Logger name="org.apache.jasper.servlet.TldScanner" level="debug" additivity="false">
+            <AppenderRef ref="LOGFILE"/>
+        </Logger>
         <Logger name="de.unigoettingen.sub.search.opac" level="info" additivity="false">
             <AppenderRef ref="LOGFILE"/>
         </Logger>
