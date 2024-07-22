@@ -10,9 +10,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
-[WARNING] Unused declared dependencies found:
-[WARNING]    org.openpreservation.jhove:jhove-modules:jar:1.20.1:compile
-[WARNING]    org.openpreservation.jhove:jhove-ext-modules:jar:1.20.1:compile
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -51,7 +48,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter-engine</artifactId>
         </dependency>
     </dependencies>
 
