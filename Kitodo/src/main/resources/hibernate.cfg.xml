@@ -22,10 +22,10 @@
         <!-- SQL - Settings -->
         <property name="hibernate.dialect">org.hibernate.dialect.MySQL5Dialect</property>
         <property name="hibernate.dialect.storage_engine">innodb</property>
-        <property name="hibernate.connection.driver_class">com.mysql.jdbc.Driver</property>
+        <property name="hibernate.connection.driver_class">org.mariadb.jdbc.Driver</property>
 
         <property name="hibernate.connection.url">
-            jdbc:mysql://localhost/kitodo?useSSL=false
+            jdbc:mariadb://localhost/kitodo?useSSL=false
         </property>
         <property name="hibernate.connection.username">kitodo</property>
         <property name="hibernate.connection.password">kitodo</property>
