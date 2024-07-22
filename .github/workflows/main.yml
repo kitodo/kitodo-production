@@ -68,7 +68,7 @@ jobs:
             mvn --version
       - name: run build
         run:
-            mvn clean install -B '-Pall-tests,flyway,checkstyle,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
+            mvn clean install -B -T 1C '-Pall-tests,flyway,checkstyle,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
 
       - name: Upload Build Results
         uses: actions/upload-artifact@v4
