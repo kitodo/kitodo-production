@@ -20,8 +20,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import jakarta.xml.transform.TransformerException;
-import jakarta.xml.xpath.XPathExpressionException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -36,7 +36,7 @@ public class XMLUtilsTest {
     private static final String TEST_ELEMENT = "testElement";
     private static final String TEST_CHILD_ELEMENT = "testChildElement";
     private static final String XML_STRING = "<document><element>Text</element></document>";
-    private static final String EXPECTED_EXCEPTION_MESSAGE = "jakarta.xml.transform.TransformerException: "
+    private static final String EXPECTED_EXCEPTION_MESSAGE = "javax.xml.transform.TransformerException: "
             + "A location step was expected following the '/' or '//' token.";
     private static Locale originalDefaultLocale;
 

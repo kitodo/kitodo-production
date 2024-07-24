@@ -14,10 +14,10 @@ package org.kitodo.production.renderer;
 import java.io.IOException;
 import java.util.Optional;
 
-import jakarta.faces.component.UIComponent;
-import jakarta.faces.component.UIParameter;
-import jakarta.faces.context.FacesContext;
-import jakarta.faces.context.ResponseWriter;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIParameter;
+import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 
 import org.primefaces.component.media.Media;
 import org.primefaces.component.media.MediaRenderer;

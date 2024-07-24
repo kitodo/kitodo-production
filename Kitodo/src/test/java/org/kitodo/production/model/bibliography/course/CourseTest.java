@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 
-import jakarta.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.ParserConfigurationException;
 
 import org.junit.jupiter.api.Test;
 import org.kitodo.production.helper.XMLUtils;

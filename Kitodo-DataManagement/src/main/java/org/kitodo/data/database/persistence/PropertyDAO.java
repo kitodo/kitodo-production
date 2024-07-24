@@ -11,11 +11,11 @@
 
 package org.kitodo.data.database.persistence;
 
-import jakarta.persistence.PersistenceException;
-
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.persistence.PersistenceException;
 
 import org.hibernate.Session;
 import org.kitodo.data.database.beans.Property;

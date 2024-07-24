@@ -11,18 +11,18 @@
 
 package org.kitodo.docket;
 
-import jakarta.xml.transform.Result;
-import jakarta.xml.transform.Transformer;
-import jakarta.xml.transform.TransformerException;
-import jakarta.xml.transform.TransformerFactory;
-import jakarta.xml.transform.sax.SAXResult;
-import jakarta.xml.transform.stream.StreamSource;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+
+import javax.xml.transform.Result;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.sax.SAXResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.apache.fop.apps.FOPException;
 import org.apache.fop.apps.Fop;

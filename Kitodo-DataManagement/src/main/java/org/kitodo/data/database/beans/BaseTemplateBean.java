@@ -11,10 +11,10 @@
 
 package org.kitodo.data.database.beans;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.MappedSuperclass;
-
 import java.util.Date;
+
+import javax.persistence.Column;
+import javax.persistence.MappedSuperclass;
 
 /**
  * This bean contains properties common for Template and Process.

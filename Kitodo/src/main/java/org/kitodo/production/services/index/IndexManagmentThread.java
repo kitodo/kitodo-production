@@ -13,7 +13,7 @@ package org.kitodo.production.services.index;
 
 import java.util.Objects;
 
-import jakarta.faces.push.PushContext;
+import javax.faces.push.PushContext;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;

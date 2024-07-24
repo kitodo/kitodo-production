@@ -22,7 +22,7 @@ import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.function.BiConsumer;
 
-import jakarta.faces.model.SelectItem;
+import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;

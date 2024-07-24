@@ -16,16 +16,16 @@ import java.util.Collection;
 import java.util.Objects;
 import java.util.Optional;
 
-import jakarta.jms.Connection;
-import jakarta.jms.DeliveryMode;
-import jakarta.jms.Destination;
-import jakarta.jms.JMSException;
-import jakarta.jms.MessageConsumer;
-import jakarta.jms.MessageProducer;
-import jakarta.jms.Session;
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
+import javax.jms.Connection;
+import javax.jms.DeliveryMode;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.MessageConsumer;
+import javax.jms.MessageProducer;
+import javax.jms.Session;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.ActiveMQSslConnectionFactory;
@@ -181,7 +181,7 @@ public class ActiveMQDirector implements Runnable, ServletContextListener {
      * value can be overridden from the kitodo_config.properties parameter
      * “activeMQ.results.timeToLive”. The time to live must be specified in
      * milliseconds; 0 disables the oblivion. (See also:
-     * http://docs.oracle.com/javaee/6/api/jakarta/jms/MessageProducer.html#setTimeToLive%28long%29
+     * http://docs.oracle.com/javaee/6/api/javax/jms/MessageProducer.html#setTimeToLive%28long%29
      * )
      *
      * @param topic

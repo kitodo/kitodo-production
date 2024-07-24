@@ -30,7 +30,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-import jakarta.naming.ConfigurationException;
+import javax.naming.ConfigurationException;
 
 import org.apache.commons.collections4.iterators.PeekingIterator;
 import org.apache.logging.log4j.LogManager;

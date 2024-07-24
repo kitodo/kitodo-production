@@ -13,7 +13,7 @@ package org.kitodo.dataeditor;
 
 import java.io.IOException;
 
-import jakarta.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeConfigurationException;
 
 import org.kitodo.dataeditor.entities.DmdSec;
 import org.kitodo.dataeditor.entities.FileSec;

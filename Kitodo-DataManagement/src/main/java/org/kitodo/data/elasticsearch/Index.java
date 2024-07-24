@@ -11,7 +11,7 @@
 
 package org.kitodo.data.elasticsearch;
 
-import jakarta.persistence.Table;
+import javax.persistence.Table;
 
 import org.kitodo.config.ConfigMain;
 

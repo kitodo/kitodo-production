@@ -11,9 +11,6 @@
 
 package org.kitodo.serviceloader;
 
-import jakarta.faces.context.FacesContext;
-import jakarta.servlet.http.HttpSession;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,6 +36,9 @@ import java.util.ServiceLoader;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;

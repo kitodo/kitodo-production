@@ -20,11 +20,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.faces.push.Push;
-import jakarta.faces.push.PushContext;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
+import javax.enterprise.context.ApplicationScoped;
+import javax.faces.push.Push;
+import javax.faces.push.PushContext;
+import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

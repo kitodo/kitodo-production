@@ -11,8 +11,8 @@
 
 package org.kitodo.production.controller;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;

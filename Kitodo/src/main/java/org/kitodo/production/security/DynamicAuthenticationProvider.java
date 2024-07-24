@@ -13,8 +13,8 @@ package org.kitodo.production.security;
 
 import java.util.Objects;
 
-import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Named;
+import javax.enterprise.context.RequestScoped;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

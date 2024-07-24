@@ -11,8 +11,8 @@
 
 package org.kitodo.dataeditor.ruleset.xml;
 
-import jakarta.xml.bind.annotation.XmlEnum;
-import jakarta.xml.bind.annotation.XmlEnumValue;
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlEnumValue;
 
 /**
  * This class is a backing bean for the XML attribute type in the ruleset. With

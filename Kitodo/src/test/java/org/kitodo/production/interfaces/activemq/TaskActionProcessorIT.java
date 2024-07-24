@@ -21,7 +21,7 @@ import java.io.File;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.jms.JMSException;
+import javax.jms.JMSException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.junit.jupiter.api.AfterEach;

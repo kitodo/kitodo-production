@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 import java.util.Objects;
 
-import jakarta.servlet.ServletContextEvent;
-import jakarta.servlet.ServletContextListener;
-import jakarta.servlet.annotation.WebListener;
+import javax.servlet.ServletContextEvent;
+import javax.servlet.ServletContextListener;
+import javax.servlet.annotation.WebListener;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -59,7 +59,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
      * When the servlet is unloaded, i.e. on container shutdown, the TaskManager
      * shall be shut down gracefully.
      *
-     * @see jakarta.servlet.ServletContextListener#contextDestroyed(jakarta.servlet.ServletContextEvent)
+     * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextDestroyed(ServletContextEvent arg) {
@@ -69,7 +69,7 @@ public class TaskSitter implements Runnable, ServletContextListener {
     /**
      * Currently, there is nothing to do when the servlet is loading.
      *
-     * @see jakarta.servlet.ServletContextListener#contextInitialized(jakarta.servlet.ServletContextEvent)
+     * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
     @Override
     public void contextInitialized(ServletContextEvent argument) {

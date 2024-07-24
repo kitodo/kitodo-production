@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.faces.model.SelectItem;
+import javax.faces.model.SelectItem;
 
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ListColumn;

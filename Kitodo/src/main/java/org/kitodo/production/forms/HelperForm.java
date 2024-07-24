@@ -13,8 +13,8 @@ package org.kitodo.production.forms;
 
 import java.io.Serializable;
 
-import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Named;
+import javax.enterprise.context.SessionScoped;
+import javax.inject.Named;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;

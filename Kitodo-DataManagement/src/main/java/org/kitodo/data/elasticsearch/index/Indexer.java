@@ -11,11 +11,11 @@
 
 package org.kitodo.data.elasticsearch.index;
 
-import jakarta.ws.rs.HttpMethod;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import javax.ws.rs.HttpMethod;
 
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.elasticsearch.Index;

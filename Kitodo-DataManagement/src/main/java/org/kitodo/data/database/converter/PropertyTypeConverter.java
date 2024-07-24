@@ -11,9 +11,9 @@
 
 package org.kitodo.data.database.converter;
 
-import jakarta.persistence.AttributeConverter;
-
 import java.util.Objects;
+
+import javax.persistence.AttributeConverter;
 
 import org.kitodo.data.database.enums.PropertyType;
 

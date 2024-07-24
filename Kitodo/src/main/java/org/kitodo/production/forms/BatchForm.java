@@ -18,9 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.faces.event.ValueChangeEvent;
-import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Named;
+import javax.faces.event.ValueChangeEvent;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

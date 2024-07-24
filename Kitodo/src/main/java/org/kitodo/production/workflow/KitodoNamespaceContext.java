@@ -15,7 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import jakarta.xml.namespace.NamespaceContext;
+import javax.xml.namespace.NamespaceContext;
 
 public class KitodoNamespaceContext implements NamespaceContext {
 

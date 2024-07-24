@@ -143,7 +143,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private void authorizeGeneralPages(HttpSecurity http) throws Exception {
         http.authorizeRequests()
             .antMatchers("/pages/images/**").permitAll()
-            .antMatchers("/jakarta.faces.resource/**", "**/resources/**").permitAll()
+            .antMatchers("/javax.faces.resource/**", "**/resources/**").permitAll()
             .antMatchers("/js/modeler.js").permitAll()
             .antMatchers("/js/toggle.js").permitAll()
             .anyRequest().authenticated();

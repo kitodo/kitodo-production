@@ -18,9 +18,9 @@ import java.nio.file.Paths;
 import java.util.Locale;
 import java.util.Objects;
 
-import jakarta.annotation.PostConstruct;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Named;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 
 import org.kitodo.config.ConfigCore;
 import org.omnifaces.cdi.Eager;

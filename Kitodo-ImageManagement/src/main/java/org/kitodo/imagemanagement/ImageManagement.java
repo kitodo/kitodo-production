@@ -11,8 +11,6 @@
 
 package org.kitodo.imagemanagement;
 
-import jakarta.imageio.ImageIO;
-
 import java.awt.Image;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,6 +18,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Files;
 import java.util.function.Function;
+
+import javax.imageio.ImageIO;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -38,7 +38,7 @@ public class ImageManagement implements ImageManagementInterface {
     /**
      * Image format used internally to create image derivatives, optimized for
      * loss-free image quality, and speed. The format must be supported by both
-     * ImageMagick and {@link jakarta.imageio.ImageIO}.
+     * ImageMagick and {@link javax.imageio.ImageIO}.
      */
     private static final String RAW_IMAGE_FORMAT = ".bmp";
 
@@ -51,7 +51,7 @@ public class ImageManagement implements ImageManagementInterface {
     /**
      * Image format used internally to create web images, optimized for small
      * size. The format must be supported by both ImageMagick and
-     * {@link jakarta.imageio.ImageIO}.
+     * {@link javax.imageio.ImageIO}.
      */
     private static final String WEB_IMAGE_FORMAT = ".jpeg";
 

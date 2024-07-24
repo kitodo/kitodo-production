@@ -19,10 +19,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
-import jakarta.faces.context.FacesContext;
-import jakarta.xml.parsers.ParserConfigurationException;
-import jakarta.xml.transform.TransformerException;
-import jakarta.xml.xpath.XPathExpressionException;
+import javax.faces.context.FacesContext;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

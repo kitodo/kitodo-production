@@ -23,7 +23,7 @@
                     if defined, allows running the validator on this file group
 
             - optional attribute 'formatName':
-                    Member of jakarta.imageio.ImageIO.getWriterFormatNames() - if
+                    Member of javax.imageio.ImageIO.getWriterFormatNames() - if
                     defined, allows generating DPI changed and web images in
                     this format
 

@@ -13,8 +13,8 @@ package org.kitodo.production.forms;
 
 import java.io.Serializable;
 
-import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Named;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.kitodo.data.database.beans.SearchField;
 

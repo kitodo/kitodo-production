@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
-import jakarta.faces.context.FacesContext;
-import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Named;
-import jakarta.naming.ConfigurationException;
-import jakarta.xml.transform.TransformerException;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
+import javax.naming.ConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;

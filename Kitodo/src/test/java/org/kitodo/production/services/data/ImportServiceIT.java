@@ -83,9 +83,9 @@ import org.kitodo.test.utils.TestConstants;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
-import jakarta.xml.parsers.ParserConfigurationException;
-import jakarta.xml.transform.TransformerException;
-import jakarta.xml.xpath.XPathExpressionException;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 
 public class ImportServiceIT {
 

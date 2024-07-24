@@ -14,8 +14,8 @@ package org.kitodo.production.security;
 import java.io.IOException;
 import java.util.Objects;
 
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.Authentication;

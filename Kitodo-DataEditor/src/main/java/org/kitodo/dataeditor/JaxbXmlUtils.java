@@ -23,15 +23,15 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
-import jakarta.xml.bind.JAXBElement;
-import jakarta.xml.datatype.DatatypeConfigurationException;
-import jakarta.xml.datatype.DatatypeFactory;
-import jakarta.xml.datatype.XMLGregorianCalendar;
-import jakarta.xml.transform.Transformer;
-import jakarta.xml.transform.TransformerException;
-import jakarta.xml.transform.TransformerFactory;
-import jakarta.xml.transform.stream.StreamResult;
-import jakarta.xml.transform.stream.StreamSource;
+import javax.xml.bind.JAXBElement;
+import javax.xml.datatype.DatatypeConfigurationException;
+import javax.xml.datatype.DatatypeFactory;
+import javax.xml.datatype.XMLGregorianCalendar;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.stream.StreamResult;
+import javax.xml.transform.stream.StreamSource;
 
 import org.kitodo.api.filemanagement.FileManagementInterface;
 import org.kitodo.dataformat.metskitodo.KitodoType;

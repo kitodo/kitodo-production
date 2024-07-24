@@ -11,8 +11,8 @@
 
 package org.kitodo.data.database.converter;
 
-import jakarta.persistence.AttributeConverter;
-import jakarta.persistence.Converter;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 
 import org.kitodo.data.database.enums.TaskStatus;
 

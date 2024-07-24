@@ -20,8 +20,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import jakarta.faces.view.ViewScoped;
-import jakarta.inject.Named;
+import javax.faces.view.ViewScoped;
+import javax.inject.Named;
 
 import org.apache.commons.configuration2.ex.ConfigurationException;
 import org.kitodo.api.schemaconverter.MetadataFormat;
