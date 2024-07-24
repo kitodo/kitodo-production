@@ -117,6 +117,8 @@ public class ImportServiceIT {
     private static final int RULESET_ID = 1;
     private static final String TITLE = "Title";
     private static final String PLACE = "Place";
+    private static final String LABEL = "LABEL";
+    private static final String ORDERLABEL = "ORDERLABEL";
     private static final int EXPECTED_NR_OF_CHILDREN = 23;
     private static final String PICA_XML = "picaxml";
     private static final String PICA_PPN = "pica.ppn";
@@ -201,6 +203,45 @@ public class ImportServiceIT {
             ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
         }
     }
+
+    /**
+     * Tests whether basic catalog metadata import with additional preset metadata including LABEL and ORDERLABEL
+     * succeeds.
+     *
+     * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
+     * @throws ImportException when importing metadata fails
+     * @throws IOException when importing metadata fails
+     */
+    @Test
+    public void testImportProcessWithAdditionalMetadataWithLabelAndOrderlabel() throws DAOException, ImportException, IOException {
+        Map<String, List<String>> presetMetadata = new HashMap<>();
+        presetMetadata.put(TITLE, List.of("Band 1"));
+        presetMetadata.put(PLACE, List.of("Hamburg", "Berlin"));
+        presetMetadata.put(LABEL, List.of("TEST-LABEL"));
+        presetMetadata.put(ORDERLABEL, List.of("TEST-ORDERLABEL"));
+        Process processWithAdditionalMetadata = importProcessWithAdditionalMetadata(RECORD_ID,
+                MockDatabase.getK10PlusImportConfiguration(), presetMetadata);
+        Workpiece workpiece = ServiceManager.getMetsService()
+                .loadWorkpiece(processService.getMetadataFileUri(processWithAdditionalMetadata));
+        HashSet<Metadata> metadata = workpiece.getLogicalStructure().getMetadata();
+        String processLabel = workpiece.getLogicalStructure().getLabel();
+        String processOrderlabel = workpiece.getLogicalStructure().getOrderlabel();
+        try {
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
+            Assert.assertTrue("Process does not contain correct metadata",
+                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
+            Assert.assertEquals("Process does not have the correct LABEL",
+                    processLabel, "TEST-LABEL");
+            Assert.assertEquals("Process does not have the correct ORDERLABEL",
+                    processOrderlabel, "TEST-ORDERLABEL");
+        } finally {
+            ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
+        }
+    }
+
 
     private boolean assertMetadataSetContainsMetadata(HashSet<Metadata> metadataSet, String metadataKey, String metadataValue) {
         return metadataSet.stream()

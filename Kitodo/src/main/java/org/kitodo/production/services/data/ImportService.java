@@ -1216,6 +1216,7 @@ public class ImportService {
             processTempProcess(tempProcess, ServiceManager.getRulesetService().openRuleset(template.getRuleset()),
                     "create", Locale.LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage),
                     parentTempProcess);
+            setLabelAndOrderLabelOfImportedProcess(tempProcess, presetMetadata);
             String title = tempProcess.getProcess().getTitle();
             String validateRegEx = ConfigCore.getParameterOrDefaultValue(ParameterCore.VALIDATE_PROCESS_TITLE_REGEX);
             if (StringUtils.isBlank(title)) {
@@ -1290,6 +1291,19 @@ public class ImportService {
             }
         }
         return metadata;
+    }
+
+    private void setLabelAndOrderLabelOfImportedProcess(TempProcess tempProcess, Map<String, List<String>> presetMetadata) {
+        List<String> labelList = presetMetadata.get(ProcessFieldedMetadata.METADATA_KEY_LABEL);
+        List<String> orderLabelList = presetMetadata.get(ProcessFieldedMetadata.METADATA_KEY_ORDERLABEL);
+
+        if (Objects.nonNull(labelList) && !labelList.isEmpty() && !labelList.get(0).isBlank()) {
+            tempProcess.getWorkpiece().getLogicalStructure().setLabel(labelList.get(0));
+        }
+
+        if (Objects.nonNull(orderLabelList) && !orderLabelList.isEmpty() && !orderLabelList.get(0).isBlank()) {
+            tempProcess.getWorkpiece().getLogicalStructure().setOrderlabel(orderLabelList.get(0));
+        }
     }
 
     /**
