@@ -931,6 +931,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     @Override
+    @SuppressWarnings("checkstyle:methodlength")
     public ProcessDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
         ProcessDTO processDTO = new ProcessDTO();
         if (!jsonObject.isEmpty()) {

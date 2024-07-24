@@ -573,6 +573,7 @@ public class FilterService extends SearchService<Filter, FilterDTO, FilterDAO> {
      *            as {@link ObjectType}
      * @return query as {@link QueryBuilder}
      */
+    @SuppressWarnings("checkstyle:methodlength")
     private QueryBuilder createTaskFilters(String filter, FilterString filterString, TaskStatus taskStatus,
             boolean negate, ObjectType objectType) {
         /*
