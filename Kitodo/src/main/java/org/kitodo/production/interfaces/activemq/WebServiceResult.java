@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
+import jakarta.jms.JMSException;
+import jakarta.jms.MapMessage;
 
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;

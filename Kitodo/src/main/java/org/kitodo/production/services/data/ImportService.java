@@ -33,13 +33,13 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.faces.model.SelectItem;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
+import jakarta.faces.model.SelectItem;
+import jakarta.xml.parsers.ParserConfigurationException;
+import jakarta.xml.transform.TransformerException;
+import jakarta.xml.xpath.XPath;
+import jakarta.xml.xpath.XPathConstants;
+import jakarta.xml.xpath.XPathExpressionException;
+import jakarta.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

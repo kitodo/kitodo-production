@@ -20,11 +20,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.enterprise.context.SessionScoped;
-import javax.inject.Named;
+import jakarta.crypto.BadPaddingException;
+import jakarta.crypto.IllegalBlockSizeException;
+import jakarta.crypto.NoSuchPaddingException;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

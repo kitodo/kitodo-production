@@ -29,10 +29,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.enterprise.context.SessionScoped;
-import javax.faces.context.FacesContext;
-import javax.faces.model.SelectItem;
-import javax.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.model.SelectItem;
+import jakarta.inject.Named;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

@@ -11,6 +11,13 @@
 
 package org.kitodo.queryurlimport;
 
+import jakarta.xml.parsers.DocumentBuilder;
+import jakarta.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.parsers.ParserConfigurationException;
+import jakarta.xml.xpath.XPath;
+import jakarta.xml.xpath.XPathExpressionException;
+import jakarta.xml.xpath.XPathFactory;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
@@ -18,13 +25,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Objects;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathExpressionException;
-import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;

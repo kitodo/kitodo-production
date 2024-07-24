@@ -21,9 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.transform.TransformerException;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.datatype.DatatypeConfigurationException;
+import jakarta.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

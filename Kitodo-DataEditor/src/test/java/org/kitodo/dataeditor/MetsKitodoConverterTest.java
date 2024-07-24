@@ -19,9 +19,9 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.transform.TransformerException;
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.transform.TransformerException;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;

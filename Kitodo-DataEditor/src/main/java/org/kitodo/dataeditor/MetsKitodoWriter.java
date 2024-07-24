@@ -17,10 +17,10 @@ import java.io.StringWriter;
 import java.net.URI;
 import java.util.Objects;
 
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
-import javax.xml.datatype.DatatypeConfigurationException;
+import jakarta.xml.bind.JAXBContext;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.bind.Marshaller;
+import jakarta.xml.datatype.DatatypeConfigurationException;
 
 import org.kitodo.dataformat.metskitodo.Mets;
 import org.kitodo.utils.JAXBContextCache;

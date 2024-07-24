@@ -24,8 +24,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.stream.StreamSource;
+import jakarta.xml.transform.TransformerException;
+import jakarta.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;

@@ -17,11 +17,11 @@ import java.net.URI;
 import java.nio.file.Paths;
 import java.util.Objects;
 
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import jakarta.xml.transform.Transformer;
+import jakarta.xml.transform.TransformerException;
+import jakarta.xml.transform.TransformerFactory;
+import jakarta.xml.transform.stream.StreamResult;
+import jakarta.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
 

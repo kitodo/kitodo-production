@@ -11,7 +11,7 @@
 
 package org.kitodo.data.database.converter;
 
-import javax.persistence.AttributeConverter;
+import jakarta.persistence.AttributeConverter;
 
 import org.kitodo.data.database.enums.PasswordEncryption;
 

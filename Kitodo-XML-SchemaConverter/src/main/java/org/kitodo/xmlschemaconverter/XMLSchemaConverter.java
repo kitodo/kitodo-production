@@ -22,19 +22,19 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UnknownFormatConversionException;
 
-import javax.xml.XMLConstants;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.Result;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.sax.SAXResult;
-import javax.xml.transform.sax.SAXSource;
-import javax.xml.transform.sax.SAXTransformerFactory;
-import javax.xml.transform.sax.TransformerHandler;
-import javax.xml.transform.stream.StreamResult;
-import javax.xml.transform.stream.StreamSource;
+import jakarta.xml.XMLConstants;
+import jakarta.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.parsers.ParserConfigurationException;
+import jakarta.xml.transform.Result;
+import jakarta.xml.transform.Transformer;
+import jakarta.xml.transform.TransformerException;
+import jakarta.xml.transform.TransformerFactory;
+import jakarta.xml.transform.sax.SAXResult;
+import jakarta.xml.transform.sax.SAXSource;
+import jakarta.xml.transform.sax.SAXTransformerFactory;
+import jakarta.xml.transform.sax.TransformerHandler;
+import jakarta.xml.transform.stream.StreamResult;
+import jakarta.xml.transform.stream.StreamSource;
 
 import net.sf.saxon.TransformerFactoryImpl;
 

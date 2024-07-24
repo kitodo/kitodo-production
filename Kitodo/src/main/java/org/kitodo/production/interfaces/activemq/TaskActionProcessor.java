@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import javax.jms.JMSException;
+import jakarta.jms.JMSException;
 
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;

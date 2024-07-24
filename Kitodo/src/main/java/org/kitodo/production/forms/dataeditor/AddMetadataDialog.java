@@ -13,7 +13,7 @@ package org.kitodo.production.forms.dataeditor;
 
 import java.util.List;
 
-import javax.faces.model.SelectItem;
+import jakarta.faces.model.SelectItem;
 
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.model.TreeNode;

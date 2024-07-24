@@ -26,9 +26,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import javax.xml.bind.JAXBException;
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.transform.TransformerException;
+import jakarta.xml.bind.JAXBException;
+import jakarta.xml.datatype.DatatypeConfigurationException;
+import jakarta.xml.transform.TransformerException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;

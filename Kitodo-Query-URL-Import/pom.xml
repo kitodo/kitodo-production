@@ -28,6 +28,37 @@
     </properties>
 
     <dependencies>
+<!-- gibt es nicht
+        <dependency>
+            <groupId>jakarta.xml</groupId>
+            <artifactId>jakarta.xml-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+-->
+         <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>xml-apis</groupId>
+            <artifactId>xml-apis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>jakarta.xml.ws</groupId>
+            <artifactId>jakarta.xml.ws-api</artifactId>
+        </dependency>
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-impl</artifactId>
+    <scope>runtime</scope>
+</dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>

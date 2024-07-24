@@ -21,15 +21,15 @@ import java.util.Arrays;
 import java.util.Base64;
 import java.util.Objects;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
+import jakarta.crypto.BadPaddingException;
+import jakarta.crypto.Cipher;
+import jakarta.crypto.IllegalBlockSizeException;
+import jakarta.crypto.NoSuchPaddingException;
+import jakarta.crypto.SecretKey;
+import jakarta.crypto.SecretKeyFactory;
+import jakarta.crypto.spec.IvParameterSpec;
+import jakarta.crypto.spec.PBEKeySpec;
+import jakarta.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;

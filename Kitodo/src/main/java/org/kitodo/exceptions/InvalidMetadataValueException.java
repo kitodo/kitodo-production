@@ -11,7 +11,7 @@
 
 package org.kitodo.exceptions;
 
-import javax.management.InvalidAttributeValueException;
+import jakarta.management.InvalidAttributeValueException;
 
 import org.kitodo.production.helper.Helper;
 

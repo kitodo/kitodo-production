@@ -15,10 +15,10 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
-import javax.faces.convert.Converter;
-import javax.inject.Named;
+import jakarta.faces.component.UIComponent;
+import jakarta.faces.context.FacesContext;
+import jakarta.faces.convert.Converter;
+import jakarta.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.production.forms.dataeditor.IllustratedSelectItem;

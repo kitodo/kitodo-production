@@ -11,6 +11,9 @@
 
 package org.kitodo.dataformat.access;
 
+import jakarta.xml.bind.JAXBElement;
+import jakarta.xml.namespace.QName;
+
 import java.math.BigInteger;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
@@ -26,9 +29,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
-
-import javax.xml.bind.JAXBElement;
-import javax.xml.namespace.QName;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;

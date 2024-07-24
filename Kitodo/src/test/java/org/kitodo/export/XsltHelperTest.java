@@ -18,7 +18,7 @@ import java.io.File;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 
-import javax.xml.transform.stream.StreamSource;
+import jakarta.xml.transform.stream.StreamSource;
 
 import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Test;

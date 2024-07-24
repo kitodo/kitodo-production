@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Locale.LanguageRange;
 
-import javax.xml.bind.JAXBException;
+import jakarta.xml.bind.JAXBException;
 
 import org.junit.jupiter.api.Test;
 import org.kitodo.api.imagemanagement.ImageFileFormat;

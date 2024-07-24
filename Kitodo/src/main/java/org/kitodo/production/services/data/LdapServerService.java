@@ -34,24 +34,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import javax.naming.Context;
-import javax.naming.NamingEnumeration;
-import javax.naming.NamingException;
-import javax.naming.directory.Attribute;
-import javax.naming.directory.Attributes;
-import javax.naming.directory.BasicAttribute;
-import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
-import javax.naming.directory.InitialDirContext;
-import javax.naming.directory.ModificationItem;
-import javax.naming.directory.SearchResult;
-import javax.naming.ldap.InitialLdapContext;
-import javax.naming.ldap.LdapContext;
-import javax.naming.ldap.StartTlsRequest;
-import javax.naming.ldap.StartTlsResponse;
+import jakarta.crypto.BadPaddingException;
+import jakarta.crypto.IllegalBlockSizeException;
+import jakarta.crypto.NoSuchPaddingException;
+import jakarta.naming.Context;
+import jakarta.naming.NamingEnumeration;
+import jakarta.naming.NamingException;
+import jakarta.naming.directory.Attribute;
+import jakarta.naming.directory.Attributes;
+import jakarta.naming.directory.BasicAttribute;
+import jakarta.naming.directory.BasicAttributes;
+import jakarta.naming.directory.DirContext;
+import jakarta.naming.directory.InitialDirContext;
+import jakarta.naming.directory.ModificationItem;
+import jakarta.naming.directory.SearchResult;
+import jakarta.naming.ldap.InitialLdapContext;
+import jakarta.naming.ldap.LdapContext;
+import jakarta.naming.ldap.StartTlsRequest;
+import jakarta.naming.ldap.StartTlsResponse;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
@@ -159,9 +159,9 @@ public class LdapServerService extends SearchDatabaseService<LdapServer, LdapSer
             loadCertificates(keystorepath, keystorepasswd, ldapServer);
 
             // set properties, so that the current keystore is used for SSL
-            System.setProperty("javax.net.ssl.keyStore", keystorepath);
-            System.setProperty("javax.net.ssl.trustStore", keystorepath);
-            System.setProperty("javax.net.ssl.keyStorePassword", keystorepasswd);
+            System.setProperty("jakarta.net.ssl.keyStore", keystorepath);
+            System.setProperty("jakarta.net.ssl.trustStore", keystorepath);
+            System.setProperty("jakarta.net.ssl.keyStorePassword", keystorepasswd);
             env.put(Context.SECURITY_PROTOCOL, "ssl");
         }
         return env;

@@ -13,7 +13,7 @@ package org.kitodo.production.helper.tasks;
 
 import java.io.IOException;
 
-import javax.naming.ConfigurationException;
+import jakarta.naming.ConfigurationException;
 
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;

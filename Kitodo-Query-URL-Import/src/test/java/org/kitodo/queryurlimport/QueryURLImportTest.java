@@ -33,8 +33,8 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import jakarta.xml.parsers.DocumentBuilderFactory;
+import jakarta.xml.parsers.ParserConfigurationException;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterAll;

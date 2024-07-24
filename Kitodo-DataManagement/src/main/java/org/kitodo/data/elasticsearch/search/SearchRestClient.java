@@ -11,13 +11,13 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import jakarta.ws.rs.HttpMethod;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Objects;
-
-import javax.ws.rs.HttpMethod;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.entity.ContentType;

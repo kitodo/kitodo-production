@@ -23,7 +23,6 @@
 [WARNING]    org.primefaces:primefaces:jar:8.0:compile
 [WARNING]    commons-io:commons-io:jar:2.11.0:compile
 [WARNING]    org.seleniumhq.selenium:selenium-api:jar:3.141.59:test
-[WARNING]    javax.ws.rs:javax.ws.rs-api:jar:2.1.1:compile
 [WARNING]    jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
 [WARNING]    org.springframework.ldap:spring-ldap-core:jar:2.4.1:compile
 [WARNING]    commons-codec:commons-codec:jar:1.15:compile
@@ -37,16 +36,12 @@
 [WARNING]    org.camunda.bpm.model:camunda-xml-model:jar:7.17.0:compile
 [WARNING]    jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
 [WARNING]    org.hamcrest:hamcrest:jar:2.2-rc1:test
-[WARNING]    org.springframework.security:spring-security-core:jar:5.7.11:compile
 [WARNING]    org.junit.jupiter:junit-jupiter-api:jar:5.9.2:test
 [WARNING]    org.springframework:spring-context:jar:5.3.29:compile
 [WARNING]    org.seleniumhq.selenium:selenium-remote-driver:jar:3.141.59:test
 [WARNING] Unused declared dependencies found:
-[WARNING]    org.codehaus.jackson:jackson-xc:jar:1.9.13:compile
-[WARNING]    commons-beanutils:commons-beanutils:jar:1.9.4:compile
 [WARNING]    commons-cli:commons-cli:jar:1.5.0:compile
 [WARNING]    org.apache.commons:commons-math3:jar:3.6.1:compile
-[WARNING]    javax.ws.rs:jsr311-api:jar:1.1.1:compile
 [WARNING]    com.mysql:mysql-connector-j:jar:8.0.33:runtime
 [WARNING]    org.mariadb.jdbc:mariadb-java-client:jar:2.7.6:runtime
 [WARNING]    net.sf.barcode4j:barcode4j-fop-ext:jar:2.1:compile
@@ -120,24 +115,16 @@
             <scope>compile</scope>
         </dependency>
         <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.itextpdf</groupId>
             <artifactId>itextpdf</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-xc</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
         </dependency>
         <dependency>
             <groupId>commons-cli</groupId>
@@ -149,12 +136,14 @@
             <version>3.6.1</version>
         </dependency>
         <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>jsr311-api</artifactId>
+            <groupId>jakarta.ws.rs</groupId>
+            <artifactId>jakarta.ws.rs-api</artifactId>
+            <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
+            <groupId>jakarta.xml.bind</groupId>
+            <artifactId>jakarta.xml.bind-api</artifactId>
+            <version>3.0.1</version>
         </dependency>
         <dependency>
             <groupId>com.mysql</groupId>
@@ -205,8 +194,9 @@
             <artifactId>plexus-container-default</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.el</groupId>
-            <artifactId>javax.el-api</artifactId>
+            <groupId>jakarta.el</groupId>
+            <artifactId>jakarta.el-api</artifactId>
+            <version>4.0.0</version>
         </dependency>
         <dependency>
             <groupId>jakarta.json</groupId>
@@ -277,13 +267,15 @@
             <artifactId>jdom2</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.hibernate</groupId>
+            <groupId>org.hibernate.orm</groupId>
             <artifactId>hibernate-core</artifactId>
         </dependency>
+<!--
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
         </dependency>
+-->
         <dependency>
             <groupId>xml-apis</groupId>
             <artifactId>xml-apis-ext</artifactId>
