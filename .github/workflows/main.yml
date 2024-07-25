@@ -71,8 +71,12 @@ jobs:
       - name: check maven version
         run:
             mvn --version
+      - name: Run dependency:analyze
+        run:
+            mvn -B dependency:analyze
+      - name: Run dependency:tree
+        run:
+            mvn -B dependency:tree
       - name: run build
         run:
             mvn clean install -B '-Pall-tests,flyway,checkstyle,!development' && xvfb-run --server-args="-screen 0 1600x1280x24" mvn clean install -B '-Pselenium,!development'
-
-
