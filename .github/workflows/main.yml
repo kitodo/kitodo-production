@@ -77,6 +77,9 @@ jobs:
       - name: Run dependency:analyze
         run:
             mvn -B dependency:analyze
+      - name: Run production build (required for dependency tree)
+        run:
+            mvn -B clean install
       - name: Run dependency:tree
         run:
             mvn -B dependency:tree
