@@ -39,6 +39,8 @@ jobs:
         run: |
             cp $GITHUB_WORKSPACE/config/database.yml.actions $GITHUB_WORKSPACE/config/database.yml
             cp $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties.actions $GITHUB_WORKSPACE/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+            mkdir -p $GITHUB_WORKSPACE/config-local
+            cp $GITHUB_WORKSPACE/Kitodo/src/main/resources/kitodo_projects.xml $GITHUB_WORKSPACE/config-local
 
       # Runs a set of commands using the runners shell
       - name: start mysql
