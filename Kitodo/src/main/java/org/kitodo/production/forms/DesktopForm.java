@@ -11,6 +11,8 @@
 
 package org.kitodo.production.forms;
 
+import jakarta.json.JsonException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +37,6 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
 import org.opensearch.OpenSearchStatusException;
 import org.primefaces.model.SortOrder;
-
-import jakarta.json.JsonException;
 
 @Named("DesktopForm")
 @ViewScoped

@@ -11,6 +11,10 @@
 
 package org.kitodo.production.forms;
 
+import jakarta.json.Json;
+import jakarta.json.JsonArray;
+import jakarta.json.JsonArrayBuilder;
+
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -33,10 +37,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.index.IndexingService;
 import org.omnifaces.util.Ajax;
-
-import jakarta.json.Json;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonArrayBuilder;
 
 @Named
 @ApplicationScoped

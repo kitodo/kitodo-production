@@ -13,6 +13,10 @@ package org.kitodo.production.services.index;
 
 import static java.lang.Math.toIntExact;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
@@ -48,10 +52,6 @@ import org.kitodo.production.helper.IndexWorker;
 import org.kitodo.production.helper.IndexWorkerStatus;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchService;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 
 public class IndexingService {
 

@@ -11,6 +11,10 @@
 
 package org.kitodo.selenium.testframework.helper;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -18,10 +22,6 @@ import java.io.InputStreamReader;
 import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URL;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;

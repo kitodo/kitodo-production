@@ -17,6 +17,8 @@ import static org.opensearch.index.query.QueryBuilders.queryStringQuery;
 import static org.opensearch.index.query.QueryBuilders.rangeQuery;
 import static org.opensearch.index.query.QueryBuilders.termsQuery;
 
+import jakarta.json.JsonObject;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -56,8 +58,6 @@ import org.opensearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.opensearch.search.sort.SortBuilder;
 import org.opensearch.search.sort.SortBuilders;
 import org.primefaces.model.SortOrder;
-
-import jakarta.json.JsonObject;
 
 /**
  * Class for implementing methods used by all service classes which search in

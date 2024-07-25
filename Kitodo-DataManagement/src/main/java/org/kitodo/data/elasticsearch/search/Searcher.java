@@ -11,6 +11,10 @@
 
 package org.kitodo.data.elasticsearch.search;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,10 +32,6 @@ import org.opensearch.search.SearchHits;
 import org.opensearch.search.aggregations.AggregationBuilder;
 import org.opensearch.search.aggregations.Aggregations;
 import org.opensearch.search.sort.SortBuilder;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 
 /**
  * Implementation of ElasticSearch Searcher for Kitodo - Data Management

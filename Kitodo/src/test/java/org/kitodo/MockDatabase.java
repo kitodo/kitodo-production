@@ -11,6 +11,10 @@
 
 package org.kitodo;
 
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
+import jakarta.json.JsonReader;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,10 +40,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
-import jakarta.json.Json;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonReader;
 
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
