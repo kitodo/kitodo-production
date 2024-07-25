@@ -32,7 +32,7 @@ import org.kitodo.production.services.data.FilterService;
 
 public class FilterMenu {
 
-    private static final int MAX_SUGGESTIONS = 15;
+    private static final int MAX_SUGGESTIONS = 100;
     private static final List<FilterString> processCategories = Arrays.asList(
             FilterString.TASK,
             FilterString.TASKINWORK,
