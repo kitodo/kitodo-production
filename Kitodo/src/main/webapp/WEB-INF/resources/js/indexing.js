@@ -11,18 +11,6 @@
  *
  */
 
-function createMapping(objectTypes) {
-    toggleButtons(false, objectTypes);
-    document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='inline';
-    return true;
-}
-
-function deleteIndex(objectTypes) {
-    toggleButtons(false, objectTypes);
-    document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='inline';
-    return true;
-}
-
 function toggleProgressPolling(message) {
     if (message.includes("indexing_started")) {
         PF('progressPoll').start();
@@ -76,4 +64,16 @@ function toggleButtons(state, objectTypes) {
         }
         PF('startIndexingAll').disable();
     }
+}
+
+function createMapping(objectTypes) {
+    toggleButtons(false, objectTypes);
+    document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='inline';
+    return true;
+}
+
+function deleteIndex(objectTypes) {
+    toggleButtons(false, objectTypes);
+    document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='inline';
+    return true;
 }
