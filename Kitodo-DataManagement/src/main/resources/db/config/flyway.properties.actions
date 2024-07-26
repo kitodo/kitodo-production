@@ -1,4 +1,4 @@
 flyway.user=kitodo
 flyway.password=kitodo
-flyway.url=jdbc:mariadb://localhost/kitodo
+flyway.url=jdbc:mariadb://localhost/kitodo?allowPublicKeyRetrieval=true&useSSL=false
 flyway.locations=filesystem:Kitodo-DataManagement/src/main/resources/db/migration
