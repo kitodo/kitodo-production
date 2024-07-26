@@ -68,4 +68,28 @@ public class CommentTooltipView {
     public List<Comment> getComments(TaskDTO taskDTO) {
         return getComments(taskDTO.getProcess());
     }
+
+    /**
+     * Get the most recent comment of the given process.
+     *
+     * @param processDTO process as ProcessDTO
+     * @return message of the comment
+     */
+    public String getLastComment(ProcessDTO processDTO) {
+        List<Comment> comments = getComments(processDTO);
+        if (comments.isEmpty()) {
+            return "";
+        }
+        return comments.get(0).getMessage();
+    }
+
+    /**
+     * Get the most recent comment of process containing the given task.
+     *
+     * @param taskDTO task as TaskDTO
+     * @return message of the comment
+     */
+    public String getLastComment(TaskDTO taskDTO) {
+        return getLastComment(taskDTO.getProcess());
+    }
 }

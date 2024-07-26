@@ -1190,4 +1190,13 @@ public class ProcessForm extends TemplateBaseForm {
         }
         return false;
     }
+
+    /**
+     * Determine whether the last comment should be displayed in the comments column.
+     *
+     * @return boolean
+     */
+    public boolean showLastComment() {
+        return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT);
+    }
 }
