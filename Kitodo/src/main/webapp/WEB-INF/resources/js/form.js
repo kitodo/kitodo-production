@@ -9,6 +9,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+function setConfirmUnload(on) {
+    window.onbeforeunload = (on) ? function() { return true; } : null;
+}
+
 $(function() {
     $('#editForm').on('input', ':input', function() {
         if (!$(this).parent().parent().hasClass('locked-button')) {
@@ -16,7 +20,3 @@ $(function() {
         }
     });
 });
-
-function setConfirmUnload(on) {
-    window.onbeforeunload = (on) ? function() { return true; } : undefined;
-}
