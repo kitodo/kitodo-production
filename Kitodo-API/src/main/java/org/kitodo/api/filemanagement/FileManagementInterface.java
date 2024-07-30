@@ -35,6 +35,7 @@ public interface FileManagementInterface {
      * @param file
      *            if true it creates the file, if false it created directory
      * @return the URI of the new resource
+     * @throws IOException if file/folder could not be created
      */
     URI create(URI parentFolderUri, String name, boolean file) throws IOException;
 
@@ -44,6 +45,7 @@ public interface FileManagementInterface {
      * @param uri
      *            the uri to write to
      * @return an writable OutputStream
+     * @throws IOException if uri could not be written
      */
     OutputStream write(URI uri) throws IOException;
 
@@ -53,6 +55,7 @@ public interface FileManagementInterface {
      * @param uri
      *            the uri to write from
      * @return a readable InputStream
+     * @throws IOException if uri could not be read
      */
     InputStream read(URI uri) throws IOException;
 
@@ -63,6 +66,7 @@ public interface FileManagementInterface {
      *            source file as uri
      * @param targetResource
      *            destination file as uri
+     * @throws IOException if source could not be read or destination could not be written
      */
     void copy(URI sourceResource, URI targetResource) throws IOException;
 
@@ -72,6 +76,7 @@ public interface FileManagementInterface {
      * @param uri
      *            the URI to delete
      * @return true if successful, false otherwise
+     * @throws IOException if uri could not be deleted
      */
     boolean delete(URI uri) throws IOException;
 
@@ -95,6 +100,7 @@ public interface FileManagementInterface {
      * @param newName
      *            the new name of the resource
      * @return URI of renamed resource
+     * @throws IOException if uri could not be renamed
      */
     URI rename(URI uri, String newName) throws IOException;
 
@@ -114,6 +120,7 @@ public interface FileManagementInterface {
      * @param directory
      *            URI to get size
      * @return size of directory as Long
+     * @throws IOException if getting the size of URI failed
      */
     Long getSizeOfDirectory(URI directory) throws IOException;
 
@@ -179,6 +186,7 @@ public interface FileManagementInterface {
      * @param processId
      *            the id of the process
      * @return the URI to the process Location
+     * @throws IOException if the folder structure could not be created
      */
     URI createProcessLocation(String processId) throws IOException;
 
