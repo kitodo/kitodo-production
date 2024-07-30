@@ -478,7 +478,6 @@
                     <plugin>
                         <!-- Copy config local resources to target -->
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -587,7 +586,6 @@
                     <plugin>
                         <!-- Copy config local resources to target -->
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>

@@ -80,7 +80,6 @@
             <!--copy XML schema definitions to target folder-->
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven-resources-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>copy-kitodo-xsd</id>
