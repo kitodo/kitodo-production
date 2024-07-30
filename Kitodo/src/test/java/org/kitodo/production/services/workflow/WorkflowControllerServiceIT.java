@@ -38,9 +38,11 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.enums.CommentType;
+import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
@@ -420,20 +422,10 @@ public class WorkflowControllerServiceIT {
 
     @Test
     public void shouldSolveProblem() throws Exception {
-        Task currentTask = taskService.getById(8);
-        Task correctionTask = taskService.getById(6);
 
-        Comment correctionComment = new Comment();
-        correctionComment.setMessage("Fix it!");
-        correctionComment.setAuthor(ServiceManager.getUserService().getById(1));
-        correctionComment.setCurrentTask(currentTask);
-        correctionComment.setCorrectionTask(correctionTask);
-        correctionComment.setProcess(currentTask.getProcess());
-        correctionComment.setType(CommentType.ERROR);
-        correctionComment.setCorrected(Boolean.FALSE);
-        correctionComment.setCreationDate(new Date());
-
-        ServiceManager.getCommentService().saveToDatabase(correctionComment);
+        Comment correctionComment = prepareCorrectionComment();
+        Task currentTask = correctionComment.getCurrentTask();
+        Task correctionTask = correctionComment.getCorrectionTask();
 
         workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
         workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
@@ -453,5 +445,35 @@ public class WorkflowControllerServiceIT {
 
         assertEquals(TaskStatus.OPEN, correctionComment.getCurrentTask().getProcessingStatus(), "Solving reported problem was unsuccessful - current task '" + currentTask.getTitle()
                 + "' was not set to processing status 'OPEN'!");
+    }
+
+    @Test
+    public void shouldGetCorrectCommentStatus() throws DAOException, DataException, IOException {
+        Comment correctionComment = prepareCorrectionComment();
+        workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        assertEquals(CorrectionComments.OPEN_CORRECTION_COMMENTS, ProcessConverter
+                .getCorrectionCommentStatus(correctionComment.getProcess()));
+        workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        assertEquals(CorrectionComments.NO_OPEN_CORRECTION_COMMENTS, ProcessConverter
+                .getCorrectionCommentStatus(correctionComment.getProcess()));
+    }
+
+    private Comment prepareCorrectionComment() throws DAOException {
+        Task currentTask = taskService.getById(8);
+        Task correctionTask = taskService.getById(6);
+
+        Comment correctionComment = new Comment();
+        correctionComment.setMessage("Fix it!");
+        correctionComment.setAuthor(ServiceManager.getUserService().getById(1));
+        correctionComment.setCurrentTask(currentTask);
+        correctionComment.setCorrectionTask(correctionTask);
+        correctionComment.setProcess(currentTask.getProcess());
+        correctionComment.setType(CommentType.ERROR);
+        correctionComment.setCorrected(Boolean.FALSE);
+        correctionComment.setCreationDate(new Date());
+
+        ServiceManager.getCommentService().saveToDatabase(correctionComment);
+
+        return correctionComment;
     }
 }
