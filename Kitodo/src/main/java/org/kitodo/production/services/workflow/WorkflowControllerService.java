@@ -386,6 +386,13 @@ public class WorkflowControllerService {
      */
     public void solveProblem(Comment comment, TaskEditType taskEditType)
             throws DataException, DAOException, IOException {
+        comment.setCorrected(Boolean.TRUE);
+        comment.setCorrectionDate(new Date());
+        try {
+            ServiceManager.getCommentService().saveToDatabase(comment);
+        } catch (DAOException e) {
+            Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
+        }
         if (Objects.nonNull(comment.getCorrectionTask())) {
             closeTaskByUser(comment.getCorrectionTask());
             comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
@@ -399,12 +406,8 @@ public class WorkflowControllerService {
             taskService.save(currentTask);
         }
         comment.setCurrentTask(ServiceManager.getTaskService().getById(comment.getCurrentTask().getId()));
-        comment.setCorrected(Boolean.TRUE);
-        comment.setCorrectionDate(new Date());
-        try {
-            ServiceManager.getCommentService().saveToDatabase(comment);
-        } catch (DAOException e) {
-            Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
+        if (Objects.nonNull(comment.getProcess())) {
+            comment.setProcess(ServiceManager.getProcessService().getById(comment.getProcess().getId()));
         }
     }
 
