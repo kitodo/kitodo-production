@@ -370,6 +370,12 @@ from system library in Java 11+ -->
                 <scope>test</scope>
             </dependency>
             <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox-io</artifactId>
+                <version>3.0.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.poi</groupId>
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
@@ -652,14 +658,12 @@ from system library in Java 11+ -->
                 <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
-<!--
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-commons</artifactId>
                 <version>1.9.2</version>
                 <scope>test</scope>
             </dependency>
--->
             <dependency>
                 <groupId>org.jvnet.jaxb2_commons</groupId>
                 <artifactId>jaxb2-basics-runtime</artifactId>

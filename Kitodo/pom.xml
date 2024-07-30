@@ -21,7 +21,6 @@
 [WARNING]    org.jboss.weld.servlet:weld-servlet:jar:2.4.8.Final:compile
 [WARNING]    org.springframework.security:spring-security-crypto:jar:5.7.11:compile
 [WARNING]    org.primefaces:primefaces:jar:8.0:compile
-[WARNING]    commons-io:commons-io:jar:2.11.0:compile
 [WARNING]    org.seleniumhq.selenium:selenium-api:jar:3.141.59:test
 [WARNING]    javax.ws.rs:javax.ws.rs-api:jar:2.1.1:compile
 [WARNING]    jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
@@ -32,13 +31,11 @@
 [WARNING]    org.apache.commons:commons-collections4:jar:4.4:compile
 [WARNING]    org.apache.logging.log4j:log4j-1.2-api:jar:2.19.0:compile
 [WARNING]    org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar:1.1.1:compile
-[WARNING]    org.junit.platform:junit-platform-commons:jar:1.9.2:test
 [WARNING]    org.springframework:spring-beans:jar:5.3.29:compile
 [WARNING]    org.camunda.bpm.model:camunda-xml-model:jar:7.17.0:compile
 [WARNING]    jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
 [WARNING]    org.hamcrest:hamcrest:jar:2.2-rc1:test
 [WARNING]    org.springframework.security:spring-security-core:jar:5.7.11:compile
-[WARNING]    org.junit.jupiter:junit-jupiter-api:jar:5.9.2:test
 [WARNING]    org.springframework:spring-context:jar:5.3.29:compile
 [WARNING]    org.seleniumhq.selenium:selenium-remote-driver:jar:3.141.59:test
 [WARNING] Unused declared dependencies found:
@@ -70,7 +67,6 @@
 [WARNING]    org.openpreservation.jhove:jhove-modules:jar:1.20.1:compile
 [WARNING]    org.openpreservation.jhove:jhove-ext-modules:jar:1.20.1:compile
 [WARNING]    se.jiderhamn.classloader-leak-prevention:classloader-leak-prevention-servlet3:jar:2.7.0:runtime
-[WARNING]    org.junit.jupiter:junit-jupiter-engine:jar:5.9.2:test
 [WARNING]    org.junit.vintage:junit-vintage-engine:jar:5.9.2:test
 [WARNING]    org.xmlunit:xmlunit-core:jar:2.10.0:compile
 [WARNING]    org.primefaces.extensions:primefaces-extensions:jar:8.0.5:compile
@@ -105,6 +101,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
@@ -319,7 +319,13 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
