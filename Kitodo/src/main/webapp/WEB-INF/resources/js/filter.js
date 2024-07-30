@@ -11,7 +11,6 @@
 /* globals removeFilter, updateSuggestions, submitFilters, filterKeydownEvents */
 
 /* Define identifiers used to select elements */
-const LIST_WRAPPER = "#listWrapper";
 const FILTER_INPUT_FORM = "#filterInputForm";
 const FILTER_INPUT = "#filterInputForm\\:filterfield";
 const FILTER_INPUT_PARSED_FILTERS_AND_OPTIONS_FORMS = "#filterInputForm, #parsedFiltersForm, #filterOptionsForm";
@@ -147,12 +146,9 @@ function handleKeydown(event) {
 }
 
 /**
- * Calculate the maximum height and display the filter options overlay.
+ * Display the filter options overlay.
  */
 function openFilterOptionsMenu() {
-    let distanceWrapperToMenuTop = $(FILTER_INPUT).offset().top - $(LIST_WRAPPER).offset().top + $(FILTER_INPUT).height();
-    let maxMenuHeight = $(LIST_WRAPPER).height() - distanceWrapperToMenuTop - 20;
-    $(FILTER_OPTIONS_FORM_WRAPPER).css("max-height", maxMenuHeight + "px");
     $(FILTER_OPTIONS_FORM_WRAPPER).show();
 }
 

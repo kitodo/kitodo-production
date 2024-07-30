@@ -881,8 +881,6 @@ label.ui-outputlabel[for] {
 #filterOptionsFormWrapper {
     box-shadow: var(--second-level-shadow);
     display: none;
-    overflow-x: hidden;
-    overflow-y: scroll;
     position: absolute;
     top: 100%;
     z-index: 1;
@@ -900,6 +898,8 @@ label.ui-outputlabel[for] {
 #filterOptionsForm\:suggestions  {
     border-bottom: solid var(--contrast-border-width) var(--medium-gray);
     margin-bottom: var(--default-full-size);
+    max-height: calc(100vh - 350px);
+    overflow-x: auto;
 }
 
 #filterOptionsForm\:suggestions .selected {
