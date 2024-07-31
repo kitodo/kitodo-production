@@ -29,7 +29,7 @@ public class MediaPartial {
      *
      * @param begin
      *         The begin as formatted time in form of
-     *         ([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}
+     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
      */
     public MediaPartial(String begin) {
         this.begin = begin;
@@ -40,10 +40,10 @@ public class MediaPartial {
      *
      * @param begin
      *         The begin as formatted time in form of
-     *         ([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}
+     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
      * @param extent
      *         The extent as formatted time in form of
-     *         ([0-1]\\d|2[0-3]):[0-5]\\d:[0-5]\\d\\.\\d{3}
+     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
      */
     public MediaPartial(String begin, String extent) {
         this(begin);
