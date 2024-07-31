@@ -44,7 +44,6 @@ import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
@@ -227,16 +226,11 @@ public class ImportServiceIT {
         String processLabel = workpiece.getLogicalStructure().getLabel();
         String processOrderlabel = workpiece.getLogicalStructure().getOrderlabel();
         try {
-            Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"));
-            Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"));
-            Assert.assertTrue("Process does not contain correct metadata",
-                    assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"));
-            Assert.assertEquals("Process does not have the correct LABEL",
-                    processLabel, "TEST-LABEL");
-            Assert.assertEquals("Process does not have the correct ORDERLABEL",
-                    processOrderlabel, "TEST-ORDERLABEL");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, TITLE, "Band 1"), "Process does not contain correct metadata");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, PLACE, "Hamburg"), "Process does not contain correct metadata");
+            assertTrue(assertMetadataSetContainsMetadata(metadata, PLACE, "Berlin"), "Process does not contain correct metadata");
+            assertEquals("TEST-LABEL", processLabel,"Process does not have the correct LABEL");
+            assertEquals("TEST-ORDERLABEL", processOrderlabel,"Process does not have the correct ORDERLABEL");
         } finally {
             ProcessTestUtils.removeTestProcess(processWithAdditionalMetadata.getId());
         }
