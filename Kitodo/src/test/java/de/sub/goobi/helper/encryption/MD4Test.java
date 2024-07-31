@@ -11,13 +11,13 @@
 
 package de.sub.goobi.helper.encryption;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 import org.bouncycastle.crypto.digests.MD4Digest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class MD4Test {
     private static HashMap<String, byte[]> testData;
@@ -43,8 +43,7 @@ public class MD4Test {
             byte[] encrypted = new byte[digester.getDigestSize()];
             digester.update(unicodePassword, 0, unicodePassword.length);
             digester.doFinal(encrypted, 0);
-            assertArrayEquals("Encrypted password doesn't match the precomputed one! ",
-                    encrypted, testData.get(clearText));
+            assertArrayEquals(encrypted, testData.get(clearText), "Encrypted password doesn't match the precomputed one! ");
         }
     }
 }

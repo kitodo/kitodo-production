@@ -11,12 +11,15 @@
 
 package org.kitodo.production.forms;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
@@ -35,7 +38,7 @@ public class MassImportFormIT {
     private static final String FIRST_TEMPLATE_TITLE = "First template";
     private static final String TSL_ATS = "TSL/ATS";
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -43,7 +46,7 @@ public class MassImportFormIT {
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanup() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -53,12 +56,12 @@ public class MassImportFormIT {
     public void shouldPrepareMassImport() {
         MassImportForm massImportForm = new MassImportForm();
         massImportForm.prepareMassImport(TEMPLATE_ID, PROJECT_ID);
-        Assert.assertEquals("Wrong template title", FIRST_TEMPLATE_TITLE, massImportForm.getTemplateTitle());
+        assertEquals(FIRST_TEMPLATE_TITLE, massImportForm.getTemplateTitle(), "Wrong template title");
         AddMetadataDialog addMetadataDialog = massImportForm.getAddMetadataDialog();
-        Assert.assertNotNull("'Add metadata' dialog should not be null", addMetadataDialog);
+        assertNotNull(addMetadataDialog, "'Add metadata' dialog should not be null");
         List<ProcessDetail> metadataTypes = addMetadataDialog.getAllMetadataTypes();
-        Assert.assertFalse("List of metadata types should not be empty", metadataTypes.isEmpty());
+        assertFalse(metadataTypes.isEmpty(), "List of metadata types should not be empty");
         ProcessDetail firstDetail = metadataTypes.get(0);
-        Assert.assertEquals(String.format("First metadata type should be '%s'", TSL_ATS), TSL_ATS, firstDetail.getLabel());
+        assertEquals(TSL_ATS, firstDetail.getLabel(), String.format("First metadata type should be '%s'", TSL_ATS));
     }
 }

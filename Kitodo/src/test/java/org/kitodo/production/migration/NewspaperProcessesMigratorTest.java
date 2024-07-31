@@ -11,13 +11,13 @@
 
 package org.kitodo.production.migration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.data.database.beans.Batch;
-
 
 public class NewspaperProcessesMigratorTest {
 
@@ -39,8 +39,8 @@ public class NewspaperProcessesMigratorTest {
         for (String newspaperTitle : listOfNewspaperTitles) {
             String dailyTitle = newspaperTitle + "-20210804";
             String multipleDailyTitle = dailyTitle + "01p_01-p";
-            Assert.assertEquals(newspaperTitle, migrator.generateNewspaperShortTitle(dailyTitle));
-            Assert.assertEquals(newspaperTitle, migrator.generateNewspaperShortTitle(multipleDailyTitle));
+            assertEquals(newspaperTitle, migrator.generateNewspaperShortTitle(dailyTitle));
+            assertEquals(newspaperTitle, migrator.generateNewspaperShortTitle(multipleDailyTitle));
         }
     }
 }

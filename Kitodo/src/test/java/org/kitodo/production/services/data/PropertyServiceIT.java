@@ -12,15 +12,14 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.List;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -33,32 +32,29 @@ public class PropertyServiceIT {
 
     private static final PropertyService propertyService = ServiceManager.getPropertyService();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
 
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
-
     @Test
     public void shouldCountAllProperties() {
         await().untilAsserted(
-            () -> assertEquals("Properties were not counted correctly!", Long.valueOf(8), propertyService.countDatabaseRows()));
+            () -> assertEquals(Long.valueOf(8), propertyService.countDatabaseRows(), "Properties were not counted correctly!"));
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForProperties() throws Exception {
         Long amount = propertyService.countDatabaseRows();
-        assertEquals("Properties were not counted correctly!", Long.valueOf(8), amount);
+        assertEquals(Long.valueOf(8), amount, "Properties were not counted correctly!");
     }
 
     @Test
@@ -66,11 +62,11 @@ public class PropertyServiceIT {
         Property processProperty = propertyService.getById(1);
         String actual = processProperty.getTitle();
         String expected = "Process Property";
-        assertEquals("Process property was not found in database - title doesn't match!", expected, actual);
+        assertEquals(expected, actual, "Process property was not found in database - title doesn't match!");
 
         actual = processProperty.getValue();
         expected = "first value";
-        assertEquals("Process property was not found in database - value doesn't match!", expected, actual);
+        assertEquals(expected, actual, "Process property was not found in database - value doesn't match!");
     }
 
     @Test
@@ -78,11 +74,11 @@ public class PropertyServiceIT {
         Property templateProperty = propertyService.getById(7);
         String actual = templateProperty.getTitle();
         String expected = "firstTemplate title";
-        assertEquals("Template property was not found in database - title doesn't match!", expected, actual);
+        assertEquals(expected, actual, "Template property was not found in database - title doesn't match!");
 
         actual = templateProperty.getValue();
         expected = "first value";
-        assertEquals("Template property was not found in database - value doesn't match!", expected, actual);
+        assertEquals(expected, actual, "Template property was not found in database - value doesn't match!");
     }
 
     @Test
@@ -90,11 +86,11 @@ public class PropertyServiceIT {
         Property workpieceProperty = propertyService.getById(5);
         String actual = workpieceProperty.getTitle();
         String expected = "FirstWorkpiece Property";
-        assertEquals("Workpiece property was not found in database - title doesn't match!", expected, actual);
+        assertEquals(expected, actual, "Workpiece property was not found in database - title doesn't match!");
 
         actual = workpieceProperty.getValue();
         expected = "first value";
-        assertEquals("Workpiece property was not found in database - value doesn't match!", expected, actual);
+        assertEquals(expected, actual, "Workpiece property was not found in database - value doesn't match!");
     }
 
     /**
@@ -102,28 +98,27 @@ public class PropertyServiceIT {
      */
     @Test
     public void shouldFindDistinctTitles() {
-        assertEquals("Incorrect size of distinct titles for process properties!", 6,
-            propertyService.findDistinctTitles().size());
+        assertEquals(6, propertyService.findDistinctTitles().size(), "Incorrect size of distinct titles for process properties!");
 
         List<String> processPropertiesTitlesDistinct = propertyService.findDistinctTitles();
 
         String title = processPropertiesTitlesDistinct.get(0);
-        assertEquals("Incorrect sorting of distinct titles for process properties!", "FirstWorkpiece Property", title);
+        assertEquals("FirstWorkpiece Property", title, "Incorrect sorting of distinct titles for process properties!");
 
         title = processPropertiesTitlesDistinct.get(1);
-        assertEquals("Incorrect sorting of distinct titles for process properties!", "Korrektur notwendig", title);
+        assertEquals("Korrektur notwendig", title, "Incorrect sorting of distinct titles for process properties!");
     }
 
     @Test
     public void shouldGetAllProperties() throws Exception {
         List<Property> properties = propertyService.getAll();
-        assertEquals("Not all properties were found in database!", 8, properties.size());
+        assertEquals(8, properties.size(), "Not all properties were found in database!");
     }
 
     @Test
     public void shouldGetAllPropertiesInGivenRange() throws Exception {
         List<Property> properties = propertyService.getAll(2, 6);
-        assertEquals("Not all properties were found in database!", 6, properties.size());
+        assertEquals(6, properties.size(), "Not all properties were found in database!");
     }
 
     @Test
@@ -131,49 +126,40 @@ public class PropertyServiceIT {
         Property property = new Property();
         property.setTitle("To Remove");
         propertyService.saveToDatabase(property);
-        Property foundProperty = propertyService.getById(9);
-        assertEquals("Additional property was not inserted in database!", "To Remove", foundProperty.getTitle());
-
-        propertyService.saveToDatabase(foundProperty);
-        exception.expect(DAOException.class);
-        propertyService.getById(9);
+        Property foundProperty = propertyService.getById(property.getId());
+        assertEquals("To Remove", foundProperty.getTitle(), "Additional property was not inserted in database!");
 
         property = new Property();
         property.setTitle("To remove");
         propertyService.saveToDatabase(property);
         foundProperty = propertyService.getById(10);
-        assertEquals("Additional property was not inserted in database!", "To remove", foundProperty.getTitle());
+        assertEquals("To remove", foundProperty.getTitle(), "Additional property was not inserted in database!");
 
         propertyService.removeFromDatabase(10);
-        exception.expect(DAOException.class);
-        propertyService.getById(10);
+        assertThrows(DAOException.class, () -> propertyService.getById(10));
     }
 
     @Test
     public void shouldFindById() throws DAOException {
         Integer expected = 1;
-        assertEquals("Property was not found in database!", expected, propertyService.getById(1).getId());
+        assertEquals(expected, propertyService.getById(1).getId(), "Property was not found in database!");
     }
 
     @Test
     public void shouldFindByValue() {
-        assertEquals("Properties were not found in database!", 2,
-            propertyService.findByValue("second").size());
+        assertEquals(2, propertyService.findByValue("second").size(), "Properties were not found in database!");
 
-        assertEquals("Property was not found in database!", 1,
-            propertyService.findByValue("second value").size());
+        assertEquals(1, propertyService.findByValue("second value").size(), "Property was not found in database!");
     }
 
     @Test
     public void shouldFindByTitleAndValue() {
-        assertEquals("Property was not found in database!", 1,
-            propertyService.findByTitleAndValue("Korrektur notwendig", "second value").size());
+        assertEquals(1, propertyService.findByTitleAndValue("Korrektur notwendig", "second value").size(), "Property was not found in database!");
     }
 
     @Test
     public void shouldNotFindByTitleAndValue() {
-        assertEquals("Property was found in database!", 0,
-            propertyService.findByTitleAndValue("Korrektur notwendig", "third").size());
+        assertEquals(0, propertyService.findByTitleAndValue("Korrektur notwendig", "third").size(), "Property was found in database!");
     }
 
 }

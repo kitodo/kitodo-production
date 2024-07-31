@@ -12,7 +12,8 @@
 package org.kitodo.production.metadata;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kitodo.test.utils.ProcessTestUtils.METADATA_BASE_DIR;
 import static org.kitodo.test.utils.ProcessTestUtils.META_XML;
 
@@ -24,11 +25,9 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.Metadata;
@@ -57,7 +56,7 @@ public class MetadataEditorIT {
     /**
      * Is running before the class runs.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -76,16 +75,13 @@ public class MetadataEditorIT {
     /**
      * Is running after the class has run.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         ProcessTestUtils.removeTestProcess(testProcessIds.get(MockDatabase.HIERARCHY_PARENT));
         ProcessTestUtils.removeTestProcess(testProcessIds.get(MockDatabase.HIERARCHY_CHILD_TO_ADD));
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void shouldAddLink() throws Exception {
@@ -96,8 +92,7 @@ public class MetadataEditorIT {
 
         MetadataEditor.addLink(ServiceManager.getProcessService().getById(parentId), "0", childId);
 
-        assertTrue("The link was not added correctly!",
-            isInternalMetsLink(FileUtils.readLines(metaXmlFile, StandardCharsets.UTF_8).get(36), childId));
+        assertTrue(isInternalMetsLink(FileUtils.readLines(metaXmlFile, StandardCharsets.UTF_8).get(36), childId), "The link was not added correctly!");
 
         FileUtils.writeLines(metaXmlFile, StandardCharsets.UTF_8.toString(), metaXmlContentBefore);
         FileUtils.deleteQuietly(new File(METADATA_BASE_DIR + parentId + "/meta.xml.1"));
@@ -118,7 +113,7 @@ public class MetadataEditorIT {
             InsertionPosition.FIRST_CHILD_OF_CURRENT_ELEMENT);
 
         List<LogicalDivision> logicalDivisions = workpiece.getAllLogicalDivisions();
-        assertTrue("Metadata should be empty", logicalDivisions.get(newNrDivisions - 1).getMetadata().isEmpty());
+        assertTrue(logicalDivisions.get(newNrDivisions - 1).getMetadata().isEmpty(), "Metadata should be empty");
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
@@ -152,9 +147,9 @@ public class MetadataEditorIT {
         Metadata metadatumOne = metadataListOne.get(0);
         Metadata metadatumTwo = metadataListTwo.get(0);
 
-        assertTrue("Metadata should be of type MetadataEntry", metadatumOne instanceof MetadataEntry);
-        assertTrue("Metadata value was incorrectly added", ((MetadataEntry) metadatumOne).getValue().equals("value 1")
-                && ((MetadataEntry) metadatumTwo).getValue().equals("value 2"));
+        assertInstanceOf(MetadataEntry.class, metadatumOne, "Metadata should be of type MetadataEntry");
+        assertTrue(((MetadataEntry) metadatumOne).getValue().equals("value 1")
+                && ((MetadataEntry) metadatumTwo).getValue().equals("value 2"), "Metadata value was incorrectly added");
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 
@@ -187,10 +182,8 @@ public class MetadataEditorIT {
         Metadata metadatumOne = metadataListOne.get(0);
         Metadata metadatumTwo = metadataListTwo.get(0);
 
-        assertTrue("Metadata should be of type MetadataGroup",
-            metadatumOne instanceof MetadataGroup && metadatumTwo instanceof MetadataGroup);
-        assertTrue("Metadata value was incorrectly added",
-            metadatumOne.getKey().equals("Person") && metadatumTwo.getKey().equals("Person"));
+        assertTrue(metadatumOne instanceof MetadataGroup && metadatumTwo instanceof MetadataGroup, "Metadata should be of type MetadataGroup");
+        assertTrue(metadatumOne.getKey().equals("Person") && metadatumTwo.getKey().equals("Person"), "Metadata value was incorrectly added");
         ProcessTestUtils.removeTestProcess(testProcessId);
     }
 

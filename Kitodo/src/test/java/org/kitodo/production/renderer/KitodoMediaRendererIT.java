@@ -11,7 +11,7 @@
 
 package org.kitodo.production.renderer;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -29,8 +29,8 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 import javax.faces.context.ResponseWriterWrapper;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.support.ReflectionSupport;
 import org.kitodo.BasePrimefaceTest;
 import org.mockito.Mock;
@@ -60,7 +60,7 @@ public class KitodoMediaRendererIT extends BasePrimefaceTest {
      *
      * @throws Exception the exceptions thrown by method
      */
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         when(primeApplicationContext.getEnvironment()).thenReturn(primeEnvironment);
 

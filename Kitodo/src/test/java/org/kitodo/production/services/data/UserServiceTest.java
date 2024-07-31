@@ -11,11 +11,11 @@
 
 package org.kitodo.production.services.data;
 
-import org.junit.Test;
-import org.kitodo.production.services.ServiceManager;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
+import org.kitodo.production.services.ServiceManager;
 
 public class UserServiceTest {
 
@@ -23,8 +23,8 @@ public class UserServiceTest {
 
     @Test
     public void shouldCheckIfIsLoginValid() {
-        assertTrue("Login is invalid!", userService.isLoginValid("validLogin"));
+        assertTrue(userService.isLoginValid("validLogin"), "Login is invalid!");
 
-        assertFalse("Login is valid!", userService.isLoginValid("root"));
+        assertFalse(userService.isLoginValid("root"), "Login is valid!");
     }
 }

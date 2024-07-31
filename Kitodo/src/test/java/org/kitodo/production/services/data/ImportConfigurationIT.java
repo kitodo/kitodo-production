@@ -11,17 +11,17 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.kitodo.test.utils.TestConstants.GBV;
 import static org.kitodo.test.utils.TestConstants.KALLIOPE;
 
 import java.util.List;
 
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -34,7 +34,7 @@ public class ImportConfigurationIT {
     /**
      * Insert test mapping files and import configurations into database.
      */
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertRolesFull();
@@ -52,9 +52,9 @@ public class ImportConfigurationIT {
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
         List<ImportConfiguration> configs = ServiceManager.getImportConfigurationService().getAll();
-        assertEquals("Wrong number of import configurations", 3, configs.size());
-        assertEquals("Wrong first import configuration", GBV, configs.get(0).getTitle());
-        assertEquals("Wrong last import configuration", KALLIOPE, configs.get(2).getTitle());
+        assertEquals(3, configs.size(), "Wrong number of import configurations");
+        assertEquals(GBV, configs.get(0).getTitle(), "Wrong first import configuration");
+        assertEquals(KALLIOPE, configs.get(2).getTitle(), "Wrong last import configuration");
     }
 
     /**
@@ -67,12 +67,12 @@ public class ImportConfigurationIT {
         User userThree = ServiceManager.getUserService().getById(3);
         SecurityTestUtils.addUserDataToSecurityContext(userThree, 2);
         List<ImportConfiguration> configs = ServiceManager.getImportConfigurationService().getAll();
-        assertEquals("Wrong number of import configurations",2, configs.size());
-        assertFalse("User should not have access to import configuration 'Kalliope' of unassigned client",
-                configs.stream().anyMatch(config -> KALLIOPE.equals(config.getTitle())));
+        assertEquals(2, configs.size(), "Wrong number of import configurations");
+        assertFalse(configs.stream().anyMatch(config -> KALLIOPE.equals(config.getTitle())),
+            "User should not have access to import configuration 'Kalliope' of unassigned client");
     }
 
-    @After
+    @AfterEach
     public void cleanupSecurityContext() {
         SecurityTestUtils.cleanSecurityContext();
     }
@@ -80,7 +80,7 @@ public class ImportConfigurationIT {
     /**
      * Clean up test database.
      */
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();

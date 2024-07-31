@@ -11,10 +11,14 @@
 
 package org.kitodo.production.helper.tasks;
 
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.production.services.ServiceManager;
@@ -34,7 +38,7 @@ public class MigrationTaskIT {
     private static final int TEMPLATE_ID = 1;
     private static final int RULESET_ID = 1;
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -44,7 +48,7 @@ public class MigrationTaskIT {
         ProcessTestUtils.copyTestMetadataFile(migrationTestProcessId, METADATA_MIGRATION_SOURCE_FILE);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         ProcessTestUtils.removeTestProcess(migrationTestProcessId);
         MockDatabase.stopNode();
@@ -55,11 +59,10 @@ public class MigrationTaskIT {
     public void testMigrationTask() throws Exception {
         MigrationTask migrationTask = new MigrationTask(project);
         migrationTask.start();
-        Assert.assertTrue(migrationTask.isAlive());
+        assertTrue(migrationTask.isAlive());
         migrationTask.join();
-        Assert.assertFalse(migrationTask.isAlive());
-        Assert.assertEquals(100, migrationTask.getProgress());
-        Assert.assertNotNull("Process migration failed",
-            metsService.loadWorkpiece(processService.getMetadataFileUri(processService.getById(migrationTestProcessId))));
+        assertFalse(migrationTask.isAlive());
+        assertEquals(100, migrationTask.getProgress());
+        assertNotNull(metsService.loadWorkpiece(processService.getMetadataFileUri(processService.getById(migrationTestProcessId))), "Process migration failed");
     }
 }

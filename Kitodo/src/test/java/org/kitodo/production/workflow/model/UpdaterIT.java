@@ -11,22 +11,24 @@
 
 package org.kitodo.production.workflow.model;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.production.services.ServiceManager;
 
 public class UpdaterIT {
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -37,6 +39,6 @@ public class UpdaterIT {
         Template template = ServiceManager.getTemplateService().getById(1);
 
         Updater updater = new Updater(template);
-        updater.updateProcessesAssignedToTemplate();
+        assertDoesNotThrow(() -> updater.updateProcessesAssignedToTemplate());
     }
 }

@@ -16,8 +16,8 @@ import java.io.File;
 import org.apache.commons.lang3.SystemUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
@@ -29,7 +29,7 @@ public class BaseTestSelenium {
     private static final Logger logger = LogManager.getLogger(BaseTestSelenium.class);
     private static final File usersDirectory = new File("src/test/resources/users");
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
@@ -50,7 +50,7 @@ public class BaseTestSelenium {
         Browser.Initialize();
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws Exception {
         try {
             Browser.close();

@@ -11,15 +11,21 @@
 
 package org.kitodo.production.services.migration;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
@@ -37,14 +43,14 @@ public class MigrationServiceIT {
 
     private MigrationService migrationService = ServiceManager.getMigrationService();
 
-    @Before
+    @BeforeEach
     public void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @After
+    @AfterEach
     public void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -62,19 +68,17 @@ public class MigrationServiceIT {
         taskOne.setTitle("test");
         tasksToCompare.add(taskOne);
 
-        Assert.assertFalse("Lists should have a different size",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "Lists should have a different size");
 
         Task taskTwo = new Task();
         taskTwo.setTitle("testTwo");
         tasksToCompare.add(taskTwo);
 
-        Assert.assertFalse("Tasks should have different Titles",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "Tasks should have different Titles");
 
         tasksToCompare.set(1, null);
 
-        Assert.assertFalse("Null task should fail", migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "Null task should fail");
 
         Task correctTaskOne = new Task();
         correctTaskOne.setTitle("Finished");
@@ -88,20 +92,18 @@ public class MigrationServiceIT {
         tasksToCompare.add(correctTaskOne);
         tasksToCompare.add(correctTaskTwo);
 
-        Assert.assertFalse("scriptPath should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "scriptPath should be different");
 
         correctTaskTwo.setScriptPath("../type/automatic/script/path");
 
-        Assert.assertTrue("Tasks should be equal", migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertTrue(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "Tasks should be equal");
 
         correctTaskOne.setBatchStep(false);
         tasksToCompare.clear();
         tasksToCompare.add(correctTaskTwo);
         tasksToCompare.add(correctTaskOne);
 
-        Assert.assertFalse("Tasks are in the wrong order",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "Tasks are in the wrong order");
 
     }
 
@@ -126,50 +128,42 @@ public class MigrationServiceIT {
 
         correctTaskOne.setTypeMetadata(true);
 
-        Assert.assertFalse("TypeMetadata should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "TypeMetadata should be different");
 
         correctTaskOne.setTypeMetadata(false);
         correctTaskOne.setTypeImagesWrite(true);
 
-        Assert.assertFalse("typeImagesWrite should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "typeImagesWrite should be different");
 
         correctTaskOne.setTypeImagesWrite(false);
         correctTaskOne.setTypeImagesRead(true);
 
-        Assert.assertFalse("typeImagesRead should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "typeImagesRead should be different");
 
         correctTaskOne.setTypeImagesRead(false);
         correctTaskOne.setTypeAutomatic(true);
 
-        Assert.assertFalse("typeAutomatic should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "typeAutomatic should be different");
 
         correctTaskOne.setTypeAutomatic(false);
         correctTaskOne.setTypeExportDMS(true);
 
-        Assert.assertFalse("TypeExportDMS should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "TypeExportDMS should be different");
 
         correctTaskOne.setTypeExportDMS(false);
         correctTaskOne.setTypeAcceptClose(true);
 
-        Assert.assertFalse("TypeAcceptClose should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "TypeAcceptClose should be different");
 
         correctTaskOne.setTypeAcceptClose(false);
         correctTaskOne.setTypeCloseVerify(true);
 
-        Assert.assertFalse("TypeCloseVerify should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "TypeCloseVerify should be different");
 
         correctTaskOne.setTypeCloseVerify(false);
         correctTaskOne.setBatchStep(true);
 
-        Assert.assertFalse("batchStep should be different",
-            migrationService.tasksAreEqual(originalTasks, tasksToCompare));
+        assertFalse(migrationService.tasksAreEqual(originalTasks, tasksToCompare), "batchStep should be different");
 
     }
 
@@ -187,13 +181,13 @@ public class MigrationServiceIT {
         newTemplates.add(template);
         Map<Template, Template> matchingTemplates = migrationService.getMatchingTemplates(newTemplates);
 
-        Assert.assertNotNull(matchingTemplates.get(template));
-        Assert.assertEquals(existingTemplates.get(0), matchingTemplates.get(template));
+        assertNotNull(matchingTemplates.get(template));
+        assertEquals(existingTemplates.get(0), matchingTemplates.get(template));
 
         template.setDocket(null);
 
-        Assert.assertNull(matchingTemplates.get(template));
-        Assert.assertNotEquals(existingTemplates.get(0), matchingTemplates.get(template));
+        assertNull(matchingTemplates.get(template));
+        assertNotEquals(existingTemplates.get(0), matchingTemplates.get(template));
     }
 
     @Test
@@ -217,16 +211,16 @@ public class MigrationServiceIT {
         Template template = new Template();
         template.setTitle("testTemplate");
         ServiceManager.getTemplateService().save(template);
-        Assert.assertEquals(0, template.getProcesses().size());
-        Assert.assertNull(firstProcess.getTemplate());
-        Assert.assertNull(secondProcess.getTemplate());
+        assertEquals(0, template.getProcesses().size());
+        assertNull(firstProcess.getTemplate());
+        assertNull(secondProcess.getTemplate());
 
         migrationService.addProcessesToTemplate(template, processes);
 
         template = ServiceManager.getTemplateService().getById(template.getId());
-        Assert.assertEquals(2, template.getProcesses().size());
-        Assert.assertEquals(5, (long) firstProcess.getTemplate().getId());
-        Assert.assertEquals(5, (long) secondProcess.getTemplate().getId());
+        assertEquals(2, template.getProcesses().size());
+        assertEquals(5, (long) firstProcess.getTemplate().getId());
+        assertEquals(5, (long) secondProcess.getTemplate().getId());
     }
 
     @Test
@@ -235,15 +229,15 @@ public class MigrationServiceIT {
         Template secondTemplate = ServiceManager.getTemplateService().getById(2);
 
         List<Process> firstTemplateProcesses = firstTemplate.getProcesses();
-        Assert.assertEquals(2, firstTemplateProcesses.size());
-        Assert.assertEquals(0, secondTemplate.getProcesses().size());
-        Assert.assertEquals(1, (long) firstTemplateProcesses.get(0).getTemplate().getId());
+        assertEquals(2, firstTemplateProcesses.size());
+        assertEquals(0, secondTemplate.getProcesses().size());
+        assertEquals(1, (long) firstTemplateProcesses.get(0).getTemplate().getId());
         migrationService.addProcessesToTemplate(secondTemplate, firstTemplateProcesses);
 
-        Assert.assertEquals(2, firstTemplateProcesses.size());
+        assertEquals(2, firstTemplateProcesses.size());
         secondTemplate = ServiceManager.getTemplateService().getById(2);
-        Assert.assertEquals(2, secondTemplate.getProcesses().size());
-        Assert.assertEquals(2, (long) firstTemplateProcesses.get(0).getTemplate().getId());
+        assertEquals(2, secondTemplate.getProcesses().size());
+        assertEquals(2, (long) firstTemplateProcesses.get(0).getTemplate().getId());
     }
 
     @Test
@@ -253,36 +247,31 @@ public class MigrationServiceIT {
         Map<Template, List<Process>> templatesForProcesses = migrationService.createTemplatesForProcesses(processes,
             workflow);
 
-        Assert.assertEquals(1, templatesForProcesses.size());
-        Assert.assertEquals(processes.get(0).getDocket(), templatesForProcesses.keySet().iterator().next().getDocket());
-        Assert.assertEquals(processes.get(0).getRuleset(),
-            templatesForProcesses.keySet().iterator().next().getRuleset());
-        Assert.assertEquals(2, templatesForProcesses.values().iterator().next().size());
+        assertEquals(1, templatesForProcesses.size());
+        assertEquals(processes.get(0).getDocket(), templatesForProcesses.keySet().iterator().next().getDocket());
+        assertEquals(processes.get(0).getRuleset(), templatesForProcesses.keySet().iterator().next().getRuleset());
+        assertEquals(2, templatesForProcesses.values().iterator().next().size());
 
     }
 
     @Test
     public void testCreateTaskString() throws DAOException {
-        Assert.assertEquals("Finished, Closed, Progress, Open, Locked" + MigrationService.SEPARATOR + "9c43055e",
-            migrationService.createTaskString(ServiceManager.getProcessService().getById(1).getTasks()));
+        assertEquals("Finished, Closed, Progress, Open, Locked" + MigrationService.SEPARATOR + "9c43055e", migrationService.createTaskString(ServiceManager.getProcessService().getById(1).getTasks()));
         List<Task> secondTasks = ServiceManager.getProcessService().getById(2).getTasks();
-        Assert.assertEquals("Additional, Processed and Some, Next Open" + MigrationService.SEPARATOR + "848a8483",
-            migrationService.createTaskString(secondTasks));
+        assertEquals("Additional, Processed and Some, Next Open" + MigrationService.SEPARATOR + "848a8483", migrationService.createTaskString(secondTasks));
         secondTasks.get(0).setTitle("test/test");
-        Assert.assertEquals("test/test, Processed and Some, Next Open" + MigrationService.SEPARATOR + "56f49a2b",
-                migrationService.createTaskString(secondTasks));
-        Assert.assertEquals(MigrationService.SEPARATOR + "0",
-            migrationService.createTaskString(ServiceManager.getProcessService().getById(3).getTasks()));
+        assertEquals("test/test, Processed and Some, Next Open" + MigrationService.SEPARATOR + "56f49a2b", migrationService.createTaskString(secondTasks));
+        assertEquals(MigrationService.SEPARATOR + "0", migrationService.createTaskString(ServiceManager.getProcessService().getById(3).getTasks()));
     }
 
     @Test
     public void testTitleIsValid() throws DAOException {
         Template newTemplate = new Template();
         newTemplate.setClient(ServiceManager.getClientService().getById(1));
-        Assert.assertFalse(migrationService.isTitleValid(newTemplate));
+        assertFalse(migrationService.isTitleValid(newTemplate));
         newTemplate.setTitle("test");
-        Assert.assertTrue(migrationService.isTitleValid(newTemplate));
+        assertTrue(migrationService.isTitleValid(newTemplate));
         newTemplate.setTitle("First template");
-        Assert.assertFalse(migrationService.isTitleValid(newTemplate));
+        assertFalse(migrationService.isTitleValid(newTemplate));
     }
 }

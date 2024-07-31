@@ -12,17 +12,17 @@
 package org.kitodo.selenium;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Workflow;
@@ -38,12 +38,12 @@ public class MigrationST extends BaseTestSelenium {
 
     private String randomWorkflowName;
 
-    @Before
+    @BeforeEach
     public void login() throws Exception {
         Pages.getLoginPage().goTo().performLoginAsAdmin();
     }
 
-    @After
+    @AfterEach
     public void logout() throws Exception {
         FileService fileService = ServiceManager.getFileService();
         String diagramDirectory = ConfigCore.getKitodoDiagramDirectory();
@@ -65,7 +65,7 @@ public class MigrationST extends BaseTestSelenium {
         ServiceManager.getProcessService().save(process);
         SystemPage systemPage = Pages.getSystemPage().goTo();
 
-        assertNull("wrong template", process.getTemplate());
+        assertNull(process.getTemplate(), "wrong template");
         systemPage.startWorkflowMigration();
         systemPage.selectProjects();
         assertEquals("Finished, Closed, Progress, Open, Locked", systemPage.getAggregatedTasks(2));
@@ -78,16 +78,15 @@ public class MigrationST extends BaseTestSelenium {
         String newTemplateTitle = "newTemplate";
         systemPage.createNewTemplateFromPopup(newTemplateTitle);
         await().pollDelay(700, TimeUnit.MILLISECONDS).atMost(30, TimeUnit.SECONDS)
-                .ignoreExceptions().untilAsserted(() -> assertEquals("template of process should have changed", 5,
-            (long) ServiceManager.getProcessService().getById(1).getTemplate().getId()));
+                .ignoreExceptions().untilAsserted(() -> assertEquals(5, (long) ServiceManager.getProcessService().getById(1).getTemplate().getId(), "template of process should have changed"));
         WorkflowService workflowService = ServiceManager.getWorkflowService();
         Workflow workflow = workflowService.getById(4);
         final long numberOfTemplates = workflow.getTemplates().size();
         final long workflowTemplateId = workflow.getTemplates().get(0).getId();
         String processTemplateTitle = ServiceManager.getProcessService().getById(1).getTemplate().getTitle();
 
-        assertEquals("only one template should be assigned", 1, numberOfTemplates);
-        assertEquals("wrong template", 5, workflowTemplateId);
-        assertEquals("wrong title for template", newTemplateTitle, processTemplateTitle);
+        assertEquals(1, numberOfTemplates, "only one template should be assigned");
+        assertEquals(5, workflowTemplateId, "wrong template");
+        assertEquals(newTemplateTitle, processTemplateTitle, "wrong title for template");
     }
 }

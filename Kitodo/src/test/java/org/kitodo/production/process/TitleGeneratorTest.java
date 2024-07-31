@@ -11,7 +11,7 @@
 
 package org.kitodo.production.process;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Workpiece;
@@ -86,7 +86,7 @@ public class TitleGeneratorTest {
         for (String givenHash : testData.keySet()) {
             for (Map.Entry<String, String> entry : testData.get(givenHash).entrySet()) {
                 String created = TitleGenerator.createAtstsl(entry.getValue(), entry.getKey());
-                assertEquals("Created hash doesn't match the precomputed one!", givenHash, created);
+                assertEquals(givenHash, created, "Created hash doesn't match the precomputed one!");
             }
         }
     }
@@ -96,7 +96,7 @@ public class TitleGeneratorTest {
     public void shouldGenerateTitle() throws Exception {
         TitleGenerator titleGenerator = new TitleGenerator("", createProcessDetailsList());
         String created = titleGenerator.generateTitle("TSL_ATS+'_'+CatalogIDDigital", null);
-        assertEquals("Created hash doesn't match the precomputed one!", "TestTest_123", created);
+        assertEquals("TestTest_123", created, "Created hash doesn't match the precomputed one!");
     }
 
     static List<ProcessDetail> createProcessDetailsList() throws IOException {

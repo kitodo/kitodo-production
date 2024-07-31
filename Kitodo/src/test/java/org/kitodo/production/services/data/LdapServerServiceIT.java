@@ -11,12 +11,12 @@
 
 package org.kitodo.production.services.data;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.LdapServer;
 import org.kitodo.production.services.ServiceManager;
@@ -25,12 +25,12 @@ public class LdapServerServiceIT {
 
     private static final LdapServerService ldapServerService = ServiceManager.getLdapServerService();
 
-    @BeforeClass
+    @BeforeAll
     public static void prepareDatabase() throws Exception {
         MockDatabase.insertLdapGroups();
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanDatabase() {
         MockDatabase.cleanDatabase();
     }
@@ -38,9 +38,8 @@ public class LdapServerServiceIT {
     @Test
     public void shouldFindLdapServer() throws Exception {
         LdapServer ldapServer = ldapServerService.getById(1);
-        assertEquals("LpadServer title is not matching", "FirstLdapServer", ldapServer.getTitle());
-        assertFalse("LpadServer useSsl is not matching", ldapServer.isUseSsl());
-        assertEquals("LdapServer password encoding is not matching", "SHA",
-            ldapServer.getPasswordEncryption().getTitle());
+        assertEquals("FirstLdapServer", ldapServer.getTitle(), "LpadServer title is not matching");
+        assertFalse(ldapServer.isUseSsl(), "LpadServer useSsl is not matching");
+        assertEquals("SHA", ldapServer.getPasswordEncryption().getTitle(), "LdapServer password encoding is not matching");
     }
 }
