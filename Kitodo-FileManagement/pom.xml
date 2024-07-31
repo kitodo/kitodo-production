@@ -39,10 +39,6 @@
             <artifactId>kitodo-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.kitodo</groupId>
-            <artifactId>kitodo-command</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
         </dependency>
