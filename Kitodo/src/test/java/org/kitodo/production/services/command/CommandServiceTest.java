@@ -11,6 +11,11 @@
 
 package org.kitodo.production.services.command;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -23,8 +28,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
 import org.kitodo.api.command.CommandResult;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 public class CommandServiceTest {
     private static String scriptExtension;
