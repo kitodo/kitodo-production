@@ -8,6 +8,8 @@
 /javadoc
 # local build of docs with mkdocs
 /site
+# flatten-maven-plugin
+.flattened-pom.xml
 # Eclipse directories and files
 .classpath
 .project
