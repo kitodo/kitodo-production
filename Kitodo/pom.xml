@@ -51,7 +51,6 @@
 [WARNING]    org.eclipse.parsson:jakarta.json:jar:1.1.6:compile
 [WARNING]    commons-net:commons-net:jar:3.9.0:compile
 [WARNING]    org.apache.logging.log4j:log4j-web:jar:2.19.0:compile
-[WARNING]    org.apache.pdfbox:pdfbox:jar:2.0.26:test
 [WARNING]    org.apache.poi:poi-ooxml:jar:5.2.2:compile
 [WARNING]    org.apache.poi:poi-scratchpad:jar:5.2.2:compile
 [WARNING]    org.apache.xmlgraphics:xmlgraphics-commons:jar:2.8:compile
@@ -319,7 +318,7 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
