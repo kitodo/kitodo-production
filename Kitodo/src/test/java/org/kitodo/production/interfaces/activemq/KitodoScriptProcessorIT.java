@@ -10,7 +10,7 @@
  */
 package org.kitodo.production.interfaces.activemq;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -23,9 +23,9 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Process;
@@ -33,14 +33,14 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 
 public class KitodoScriptProcessorIT {
-    @Before
+    @BeforeAll
     public void prepare() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @After
+    @AfterAll
     public void clean() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
@@ -433,8 +433,8 @@ public class KitodoScriptProcessorIT {
         underTest.process(testData);
 
         // check results
-        assertEquals("should have passed the script to be executed", scriptResult.get(0), "action:test");
-        assertEquals("should have passed one process", processesResult.size(), 1);
-        assertEquals("should have passed process 1", processesResult.get(0).getId(), (Integer) 1);
+        assertEquals(scriptResult.get(0), "action:test", "should have passed the script to be executed");
+        assertEquals(processesResult.size(), 1, "should have passed one process");
+        assertEquals(processesResult.get(0).getId(), 1, "should have passed process 1");
     }
 }
