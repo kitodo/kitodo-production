@@ -11,11 +11,14 @@
 
 package org.kitodo.production.interfaces.activemq;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -29,12 +32,11 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.utils.Guard;
 
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-
 public class MapMessageObjectReader {
 
     private MapMessage ticket;
     private static final Logger logger = LogManager.getLogger(MapMessageObjectReader.class);
+    private static final String MANDATORY_ARGUMENT = "Mandatory argument ";
     private static final String MISSING_ARGUMENT = "Missing mandatory argument: \"";
     private static final String WRONG_TYPE = "\" was not found to be of type ";
 
@@ -104,7 +106,8 @@ public class MapMessageObjectReader {
      *             in case that getObject returns null or the returned string is
      *             of length “0”.
      * @throws JMSException
-     *             can be thrown by MapMessage.getString(String)
+     *             thrown by MapMessage.getString(String) if the string is a
+     *             byte[]
      */
     public String getMandatoryString(String key) throws JMSException {
         String mandatoryString = ticket.getString(key);
@@ -160,6 +163,32 @@ public class MapMessageObjectReader {
     }
 
     /**
+     * Fetches a String from a map. This is a strict implementation that
+     * requires the string not to be null and not to be empty.
+     *
+     * @param key
+     *            the name of the string to return
+     * @return the string requested
+     * @throws IllegalArgumentException
+     *             in case that get returns null, an inappropriate object, or
+     *             the returned string is of length “0”.
+     */
+    public static String getMandatoryString(Map<?, ?> data, String key) {
+        Object value = data.get(key);
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
+        }
+        if (!(value instanceof String)) {
+            throw new IllegalArgumentException(MANDATORY_ARGUMENT + key + " is not a string");
+        }
+        String mandatoryString = (String) value;
+        if (mandatoryString.isEmpty()) {
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
+        }
+        return mandatoryString;
+    }
+
+    /**
      * Fetches a String from a MapMessage. This is an access forward to the
      * native function of the MapMessage. You may consider to use
      * getMandatoryString() instead.
@@ -181,18 +210,45 @@ public class MapMessageObjectReader {
      * implementation that requires the Integer not to be null.
      *
      * @param key
-     *            the name of the string to return
+     *            the name of the integer to return
      * @return the string requested
      * @throws IllegalArgumentException
      *             in case that getObject returns null
      * @throws JMSException
-     *             can be thrown by MapMessage.getString(String)
+     *             in case that getObject returns an unmatching object type
      */
     public Integer getMandatoryInteger(String key) throws JMSException {
         if (!ticket.itemExists(key)) {
             throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
         }
         return ticket.getInt(key);
+    }
+
+    /**
+     * Fetches an Integer object from a map. This is a strict implementation
+     * that requires the Integer not to be null.
+     *
+     * @param data
+     *            the data map
+     * @param key
+     *            the name of the integer to return
+     * @return the string requested
+     * @throws IllegalArgumentException
+     *             in case that there is no such key, or get returns an
+     *             unmatching object type
+     */
+    public static Integer getMandatoryInteger(Map<?, ?> data, String key) {
+        if (!data.containsKey(key)) {
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
+        }
+        Object value = data.get(key);
+        if (value instanceof Integer) {
+            return (Integer) value;
+        }
+        if (value instanceof String) {
+            return Integer.valueOf((String) value);
+        }
+        throw new IllegalArgumentException(MANDATORY_ARGUMENT + key + " is not an integer");
     }
 
     /**
@@ -241,6 +297,21 @@ public class MapMessageObjectReader {
         }
 
         return mapOfStringToString;
+    }
+
+    @CheckForNull
+    public List<?> getList(String key) {
+        return null;
+    }
+
+    @CheckForNull
+    public Integer getInteger(String key) {
+        return null;
+    }
+
+    @CheckForNull
+    public Map<String, ?> getMapOfString(String string) {
+        return null;
     }
 
     /**
