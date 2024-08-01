@@ -79,6 +79,7 @@
         <!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/check-mojo.html -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <selenium.version>3.141.59</selenium.version>
+        <spring.version>5.3.29</spring.version>
         <spring.security.version>5.7.11</spring.security.version>
         <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
         <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
@@ -849,17 +850,17 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-beans</artifactId>
-                <version>5.3.29</version>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
-                <version>5.3.29</version>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
-                <version>5.3.29</version>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.ldap</groupId>
