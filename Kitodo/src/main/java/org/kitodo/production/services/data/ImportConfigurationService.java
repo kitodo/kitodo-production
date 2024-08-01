@@ -146,6 +146,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
      * @return list of all ImportConfigurations sorted by title
      * @throws DAOException when ImportConfigurations could not be loaded
      */
+    @Override
     public List<ImportConfiguration> getAll() throws DAOException {
         User currentUser = ServiceManager.getUserService().getCurrentUser();
         return super.getAll().stream()
