@@ -189,6 +189,11 @@
                 <version>1.1.1</version>
             </dependency>
             <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.el</groupId>
                 <artifactId>javax.el-api</artifactId>
                 <version>3.0.0</version>
@@ -294,6 +299,11 @@ from system library in Java 11+ -->
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-join</artifactId>
+                <version>8.11.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.myfaces.core</groupId>

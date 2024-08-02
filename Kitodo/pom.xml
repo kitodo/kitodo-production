@@ -141,6 +141,10 @@
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-join</artifactId>
+        </dependency>
         <!-- overwrite parent dependency -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
