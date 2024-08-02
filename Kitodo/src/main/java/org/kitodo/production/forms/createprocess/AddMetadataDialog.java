@@ -64,6 +64,9 @@ public class AddMetadataDialog {
      * @return whether any further metadata can be added to currently selected structure element.
      */
     public boolean metadataAddableToStructureElement() throws InvalidMetadataValueException {
+        if (Objects.isNull(createProcessForm.getRulesetManagement())) {
+            return false;
+        }
         prepareAddableMetadataForStructure();
         return !getAddableMetadata().isEmpty();
     }
