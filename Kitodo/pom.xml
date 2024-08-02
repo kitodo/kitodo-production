@@ -17,7 +17,6 @@
 [WARNING]    org.jboss.weld.servlet:weld-servlet:jar:2.4.8.Final:compile
 [WARNING]    org.primefaces:primefaces:jar:8.0:compile
 [WARNING]    org.seleniumhq.selenium:selenium-api:jar:3.141.59:test
-[WARNING]    javax.ws.rs:javax.ws.rs-api:jar:2.1.1:compile
 [WARNING]    jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
 [WARNING]    commons-codec:commons-codec:jar:1.15:compile
 [WARNING]    junit:junit:jar:4.13.2:test
@@ -180,6 +179,10 @@
             <artifactId>spring-faces</artifactId>
         </dependency>
 -->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>jsr311-api</artifactId>
