@@ -74,9 +74,10 @@
         <version>3.8.0-SNAPSHOT</version>
     </parent>
 
-    <name>Kitodo - Core</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo</artifactId>
     <packaging>war</packaging>
+    <name>Kitodo - Core</name>
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
@@ -434,8 +435,8 @@
               that means first entry will be added as last resource and may override other resources -->
             <resource>
                 <!-- ATTENTION! This config is only loaded in all-tests and selenium profile with specified path-->
-                <directory>${build.resources.path}</directory>
                 <filtering>true</filtering>
+                <directory>${build.resources.path}</directory>
                 <includes>
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>
@@ -473,9 +474,6 @@
     <profiles>
         <profile>
             <id>all-tests</id>
-            <properties>
-                <build.resources.path>src/test/resources</build.resources.path>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -493,6 +491,9 @@
                     </plugin>
                 </plugins>
             </build>
+            <properties>
+                <build.resources.path>src/test/resources</build.resources.path>
+            </properties>
         </profile>
 
         <profile>
@@ -538,6 +539,25 @@
                         <artifactId>cargo-maven3-plugin</artifactId>
                         <version>${cargo.plugin.version}</version>
 
+                        <executions>
+                            <!-- start Tomcat -->
+                            <execution>
+                                <id>start-container</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- stop Tomcat -->
+                            <execution>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
                         <configuration>
                             <!-- Provide Tomcat -->
                             <container>
@@ -561,25 +581,6 @@
                                 </deployable>
                             </deployables>
                         </configuration>
-
-                        <executions>
-                            <!-- start Tomcat -->
-                            <execution>
-                                <id>start-container</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <!-- stop Tomcat -->
-                            <execution>
-                                <id>stop-container</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
 
                     <plugin>
@@ -646,6 +647,25 @@
                         <artifactId>cargo-maven3-plugin</artifactId>
                         <version>${cargo.plugin.version}</version>
 
+                        <executions>
+                            <!-- start Tomcat -->
+                            <execution>
+                                <id>start-container</id>
+                                <phase>pre-integration-test</phase>
+                                <goals>
+                                    <goal>start</goal>
+                                </goals>
+                            </execution>
+                            <!-- stop Tomcat -->
+                            <execution>
+                                <id>stop-container</id>
+                                <phase>post-integration-test</phase>
+                                <goals>
+                                    <goal>stop</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+
                         <configuration>
                             <!-- Provide Tomcat -->
                             <container>
@@ -669,25 +689,6 @@
                                 </deployable>
                             </deployables>
                         </configuration>
-
-                        <executions>
-                            <!-- start Tomcat -->
-                            <execution>
-                                <id>start-container</id>
-                                <phase>pre-integration-test</phase>
-                                <goals>
-                                    <goal>start</goal>
-                                </goals>
-                            </execution>
-                            <!-- stop Tomcat -->
-                            <execution>
-                                <id>stop-container</id>
-                                <phase>post-integration-test</phase>
-                                <goals>
-                                    <goal>stop</goal>
-                                </goals>
-                            </execution>
-                        </executions>
                     </plugin>
 
                     <plugin>
@@ -695,16 +696,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>${maven-failsafe-plugin.version}</version>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*IT.java</exclude>
-                                <exclude>**/*Test.java</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*ST.java</include>
-                            </includes>
-                        </configuration>
-
                         <executions>
                             <execution>
                                 <phase>integration-test</phase>
@@ -714,6 +705,16 @@
                                 </goals>
                             </execution>
                         </executions>
+
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                                <exclude>**/*Test.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*ST.java</include>
+                            </includes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

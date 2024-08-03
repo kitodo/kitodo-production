@@ -23,6 +23,7 @@
     </parent>
 
     <name>Kitodo - Long Term Preservation Validation</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-longtermpreservation-validation</artifactId>
 
     <properties>

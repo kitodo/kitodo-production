@@ -21,6 +21,7 @@
     </parent>
 
     <name>Kitodo - Query URL Import</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-query-url-import</artifactId>
 
     <properties>

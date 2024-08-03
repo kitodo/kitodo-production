@@ -23,6 +23,7 @@
     </parent>
 
     <name>Kitodo - Data Management</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-data-management</artifactId>
 
     <properties>

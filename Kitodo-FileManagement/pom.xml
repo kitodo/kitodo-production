@@ -23,6 +23,7 @@
     </parent>
 
     <name>Kitodo - File Management</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-file-management</artifactId>
 
     <properties>

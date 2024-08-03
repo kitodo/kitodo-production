@@ -23,6 +23,7 @@
     </parent>
 
     <name>Kitodo - Persistent Identifier</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-persistentidentifier</artifactId>
 
     <properties>

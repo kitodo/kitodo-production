@@ -21,6 +21,7 @@
     </parent>
 
     <name>Kitodo - XML SchemaConverter</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-xml-schemaconverter</artifactId>
 
     <properties>

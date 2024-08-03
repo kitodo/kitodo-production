@@ -23,6 +23,7 @@
     </parent>
 
     <name>Kitodo - Docket</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-docket</artifactId>
 
     <properties>

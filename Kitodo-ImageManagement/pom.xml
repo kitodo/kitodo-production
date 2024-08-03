@@ -23,6 +23,7 @@
     </parent>
 
     <name>Kitodo - Image Management</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-image-management</artifactId>
 
     <properties>

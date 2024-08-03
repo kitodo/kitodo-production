@@ -21,6 +21,7 @@
     </parent>
 
     <name>Kitodo - Data Format</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-data-format</artifactId>
 
     <properties>

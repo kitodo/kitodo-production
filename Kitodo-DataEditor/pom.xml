@@ -21,6 +21,7 @@
     </parent>
 
     <name>Kitodo - Data Editor</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-data-editor</artifactId>
 
     <properties>
