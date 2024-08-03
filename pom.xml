@@ -85,20 +85,6 @@
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
-    <repositories>
-        <!-- Let's first add the default Maven central repo,
-             otherwise Maven will not use Maven Central as first download option -->
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
-
     <modules>
         <module>Kitodo-API</module>
         <module>Kitodo-DataManagement</module>
