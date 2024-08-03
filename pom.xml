@@ -340,7 +340,7 @@ from system library in Java 11+ -->
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
                 <exclusions>
-                    <!-- exlcude stax-api which provides javax.xml.namespace package
+                    <!-- exclude stax-api which provides javax.xml.namespace package
                          already included in system modules of Java 11+ -->
                     <exclusion>
                         <groupId>stax</groupId>
@@ -387,7 +387,7 @@ from system library in Java 11+ -->
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
-                    <!-- exlcude xml-apis which provides javax.xml.transform package
+                    <!-- exclude xml-apis which provides javax.xml.transform package
                          already included in system modules of Java 11+ -->
                     <exclusion>
                         <groupId>xml-apis</groupId>
