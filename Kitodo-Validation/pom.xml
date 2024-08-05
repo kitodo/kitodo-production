@@ -23,7 +23,7 @@
     </parent>
 
     <name>Kitodo - Validation</name>
-    <groupId>org.kitodo.validation</groupId>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-validation</artifactId>
 
     <properties>
