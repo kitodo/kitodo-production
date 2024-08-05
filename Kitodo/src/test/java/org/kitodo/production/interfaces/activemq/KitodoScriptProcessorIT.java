@@ -23,8 +23,8 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.MapMessage;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -33,14 +33,14 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.KitodoScriptService;
 
 public class KitodoScriptProcessorIT {
-    @BeforeAll
+    @BeforeEach
     public void prepare() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesForWorkflowFull();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
     }
 
-    @AfterAll
+    @AfterEach
     public void clean() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
