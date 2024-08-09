@@ -5,12 +5,17 @@
 --
 -- It is licensed under GNU General Public License version 3 or later.
 --
--- For the full copyright and license information, please read the
--- GPL3-License.txt file that was distributed with this source code.
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 --
 
-ALTER TABLE client_x_listColumn RENAME TO client_x_listcolumn;
-ALTER TABLE ldapGroup RENAME TO ldapgroup;
-ALTER TABLE ldapServer RENAME TO ldapserver;
-ALTER TABLE listColumn RENAME TO listcolumn;
-ALTER TABLE workflowCondition RENAME TO workflowcondition;
+ALTER TABLE client_x_listColumn RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO client_x_listcolumn;
+ALTER TABLE ldapGroup RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO ldapgroup;
+ALTER TABLE ldapServer RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO ldapserver;
+ALTER TABLE listColumn RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO listcolumn;
+ALTER TABLE workflowCondition RENAME TO renamed_table;
+ALTER TABLE renamed_table RENAME TO workflowcondition;

@@ -7,9 +7,62 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
+[WARNING] Used undeclared dependencies found:
+[WARNING]    org.apache.poi:poi:jar:5.2.2:compile
+[WARNING]    org.apache.myfaces.core:myfaces-api:jar:2.3.10:compile
+[WARNING]    org.apache.lucene:lucene-join:jar:9.10.0:compile
+[WARNING]    org.jboss.weld.servlet:weld-servlet:jar:2.4.8.Final:compile
+[WARNING]    org.primefaces:primefaces:jar:8.0:compile
+[WARNING]    org.seleniumhq.selenium:selenium-api:jar:3.141.59:test
+[WARNING]    jakarta.annotation:jakarta.annotation-api:jar:1.3.5:compile
+[WARNING]    commons-codec:commons-codec:jar:1.15:compile
+[WARNING]    junit:junit:jar:4.13.2:test
+[WARNING]    org.hamcrest:hamcrest-core:jar:1.3:compile
+[WARNING]    org.apache.logging.log4j:log4j-1.2-api:jar:2.19.0:compile
+[WARNING]    org.apache.geronimo.specs:geronimo-jms_1.1_spec:jar:1.1.1:compile
+[WARNING]    org.camunda.bpm.model:camunda-xml-model:jar:7.17.0:compile
+[WARNING]    jakarta.validation:jakarta.validation-api:jar:2.0.2:compile
+[WARNING]    org.hamcrest:hamcrest:jar:2.2-rc1:test
+[WARNING]    org.seleniumhq.selenium:selenium-remote-driver:jar:3.141.59:test
+[WARNING] Unused declared dependencies found:
+[WARNING]    org.codehaus.jackson:jackson-xc:jar:1.9.13:compile
+[WARNING]    commons-beanutils:commons-beanutils:jar:1.9.4:compile
+[WARNING]    commons-cli:commons-cli:jar:1.5.0:compile
+[WARNING]    javax.ws.rs:jsr311-api:jar:1.1.1:compile
+[WARNING]    com.mysql:mysql-connector-j:jar:8.0.33:runtime
+[WARNING]    org.mariadb.jdbc:mariadb-java-client:jar:2.7.6:runtime
+[WARNING]    net.sf.barcode4j:barcode4j-fop-ext:jar:2.1:compile
+[WARNING]    org.codehaus.plexus:plexus-container-default:jar:1.7.1:test
+[WARNING]    org.eclipse.parsson:jakarta.json:jar:1.1.6:compile
+[WARNING]    commons-net:commons-net:jar:3.9.0:compile
+[WARNING]    org.apache.logging.log4j:log4j-web:jar:2.19.0:compile
+[WARNING]    org.apache.poi:poi-ooxml:jar:5.2.2:compile
+[WARNING]    org.apache.poi:poi-scratchpad:jar:5.2.2:compile
+[WARNING]    org.apache.xmlgraphics:xmlgraphics-commons:jar:2.8:compile
+[WARNING]    org.apache.xmlgraphics:fop:jar:2.8:compile
+[WARNING]    org.apache.avalon.framework:avalon-framework-api:jar:4.3.1:compile
+[WARNING]    org.apache.avalon.framework:avalon-framework-impl:jar:4.3.1:compile
+[WARNING]    org.jdom:jdom2:jar:2.0.6.1:compile
+[WARNING]    org.hibernate.validator:hibernate-validator:jar:6.2.4.Final:compile
+[WARNING]    xml-apis:xml-apis-ext:jar:1.3.04:compile
+[WARNING]    org.im4java:im4java:jar:1.4.0:compile
+[WARNING]    org.openpreservation.jhove:jhove-core:jar:1.20.1:compile
+[WARNING]    org.openpreservation.jhove:jhove-modules:jar:1.20.1:compile
+[WARNING]    org.openpreservation.jhove:jhove-ext-modules:jar:1.20.1:compile
+[WARNING]    se.jiderhamn.classloader-leak-prevention:classloader-leak-prevention-servlet3:jar:2.7.0:runtime
+[WARNING]    org.junit.vintage:junit-vintage-engine:jar:5.9.2:test
+[WARNING]    org.xmlunit:xmlunit-core:jar:2.10.0:compile
+[WARNING]    org.primefaces.extensions:primefaces-extensions:jar:8.0.5:compile
+[WARNING]    org.primefaces.extensions:resources-codemirror:jar:6.1.1:compile
+[WARNING]    org.webjars:uikit:jar:2.26.3:compile
+[WARNING]    org.jvnet.jaxb2_commons:jaxb2-basics-runtime:jar:1.11.1:compile
+[WARNING]    org.webjars:openlayers:jar:5.2.0:compile
+[WARNING] Non-test scoped test only dependencies found:
+[WARNING]    org.xmlunit:xmlunit-matchers:jar:2.9.0:compile
+[WARNING]    org.hamcrest:hamcrest-core:jar:1.3:compile
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -21,9 +74,10 @@
         <version>3.8.0-SNAPSHOT</version>
     </parent>
 
-    <name>Kitodo - Core</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo</artifactId>
     <packaging>war</packaging>
+    <name>Kitodo - Core</name>
 
     <properties>
         <main.basedir>${project.parent.basedir}</main.basedir>
@@ -34,6 +88,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
@@ -54,6 +112,14 @@
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-core-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
+            <artifactId>jackson-mapper-asl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-xc</artifactId>
         </dependency>
         <dependency>
@@ -66,8 +132,53 @@
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-beans</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.ldap</groupId>
+            <artifactId>spring-ldap-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-config</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-ldap</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-web</artifactId>
+        </dependency>
+<!--
+        <dependency>
+            <groupId>org.springframework.webflow</groupId>
+            <artifactId>spring-faces</artifactId>
+        </dependency>
+-->
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.ws.rs</groupId>
@@ -126,6 +237,14 @@
             <artifactId>javax.el-api</artifactId>
         </dependency>
         <dependency>
+            <groupId>jakarta.json</groupId>
+            <artifactId>jakarta.json-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.parsson</groupId>
+            <artifactId>jakarta.json</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-client</artifactId>
         </dependency>
@@ -139,19 +258,15 @@
         </dependency>
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-web</artifactId>
         </dependency>
-        <!-- overwrite parent dependency -->
         <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>2.0.26</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>commons-logging</groupId>
-                    <artifactId>commons-logging</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-join</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
@@ -178,12 +293,20 @@
             <artifactId>avalon-framework-impl</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>transport</artifactId>
+            <groupId>org.opensearch</groupId>
+            <artifactId>opensearch</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.opensearch.plugin</groupId>
+            <artifactId>transport-netty4-client</artifactId>
         </dependency>
         <dependency>
             <groupId>org.jdom</groupId>
             <artifactId>jdom2</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>
@@ -198,6 +321,7 @@
              <artifactId>im4java</artifactId>
         </dependency>
         <dependency>
+            <!-- required for tests -->
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-exec</artifactId>
         </dependency>
@@ -225,6 +349,12 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.platform</groupId>
+            <artifactId>junit-platform-commons</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.xmlunit</groupId>
@@ -233,6 +363,7 @@
         <dependency>
             <groupId>org.xmlunit</groupId>
             <artifactId>xmlunit-matchers</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>com.h2database</groupId>
@@ -304,8 +435,8 @@
               that means first entry will be added as last resource and may override other resources -->
             <resource>
                 <!-- ATTENTION! This config is only loaded in all-tests and selenium profile with specified path-->
-                <directory>${build.resources.path}</directory>
                 <filtering>true</filtering>
+                <directory>${build.resources.path}</directory>
                 <includes>
                     <include>**/*.xml</include>
                     <include>**/*.properties</include>
@@ -313,7 +444,7 @@
             </resource>
             <resource>
                 <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
-                <directory>../config-local</directory>
+                <directory>${main.basedir}/config-local</directory>
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
@@ -343,9 +474,6 @@
     <profiles>
         <profile>
             <id>all-tests</id>
-            <properties>
-                <build.resources.path>src/test/resources</build.resources.path>
-            </properties>
             <build>
                 <plugins>
                     <plugin>
@@ -363,6 +491,9 @@
                     </plugin>
                 </plugins>
             </build>
+            <properties>
+                <build.resources.path>src/test/resources</build.resources.path>
+            </properties>
         </profile>
 
         <profile>
@@ -382,7 +513,6 @@
                     <plugin>
                         <!-- Copy config local resources to target -->
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -409,37 +539,6 @@
                         <artifactId>cargo-maven3-plugin</artifactId>
                         <version>${cargo.plugin.version}</version>
 
-                        <configuration>
-                            <!-- Provide Tomcat -->
-                            <container>
-                                <containerId>tomcat${tomcat.baseversion}x</containerId>
-                                <zipUrlInstaller>
-                                    <url>
-                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
-                                    </url>
-                                    <downloadDir>${project.build.directory}/downloads</downloadDir>
-                                    <extractDir>${project.build.directory}/extracts</extractDir>
-                                </zipUrlInstaller>
-                            </container>
-
-                            <!-- Tomcat configuration -->
-                            <configuration>
-                                <type>existing</type>
-                                <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
-                                </home>
-                                <properties>
-                                    <cargo.logging>low</cargo.logging>
-                                </properties>
-                            </configuration>
-                            <deployables>
-                                <deployable>
-                                    <location>${project.build.directory}/kitodo-${project.version}.war</location>
-                                    <type>war</type>
-                                </deployable>
-                            </deployables>
-                        </configuration>
-
                         <executions>
                             <!-- start Tomcat -->
                             <execution>
@@ -458,6 +557,30 @@
                                 </goals>
                             </execution>
                         </executions>
+
+                        <configuration>
+                            <!-- Provide Tomcat -->
+                            <container>
+                                <containerId>tomcat${tomcat.baseversion}x</containerId>
+                                <zipUrlInstaller>
+                                    <url>
+                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
+                                    </url>
+                                    <downloadDir>${project.build.directory}/downloads</downloadDir>
+                                    <extractDir>${project.build.directory}/extracts</extractDir>
+                                </zipUrlInstaller>
+                            </container>
+
+                            <!-- Tomcat configuration -->
+                            <configuration>
+                            </configuration>
+                            <deployables>
+                                <deployable>
+                                    <location>${project.build.directory}/kitodo-${project.version}.war</location>
+                                    <type>war</type>
+                                </deployable>
+                            </deployables>
+                        </configuration>
                     </plugin>
 
                     <plugin>
@@ -498,7 +621,6 @@
                     <plugin>
                         <!-- Copy config local resources to target -->
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-resources</id>
@@ -525,37 +647,6 @@
                         <artifactId>cargo-maven3-plugin</artifactId>
                         <version>${cargo.plugin.version}</version>
 
-                        <configuration>
-                            <!-- Provide Tomcat -->
-                            <container>
-                                <containerId>tomcat${tomcat.baseversion}x</containerId>
-                                <zipUrlInstaller>
-                                    <url>
-                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
-                                    </url>
-                                    <downloadDir>${project.build.directory}/downloads</downloadDir>
-                                    <extractDir>${project.build.directory}/extracts</extractDir>
-                                </zipUrlInstaller>
-                            </container>
-
-                            <!-- Tomcat configuration -->
-                            <configuration>
-                                <type>existing</type>
-                                <home>
-                                    ${project.build.directory}/extracts/apache-tomcat-${tomcat.version}/apache-tomcat-${tomcat.version}
-                                </home>
-                                <properties>
-                                    <cargo.logging>low</cargo.logging>
-                                </properties>
-                            </configuration>
-                            <deployables>
-                                <deployable>
-                                    <location>${project.build.directory}/kitodo-${project.version}.war</location>
-                                    <type>war</type>
-                                </deployable>
-                            </deployables>
-                        </configuration>
-
                         <executions>
                             <!-- start Tomcat -->
                             <execution>
@@ -574,6 +665,30 @@
                                 </goals>
                             </execution>
                         </executions>
+
+                        <configuration>
+                            <!-- Provide Tomcat -->
+                            <container>
+                                <containerId>tomcat${tomcat.baseversion}x</containerId>
+                                <zipUrlInstaller>
+                                    <url>
+                                        https://archive.apache.org/dist/tomcat/tomcat-${tomcat.baseversion}/v${tomcat.version}/bin/apache-tomcat-${tomcat.version}.zip
+                                    </url>
+                                    <downloadDir>${project.build.directory}/downloads</downloadDir>
+                                    <extractDir>${project.build.directory}/extracts</extractDir>
+                                </zipUrlInstaller>
+                            </container>
+
+                            <!-- Tomcat configuration -->
+                            <configuration>
+                            </configuration>
+                            <deployables>
+                                <deployable>
+                                    <location>${project.build.directory}/kitodo-${project.version}.war</location>
+                                    <type>war</type>
+                                </deployable>
+                            </deployables>
+                        </configuration>
                     </plugin>
 
                     <plugin>
@@ -581,16 +696,6 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
                         <version>${maven-failsafe-plugin.version}</version>
-                        <configuration>
-                            <excludes>
-                                <exclude>**/*IT.java</exclude>
-                                <exclude>**/*Test.java</exclude>
-                            </excludes>
-                            <includes>
-                                <include>**/*ST.java</include>
-                            </includes>
-                        </configuration>
-
                         <executions>
                             <execution>
                                 <phase>integration-test</phase>
@@ -600,6 +705,16 @@
                                 </goals>
                             </execution>
                         </executions>
+
+                        <configuration>
+                            <excludes>
+                                <exclude>**/*IT.java</exclude>
+                                <exclude>**/*Test.java</exclude>
+                            </excludes>
+                            <includes>
+                                <include>**/*ST.java</include>
+                            </includes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

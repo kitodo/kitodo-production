@@ -5,11 +5,13 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.forms;
+
+import jakarta.json.JsonException;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -18,11 +20,9 @@ import java.util.List;
 
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
-import javax.json.JsonException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.ElasticsearchStatusException;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
@@ -35,6 +35,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.ProjectService;
+import org.opensearch.OpenSearchStatusException;
 import org.primefaces.model.SortOrder;
 
 @Named("DesktopForm")
@@ -213,7 +214,7 @@ public class DesktopForm extends BaseForm {
                     return 0L;
             }
 
-        } catch (DAOException | JsonException | ElasticsearchStatusException e) {
+        } catch (DAOException | JsonException | OpenSearchStatusException e) {
             Helper.setErrorMessage("Unable to load number of elements", logger, e);
         }
         return 0L;

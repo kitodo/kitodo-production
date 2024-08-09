@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.api.dataeditor.rulesetmanagement;
@@ -24,7 +24,7 @@ import org.kitodo.api.Metadata;
  * for this key. If the key is a multiple choice, the values are grouped, hence
  * the list, otherwise the length of the list is always only one. Effectively,
  * the return type of
- * {@link ComplexMetadataViewInterface#getSortedVisibleMetadatas(Collection, Collection)}
+ * {@link ComplexMetadataViewInterface#getSortedVisibleMetadata(Collection, Collection)}
  * is {@code List<Pair<MetadataViewInterface, Collection<T>>>}. Since the key
  * must be repeatable if there is more than one value but the key is not a
  * multiple choice, a map would be an inappropriate choice at this point.

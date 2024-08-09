@@ -5,13 +5,13 @@
 --
 -- It is licensed under GNU General Public License version 3 or later.
 --
--- For the full copyright and license information, please read the
--- GPL3-License.txt file that was distributed with this source code.
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 --
 
 -- Update roles and authorities.
 
--- 1. Add initial roles if they don not exists yet
+-- 1. Add initial roles if they do not exist yet
 --
 INSERT IGNORE INTO role (title, client_id) VALUES ('WorkflowManagement', 1);
 

@@ -6,22 +6,10 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
  */
-
-function createMapping(objectTypes) {
-    toggleButtons(false, objectTypes);
-    document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='inline';
-    return true;
-}
-
-function deleteIndex(objectTypes) {
-    toggleButtons(false, objectTypes);
-    document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='inline';
-    return true;
-}
 
 function toggleProgressPolling(message) {
     if (message.includes("indexing_started")) {
@@ -76,4 +64,16 @@ function toggleButtons(state, objectTypes) {
         }
         PF('startIndexingAll').disable();
     }
+}
+
+function createMapping(objectTypes) {
+    toggleButtons(false, objectTypes);
+    document.getElementById('systemTabView:indexing_form:create-mapping-loading').style.display='inline';
+    return true;
+}
+
+function deleteIndex(objectTypes) {
+    toggleButtons(false, objectTypes);
+    document.getElementById('systemTabView:indexing_form:delete-index-loading').style.display='inline';
+    return true;
 }

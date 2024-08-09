@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.selenium.testframework;
@@ -18,7 +18,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.config.ConfigCore;
@@ -43,8 +42,6 @@ public class BaseTestSelenium {
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             File scriptCreateDirUserHome = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-            ExecutionPermission.setExecutePermission(scriptCreateDirMeta);
-            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
         }
 
         Browser.Initialize();
@@ -61,8 +58,6 @@ public class BaseTestSelenium {
         if (SystemUtils.IS_OS_LINUX) {
             File scriptCreateDirMeta = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
             File scriptCreateDirUserHome = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirMeta);
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
         }
 
         FileLoader.deleteConfigProjectsFile();

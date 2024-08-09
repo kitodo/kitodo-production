@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.services.data;
@@ -28,9 +28,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.api.command.CommandResult;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
@@ -73,6 +70,9 @@ import org.kitodo.production.services.data.base.ProjectSearchService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.QueryBuilders;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -120,8 +120,6 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
      */
     private BoolQueryBuilder createUserTaskQuery(String filter, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                                                  boolean showAutomaticTasks, List<TaskStatus> taskStatusRestrictions) {
-        User user = ServiceManager.getUserService().getAuthenticatedUser();
-
         BoolQueryBuilder query = new BoolQueryBuilder();
         query.must(getQueryForTemplate(0));
         if (Objects.isNull(filter)) {
@@ -132,6 +130,8 @@ public class TaskService extends ProjectSearchService<Task, TaskDTO, TaskDAO> {
 
         query.must(getQueryForProcessingStatuses(taskStatusRestrictions.stream()
                 .map(TaskStatus::getValue).collect(Collectors.toSet())));
+
+        User user = ServiceManager.getUserService().getAuthenticatedUser();
 
         if (onlyOwnTasks) {
             query.must(getQueryForProcessingUser(user.getId()));

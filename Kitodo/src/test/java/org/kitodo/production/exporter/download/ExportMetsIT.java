@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.exporter.download;
@@ -26,7 +26,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -65,10 +64,6 @@ public class ExportMetsIT {
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         FileLoader.createConfigProjectsFile();
 
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
-        }
-
         File userdataDirectory = new File(ConfigCore.getParameter(ParameterCore.DIR_USERS));
         if (!userdataDirectory.exists() && !userdataDirectory.mkdir()) {
             throw new IOException("Could not create users directory");
@@ -83,10 +78,6 @@ public class ExportMetsIT {
         fileService.delete(URI.create(metadataDirectory));
         fileService.delete(ConfigCore.getUriParameter(ParameterCore.DIR_USERS));
         FileLoader.deleteConfigProjectsFile();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
-        }
     }
 
     @Test

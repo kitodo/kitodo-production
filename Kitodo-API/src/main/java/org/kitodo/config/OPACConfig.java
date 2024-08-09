@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.config;
@@ -71,6 +71,7 @@ public class OPACConfig {
      * @param catalogName String identifying the catalog by title
      * @param parameter String identifying the parameter by name
      * @return value of parameter
+     * @throws ParameterNotFoundException if parameter was not found
      */
     public static String getConfigValue(String catalogName, String parameter) throws ParameterNotFoundException {
         HierarchicalConfiguration<ImmutableNode> opacConfiguration = getCatalog(catalogName);
@@ -151,6 +152,7 @@ public class OPACConfig {
      * Get host parameter of catalog configuration with name 'catalogName'.
      * @param catalogName name of catalog configuration
      * @return host value as String
+     * @throws MandatoryParameterMissingException if required parameter is missing
      */
     public static String getHost(String catalogName) throws MandatoryParameterMissingException {
         return getUrlConfigPart(catalogName, HOST);
@@ -160,6 +162,7 @@ public class OPACConfig {
      * Get scheme parameter of catalog configuration with name 'catalogName'.
      * @param catalogName name of catalog configuration
      * @return scheme value as String
+     * @throws MandatoryParameterMissingException if required parameter is missing
      */
     public static String getScheme(String catalogName) throws MandatoryParameterMissingException {
         return getUrlConfigPart(catalogName, SCHEME);
@@ -169,6 +172,7 @@ public class OPACConfig {
      * Get path parameter of catalog configuration with name 'catalogName'.
      * @param catalogName name of catalog configuration
      * @return path value as String
+     * @throws MandatoryParameterMissingException if required parameter is missing
      */
     public static String getPath(String catalogName) throws MandatoryParameterMissingException {
         return getUrlConfigPart(catalogName, PATH);
@@ -178,6 +182,7 @@ public class OPACConfig {
      * Get port parameter of catalog configuration with name 'catalogName'.
      * @param catalogName name of catalog configuration
      * @return port value as String
+     * @throws MandatoryParameterMissingException if required parameter is missing
      */
     public static String getPort(String catalogName) throws MandatoryParameterMissingException {
         return getUrlConfigPart(catalogName, PORT);

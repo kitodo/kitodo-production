@@ -5,8 +5,8 @@
 --
 -- It is licensed under GNU General Public License version 3 or later.
 --
--- For the full copyright and license information, please read the
--- GPL3-License.txt file that was distributed with this source code.
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 --
 
 -- Add column configuration authorities
@@ -85,7 +85,7 @@ INSERT INTO listColumn (title) VALUES ('ldapgroup.ldapgroup');
 INSERT INTO listColumn (title) VALUES ('ldapgroup.home_directory');
 INSERT INTO listColumn (title) VALUES ('ldapgroup.gidNumber');
 
--- 3. Create client_x_listcolumn table
+-- 3. Create client_x_listColumn table
 CREATE TABLE client_x_listColumn (
   client_id INT(11) NOT NULL,
   column_id INT(11) NOT NULL,

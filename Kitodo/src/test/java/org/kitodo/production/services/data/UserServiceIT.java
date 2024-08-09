@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.services.data;
@@ -25,7 +25,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
@@ -187,7 +186,6 @@ public class UserServiceIT {
         String homeDirectory = ConfigCore.getParameter(ParameterCore.DIR_USERS);
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_USER_HOME));
-        ExecutionPermission.setExecutePermission(script);
 
         URI homeDirectoryForUser = userService.getHomeDirectory(user);
         boolean condition = homeDirectoryForUser.getRawPath().contains(homeDirectory + user.getLogin());
@@ -197,8 +195,6 @@ public class UserServiceIT {
         homeDirectoryForUser = userService.getHomeDirectory(user);
         condition = homeDirectoryForUser.getRawPath().contains(user.getLogin());
         assertTrue(condition, "Home directory of user is incorrect!");
-
-        ExecutionPermission.setNoExecutePermission(script);
     }
 
     @Test

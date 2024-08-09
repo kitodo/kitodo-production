@@ -7,8 +7,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -22,82 +22,12 @@
     <version>3.8.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
+    <name>Kitodo Production</name>
+    <url>https://github.com/kitodo/kitodo-production</url>
     <organization>
         <name>Kitodo. Key to digital objects e. V.</name>
         <url>https://www.kitodo.org</url>
     </organization>
-    <name>Kitodo Production</name>
-    <url>https://github.com/kitodo/kitodo-production</url>
-
-    <properties>
-        <kitodo.version>3.8.0-SNAPSHOT</kitodo.version>
-        <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
-        <main.basedir>${project.basedir}</main.basedir>
-        <phase.prop>none</phase.prop>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
-        <maven.compiler.debug>true</maven.compiler.debug>
-        <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
-        <maxAllowedViolations>0</maxAllowedViolations>
-        <tomcat.baseversion>9</tomcat.baseversion>
-        <tomcat.version>9.0.65</tomcat.version>
-        <awaitility.version>4.0.1</awaitility.version>
-        <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
-        <commons-codec.version>1.15</commons-codec.version>
-        <commons-io.version>2.11.0</commons-io.version>
-        <commons-lang3.version>3.14.0</commons-lang3.version>
-        <commons-net.version>3.9.0</commons-net.version>
-        <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
-        <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
-        <hamcrest.version>2.2-rc1</hamcrest.version>
-        <hibernate.version>5.6.10.Final</hibernate.version>
-        <jaxb.api.version>2.3.3</jaxb.api.version>
-        <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
-        <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
-        <jaxen.version>1.2.0</jaxen.version>
-        <jhove.version>1.20.1</jhove.version>
-        <myfaces.version>2.3.10</myfaces.version>
-        <mysql.version>8.0.31</mysql.version>
-        <poi.version>5.2.2</poi.version>
-        <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
-        <saxon.version>9.9.1-8</saxon.version>
-        <log4j.version>2.19.0</log4j.version>
-        <junit.version>5.9.2</junit.version>
-        <elasticsearch.version>7.17.10</elasticsearch.version>
-        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
-
-        <!-- maven-resources-plugin versions greater 3.2.0 introduce changes that
-             stop the build in Eclipse on Windows from using "config-local" -->
-        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
-
-        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
-        <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
-        <mockito.version>5.9.0</mockito.version>
-        <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
-        <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.11</spring.security.version>
-        <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
-        <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
-        <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
-        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
-    </properties>
-
-    <repositories>
-        <!-- Let's first add the default Maven central repo,
-             otherwise Maven will not use Maven Central as first download option -->
-        <repository>
-            <id>central</id>
-            <name>Maven Repository Switchboard</name>
-            <layout>default</layout>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
 
     <modules>
         <module>Kitodo-API</module>
@@ -116,6 +46,66 @@
         <module>Kitodo</module>
     </modules>
 
+    <properties>
+        <kitodo.version>3.8.0-SNAPSHOT</kitodo.version>
+        <checkstyle.config.location>config/checkstyle.xml</checkstyle.config.location>
+        <main.basedir>${project.basedir}</main.basedir>
+        <phase.prop>none</phase.prop>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>11</maven.compiler.release>
+        <maven.compiler.debug>true</maven.compiler.debug>
+        <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
+        <maxAllowedViolations>0</maxAllowedViolations>
+        <tomcat.baseversion>9</tomcat.baseversion>
+        <tomcat.version>9.0.65</tomcat.version>
+        <awaitility.version>4.0.1</awaitility.version>
+        <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
+        <commons-codec.version>1.15</commons-codec.version>
+        <commons-io.version>2.11.0</commons-io.version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-net.version>3.9.0</commons-net.version>
+        <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
+        <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
+        <hamcrest.version>2.2-rc1</hamcrest.version>
+        <hibernate.version>5.6.15.Final</hibernate.version>
+        <jaxb.api.version>2.3.3</jaxb.api.version>
+        <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
+        <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
+        <jaxen.version>1.2.0</jaxen.version>
+        <jhove.version>1.20.1</jhove.version>
+        <myfaces.version>2.3.10</myfaces.version>
+        <mysql.version>8.0.33</mysql.version>
+        <poi.version>5.2.5</poi.version>
+        <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
+        <saxon.version>9.9.1-8</saxon.version>
+        <log4j.version>2.19.0</log4j.version>
+        <junit.version>5.9.2</junit.version>
+        <opensearch.version>2.15.0</opensearch.version>
+        <opensearch-java.version>2.11.1</opensearch-java.version>
+        <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+
+        <!-- maven-resources-plugin versions greater 3.2.0 introduce changes that
+             stop the build in Eclipse on Windows from using "config-local" -->
+        <maven-resources-plugin.version>3.2.0</maven-resources-plugin.version>
+
+        <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
+        <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
+        <mockito.version>5.9.0</mockito.version>
+        <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
+        <!-- https://maven.apache.org/plugins/maven-checkstyle-plugin/check-mojo.html -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <selenium.version>3.141.59</selenium.version>
+        <spring.version>5.3.29</spring.version>
+        <spring.security.version>5.7.11</spring.security.version>
+        <!-- https://mvnrepository.com/artifact/org.flywaydb/flyway-maven-plugin -->
+        <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
+        <spotbugs-maven-plugin.version>4.8.6.2</spotbugs-maven-plugin.version>
+        <pitest.version>1.4.10</pitest.version>
+        <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
+        <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
+    </properties>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -127,7 +117,7 @@
             <dependency>
                 <groupId>com.itextpdf</groupId>
                 <artifactId>itextpdf</artifactId>
-                <version>5.5.13.3</version>
+                <version>5.5.13.4</version>
             </dependency>
             <dependency>
                 <groupId>com.opencsv</groupId>
@@ -138,13 +128,13 @@
                 <groupId>com.xebialabs.restito</groupId>
                 <artifactId>restito</artifactId>
                 <version>0.9.3</version>
+                <scope>test</scope>
                 <exclusions>
                     <exclusion>
                         <groupId>junit</groupId>
                         <artifactId>junit</artifactId>
                     </exclusion>
                 </exclusions>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>commons-codec</groupId>
@@ -158,8 +148,28 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>4.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
                 <artifactId>commons-configuration2</artifactId>
                 <version>2.10.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.geronimo.specs</groupId>
+                <artifactId>geronimo-jms_1.1_spec</artifactId>
+                <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-join</artifactId>
+                <version>9.10.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.poi</groupId>
+                <artifactId>poi</artifactId>
+                <version>${poi.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-beanutils</groupId>
@@ -185,7 +195,7 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.3.1</version>
+                <version>1.3.3</version>
             </dependency>
             <dependency>
                 <groupId>commons-net</groupId>
@@ -198,9 +208,19 @@
                 <version>2.2.21</version>
             </dependency>
             <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>2.2</version>
+            </dependency>
+            <dependency>
                 <groupId>javax.activation</groupId>
                 <artifactId>activation</artifactId>
                 <version>1.1.1</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>javax.persistence-api</artifactId>
+                <version>2.2</version>
             </dependency>
             <dependency>
                 <groupId>javax.el</groupId>
@@ -286,11 +306,21 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
-                <version>4.5.13</version>
+                <version>4.5.14</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.16</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-1.2-api</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.logging.log4j</groupId>
+                <artifactId>log4j-api</artifactId>
                 <version>${log4j.version}</version>
             </dependency>
             <dependency>
@@ -308,6 +338,11 @@ from system library in Java 11+ -->
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-web</artifactId>
                 <version>${log4j.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.lucene</groupId>
+                <artifactId>lucene-join</artifactId>
+                <version>8.11.1</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.myfaces.core</groupId>
@@ -332,7 +367,13 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
-                <version>3.0.0-RC1</version>
+                <version>3.0.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox-io</artifactId>
+                <version>3.0.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -340,7 +381,7 @@ from system library in Java 11+ -->
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
                 <exclusions>
-                    <!-- exlcude stax-api which provides javax.xml.namespace package
+                    <!-- exclude stax-api which provides javax.xml.namespace package
                          already included in system modules of Java 11+ -->
                     <exclusion>
                         <groupId>stax</groupId>
@@ -387,7 +428,7 @@ from system library in Java 11+ -->
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
-                    <!-- exlcude xml-apis which provides javax.xml.transform package
+                    <!-- exclude xml-apis which provides javax.xml.transform package
                          already included in system modules of Java 11+ -->
                     <exclusion>
                         <groupId>xml-apis</groupId>
@@ -414,12 +455,27 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.bouncycastle</groupId>
                 <artifactId>bcprov-jdk18on</artifactId>
-                <version>1.78</version>
+                <version>1.78.1</version>
             </dependency>
             <dependency>
                 <groupId>org.camunda.bpm.model</groupId>
                 <artifactId>camunda-bpmn-model</artifactId>
                 <version>7.17.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.camunda.bpm.model</groupId>
+                <artifactId>camunda-xml-model</artifactId>
+                <version>7.17.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <version>1.9.13</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <version>1.9.13</version>
             </dependency>
             <dependency>
                 <groupId>org.codehaus.jackson</groupId>
@@ -433,8 +489,8 @@ from system library in Java 11+ -->
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
-                        <artifactId>commons-io</artifactId>
                         <groupId>commons-io</groupId>
+                        <artifactId>commons-io</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -445,36 +501,53 @@ from system library in Java 11+ -->
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
-                        <artifactId>plexus-utils</artifactId>
                         <groupId>org.codehaus.plexus</groupId>
+                        <artifactId>plexus-utils</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>${elasticsearch.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-codec</groupId>
-                        <artifactId>commons-codec</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.opensearch</groupId>
+                <artifactId>opensearch</artifactId>
+                <version>${opensearch.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.client</groupId>
+                <groupId>org.opensearch</groupId>
+                <artifactId>opensearch-core</artifactId>
+                <version>${opensearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-rest-high-level-client</artifactId>
+                <version>${opensearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-rest-client</artifactId>
+                <version>${opensearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-java</artifactId>
+                <version>${opensearch-java.version}</version>
+            </dependency>
+<!--
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
                 <artifactId>transport</artifactId>
-                <version>${elasticsearch.version}</version>
+                <version>${opensearch.version}</version>
+            </dependency>
+-->
+            <dependency>
+                <groupId>org.opensearch.plugin</groupId>
+                <artifactId>transport-netty4-client</artifactId>
+                <version>${opensearch.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.plugin</groupId>
-                <artifactId>transport-netty4-client</artifactId>
-                <version>${elasticsearch.version}</version>
-                <scope>test</scope>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <version>1.7.32</version>
             </dependency>
             <dependency>
                 <!-- hibernate caching dependency -->
@@ -484,9 +557,19 @@ from system library in Java 11+ -->
                 <scope>runtime</scope>
             </dependency>
             <dependency>
-                <groupId>org.glassfish</groupId>
+                <groupId>jakarta.json</groupId>
+                <artifactId>jakarta.json-api</artifactId>
+                <version>2.1.3</version>
+            </dependency>
+            <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>2.0.2</version>
+            </dependency>
+            <dependency>
+                <groupId>org.eclipse.parsson</groupId>
                 <artifactId>jakarta.json</artifactId>
-                <version>1.1.6</version>
+                <version>1.1.7</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
@@ -496,6 +579,12 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.hamcrest</groupId>
                 <artifactId>hamcrest</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest-core</artifactId>
                 <version>${hamcrest.version}</version>
                 <scope>test</scope>
             </dependency>
@@ -524,7 +613,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.hibernate.validator</groupId>
                 <artifactId>hibernate-validator</artifactId>
-                <version>6.2.4.Final</version>
+                <version>6.2.5.Final</version>
                 <exclusions>
                     <exclusion>
                         <groupId>org.jboss.logging</groupId>
@@ -553,9 +642,27 @@ from system library in Java 11+ -->
                 <version>20231013</version>
             </dependency>
             <dependency>
+                <groupId>junit</groupId>
+                <artifactId>junit</artifactId>
+                <version>4.13.2</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-commons</artifactId>
+                <version>1.9.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -628,7 +735,12 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.passay</groupId>
                 <artifactId>passay</artifactId>
-                <version>1.6.2</version>
+                <version>1.6.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.primefaces</groupId>
+                <artifactId>primefaces</artifactId>
+                <version>8.0</version>
             </dependency>
             <dependency>
                 <groupId>org.primefaces.extensions</groupId>
@@ -653,13 +765,25 @@ from system library in Java 11+ -->
             </dependency>
             <dependency>
                 <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-api</artifactId>
+                <version>${selenium.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
+                <artifactId>selenium-remote-driver</artifactId>
+                <version>${selenium.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.seleniumhq.selenium</groupId>
                 <artifactId>selenium-firefox-driver</artifactId>
                 <version>${selenium.version}</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
-                        <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>commons-codec</groupId>
@@ -682,8 +806,8 @@ from system library in Java 11+ -->
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
-                        <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>commons-codec</groupId>
@@ -706,8 +830,8 @@ from system library in Java 11+ -->
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
-                        <artifactId>commons-logging</artifactId>
                         <groupId>commons-logging</groupId>
+                        <artifactId>commons-logging</artifactId>
                     </exclusion>
                     <exclusion>
                         <groupId>commons-codec</groupId>
@@ -722,6 +846,36 @@ from system library in Java 11+ -->
                         <artifactId>commons-exec</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <version>2.4.1</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-core</artifactId>
+                <version>${spring.security.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security</groupId>
+                <artifactId>spring-security-crypto</artifactId>
+                <version>${spring.security.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework.security</groupId>
@@ -745,28 +899,28 @@ from system library in Java 11+ -->
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-core</artifactId>
-                        <groupId>org.springframework</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-expression</artifactId>
-                        <groupId>org.springframework</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-beans</artifactId>
-                        <groupId>org.springframework</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-context</artifactId>
-                        <groupId>org.springframework</groupId>
                     </exclusion>
                     <exclusion>
+                        <groupId>org.springframework</groupId>
                         <artifactId>spring-web</artifactId>
-                        <groupId>org.springframework</groupId>
                     </exclusion>
                     <exclusion>
-                        <artifactId>spring-aop</artifactId>
                         <groupId>org.springframework</groupId>
+                        <artifactId>spring-aop</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -798,7 +952,8 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-matchers</artifactId>
-                <version>2.9.0</version>
+                <version>2.9.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
@@ -817,6 +972,55 @@ from system library in Java 11+ -->
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.3.0</version>
+                    <executions>
+                        <execution>
+                            <id>enforce-maven</id>
+                            <goals>
+                                <goal>enforce</goal>
+                            </goals>
+                            <configuration>
+                                <rules>
+                                    <requireMavenVersion>
+                                        <version>3.6.0</version>
+                                    </requireMavenVersion>
+                                    <requireJavaVersion>
+                                        <version>11</version>
+                                    </requireJavaVersion>
+                                </rules>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.owasp</groupId>
+                    <artifactId>dependency-check-maven</artifactId>
+                    <version>7.1.1</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>check</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                    <executions>
+                        <execution>
+                            <id>analyze</id>
+                            <phase>verify</phase>
+                            <configuration>
+                                <failOnViolation>true</failOnViolation>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
@@ -846,21 +1050,116 @@ from system library in Java 11+ -->
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>3.4.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-clean-plugin</artifactId>
+                    <version>3.1.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.11.0</version>
+                    <version>3.13.0</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>${maven-failsafe-plugin.version}</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <version>${maven-resources-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.2.5</version>
                 </plugin>
+                <plugin>
+                    <groupId>org.flywaydb</groupId>
+                    <artifactId>flyway-maven-plugin</artifactId>
+                    <version>${flyway-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.mysql</groupId>
+                            <artifactId>mysql-connector-j</artifactId>
+                            <version>${mysql.version}</version>
+                        </dependency>
+                       <dependency>
+                           <groupId>org.flywaydb</groupId>
+                          <artifactId>flyway-mysql</artifactId>
+                          <version>${flyway-maven-plugin.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>org.mariadb.jdbc</groupId>
+                            <artifactId>mariadb-java-client</artifactId>
+                            <version>${mariadb-java-client.version}</version>
+                        </dependency>
+                    </dependencies>
+                    <configuration>
+                        <configFiles>
+                            <!-- local configuration file -->
+                            <!--<configFile>${main.basedir}/config-local/flyway.properties</configFile>-->
+                            <configFile>
+                                ${main.basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+                            </configFile>
+                        </configFiles>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.10</version>
+                </plugin>
+                <plugin>
+                  <groupId>com.github.spotbugs</groupId>
+                  <artifactId>spotbugs-maven-plugin</artifactId>
+                  <version>${spotbugs-maven-plugin.version}</version>
+<!--
+                  <dependencies>
+                    <dependency>
+                      <groupId>com.github.spotbugs</groupId>
+                      <artifactId>spotbugs</artifactId>
+                      <version>4.7.3</version>
+                    </dependency>
+                  </dependencies>
+-->
+                  <executions>
+                    <execution>
+                      <id>analyze-compile</id>
+                      <phase>compile</phase>
+                      <goals>
+                        <goal>check</goal>
+                      </goals>
+                    </execution>
+                  </executions>
+                  <configuration>
+                    <effort>Max</effort>
+                    <threshold>Low</threshold>
+                    <xmlOutput>true</xmlOutput>
+<!--
+                    <findbugsXmlOutputDirectory>${project.build.directory}/target/spotbugs</findbugsXmlOutputDirectory>
+                    <includeFilterFile>spotbugs-include.xml</includeFilterFile>
+                    <excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+-->
+                    <plugins>
+                      <plugin>
+                        <groupId>com.h3xstream.findsecbugs</groupId>
+                        <artifactId>findsecbugs-plugin</artifactId>
+                        <version>1.12.0</version>
+                      </plugin>
+                    </plugins>
+                  </configuration>
+                </plugin>
             </plugins>
         </pluginManagement>
         <plugins>
             <plugin>
-                <inherited>false</inherited>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>3.1.0</version>
+                <inherited>false</inherited>
                 <configuration>
                     <filesets>
                         <fileset>
@@ -878,6 +1177,72 @@ from system library in Java 11+ -->
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
             </plugin>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                    </execution>
+<!-- check disabled because it will fail until better coverage is realized
+                    <execution>
+                        <id>jacoco-check</id>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <rule>
+                                    <element>PACKAGE</element>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.50</minimum>
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+-->
+                </executions>
+            </plugin>
+            <plugin>
+              <groupId>org.codehaus.mojo</groupId>
+              <artifactId>flatten-maven-plugin</artifactId>
+              <version>1.1.0</version>
+              <executions>
+                <execution>
+                  <id>flatten</id>
+                  <phase>process-resources</phase>
+                  <goals>
+                    <goal>flatten</goal>
+                  </goals>
+                </execution>
+                <execution>
+                  <id>flatten.clean</id>
+                  <phase>clean</phase>
+                  <goals>
+                    <goal>clean</goal>
+                  </goals>
+                </execution>
+              </executions>
+              <configuration>
+                <updatePomFile>true</updatePomFile>
+                <flattenMode>resolveCiFriendliesOnly</flattenMode>
+              </configuration>
+            </plugin>
         </plugins>
     </build>
 
@@ -889,7 +1254,6 @@ from system library in Java 11+ -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>${maven-failsafe-plugin.version}</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -909,31 +1273,29 @@ from system library in Java 11+ -->
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-checkstyle-plugin</artifactId>
-                        <version>3.1.2</version>
-                        <dependencies>
-                            <dependency>
-                                <groupId>com.puppycrawl.tools</groupId>
-                                <artifactId>checkstyle</artifactId>
-                                <version>10.3.2</version>
-                            </dependency>
-                        </dependencies>
                         <executions>
                             <execution>
                                 <id>checkstyle-check</id>
                                 <phase>validate</phase>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
                                 <configuration>
-                                    <encoding>UTF-8</encoding>
                                     <failOnViolation>true</failOnViolation>
                                     <failsOnError>false</failsOnError>
                                     <logViolationsToConsole>true</logViolationsToConsole>
                                     <maxAllowedViolations>${maxAllowedViolations}</maxAllowedViolations>
                                     <violationSeverity>warning</violationSeverity>
                                 </configuration>
-                                <goals>
-                                    <goal>check</goal>
-                                </goals>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.puppycrawl.tools</groupId>
+                                <artifactId>checkstyle</artifactId>
+                                <version>10.17.0</version>
+                            </dependency>
+                        </dependencies>
                     </plugin>
                 </plugins>
             </build>
@@ -941,7 +1303,7 @@ from system library in Java 11+ -->
         <profile>
             <id>development</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <activeByDefault>false</activeByDefault>
             </activation>
             <build>
                 <plugins>
@@ -965,7 +1327,6 @@ from system library in Java 11+ -->
                     </plugin>
                     <plugin>
                         <artifactId>maven-resources-plugin</artifactId>
-                        <version>${maven-resources-plugin.version}</version>
                         <executions>
                             <execution>
                                 <id>copy-files-on-build</id>
@@ -996,14 +1357,6 @@ from system library in Java 11+ -->
                     <plugin>
                         <groupId>com.github.spotbugs</groupId>
                         <artifactId>spotbugs-maven-plugin</artifactId>
-                        <version>${spotbugs-maven-plugin.version}</version>
-                        <configuration>
-                            <xmlOutput>true</xmlOutput>
-                            <xmlOutputDirectory>target/spotbugsreports</xmlOutputDirectory>
-                            <effort>Max</effort>
-                            <failOnError>false</failOnError>
-                            <threshold>medium</threshold>
-                        </configuration>
                         <executions>
                             <execution>
                                 <phase>compile</phase>
@@ -1012,6 +1365,13 @@ from system library in Java 11+ -->
                                 </goals>
                             </execution>
                         </executions>
+                        <configuration>
+                            <xmlOutput>true</xmlOutput>
+                            <xmlOutputDirectory>target/spotbugsreports</xmlOutputDirectory>
+                            <effort>Max</effort>
+                            <failOnError>false</failOnError>
+                            <threshold>medium</threshold>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -1024,27 +1384,6 @@ from system library in Java 11+ -->
                         <groupId>org.flywaydb</groupId>
                         <artifactId>flyway-maven-plugin</artifactId>
                         <version>${flyway-maven-plugin.version}</version>
-                        <configuration>
-                            <configFiles>
-                                <!-- local configuration file -->
-                                <!--<configFile>${basedir}/config-local/flyway.properties</configFile>-->
-                                <configFile>
-                                    ${basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
-                                </configFile>
-                            </configFiles>
-                        </configuration>
-                        <dependencies>
-                            <dependency>
-                                <groupId>mysql</groupId>
-                                <artifactId>mysql-connector-java</artifactId>
-                                <version>${mysql.version}</version>
-                            </dependency>
-                            <dependency>
-                                <groupId>org.mariadb.jdbc</groupId>
-                                <artifactId>mariadb-java-client</artifactId>
-                                <version>${mariadb-java-client.version}</version>
-                            </dependency>
-                        </dependencies>
                         <executions>
                             <execution>
                                 <phase>${phase.prop}</phase>
@@ -1054,6 +1393,27 @@ from system library in Java 11+ -->
                                 </goals>
                             </execution>
                         </executions>
+                        <dependencies>
+                            <dependency>
+                                <groupId>com.mysql</groupId>
+                                <artifactId>mysql-connector-j</artifactId>
+                                <version>${mysql.version}</version>
+                            </dependency>
+                            <dependency>
+                                <groupId>org.mariadb.jdbc</groupId>
+                                <artifactId>mariadb-java-client</artifactId>
+                                <version>${mariadb-java-client.version}</version>
+                            </dependency>
+                        </dependencies>
+                        <configuration>
+                            <configFiles>
+                                <!-- local configuration file -->
+                                <!--<configFile>${main.basedir}/config-local/flyway.properties</configFile>-->
+                                <configFile>
+                                    ${main.basedir}/Kitodo-DataManagement/src/main/resources/db/config/flyway.properties
+                                </configFile>
+                            </configFiles>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>
@@ -1066,6 +1426,16 @@ from system library in Java 11+ -->
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-javadoc-plugin</artifactId>
                         <version>${maven-javadoc-plugin.version}</version>
+                        <executions>
+                            <execution>
+                                <id>aggregate</id>
+                                <phase>site</phase>
+                                <goals>
+                                    <goal>aggregate</goal>
+                                </goals>
+                                <configuration></configuration>
+                            </execution>
+                        </executions>
                         <configuration>
                             <reportOutputDirectory>${doctarget}</reportOutputDirectory>
                             <destDir>${docdir}</destDir>
@@ -1073,17 +1443,6 @@ from system library in Java 11+ -->
                             <failOnError>false</failOnError>
                             <doclint>-html</doclint>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <id>aggregate</id>
-                                <goals>
-                                    <goal>aggregate</goal>
-                                </goals>
-                                <phase>site</phase>
-                                <configuration>
-                                </configuration>
-                            </execution>
-                        </executions>
                     </plugin>
                 </plugins>
             </build>

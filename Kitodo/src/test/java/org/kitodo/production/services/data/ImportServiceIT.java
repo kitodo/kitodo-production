@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.services.data;
@@ -46,7 +46,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.Metadata;
@@ -601,14 +600,8 @@ public class ImportServiceIT {
     private Process importProcess(String recordId, ImportConfiguration importConfiguration)
             throws IOException, ImportException {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, new HashMap<>());
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
         return importedProcess;
     }
 
@@ -616,14 +609,8 @@ public class ImportServiceIT {
                                                         Map<String, List<String>> presetMetadata)
             throws IOException, ImportException {
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         Process importedProcess = importService.importProcess(recordId, 1, 1,
                 importConfiguration, presetMetadata);
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
         return importedProcess;
     }
 }

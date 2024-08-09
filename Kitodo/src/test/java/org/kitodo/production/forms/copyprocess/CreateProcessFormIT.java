@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.forms.copyprocess;
@@ -25,7 +25,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataformat.Workpiece;
@@ -88,14 +87,8 @@ public class CreateProcessFormIT {
         underTest.getMainProcess().setTitle("title");
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         long before = processService.count();
         underTest.createNewProcess();
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
         long after = processService.count();
         assertEquals(before + 1, after, "No process was created!");
 
@@ -121,10 +114,8 @@ public class CreateProcessFormIT {
         underTest.getMainProcess().setTitle("title");
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        ExecutionPermission.setExecutePermission(script);
         long before = processService.count();
         underTest.createNewProcess();
-        ExecutionPermission.setNoExecutePermission(script);
         long after = processService.count();
         assertEquals(before + 1, after, "No process was created!");
 

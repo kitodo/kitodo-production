@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.command;
@@ -47,21 +47,12 @@ public class CommandTest {
             windows = true;
         } else {
             scriptExtension = ".sh";
-
-            setFileExecuteable(workingScript);
-            setFileExecuteable(workingScriptWithParameters);
-            setFileExecuteable(notWorkingScript);
         }
 
     }
 
     @AfterAll
     public static void tearDown() throws IOException {
-        if (!windows) {
-            setFileNotExecuteable(workingScript);
-            setFileNotExecuteable(workingScriptWithParameters);
-            setFileNotExecuteable(notWorkingScript);
-        }
     }
 
     @Test
@@ -147,38 +138,5 @@ public class CommandTest {
         assertEquals(expectedCommandResult.getMessages(),
                 commandResult.getMessages(),
                 "Result messages of CommandResults are not identical");
-    }
-
-    private static void setFileExecuteable(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-        perms.add(PosixFilePermission.OWNER_EXECUTE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-        perms.add(PosixFilePermission.OTHERS_EXECUTE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-        perms.add(PosixFilePermission.GROUP_EXECUTE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
-    }
-
-    private static void setFileNotExecuteable(File file) throws IOException {
-        Set<PosixFilePermission> perms = new HashSet<>();
-
-        perms.add(PosixFilePermission.OWNER_READ);
-        perms.add(PosixFilePermission.OWNER_WRITE);
-
-        perms.add(PosixFilePermission.OTHERS_READ);
-        perms.add(PosixFilePermission.OTHERS_WRITE);
-
-        perms.add(PosixFilePermission.GROUP_READ);
-        perms.add(PosixFilePermission.GROUP_WRITE);
-
-        Files.setPosixFilePermissions(file.toPath(), perms);
     }
 }

@@ -5,8 +5,8 @@
 --
 -- It is licensed under GNU General Public License version 3 or later.
 --
--- For the full copyright and license information, please read the
--- GPL3-License.txt file that was distributed with this source code.
+-- You should have received a copy of the GNU General Public License
+-- along with this program.  If not, see <https://www.gnu.org/licenses/>.
 --
 
 -- Change user group and role.
@@ -73,7 +73,7 @@ DELETE FROM authority WHERE title LIKE '%Batch_globalAssignable';
 --
 SET SQL_SAFE_UPDATES = 1;
 
--- 7. Add initial roles if they don not exists yet
+-- 7. Add initial roles if they do not exist yet
 --
 INSERT IGNORE INTO role (title, client_id) VALUES ('Administration', 1);
 INSERT IGNORE INTO role (title, client_id) VALUES ('ClientManagement', 1);

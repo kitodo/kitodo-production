@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.utils;
@@ -112,21 +112,18 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(double)")
     void isPositiveDoubleShouldNotFailForPositiveValue() {
         double value = 42;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(double)")
     void isPositiveDoubleShouldNotFailForPositiveBoundary() {
         double value = Double.MIN_VALUE;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(double)")
     void isPositiveDoubleShouldFailForZero() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = 0;
@@ -137,7 +134,6 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(double)")
     void isPositiveDoubleShouldFailForNegative() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = -299_792_458;
@@ -148,21 +144,18 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(long)")
     void isPositiveLongShouldNotFailForPositiveUpperBound() {
         long value = Long.MAX_VALUE;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(long)")
     void isPositiveLongShouldNotFailForPositiveLowerBound() {
         long value = 1;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(long)")
     void isPositiveLongShouldFailForZero() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = 0;
@@ -172,7 +165,6 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(long)")
     void isPositiveLongShouldFailForNegative() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = Long.MAX_VALUE + 1; // negative due to integer overflow

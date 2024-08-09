@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.api.dataformat;
@@ -29,7 +29,7 @@ public class MediaPartial {
      *
      * @param begin
      *         The begin as formatted time in form of
-     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
      */
     public MediaPartial(String begin) {
         this.begin = begin;
@@ -40,10 +40,10 @@ public class MediaPartial {
      *
      * @param begin
      *         The begin as formatted time in form of
-     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
      * @param extent
      *         The extent as formatted time in form of
-     *         {@link org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
+     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
      */
     public MediaPartial(String begin, String extent) {
         this(begin);

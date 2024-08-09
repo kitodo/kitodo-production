@@ -6,8 +6,8 @@
   *
   * It is licensed under GNU General Public License version 3 or later.
   *
-  * For the full copyright and license information, please read the
-  * GPL3-License.txt file that was distributed with this source code.
+  * You should have received a copy of the GNU General Public License
+  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -21,6 +21,7 @@
     </parent>
 
     <name>Kitodo - XML SchemaConverter</name>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-xml-schemaconverter</artifactId>
 
     <properties>
@@ -28,6 +29,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>
@@ -38,11 +43,13 @@
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
+            <artifactId>junit-jupiter-api</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>net.sf.saxon</groupId>

@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.api.dataeditor;
@@ -26,6 +26,7 @@ public interface DataEditorInterface {
      *            The URI to the xml file to read.
      * @param xsltFileUri
      *            The URI to the xsl file for transformation of old format goobi metadata files.
+     * @throws IOException if reading fails.
      */
     void readData(URI xmlFileUri, URI xsltFileUri) throws IOException;
 

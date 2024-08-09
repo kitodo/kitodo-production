@@ -5,20 +5,20 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,13 +33,12 @@ import java.util.Map;
 import java.util.OptionalInt;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 import org.kitodo.FileLoader;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -82,9 +81,6 @@ public class ProcessServiceIT {
 
     @BeforeAll
     public static void prepareDatabase() throws Exception {
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
         testProcessIds = MockDatabase.insertProcessesForHierarchyTests();
@@ -105,9 +101,6 @@ public class ProcessServiceIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         fileService.delete(URI.create("1"));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
     }
 
     @Test

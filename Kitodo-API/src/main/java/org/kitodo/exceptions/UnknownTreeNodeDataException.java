@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.exceptions;
@@ -15,6 +15,7 @@ public class UnknownTreeNodeDataException extends RuntimeException {
 
     /**
      * Constructor with given parameter name for exception message.
+     * @param type String which describes the unexpected type
      */
     public UnknownTreeNodeDataException(String type) {
         super("TreeNode contains data of unexpected type '" + type + "!");

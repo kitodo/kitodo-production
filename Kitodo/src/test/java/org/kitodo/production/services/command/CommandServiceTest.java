@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.services.command;
@@ -26,7 +26,6 @@ import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.api.command.CommandResult;
 
 public class CommandServiceTest {
@@ -50,23 +49,12 @@ public class CommandServiceTest {
             windows = true;
         } else {
             scriptExtension = ".sh";
-
-            ExecutionPermission.setExecutePermission(workingScript);
-            ExecutionPermission.setExecutePermission(workingScriptWithParameters);
-            ExecutionPermission.setExecutePermission(longWorkingScript2s);
-            ExecutionPermission.setExecutePermission(longWorkingScript1s);
         }
 
     }
 
     @AfterAll
     public static void tearDown() throws IOException {
-        if (!windows) {
-            ExecutionPermission.setNoExecutePermission(workingScript);
-            ExecutionPermission.setNoExecutePermission(workingScriptWithParameters);
-            ExecutionPermission.setNoExecutePermission(longWorkingScript2s);
-            ExecutionPermission.setNoExecutePermission(longWorkingScript1s);
-        }
     }
 
     @Test

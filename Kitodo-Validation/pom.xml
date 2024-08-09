@@ -7,8 +7,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  *
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -23,7 +23,7 @@
     </parent>
 
     <name>Kitodo - Validation</name>
-    <groupId>org.kitodo.validation</groupId>
+    <groupId>org.kitodo</groupId>
     <artifactId>kitodo-validation</artifactId>
 
     <properties>
@@ -31,6 +31,10 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.kitodo</groupId>
             <artifactId>kitodo-api</artifactId>

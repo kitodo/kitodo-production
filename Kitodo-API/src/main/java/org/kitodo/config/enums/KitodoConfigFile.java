@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.config.enums;
@@ -85,6 +85,7 @@ public enum KitodoConfigFile {
      * @param name
      *            of configuration file
      * @return File
+     * @throws FileNotFoundException if the configuration file is not found
      */
     public static KitodoConfigFile getByName(String name) throws FileNotFoundException {
         for (KitodoConfigFile file : KitodoConfigFile.values()) {

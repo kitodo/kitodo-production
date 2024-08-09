@@ -5,8 +5,8 @@
  *
  * It is licensed under GNU General Public License version 3 or later.
  *
- * For the full copyright and license information, please read the
- * GPL3-License.txt file that was distributed with this source code.
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package org.kitodo.production.services.workflow;
@@ -28,7 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.kitodo.ExecutionPermission;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.config.ConfigCore;
@@ -79,14 +78,6 @@ public class WorkflowControllerServiceIT {
         ProcessTestUtils.copyTestMetadataFile(workflowTestProcessId2, METADATA_TEST_FILENAME);
 
         usersDirectory.mkdir();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(scriptCreateDirUserHome);
-            ExecutionPermission.setExecutePermission(scriptCreateSymLink);
-            ExecutionPermission.setExecutePermission(scriptDeleteSymLink);
-            ExecutionPermission.setExecutePermission(scriptNotWorking);
-            ExecutionPermission.setExecutePermission(scriptWorking);
-        }
     }
 
     @AfterEach
@@ -96,14 +87,6 @@ public class WorkflowControllerServiceIT {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
         SecurityTestUtils.cleanSecurityContext();
-
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(scriptCreateDirUserHome);
-            ExecutionPermission.setNoExecutePermission(scriptCreateSymLink);
-            ExecutionPermission.setNoExecutePermission(scriptDeleteSymLink);
-            ExecutionPermission.setNoExecutePermission(scriptNotWorking);
-            ExecutionPermission.setNoExecutePermission(scriptWorking);
-        }
 
         usersDirectory.delete();
     }

@@ -23,7 +23,6 @@ Basic configuration files are located under `src/main/resources/` directory. To 
 
 Most probably, you will have to adjust these four files:
 * kitodo_config.properties
-* contentServerConfig.xml
 * hibernate.cfg.xml
 * log4j2.properties
 
