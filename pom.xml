@@ -53,8 +53,8 @@
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
         <hibernate.version>5.6.10.Final</hibernate.version>
-        <jaxb.api.version>2.3.1</jaxb.api.version>
-        <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
+        <jaxb.api.version>2.3.3</jaxb.api.version>
+        <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jhove.version>1.20.1</jhove.version>
@@ -226,8 +226,8 @@
             <!-- Include jaxb runtime dependencies which have been removed
 from system library in Java 11+ -->
             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jaxb.api.version}</version>
             </dependency>
             <dependency>
@@ -485,8 +485,8 @@ from system library in Java 11+ -->
             </dependency>
             <dependency>
                 <groupId>org.glassfish</groupId>
-                <artifactId>javax.json</artifactId>
-                <version>1.1.4</version>
+                <artifactId>jakarta.json</artifactId>
+                <version>1.1.6</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jaxb</groupId>
@@ -498,6 +498,18 @@ from system library in Java 11+ -->
                 <artifactId>hamcrest</artifactId>
                 <version>${hamcrest.version}</version>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <!-- can be removed with Hibernate 6.x -->
+                        <groupId>javax.xml.bind</groupId>
+                        <artifactId>jaxb-api</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
