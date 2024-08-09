@@ -87,6 +87,7 @@ public class ProcessForm extends TemplateBaseForm {
     private Property property;
     private final FilterMenu filterMenu = new FilterMenu(this);
     private final transient FileService fileService = ServiceManager.getFileService();
+    private final transient ProcessService processService = ServiceManager.getProcessService();
     private final transient WorkflowControllerService workflowControllerService = new WorkflowControllerService();
     private final String processEditPath = MessageFormat.format(REDIRECT_PATH, "processEdit");
 
@@ -274,71 +275,16 @@ public class ProcessForm extends TemplateBaseForm {
             Helper.setErrorMessage("processTitleInvalid", new Object[] {validateRegEx });
             return false;
         } else {
-            renamePropertiesValuesForProcessTitle(this.process.getProperties());
-            renamePropertiesValuesForProcessTitle(this.process.getTemplates());
-            removePropertiesWithEmptyTitle(this.process.getWorkpieces());
-
             try {
-                renameImageDirectories();
-                renameOcrDirectories();
-                renameDefinedDirectories();
+                processService.renameProcess(this.process, this.newProcessTitle);
             } catch (IOException | RuntimeException e) {
                 Helper.setErrorMessage("errorRenaming", new Object[] {Helper.getTranslation("directory") }, logger, e);
             }
-
-            this.process.setTitle(this.newProcessTitle);
 
             // remove Tiffwriter file
             ServiceManager.getKitodoScriptService().deleteTiffHeaderFile(List.of(process));
         }
         return true;
-    }
-
-    private void renamePropertiesValuesForProcessTitle(List<Property> properties) {
-        for (Property property : properties) {
-            if (Objects.nonNull(property.getValue()) && property.getValue().contains(this.process.getTitle())) {
-                property.setValue(property.getValue().replaceAll(this.process.getTitle(), this.newProcessTitle));
-            }
-        }
-    }
-
-    private void renameImageDirectories() throws IOException {
-        URI imageDirectory = fileService.getImagesDirectory(process);
-        renameDirectories(imageDirectory);
-    }
-
-    private void renameOcrDirectories() throws IOException {
-        URI ocrDirectory = fileService.getOcrDirectory(process);
-        renameDirectories(ocrDirectory);
-    }
-
-    private void renameDirectories(URI directory) throws IOException {
-        if (fileService.isDirectory(directory)) {
-            List<URI> subDirs = fileService.getSubUris(directory);
-            for (URI imageDir : subDirs) {
-                if (fileService.isDirectory(imageDir)) {
-                    fileService.renameFile(imageDir, imageDir.toString().replace(process.getTitle(), newProcessTitle));
-                }
-            }
-        }
-    }
-
-    private void renameDefinedDirectories() {
-        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        for (String processDir : processDirs) {
-            // TODO: check it out
-            URI processDirAbsolute = ServiceManager.getProcessService().getProcessDataDirectory(process)
-                    .resolve(processDir.replace("(processtitle)", process.getTitle()));
-
-            File dir = new File(processDirAbsolute);
-            boolean renamed;
-            if (dir.isDirectory()) {
-                renamed = dir.renameTo(new File(dir.getAbsolutePath().replace(process.getTitle(), newProcessTitle)));
-                if (!renamed) {
-                    Helper.setErrorMessage("errorRenaming", new Object[] {dir.getName() });
-                }
-            }
-        }
     }
 
     /**
@@ -742,7 +688,7 @@ public class ProcessForm extends TemplateBaseForm {
         this.process.getProperties().remove(this.property);
 
         List<Property> propertiesToFilterTitle = this.process.getProperties();
-        removePropertiesWithEmptyTitle(propertiesToFilterTitle);
+        processService.removePropertiesWithEmptyTitle(propertiesToFilterTitle, this.process);
         loadProcessProperties();
     }
 
@@ -754,16 +700,6 @@ public class ProcessForm extends TemplateBaseForm {
         newProperty.getProcesses().add(this.process);
         this.process.getProperties().add(newProperty);
         loadProcessProperties();
-    }
-
-    // TODO: is it really a case that title is empty?
-    private void removePropertiesWithEmptyTitle(List<Property> properties) {
-        for (Property processProperty : properties) {
-            if (Objects.isNull(processProperty.getTitle()) || processProperty.getTitle().isEmpty()) {
-                processProperty.getProcesses().clear();
-                this.process.getProperties().remove(processProperty);
-            }
-        }
     }
 
     /**
