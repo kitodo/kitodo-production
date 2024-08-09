@@ -444,8 +444,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * Returns the only metadata entry or null. Throws an IllegalStateException
      * if the value is ambiguous or cannot be cast.
      *
-     * @param <T>
-     *
      * @param values
      *            values obtained
      * @return the only entry or null
