@@ -85,6 +85,7 @@ public enum KitodoConfigFile {
      * @param name
      *            of configuration file
      * @return File
+     * @throws FileNotFoundException if the configuration file is not found
      */
     public static KitodoConfigFile getByName(String name) throws FileNotFoundException {
         for (KitodoConfigFile file : KitodoConfigFile.values()) {
