@@ -109,7 +109,7 @@ public class CreateNewProcessOrder {
      * @throws ProcessorException
      *             if the process count for the title is not exactly one
      */
-    public CreateNewProcessOrder(MapMessageObjectReader ticket) throws DAOException, DataException, JMSException,
+    CreateNewProcessOrder(MapMessageObjectReader ticket) throws DAOException, DataException, JMSException,
             ProcessorException {
         this.projectId = ticket.getMandatoryInteger(FIELD_PROJECT);
         this.templateId = ticket.getMandatoryInteger(FIELD_TEMPLATE);
@@ -231,7 +231,7 @@ public class CreateNewProcessOrder {
      * @return the project ID
      */
     @NonNull
-    public Integer getProjectId() {
+    Integer getProjectId() {
         return projectId;
     }
 
@@ -242,7 +242,7 @@ public class CreateNewProcessOrder {
      * @throws DAOException
      *             if the template cannot be loaded
      */
-    public Template getTemplate() throws DAOException {
+    Template getTemplate() throws DAOException {
         return ServiceManager.getTemplateService().getById(templateId);
     }
 
@@ -253,7 +253,7 @@ public class CreateNewProcessOrder {
      * @return the template ID
      */
     @NonNull
-    public Integer getTemplateId() {
+    Integer getTemplateId() {
         return templateId;
     }
 
@@ -266,7 +266,7 @@ public class CreateNewProcessOrder {
      * @return import instructions
      */
     @NonNull
-    public List<Pair<ImportConfiguration, String>> getImports() {
+    List<Pair<ImportConfiguration, String>> getImports() {
         return imports;
     }
 
@@ -278,7 +278,7 @@ public class CreateNewProcessOrder {
      * @return the title, if any
      */
     @NonNull
-    public Optional<String> getTitle() {
+    Optional<String> getTitle() {
         return title;
     }
 
@@ -290,21 +290,8 @@ public class CreateNewProcessOrder {
      *             if the process cannot be loaded
      */
     @CheckForNull
-    public Process getParent() throws DAOException {
+    Process getParent() throws DAOException {
         return parentId.isPresent() ? ServiceManager.getProcessService().getById(parentId.get()) : null;
-    }
-
-    /**
-     * Returns the (optional) parent record ID. If set, the process to be
-     * created must be created as the new last child under this parent process.
-     * Otherwise, a standalone process is created. Can be
-     * {@code Optional.empty()}, but never {@code null}.
-     * 
-     * @return the title, if any
-     */
-    @NonNull
-    public Optional<Integer> getParentId() {
-        return parentId;
     }
 
     /**
@@ -314,7 +301,7 @@ public class CreateNewProcessOrder {
      * @return
      */
     @NonNull
-    public Collection<Metadata> getMetadata() {
+    Collection<Metadata> getMetadata() {
         return metadata;
     }
 }

@@ -61,7 +61,6 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
     private static final List<LanguageRange> METADATA_LANGUAGE = Locale.LanguageRange.parse("en");
 
     private final ImportService importService = ServiceManager.getImportService();
-    private final ProcessService processService = ServiceManager.getProcessService();
     private final RulesetService rulesetService = ServiceManager.getRulesetService();
 
     private RulesetManagementInterface rulesetManagement;
