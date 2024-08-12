@@ -46,6 +46,44 @@ import net.bytebuddy.utility.nullability.MaybeNull;
  * Order to create a new process. This contains all the necessary data.
  */
 public class CreateNewProcessOrder {
+
+    /* Catalog imports can be specified (none, one or more). An
+     * "importconfiguration" and a search "value" must be specified. The search
+     * is carried out in the default search field. If no hit is found, or more
+     * than one, the search aborts with an error message. In the case of
+     * multiple imports, a repeated import is carried out according to the
+     * procedure specified in the rule set. */
+    private static final String FIELD_IMPORT = "import";
+    private static final String FIELD_IMPORT_CONFIG = "importconfiguration";
+    private static final String FIELD_IMPORT_VALUE = "value";
+
+    /* Additionally metadata can be passed. Passing multiple metadata or passing
+     * grouped metadata is also possible. */
+    private static final String FIELD_METADATA = "metadata";
+
+    /* A parent process can optionally be specified. The process ID or the
+     * process title can be specified. (If the value is all digits, it is
+     * considered the process ID, else it is considered the process title.) The
+     * process must be found in the client’s processes. If no parent process is
+     * specified, but a metadata entry with a use="higherLevelIdentifier" is
+     * included in the data from the catalog, the parent process is searched for
+     * using the metadata entry with use="recordIdentifier". It must already
+     * exist for the client. No parent process is implicitly created. The child
+     * process is added at the last position in the parent process. */
+    private static final String FIELD_PARENT = "parent";
+
+    // Mandatory information is the project ID.
+    private static final String FIELD_PROJECT = "project";
+
+    // Mandatory information is the process template.
+    private static final String FIELD_TEMPLATE = "template";
+
+    /* A process title can optionally be specified. If it is specified
+     * explicitly, exactly this process title is used, otherwise the system
+     * creates the process title according to the configured rule. The process
+     * title must still be unused for the client who owns the project. */
+    private static final String FIELD_TITLE = "title";
+
     private final Integer projectId;
     private final Integer templateId;
     private final List<Pair<ImportConfiguration, String>> imports;
@@ -74,14 +112,13 @@ public class CreateNewProcessOrder {
      */
     public CreateNewProcessOrder(MapMessageObjectReader ticket) throws DAOException, DataException, JMSException,
             ProcessorException {
-        this.projectId = ticket.getMandatoryInteger("project");
-        this.templateId = ticket.getMandatoryInteger("template");
-        this.imports = convertImports(ticket.getList("import"));
-        this.title = Optional.ofNullable(ticket.getString("title"));
-        this.parentId = Optional.ofNullable(convertProcessId(ticket.getString("parent")));
-        this.metadata = convertMetadata(ticket.getMapOfString("metadata"));
+        this.projectId = ticket.getMandatoryInteger(FIELD_PROJECT);
+        this.templateId = ticket.getMandatoryInteger(FIELD_TEMPLATE);
+        this.imports = convertImports(ticket.getList(FIELD_IMPORT));
+        this.title = Optional.ofNullable(ticket.getString(FIELD_TITLE));
+        this.parentId = Optional.ofNullable(convertProcessId(ticket.getString(FIELD_PARENT)));
+        this.metadata = convertMetadata(ticket.getMapOfString(FIELD_METADATA));
     }
-
 
     /**
      * Converts import details into safe data objects. For {@code null}, it will
@@ -108,9 +145,9 @@ public class CreateNewProcessOrder {
                 throw new IllegalArgumentException("Entry of \"imports\" is not a map");
             }
             Map<?, ?> map = (Map<?, ?>) dubious;
-            ImportConfiguration importconfiguration = importConfigurationService.getById(
-                    MapMessageObjectReader.getMandatoryInteger(map, "importconfiguration"));
-            String value = MapMessageObjectReader.getMandatoryString(map, "value");
+            ImportConfiguration importconfiguration = importConfigurationService.getById(MapMessageObjectReader
+                    .getMandatoryInteger(map, FIELD_IMPORT_CONFIG));
+            String value = MapMessageObjectReader.getMandatoryString(map, FIELD_IMPORT_VALUE);
             result.add(Pair.of(importconfiguration, value));
         }
         return result;
