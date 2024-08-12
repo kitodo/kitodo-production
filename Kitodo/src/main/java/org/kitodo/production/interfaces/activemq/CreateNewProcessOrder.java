@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import javax.jms.JMSException;
 
@@ -28,10 +29,16 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.ProcessorException;
+import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportConfigurationService;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import net.bytebuddy.utility.nullability.MaybeNull;
 
@@ -51,24 +58,30 @@ public class CreateNewProcessOrder {
      * 
      * @param ticket
      *            Active MQ message with (hopefully) all the data
-     * @throws JMSException
-     *             Defined by the JMS API. I have not seen any cases where this
-     *             would actually be thrown in the calls used here.
      * @throws DAOException
      *             if the ImportConfiguartionDAO is unable to find an import
      *             configuration with the given ID
+     * @throws DataException
+     *             if there is an error accessing the search service
      * @throws IllegalArgumentException
      *             If a required field is missing in the Active MQ message
      *             message, or contains inappropriate values.
+     * @throws JMSException
+     *             Defined by the JMS API. I have not seen any cases where this
+     *             would actually be thrown in the calls used here.
+     * @throws ProcessorException
+     *             if the process count for the title is not exactly one
      */
-    public CreateNewProcessOrder(MapMessageObjectReader ticket) throws JMSException, DAOException {
+    public CreateNewProcessOrder(MapMessageObjectReader ticket) throws DAOException, DataException, JMSException,
+            ProcessorException {
         this.projectId = ticket.getMandatoryInteger("project");
         this.templateId = ticket.getMandatoryInteger("template");
         this.imports = convertImports(ticket.getList("import"));
         this.title = Optional.ofNullable(ticket.getString("title"));
-        this.parentId = Optional.ofNullable(ticket.getInteger("parent"));
+        this.parentId = Optional.ofNullable(convertProcessId(ticket.getString("parent")));
         this.metadata = convertMetadata(ticket.getMapOfString("metadata"));
     }
+
 
     /**
      * Converts import details into safe data objects. For {@code null}, it will
@@ -101,6 +114,39 @@ public class CreateNewProcessOrder {
             result.add(Pair.of(importconfiguration, value));
         }
         return result;
+    }
+
+    /**
+     * Gets the process ID. If the string is an integer, it is used as the
+     * process ID. Otherwise it is considered a title and searched for. If it is
+     * a title, there must be exactly one process for it to be converted to an
+     * ID.
+     * 
+     * @param processId
+     *            parent process reference
+     * @return ID of the parent process
+     * @throws DataException
+     *             if there is an error accessing the search service
+     * @throws ProcessorException
+     *             if the process count for the title is not exactly one
+     */
+    @CheckForNull
+    private static final Integer convertProcessId(String processId) throws DataException, ProcessorException {
+        if (Objects.isNull(processId)) {
+            return null;
+        }
+        if (processId.matches("\\d+")) {
+            return Integer.valueOf(processId);
+        } else {
+            List<ProcessDTO> parents = ServiceManager.getProcessService().findByTitle(processId);
+            if (parents.size() == 0) {
+                throw new ProcessorException("Parent process not found");
+            } else if (parents.size() > 1) {
+                throw new ProcessorException("Parent process exists more than one");
+            } else {
+                return parents.get(0).getId();
+            }
+        }
     }
 
     /**
@@ -154,6 +200,17 @@ public class CreateNewProcessOrder {
     }
 
     /**
+     * Returns the production template.
+     * 
+     * @return the template
+     * @throws DAOException
+     *             if the template cannot be loaded
+     */
+    public Template getTemplate() throws DAOException {
+        return ServiceManager.getTemplateService().getById(templateId);
+    }
+
+    /**
      * Returns the production template ID. This is a mandatory field and can
      * never be {@code null}.
      * 
@@ -187,6 +244,18 @@ public class CreateNewProcessOrder {
     @NonNull
     public Optional<String> getTitle() {
         return title;
+    }
+
+    /**
+     * Returns the parent process, if any.
+     * 
+     * @return the parent process, or {@code null}
+     * @throws DAOException
+     *             if the process cannot be loaded
+     */
+    @CheckForNull
+    public Process getParent() throws DAOException {
+        return parentId.isPresent() ? ServiceManager.getProcessService().getById(parentId.get()) : null;
     }
 
     /**
