@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -300,18 +301,48 @@ public class MapMessageObjectReader {
     }
 
     @CheckForNull
-    public List<?> getList(String key) {
-        return null;
+    public List<?> getList(String key) throws JMSException {
+        Object valueObject = ticket.getObject(key);
+        if (Objects.isNull(valueObject)) {
+            return null;
+        }
+        if (!(valueObject instanceof List)) {
+            throw new IllegalArgumentException(key + " is not a List");
+        }
+        return (List<?>) valueObject;
     }
 
     @CheckForNull
-    public Integer getInteger(String key) {
-        return null;
+    public Integer getInteger(String key) throws JMSException {
+        Object valueObject = ticket.getObject(key);
+        if (Objects.isNull(valueObject)) {
+            return null;
+        }
+        if (!(valueObject instanceof Integer)) {
+            throw new IllegalArgumentException(key + " is not an Integer");
+        }
+        return (Integer) valueObject;
     }
 
     @CheckForNull
-    public Map<String, ?> getMapOfString(String string) {
-        return null;
+    public Map<String, ?> getMapOfString(String key) throws JMSException {
+        HashMap<String, Object> mapOfString = new HashMap<>();
+        Object mapObject = ticket.getObject(key);
+        if (Objects.isNull(mapObject)) {
+            return null;
+        }
+        if (!(mapObject instanceof Map)) {
+            throw new IllegalArgumentException("Incompatible types: \"" + key + WRONG_TYPE + "Map.");
+        }
+        for (Entry<?, ?> entry : ((Map<?, ?>) mapObject).entrySet()) {
+            Object entryKey = entry.getKey();
+            if (!(entryKey instanceof String)) {
+                throw new IllegalArgumentException("Incompatible types: A key element of \"" + key + WRONG_TYPE
+                        + "String.");
+            }
+            mapOfString.put(((String) entryKey), entry.getValue());
+        }
+        return mapOfString;
     }
 
     /**
