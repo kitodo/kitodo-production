@@ -16,6 +16,7 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Locale.LanguageRange;
 
 import javax.jms.JMSException;
@@ -30,8 +31,10 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -42,11 +45,14 @@ import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.ProcessHelper;
 import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
+import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.services.file.FileService;
 import org.xml.sax.SAXException;
 
 /**
@@ -57,9 +63,12 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
 
     private static final String ACQUISITION_STAGE = "create";
     private static final int IMPORT_DEPTH = 1;
+    private static final String LAST_CHILD = Integer.toString(Integer.MAX_VALUE);
     private static final List<LanguageRange> METADATA_LANGUAGE = Locale.LanguageRange.parse("en");
 
+    private final FileService fileService = ServiceManager.getFileService();
     private final ImportService importService = ServiceManager.getImportService();
+    private final ProcessService processService = ServiceManager.getProcessService();
     private final RulesetService rulesetService = ServiceManager.getRulesetService();
 
     private RulesetManagementInterface rulesetManagement;
@@ -101,20 +110,29 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             }
             ProcessFieldedMetadata processDetails = ProcessHelper.initializeProcessDetails(tempProcess.getWorkpiece()
                     .getLogicalStructure(), rulesetManagement, ACQUISITION_STAGE, METADATA_LANGUAGE);
+            Process process = tempProcess.getProcess();
+            Process parent = order.getParent();
             ProcessHelper.generateAtstslFields(tempProcess, processDetails.getRows(), Collections.emptyList(),
-                tempProcess.getProcess().getBaseType(), rulesetManagement, ACQUISITION_STAGE, METADATA_LANGUAGE, order
-                        .getParent(), true);
+                process.getBaseType(), rulesetManagement, ACQUISITION_STAGE, METADATA_LANGUAGE, parent, true);
             if (order.getTitle().isPresent()) {
-                tempProcess.getProcess().setTitle(order.getTitle().get());
+                process.setTitle(order.getTitle().get());
             }
-            if (!ProcessValidator.isProcessTitleCorrect(tempProcess.getProcess().getTitle())) {
-                throw new ProcessorException(Helper.getTranslation("processTitleAlreadyInUse", tempProcess.getProcess()
-                        .getTitle()));
+            if (!ProcessValidator.isProcessTitleCorrect(process.getTitle())) {
+                throw new ProcessorException(Helper.getTranslation("processTitleAlreadyInUse", process.getTitle()));
             }
-        } catch (DataException | DAOException | InvalidMetadataValueException | IOException | NoRecordFoundException
-                | NoSuchMetadataFieldException | ParserConfigurationException | ProcessGenerationException
-                | SAXException | TransformerException | UnsupportedFormatException | URISyntaxException
-                | XPathExpressionException e) {
+            processService.save(process);
+            fileService.createProcessLocation(process);
+            if (Objects.nonNull(parent)) {
+                MetadataEditor.addLink(parent, LAST_CHILD, process.getId());
+                parent.getChildren().add(process);
+                process.setParent(parent);
+                processService.save(process);
+                processService.save(parent);
+            }
+        } catch (CommandException | DataException | DAOException | InvalidMetadataValueException | IOException
+                | NoRecordFoundException | NoSuchMetadataFieldException | ParserConfigurationException
+                | ProcessGenerationException | SAXException | TransformerException | UnsupportedFormatException
+                | URISyntaxException | XPathExpressionException e) {
             throw new ProcessorException(e.getMessage());
         }
     }
