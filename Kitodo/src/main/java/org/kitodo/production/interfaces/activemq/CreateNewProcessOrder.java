@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.regex.Pattern;
 
 import javax.jms.JMSException;
 
@@ -40,7 +39,7 @@ import org.kitodo.production.services.data.ImportConfigurationService;
 
 import edu.umd.cs.findbugs.annotations.CheckForNull;
 import edu.umd.cs.findbugs.annotations.NonNull;
-import net.bytebuddy.utility.nullability.MaybeNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Order to create a new process. This contains all the necessary data.
@@ -131,7 +130,7 @@ public class CreateNewProcessOrder {
      *             if the ImportConfiguartionDAO is unable to find an import
      *             configuration with that ID
      */
-    private static final List<Pair<ImportConfiguration, String>> convertImports(@MaybeNull List<?> imports)
+    private static final List<Pair<ImportConfiguration, String>> convertImports(@Nullable List<?> imports)
             throws DAOException {
 
         if (Objects.isNull(imports) || imports.isEmpty()) {
@@ -190,7 +189,7 @@ public class CreateNewProcessOrder {
      * Converts metadata details into safe data objects. For {@code null}, it
      * will return an empty collection, never {@code null}.
      */
-    private static final HashSet<Metadata> convertMetadata(@MaybeNull Map<?, ?> metadata) {
+    private static final HashSet<Metadata> convertMetadata(@Nullable Map<?, ?> metadata) {
 
         HashSet<Metadata> result = new HashSet<>();
         if (Objects.isNull(metadata)) {
