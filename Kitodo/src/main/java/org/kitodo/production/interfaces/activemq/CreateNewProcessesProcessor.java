@@ -46,7 +46,6 @@ import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.process.ProcessValidator;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
-import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
 import org.xml.sax.SAXException;
 
@@ -120,6 +119,15 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
         }
     }
 
+    /**
+     * Imports a dataset with an import configuration.
+     * 
+     * @param order
+     *            order for creating the process
+     * @param which
+     *            which dataset should be imported
+     * @return the imported dataset
+     */
     private TempProcess importProcess(CreateNewProcessOrder order, int which) throws DAOException,
             InvalidMetadataValueException, IOException, NoRecordFoundException, NoSuchMetadataFieldException,
             ParserConfigurationException, ProcessGenerationException, ProcessorException, SAXException,
