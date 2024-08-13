@@ -61,8 +61,8 @@ import org.xml.sax.SAXException;
 public class CreateNewProcessesProcessor extends ActiveMQProcessor {
     private static final Logger logger = LogManager.getLogger(CreateNewProcessesProcessor.class);
 
-    private static final String ACQUISITION_STAGE = "create";
-    private static final int IMPORT_DEPTH = 1;
+    private static final String ACQUISITION_STAGE_PROCESS_CREATION = "create";
+    private static final int IMPORT_WITHOUT_ANY_HIERARCHY = 1;
     private static final String LAST_CHILD = Integer.toString(Integer.MAX_VALUE);
     private static final List<LanguageRange> METADATA_LANGUAGE = Locale.LanguageRange.parse("en");
 
@@ -98,7 +98,8 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
                 tempProcess.verifyDocType();
                 for (int which = 1; which < order.getImports().size(); which++) {
                     rulesetManagement.updateMetadata(tempProcess.getWorkpiece().getLogicalStructure().getType(),
-                        tempProcess.getWorkpiece().getLogicalStructure().getMetadata(), ACQUISITION_STAGE,
+                        tempProcess.getWorkpiece().getLogicalStructure().getMetadata(),
+                        ACQUISITION_STAGE_PROCESS_CREATION,
                         importProcess(order, which).getWorkpiece().getLogicalStructure().getMetadata());
                 }
             } else {
@@ -109,11 +110,12 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
                 tempProcess.verifyDocType();
             }
             ProcessFieldedMetadata processDetails = ProcessHelper.initializeProcessDetails(tempProcess.getWorkpiece()
-                    .getLogicalStructure(), rulesetManagement, ACQUISITION_STAGE, METADATA_LANGUAGE);
+                    .getLogicalStructure(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE);
             Process process = tempProcess.getProcess();
             Process parent = order.getParent();
             ProcessHelper.generateAtstslFields(tempProcess, processDetails.getRows(), Collections.emptyList(),
-                process.getBaseType(), rulesetManagement, ACQUISITION_STAGE, METADATA_LANGUAGE, parent, true);
+                process.getBaseType(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE, parent,
+                true);
             if (order.getTitle().isPresent()) {
                 process.setTitle(order.getTitle().get());
             }
@@ -151,9 +153,10 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             ParserConfigurationException, ProcessGenerationException, ProcessorException, SAXException,
             TransformerException, UnsupportedFormatException, URISyntaxException, XPathExpressionException {
 
-        List<TempProcess> processHierarchy = importService.importProcessHierarchy(order.getImports().get(which)
-                .getValue(), order.getImports().get(which).getKey(), order.getProjectId(), order.getTemplateId(),
-            IMPORT_DEPTH, rulesetManagement.getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
+        List<TempProcess> processHierarchy = importService.importProcessHierarchy(
+                order.getImports().get(which).getValue(), order.getImports().get(which).getKey(),
+                order.getProjectId(), order.getTemplateId(), IMPORT_WITHOUT_ANY_HIERARCHY,
+                rulesetManagement.getFunctionalKeys(FunctionalMetadata.HIGHERLEVEL_IDENTIFIER));
         if (processHierarchy.size() == 0) {
             throw new ProcessorException("Process was not imported");
         } else if (processHierarchy.size() > 1) {
