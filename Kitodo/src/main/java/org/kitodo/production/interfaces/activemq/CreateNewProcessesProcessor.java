@@ -16,8 +16,9 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.Objects;
 import java.util.Locale.LanguageRange;
+import java.util.Objects;
+import java.util.Set;
 
 import javax.jms.JMSException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -26,13 +27,16 @@ import javax.xml.xpath.XPathExpressionException;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
+import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -52,6 +56,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.RulesetService;
+import org.kitodo.production.services.data.TaskService;
+import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.xml.sax.SAXException;
 
@@ -63,13 +69,15 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
 
     private static final String ACQUISITION_STAGE_PROCESS_CREATION = "create";
     private static final int IMPORT_WITHOUT_ANY_HIERARCHY = 1;
-    private static final String LAST_CHILD = Integer.toString(Integer.MAX_VALUE);
+    private static final String LAST_CHILD = Integer.toString(-1);
     private static final List<LanguageRange> METADATA_LANGUAGE = Locale.LanguageRange.parse("en");
 
     private final FileService fileService = ServiceManager.getFileService();
     private final ImportService importService = ServiceManager.getImportService();
+    private final MetsService metsService = ServiceManager.getMetsService();
     private final ProcessService processService = ServiceManager.getProcessService();
     private final RulesetService rulesetService = ServiceManager.getRulesetService();
+    private final TaskService taskService = ServiceManager.getTaskService();
 
     private RulesetManagementInterface rulesetManagement;
 
@@ -97,10 +105,11 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
                 tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(order.getMetadata());
                 tempProcess.verifyDocType();
                 for (int which = 1; which < order.getImports().size(); which++) {
+                    TempProcess repeatedImport = importProcess(order, which);
+                    Set<Metadata> metadata = repeatedImport.getWorkpiece().getLogicalStructure().getMetadata();
                     rulesetManagement.updateMetadata(tempProcess.getWorkpiece().getLogicalStructure().getType(),
                         tempProcess.getWorkpiece().getLogicalStructure().getMetadata(),
-                        ACQUISITION_STAGE_PROCESS_CREATION,
-                        importProcess(order, which).getWorkpiece().getLogicalStructure().getMetadata());
+                        ACQUISITION_STAGE_PROCESS_CREATION, metadata);
                 }
             } else {
                 ProcessGenerator processGenerator = new ProcessGenerator();
@@ -109,32 +118,33 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
                 tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(order.getMetadata());
                 tempProcess.verifyDocType();
             }
+            Process process = tempProcess.getProcess();
             ProcessFieldedMetadata processDetails = ProcessHelper.initializeProcessDetails(tempProcess.getWorkpiece()
                     .getLogicalStructure(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE);
-            Process process = tempProcess.getProcess();
-            Process parent = order.getParent();
+            Process parentProcess = order.getParent();
             ProcessHelper.generateAtstslFields(tempProcess, processDetails.getRows(), Collections.emptyList(),
                 tempProcess.getWorkpiece().getLogicalStructure().getType(), rulesetManagement,
-                ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE, parent, true);
+                ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE, parentProcess, true);
             if (order.getTitle().isPresent()) {
                 process.setTitle(order.getTitle().get());
             }
             if (!ProcessValidator.isProcessTitleCorrect(process.getTitle())) {
                 throw new ProcessorException(Helper.getTranslation("processTitleAlreadyInUse", process.getTitle()));
             }
-            processService.save(process);
+            saveProcess(process);
             fileService.createProcessLocation(process);
-            if (Objects.nonNull(parent)) {
-                MetadataEditor.addLink(parent, LAST_CHILD, process.getId());
-                parent.getChildren().add(process);
-                process.setParent(parent);
-                processService.save(process);
-                processService.save(parent);
+            metsService.saveWorkpiece(tempProcess.getWorkpiece(), processService.getMetadataFileUri(process));
+            if (Objects.nonNull(parentProcess)) {
+                MetadataEditor.addLink(parentProcess, LAST_CHILD, process.getId());
+                process.setParent(parentProcess);
+                parentProcess.getChildren().add(process);
+                saveProcess(process);
+                saveProcess(parentProcess);
             }
-        } catch (CommandException | DataException | DAOException | InvalidMetadataValueException | IOException
-                | NoRecordFoundException | NoSuchMetadataFieldException | ParserConfigurationException
-                | ProcessGenerationException | SAXException | TransformerException | UnsupportedFormatException
-                | URISyntaxException | XPathExpressionException e) {
+        } catch (CommandException | CustomResponseException | DataException | DAOException
+                | InvalidMetadataValueException | IOException | NoRecordFoundException | NoSuchMetadataFieldException
+                | ParserConfigurationException | ProcessGenerationException | SAXException | TransformerException
+                | UnsupportedFormatException | URISyntaxException | XPathExpressionException e) {
             throw new ProcessorException(e.getMessage());
         }
     }
@@ -163,5 +173,18 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             throw new ProcessorException(processHierarchy.size() + " processes were imported");
         }
         return processHierarchy.get(0);
+    }
+
+    /**
+     * When the process is saved, the tasks are also indexed.
+     * 
+     * @param process
+     *            process to be saved
+     */
+    private void saveProcess(Process process) throws DataException, CustomResponseException, IOException {
+        processService.save(process, true);
+        for (Task task : process.getTasks()) {
+            taskService.saveToIndex(task, true);
+        }
     }
 }
