@@ -12,6 +12,7 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.faces.model.SelectItem;
 
