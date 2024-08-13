@@ -58,11 +58,11 @@ public class SessionService implements HttpSessionListener {
             if (principal instanceof SecurityUserDetails) {
                 expireSessionsOfUser((SecurityUserDetails) principal);
             } else {
-                logger.warn(MessageFormat.format("Cannot expire session: {0} !instanceof SecurityUserDetails",
+                logger.warn(MessageFormat.format("Cannot expire session: {0} is not an instance of SecurityUserDetails",
                     Helper.getObjectDescription(principal)));
             }
         } else {
-            logger.warn(MessageFormat.format("Cannot expire session: {0} !instanceof SecurityContextImpl",
+            logger.warn(MessageFormat.format("Cannot expire session: {0} is not an instance of SecurityContextImpl",
                 Helper.getObjectDescription(securityContextObject)));
         }
     }
