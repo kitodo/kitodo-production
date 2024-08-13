@@ -215,7 +215,7 @@ public class TempProcess {
                 if (docTypeMetadata.isPresent() && docTypeMetadata.get() instanceof MetadataEntry) {
                     String docType = ((MetadataEntry)docTypeMetadata.get()).getValue();
                     if (StringUtils.isNotBlank(docType)
-                            && !this.getWorkpiece().getLogicalStructure().getType().equals(docType)) {
+                            && !Objects.equals(this.getWorkpiece().getLogicalStructure().getType(), docType)) {
                         this.getWorkpiece().getLogicalStructure().setType(docType);
                     }
                 }
