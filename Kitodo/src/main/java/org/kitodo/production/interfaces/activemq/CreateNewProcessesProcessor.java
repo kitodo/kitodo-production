@@ -114,8 +114,8 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             Process process = tempProcess.getProcess();
             Process parent = order.getParent();
             ProcessHelper.generateAtstslFields(tempProcess, processDetails.getRows(), Collections.emptyList(),
-                process.getBaseType(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE, parent,
-                true);
+                tempProcess.getWorkpiece().getLogicalStructure().getType(), rulesetManagement,
+                ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE, parent, true);
             if (order.getTitle().isPresent()) {
                 process.setTitle(order.getTitle().get());
             }
