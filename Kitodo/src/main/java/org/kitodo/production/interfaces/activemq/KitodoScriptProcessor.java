@@ -13,6 +13,7 @@ package org.kitodo.production.interfaces.activemq;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -47,8 +48,15 @@ public class KitodoScriptProcessor extends ActiveMQProcessor {
 
     @Override
     protected void process(MapMessageObjectReader ticket) throws ProcessorException, JMSException {
+        final List<String> allowedCommands = Arrays.asList(ConfigCore.getParameter(
+            ParameterCore.ACTIVE_MQ_KITODO_SCRIPT_ALLOW).split(","));
         try {
             String script = ticket.getMandatoryString("script");
+            int space = script.indexOf(' ');
+            if (!allowedCommands.contains(script.substring(7, space >= 0 ? space : script.length()))) {
+                throw new IllegalArgumentException((space >= 0 ? script.substring(0, space) : script)
+                        + " is not allowed");
+            }
             Collection<Integer> processIds = ticket.getCollectionOfInteger("processes");
             List<Process> processes = new ArrayList<>(processIds.size());
             for (Integer id : processIds) {

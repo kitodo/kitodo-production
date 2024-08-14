@@ -621,6 +621,8 @@ public enum ParameterCore implements ParameterInterface {
 
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
 
+    ACTIVE_MQ_KITODO_SCRIPT_ALLOW(new Parameter<UndefinedParameter>("activeMQ.kitodoScript.allow")),
+
     ACTIVE_MQ_KITODO_SCRIPT_QUEUE(new Parameter<UndefinedParameter>("activeMQ.kitodoScript.queue")),
 
     ACTIVE_MQ_TASK_ACTION_QUEUE(new Parameter<UndefinedParameter>("activeMQ.taskAction.queue")),

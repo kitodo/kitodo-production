@@ -12,6 +12,7 @@
 package org.kitodo.production.interfaces.activemq;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.anyList;
 import static org.mockito.Mockito.anyString;
 import static org.mockito.Mockito.doNothing;
@@ -98,5 +99,21 @@ public class KitodoScriptProcessorIT {
         assertEquals("action:test", scriptCaptor.getValue(), "should have passed the script to be executed");
         assertEquals(1, processCaptor.getAllValues().size(), "should have passed one process");
         assertEquals(1, processCaptor.getAllValues().get(0).get(0).getId(), "should have passed process 1");
+    }
+
+    @Test
+    public void shouldNotExecuteKitodoScript() throws Exception {
+        // test data
+        MapMessageObjectReader mockedMessage = mock(MapMessageObjectReader.class);
+        when(mockedMessage.getMandatoryString("script")).thenReturn("action:other");
+
+        // the object to be tested
+        KitodoScriptProcessor underTest = new KitodoScriptProcessor();
+
+        // carry out test
+        IllegalArgumentException illegalArgumentException = assertThrows(IllegalArgumentException.class, () -> underTest
+                .process(mockedMessage));
+        assertEquals("action:other is not allowed", illegalArgumentException.getMessage(),
+            "should report that the action is not permitted");
     }
 }
