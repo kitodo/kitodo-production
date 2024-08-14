@@ -20,15 +20,13 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
-import javax.servlet.http.HttpSessionAttributeListener;
-import javax.servlet.http.HttpSessionBindingEvent;
 
 /**
  * Listener to set up Kitodo versioning information from Manifest on application
  * startup.
  */
 @WebListener
-public class KitodoVersionListener implements ServletContextListener, HttpSessionAttributeListener {
+public class KitodoVersionListener implements ServletContextListener {
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -50,21 +48,4 @@ public class KitodoVersionListener implements ServletContextListener, HttpSessio
     public void contextDestroyed(ServletContextEvent sce) {
         // nothing is done here
     }
-
-    @Override
-    public void attributeAdded(HttpSessionBindingEvent sbe) {
-        // nothing is done here
-    }
-
-    @Override
-
-    public void attributeRemoved(HttpSessionBindingEvent sbe) {
-        // nothing is done here
-    }
-
-    @Override
-    public void attributeReplaced(HttpSessionBindingEvent sbe) {
-        // nothing is done here
-    }
-
 }
