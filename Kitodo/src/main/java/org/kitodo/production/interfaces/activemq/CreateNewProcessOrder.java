@@ -11,6 +11,10 @@
 
 package org.kitodo.production.interfaces.activemq;
 
+import edu.umd.cs.findbugs.annotations.CheckForNull;
+import edu.umd.cs.findbugs.annotations.NonNull;
+import edu.umd.cs.findbugs.annotations.Nullable;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -36,10 +40,6 @@ import org.kitodo.exceptions.ProcessorException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ImportConfigurationService;
-
-import edu.umd.cs.findbugs.annotations.CheckForNull;
-import edu.umd.cs.findbugs.annotations.NonNull;
-import edu.umd.cs.findbugs.annotations.Nullable;
 
 /**
  * Order to create a new process. This contains all the necessary data.
@@ -298,7 +298,7 @@ public class CreateNewProcessOrder {
      * Specifies the metadata for the logical structure root of the process to
      * be created. Can be empty, but never {@code null}.
      * 
-     * @return
+     * @return the metadata
      */
     @NonNull
     Collection<Metadata> getMetadata() {
