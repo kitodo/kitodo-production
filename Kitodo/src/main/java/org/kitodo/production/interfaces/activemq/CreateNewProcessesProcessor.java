@@ -91,61 +91,54 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
         super(ConfigCore.getOptionalString(ParameterCore.ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE).orElse(null));
     }
 
-    /*
-     * The main routine processing incoming tickets.
-     */
+    /* The main routine processing incoming tickets. The function has been
+     * divided into three parts so that it is not too long. */
     @Override
     protected void process(MapMessageObjectReader ticket) throws ProcessorException, JMSException {
         try {
             CreateNewProcessOrder order = new CreateNewProcessOrder(ticket);
             rulesetManagement = rulesetService.openRuleset(order.getTemplate().getRuleset());
-            TempProcess tempProcess;
-            if (!order.getImports().isEmpty()) {
-                tempProcess = importProcess(order, 0);
-                tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(order.getMetadata());
-                tempProcess.verifyDocType();
-                for (int which = 1; which < order.getImports().size(); which++) {
-                    TempProcess repeatedImport = importProcess(order, which);
-                    Set<Metadata> metadata = repeatedImport.getWorkpiece().getLogicalStructure().getMetadata();
-                    rulesetManagement.updateMetadata(tempProcess.getWorkpiece().getLogicalStructure().getType(),
-                        tempProcess.getWorkpiece().getLogicalStructure().getMetadata(),
-                        ACQUISITION_STAGE_PROCESS_CREATION, metadata);
-                }
-            } else {
-                ProcessGenerator processGenerator = new ProcessGenerator();
-                processGenerator.generateProcess(order.getTemplateId(), order.getProjectId());
-                tempProcess = new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece());
-                tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(order.getMetadata());
-                tempProcess.verifyDocType();
-            }
+            TempProcess tempProcess = obtainTempProcess(order);
             Process process = tempProcess.getProcess();
-            ProcessFieldedMetadata processDetails = ProcessHelper.initializeProcessDetails(tempProcess.getWorkpiece()
-                    .getLogicalStructure(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE);
-            Process parentProcess = order.getParent();
-            ProcessHelper.generateAtstslFields(tempProcess, processDetails.getRows(), Collections.emptyList(),
-                tempProcess.getWorkpiece().getLogicalStructure().getType(), rulesetManagement,
-                ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE, parentProcess, true);
-            if (order.getTitle().isPresent()) {
-                process.setTitle(order.getTitle().get());
-            }
-            if (!ProcessValidator.isProcessTitleCorrect(process.getTitle())) {
-                throw new ProcessorException(Helper.getTranslation("processTitleAlreadyInUse", process.getTitle()));
-            }
-            saveProcess(process);
-            fileService.createProcessLocation(process);
-            metsService.saveWorkpiece(tempProcess.getWorkpiece(), processService.getMetadataFileUri(process));
-            if (Objects.nonNull(parentProcess)) {
-                MetadataEditor.addLink(parentProcess, LAST_CHILD, process.getId());
-                process.setParent(parentProcess);
-                parentProcess.getChildren().add(process);
-                saveProcess(process);
-                saveProcess(parentProcess);
-            }
+            Process parentProcess = formProcessTitle(order, tempProcess, process);
+            createProcess(tempProcess, process, parentProcess);
+
         } catch (CommandException | CustomResponseException | DataException | DAOException
                 | InvalidMetadataValueException | IOException | NoRecordFoundException | NoSuchMetadataFieldException
                 | ParserConfigurationException | ProcessGenerationException | SAXException | TransformerException
                 | UnsupportedFormatException | URISyntaxException | XPathExpressionException e) {
             throw new ProcessorException(e.getMessage());
+        }
+    }
+
+    /* In the first part of the processing routine, the process is either
+     * created without import, or it is imported. The existing data is then
+     * added. */
+    private TempProcess obtainTempProcess(CreateNewProcessOrder order) throws DAOException,
+            InvalidMetadataValueException,
+            IOException, NoRecordFoundException, NoSuchMetadataFieldException, ParserConfigurationException,
+            ProcessGenerationException, ProcessorException, SAXException, TransformerException,
+            UnsupportedFormatException, URISyntaxException, XPathExpressionException {
+
+        if (order.getImports().isEmpty()) {
+            ProcessGenerator processGenerator = new ProcessGenerator();
+            processGenerator.generateProcess(order.getTemplateId(), order.getProjectId());
+            TempProcess tempProcess = new TempProcess(processGenerator.getGeneratedProcess(), new Workpiece());
+            tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(order.getMetadata());
+            tempProcess.verifyDocType();
+            return tempProcess;
+        } else {
+            TempProcess tempProcess = importProcess(order, 0);
+            tempProcess.getWorkpiece().getLogicalStructure().getMetadata().addAll(order.getMetadata());
+            tempProcess.verifyDocType();
+            for (int which = 1; which < order.getImports().size(); which++) {
+                TempProcess repeatedImport = importProcess(order, which);
+                Set<Metadata> metadata = repeatedImport.getWorkpiece().getLogicalStructure().getMetadata();
+                rulesetManagement.updateMetadata(tempProcess.getWorkpiece().getLogicalStructure().getType(),
+                    tempProcess.getWorkpiece().getLogicalStructure().getMetadata(),
+                    ACQUISITION_STAGE_PROCESS_CREATION, metadata);
+            }
+            return tempProcess;
         }
     }
 
@@ -173,6 +166,43 @@ public class CreateNewProcessesProcessor extends ActiveMQProcessor {
             throw new ProcessorException(processHierarchy.size() + " processes were imported");
         }
         return processHierarchy.get(0);
+    }
+
+    /* In the second and middle part of the processing routine, the process
+     * title is generated. */
+    private Process formProcessTitle(CreateNewProcessOrder order, TempProcess tempProcess, Process process)
+            throws DAOException, ProcessGenerationException, ProcessorException {
+
+        ProcessFieldedMetadata processDetails = ProcessHelper.initializeProcessDetails(tempProcess.getWorkpiece()
+                .getLogicalStructure(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION, METADATA_LANGUAGE);
+        Process parentProcess = order.getParent();
+        ProcessHelper.generateAtstslFields(tempProcess, processDetails.getRows(), Collections.emptyList(), tempProcess
+                .getWorkpiece().getLogicalStructure().getType(), rulesetManagement, ACQUISITION_STAGE_PROCESS_CREATION,
+            METADATA_LANGUAGE, parentProcess, true);
+        if (order.getTitle().isPresent()) {
+            process.setTitle(order.getTitle().get());
+        }
+        if (!ProcessValidator.isProcessTitleCorrect(process.getTitle())) {
+            throw new ProcessorException(Helper.getTranslation("processTitleAlreadyInUse", process.getTitle()));
+        }
+        return parentProcess;
+    }
+
+    /* In the third and final part of the processing routine, the process is
+     * created and saved. */
+    private void createProcess(TempProcess tempProcess, Process process, Process parentProcess) throws DataException,
+            CustomResponseException, IOException, CommandException {
+
+        saveProcess(process);
+        fileService.createProcessLocation(process);
+        metsService.saveWorkpiece(tempProcess.getWorkpiece(), processService.getMetadataFileUri(process));
+        if (Objects.nonNull(parentProcess)) {
+            MetadataEditor.addLink(parentProcess, LAST_CHILD, process.getId());
+            process.setParent(parentProcess);
+            parentProcess.getChildren().add(process);
+            saveProcess(process);
+            saveProcess(parentProcess);
+        }
     }
 
     /**
