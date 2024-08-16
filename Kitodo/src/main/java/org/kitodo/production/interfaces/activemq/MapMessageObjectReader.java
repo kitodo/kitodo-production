@@ -300,6 +300,19 @@ public class MapMessageObjectReader {
         return mapOfStringToString;
     }
 
+    /**
+     * Fetches a {@code List<?>} from a MapMessage. May return {@code null} if
+     * there is no such object.
+     * 
+     * @param key
+     *            key for which the list to return
+     * @return the map, or {@code null}
+     * @throws IllegalArgumentException
+     *             if the object isn’t a {@code List}
+     * @throws JMSException
+     *             if an I/O exception occurs during read, i.e. if the map
+     *             message sent is larger than the allowed size
+     */
     @CheckForNull
     public List<?> getList(String key) throws JMSException {
         Object valueObject = ticket.getObject(key);
@@ -312,6 +325,19 @@ public class MapMessageObjectReader {
         return (List<?>) valueObject;
     }
 
+    /**
+     * Fetches an {@code Integer} from a MapMessage. May return {@code null} if
+     * there is no such object.
+     * 
+     * @param key
+     *            key for which the integer to return
+     * @return the integer, or {@code null} if there isn’t one
+     * @throws IllegalArgumentException
+     *             if the object is not an Integer
+     * @throws JMSException
+     *             if an I/O exception occurs during read, i.e. if the map
+     *             message sent is larger than the allowed size
+     */
     @CheckForNull
     public Integer getInteger(String key) throws JMSException {
         Object valueObject = ticket.getObject(key);
@@ -324,6 +350,20 @@ public class MapMessageObjectReader {
         return (Integer) valueObject;
     }
 
+    /**
+     * Fetches a {@code Map<String, ?>} from a MapMessage. May return
+     * {@code null} if there is no such object.
+     * 
+     * @param key
+     *            key for which the map to return
+     * @return the map, or {@code null}
+     * @throws IllegalArgumentException
+     *             if the object isn’t a {@code Map} or one of its keys isn’t a
+     *             {@code String}
+     * @throws JMSException
+     *             if an I/O exception occurs during read, i.e. if the map
+     *             message sent is larger than the allowed size
+     */
     @CheckForNull
     public Map<String, ?> getMapOfString(String key) throws JMSException {
         HashMap<String, Object> mapOfString = new HashMap<>();
