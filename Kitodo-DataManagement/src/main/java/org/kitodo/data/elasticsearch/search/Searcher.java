@@ -105,6 +105,18 @@ public class Searcher extends Index {
     }
 
     /**
+     * Get documents by id.
+     *
+     * @param ids
+     *            of searched document as List
+     * @return JSONObject
+     */
+    public List<Map<String, Object>> getDocuments(List<Integer> ids) throws CustomResponseException, DataException {
+        SearchRestClient restClient = initiateRestClient();
+        return restClient.getDocuments(this.type,ids);
+    }
+
+    /**
      * Find document by id.
      *
      * @param id

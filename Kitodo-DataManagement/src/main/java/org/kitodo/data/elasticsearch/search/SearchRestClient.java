@@ -14,6 +14,7 @@ package org.kitodo.data.elasticsearch.search;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -25,6 +26,9 @@ import org.apache.http.nio.entity.NStringEntity;
 import org.apache.http.util.EntityUtils;
 import org.elasticsearch.action.get.GetRequest;
 import org.elasticsearch.action.get.GetResponse;
+import org.elasticsearch.action.get.MultiGetItemResponse;
+import org.elasticsearch.action.get.MultiGetRequest;
+import org.elasticsearch.action.get.MultiGetResponse;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Request;
@@ -191,6 +195,40 @@ public class SearchRestClient extends KitodoRestClient {
         } catch (IOException e) {
             throw new DataException(e);
         }
+    }
+
+    /**
+     * Get document list for given ids.
+     *
+     * @param type
+     *            for which request is performed
+     * @param ids
+     *            of searched documents
+     * @return a list of documents, each represented as a map with document ID under the "id" key.
+     */
+    public List<Map<String, Object>> getDocuments(String type, List<Integer> ids) throws CustomResponseException, DataException {
+        List<Map<String, Object>> documents = new ArrayList<>();
+
+        try {
+            // Create a MultiGetRequest to fetch multiple documents
+            MultiGetRequest multiGetRequest = new MultiGetRequest();
+            for (Integer id : ids) {
+                multiGetRequest.add(new MultiGetRequest.Item(this.indexBase + "_" + type, String.valueOf(id)));
+            }
+            MultiGetResponse multiGetResponse = highLevelClient.mget(multiGetRequest, RequestOptions.DEFAULT);
+            for (MultiGetItemResponse itemResponse : multiGetResponse.getResponses()) {
+                if (!itemResponse.isFailed() && itemResponse.getResponse().isExists()) {
+                    Map<String, Object> document = itemResponse.getResponse().getSourceAsMap();
+                    document.put("id", itemResponse.getResponse().getId());
+                    documents.add(document);
+                }
+            }
+        } catch (ResponseException e) {
+            handleResponseException(e);
+        } catch (IOException e) {
+            throw new DataException(e);
+        }
+        return documents;
     }
 
     private String performRequest(String type, HttpEntity entity, String httpMethod, String urlRequest)

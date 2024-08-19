@@ -558,8 +558,26 @@ public class StructurePanel implements Serializable {
         invisibleRootNode.setExpanded(true);
         invisibleRootNode.setType(STRUCTURE_NODE_TYPE);
         addParentLinksRecursive(dataEditor.getProcess(), invisibleRootNode);
-        buildStructureTreeRecursively(structure, invisibleRootNode);
+        List<Integer> processIds = getAllLinkedProcessIds(structure);
+        Map<Integer, String> processTypeMap = processIds.isEmpty() ? Collections.emptyMap() : fetchProcessTypes(processIds);
+        buildStructureTreeRecursively(structure, invisibleRootNode, processTypeMap);
         return invisibleRootNode;
+    }
+
+    private List<Integer> getAllLinkedProcessIds(LogicalDivision structure) {
+        return structure.getAllChildren().stream()
+                .filter(division -> division.getLink() != null)
+                .map(division -> ServiceManager.getProcessService().processIdFromUri(division.getLink().getUri()))
+                .collect(Collectors.toList());
+    }
+
+    private Map<Integer, String> fetchProcessTypes(List<Integer> processIds) {
+        try {
+            return ServiceManager.getProcessService().getIdBaseTypeMap(processIds);
+        } catch (DataException e) {
+            Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
+            return Collections.emptyMap();
+        }
     }
 
     /**
@@ -585,7 +603,7 @@ public class StructurePanel implements Serializable {
      * @param structure the logical division
      * @return the StructureTreeNode instance
      */
-    private StructureTreeNode buildStructureTreeNode(LogicalDivision structure) {
+    private StructureTreeNode buildStructureTreeNode(LogicalDivision structure,  Map<Integer, String> idTypeMap) {
         StructureTreeNode node;
         if (Objects.isNull(structure.getLink())) {
             StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement().getStructuralElementView(
@@ -596,19 +614,17 @@ public class StructurePanel implements Serializable {
             node = new StructureTreeNode(label, pageRange, undefined, false, structure);
         } else {
             node = new StructureTreeNode(structure.getLink().getUri().toString(), null, true, true, structure);
+            Map<String, StructuralElementViewInterface> viewCache = new HashMap<>();
             for (Process child : dataEditor.getCurrentChildren()) {
-                try {
-                    String type = ServiceManager.getProcessService().getBaseType(child.getId());
-                    if (child.getId() == ServiceManager.getProcessService()
-                            .processIdFromUri(structure.getLink().getUri())) {
-                        StructuralElementViewInterface view = dataEditor.getRulesetManagement().getStructuralElementView(
-                            type, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
-                        node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
-                                + child.getTitle(), null, view.isUndefined(), true, structure);
-                    }
-                } catch (DataException e) {
-                    Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
-                    node = new StructureTreeNode(child.getTitle(), null, true, true, child);
+                if (child.getId() == ServiceManager.getProcessService().processIdFromUri(structure.getLink().getUri())) {
+                    String type = idTypeMap.get(child.getId());
+                    // Retrieve the view from cache if it exists, otherwise compute and cache it
+                    StructuralElementViewInterface view = viewCache.computeIfAbsent(type, key ->
+                            dataEditor.getRulesetManagement().getStructuralElementView(
+                                    key, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList())
+                    );
+                    node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
+                            + child.getTitle(), null, view.isUndefined(), true, structure);
                 }
             }
         }
@@ -620,10 +636,12 @@ public class StructurePanel implements Serializable {
      *
      * @param structure the current logical structure
      * @param result the current corresponding primefaces tree node
+     * @param processTypeMap the mapping of process id to basetype
      * @return a collection of views that contains all views of the full sub-tree
      */
-    private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result) {
-        StructureTreeNode node = buildStructureTreeNode(structure);
+    private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result, Map<Integer,
+            String> processTypeMap) {
+        StructureTreeNode node = buildStructureTreeNode(structure, processTypeMap);
         /*
          * Creating the tree node by handing over the parent node automatically
          * appends it to the parent as a child. That’s the logic of the JSF
@@ -637,7 +655,7 @@ public class StructurePanel implements Serializable {
         Set<View> viewsShowingOnAChild = new HashSet<>();
         if (!this.logicalStructureTreeContainsMedia()) {
             for (LogicalDivision child : structure.getChildren()) {
-                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent));
+                viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent, processTypeMap));
             }
         } else {
             // iterate through children and views ordered by the ORDER attribute
@@ -645,7 +663,7 @@ public class StructurePanel implements Serializable {
             for (Pair<View, LogicalDivision> pair : merged) {
                 if (Objects.nonNull(pair.getRight())) {
                     // add child and their views
-                    viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent));
+                    viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent, processTypeMap));
                 } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
                     // add views of current logical division as leaf nodes
                     DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);

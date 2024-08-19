@@ -17,6 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.kitodo.DummyRulesetManagement;
@@ -25,6 +27,7 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.DefaultTreeNode;
 import org.primefaces.model.TreeNode;
 
@@ -47,12 +50,14 @@ public class StructurePanelTest {
         LinkedMetsResource link = new LinkedMetsResource();
         link.setUri(URI.create("database://?process.id=42"));
         structure.setLink(link);
+        Map<Integer, String> processTypeMap = new HashMap<>();
+        processTypeMap.put(ServiceManager.getProcessService().processIdFromUri(link.getUri()), "Monograph");
         TreeNode result = new DefaultTreeNode();
 
         Method buildStructureTreeRecursively = StructurePanel.class.getDeclaredMethod("buildStructureTreeRecursively",
-            LogicalDivision.class, TreeNode.class);
+            LogicalDivision.class, TreeNode.class, Map.class);
         buildStructureTreeRecursively.setAccessible(true);
-        buildStructureTreeRecursively.invoke(underTest, structure, result);
+        buildStructureTreeRecursively.invoke(underTest, structure, result, processTypeMap);
 
         assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
     }
