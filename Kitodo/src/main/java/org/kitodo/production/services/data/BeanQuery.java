@@ -22,7 +22,6 @@ import java.util.Map;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.Task;
 import org.primefaces.model.SortOrder;
 
 public class BeanQuery {

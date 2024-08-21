@@ -14,16 +14,15 @@ package org.kitodo.production.forms;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 
 import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
@@ -40,12 +39,17 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchProcessHelper;
 import org.kitodo.production.model.LazyDTOModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
+import org.kitodo.production.services.data.ProcessService;
+import org.primefaces.model.SortOrder;
 
 @Named("BatchForm")
 @ViewScoped
 public class BatchForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(BatchForm.class);
+
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     private List<Process> currentProcesses;
     private List<Process> selectedProcesses = new ArrayList<>();
@@ -106,19 +110,19 @@ public class BatchForm extends BaseForm {
      * Filter processes.
      */
     public void filterProcesses() {
-        Map<String, Object> parameters = new HashMap<>();
-        String query = "FROM Process";
-
-        if (Objects.nonNull(this.processfilter)) {
-            parameters.put("processfilter", this.processfilter);
-            query += " WHERE title LIKE '%:processfilter%'";
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        if (StringUtils.isNotBlank(this.processfilter)) {
+            query.forIdOrInTitle(this.processfilter);
         }
-        query += " ORDER BY creationDate DESC";
+        query.defineSorting("creationDate", SortOrder.DESCENDING);
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
         if (batchMaxSize > 0) {
-            this.currentProcesses = ServiceManager.getProcessService().getByQuery(query, parameters, batchMaxSize);
+            this.currentProcesses = processService.getByQuery(query.formQueryForAll(), query
+                    .getQueryParameters(), batchMaxSize);
         } else {
-            this.currentProcesses = ServiceManager.getProcessService().getByQuery(query, parameters);
+            this.currentProcesses = processService.getByQuery(query.formQueryForAll(), query
+                    .getQueryParameters());
         }
     }
 
