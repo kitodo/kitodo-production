@@ -173,9 +173,10 @@
                                     <div class="project-template-action">
                                         <h:outputText value="#{project.title}"
                                                       title="#{project.title}"
-                                                      styleClass="expansion-list-item-title"/>
+                                                      styleClass="expansion-list-item-title"
+                                                      rendered="#{project.active}"/>
                                         <h:panelGroup class="expansion-list-item-actions">
-                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and item.isActive()}">
+                                            <h:outputText rendered="#{SecurityAccessController.hasAuthorityToAddProcess() and item.isActive() and project.active}">
                                                 <h:link id="createProcess"
                                                         outcome="/pages/processFromTemplate?faces-redirect=true"
                                                         styleClass="action"
