@@ -28,6 +28,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.persistence.TemplateDAO;
 import org.kitodo.data.interfaces.DocketInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
@@ -62,6 +64,7 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "template", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Task> tasks;
 
