@@ -126,6 +126,7 @@ public class WorkflowFormIT {
         task.setEditType(TaskEditType.MANUAL_SINGLE);
         task.setOrdering(ordering);
         task.setTemplate(template);
+        template.getTasks().add(task);
         taskService.save(task);
         return task;
     }
