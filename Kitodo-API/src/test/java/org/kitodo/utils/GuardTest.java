@@ -112,21 +112,21 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(double)")
+    @Tag("isPositive_double")
     void isPositiveDoubleShouldNotFailForPositiveValue() {
         double value = 42;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(double)")
+    @Tag("isPositive_double")
     void isPositiveDoubleShouldNotFailForPositiveBoundary() {
         double value = Double.MIN_VALUE;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(double)")
+    @Tag("isPositive_double")
     void isPositiveDoubleShouldFailForZero() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = 0;
@@ -137,7 +137,7 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(double)")
+    @Tag("isPositive_double")
     void isPositiveDoubleShouldFailForNegative() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             double value = -299_792_458;
@@ -148,21 +148,21 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(long)")
+    @Tag("isPositive_long")
     void isPositiveLongShouldNotFailForPositiveUpperBound() {
         long value = Long.MAX_VALUE;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(long)")
+    @Tag("isPositive_long")
     void isPositiveLongShouldNotFailForPositiveLowerBound() {
         long value = 1;
         Guard.isPositive("value", value);
     }
 
     @Test
-    @Tag("isPositive(long)")
+    @Tag("isPositive_long")
     void isPositiveLongShouldFailForZero() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = 0;
@@ -172,7 +172,7 @@ class GuardTest {
     }
 
     @Test
-    @Tag("isPositive(long)")
+    @Tag("isPositive_long")
     void isPositiveLongShouldFailForNegative() {
         IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> {
             long value = Long.MAX_VALUE + 1; // negative due to integer overflow
