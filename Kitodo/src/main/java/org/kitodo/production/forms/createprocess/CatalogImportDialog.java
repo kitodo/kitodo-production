@@ -192,8 +192,8 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
                 } else {
                     createProcessForm.setProcesses(processes);
                     TempProcess currentTempProcess = processes.getFirst();
-                    attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
                     createProcessForm.fillCreateProcessForm(currentTempProcess);
+                    attachToExistingParentAndGenerateAtstslIfNotExist(currentTempProcess);
                     showMessageAndRecord(importConfiguration, processes);
                 }
             } catch (IOException | ProcessGenerationException | XPathExpressionException | URISyntaxException
