@@ -13,6 +13,7 @@ package org.kitodo.production.services.data.base;
 
 import io.reactivex.annotations.CheckReturnValue;
 
+import java.util.AbstractCollection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -234,6 +235,9 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
                 }
                 if (parameter instanceof String) {
                     return '\'' + ((String) parameter) + '\'';
+                }
+                if (parameter instanceof AbstractCollection) {
+                    return Objects.toString(parameter).replaceFirst("^\\[(.*)\\]$", "$1");
                 }
                 return Objects.toString(parameter);
             });
