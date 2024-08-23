@@ -18,6 +18,8 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
@@ -26,6 +28,7 @@ import org.primefaces.model.SortOrder;
 
 public class BeanQuery {
 
+    private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
     private String objectClass;
     private String varName;
     private Collection<String> restrictions = new ArrayList<>();
@@ -114,14 +117,26 @@ public class BeanQuery {
             searchInput = searchInput.substring(1, searchInput.length() - 1);
         }
         String searchInputAnywhere = '%' + searchInput + '%';
-        try {
-            Integer possibleId = Integer.valueOf(searchInput);
-            restrictions.add('(' + varName + ".id = :possibleId OR " + varName + ".title LIKE :searchInput)");
-            parameters.put("possibleId", possibleId);
-            parameters.put("searchInput", searchInputAnywhere);
-        } catch (NumberFormatException e) {
-            restrictions.add(varName + ".title LIKE :searchInput");
-            parameters.put("searchInput", searchInputAnywhere);
+        Matcher idSearchInput = EXPLICIT_ID_SEARCH.matcher(searchInput);
+        if (idSearchInput.matches()) {
+            try {
+                Integer expectedId = Integer.valueOf(idSearchInput.group(1));
+                restrictions.add(varName + ".id = :id");
+                parameters.put("id", expectedId);
+            } catch (NumberFormatException e) {
+                restrictions.add(varName + ".title LIKE :searchInput");
+                parameters.put("searchInput", searchInputAnywhere);
+            }
+        } else {
+            try {
+                Integer possibleId = Integer.valueOf(searchInput);
+                restrictions.add('(' + varName + ".id = :possibleId OR " + varName + ".title LIKE :searchInput)");
+                parameters.put("possibleId", possibleId);
+                parameters.put("searchInput", searchInputAnywhere);
+            } catch (NumberFormatException e) {
+                restrictions.add(varName + ".title LIKE :searchInput");
+                parameters.put("searchInput", searchInputAnywhere);
+            }
         }
     }
 
