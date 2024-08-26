@@ -260,11 +260,13 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         try {
             BeanQuery query = new BeanQuery(Process.class);
             query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-            Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
-            if (filtersIterator.hasNext()) {
-                String filterString = filtersIterator.next().getValue();
-                if (StringUtils.isNotBlank(filterString)) {
-                    query.restrictWithUserFilterString(filterString);
+            if (Objects.nonNull(filters)) {
+                Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+                if (filtersIterator.hasNext()) {
+                    String filterString = filtersIterator.next().getValue();
+                    if (StringUtils.isNotBlank(filterString)) {
+                        query.restrictWithUserFilterString(filterString);
+                    }
                 }
             }
             if (!showClosedProcesses) {
