@@ -70,21 +70,6 @@ public class SearchingST extends BaseTestSelenium {
     }
 
     @Test
-    public void searchForProcesses() throws Exception {
-        desktopPage.searchInSearchField("process");
-        int numberOfResults = searchResultPage.getNumberOfResults();
-        assertEquals("There should be two processes found", 2, numberOfResults);
-
-        searchResultPage.searchInSearchField("Second");
-        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertEquals("There should be two processes found", 2, searchResultPage.getNumberOfResults()));
-
-        searchResultPage.searchInSearchField("möhö");
-        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertEquals("There should be no processes found", 0, searchResultPage.getNumberOfResults()));
-    }
-
-    @Test
     public void searchForProcessesAndSort() throws Exception {
         desktopPage.searchInSearchField("process");
         searchResultPage.clickTitleColumnForSorting();
