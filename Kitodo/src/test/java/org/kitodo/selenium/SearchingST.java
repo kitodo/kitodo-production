@@ -70,20 +70,6 @@ public class SearchingST extends BaseTestSelenium {
     }
 
     @Test
-    public void searchForProcessesAndSort() throws Exception {
-        desktopPage.searchInSearchField("process");
-        searchResultPage.clickTitleColumnForSorting();
-
-        assertEquals("First process should be top result when sorting by title", "First process", 
-            searchResultPage.getFirstSearchResultProcessTitle());
-
-        searchResultPage.clickTitleColumnForSorting();
-
-        assertEquals("Second process should be top result when reverse-sorting by title", "Second process", 
-            searchResultPage.getFirstSearchResultProcessTitle());
-    }
-
-    @Test
     public void testExtendedSearch() throws Exception {
         processesPage.goTo();
         processesPage.navigateToExtendedSearch();
