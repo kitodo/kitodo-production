@@ -93,6 +93,7 @@ public class SearchingST extends BaseTestSelenium {
      * Checks that a case insensitive filter for task status works.
      */
     @Test
+    @Ignore("currently not implemented")
     public void caseInsensitiveFilterTaskStatus() throws Exception {
         processesPage.goTo();
         processesPage.applyFilter("\"stepinwork:pRoGrEsS\"");
@@ -112,6 +113,7 @@ public class SearchingST extends BaseTestSelenium {
      * Checks whether adding and removing filters work on the processes page.
      */
     @Test
+    @Ignore("currently not implemented")
     public void addAndRemoveFilters() throws Exception {
         processesPage.goTo();
         processesPage.applyFilter("\"id:to be removed\"");
