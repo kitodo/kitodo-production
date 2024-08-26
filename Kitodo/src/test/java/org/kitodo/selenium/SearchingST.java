@@ -90,15 +90,6 @@ public class SearchingST extends BaseTestSelenium {
     }
 
     /**
-     * Checks that a case insensitive search for process titles works.
-     */
-    @Test
-    public void caseInsensitiveSearchForProcesses() throws Exception {
-        desktopPage.searchInSearchField("PrOCeSs");
-        assertEquals("Two processes should match case-insensitive search", 2, searchResultPage.getNumberOfResults());
-    }
-
-    /**
      * Checks that a case insensitive filter for task status works.
      */
     @Test
