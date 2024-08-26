@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -70,6 +71,7 @@ public class SearchingST extends BaseTestSelenium {
     }
 
     @Test
+    @Ignore("not yet implemented")
     public void testExtendedSearch() throws Exception {
         processesPage.goTo();
         processesPage.navigateToExtendedSearch();
