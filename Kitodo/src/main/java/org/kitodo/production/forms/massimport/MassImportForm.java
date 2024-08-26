@@ -110,7 +110,7 @@ public class MassImportForm extends BaseForm {
             resetValues();
             if (!csvLines.isEmpty()) {
                 importedCsvHeaderLine = csvLines.get(0);
-                metadataKeys = new LinkedList<>(Arrays.asList(csvLines.get(0).split(csvSeparator, -1)));
+                updateMetadataKeys();
                 if (csvLines.size() > 1) {
                     importedCsvLines = csvLines.subList(1, csvLines.size());
                     records = massImportService.parseLines(importedCsvLines, csvSeparator);
@@ -133,12 +133,17 @@ public class MassImportForm extends BaseForm {
      * Event listender function called when user switches CSV separator character used to split text lines into cells.
      */
     public void changeSeparator() {
-        metadataKeys = new LinkedList<>(Arrays.asList(importedCsvHeaderLine.split(csvSeparator, -1)));
+        updateMetadataKeys();
         try {
             records = massImportService.parseLines(importedCsvLines, csvSeparator);
         } catch (IOException | CsvException e) {
             Helper.setErrorMessage(e);
         }
+    }
+
+    private void updateMetadataKeys() {
+        metadataKeys = Arrays.stream(importedCsvHeaderLine.split(csvSeparator, -1)).map(String::trim)
+                .collect(Collectors.toList());
     }
 
     /**
@@ -215,7 +220,7 @@ public class MassImportForm extends BaseForm {
      */
     public String getColumnHeader(Integer columnIndex) {
         if (columnIndex < metadataKeys.size()) {
-            return metadataKeys.get(columnIndex);
+            return Helper.getTranslation(metadataKeys.get(columnIndex));
         }
         return "";
     }
