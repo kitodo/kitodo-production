@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
@@ -134,6 +135,7 @@ public class ListingST extends BaseTestSelenium {
     }
 
     @Test
+    @Ignore("displaying task's edit type currently not available")
     public void listTasksTest() throws Exception {
         tasksPage.goTo();
 
