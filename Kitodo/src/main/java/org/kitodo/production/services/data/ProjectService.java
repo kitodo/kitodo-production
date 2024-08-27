@@ -86,9 +86,8 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
     @Override
     public Long countResults(Map<?, String> filters) throws DataException {
         try {
-            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
-                ServiceManager.getUserService().getSessionClientId());
-            return countDatabaseRows("SELECT COUNT(*) FROM Project WHERE client_id = :sessionClientId", parameters);
+            BeanQuery query = getProjectsQuery();
+            return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
         } catch (DAOException e) {
             throw new DataException(e);
         }
@@ -104,11 +103,17 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
     @Override
     public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException {
-        Map<String, Object> parameters = new HashMap<>(7);
-        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
-        return getByQuery("FROM Project WHERE client_id = :sessionClientId ORDER BY ".concat(desiredOrder), parameters,
-            first, pageSize);
+
+        BeanQuery query = getProjectsQuery();
+        query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+    }
+
+    private static BeanQuery getProjectsQuery() {
+        BeanQuery projectQuery = new BeanQuery(Project.class);
+        projectQuery.addXIdRestriction("users", ServiceManager.getUserService().getCurrentUser().getId());
+        projectQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        return projectQuery;
     }
 
     @Override

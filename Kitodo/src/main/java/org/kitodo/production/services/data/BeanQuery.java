@@ -31,6 +31,7 @@ public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
     private String objectClass;
     private String varName;
+    private Collection<String> extensions = new ArrayList<>();
     private Collection<String> restrictions = new ArrayList<>();
     private Pair<String, String> sorting = Pair.of("id", "ASC");
     private Map<String, Object> parameters = new HashMap<>();
@@ -104,6 +105,22 @@ public class BeanQuery {
     }
 
     /**
+     * Requires that a member with the given ID is in the {@code @ManyToMany}
+     * relationship.
+     * 
+     * @param xField
+     *            name of {@code @ManyToMany}-mapped field
+     * @param id
+     *            ID of required member
+     */
+    public void addXIdRestriction(String xField, Integer id) {
+        String otherName = varName(xField).replaceFirst("s$", "");
+        String joker = otherName + "Id";
+        extensions.add(varName + "." + xField + " AS " + otherName + " WITH " + otherName + ".id = :" + joker);
+        parameters.put(joker, id);
+    }
+
+    /**
      * Requires that the search only finds objects where the user input either
      * matches the record number, or is part of the <i>title</i>. Title here
      * means the label. If the input is not a number, the first option is
@@ -150,6 +167,9 @@ public class BeanQuery {
         switch (objectClass) {
             case "Process":
                 restrictions.add(varName + ".project.client.id = :sessionClientId");
+                break;
+            case "Project":
+                restrictions.add(varName + ".client.id = :sessionClientId");
                 break;
             case "Task":
                 restrictions.add(varName + ".process.project.client.id = :sessionClientId");
@@ -238,8 +258,14 @@ public class BeanQuery {
      */
     public String formCountQuery() {
         String query = "SELECT COUNT(*) FROM " + objectClass;
+        if (!restrictions.isEmpty() || !extensions.isEmpty()) {
+            query += " AS " + varName;
+        }
+        for (String extension : extensions) {
+            query += " INNER JOIN " + extension;
+        }
         if (!restrictions.isEmpty()) {
-            query += " AS " + varName + " WHERE " + String.join(" AND ", restrictions);
+            query += " WHERE " + String.join(" AND ", restrictions);
         }
         return query;
     }
@@ -250,7 +276,11 @@ public class BeanQuery {
      * @return a query for all objects
      */
     public String formQueryForAll() {
-        String query = "FROM " + objectClass + " AS " + varName;
+        String query = extensions.isEmpty() ? "" : "SELECT " + varName + ' ';
+        query += "FROM " + objectClass + " AS " + varName;
+        for (String extension : extensions) {
+            query += " INNER JOIN " + extension;
+        }
         if (!restrictions.isEmpty()) {
             query += " WHERE " + String.join(" AND ", restrictions);
         }
