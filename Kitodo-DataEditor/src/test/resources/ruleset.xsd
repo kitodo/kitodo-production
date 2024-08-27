@@ -502,6 +502,11 @@
                 'createChildrenWithCalendar' This division is a superordinate unit to which child processes with a
                     calendar structure can be created. This attribute can only be set on a division that has a
                     &lt;subdivisionByDate&gt;.
+
+                'mediaPartial' with this feature, audio and video bookmarks can be set. This allows, for example,
+                    the setting of chapters for videos, similar to what is possible with YouTube, or the division
+                    of sections of a vinyl record side into segments for audio. More information are available
+                    under https://github.com/kitodo/kitodo-production/wiki/Verwendung-von-Audio-oder-Video#nutzung-der-medienteile-media-partials
             </xs:documentation>
         </xs:annotation>
         <xs:restriction>
@@ -511,6 +516,7 @@
                         <xs:restriction base="xs:token">
                             <xs:enumeration value="createChildrenFromParent"/>
                             <xs:enumeration value="createChildrenWithCalendar"/>
+                            <xs:enumeration value="mediaPartial"/>
                         </xs:restriction>
                     </xs:simpleType>
                 </xs:list>
