@@ -138,7 +138,11 @@ public class BeanQuery {
         if (idSearchInput.matches()) {
             try {
                 Integer expectedId = Integer.valueOf(idSearchInput.group(1));
-                restrictions.add(varName + ".id = :id");
+                if (objectClass.equals("Task")) {
+                    restrictions.add(varName + ".process.id = :id");
+                } else {
+                    restrictions.add(varName + ".id = :id");
+                }
                 parameters.put("id", expectedId);
             } catch (NumberFormatException e) {
                 restrictions.add(varName + ".title LIKE :searchInput");
