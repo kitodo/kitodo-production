@@ -29,10 +29,13 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
+import javax.persistence.PostLoad;
+import javax.persistence.PostUpdate;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.TaskStatus;
@@ -93,9 +96,11 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
     private Process parent;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "parent", cascade = CascadeType.PERSIST)
     private List<Process> children;
+
+    @Transient
+    private boolean hasChildren = true;
 
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("ordering")
@@ -166,6 +171,12 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
         this.tasks = new ArrayList<>();
         this.inChoiceListShown = false;
         this.creationDate = new Date();
+    }
+
+    @PostLoad
+    @PostUpdate
+    private void onPostLoad() {
+        this.hasChildren = CollectionUtils.isNotEmpty(children);
     }
 
     /**
@@ -749,7 +760,11 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
 
     @Override
     public boolean hasChildren() {
-        return CollectionUtils.isNotEmpty(children);
+        try {
+            return CollectionUtils.isNotEmpty(children);
+        } catch (LazyInitializationException e) {
+            return hasChildren;
+        }
     }
 
     @Override
