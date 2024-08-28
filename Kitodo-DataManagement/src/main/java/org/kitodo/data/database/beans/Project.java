@@ -30,9 +30,13 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
@@ -97,9 +101,11 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<User> users;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
+
+    @Transient
+    private boolean hasProcesses;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
@@ -198,6 +204,12 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
         this.users = new ArrayList<>();
         this.folders = new ArrayList<>();
         this.dmsImportRootPath = "";
+    }
+
+    @PostLoad
+    @PostUpdate
+    private void onPostLoad() {
+        this.hasProcesses = CollectionUtils.isNotEmpty(processes);
     }
 
     @Override
@@ -736,7 +748,11 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
 
     @Override
     public boolean hasProcesses() {
-        return CollectionUtils.isNotEmpty(processes);
+        try {
+            return CollectionUtils.isNotEmpty(processes);
+        } catch (LazyInitializationException e) {
+            return this.hasProcesses;
+        }
     }
 
     @Override
