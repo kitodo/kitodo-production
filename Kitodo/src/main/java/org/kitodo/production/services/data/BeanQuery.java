@@ -134,9 +134,9 @@ public class BeanQuery {
             searchInput = searchInput.substring(1, searchInput.length() - 1);
         }
         String searchInputAnywhere = '%' + searchInput + '%';
-        Matcher idSearchInput = EXPLICIT_ID_SEARCH.matcher(searchInput);
-        if (idSearchInput.matches()) {
-            try {
+        try {
+            Matcher idSearchInput = EXPLICIT_ID_SEARCH.matcher(searchInput);
+            if (idSearchInput.matches()) {
                 Integer expectedId = Integer.valueOf(idSearchInput.group(1));
                 if (objectClass.equals("Task")) {
                     restrictions.add(varName + ".process.id = :id");
@@ -144,20 +144,15 @@ public class BeanQuery {
                     restrictions.add(varName + ".id = :id");
                 }
                 parameters.put("id", expectedId);
-            } catch (NumberFormatException e) {
-                restrictions.add(varName + ".title LIKE :searchInput");
-                parameters.put("searchInput", searchInputAnywhere);
-            }
-        } else {
-            try {
+            } else {
                 Integer possibleId = Integer.valueOf(searchInput);
                 restrictions.add('(' + varName + ".id = :possibleId OR " + varName + ".title LIKE :searchInput)");
                 parameters.put("possibleId", possibleId);
                 parameters.put("searchInput", searchInputAnywhere);
-            } catch (NumberFormatException e) {
-                restrictions.add(varName + ".title LIKE :searchInput");
-                parameters.put("searchInput", searchInputAnywhere);
             }
+        } catch (NumberFormatException e) {
+            restrictions.add(varName + ".title LIKE :searchInput");
+            parameters.put("searchInput", searchInputAnywhere);
         }
     }
 
