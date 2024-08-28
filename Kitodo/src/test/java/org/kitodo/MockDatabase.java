@@ -11,7 +11,13 @@
 
 package org.kitodo;
 
-import java.io.File;
+import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
+import static com.xebialabs.restito.semantics.Condition.get;
+import static com.xebialabs.restito.semantics.Condition.parameter;
+
+import com.xebialabs.restito.semantics.Action;
+import com.xebialabs.restito.server.StubServer;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -24,7 +30,6 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -33,21 +38,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Supplier;
 
-import com.xebialabs.restito.semantics.Action;
-import com.xebialabs.restito.server.StubServer;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.awaitility.Awaitility;
 import org.awaitility.Durations;
-import org.elasticsearch.common.io.FileSystemUtils;
-import org.elasticsearch.common.settings.Settings;
-import org.elasticsearch.node.InternalSettingsPreparer;
-import org.elasticsearch.node.Node;
-import org.elasticsearch.plugins.Plugin;
-import org.elasticsearch.transport.Netty4Plugin;
 import org.h2.tools.Server;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -55,7 +51,6 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
-import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -91,7 +86,6 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.enums.ProcessState;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.process.ProcessGenerator;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
@@ -99,21 +93,13 @@ import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
 
-import static com.xebialabs.restito.builder.stub.StubHttp.whenHttp;
-import static com.xebialabs.restito.semantics.Condition.get;
-import static com.xebialabs.restito.semantics.Condition.parameter;
-
 /**
  * Insert data to test database.
  */
 public class MockDatabase {
 
-    private static Node node;
-    private static String testIndexName;
     private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
     private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
-    private static final String HTTP_TRANSPORT_PORT = "9305";
-    private static final String TARGET = "target";
     private static final String CHOICE = "choice";
     private static final String TEST = "test";
     private static final String FIRST_VALUE = "first value";
@@ -144,26 +130,9 @@ public class MockDatabase {
     }
 
     public static void startNodeWithoutMapping() throws Exception {
-        String nodeName = Helper.generateRandomString(6);
-        final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
-
-        testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-
-        Settings settings = prepareNodeSettings(port, nodeName);
-
-        removeOldDataDirectories("target/" + nodeName);
-
-        if (node != null) {
-            stopNode();
-        }
-        Supplier<String> nodeNameSupplier = () -> nodeName;
-        node = new ExtendedNode(settings, Collections.singleton(Netty4Plugin.class), nodeNameSupplier);
-        node.start();
     }
 
     public static void stopNode() throws Exception {
-        node.close();
-        node = null;
     }
 
     public static void setUpAwaitility() {
@@ -237,33 +206,6 @@ public class MockDatabase {
         insertProjects();
         insertTemplates();
         insertDataEditorSettings();
-    }
-
-    private static class ExtendedNode extends Node {
-        ExtendedNode(Settings preparedSettings, Collection<Class<? extends Plugin>> classpathPlugins,
-                     Supplier<String> nodeNameSupplier) {
-            super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, Collections.emptyMap(),
-                    Paths.get("target"), nodeNameSupplier), classpathPlugins, false);
-        }
-    }
-
-    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
-        File dataDir = new File(dataDirectory);
-        if (dataDir.exists()) {
-            FileSystemUtils.deleteSubDirectories(dataDir.toPath());
-        }
-    }
-
-    private static Settings prepareNodeSettings(String httpPort, String nodeName) {
-        return Settings.builder().put("node.name", nodeName)
-                .put("path.data", TARGET)
-                .put("path.logs", TARGET)
-                .put("path.home", TARGET)
-                .put("http.type", "netty4")
-                .put("http.port", httpPort)
-                .put("transport.tcp.port", HTTP_TRANSPORT_PORT)
-                .put("transport.type", "netty4")
-                .put("action.auto_create_index", "false").build();
     }
 
     public static void insertAuthorities() throws DAOException {

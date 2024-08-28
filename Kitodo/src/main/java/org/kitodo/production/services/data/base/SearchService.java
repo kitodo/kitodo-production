@@ -11,26 +11,14 @@
 
 package org.kitodo.production.services.data.base;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
-
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -38,7 +26,6 @@ import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.DataInterface;
-import org.primefaces.model.SortOrder;
 
 /**
  * Class for implementing methods used by all service classes which search in
@@ -267,16 +254,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
     }
 
     /**
-     * Builds a ElasticSearch query for list of Ids.
-     *
-     * @param ids as a List of Integer
-     * @return query as QueryBuilder
-     */
-    public QueryBuilder createSetQueryForIds(List<Integer> ids) {
-        return termsQuery("_id", ids);
-    }
-
-    /**
      * Get id from JSON object returned form ElasticSearch.
      *
      * @param jsonObject
@@ -291,183 +268,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
             }
         }
         return 0;
-    }
-
-    /**
-     * Create query for set of data.
-     *
-     * @param key
-     *            JSON key for searched object
-     * @param values
-     *            set of values for searched objects or some objects related to
-     *            searched object
-     * @param contains
-     *            determine if results should contain given value or should not
-     *            contain given value
-     * @return query
-     */
-    protected QueryBuilder createSetQuery(String key, Set<?> values, boolean contains) {
-        if (contains && !values.isEmpty()) {
-            return termsQuery(key, values);
-        } else if (!contains && Objects.nonNull(values)) {
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(termsQuery(key, values));
-        } else {
-            return matchQuery(key, 0);
-        }
-    }
-
-    protected QueryBuilder createSetQuery(String key, List<Map<String, Object>> values, boolean contains) {
-        Set<Integer> valuesIds = new HashSet<>();
-        for (Map<String, Object> value : values) {
-            valuesIds.add(getIdFromJSONObject(value));
-        }
-
-        return createSetQuery(key, valuesIds, contains);
-    }
-
-    protected QueryBuilder createSetQueryForBeans(String key, List<? extends BaseBean> values, boolean contains) {
-        Set<Integer> valuesIds = new HashSet<>();
-        for (BaseBean value : values) {
-            valuesIds.add(value.getId());
-        }
-
-        return createSetQuery(key, valuesIds, contains);
-    }
-
-    /**
-     * Used for cases where operator is not necessary to create query - checking
-     * only for one parameter.
-     *
-     * @param key
-     *            JSON key for searched object
-     * @param id
-     *            id value for searched object or some object related to searched
-     *            object
-     * @param contains
-     *            determine if results should contain given value or should not
-     *            contain given value
-     * @return query
-     */
-    protected QueryBuilder createSimpleQuery(String key, Integer id, boolean contains) {
-        if (contains && Objects.nonNull(id)) {
-            return matchQuery(key, id);
-        } else if (!contains && Objects.nonNull(id)) {
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(matchQuery(key, id));
-        } else {
-            return matchQuery(key, 0);
-        }
-    }
-
-    /**
-     * Used for cases where operator is not necessary to create query - checking
-     * only for one parameter.
-     *
-     * @param key
-     *            JSON key for searched object
-     * @param condition
-     *            id value for searched object or some object related to searched
-     *            object
-     * @param contains
-     *            determine if results should contain given value or should not
-     *            contain given value
-     * @return query
-     */
-    protected QueryBuilder createSimpleQuery(String key, Boolean condition, boolean contains) {
-        if (contains && Objects.nonNull(condition)) {
-            return matchQuery(key, condition);
-        } else if (!contains && Objects.nonNull(condition)) {
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(matchQuery(key, condition));
-        } else {
-            return matchQuery(key, false);
-        }
-    }
-
-    /**
-     * Used for cases where operator is not necessary to create query - checking
-     * only for one parameter.
-     *
-     * @param key
-     *            JSON key for searched object
-     * @param value
-     *            JSON value for searched object
-     * @param contains
-     *            determine if results should contain given value or should not
-     *            contain given value
-     * @return query
-     */
-    protected QueryBuilder createSimpleQuery(String key, String value, boolean contains) {
-        if (contains) {
-            return matchQuery(key, value);
-        } else {
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(matchQuery(key, value));
-        }
-    }
-
-    /**
-     * Used for cases where operator is necessary to create query - checking for
-     * more than one parameter.
-     *
-     * @param key
-     *            JSON key for searched object
-     * @param value
-     *            JSON value for searched object
-     * @param contains
-     *            determine if results should contain given value or should not
-     *            contain given value
-     * @param operator
-     *            as Operator AND or OR - useful when value contains more than one
-     *            word
-     * @return query
-     */
-    protected QueryBuilder createSimpleQuery(String key, String value, boolean contains, Operator operator) {
-        if (Objects.isNull(operator)) {
-            operator = Operator.OR;
-        }
-
-        if (contains) {
-            return matchQuery(key, value).operator(operator);
-        } else {
-            BoolQueryBuilder boolQuery = new BoolQueryBuilder();
-            return boolQuery.mustNot(matchQuery(key, value).operator(operator));
-        }
-    }
-
-    protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
-        return queryStringQuery(key + ".keyword: *" + value + "*");
-    }
-
-    /**
-     * Converts properties' values returned from ElasticSearch index.
-     *
-     * @param object
-     *            JSONObject
-     * @return display properties as list of Integers
-     */
-    @SuppressWarnings("unchecked")
-    private List<Integer> getRelatedPropertyFor(Map<String, Object> object, String key) {
-        if (Objects.nonNull(object)) {
-            List<Map<String, Object>> jsonArray = (List<Map<String, Object>>) object.get(key);
-            List<Integer> ids = new ArrayList<>();
-            for (Map<String, Object> singleObject : jsonArray) {
-                ids.add((Integer) singleObject.get("id"));
-            }
-            return ids;
-        }
-        return new ArrayList<>();
-    }
-
-    protected SortBuilder getSortBuilder(String sortField, SortOrder sortOrder) {
-        if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.ASCENDING)) {
-            return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.ASC);
-        } else if (!Objects.equals(sortField, null) && Objects.equals(sortOrder, SortOrder.DESCENDING)) {
-            return SortBuilders.fieldSort(sortField).order(org.elasticsearch.search.sort.SortOrder.DESC);
-        } else {
-            return null;
-        }
     }
 
     /**
