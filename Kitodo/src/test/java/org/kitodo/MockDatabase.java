@@ -14,7 +14,6 @@ package org.kitodo;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -32,14 +31,9 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
-
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
@@ -93,8 +87,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.HibernateUtil;
-import org.kitodo.data.elasticsearch.KitodoRestClient;
-import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
@@ -117,7 +109,6 @@ import static com.xebialabs.restito.semantics.Condition.parameter;
 public class MockDatabase {
 
     private static Node node;
-    private static IndexRestClient indexRestClient;
     private static String testIndexName;
     private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
     private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
@@ -150,10 +141,6 @@ public class MockDatabase {
 
     public static void startNode() throws Exception {
         startNodeWithoutMapping();
-        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
-            indexRestClient.createIndex(readMapping(mappingType), mappingType);
-        }
-        indexRestClient.setRefreshInterval();
     }
 
     public static void startNodeWithoutMapping() throws Exception {
@@ -161,7 +148,6 @@ public class MockDatabase {
         final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
 
         testIndexName = ConfigMain.getParameter("elasticsearch.index", "testindex");
-        indexRestClient = initializeIndexRestClient();
 
         Settings settings = prepareNodeSettings(port, nodeName);
 
@@ -176,7 +162,6 @@ public class MockDatabase {
     }
 
     public static void stopNode() throws Exception {
-        indexRestClient.deleteAllIndexes();
         node.close();
         node = null;
     }
@@ -260,31 +245,6 @@ public class MockDatabase {
             super(InternalSettingsPreparer.prepareEnvironment(preparedSettings, Collections.emptyMap(),
                     Paths.get("target"), nodeNameSupplier), classpathPlugins, false);
         }
-    }
-
-    private static IndexRestClient initializeIndexRestClient() {
-        IndexRestClient restClient = IndexRestClient.getInstance();
-        restClient.setIndexBase(testIndexName);
-        return restClient;
-    }
-
-    private static String readMapping(String mappingType) {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-
-        try (InputStream inputStream = classloader.getResourceAsStream("elasticsearch_mappings/" + mappingType + ".json")) {
-            if (Objects.nonNull(inputStream)) {
-                String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-                try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
-                    JsonObject jsonObject = jsonReader.readObject();
-                    return jsonObject.toString();
-                }
-            } else {
-                return "";
-            }
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-        }
-        return "";
     }
 
     private static void removeOldDataDirectories(String dataDirectory) throws Exception {

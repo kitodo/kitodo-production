@@ -114,8 +114,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
-import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.BatchInterface;
 import org.kitodo.data.interfaces.ProcessInterface;
@@ -178,14 +176,10 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     private static final FileService fileService = ServiceManager.getFileService();
     private static final Logger logger = LogManager.getLogger(ProcessService.class);
     private static volatile ProcessService instance = null;
-    private static final String JSON_TITLE = "title";
-    private static final String JSON_VALUE = "value";
     private static final String DIRECTORY_PREFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_PREFIX, "orig");
     private static final String DIRECTORY_SUFFIX = ConfigCore.getParameter(ParameterCore.DIRECTORY_SUFFIX, "tif");
     private static final String SUFFIX = ConfigCore.getParameter(ParameterCore.METS_EDITOR_DEFAULT_SUFFIX, "");
     private static final String PROCESS_TITLE = "(processtitle)";
-    private static final String METADATA_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadata";
-    private static final String METADATA_GROUP_SEARCH_KEY = ProcessTypeField.METADATA + ".mdWrap.xmlData.kitodo.metadataGroup.metadata";
     private static final String METADATA_FILE_NAME = "meta.xml";
     private static final String NEW_LINE_ENTITY = "\n";
     private static final boolean USE_ORIG_FOLDER = ConfigCore
@@ -581,61 +575,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             processes.add(getById(process.getId()));
         }
         return processes;
-    }
-
-    /**
-     * Parses last processing dates from the jsonObject and adds them to the process bean.
-     * 
-     * @param jsonObject the json object retrieved from elastic search
-     * @param process the process bean that will receive the processing dates
-     */
-    private void convertLastProcessingDates(Map<String, Object> jsonObject, ProcessInterface process) throws DataException {
-        String processingBeginLastTask = ProcessTypeField.PROCESSING_BEGIN_LAST_TASK.getStringValue(jsonObject);
-        process.setProcessingBeginLastTask(Helper.parseDateFromFormattedString(processingBeginLastTask));
-        String processingEndLastTask = ProcessTypeField.PROCESSING_END_LAST_TASK.getStringValue(jsonObject);
-        process.setProcessingEndLastTask(Helper.parseDateFromFormattedString(processingEndLastTask));
-    }
-
-    /**
-     * Parses task progress properties from the jsonObject and adds them to the process bean.
-     * 
-     * @param jsonObject the json object retrieved from elastic search
-     * @param process the process bean that will receive the progress information
-     */
-    private void convertTaskProgress(Map<String, Object> jsonObject, ProcessInterface process) throws DataException {
-        process.setProgressClosed(ProcessTypeField.PROGRESS_CLOSED.getDoubleValue(jsonObject));
-        process.setProgressInProcessing(ProcessTypeField.PROGRESS_IN_PROCESSING.getDoubleValue(jsonObject));
-        process.setProgressOpen(ProcessTypeField.PROGRESS_OPEN.getDoubleValue(jsonObject));
-        process.setProgressLocked(ProcessTypeField.PROGRESS_LOCKED.getDoubleValue(jsonObject));
-        process.setProgressCombined(ProcessTypeField.PROGRESS_COMBINED.getStringValue(jsonObject));
-    }
-
-    private List<PropertyInterface> convertProperties(Map<String, Object> jsonObject) throws DataException {
-        List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
-        List<PropertyInterface> properties = new ArrayList<>();
-        for (Map<String, Object> stringObjectMap : jsonArray) {
-            PropertyInterface property = DTOFactory.instance().newProperty();
-            Object title = stringObjectMap.get(JSON_TITLE);
-            Object value = stringObjectMap.get(JSON_VALUE);
-            if (Objects.nonNull(title)) {
-                property.setTitle(title.toString());
-                property.setValue(Objects.nonNull(value) ? value.toString() : "");
-                properties.add(property);
-            }
-        }
-        return properties;
-    }
-
-    private List<BatchInterface> getBatchesForProcess(Map<String, Object> jsonObject) throws DataException {
-        List<Map<String, Object>> jsonArray = ProcessTypeField.BATCHES.getJsonArray(jsonObject);
-        List<BatchInterface> batchInterfaceList = new ArrayList<>();
-        for (Map<String, Object> singleObject : jsonArray) {
-            BatchInterface batch = DTOFactory.instance().newBatch();
-            batch.setId(BatchTypeField.ID.getIntValue(singleObject));
-            batch.setTitle(BatchTypeField.TITLE.getStringValue(singleObject));
-            batchInterfaceList.add(batch);
-        }
-        return batchInterfaceList;
     }
 
     /**
@@ -1457,7 +1396,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      */
     public void downloadImages(Process process, URI userHome, String atsPpnBand, final String directorySuffix)
             throws IOException {
-        Project project = process.getProject();
+        process.getProject();
 
         // determine the output path
         URI tifDirectory = getImagesTifDirectory(true, process.getId(), process.getTitle(),

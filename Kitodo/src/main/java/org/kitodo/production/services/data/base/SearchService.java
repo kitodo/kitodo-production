@@ -11,35 +11,23 @@
 
 package org.kitodo.production.services.data.base;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.queryStringQuery;
-import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.json.JsonObject;
-import javax.ws.rs.HttpMethod;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.aggregations.AggregationBuilders;
-import org.elasticsearch.search.aggregations.Aggregations;
-import org.elasticsearch.search.aggregations.BucketOrder;
-import org.elasticsearch.search.aggregations.bucket.terms.ParsedStringTerms;
-import org.elasticsearch.search.aggregations.bucket.terms.Terms;
-import org.elasticsearch.search.aggregations.bucket.terms.TermsAggregationBuilder;
 import org.elasticsearch.search.sort.SortBuilder;
 import org.elasticsearch.search.sort.SortBuilders;
 import org.kitodo.data.database.beans.BaseBean;
@@ -48,14 +36,8 @@ import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.BaseType;
-import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.elasticsearch.search.enums.SearchCondition;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.DataInterface;
-import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.data.ProjectService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -66,9 +48,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
         extends SearchDatabaseService<T, V> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);
-    protected Searcher searcher;
-    protected Indexer indexer;
-    protected BaseType type;
     protected static final String WILDCARD = "*";
 
     /**
@@ -83,11 +62,8 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
      * @param searcher
      *            for executing queries to ElasticSearch
      */
-    public SearchService(V dao, BaseType type, Indexer indexer, Searcher searcher) {
+    public SearchService(V dao, Object type, Object indexer, Object searcher) {
         super(dao);
-        this.searcher = searcher;
-        this.indexer = indexer;
-        this.type = type;
     }
 
     /**
@@ -131,123 +107,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
     @Override
     public List<T> getAllNotIndexed(int offset, int size) throws DAOException {
         return dao.getAllNotIndexed(offset, size);
-    }
-
-    /**
-     * Get all Interface objects from index an convert them for frontend with all
-     * relations.
-     *
-     * @return List of Interface objects
-     */
-    public List<S> findAll() throws DataException {
-        return findAll(false);
-    }
-
-    /**
-     * Get all Interface objects from index.
-     *
-     * @return List of Interface objects
-     */
-    public List<S> findAll(boolean related) throws DataException {
-        return convertJSONObjectsToInterfaces(findAllDocuments(), related);
-    }
-
-    /**
-     * Get all ids from index.
-     *
-     * @return List of ids
-     */
-    public List<Integer> findAllIDs() throws DataException {
-        List<Integer> allIds = new ArrayList<>();
-        for (Map<String, Object> document : findAllDocuments()) {
-            allIds.add(Integer.parseInt((String) document.get("id")));
-        }
-        return allIds;
-    }
-
-    /**
-     * Get all ids from index in a given range.
-     *
-     * @return List of ids in given range
-     */
-    @Override
-    public List<Integer> findAllIDs(Long startIndex, int limit) throws DataException {
-        List<Integer> allIds = new ArrayList<>();
-        for (Map<String, Object> document : findAllDocuments(Math.toIntExact(startIndex), limit)) {
-            allIds.add(Integer.parseInt((String) document.get("id")));
-        }
-        return allIds;
-    }
-
-
-    /**
-     * Method saves document to the index of Elastic Search.
-     *
-     * @param baseIndexedBean
-     *            object
-     * @param forceRefresh
-     *            force index refresh - if true, time of execution is longer but
-     *            object is right after that available for display
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void saveToIndex(T baseIndexedBean, boolean forceRefresh)
-            throws CustomResponseException, DataException, IOException {
-
-        indexer.setMethod(HttpMethod.PUT);
-        if (Objects.nonNull(baseIndexedBean)) {
-            indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
-        }
-    }
-
-    /**
-     * Method adds all object found in database to Elastic Search index.
-     *
-     * @param baseIndexedBeans
-     *            List of BaseIndexedBean objects
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException, IOException {
-        indexer.setMethod(HttpMethod.PUT);
-        if (!baseIndexedBeans.isEmpty()) {
-            indexer.performMultipleRequests(baseIndexedBeans, type, false);
-            saveAsIndexed(baseIndexedBeans);
-        }
-    }
-
-    /**
-     * Method removes document from the index of Elastic Search.
-     *
-     * @param baseIndexedBean
-     *            object
-     * @param forceRefresh
-     *            force index refresh - if true, time of execution is longer but
-     *            object is right after that available for display
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public void removeFromIndex(T baseIndexedBean, boolean forceRefresh)
-            throws CustomResponseException, DataException, IOException {
-        indexer.setMethod(HttpMethod.DELETE);
-        if (Objects.nonNull(baseIndexedBean)) {
-            indexer.performSingleRequest(baseIndexedBean, type, forceRefresh);
-        }
-    }
-
-    /**
-     * Method removes document from the index of Elastic Search by given id.
-     *
-     * @param id
-     *            of object
-     * @param forceRefresh
-     *            force index refresh - if true, time of execution is longer but
-     *            object is right after that available for display
-     */
-    @Override
-    public void removeFromIndex(Integer id, boolean forceRefresh) throws CustomResponseException, DataException {
-        indexer.setMethod(HttpMethod.DELETE);
-        indexer.performSingleRequest(id, forceRefresh);
     }
 
     /**
@@ -387,152 +246,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
     }
 
     /**
-     * Count all objects in index.
-     *
-     * @return amount of all objects
-     */
-    @Override
-    public Long count() throws DataException {
-        try {
-            return searcher.countDocuments();
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Count objects according to given query.
-     *
-     * @param query
-     *            for index search
-     * @return amount of objects according to given query or 0 if query is null
-     */
-    public Long count(QueryBuilder query) throws DataException {
-        return countDocuments(query);
-    }
-
-    /**
-     * Display all documents for exact type.
-     *
-     * @return list of all documents
-     */
-    public List<Map<String, Object>> findAllDocuments() throws DataException {
-        QueryBuilder queryBuilder = matchAllQuery();
-        try {
-            return searcher.findDocuments(queryBuilder, null, null, Math.toIntExact(count()));
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Display all documents for exact type in a given range.
-     *
-     * @return list of all documents from that range
-     */
-    public List<Map<String, Object>> findAllDocuments(Integer offset, Integer size) throws DataException {
-        QueryBuilder queryBuilder = matchAllQuery();
-        try {
-            return searcher.findDocuments(queryBuilder, null, offset, size);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Find object in ES and convert it to Interface.
-     *
-     * @param id
-     *            object id
-     * @return Interface object
-     */
-    public S findById(Integer id) throws DataException {
-        return findById(id, false);
-    }
-
-    /**
-     * Find object related to previously found object in ES and convert it to Interface.
-     *
-     * @param id
-     *            related object id
-     * @param related
-     *            this method should ba called only with true, if false call method
-     *            findById(Integer id).
-     * @return related Interface object
-     */
-    public S findById(Integer id, boolean related) throws DataException {
-        try {
-            return convertJSONObjectTo(searcher.findDocument(id), related);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Find list of Interface objects by query.
-     *
-     * @param query
-     *            as QueryBuilder object
-     * @param related
-     *            determines if converted object is related to some other object (if
-     *            so, objects related to it are not included in conversion)
-     * @return list of found Interface objects
-     */
-    public List<S> findByQuery(QueryBuilder query, boolean related) throws DataException {
-        try {
-            return convertJSONObjectsToInterfaces(searcher.findDocuments(query), related);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Find list of Interface objects by query.
-     *
-     * @param query
-     *            as QueryBuilder object
-     * @param sort
-     *            as String
-     * @param related
-     *            determines if converted object is related to some other object (if
-     *            so, objects related to it are not included in conversion)
-     * @return list of found Interface objects
-     */
-    public List<S> findByQuery(QueryBuilder query, SortBuilder sort, boolean related) throws DataException {
-        try {
-            return convertJSONObjectsToInterfaces(searcher.findDocuments(query, sort), related);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Find list of sorted Interface objects by query with defined offset and size of
-     * results.
-     *
-     * @param query
-     *            as QueryBuilder object
-     * @param sort
-     *            as String
-     * @param offset
-     *            as Integer
-     * @param size
-     *            as Integer
-     * @param related
-     *            determines if converted object is related to some other object (if
-     *            so, objects related to it are not included in conversion)
-     * @return list of found Interface objects
-     */
-    public List<S> findByQuery(QueryBuilder query, SortBuilder sort, Integer offset, Integer size, boolean related)
-            throws DataException {
-        try {
-            return convertJSONObjectsToInterfaces(searcher.findDocuments(query, sort, offset, size), related);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
      * Convert list of JSONObject object to list of Interface objects.
      *
      * @param jsonObjects
@@ -551,30 +264,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
         }
 
         return results;
-    }
-
-    /**
-     * Convert related JSONObject object to bean object.
-     *
-     * @param jsonObject
-     *            result from ElasticSearch
-     * @param key
-     *            name of related property
-     * @return bean object
-     */
-    protected <O extends DataInterface> List<O> convertRelatedJSONObjectTo(Map<String, Object> jsonObject, String key,
-            SearchService<?, O, ?> service) throws DataException {
-        List<Integer> ids = getRelatedPropertyFor(jsonObject, key);
-        if (ids.isEmpty()) {
-            return new ArrayList<>();
-        }
-        // if (service instanceof ProjectService) {
-        //     BoolQueryBuilder query = new BoolQueryBuilder();
-        //     query.must(createSetQueryForIds(ids));
-        //     query.must(((ProjectService)service).getProjectsForCurrentUserQuery());
-        //     return service.findByQuery(query, true);
-        // }
-        return service.findByQuery(createSetQueryForIds(ids), true);
     }
 
     /**
@@ -602,14 +291,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
             }
         }
         return 0;
-    }
-
-    protected Long countDocuments(QueryBuilder query) throws DataException {
-        try {
-            return searcher.countDocuments(query);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
     }
 
     /**
@@ -755,156 +436,8 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
         }
     }
 
-    /**
-     * Method for comparing dates.
-     *
-     * @param key
-     *            as String
-     * @param date
-     *            as Date
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return query for searching for date in exact range
-     */
-    protected QueryBuilder createSimpleCompareDateQuery(String key, Date date, SearchCondition searchCondition) {
-        QueryBuilder query = null;
-        switch (searchCondition) {
-            case EQUAL:
-                query = matchQuery(key, Helper.getDateAsFormattedString(date));
-                break;
-            case EQUAL_OR_BIGGER:
-                query = rangeQuery(key).gte(Helper.getDateAsFormattedString(date));
-                break;
-            case EQUAL_OR_SMALLER:
-                query = rangeQuery(key).lte(Helper.getDateAsFormattedString(date));
-                break;
-            case BIGGER:
-                query = rangeQuery(key).gt(Helper.getDateAsFormattedString(date));
-                break;
-            case SMALLER:
-                query = rangeQuery(key).lt(Helper.getDateAsFormattedString(date));
-                break;
-            default:
-                assert false : searchCondition;
-        }
-        return query;
-    }
-
-    /**
-     * Method for comparing Integer values.
-     *
-     * @param key
-     *            as String
-     * @param value
-     *            as Integer
-     * @param searchCondition
-     *            as SearchCondition - bigger, smaller and so on
-     * @return query for searching for numbers in exact range
-     */
-    protected QueryBuilder createSimpleCompareQuery(String key, Integer value, SearchCondition searchCondition) {
-        QueryBuilder query = null;
-        switch (searchCondition) {
-            case EQUAL:
-                query = matchQuery(key, value);
-                break;
-            case EQUAL_OR_BIGGER:
-                query = rangeQuery(key).gte(value);
-                break;
-            case EQUAL_OR_SMALLER:
-                query = rangeQuery(key).lte(value);
-                break;
-            case BIGGER:
-                query = rangeQuery(key).gt(value);
-                break;
-            case SMALLER:
-                query = rangeQuery(key).lt(value);
-                break;
-            default:
-                assert false : searchCondition;
-        }
-        return query;
-    }
-
     protected QueryBuilder createSimpleWildcardQuery(String key, String value) {
         return queryStringQuery(key + ".keyword: *" + value + "*");
-    }
-
-    protected Long findCountAggregation(QueryBuilder query, String field) throws DataException {
-        try {
-            Aggregations jsonObject = searcher.aggregateDocuments(query, AggregationBuilders.count(field).field(field));
-            JsonObject count = jsonObject.get(field);
-            return count.getJsonNumber("value").longValue();
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    protected Double findSumAggregation(QueryBuilder query, String field) throws DataException {
-        try {
-            Aggregations jsonObject = searcher.aggregateDocuments(query, AggregationBuilders.count(field).field(field));
-            JsonObject sum = jsonObject.get(field);
-            return sum.getJsonNumber("value").doubleValue();
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    /**
-     * Find distinct values sorted by terms. Returned values are stored as Strings.
-     *
-     * @param query
-     *            for searched values to aggregation
-     * @param field
-     *            by which aggregation is going to be performed
-     * @param sort
-     *            asc true or false
-     * @param size
-     *            number of rows returned by query
-     * @return sorted list of distinct values
-     */
-    protected List<String> findDistinctValues(QueryBuilder query, String field, boolean sort, long size) throws DataException {
-        List<String> distinctValues = new ArrayList<>();
-        try {
-            TermsAggregationBuilder termsAggregation = AggregationBuilders.terms(field).field(field)
-                    .order(BucketOrder.aggregation("_key", sort));
-            if (size > 0) {
-                termsAggregation.size(Math.toIntExact(size));
-            }
-            Aggregations jsonObject = searcher.aggregateDocuments(query, termsAggregation);
-            ParsedStringTerms stringTerms = jsonObject.get(field);
-            List<? extends Terms.Bucket> buckets = stringTerms.getBuckets();
-            for (Terms.Bucket bucket : buckets) {
-                distinctValues.add(bucket.getKeyAsString());
-            }
-            return distinctValues;
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    protected Map<String, Object> findDocument(QueryBuilder query) throws DataException {
-        try {
-            return searcher.findDocument(query);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
-    }
-
-    protected List<Map<String, Object>> findDocuments(QueryBuilder query) throws DataException {
-        return findDocuments(query, null);
-    }
-
-    protected List<Map<String, Object>> findDocuments(QueryBuilder query, SortBuilder sortBuilder) throws DataException {
-        return findDocuments(query, sortBuilder, null, null);
-    }
-
-    protected List<Map<String, Object>> findDocuments(QueryBuilder query, SortBuilder sortBuilder, Integer offset, Integer size)
-            throws DataException {
-        try {
-            return searcher.findDocuments(query, sortBuilder, offset, size);
-        } catch (CustomResponseException e) {
-            throw new DataException(e);
-        }
     }
 
     /**

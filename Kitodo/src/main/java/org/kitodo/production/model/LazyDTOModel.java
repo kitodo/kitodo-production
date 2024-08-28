@@ -28,7 +28,6 @@ import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.data.interfaces.DataInterface;
 import org.kitodo.exceptions.FilterException;
@@ -43,7 +42,6 @@ public class LazyDTOModel extends LazyDataModel<Object> {
 
     final transient SearchDatabaseService searchService;
     static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
-    private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
     transient List entities = new ArrayList<>();
     String filterString = "";
 
@@ -57,7 +55,6 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      *            source
      */
     public LazyDTOModel(SearchDatabaseService searchService) {
-        indexRestClient.setIndexBase(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         this.searchService = searchService;
 
         try {
@@ -132,12 +129,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      * @return whether the ElasticSearch index is running or not
      */
     boolean indexRunning() {
-        try {
-            return indexRestClient.typeIndexesExist();
-        } catch (IOException | CustomResponseException e) {
-            logger.error(e.getMessage());
-            return false;
-        }
+        return true;
     }
 
     /**

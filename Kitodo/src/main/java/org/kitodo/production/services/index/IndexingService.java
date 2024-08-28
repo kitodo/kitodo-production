@@ -33,16 +33,12 @@ import javax.json.JsonObject;
 import javax.json.JsonReader;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
-import org.kitodo.config.ConfigMain;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.KitodoRestClient;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.IndexRestClient;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.IndexStates;
 import org.kitodo.production.enums.ObjectType;
@@ -68,11 +64,7 @@ public class IndexingService {
     static final String INDEXING_FINISHED_MESSAGE = "indexing_finished";
 
     public static final String DELETION_STARTED_MESSAGE = "deletion_started";
-    private static final String DELETION_FINISHED_MESSAGE = "deletion_finished";
-    private static final String DELETION_FAILED_MESSAGE = "deletion_failed";
-
     public static final String MAPPING_STARTED_MESSAGE = "mapping_started";
-    private static final String MAPPING_FINISHED_MESSAGE = "mapping_finished";
     public static final String MAPPING_FAILED_MESSAGE = "mapping_failed";
 
     static final int PAUSE = 1000;
@@ -83,8 +75,6 @@ public class IndexingService {
 
     private ObjectType currentIndexState = ObjectType.NONE;
     private IndexStates currentState = IndexStates.NO_STATE;
-
-    private static final IndexRestClient indexRestClient = IndexRestClient.getInstance();
 
     /**
      * Return singleton variable of type IndexingService.
@@ -113,7 +103,6 @@ public class IndexingService {
             searchServices.put(objectType, getService(objectType));
             objectIndexingStates.put(objectType, IndexStates.NO_STATE);
         }
-        indexRestClient.setIndexBase(ConfigMain.getParameter("elasticsearch.index", "kitodo"));
         try {
             countDatabaseObjects();
         } catch (DAOException e) {
@@ -121,7 +110,7 @@ public class IndexingService {
         }
     }
 
-    private SearchDatabaseService getService(ObjectType objectType) {
+    private SearchDatabaseService<?, ?> getService(ObjectType objectType) {
         if (!searchServices.containsKey(objectType) || Objects.isNull(searchServices.get(objectType))) {
             switch (objectType) {
                 case BATCH:
@@ -169,13 +158,6 @@ public class IndexingService {
             totalCount += countDatabaseObjects.get(objectType);
         }
         return totalCount;
-    }
-
-    /**
-     * Update counts of index and database objects.
-     */
-    private void updateCounts() throws DAOException {
-        countDatabaseObjects();
     }
 
     public Map<ObjectType, Integer> getCountDatabaseObjects() {
@@ -230,7 +212,7 @@ public class IndexingService {
      */
     public IndexWorkerStatus runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) 
             throws DataException, CustomResponseException, DAOException {
-        SearchDatabaseService searchService = searchServices.get(type);
+        SearchDatabaseService<?, ?> searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
 
         if (countDatabaseObjects.get(type) > 0) {
@@ -268,7 +250,7 @@ public class IndexingService {
      * @return number of database objects
      */
     private int getNumberOfDatabaseObjects(ObjectType objectType) throws DAOException {
-        SearchDatabaseService searchService = searchServices.get(objectType);
+        SearchDatabaseService<?, ?> searchService = searchServices.get(objectType);
         if (Objects.nonNull(searchService)) {
             return toIntExact(searchService.countDatabaseRows());
         }
@@ -418,75 +400,6 @@ public class IndexingService {
     }
 
     /**
-     * Create mapping which enables sorting and other aggregation functions.
-     */
-    public String createMapping() throws IOException, CustomResponseException {
-        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
-            String mapping = readMapping(mappingType);
-            if (StringUtils.isBlank(mapping)) {
-                if (indexRestClient.createIndex(null, mappingType)) {
-                    currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
-                } else {
-                    currentState = IndexStates.CREATING_MAPPING_FAILED;
-                    return MAPPING_FAILED_MESSAGE;
-                }
-            } else {
-                if (indexRestClient.createIndex(mapping, mappingType)) {
-                    if (isMappingValid(mapping, mappingType)) {
-                        currentState = IndexStates.CREATING_MAPPING_SUCCESSFUL;
-                    } else {
-                        currentState = IndexStates.CREATING_MAPPING_FAILED;
-                        return MAPPING_FAILED_MESSAGE;
-                    }
-                } else {
-                    currentState = IndexStates.CREATING_MAPPING_FAILED;
-                    return MAPPING_FAILED_MESSAGE;
-                }
-            }
-        }
-        return MAPPING_FINISHED_MESSAGE;
-    }
-
-    /**
-     * Delete whole ElasticSearch index.
-     */
-    public String deleteIndex() {
-        try {
-            indexRestClient.deleteAllIndexes();
-            currentState = IndexStates.DELETING_SUCCESSFUL;
-            return DELETION_FINISHED_MESSAGE;
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            currentState = IndexStates.DELETING_FAILED;
-            return DELETION_FAILED_MESSAGE;
-        }
-    }
-
-    private boolean isMappingValid(String mapping, String mappingType) {
-        return isMappingEqualTo(mapping, mappingType);
-    }
-
-
-    /**
-     * Return server information provided by the searchService and gathered by the
-     * rest client.
-     *
-     * @return String information about the server
-     */
-    public String getServerInformation() throws IOException {
-        return indexRestClient.getServerInformation();
-    }
-
-    /**
-     * Tests and returns whether the ElasticSearch index has been created or not.
-     *
-     * @return whether the ElasticSearch index exists or not
-     */
-    public boolean indexExists() throws IOException, CustomResponseException {
-        return indexRestClient.typeIndexesExist();
-    }
-
-    /**
      * Return the state of the ES index. -2 = failed deleting the index -1 = failed
      * creating ES mapping 1 = successfully created ES mapping 2 = successfully
      * deleted index
@@ -541,51 +454,6 @@ public class IndexingService {
      */
     public boolean indexingInProgress() {
         return !Objects.equals(this.currentIndexState, ObjectType.NONE) || indexingAll;
-    }
-
-    /**
-     * Check if current mapping is empty.
-     *
-     * @return true if mapping is empty, otherwise false
-     */
-    public boolean isMappingEmpty() {
-        String emptyMapping = "{\n\"mappings\": {\n\n    }\n}";
-        for (String mappingType : KitodoRestClient.MAPPING_TYPES) {
-            if (isMappingEqualTo(emptyMapping, mappingType)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private boolean isMappingEqualTo(String mapping, String mappingType) {
-        try (JsonReader mappingExpectedReader = Json.createReader(new StringReader(mapping));
-             JsonReader mappingCurrentReader = Json.createReader(new StringReader(indexRestClient.getMapping(mappingType)))) {
-            JsonObject mappingExpected = mappingExpectedReader.readObject();
-            JsonObject mappingCurrent = mappingCurrentReader.readObject().getJsonObject(indexRestClient.getIndexBase() + "_" + mappingType);
-            return mappingExpected.equals(mappingCurrent);
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
-    private static String readMapping(String mappingType) {
-        ClassLoader classloader = Thread.currentThread().getContextClassLoader();
-        try (InputStream inputStream = classloader.getResourceAsStream("elasticsearch_mappings/" + mappingType + ".json")) {
-            if (Objects.nonNull(inputStream)) {
-                String mapping = IOUtils.toString(inputStream, StandardCharsets.UTF_8);
-                try (JsonReader jsonReader = Json.createReader(new StringReader(mapping))) {
-                    JsonObject jsonObject = jsonReader.readObject();
-                    return jsonObject.toString();
-                }
-            } else {
-                Helper.setErrorMessage("Mapping not found!");
-                return "";
-            }
-        } catch (IOException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            return "";
-        }
     }
 
     private void startIndexingThread(PushContext context, boolean indexAllObjects, ObjectType objectType) throws IllegalStateException {

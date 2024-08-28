@@ -39,21 +39,16 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.type.enums.TaskTypeField;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.VariableReplacer;
@@ -198,28 +193,6 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
         return query;
     }
 
-    private void manageProcessDependenciesForIndex(Task task)
-            throws CustomResponseException, DataException, IOException {
-        Process process = task.getProcess();
-        if (task.getIndexAction() == IndexAction.DELETE) {
-            process.getTasks().remove(task);
-            ServiceManager.getProcessService().saveToIndex(process, false);
-        } else {
-            ServiceManager.getProcessService().saveToIndex(process, false);
-        }
-    }
-
-    private void manageTemplateDependenciesForIndex(Task task)
-            throws CustomResponseException, DataException, IOException {
-        Template template = task.getTemplate();
-        if (task.getIndexAction().equals(IndexAction.DELETE)) {
-            template.getTasks().remove(task);
-            ServiceManager.getTemplateService().saveToIndex(template, false);
-        } else {
-            ServiceManager.getTemplateService().saveToIndex(template, false);
-        }
-    }
-
     /**
      * Replace processing user for given task. Handles add/remove from list of
      * processing tasks.
@@ -253,29 +226,6 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
     public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
         throw new UnsupportedOperationException("not yet implemented");
         // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
-    }
-
-    /**
-     * Parses and adds properties related to the project of a task to the task.
-     * 
-     * @param jsonObject the jsonObject retrieved from the ElasticSearch index for a task
-     * @param task the task
-     */
-    private void convertTaskProjectFromJsonObjectTo(Map<String, Object> jsonObject,
-            TaskInterface task) throws DataException {
-
-        ProjectInterface project = DTOFactory.instance().newProject();
-        project.setId(TaskTypeField.PROJECT_ID.getIntValue(jsonObject));
-        project.setTitle(TaskTypeField.PROJECT_TITLE.getStringValue(jsonObject));
-        task.setProject(project);
-    }
-
-    private List<Integer> convertJSONValuesToList(List<Map<String, Object>> jsonObject) {
-        return jsonObject.stream()
-                .flatMap(map -> map.values().stream())
-                .filter(o -> StringUtils.isNumeric(o.toString()))
-                .map(o -> (Integer) o)
-                .collect(Collectors.toList());
     }
 
     /**
