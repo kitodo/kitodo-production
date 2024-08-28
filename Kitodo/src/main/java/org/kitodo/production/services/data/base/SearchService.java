@@ -20,7 +20,6 @@ import java.util.Objects;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseIndexedBean;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
@@ -140,7 +139,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
     @Override
     public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DataException {
         try {
-            baseIndexedBean.setIndexAction(IndexAction.INDEX);
             saveToDatabase(baseIndexedBean);
             // TODO: find out why properties lists are save double
             T savedBean = getById(baseIndexedBean.getId());
@@ -148,7 +146,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
             if (updateRelatedObjectsInIndex) {
                 manageDependenciesForIndex(savedBean);
             }
-            savedBean.setIndexAction(IndexAction.DONE);
             saveToDatabase(savedBean);
         } catch (DAOException e) {
             logger.debug(e);
@@ -160,7 +157,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
                 try {
                     saveToIndex(baseIndexedBean, true);
                     manageDependenciesForIndex(baseIndexedBean);
-                    baseIndexedBean.setIndexAction(IndexAction.DONE);
                     saveToDatabase(baseIndexedBean);
                     break;
                 } catch (CustomResponseException | IOException ee) {
@@ -202,7 +198,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends DataInt
     @Override
     public void remove(T baseIndexedBean) throws DataException {
         try {
-            baseIndexedBean.setIndexAction(IndexAction.DELETE);
             saveToDatabase(baseIndexedBean);
             T savedBean = getById(baseIndexedBean.getId());
             removeFromIndex(savedBean, true);

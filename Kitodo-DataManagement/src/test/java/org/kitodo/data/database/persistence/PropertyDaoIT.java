@@ -20,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.exceptions.DAOException;
 
@@ -58,11 +57,9 @@ public class PropertyDaoIT {
         Property firstProperty = new Property();
         firstProperty.setTitle("first_property");
         firstProperty.setDataType(null);
-        firstProperty.setIndexAction(IndexAction.DONE);
 
         Property secondProperty = new Property();
         secondProperty.setTitle("second_property");
-        secondProperty.setIndexAction(IndexAction.INDEX);
 
         Property thirdProperty = new Property();
         thirdProperty.setTitle("third_property");

@@ -27,7 +27,6 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.services.ServiceManager;
 
@@ -73,21 +72,16 @@ public class IndexingFormIT {
         Process process = new Process();
         process.setTitle("testIndex");
         process.setProject(project);
-        process.setIndexAction(IndexAction.INDEX);
         ServiceManager.getProcessService().saveToDatabase(process);
 
         indexingForm.countDatabaseObjects();
 
         ProcessInterface processOne = ServiceManager.getProcessService().findById(1);
         Assert.assertNull("process should not be found in index", processOne.getTitle());
-        IndexAction indexAction = ServiceManager.getProcessService().getById(1).getIndexAction();
-        Assert.assertEquals("Index Action should be Index", IndexAction.INDEX, indexAction);
         indexingForm.startAllIndexing();
         given().ignoreExceptions().await()
                 .until(() -> Objects.nonNull(ServiceManager.getProcessService().findById(1).getTitle()));
         processOne = ServiceManager.getProcessService().findById(1);
         Assert.assertEquals("process should be found", "testIndex",processOne.getTitle());
-        indexAction = ServiceManager.getProcessService().getById(1).getIndexAction();
-        Assert.assertEquals("Index Action should be Index", IndexAction.INDEX, indexAction);
     }
 }

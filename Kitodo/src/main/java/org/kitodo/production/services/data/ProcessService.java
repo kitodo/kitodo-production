@@ -108,7 +108,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.CorrectionComments;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
@@ -121,14 +120,12 @@ import org.kitodo.data.interfaces.PropertyInterface;
 import org.kitodo.data.interfaces.TaskInterface;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
-import org.kitodo.production.dto.DTOFactory;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.SearchResultGeneration;
 import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.helper.metadata.MetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyDocStructHelperInterface;
-import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetadataTypeHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -406,73 +403,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         query.restrictToProjects(projectIDs);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
-    }
-
-    /**
-     * Check if IndexAction flag is delete. If true remove process from list of
-     * processes and re-save batch, if false only re-save batch object.
-     *
-     * @param process
-     *            object
-     */
-    private void manageBatchesDependenciesForIndex(Process process)
-            throws CustomResponseException, DataException, IOException {
-        if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Batch batch : process.getBatches()) {
-                batch.getProcesses().remove(process);
-                ServiceManager.getBatchService().saveToIndex(batch, false);
-            }
-        } else {
-            for (Batch batch : process.getBatches()) {
-                ServiceManager.getBatchService().saveToIndex(batch, false);
-            }
-        }
-    }
-
-    /**
-     * Add process to project, if project is assigned to process.
-     *
-     * @param process
-     *            object
-     */
-    private void manageProjectDependenciesForIndex(Process process)
-            throws CustomResponseException, DataException, IOException {
-        if (Objects.nonNull(process.getProject())) {
-            ServiceManager.getProjectService().saveToIndex(process.getProject(), false);
-        }
-    }
-
-    /**
-     * Check IndexAction flag in for process object. If DELETE remove all tasks
-     * from index, if other call saveOrRemoveTaskInIndex() method.
-     *
-     * @param process
-     *            object
-     */
-    private void manageTaskDependenciesForIndex(Process process)
-            throws CustomResponseException, DAOException, IOException, DataException {
-        if (process.getIndexAction() == IndexAction.DELETE) {
-            for (Task task : process.getTasks()) {
-                ServiceManager.getTaskService().removeFromIndex(task, false);
-            }
-        }
-    }
-
-
-
-    /**
-     * Compare two list and return difference between them.
-     *
-     * @param firstList
-     *            list from which records can be remove
-     * @param secondList
-     *            records stored here will be removed from firstList
-     * @return difference between two lists
-     */
-    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
-        List<Integer> newList = new ArrayList<>(firstList);
-        newList.removeAll(secondList);
-        return newList;
     }
 
     @Override
@@ -1229,32 +1159,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     /**
-     * Filter for correction / solution messages.
-     *
-     * @param lpe
-     *            List of process properties
-     * @return List of filtered correction / solution messages
-     */
-    private List<PropertyInterface> filterForCorrectionSolutionMessages(List<PropertyInterface> lpe) {
-        List<PropertyInterface> filteredList = new ArrayList<>();
-
-        if (lpe.isEmpty()) {
-            return filteredList;
-        }
-
-        List<String> translationList = Arrays.asList("Correction required", "Correction performed",
-            "Korrektur notwendig", "Korrektur durchgef\u00FChrt");
-
-        // filtering for correction and solution messages
-        for (PropertyInterface property : lpe) {
-            if (translationList.contains(property.getTitle())) {
-                filteredList.add(property);
-            }
-        }
-        return filteredList;
-    }
-
-    /**
      * Sanitizes a possibly dirty reference URI and extracts from it the
      * operation ID of the referenced process. In case of error, a speaking
      * exception is thrown.
@@ -1316,70 +1220,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             }
         }
         return false;
-    }
-
-    /**
-     * Run through all metadata and children of given docStruct to trim the strings
-     * calls itself recursively.
-     *
-     * @param docStruct
-     *            metadata to be trimmed
-     */
-    private void trimAllMetadata(LegacyDocStructHelperInterface docStruct) {
-        // trim all metadata values
-        for (LegacyMetadataHelper md : docStruct.getAllMetadata()) {
-            if (Objects.nonNull(md.getValue())) {
-                md.setStringValue(md.getValue().trim());
-            }
-        }
-
-        // run through all children of docStruct
-        for (LegacyDocStructHelperInterface child : docStruct.getAllChildren()) {
-            trimAllMetadata(child);
-        }
-    }
-
-    /**
-     * Download full text.
-     *
-     * @param userHome
-     *            safe file
-     * @param atsPpnBand
-     *            String
-     */
-    private void downloadFullText(Process process, URI userHome, String atsPpnBand) throws IOException {
-        downloadSources(process, userHome, atsPpnBand);
-        downloadOCR(process, userHome, atsPpnBand);
-    }
-
-    private void downloadSources(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI source = fileService.getSourceDirectory(process);
-        if (fileService.fileExist(source) && !fileService.getSubUris(source).isEmpty()) {
-            URI destination = userHome.resolve(File.separator + atsPpnBand + "_src");
-            if (!fileService.fileExist(destination)) {
-                fileService.createDirectory(userHome, atsPpnBand + "_src");
-            }
-            copyProcessFiles(source, destination, null);
-        }
-    }
-
-    private void downloadOCR(Process process, URI userHome, String atsPpnBand) throws IOException {
-        URI ocr = fileService.getOcrDirectory(process);
-        if (fileService.fileExist(ocr)) {
-            List<URI> directories = fileService.getSubUris(ocr);
-            for (URI directory : directories) {
-                if (fileService.isDirectory(directory) && !fileService.getSubUris(directory).isEmpty()
-                        && fileService.getFileName(directory).contains("_")) {
-                    String suffix = fileService.getFileNameWithExtension(directory)
-                            .substring(fileService.getFileNameWithExtension(directory).lastIndexOf('_'));
-                    URI destination = userHome.resolve(File.separator + atsPpnBand + suffix);
-                    if (!fileService.fileExist(destination)) {
-                        fileService.createDirectory(userHome, atsPpnBand + suffix);
-                    }
-                    copyProcessFiles(directory, destination, null);
-                }
-            }
-        }
     }
 
     /**
@@ -1493,31 +1333,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     /**
-     * Starts copying all directories configured in kitodo_config.properties
-     * parameter "processDirs" to export folder.
-     *
-     * @param myProcess
-     *            the process object
-     * @param targetDirectory
-     *            the destination directory
-     */
-    private void directoryDownload(Process myProcess, URI targetDirectory) throws IOException {
-        String[] processDirs = ConfigCore.getStringArrayParameter(ParameterCore.PROCESS_DIRS);
-        String normalizedTitle = Helper.getNormalizedTitle(myProcess.getTitle());
-
-        for (String processDir : processDirs) {
-            URI sourceDirectory = URI.create(getProcessDataDirectory(myProcess).toString() + "/"
-                    + processDir.replace(PROCESS_TITLE, normalizedTitle));
-            URI destinationDirectory = URI
-                    .create(targetDirectory.toString() + "/" + processDir.replace(PROCESS_TITLE, normalizedTitle));
-
-            if (fileService.isDirectory(sourceDirectory)) {
-                fileService.copyFile(sourceDirectory, destinationDirectory);
-            }
-        }
-    }
-
-    /**
      * Creates a List of Docket data for the given processes.
      *
      * @param processes
@@ -1589,10 +1404,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             commentsForDocket.add(commentString);
         }
         return commentsForDocket;
-    }
-
-    private List<Map<String, Object>> getMetadataForIndex(Process process) {
-        return getMetadataForIndex(process, false);
     }
 
     @SuppressWarnings("unchecked")

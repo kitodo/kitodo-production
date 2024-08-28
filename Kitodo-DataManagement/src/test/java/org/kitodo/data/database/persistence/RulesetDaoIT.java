@@ -20,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class RulesetDaoIT {
@@ -53,11 +52,9 @@ public class RulesetDaoIT {
     private List<Ruleset> getAuthorities() {
         Ruleset firstRuleset = new Ruleset();
         firstRuleset.setTitle("first_ruleset");
-        firstRuleset.setIndexAction(IndexAction.DONE);
 
         Ruleset secondRuleset = new Ruleset();
         secondRuleset.setTitle("second_ruleset");
-        secondRuleset.setIndexAction(IndexAction.INDEX);
 
         Ruleset thirdRuleset = new Ruleset();
         thirdRuleset.setTitle("third_ruleset");
