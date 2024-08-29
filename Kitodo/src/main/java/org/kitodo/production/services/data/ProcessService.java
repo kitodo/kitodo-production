@@ -1731,7 +1731,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     public Map<Integer, String> getIdBaseTypeMap(List<Integer> processIds) throws DataException {
-        return getIdTypeMap(processIds);
+        return fetchIdToBaseTypeMap(processIds);
     }
 
     /**

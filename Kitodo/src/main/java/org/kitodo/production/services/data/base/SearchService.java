@@ -460,23 +460,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     }
 
     /**
-     * Retrieves documents for the given list of IDs, extracts the "id" and "baseType" fields,
-     * and maps each ID to its corresponding base type.
+     * Retrieves a mapping of document IDs to their corresponding base types for the given list of IDs.
      *
      * @param ids
      *            list of document IDs to retrieve and process.
      * @return a map where the keys are document IDs and the values are their associated base types.
      */
-    public Map<Integer, String> getIdTypeMap(List<Integer> ids) throws DataException {
+    public Map<Integer, String> fetchIdToBaseTypeMap(List<Integer> ids) throws DataException {
         try {
-            List<Map<String, Object>> documents = searcher.getDocuments(ids);
-            Map<Integer, String> idToBaseTypeMap = new HashMap<>();
-            for (Map<String, Object> document : documents) {
-                Integer id = Integer.parseInt((String) document.get("id"));
-                String baseType = (String) document.get("baseType");
-                idToBaseTypeMap.put(id, baseType);
-            }
-            return idToBaseTypeMap;
+            return searcher.fetchIdToBaseTypeMap(ids);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
