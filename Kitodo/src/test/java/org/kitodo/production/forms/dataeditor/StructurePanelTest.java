@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.junit.jupiter.api.Test;
 import org.kitodo.DummyRulesetManagement;
+import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.data.database.beans.Process;
@@ -51,13 +52,14 @@ public class StructurePanelTest {
         link.setUri(URI.create("database://?process.id=42"));
         structure.setLink(link);
         Map<Integer, String> processTypeMap = new HashMap<>();
+        Map<String, StructuralElementViewInterface> viewCache = new HashMap<>();
         processTypeMap.put(ServiceManager.getProcessService().processIdFromUri(link.getUri()), "Monograph");
         TreeNode result = new DefaultTreeNode();
 
         Method buildStructureTreeRecursively = StructurePanel.class.getDeclaredMethod("buildStructureTreeRecursively",
-            LogicalDivision.class, TreeNode.class, Map.class);
+            LogicalDivision.class, TreeNode.class, Map.class, Map.class);
         buildStructureTreeRecursively.setAccessible(true);
-        buildStructureTreeRecursively.invoke(underTest, structure, result, processTypeMap);
+        buildStructureTreeRecursively.invoke(underTest, structure, result, processTypeMap, viewCache);
 
         assertTrue(((StructureTreeNode) result.getChildren().get(0).getData()).isLinked());
     }
