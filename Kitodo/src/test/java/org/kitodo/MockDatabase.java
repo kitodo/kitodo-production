@@ -452,9 +452,6 @@ public class MockDatabase {
         // Assign import configurations to clients
         authorities.add(new Authority("assignImportConfigurationToClient" + GLOBAL_ASSIGNABLE));
 
-        // Use mass import
-        authorities.add(new Authority("useMassImport" + CLIENT_ASSIGNABLE));
-
         for (Authority authority : authorities) {
             ServiceManager.getAuthorityService().saveToDatabase(authority);
         }
@@ -1542,9 +1539,6 @@ public class MockDatabase {
         for (int i = 0; i < 34; i++) {
             firstRole.getAuthorities().add(allAuthorities.get(i));
         }
-
-        firstRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService()
-                .getByTitle("useMassImport" + CLIENT_ASSIGNABLE)));
 
         ServiceManager.getRoleService().saveToDatabase(firstRole);
 
