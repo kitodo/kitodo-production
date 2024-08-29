@@ -133,11 +133,11 @@
                 </h:commandLink>
 
                 <h:panelGroup styleClass="action"
+                              rendered="#{SecurityAccessController.hasAuthorityToMassImportProcesses()}"
                               title="#{item.isActive() and item.templates.size() gt 0 ? msgs['massImport'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="massImport"
                                    action="#{SelectTemplateDialogView.openMassImportForProject()}"
-                                   disabled="#{item.templates.size() lt 1 or not item.active}"
-                                   rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
+                                   disabled="#{item.templates.size() lt 1 or not item.active}">
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{item}"/>
                         <h:outputText><i class="fa fa-stack-overflow"/></h:outputText>
