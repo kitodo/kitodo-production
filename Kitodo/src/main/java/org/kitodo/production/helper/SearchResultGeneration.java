@@ -19,10 +19,10 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.interfaces.ProcessInterface;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
 
 public class SearchResultGeneration {
 
@@ -57,35 +57,17 @@ public class SearchResultGeneration {
     }
 
     private List<Process> getResultsWithFilter() {
-        List<Process> processInterfaces;
-        processInterfaces = ServiceManager.getProcessService().getByQuery(getQueryForFilter(Process.class)
-                    + " ORDER BY id ASC");
-        return processInterfaces;
-    }
-
-    /**
-     * Gets the query with filters.
-     *
-     * @param objectType
-     *            Type of object that should be filtered
-     * @return A query
-     */
-    public String getQueryForFilter(Class<? extends BaseBean> objectType) {
-        String query = "FROM Process AS process";
-        String operator = " WHERE";
-        if (!StringUtils.isBlank(filter)) {
-            query += operator + " process.title LIKE '%" + filter + "%'";
-            operator = " AND";
+        BeanQuery query = new BeanQuery(Process.class);
+        if (StringUtils.isNotBlank(filter)) {
+            query.forIdOrInTitle(filter);
         }
         if (!this.showClosedProcesses) {
-            query += operator + " process.sortHelperStatus != '100000000000'";
-            operator = " AND";
+            query.restrictToNotCompletedProcesses();
         }
         if (!this.showInactiveProjects) {
-            query += operator + " process.project.active = 0";
-            operator = " AND";
+            query.addBooleanRestriction("project.active", Boolean.FALSE);
         }
-        return query;
+        return ServiceManager.getProcessService().getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
     private HSSFWorkbook getWorkbook() {
@@ -107,9 +89,9 @@ public class SearchResultGeneration {
 
     private void insertRowData(HSSFSheet sheet) {
         int rowCounter = 2;
-        List<? extends ProcessInterface> resultsWithFilter = getResultsWithFilter();
-        for (ProcessInterface processDTO : resultsWithFilter) {
-            prepareRow(rowCounter, sheet, processDTO);
+        List<Process> resultsWithFilter = getResultsWithFilter();
+        for (Process process : resultsWithFilter) {
+            prepareRow(rowCounter, sheet, process);
             rowCounter++;
         }
     }
