@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Role;
+import org.kitodo.production.enums.ProcessState;
 import org.primefaces.model.SortOrder;
 
 public class BeanQuery {
@@ -179,9 +180,13 @@ public class BeanQuery {
         parameters.put("sessionClientId", sessionClientId);
     }
 
+    /**
+     * Requires that the search only finds processes that are not yet completed.
+     */
     public void restrictToNotCompletedProcesses() {
         restrictions.add('(' + varName + ".sortHelperStatus IS NULL OR " + varName
-                + ".sortHelperStatus != '100000000000')");
+                + ".sortHelperStatus != :completedState)");
+        parameters.put("completedState", ProcessState.COMPLETED.getValue());
     }
 
     /**
