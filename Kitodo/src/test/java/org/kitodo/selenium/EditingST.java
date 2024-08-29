@@ -135,7 +135,7 @@ public class EditingST extends BaseTestSelenium {
         assertEquals("Status is not correct", "Entwurf", status);
         WorkflowEditPage workflowEditPage = projectsPage.editWorkflow();
         workflowEditPage.changeWorkflowStatusToActive();
-        assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test)",
+        assertEquals("Header for edit workflow is incorrect", "Workflow bearbeiten (test_second)",
             Pages.getWorkflowEditPage().getHeaderText());
         projectsPage = workflowEditPage.save();
         status = projectsPage.goToWorkflowTab().getWorkflowStatusForWorkflow();

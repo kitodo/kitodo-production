@@ -1659,7 +1659,7 @@ public class MockDatabase {
         template.setWorkflow(firstWorkflow);
         ServiceManager.getTemplateService().save(template);
 
-        Workflow secondWorkflow = new Workflow(TEST);
+        Workflow secondWorkflow = new Workflow("test_second");
         secondWorkflow.setStatus(WorkflowStatus.DRAFT);
         secondWorkflow.setClient(ServiceManager.getClientService().getById(1));
         ServiceManager.getWorkflowService().save(secondWorkflow);
