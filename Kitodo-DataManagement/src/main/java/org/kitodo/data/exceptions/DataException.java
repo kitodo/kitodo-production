@@ -12,7 +12,7 @@
 package org.kitodo.data.exceptions;
 
 /**
- * Exception for wrapping CustomResponseException, DAOException and IOException.
+ * Exception for wrapping DAOException and IOException.
  */
 public class DataException extends Exception {
 

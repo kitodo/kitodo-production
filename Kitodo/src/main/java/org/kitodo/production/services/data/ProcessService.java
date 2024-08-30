@@ -112,7 +112,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
@@ -323,7 +322,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
 
     @Override
     public void saveToIndex(Process process, boolean forceRefresh)
-            throws CustomResponseException, DataException, IOException {
+            throws DataException, IOException {
 
         enrichProcessData(process, false);
 
@@ -361,7 +360,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     }
 
     @Override
-    public void addAllObjectsToIndex(List<Process> processes) throws CustomResponseException, DAOException, IOException {
+    public void addAllObjectsToIndex(List<Process> processes) throws DAOException, IOException {
         for (Process process : processes) {
             enrichProcessData(process, true);
         }

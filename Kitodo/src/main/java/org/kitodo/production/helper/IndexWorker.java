@@ -19,7 +19,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 
@@ -95,7 +94,7 @@ public class IndexWorker implements Runnable {
     }
 
     @SuppressWarnings("unchecked")
-    private void indexObjects(List<Object> objectsToIndex) throws CustomResponseException, DAOException, IOException {
+    private void indexObjects(List<Object> objectsToIndex) throws DAOException, IOException {
         this.searchService.addAllObjectsToIndex(objectsToIndex);
     }
 }

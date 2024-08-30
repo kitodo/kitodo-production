@@ -29,7 +29,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -70,7 +69,7 @@ public class CommentForm extends BaseForm {
         try {
             ServiceManager.getCommentService().removeComment(comment);
             saveProcessAndTasksToIndex();
-        } catch (CustomResponseException | DAOException | DataException | IOException e) {
+        } catch (DAOException | DataException | IOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[]{ObjectType.COMMENT.getTranslationSingular()},
                     logger, e);
         }
@@ -137,7 +136,7 @@ public class CommentForm extends BaseForm {
         return this.editedComment;
     }
     
-    private void saveProcessAndTasksToIndex() throws CustomResponseException, DataException, IOException {
+    private void saveProcessAndTasksToIndex() throws DataException, IOException {
         ServiceManager.getProcessService().saveToIndex(this.process, true);
         for (Task task : this.process.getTasks()) {
             // update tasks in elastic search index, which includes correction comment status 
@@ -171,7 +170,7 @@ public class CommentForm extends BaseForm {
         try {
             ServiceManager.getCommentService().saveToDatabase(comment);
             saveProcessAndTasksToIndex();
-        } catch (CustomResponseException | DAOException | DataException | IOException e) {
+        } catch (DAOException | DataException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
         newComment(false);
@@ -190,7 +189,7 @@ public class CommentForm extends BaseForm {
             try {
                 ServiceManager.getCommentService().saveToDatabase(this.editedComment);
                 saveProcessAndTasksToIndex();
-            } catch (CustomResponseException | DAOException | DataException | IOException e) {
+            } catch (DAOException | DataException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, logger, e);
             }
         }

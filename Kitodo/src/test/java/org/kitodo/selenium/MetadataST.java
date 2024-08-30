@@ -32,7 +32,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -242,12 +241,11 @@ public class MetadataST extends BaseTestSelenium {
     /**
      * Cleanup test environment by removing temporal dummy processes from database and index.
      * @throws DAOException when dummy process cannot be removed from database
-     * @throws CustomResponseException when dummy process cannot be removed from index
      * @throws DataException when dummy process cannot be removed from index
      * @throws IOException when deleting test files fails.
      */
     @AfterClass
-    public static void cleanup() throws DAOException, CustomResponseException, DataException, IOException {
+    public static void cleanup() throws DAOException, DataException, IOException {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);
         }

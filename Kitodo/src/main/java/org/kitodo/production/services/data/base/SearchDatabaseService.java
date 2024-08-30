@@ -28,7 +28,6 @@ import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.primefaces.model.SortOrder;
 
@@ -422,7 +421,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws CustomResponseException, DAOException,
+    public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws DAOException,
             IOException {
     }
 
@@ -481,7 +480,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
+    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException {
     }
 
     /**
@@ -559,7 +558,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws CustomResponseException, DataException,
-            IOException {
+    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws DataException, IOException {
     }
 }

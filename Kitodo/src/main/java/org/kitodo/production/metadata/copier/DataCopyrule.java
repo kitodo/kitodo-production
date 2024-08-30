@@ -21,7 +21,6 @@ import org.kitodo.api.MdSec;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
@@ -57,7 +56,7 @@ public class DataCopyrule {
                     .write(ServiceManager.getFileService().getMetadataFilePath(data.getProcess()))) {
                 ServiceManager.getMetsService().save(workpiece, out);
                 ServiceManager.getProcessService().saveToIndex(data.getProcess(), false);
-            } catch (IOException | CustomResponseException | DataException e) {
+            } catch (IOException | DataException e) {
                 logger.error("Exception while saving Metadata file", e, e.getMessage());
             }
         }

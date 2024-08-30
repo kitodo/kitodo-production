@@ -26,7 +26,6 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.VariableReplacer;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
@@ -108,7 +107,7 @@ public abstract class EditDataScript {
                 .write(ServiceManager.getFileService().getMetadataFilePath(process))) {
             ServiceManager.getMetsService().save(workpiece, out);
             ServiceManager.getProcessService().saveToIndex(process, false);
-        } catch (IOException | CustomResponseException | DataException e) {
+        } catch (IOException | DataException e) {
             logger.error(e.getMessage());
         }
     }
