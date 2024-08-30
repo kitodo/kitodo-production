@@ -36,7 +36,6 @@ import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.SearchDatabaseServiceInterface;
 import org.primefaces.model.SortOrder;
 
 public class TemplateService extends SearchDatabaseService<Template, TemplateDAO> {

@@ -30,9 +30,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.services.data.interfaces.DatabaseProcessServiceInterface;
-import org.kitodo.production.services.data.interfaces.DatabaseTaskServiceInterface;
-import org.kitodo.production.services.data.interfaces.DatabaseTemplateServiceInterface;
 import org.primefaces.model.SortOrder;
 
 public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
