@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kitodo.data.interfaces.PropertyInterface;
 
 /**
  * Property DTO object.

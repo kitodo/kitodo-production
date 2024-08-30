@@ -19,9 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kitodo.data.interfaces.DocketInterface;
-import org.kitodo.data.interfaces.RulesetInterface;
-import org.kitodo.data.interfaces.TaskInterface;
 
 public abstract class BaseTemplateDTO extends BaseDTO {
 

@@ -27,7 +27,7 @@ import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
-import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 
 public class IndexingFormIT {

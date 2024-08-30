@@ -24,7 +24,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.BaseBeanInterface;
+import org.kitodo.data.database.beans.BaseBean;
 
 /**
  * Class for implementing methods used by all service classes which search in

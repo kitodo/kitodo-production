@@ -14,8 +14,6 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.data.interfaces.ProcessInterface;
 
 /**
  * Batch DTO object.

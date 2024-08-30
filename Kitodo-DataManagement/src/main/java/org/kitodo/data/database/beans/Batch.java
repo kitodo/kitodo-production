@@ -29,8 +29,8 @@ import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Process;
 
 /**
  * A user-definable, unordered collection of processes whose batch-type tasks

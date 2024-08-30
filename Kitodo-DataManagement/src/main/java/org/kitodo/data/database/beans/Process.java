@@ -42,14 +42,14 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
-import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.data.interfaces.DocketInterface;
-import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.PropertyInterface;
-import org.kitodo.data.interfaces.RulesetInterface;
-import org.kitodo.data.interfaces.TaskInterface;
-import org.kitodo.data.interfaces.UserInterface;
+import org.kitodo.data.database.beans.Batch;
+import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Property;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "process")

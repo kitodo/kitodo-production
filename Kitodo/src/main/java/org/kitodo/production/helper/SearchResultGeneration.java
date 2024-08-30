@@ -20,7 +20,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
 

@@ -17,11 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.PropertyInterface;
-import org.kitodo.data.interfaces.UserInterface;
 
 /**
  * Process DTO object.

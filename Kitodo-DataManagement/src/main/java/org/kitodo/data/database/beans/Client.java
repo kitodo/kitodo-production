@@ -26,9 +26,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.ClientDAO;
-import org.kitodo.data.interfaces.ClientInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.UserInterface;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "client")

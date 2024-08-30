@@ -21,11 +21,6 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.TaskInterface;
-import org.kitodo.data.interfaces.TemplateInterface;
-import org.kitodo.data.interfaces.UserInterface;
 
 /**
  * Task DTO object.

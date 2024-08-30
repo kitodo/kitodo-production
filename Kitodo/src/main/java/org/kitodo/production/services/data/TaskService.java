@@ -45,7 +45,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;

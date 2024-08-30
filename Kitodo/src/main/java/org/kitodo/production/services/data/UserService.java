@@ -45,7 +45,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.UserInterface;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;

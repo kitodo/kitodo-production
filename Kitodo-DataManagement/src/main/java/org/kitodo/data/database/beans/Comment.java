@@ -23,7 +23,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.CommentType;
-import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.database.beans.Task;
 
 @Entity
 @Table(name = "comment")

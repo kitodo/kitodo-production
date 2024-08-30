@@ -15,7 +15,6 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.WorkflowStatus;
-import org.kitodo.data.interfaces.WorkflowInterface;
 
 public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
 

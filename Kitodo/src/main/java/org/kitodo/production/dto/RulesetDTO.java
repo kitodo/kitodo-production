@@ -11,8 +11,6 @@
 
 package org.kitodo.production.dto;
 
-import org.kitodo.data.interfaces.ClientInterface;
-import org.kitodo.data.interfaces.RulesetInterface;
 
 /**
  * Ruleset DTO object.

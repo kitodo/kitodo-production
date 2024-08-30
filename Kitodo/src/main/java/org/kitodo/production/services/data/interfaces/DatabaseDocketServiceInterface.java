@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.DocketInterface;
+import org.kitodo.data.database.beans.Docket;
 
 /**
  * Specifies the special database-related functions of the docket service.

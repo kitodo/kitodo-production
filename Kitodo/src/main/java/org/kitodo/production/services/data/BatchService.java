@@ -21,7 +21,7 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.BatchInterface;
+import org.kitodo.data.database.beans.Batch;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseBatchServiceInterface;

@@ -19,10 +19,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
-import org.kitodo.data.interfaces.ClientInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.TemplateInterface;
-import org.kitodo.data.interfaces.UserInterface;
 
 /**
  * Project DTO object.

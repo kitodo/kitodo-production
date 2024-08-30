@@ -13,7 +13,6 @@ package org.kitodo.production.dto;
 
 import java.io.Serializable;
 
-import org.kitodo.data.interfaces.BaseBeanInterface;
 
 public abstract class BaseDTO implements Serializable, BaseBeanInterface {
 

@@ -16,7 +16,7 @@ import java.util.List;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.RulesetInterface;
+import org.kitodo.data.database.beans.Ruleset;
 
 /**
  * Specifies the special database-related functions of the ruleset service.

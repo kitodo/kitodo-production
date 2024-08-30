@@ -28,7 +28,7 @@ import javax.persistence.Table;
 
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
-import org.kitodo.data.interfaces.WorkflowInterface;
+import org.kitodo.data.database.beans.Workflow;
 
 @Entity
 @Table(name = "workflow")

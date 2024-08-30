@@ -14,9 +14,6 @@ package org.kitodo.production.dto;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.kitodo.data.interfaces.ClientInterface;
-import org.kitodo.data.interfaces.RoleInterface;
-import org.kitodo.data.interfaces.UserInterface;
 
 /**
  * Role DTO object.

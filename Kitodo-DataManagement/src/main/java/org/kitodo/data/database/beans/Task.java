@@ -35,11 +35,11 @@ import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.RoleInterface;
-import org.kitodo.data.interfaces.TaskInterface;
-import org.kitodo.data.interfaces.TemplateInterface;
-import org.kitodo.data.interfaces.UserInterface;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Role;
+import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.beans.Template;
+import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "task")

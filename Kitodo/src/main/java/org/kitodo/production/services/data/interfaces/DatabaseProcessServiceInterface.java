@@ -26,7 +26,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.ProcessInterface;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.dataformat.MetsService;

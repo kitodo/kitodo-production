@@ -26,7 +26,7 @@ import javax.persistence.Table;
 import org.kitodo.data.database.converter.PropertyTypeConverter;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.persistence.PropertyDAO;
-import org.kitodo.data.interfaces.PropertyInterface;
+import org.kitodo.data.database.beans.Property;
 
 @Entity
 @Table(name = "property")

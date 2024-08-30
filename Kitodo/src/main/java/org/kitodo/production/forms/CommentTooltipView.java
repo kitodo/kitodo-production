@@ -22,8 +22,8 @@ import javax.inject.Named;
 
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.TaskInterface;
+import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 

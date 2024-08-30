@@ -17,7 +17,7 @@ import java.util.Map;
 
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.database.beans.Template;
 import org.primefaces.model.SortOrder;
 
 /**

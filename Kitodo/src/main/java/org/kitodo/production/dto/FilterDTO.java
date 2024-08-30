@@ -11,7 +11,6 @@
 
 package org.kitodo.production.dto;
 
-import org.kitodo.data.interfaces.FilterInterface;
 
 /**
  * Filter DTO object.

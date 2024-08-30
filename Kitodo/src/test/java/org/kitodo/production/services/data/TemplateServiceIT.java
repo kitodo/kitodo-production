@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.interfaces.TemplateInterface;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.services.ServiceManager;
 

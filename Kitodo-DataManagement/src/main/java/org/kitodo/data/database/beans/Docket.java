@@ -20,8 +20,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.kitodo.data.interfaces.ClientInterface;
-import org.kitodo.data.interfaces.DocketInterface;
+import org.kitodo.data.database.beans.Client;
+import org.kitodo.data.database.beans.Docket;
 
 @Entity
 @Table(name = "docket")

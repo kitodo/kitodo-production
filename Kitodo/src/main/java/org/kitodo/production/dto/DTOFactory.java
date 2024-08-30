@@ -11,19 +11,7 @@
 
 package org.kitodo.production.dto;
 
-import org.kitodo.data.interfaces.BatchInterface;
-import org.kitodo.data.interfaces.ClientInterface;
 import org.kitodo.data.interfaces.DataFactoryInterface;
-import org.kitodo.data.interfaces.DocketInterface;
-import org.kitodo.data.interfaces.FilterInterface;
-import org.kitodo.data.interfaces.ProcessInterface;
-import org.kitodo.data.interfaces.ProjectInterface;
-import org.kitodo.data.interfaces.PropertyInterface;
-import org.kitodo.data.interfaces.RulesetInterface;
-import org.kitodo.data.interfaces.TaskInterface;
-import org.kitodo.data.interfaces.TemplateInterface;
-import org.kitodo.data.interfaces.UserInterface;
-import org.kitodo.data.interfaces.WorkflowInterface;
 
 /**
  * A factory object for data transfer objects.
