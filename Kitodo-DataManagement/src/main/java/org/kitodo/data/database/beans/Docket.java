@@ -25,7 +25,7 @@ import org.kitodo.data.database.beans.Docket;
 
 @Entity
 @Table(name = "docket")
-public class Docket extends BaseIndexedBean implements DocketInterface {
+public class Docket extends BaseIndexedBean {
 
     @Column(name = "title")
     private String title;

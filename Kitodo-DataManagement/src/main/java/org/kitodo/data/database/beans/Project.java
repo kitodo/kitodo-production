@@ -48,7 +48,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean implements ProjectInterface, Comparable<Project> {
+public class Project extends BaseIndexedBean, Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;

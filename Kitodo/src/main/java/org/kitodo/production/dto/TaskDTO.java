@@ -25,7 +25,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 /**
  * Task DTO object.
  */
-public class TaskDTO extends BaseDTO implements TaskInterface {
+public class TaskDTO extends BaseDTO {
 
     private String title;
     private String localizedTitle;

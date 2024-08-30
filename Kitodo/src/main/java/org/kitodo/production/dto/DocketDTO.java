@@ -15,7 +15,7 @@ package org.kitodo.production.dto;
 /**
  * Docket DTO object.
  */
-public class DocketDTO extends BaseDTO implements DocketInterface {
+public class DocketDTO extends BaseDTO {
 
     private String file;
     private String title;

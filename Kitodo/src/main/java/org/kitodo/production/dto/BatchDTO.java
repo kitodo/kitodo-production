@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Batch DTO object.
  */
-public class BatchDTO extends BaseDTO implements BatchInterface {
+public class BatchDTO extends BaseDTO {
 
     private String title;
     private List<ProcessDTO> processes = new ArrayList<>();

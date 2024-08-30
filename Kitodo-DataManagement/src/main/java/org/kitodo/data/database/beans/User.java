@@ -36,7 +36,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "user")
-public class User extends BaseBean implements UserInterface {
+public class User extends BaseBean {
 
     @Column(name = "name")
     private String name;

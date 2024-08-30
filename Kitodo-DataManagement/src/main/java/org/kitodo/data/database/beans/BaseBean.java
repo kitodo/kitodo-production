@@ -29,7 +29,7 @@ import org.kitodo.data.database.beans.BaseBean;
  * Base bean class.
  */
 @MappedSuperclass
-public abstract class BaseBean implements BaseBeanInterface, Serializable {
+public abstract class BaseBean, Serializable {
 
     @Id
     @Column(name = "id")

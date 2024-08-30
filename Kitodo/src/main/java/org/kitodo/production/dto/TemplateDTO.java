@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
+public class TemplateDTO extends BaseTemplateDTO {
 
     private boolean active;
     private WorkflowInterface workflow;

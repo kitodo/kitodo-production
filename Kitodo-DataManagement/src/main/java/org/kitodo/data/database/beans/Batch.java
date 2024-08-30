@@ -41,7 +41,7 @@ import org.kitodo.data.database.beans.Process;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseIndexedBean implements BatchInterface {
+public class Batch extends BaseIndexedBean {
 
     /**
      * The batch title. Using titles for batches is optional, the field may be

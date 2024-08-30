@@ -43,7 +43,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "task")
-public class Task extends BaseIndexedBean implements TaskInterface {
+public class Task extends BaseIndexedBean {
 
     @Column(name = "title")
     private String title;

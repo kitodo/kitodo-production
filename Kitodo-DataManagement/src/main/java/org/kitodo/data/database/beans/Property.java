@@ -30,7 +30,7 @@ import org.kitodo.data.database.beans.Property;
 
 @Entity
 @Table(name = "property")
-public class Property extends BaseIndexedBean implements PropertyInterface, Comparable<Property> {
+public class Property extends BaseIndexedBean, Comparable<Property> {
 
     @Column(name = "title")
     private String title;

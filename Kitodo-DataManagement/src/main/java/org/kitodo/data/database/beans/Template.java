@@ -40,7 +40,7 @@ import org.kitodo.data.database.beans.Workflow;
 
 @Entity
 @Table(name = "template")
-public class Template extends BaseTemplateBean implements TemplateInterface {
+public class Template extends BaseTemplateBean {
 
     @Column(name = "active")
     private Boolean active = true;

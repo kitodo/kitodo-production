@@ -21,7 +21,7 @@ import java.util.Objects;
 /**
  * Process DTO object.
  */
-public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
+public class ProcessDTO extends BaseTemplateDTO {
 
     private ProjectInterface project;
     private List<BatchDTO> batches = new ArrayList<>();

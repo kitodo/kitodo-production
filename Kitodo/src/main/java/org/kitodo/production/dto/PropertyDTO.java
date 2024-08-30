@@ -21,7 +21,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Property DTO object.
  */
-public class PropertyDTO extends BaseDTO implements PropertyInterface {
+public class PropertyDTO extends BaseDTO {
 
     private String title;
     private String value;

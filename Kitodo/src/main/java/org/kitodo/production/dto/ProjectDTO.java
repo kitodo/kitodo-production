@@ -23,7 +23,7 @@ import org.apache.commons.lang3.StringUtils;
 /**
  * Project DTO object.
  */
-public class ProjectDTO extends BaseDTO implements ProjectInterface {
+public class ProjectDTO extends BaseDTO {
 
     private String title;
     private String startDate;

@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "client")
-public class Client extends BaseBean implements ClientInterface {
+public class Client extends BaseBean {
 
     @Column(name = "name")
     private String name;

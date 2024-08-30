@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Role DTO object.
  */
-public class RoleDTO extends BaseDTO implements RoleInterface {
+public class RoleDTO extends BaseDTO {
 
     private String title;
     private List<UserDTO> users = new ArrayList<>();

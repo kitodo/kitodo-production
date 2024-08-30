@@ -20,7 +20,7 @@ import java.util.Collection;
 import org.kitodo.api.docket.DocketData;
 import org.kitodo.api.docket.DocketInterface;
 
-public class Docket implements DocketInterface {
+public class Docket {
 
     @Override
     public File generateDocket(DocketData docketData, URI xslFileUri) throws IOException {

@@ -15,7 +15,7 @@ package org.kitodo.production.dto;
 /**
  * Ruleset DTO object.
  */
-public class RulesetDTO extends BaseDTO implements RulesetInterface {
+public class RulesetDTO extends BaseDTO {
 
     private String file;
     private String title;

@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "role")
-public class Role extends BaseBean implements RoleInterface, Comparable<Role> {
+public class Role extends BaseBean, Comparable<Role> {
 
     @Column(name = "title", nullable = false)
     private String title;

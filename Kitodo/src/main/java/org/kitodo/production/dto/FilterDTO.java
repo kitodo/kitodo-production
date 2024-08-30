@@ -15,7 +15,7 @@ package org.kitodo.production.dto;
 /**
  * Filter DTO object.
  */
-public class FilterDTO extends BaseDTO implements FilterInterface {
+public class FilterDTO extends BaseDTO {
 
     private String value;
 

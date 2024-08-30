@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * User DTO object.
  */
-public class UserDTO extends BaseDTO implements UserInterface {
+public class UserDTO extends BaseDTO {
 
     private String login;
     private String name;

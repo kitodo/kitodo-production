@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.Workflow;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BaseIndexedBean implements WorkflowInterface {
+public class Workflow extends BaseIndexedBean {
 
     @Column(name = "title")
     private String title;

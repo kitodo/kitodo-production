@@ -53,7 +53,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "process")
-public class Process extends BaseTemplateBean implements ProcessInterface {
+public class Process extends BaseTemplateBean {
 
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;

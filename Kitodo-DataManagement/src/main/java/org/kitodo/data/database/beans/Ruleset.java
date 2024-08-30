@@ -25,7 +25,7 @@ import org.kitodo.data.database.beans.Ruleset;
 
 @Entity
 @Table(name = "ruleset")
-public class Ruleset extends BaseIndexedBean implements RulesetInterface {
+public class Ruleset extends BaseIndexedBean {
 
     @Column(name = "title")
     private String title;

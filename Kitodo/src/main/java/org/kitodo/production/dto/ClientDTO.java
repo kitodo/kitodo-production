@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class ClientDTO extends BaseDTO implements ClientInterface {
+public class ClientDTO extends BaseDTO {
 
     private String name;
     private List<UserDTO> users = new ArrayList<>();

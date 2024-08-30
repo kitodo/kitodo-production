@@ -16,7 +16,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.WorkflowStatus;
 
-public class WorkflowDTO extends BaseDTO implements WorkflowInterface {
+public class WorkflowDTO extends BaseDTO {
 
     private String title;
     private String status;
