@@ -601,8 +601,10 @@ public class StructurePanel implements Serializable {
     /**
      * Build a StructureTreeNode for a logical division, which is then visualized in the logical structure tree.
      *
-     * @param structure the logical division
-     * @return the StructureTreeNode instance
+     * @param structure the logical division for which the tree node is being constructed
+     * @param idTypeMap the mapping of process id to basetype
+     * @param viewCache a cache for storing and retrieving already processed StructuralElementViews
+     * @return the constructed {@link StructureTreeNode} instance representing the given logical division
      */
     private StructureTreeNode buildStructureTreeNode(LogicalDivision structure,  Map<Integer, String> idTypeMap,
                                                      Map<String, StructuralElementViewInterface> viewCache) {
@@ -640,6 +642,7 @@ public class StructurePanel implements Serializable {
      * @param structure the current logical structure
      * @param result the current corresponding primefaces tree node
      * @param processTypeMap the mapping of process id to basetype
+     * @param viewCache a cache for storing and retrieving already processed StructuralElementViews
      * @return a collection of views that contains all views of the full sub-tree
      */
     private Collection<View> buildStructureTreeRecursively(LogicalDivision structure, TreeNode result, Map<Integer,
