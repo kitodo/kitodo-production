@@ -95,8 +95,8 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws DataException {
-        assertEquals(rulesetNotFound, slubDD, rulesetService.findById(1).getTitle());
+    public void shouldFindById() throws DAOException {
+        assertEquals(rulesetNotFound, slubDD, rulesetService.getById(1).getTitle());
     }
 
     @Test

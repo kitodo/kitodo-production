@@ -33,11 +33,9 @@ import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseProjectServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
-        implements DatabaseProjectServiceInterface {
+public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 
@@ -92,7 +90,16 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         }
     }
 
-    @Override
+    /**
+     * Returns all projects of the client, for which the logged in user is
+     * currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     * 
+     * @return all projects for the selected client
+     */
     public List<Project> getAllForSelectedClient() {
         return dao.getByQuery(
                 "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId ORDER BY title",
@@ -115,7 +122,23 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         return projectQuery;
     }
 
-    @Override
+    /**
+     * Returns all projects that can still be assigned to a user. Returns the
+     * projects that are not already assigned to the user to be edited, and that
+     * belong to the client for which the logged-in user is currently working.
+     * These are displayed in the addProjectsPopup.
+     * 
+     * <p>
+     * {P} := currentUser.currentClient.projects - userAccount.projects
+     *
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     * 
+     * @param user
+     *            user being edited
+     * @return projects that can be assigned
+     */
     public List<Project> findAllAvailableForAssignToUser(User user) throws DataException {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
@@ -201,12 +224,33 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         return duplicatedProject;
     }
 
-    @Override
+    /**
+     * Returns all projects the user is assigned to for the current client. This
+     * returns all projects, that the user, identified by the current session,
+     * is assigned to, and that belong to the client, that they are currently
+     * working for.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     * 
+     * @return all projects the user is assigned to for the current client
+     * @throws DataException
+     *             on errors
+     */
     public List<Project> findAllProjectsForCurrentUser() throws DataException {
         return ServiceManager.getUserService().getCurrentUser().getProjects();
     }
 
-    @Override
+    /**
+     * Returns all projects of the specified client and name.
+     *
+     * @param title
+     *            naming of the projects
+     * @param clientId
+     *            record number of the client whose projects are queried
+     * @return all projects of the specified client and name
+     */
     public List<Project> getProjectsWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT p FROM Project AS p INNER JOIN p.client AS c WITH c.id = :clientId WHERE p.title = :title";
         Map<String, Object> parameters = new HashMap<>();
@@ -215,7 +259,18 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
         return getByQuery(query, parameters);
     }
 
-    @Override
+    /**
+     * Returns the names of the projects the user is allowed to see. If the user
+     * has the {@code AuthorityToViewProjectList} and
+     * {@link AuthorityToViewClientList} permissions, the list is returned
+     * unfiltered. Otherwise it will be limited to those projects that belong to
+     * the client for which the user is currently working and to which the user
+     * is assigned.
+     * 
+     * @param projects
+     *            projects to filter if necessary
+     * @return Returns a string with the names, separated by ", "
+     */
     public String getProjectTitles(List<Project> projects) throws DataException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
                 && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
@@ -247,5 +302,28 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
             ServiceManager.getTemplateService().saveToDatabase(template);
         }
         ServiceManager.getProjectService().remove(project);
+    }
+
+    // === alternative functions that are no longer required ===
+
+    /**
+     * Returns all projects from the database.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This method actually returns all objects of all clients and is therefore
+     * more suitable for operational purposes, rather not for display purposes.
+     *
+     * @return all objects of the implementing type
+     * @deprecated Use {@link #getAll()}.
+     */
+    @Deprecated
+    @SuppressWarnings("unchecked")
+    public List<Project> findAll() throws DataException {
+        try {
+            return (List<Project>) (List<?>) getAll();
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
     }
 }

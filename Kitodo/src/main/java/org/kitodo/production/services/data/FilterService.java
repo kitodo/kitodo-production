@@ -42,14 +42,12 @@ import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseFilterServiceInterface;
 import org.primefaces.model.SortOrder;
 
 /**
  * Service for Filter bean.
  */
-public class FilterService extends SearchDatabaseService<Filter, FilterDAO>
-        implements DatabaseFilterServiceInterface {
+public class FilterService extends SearchDatabaseService<Filter, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;

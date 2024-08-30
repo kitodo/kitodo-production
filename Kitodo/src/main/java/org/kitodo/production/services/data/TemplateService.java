@@ -36,11 +36,10 @@ import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseTemplateServiceInterface;
+import org.kitodo.production.services.data.interfaces.SearchDatabaseServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class TemplateService extends SearchDatabaseService<Template, TemplateDAO>
-        implements DatabaseTemplateServiceInterface {
+public class TemplateService extends SearchDatabaseService<Template, TemplateDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 
@@ -111,7 +110,37 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
                 parameters, first, pageSize);
     }
 
-    @Override
+    /**
+     * Returns all process templates that can still be assigned to a project.
+     * Returns the process templates that
+     * <ul>
+     * <li>are active</li>
+     * <li>and that are not already assigned to the project to be
+     * edited<sup>✻</sup>,</li>
+     * <li>and that belong to the client for which the logged-in user is
+     * currently working.</li>
+     * </ul>
+     * These are displayed in the templateAddPopup.
+     * 
+     * <p>
+     * {T} := currentUser.currentClient.processTemplates[active] -
+     * projectEdited.processTemplates
+     *
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * ✻) If the project has already been saved. If not, if {@code projectID} is
+     * {@code null}, returns all active process templates for the current
+     * client.
+     * 
+     * @param projectId
+     *            ID of project which is going to be edited. May be
+     *            {@code null}.
+     * @return process templates that can be assigned
+     */
     public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
         try {
             Map<String, Object> parameters = new HashMap<>();
@@ -153,13 +182,31 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         return duplicatedTemplate;
     }
 
-    @Override
+    /**
+     * Determines all process templates with a specific docket.
+     *
+     * @param docketId
+     *            record number of the docket
+     * @return list that is not empty if something was found, otherwise empty
+     *         list
+     */
     public Collection<?> findByDocket(int docketId) throws DataException {
         Map<String, Object> parameters = Collections.singletonMap("docketId", docketId);
         return getByQuery("FROM Template WHERE docket_id = :docketId", parameters, 1);
     }
 
-    @Override
+    /**
+     * Determines all process templates with a specific ruleset.
+     *
+     * @param rulesetId
+     *            record number of the ruleset
+     * @return list that is not empty if something was found, otherwise empty
+     *         list
+     */
+    /*
+     * Used in RulesetForm to find out whether a ruleset is used in a process
+     * template. (Then it may not be deleted.) Is only checked for isEmpty().
+     */
     public Collection<?> findByRuleset(int rulesetId) throws DataException {
         Map<String, Object> parameters = Collections.singletonMap("rulesetId", rulesetId);
         return getByQuery("FROM Template WHERE ruleset_id = :rulesetId", parameters, 1);
@@ -232,7 +279,27 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         return true;
     }
 
-    @Override
+    /**
+     * Sets whether to display non-active production templates in the list.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * Affects the results of functions {@link #countDatabaseRows()} and
+     * {@link #loadData(int, int, String, SortOrder, Map)} in
+     * {@link SearchDatabaseServiceInterface}.
+     * 
+     * @param showInactiveTemplates
+     *            as boolean
+     */
+    /*
+     * Here, a value is set that affects the generally specified functions
+     * countResults() and loadData() in SearchDatabaseServiceInterface. However,
+     * in DatabaseProjectServiceInterface and DatabaseTaskServiceInterface, an
+     * additional functions countResults() and loadData() are specified with
+     * additional parameters, and the generally specified functions
+     * countResults() and loadData() from SearchDatabaseServiceInterface are not
+     * used. This could be equalized at some point in the future.
+     */
     public void setShowInactiveTemplates(boolean showInactiveTemplates) {
         this.showInactiveTemplates = showInactiveTemplates;
     }
@@ -248,7 +315,15 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         return dao.getTemplatesWithTitle(title);
     }
 
-    @Override
+    /**
+     * Returns all process templates of the specified client and name.
+     *
+     * @param title
+     *            naming of the projects
+     * @param clientId
+     *            record number of the client whose projects are queried
+     * @return all process templates of the specified client and name
+     */
     public List<Template> getTemplatesWithTitleAndClient(String title, Integer clientId) {
         String query = "SELECT t FROM Template AS t INNER JOIN t.client AS c WITH c.id = :clientId WHERE t.title = :title";
         Map<String, Object> parameters = new HashMap<>();

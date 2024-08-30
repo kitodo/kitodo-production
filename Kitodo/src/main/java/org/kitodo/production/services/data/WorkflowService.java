@@ -25,11 +25,9 @@ import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseWorkflowServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO>
-        implements DatabaseWorkflowServiceInterface {
+public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 
@@ -110,12 +108,32 @@ public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO
         return duplicatedWorkflow;
     }
 
-    @Override
+    /**
+     * Returns all available workflows. These are all workflows that are in
+     * {@link WorkflowStatus} {@code ACTIVE} for the client for which the
+     * current user is working at the moment.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     *
+     * @return all available workflows
+     */
     public List<Workflow> getAvailableWorkflows() {
         return dao.getAvailableWorkflows(ServiceManager.getUserService().getSessionClientId());
     }
 
-    @Override
+    /**
+     * Returns all active workflows. These are all workflows that are in
+     * {@link WorkflowStatus} {@code ACTIVE}.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This method actually returns all objects of all clients and is therefore
+     * more suitable for operational purposes, rather not for display purposes.
+     * 
+     * @return all active workflows
+     */
     public List<Workflow> getAllActiveWorkflows() {
         return dao.getAllActive();
     }

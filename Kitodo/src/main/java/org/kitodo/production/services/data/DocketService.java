@@ -23,10 +23,9 @@ import org.kitodo.data.database.persistence.DocketDAO;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseDocketServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends SearchDatabaseService<Docket, DocketDAO> implements DatabaseDocketServiceInterface {
+public class DocketService extends SearchDatabaseService<Docket, DocketDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 
@@ -91,13 +90,34 @@ public class DocketService extends SearchDatabaseService<Docket, DocketDAO> impl
             first, pageSize);
     }
 
-    @Override
+    /**
+     * Returns all docket configuration objects of the client, for which the
+     * logged in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     * 
+     * @return all dockets for the selected client
+     */
     public List<Docket> getAllForSelectedClient() {
         return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
-    @Override
+    /**
+     * Returns all docket configuration objects with the specified label. This
+     * can be used to check whether a label is still available.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * There is currently no filtering by client, so a label used by one client
+     * cannot be used by another client.
+     * 
+     * @param title
+     *            name to search for
+     * @return list of dockets
+     */
     public List<Docket> getByTitle(String title) {
         return dao.getByQuery("FROM Docket WHERE title = :title", Collections.singletonMap("title", title));
     }

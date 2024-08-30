@@ -130,7 +130,6 @@ import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseProcessServiceInterface;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -148,8 +147,7 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
-        implements DatabaseProcessServiceInterface {
+public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 
@@ -241,7 +239,42 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return countResults(filters, false, false);
     }
 
-    @Override
+    /**
+     * Returns the number of objects of the implementing type that the filter
+     * matches.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function counts the data records for the client, for which the
+     * logged in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     *
+     * @param filters
+     *            a map with exactly one entry, only the value is important, in
+     *            which the content of the filter field is passed
+     * @param showClosedProcesses
+     *            whether completed processes should be displayed (usually not)
+     * @param showInactiveProjects
+     *            whether processes of deactivated projects should be displayed
+     *            (usually not)
+     * @return the number of matching objects
+     * @throws DAOException
+     *             that can be caused by Hibernate
+     * @throws DataException
+     *             that can be caused by ElasticSearch
+     */
+    /*
+     * Here, an additional function countResults() is specified with additional
+     * parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future.
+     */
     public Long countResults(Map<?, String> filters, boolean showClosedProcesses, boolean showInactiveProjects)
             throws DataException {
         try {
@@ -370,13 +403,84 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return LegacyPrefsHelper.getMetadataType(myPrefs, inName);
     }
 
+    /**
+     * Returns processes to be offered as templates in the selection list. If a
+     * user wants to create a larger number of processes that are the same in
+     * many metadata, they can create one sample process and then create copies
+     * of it.
+     * 
+     * @return processes to be offered in the choice list
+     */
+    public List<Process> getTemplateProcesses() throws DataException, DAOException {
+        return getByQuery("FROM Process WHERE inChoiceListShown IS true ORDER BY title ASC");
+    }
+
     @Override
     public List<Process> loadData(int first, int pageSize, String sortField,
             org.primefaces.model.SortOrder sortOrder, Map<?, String> filters) throws DataException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
     }
 
-    @Override
+    /**
+     * Provides a window onto the process objects. This makes it possible to
+     * navigate through the processes page by page, without having to load all
+     * objects into memory.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function filters the data according to the client, for which the
+     * logged in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     * 
+     * @param offset
+     *            number of objects to be skipped at the list head
+     * @param limit
+     *            maximum number of objects to return
+     * @param sortField
+     *            by which column the data should be sorted. Must not be
+     *            {@code null} or empty.
+     *
+     * <p>
+     *            One of:
+     *            <ul>
+     *            <li>"id": ID</li>
+     *            <li>"title.keyword": Process title</li>
+     *            <li>"progressCombined": Status</li>
+     *            <li>"lastEditingUser": Last editing user</li>
+     *            <li>"processingBeginLastTask": Processing begin of last
+     *            task</li>
+     *            <li>"processingEndLastTask": Processing end of last task</li>
+     *            <li>"correctionCommentStatus": Comments</li>
+     *            <li>"project.title.keyword": Project</li>
+     *            <li>"creationDate": Duration [sic!]</li>
+     *            </ul>
+     * @param sortOrder
+     *            sort ascending or descending?
+     * @param filters
+     *            a map with exactly one entry, only the value is important, in
+     *            which the content of the filter field is passed. May be
+     *            {@code null} if there is no filter input, like on dashboard.
+     * @param showClosedProcesses
+     *            whether completed processes should be displayed (usually not)
+     * @param showInactiveProjects
+     *            whether processes of deactivated projects should be displayed
+     *            (usually not)
+     * @return the data objects to be displayed
+     * @throws DataException
+     *             if processes cannot be loaded from search index
+     */
+    /*
+     * Here, an additional function loadData() is specified with additional
+     * parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future.
+     */
     public List<Process> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
@@ -401,7 +505,16 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
     }
 
-    @Override
+    /**
+     * Saves multiple processes in the database.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * Each object is stored in its own database transaction.
+     *
+     * @param list
+     *            processes to save
+     */
     public void saveList(List<Process> list) throws DAOException {
         dao.saveList(list);
     }
@@ -409,6 +522,29 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     @Override
     public void refresh(Process process) {
         dao.refresh(process);
+    }
+
+    /**
+     * Finds all processes with specific metadata entries.
+     *
+     * @param metadata
+     *            metadata entries that the process must have
+     * @param exactMatch
+     *            whether all metadata entries must be found in the process,
+     *            otherwise at least one
+     * @return all found processes
+     * @throws DataException
+     *             if there was an error during the search, or if the metadata
+     *             is not indexed
+     */
+    /*
+     * Used in the import service to locate parent processes. The map contains
+     * exactly one entry: a metadata key which is use="recordIdentifier", and as
+     * value the remote ID of the parent process (for example its PPN).
+     * exactMatch is always true here.
+     */
+    public List<Process> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        throw new DataException("index currently not available");
     }
 
     /**
@@ -422,28 +558,102 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return findByMetadata(metadata, false);
     }
 
-    @Override
-    public List<?> findByDocket(int docketId) throws DataException {
+    /**
+     * Determines all processes with a specific docket.
+     *
+     * @param docketId
+     *            record number of the docket
+     * @return list that is not empty if something was found, otherwise empty
+     *         list
+     */
+    /*
+     * Used in DocketForm to find out whether a docket is used in a process.
+     * (Then it may not be deleted.) Is only checked for isEmpty().
+     */
+    public Collection<?> findByDocket(int docketId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("docket.id", docketId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
-    @Override
-    public List<?> findByTemplate(int templateId) throws DataException {
+    /**
+     * Determines all processes with a specific production template.
+     *
+     * @param templateId
+     *            record number of the production template
+     * @return list that is not empty if something was found, otherwise empty
+     *         list
+     * @throws DataException
+     *             if an error occurred during the search
+     */
+    /*
+     * Used in TemplateForm to find out whether a production template is used in
+     * a process. (Then it may not be deleted.) Is only checked for isEmpty().
+     */
+    public Collection<?> findByTemplate(int templateId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("template.id", templateId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
-    @Override
-    public List<?> findByRuleset(int rulesetId) throws DataException {
+    /**
+     * Finds all processes with the specified name.
+     *
+     * @param title
+     *            process name to search for
+     * @return all processes with the specified name
+     * @throws DataException
+     *             when there is an error on conversation
+     */
+    /*
+     * Only used in NewspaperProcessesGenerator and only checked there on
+     * .isEmpty(), to see if a process title already exists.
+     */
+    @SuppressWarnings("unchecked")
+    public Collection<Process> findByTitle(String title) throws DataException {
+        return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
+    }
+
+    /**
+     * Determines all processes with a specific ruleset.
+     *
+     * @param rulesetId
+     *            record number of the ruleset
+     * @return list that is not empty if something was found, otherwise empty
+     *         list
+     */
+    /*
+     * Used in RulesetForm to find out whether a ruleset is used in a process.
+     * (Then it may not be deleted.) Is only checked for isEmpty().
+     */
+    public Collection<?> findByRuleset(int rulesetId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("ruleset.id", rulesetId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
-    @Override
+    /**
+     * Searches for linkable processes based on user input. A process can be
+     * linked if it has the samerule set, belongs to the same client, and the
+     * topmost element of the logical outline below the selected parent element
+     * is an allowed child.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * For the latter, the data file must be read at the moment. This will be
+     * aborted after a timeout so that the user gets an answer (which may be
+     * incomplete) in finite time.
+     *
+     * @param searchInput
+     *            user input
+     * @param rulesetId
+     *            the id of the allowed ruleset
+     * @param allowedStructuralElementTypes
+     *            allowed topmost logical structural elements
+     * @return found processes
+     * @throws DataException
+     *             if the search engine fails
+     */
     public List<Process> findLinkableChildProcesses(String searchInput, int rulesetId,
             Collection<String> allowedStructuralElementTypes) throws DataException {
 
@@ -455,7 +665,20 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
-    @Override
+    /**
+     * Searches for linkable processes based on user input. A process can be
+     * linked if it belongs to the same project and has the same ruleset.
+     *
+     * @param searchInput
+     *            user input
+     * @param projectId
+     *            the id of the allowed project
+     * @param rulesetId
+     *            the id of the allowed ruleset
+     * @return found processes
+     * @throws DataException
+     *             if the search engine fails
+     */
     public List<Process> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
             throws DataException {
 
@@ -467,7 +690,62 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 
-    @Override
+    /**
+     * Determines how many processes have a specific identifier.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This function counts the data records for the client, for which the
+     * logged in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     *
+     * <!-- Used to check whether a process identifier is already in use. In
+     * both places, the result is only checked for > 0. -->
+     *
+     * @param title
+     *            process name to be searched for
+     * @return number of processes with this title
+     */
+    public Long findNumberOfProcessesWithTitle(String title) throws DataException {
+        int sessionClientId = ServiceManager.getUserService().getSessionClientId();
+        String query = "FROM Process process WHERE process.title = '" + title + "' "
+                + "AND process.project.client.id = " + sessionClientId;
+        return (long) getByQuery(query).size();
+    }
+
+    /**
+     * Returns all selected processes. This refers to when a user has ticked
+     * "select all", and then optionally deselected individual processes. The
+     * function then returns a list of all <i>remaining</i> processes.
+     * 
+     * <p>
+     * <b>API Note:</b><br>
+     * This function counts the data records for the client, for which the
+     * logged in user is currently working. <b>Use it with caution, only if the
+     * number of objects is manageable.</b>
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * This function requires that the thread is assigned to a logged-in user.
+     * 
+     * 
+     * @param showClosedProcesses
+     *            whether completed processes should also be displayed (usually
+     *            not)
+     * @param showInactiveProjects
+     *            whether processes from projects that are no longer active
+     *            should also be displayed (usually not)
+     * @param filter
+     *            user input in the filter input field
+     * @param excludedProcessIds
+     *            IDs of processes individually deselected after "select all"
+     * @return the processes found
+     * @throws DataException
+     *             if an error occurs
+     */
     public List<Process> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
             String filter, Collection<Integer> excludedProcessIds) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
@@ -648,7 +926,20 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
     }
 
-    @Override
+    /**
+     * Sets [sic!] the record number of the process into the processBaseUri
+     * field. Can also save the process.
+     * 
+     * <!-- Since the moment this was introduced, I've never understood why this
+     * exists. Nor why property processBaseUri exists at all. See #5856 -->
+     *
+     * @param process
+     *            process for which the data record number should be placed in
+     *            the processBaseUri field
+     * @param forIndexingAll
+     *            whether the process should <b>not</b> be saved
+     * @return the record number in a URI object
+     */
     public URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         if (Objects.isNull(process.getProcessBaseUri())) {
             process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
@@ -665,11 +956,13 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     /**
-     * Get process data directory.
+     * Sets [!] the record number of the process into the processBase field and
+     * saves the process.
      *
      * @param process
-     *            object
-     * @return path
+     *            process for which the data record number should be placed in
+     *            the processBase field
+     * @return the record number
      */
     public URI getProcessDataDirectory(Process process) {
         return getProcessDataDirectory(process, false);
@@ -1133,7 +1426,18 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         }
     }
 
-    @Override
+    /**
+     * Returns the type of the top element of the logical structure, and thus
+     * the type of the workpiece of the process.
+     *
+     * @param processId
+     *            id of the process whose root type is to be determined
+     * @return the type of root element of the logical structure of the
+     *         workpiece
+     * @throws DataException
+     *             if the type cannot be found in the index (e.g. because the
+     *             process cannot be found in the index)
+     */
     public String getBaseType(int processId) throws DataException {
         try {
             Process process = getById(processId);
@@ -1505,7 +1809,22 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
     }
 
-    @Override
+    /**
+     * Updates the children linked in the database to those specified in the
+     * logical structure. Processes linked in the logical structure are linked
+     * in the database. For processes that are not linked in the logical
+     * structure, the link in the database is removed.
+     *
+     * @param process
+     *            parent process
+     * @param logicalStructure
+     *            the current state of the logical structure
+     * @throws DAOException
+     *             if a process is referenced with a URI whose ID does not
+     *             appear in the database
+     * @throws DataException
+     *             if the process cannot be saved
+     */
     public void updateChildrenFromLogicalStructure(Process process, LogicalDivision logicalStructure)
             throws DAOException, DataException {
         removeLinksFromNoLongerLinkedProcesses(process, logicalStructure);
@@ -1580,7 +1899,15 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return parents;
     }
 
-    @Override
+    /**
+     * Gets the number of immediate children of the given process.
+     * 
+     * @param processId
+     *            id of the process
+     * @return number of immediate children
+     * @throws DAOException
+     *             when query to database fails
+     */
     public int getNumberOfChildren(int processId) throws DAOException {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
     }
@@ -2009,5 +2336,43 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
             return true;
         }
         return FileService.hasImages(process, generatorSource);
+    }
+
+    // === alternative functions that are no longer required ===
+
+    /**
+     * Find object in ES and convert it to Interface.
+     *
+     * @param id
+     *            object id
+     * @return Interface object
+     * @deprecated Use {@link #getById(Integer)}.
+     */
+    @Deprecated
+    public Process findById(Integer id) throws DataException {
+        try {
+            return getById(id);
+        } catch (DAOException e) {
+            throw new DataException(e);
+        }
+    }
+
+    /**
+     * Finds processes by searchQuery for a number of fields.
+     *
+     * @param searchQuery
+     *            the query word or phrase
+     * @return a List of found Processs
+     * @throws DataException
+     *             when accessing the elasticsearch server fails
+     */
+    /*
+     * Only used in SearchResultForm. SearchResultForm is thrown out in further
+     * development. No new implementation required here. (However, the
+     * functionality must be provided in countResults() and loadData().)
+     */
+    @Deprecated
+    public List<Process> findByAnything(String searchQuery) throws DataException {
+        throw new UnsupportedOperationException("no longer provided this way");
     }
 }

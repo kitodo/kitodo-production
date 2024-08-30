@@ -23,11 +23,9 @@ import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
-import org.kitodo.production.services.data.interfaces.DatabaseBatchServiceInterface;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
-        implements DatabaseBatchServiceInterface {
+public class BatchService extends SearchDatabaseService<Batch, BatchDAO> {
 
     private static volatile BatchService instance = null;
     private static final String BATCH = "batch";
@@ -75,12 +73,16 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
     }
 
     /**
-     * Remove all passed batches.
+     * Deletes all given batches from the database.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * The function must get all processes from each batch and delete the
+     * batches to be deleted in each process, before it deletes the batches.
      *
      * @param batches
-     *            to remove
+     *            batches to delete
      */
-    @Override
     public void removeAll(Collection<Batch> batches) throws DataException {
         for (Batch batch : batches) {
             remove(batch);

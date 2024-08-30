@@ -94,9 +94,9 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         String expected = defaultDocket;
-        assertEquals(docketNotFound, expected, docketService.findById(1).getTitle());
+        assertEquals(docketNotFound, expected, docketService.getById(1).getTitle());
     }
 
     @Test

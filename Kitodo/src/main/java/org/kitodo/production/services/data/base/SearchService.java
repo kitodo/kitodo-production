@@ -90,7 +90,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseBea
      *            amount of results
      * @return list of all not indexed objects from database in given range
      */
-    @Override
     public List<T> getAllNotIndexed(int offset, int size) throws DAOException {
         return dao.getAllNotIndexed(offset, size);
     }
@@ -270,7 +269,6 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseBea
      * @param baseIndexedBeansId the list of beans to check for missing db eintries.
      *
      */
-    @Override
     public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException, CustomResponseException {
         for (Integer baseIndexedBeanId : baseIndexedBeansId) {
             try {
@@ -279,5 +277,15 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseBea
                 removeFromIndex(baseIndexedBeanId,true);
             }
         }
+    }
+
+    // === alternative functions that are no longer required ===
+
+    @Deprecated
+    private void removeFromIndex(int id, boolean b) throws CustomResponseException {
+    }
+
+    @Deprecated
+    private void removeFromIndex(T savedBean, boolean b) throws CustomResponseException, IOException {
     }
 }
