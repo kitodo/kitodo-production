@@ -35,8 +35,8 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
     private Integer numberOfVolumes;
     private Boolean active = true;
     private ClientInterface client;
-    private List<? extends TemplateInterface> templates = new ArrayList<>();
-    private List<? extends UserInterface> users = new ArrayList<>();
+    private List<TemplateDTO> templates = new ArrayList<>();
+    private List<UserDTO> users = new ArrayList<>();
     private boolean hasProcesses;
 
     /**
@@ -254,7 +254,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @return list of active templates as TemplateDTO
      */
     @Override
-    public List<? extends TemplateInterface> getActiveTemplates() {
+    public List<TemplateDTO> getActiveTemplates() {
         return templates;
     }
 
@@ -265,7 +265,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *            as list of TemplateDTO
      */
     @Override
-    public void setActiveTemplates(List<? extends TemplateInterface> templates) {
+    public void setActiveTemplates(List<TemplateDTO> templates) {
         this.templates = templates;
     }
 
@@ -275,7 +275,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      * @return list of users as UserDTO
      */
     @Override
-    public List<? extends UserInterface> getUsers() {
+    public List<UserDTO> getUsers() {
         return users;
     }
 
@@ -286,7 +286,7 @@ public class ProjectDTO extends BaseDTO implements ProjectInterface {
      *            as list of UserDTO
      */
     @Override
-    public void setUsers(List<? extends UserInterface> users) {
+    public void setUsers(List<UserDTO> users) {
         this.users = users;
     }
 

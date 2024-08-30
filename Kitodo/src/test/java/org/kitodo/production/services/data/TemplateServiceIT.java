@@ -52,7 +52,7 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindAll() throws Exception {
-        List<? extends TemplateInterface> templates = templateService.getAll();
+        List<Template> templates = templateService.getAll();
         assertEquals("Found incorrect amount of templates!", 4, templates.size());
     }
 

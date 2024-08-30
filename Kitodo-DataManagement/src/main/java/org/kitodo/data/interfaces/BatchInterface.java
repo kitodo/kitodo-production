@@ -41,7 +41,7 @@ public interface BatchInterface extends BaseBeanInterface {
      *
      * @return the processes belonging to the batch
      */
-    List<? extends ProcessInterface> getProcesses();
+    List<Process> getProcesses();
 
     /**
      * Sets the list of processes belonging to the batch. The list should not
@@ -51,6 +51,6 @@ public interface BatchInterface extends BaseBeanInterface {
      *            contain the list of processes belonging to the batch to be
      *            determined
      */
-    void setProcesses(List<? extends ProcessInterface> processes);
+    void setProcesses(List<Process> processes);
 
 }

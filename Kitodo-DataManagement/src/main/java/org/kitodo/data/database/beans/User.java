@@ -314,7 +314,7 @@ public class User extends BaseBean implements UserInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setRoles(List<? extends RoleInterface> roles) {
+    public void setRoles(List<Role> roles) {
         this.roles = (List<Role>) roles;
     }
 
@@ -329,7 +329,7 @@ public class User extends BaseBean implements UserInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setProcessingTasks(List<? extends TaskInterface> processingTasks) {
+    public void setProcessingTasks(List<Task> processingTasks) {
         this.processingTasks = (List<Task>) processingTasks;
     }
 
@@ -344,7 +344,7 @@ public class User extends BaseBean implements UserInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setProjects(List<? extends ProjectInterface> projects) {
+    public void setProjects(List<Project> projects) {
         this.projects = (List<Project>) projects;
     }
 
@@ -359,7 +359,7 @@ public class User extends BaseBean implements UserInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setClients(List<? extends ClientInterface> clients) {
+    public void setClients(List<Client> clients) {
         this.clients = (List<Client>) clients;
     }
 
@@ -428,7 +428,7 @@ public class User extends BaseBean implements UserInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setFilters(List<? extends FilterInterface> filters) {
+    public void setFilters(List<Filter> filters) {
         this.filters = (List<Filter>) filters;
     }
 

@@ -20,7 +20,7 @@ public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
     private boolean active;
     private WorkflowInterface workflow;
     private boolean canBeUsedForProcess;
-    private List<? extends ProjectInterface> projects = new ArrayList<>();
+    private List<ProjectDTO> projects = new ArrayList<>();
 
     /**
      * Get active.
@@ -83,7 +83,7 @@ public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
      *
      * @return value of projects
      */
-    public List<? extends ProjectInterface> getProjects() {
+    public List<ProjectDTO> getProjects() {
         return projects;
     }
 
@@ -93,7 +93,7 @@ public class TemplateDTO extends BaseTemplateDTO implements TemplateInterface {
      * @param projects
      *            as List of ProjectInterface
      */
-    public void setProjects(List<? extends ProjectInterface> projects) {
+    public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;
     }
 }

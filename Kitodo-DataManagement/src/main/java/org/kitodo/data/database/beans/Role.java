@@ -111,7 +111,7 @@ public class Role extends BaseBean implements RoleInterface, Comparable<Role> {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setUsers(List<? extends UserInterface> users) {
+    public void setUsers(List<User> users) {
         this.users = (List<User>) users;
     }
 

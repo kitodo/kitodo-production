@@ -292,7 +292,7 @@ public interface ProjectInterface extends BaseBeanInterface {
      *
      * @return the active production templates
      */
-    List<? extends TemplateInterface> getActiveTemplates();
+    List<Template> getActiveTemplates();
 
     /**
      * Sets the active production templates associated with the project. This
@@ -301,14 +301,14 @@ public interface ProjectInterface extends BaseBeanInterface {
      * @param templates
      *            the active production templates
      */
-    void setActiveTemplates(List<? extends TemplateInterface> templates);
+    void setActiveTemplates(List<Template> templates);
 
     /**
      * Returns the users contributing to this project.
      *
      * @return the users contributing to this project
      */
-    List<? extends UserInterface> getUsers();
+    List<User> getUsers();
 
     /**
      * Specifies the users who will contribute to this project.
@@ -316,7 +316,7 @@ public interface ProjectInterface extends BaseBeanInterface {
      * @param users
      *            the users contributing to this project
      */
-    void setUsers(List<? extends UserInterface> users);
+    void setUsers(List<User> users);
 
     /**
      * Returns whether processes exist in the project. A project that contains

@@ -129,7 +129,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      *
      * @return the task list
      */
-    List<? extends TaskInterface> getTasks();
+    List<Task> getTasks();
 
     /**
      * Sets the task list of this process.
@@ -137,7 +137,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param tasks
      *            the task list
      */
-    void setTasks(List<? extends TaskInterface> tasks);
+    void setTasks(List<Task> tasks);
 
     /**
      * Returns the project the process belongs to. Digitization processes are
@@ -162,7 +162,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      *
      * @return the batches to which the process is assigned
      */
-    List<? extends BatchInterface> getBatches();
+    List<Batch> getBatches();
 
     /**
      * Sets the list that specifies the batches to which the process is
@@ -173,7 +173,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param batches
      *            list of batches to which the process is associated
      */
-    void setBatches(List<? extends BatchInterface> batches);
+    void setBatches(List<Batch> batches);
 
     /**
      * Returns the operational properties of the process. Properties are a tool
@@ -183,7 +183,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      *
      * @return list of properties
      */
-    List<? extends PropertyInterface> getProperties();
+    List<Property> getProperties();
 
     /**
      * Sets the list of operational properties of the process. This list is not
@@ -192,7 +192,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param properties
      *            list of properties as PropertyInterface
      */
-    void setProperties(List<? extends PropertyInterface> properties);
+    void setProperties(List<Property> properties);
 
     /**
      * Returns the user who is currently blocking the process's business data.

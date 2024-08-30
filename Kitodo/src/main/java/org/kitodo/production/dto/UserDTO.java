@@ -27,15 +27,15 @@ public class UserDTO extends BaseDTO implements UserInterface {
     private String location;
     private String ldapLogin;
     private boolean active = true;
-    private List<? extends FilterInterface> filters = new ArrayList<>();
+    private List<FilterDTO> filters = new ArrayList<>();
     private Integer filtersSize;
-    private List<? extends RoleInterface> roles = new ArrayList<>();
+    private List<RoleDTO> roles = new ArrayList<>();
     private Integer rolesSize;
-    private List<? extends ClientInterface> clients = new ArrayList<>();
+    private List<ClientDTO> clients = new ArrayList<>();
     private int clientsSize;
-    private List<? extends ProjectInterface> projects = new ArrayList<>();
+    private List<ProjectDTO> projects = new ArrayList<>();
     private Integer projectsSize;
-    private List<? extends TaskInterface> processingTasks = new ArrayList<>();
+    private List<TaskDTO> processingTasks = new ArrayList<>();
 
     /**
      * Get login.
@@ -175,7 +175,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      *
      * @return list of filters as FilterInterface
      */
-    public List<? extends FilterInterface> getFilters() {
+    public List<FilterDTO> getFilters() {
         return filters;
     }
 
@@ -185,7 +185,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      * @param filters
      *            list of filters as FilterInterface
      */
-    public void setFilters(List<? extends FilterInterface> filters) {
+    public void setFilters(List<FilterDTO> filters) {
         this.filters = filters;
     }
 
@@ -213,7 +213,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      *
      * @return list of roles as RoleInterface
      */
-    public List<? extends RoleInterface> getRoles() {
+    public List<RoleDTO> getRoles() {
         return roles;
     }
 
@@ -223,7 +223,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      * @param roles
      *            list of roles as RoleInterface
      */
-    public void setRoles(List<? extends RoleInterface> roles) {
+    public void setRoles(List<RoleDTO> roles) {
         this.roles = roles;
     }
 
@@ -251,7 +251,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      *
      * @return The clients.
      */
-    public List<? extends ClientInterface> getClients() {
+    public List<ClientDTO> getClients() {
         return clients;
     }
 
@@ -260,7 +260,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      *
      * @param clients The clients.
      */
-    public void setClients(List<? extends ClientInterface> clients) {
+    public void setClients(List<ClientDTO> clients) {
         this.clients = clients;
     }
 
@@ -287,7 +287,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      *
      * @return list of projects as ProjectInterface
      */
-    public List<? extends ProjectInterface> getProjects() {
+    public List<ProjectDTO> getProjects() {
         return projects;
     }
 
@@ -297,7 +297,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      * @param projects
      *            list of projects as ProjectInterface
      */
-    public void setProjects(List<? extends ProjectInterface> projects) {
+    public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;
     }
 
@@ -326,7 +326,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      *
      * @return list of processing tasks as TaskInterface
      */
-    public List<? extends TaskInterface> getProcessingTasks() {
+    public List<TaskDTO> getProcessingTasks() {
         return processingTasks;
     }
 
@@ -336,7 +336,7 @@ public class UserDTO extends BaseDTO implements UserInterface {
      * @param processingTasks
      *            list of processing tasks as TaskInterface
      */
-    public void setProcessingTasks(List<? extends TaskInterface> processingTasks) {
+    public void setProcessingTasks(List<TaskDTO> processingTasks) {
         this.processingTasks = processingTasks;
     }
 }

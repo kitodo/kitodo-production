@@ -108,7 +108,7 @@ public class Client extends BaseBean implements ClientInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setUsers(List<? extends UserInterface> users) {
+    public void setUsers(List<User> users) {
         this.users = (List<User>) users;
     }
 
@@ -119,7 +119,7 @@ public class Client extends BaseBean implements ClientInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setProjects(List<? extends ProjectInterface> projects) {
+    public void setProjects(List<Project> projects) {
         this.projects = (List<Project>) projects;
     }
 }

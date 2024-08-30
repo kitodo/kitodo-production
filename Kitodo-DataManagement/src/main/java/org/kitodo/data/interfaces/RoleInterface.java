@@ -44,7 +44,7 @@ public interface RoleInterface extends BaseBeanInterface {
      *
      * @return list of users who hold this role
      */
-    List<? extends UserInterface> getUsers();
+    List<User> getUsers();
 
     /**
      * Sets the list of users who hold this role.
@@ -52,7 +52,7 @@ public interface RoleInterface extends BaseBeanInterface {
      * @param users
      *            list of users who hold this role to set
      */
-    void setUsers(List<? extends UserInterface> users);
+    void setUsers(List<User> users);
 
     /**
      * Returns how many users hold this role.
@@ -62,7 +62,7 @@ public interface RoleInterface extends BaseBeanInterface {
      */
     @Deprecated
     default Integer getUsersSize() {
-        List<? extends UserInterface> users = getUsers();
+        List<User> users = getUsers();
         return Objects.nonNull(users) ? users.size() : null;
     }
 
@@ -83,7 +83,7 @@ public interface RoleInterface extends BaseBeanInterface {
     @Deprecated
     default void setUsersSize(Integer size) {
         int newSize = Objects.nonNull(size) ? size : 0;
-        List<? extends UserInterface> users = Optional.of(getUsers()).orElse(Collections.emptyList());
+        List<User> users = Optional.of(getUsers()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;

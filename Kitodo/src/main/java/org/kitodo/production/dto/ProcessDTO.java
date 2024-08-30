@@ -24,8 +24,8 @@ import java.util.Objects;
 public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
 
     private ProjectInterface project;
-    private List<? extends BatchInterface> batches = new ArrayList<>();
-    private List<? extends PropertyInterface> properties = new ArrayList<>();
+    private List<BatchDTO> batches = new ArrayList<>();
+    private List<PropertyDTO> properties = new ArrayList<>();
     private UserInterface blockedUser;
     private Double progressClosed;
     private Double progressInProcessing;
@@ -76,7 +76,7 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      *
      * @return list of batches as BatchInterface
      */
-    public List<? extends BatchInterface> getBatches() {
+    public List<BatchDTO> getBatches() {
         return batches;
     }
 
@@ -95,7 +95,7 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      *
      * @return list of properties as PropertyInterface
      */
-    public List<? extends PropertyInterface> getProperties() {
+    public List<PropertyDTO> getProperties() {
         if (Objects.isNull(this.properties)) {
             properties = new ArrayList<>();
         }
@@ -108,7 +108,7 @@ public class ProcessDTO extends BaseTemplateDTO implements ProcessInterface {
      * @param properties
      *            list of properties as PropertyInterface
      */
-    public void setProperties(List<? extends PropertyInterface> properties) {
+    public void setProperties(List<PropertyDTO> properties) {
         this.properties = properties;
     }
 

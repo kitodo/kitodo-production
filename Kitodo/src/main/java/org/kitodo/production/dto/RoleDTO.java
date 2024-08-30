@@ -21,7 +21,7 @@ import java.util.List;
 public class RoleDTO extends BaseDTO implements RoleInterface {
 
     private String title;
-    private List<? extends UserInterface> users = new ArrayList<>();
+    private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;
     private ClientInterface client;
 
@@ -49,7 +49,7 @@ public class RoleDTO extends BaseDTO implements RoleInterface {
      *
      * @return list of users as UserInterface
      */
-    public List<? extends UserInterface> getUsers() {
+    public List<UserDTO> getUsers() {
         return users;
     }
 
@@ -59,7 +59,7 @@ public class RoleDTO extends BaseDTO implements RoleInterface {
      * @param users
      *            list of users as UserInterface
      */
-    public void setUsers(List<? extends UserInterface> users) {
+    public void setUsers(List<UserDTO> users) {
         this.users = users;
     }
 

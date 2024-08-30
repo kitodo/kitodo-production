@@ -223,7 +223,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
      *            list of tasks for testing
      * @return true or false
      */
-    boolean hasCompleteTasks(List<? extends TaskInterface> list) {
+    boolean hasCompleteTasks(List<Task> list) {
         if (list.isEmpty()) {
             return false;
         }

@@ -166,7 +166,7 @@ public interface UserInterface extends BaseBeanInterface {
      *
      * @return the saved search queries
      */
-    List<? extends FilterInterface> getFilters();
+    List<Filter> getFilters();
 
     /**
      * Sets a list of the user's saved searches. The list should not contain
@@ -175,7 +175,7 @@ public interface UserInterface extends BaseBeanInterface {
      * @param filters
      *            list of saved search queries to set
      */
-    void setFilters(List<? extends FilterInterface> filters);
+    void setFilters(List<Filter> filters);
 
     /**
      * Returns the number of saved search queries.
@@ -185,7 +185,7 @@ public interface UserInterface extends BaseBeanInterface {
      */
     @Deprecated
     default Integer getFiltersSize() {
-        List<? extends FilterInterface> queries = getFilters();
+        List<Filter> queries = getFilters();
         return Objects.nonNull(queries) ? queries.size() : null;
     }
 
@@ -209,7 +209,7 @@ public interface UserInterface extends BaseBeanInterface {
             setFilters(null);
             return;
         }
-        List<? extends FilterInterface> filters = Optional.of(getFilters()).orElse(Collections.emptyList());
+        List<Filter> filters = Optional.of(getFilters()).orElse(Collections.emptyList());
         if (filtersSize == filters.size()) {
             return;
         }
@@ -225,7 +225,7 @@ public interface UserInterface extends BaseBeanInterface {
      *
      * @return a list of all roles of the user
      */
-    List<? extends RoleInterface> getRoles();
+    List<Role> getRoles();
 
     /**
      * Sets a list of all of the user's roles.
@@ -233,7 +233,7 @@ public interface UserInterface extends BaseBeanInterface {
      * @param roles
      *            list to set
      */
-    void setRoles(List<? extends RoleInterface> roles);
+    void setRoles(List<Role> roles);
 
     /**
      * Returns the number of roles the user has.
@@ -243,7 +243,7 @@ public interface UserInterface extends BaseBeanInterface {
      */
     @Deprecated
     default int getRolesSize() {
-        List<? extends RoleInterface> roles = getRoles();
+        List<Role> roles = getRoles();
         return Objects.nonNull(roles) ? roles.size() : 0;
     }
 
@@ -264,7 +264,7 @@ public interface UserInterface extends BaseBeanInterface {
     @Deprecated
     default void setRolesSize(Integer rolesSize) {
         int newSize = Objects.nonNull(rolesSize) ? rolesSize : 0;
-        List<? extends RoleInterface> users = Optional.of(getRoles()).orElse(Collections.emptyList());
+        List<Role> users = Optional.of(getRoles()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;
@@ -280,7 +280,7 @@ public interface UserInterface extends BaseBeanInterface {
      *
      * @return the clients
      */
-    List<? extends ClientInterface> getClients();
+    List<Client> getClients();
 
     /**
      * Sets the list of all clients that the user interacts with.
@@ -288,7 +288,7 @@ public interface UserInterface extends BaseBeanInterface {
      * @param clients
      *            clients to set
      */
-    void setClients(List<? extends ClientInterface> clients);
+    void setClients(List<Client> clients);
 
     /**
      * Returns the number of clients the user interacts with.
@@ -298,7 +298,7 @@ public interface UserInterface extends BaseBeanInterface {
      */
     @Deprecated
     default int getClientsSize() {
-        List<? extends ClientInterface> clients = getClients();
+        List<Client> clients = getClients();
         return Objects.nonNull(clients) ? clients.size() : 0;
     }
 
@@ -319,7 +319,7 @@ public interface UserInterface extends BaseBeanInterface {
     @Deprecated
     default void setClientsSize(Integer clientsSize) {
         int newSize = Objects.nonNull(clientsSize) ? clientsSize : 0;
-        List<? extends ClientInterface> users = Optional.of(getClients()).orElse(Collections.emptyList());
+        List<Client> users = Optional.of(getClients()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;
@@ -335,7 +335,7 @@ public interface UserInterface extends BaseBeanInterface {
      *
      * @return all projects
      */
-    List<? extends ProjectInterface> getProjects();
+    List<Project> getProjects();
 
     /**
      * Sets the list of all projects the user is working on.
@@ -343,7 +343,7 @@ public interface UserInterface extends BaseBeanInterface {
      * @param projects
      *            list of projects to set
      */
-    void setProjects(List<? extends ProjectInterface> projects);
+    void setProjects(List<Project> projects);
 
     /**
      * Returns the number of projects the user is working on.
@@ -353,7 +353,7 @@ public interface UserInterface extends BaseBeanInterface {
      */
     @Deprecated
     default int getProjectsSize() {
-        List<? extends ProjectInterface> projects = getProjects();
+        List<Project> projects = getProjects();
         return Objects.nonNull(projects) ? projects.size() : 0;
     }
 
@@ -374,7 +374,7 @@ public interface UserInterface extends BaseBeanInterface {
     @Deprecated
     default void setProjectsSize(Integer projectsSize) {
         int newSize = Objects.nonNull(projectsSize) ? projectsSize : 0;
-        List<? extends ProjectInterface> users = Optional.of(getProjects()).orElse(Collections.emptyList());
+        List<Project> users = Optional.of(getProjects()).orElse(Collections.emptyList());
         int currentSize = users.size();
         if (newSize == currentSize) {
             return;
@@ -390,7 +390,7 @@ public interface UserInterface extends BaseBeanInterface {
      *
      * @return all tasks the user is working on
      */
-    List<? extends TaskInterface> getProcessingTasks();
+    List<Task> getProcessingTasks();
 
     /**
      * Sets a list of all tasks that the user should work on.
@@ -398,5 +398,5 @@ public interface UserInterface extends BaseBeanInterface {
      * @param processingTasks
      *            list of tasks to set
      */
-    void setProcessingTasks(List<? extends TaskInterface> processingTasks);
+    void setProcessingTasks(List<Task> processingTasks);
 }

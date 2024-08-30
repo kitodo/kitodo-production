@@ -122,7 +122,7 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO>
         return filter;
     }
 
-    Set<Integer> collectIds(List<? extends BaseBeanInterface> dtos) {
+    Set<Integer> collectIds(List<BaseBean> dtos) {
         Set<Integer> ids = new HashSet<>();
         for (BaseBeanInterface process : dtos) {
             ids.add(process.getId());

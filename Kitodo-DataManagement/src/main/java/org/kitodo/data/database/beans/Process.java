@@ -436,7 +436,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setTasks(List<? extends TaskInterface> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = (List<Task>) tasks;
     }
 
@@ -501,7 +501,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
      */
     @Override
     @SuppressWarnings("unchecked")
-    public void setBatches(List<? extends BatchInterface> batches) {
+    public void setBatches(List<Batch> batches) {
         if (this.batches == null) {
             this.batches = (List<Batch>) batches;
         } else {
@@ -543,7 +543,7 @@ public class Process extends BaseTemplateBean implements ProcessInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setProperties(List<? extends PropertyInterface> properties) {
+    public void setProperties(List<Property> properties) {
         this.properties = (List<Property>) properties;
     }
 

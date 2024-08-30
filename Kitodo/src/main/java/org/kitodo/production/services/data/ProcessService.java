@@ -514,7 +514,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *            list of batches for checkout
      * @return true or false
      */
-    boolean isProcessAssignedToOnlyOneBatch(List<? extends BatchInterface> list) {
+    boolean isProcessAssignedToOnlyOneBatch(List<Batch> list) {
         return list.size() == 1;
     }
 

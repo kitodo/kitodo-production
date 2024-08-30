@@ -26,7 +26,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     protected String creationDate;
     private DocketInterface docket;
     private RulesetInterface ruleset;
-    private List<? extends TaskInterface> tasks = new ArrayList<>();
+    private List<TaskDTO> tasks = new ArrayList<>();
 
     /**
      * Get title.
@@ -109,7 +109,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      *
      * @return list of tasks as TaskInterface
      */
-    public List<? extends TaskInterface> getTasks() {
+    public List<TaskDTO> getTasks() {
         return tasks;
     }
 
@@ -119,7 +119,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * @param tasks
      *            list of tasks as TaskInterface
      */
-    public void setTasks(List<? extends TaskInterface> tasks) {
+    public void setTasks(List<TaskDTO> tasks) {
         this.tasks = tasks;
     }
 

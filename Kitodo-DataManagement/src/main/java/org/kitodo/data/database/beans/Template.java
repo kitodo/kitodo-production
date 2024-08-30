@@ -232,7 +232,7 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setProjects(List<? extends ProjectInterface> projects) {
+    public void setProjects(List<Project> projects) {
         this.projects = (List<Project>) projects;
     }
 
@@ -269,7 +269,7 @@ public class Template extends BaseTemplateBean implements TemplateInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setTasks(List<? extends TaskInterface> tasks) {
+    public void setTasks(List<Task> tasks) {
         this.tasks = (List<Task>) tasks;
     }
 

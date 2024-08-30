@@ -137,7 +137,7 @@ public class Batch extends BaseIndexedBean implements BatchInterface {
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setProcesses(List<? extends ProcessInterface> processes) {
+    public void setProcesses(List<Process> processes) {
         if (this.processes == null) {
             this.processes = (List<Process>) processes;
         } else {

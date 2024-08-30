@@ -47,7 +47,7 @@ public interface DatabaseProjectServiceInterface extends SearchDatabaseServiceIn
      *            user being edited
      * @return projects that can be assigned
      */
-    List<? extends ProjectInterface> findAllAvailableForAssignToUser(User user) throws DataException;
+    List<Project> findAllAvailableForAssignToUser(User user) throws DataException;
 
     /**
      * Returns all projects the user is assigned to for the current client. This
@@ -63,7 +63,7 @@ public interface DatabaseProjectServiceInterface extends SearchDatabaseServiceIn
      * @throws DataException
      *             on errors
      */
-    List<? extends ProjectInterface> findAllProjectsForCurrentUser() throws DataException;
+    List<Project> findAllProjectsForCurrentUser() throws DataException;
 
     /**
      * Returns all projects of the client, for which the logged in user is

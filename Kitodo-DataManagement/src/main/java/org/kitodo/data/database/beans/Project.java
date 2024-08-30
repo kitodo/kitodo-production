@@ -233,7 +233,7 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
 
     @Override
     @SuppressWarnings("unchecked")
-    public void setUsers(List<? extends UserInterface> users) {
+    public void setUsers(List<User> users) {
         this.users = (List<User>) users;
     }
 
@@ -718,7 +718,7 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
     }
 
     @Override
-    public List<? extends TemplateInterface> getActiveTemplates() {
+    public List<Template> getActiveTemplates() {
         if (Objects.isNull(templates)) {
             return null;
         }
@@ -727,11 +727,11 @@ public class Project extends BaseIndexedBean implements ProjectInterface, Compar
 
     @SuppressWarnings("unchecked")
     @Override
-    public void setActiveTemplates(List<? extends TemplateInterface> activeTemplates) {
+    public void setActiveTemplates(List<Template> activeTemplates) {
         if (Objects.isNull(activeTemplates)) {
             activeTemplates = Collections.emptyList();
         }
-        Map<Integer, ? extends TemplateInterface> activeTemplatesMap = activeTemplates.stream()
+        Map<Integer, Template> activeTemplatesMap = activeTemplates.stream()
                 .collect(Collectors.toMap(TemplateInterface::getId, Function.identity()));
 
         if (Objects.isNull(this.templates) && CollectionUtils.isNotEmpty(activeTemplates)) {

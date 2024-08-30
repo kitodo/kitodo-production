@@ -18,8 +18,8 @@ import java.util.List;
 public class ClientDTO extends BaseDTO implements ClientInterface {
 
     private String name;
-    private List<? extends UserInterface> users = new ArrayList<>();
-    private List<? extends ProjectInterface> projects = new ArrayList<>();
+    private List<UserDTO> users = new ArrayList<>();
+    private List<ProjectDTO> projects = new ArrayList<>();
 
     /**
      * Gets title.
@@ -45,7 +45,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      *
      * @return The users.
      */
-    public List<? extends UserInterface> getUsers() {
+    public List<UserDTO> getUsers() {
         return users;
     }
 
@@ -55,7 +55,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      * @param users
      *            The users.
      */
-    public void setUsers(List<? extends UserInterface> users) {
+    public void setUsers(List<UserDTO> users) {
         this.users = users;
     }
 
@@ -64,7 +64,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      *
      * @return The projects.
      */
-    public List<? extends ProjectInterface> getProjects() {
+    public List<ProjectDTO> getProjects() {
         return projects;
     }
 
@@ -74,7 +74,7 @@ public class ClientDTO extends BaseDTO implements ClientInterface {
      * @param projects
      *            The projects.
      */
-    public void setProjects(List<? extends ProjectInterface> projects) {
+    public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;
     }
 }
