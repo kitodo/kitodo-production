@@ -273,8 +273,8 @@ public class Task extends BaseIndexedBean {
      * @param editType
      *            processing type to set
      */
-    public void setEditType(TaskEditType inputType) {
-        this.editType = inputType;
+    public void setEditType(TaskEditType editType) {
+        this.editType = editType;
     }
 
     /**
@@ -283,8 +283,8 @@ public class Task extends BaseIndexedBean {
      * @param processingStatus
      *            processing status to set
      */
-    public void setProcessingStatus(TaskStatus inputStatus) {
-        this.processingStatus = inputStatus;
+    public void setProcessingStatus(TaskStatus processingStatus) {
+        this.processingStatus = processingStatus;
     }
 
     /**

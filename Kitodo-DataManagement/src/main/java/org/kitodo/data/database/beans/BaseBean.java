@@ -23,7 +23,6 @@ import javax.persistence.MappedSuperclass;
 
 import org.hibernate.Hibernate;
 import org.kitodo.data.database.persistence.BaseDAO;
-import org.kitodo.data.database.beans.BaseBean;
 
 /**
  * Base bean class.

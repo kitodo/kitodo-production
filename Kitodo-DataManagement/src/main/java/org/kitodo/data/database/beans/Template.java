@@ -31,12 +31,6 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.persistence.TemplateDAO;
-import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Ruleset;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.Workflow;
 
 @Entity
 @Table(name = "template")

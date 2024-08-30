@@ -26,7 +26,6 @@ import javax.persistence.Table;
 import org.kitodo.data.database.converter.PropertyTypeConverter;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.persistence.PropertyDAO;
-import org.kitodo.data.database.beans.Property;
 
 @Entity
 @Table(name = "property")
@@ -159,13 +158,10 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
     }
 
     /**
-     * Sets the creation time of the property. The string must be parsable with
-     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     * Sets the creation time of the property.
      *
      * @param creationDate
      *            creation time to set
-     * @throws ParseException
-     *             if the time cannot be converted
      */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;

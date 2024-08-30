@@ -26,9 +26,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.RoleDAO;
-import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Role;
-import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "role")

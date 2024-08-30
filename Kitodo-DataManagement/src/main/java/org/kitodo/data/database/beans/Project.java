@@ -41,10 +41,6 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
-import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "project")
@@ -505,13 +501,10 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Sets the project end time. The string must be parsable with
-     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     * Sets the project end time.
      *
      * @param endDate
      *            the end time
-     * @throws ParseException
-     *             if the time cannot be converted
      */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
@@ -826,7 +819,7 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
      * Sets the active production templates associated with the project. This
      * list is not guaranteed to be in reliable order.
      *
-     * @param templates
+     * @param activeTemplates
      *            the active production templates
      */
     public void setActiveTemplates(List<Template> activeTemplates) {
