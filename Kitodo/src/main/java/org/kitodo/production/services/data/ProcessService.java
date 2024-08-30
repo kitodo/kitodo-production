@@ -252,6 +252,14 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * <b>Implementation Requirements:</b><br>
      * This function requires that the thread is assigned to a logged-in user.
      *
+     * <!-- Here, an additional function countResults() is specified with
+     * additional parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future. -->
+     *
      * @param filters
      *            a map with exactly one entry, only the value is important, in
      *            which the content of the filter field is passed
@@ -265,15 +273,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *             that can be caused by Hibernate
      * @throws DataException
      *             that can be caused by ElasticSearch
-     */
-    /*
-     * Here, an additional function countResults() is specified with additional
-     * parameters, and the generally specified function from
-     * SearchDatabaseServiceInterface is not used. However, in
-     * DatabaseTemplateServiceInterface, a value is set that affects the
-     * generally specified functions countResults() and loadData() in
-     * SearchDatabaseServiceInterface. This could be equalized at some point in
-     * the future.
      */
     public Long countResults(Map<?, String> filters, boolean showClosedProcesses, boolean showInactiveProjects)
             throws DataException {
@@ -425,26 +424,32 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * Provides a window onto the process objects. This makes it possible to
      * navigate through the processes page by page, without having to load all
      * objects into memory.
-     * 
+     *
      * <p>
      * <b>API Note:</b><br>
      * This function filters the data according to the client, for which the
      * logged in user is currently working.
-     * 
+     *
      * <p>
      * <b>Implementation Requirements:</b><br>
      * This function requires that the thread is assigned to a logged-in user.
-     * 
+     *
+     * <!-- Here, an additional function loadData() is specified with additional
+     * parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future. -->
+     *
      * @param offset
      *            number of objects to be skipped at the list head
      * @param limit
      *            maximum number of objects to return
      * @param sortField
      *            by which column the data should be sorted. Must not be
-     *            {@code null} or empty.
-     *
-     * <p>
-     *            One of:
+     *            {@code null} or empty.<br>
+     *            One of:<br>
      *            <ul>
      *            <li>"id": ID</li>
      *            <li>"title.keyword": Process title</li>
@@ -472,16 +477,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @throws DataException
      *             if processes cannot be loaded from search index
      */
-    /*
-     * Here, an additional function loadData() is specified with additional
-     * parameters, and the generally specified function from
-     * SearchDatabaseServiceInterface is not used. However, in
-     * DatabaseTemplateServiceInterface, a value is set that affects the
-     * generally specified functions countResults() and loadData() in
-     * SearchDatabaseServiceInterface. This could be equalized at some point in
-     * the future.
-     */
-    public List<Process> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
+    public List<Process> loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                      boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
@@ -502,7 +498,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
     /**
@@ -561,14 +557,13 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific docket.
      *
+     * <!-- Used in DocketForm to find out whether a docket is used in a
+     * process. (Then it may not be deleted.) Is only checked for isEmpty(). -->
+     *
      * @param docketId
      *            record number of the docket
      * @return list that is not empty if something was found, otherwise empty
      *         list
-     */
-    /*
-     * Used in DocketForm to find out whether a docket is used in a process.
-     * (Then it may not be deleted.) Is only checked for isEmpty().
      */
     public Collection<?> findByDocket(int docketId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
@@ -579,16 +574,16 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific production template.
      *
+     * <!-- Used in TemplateForm to find out whether a production template is
+     * used in a process. (Then it may not be deleted.) Is only checked for
+     * isEmpty(). -->
+     *
      * @param templateId
      *            record number of the production template
      * @return list that is not empty if something was found, otherwise empty
      *         list
      * @throws DataException
      *             if an error occurred during the search
-     */
-    /*
-     * Used in TemplateForm to find out whether a production template is used in
-     * a process. (Then it may not be deleted.) Is only checked for isEmpty().
      */
     public Collection<?> findByTemplate(int templateId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);
@@ -617,14 +612,13 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     /**
      * Determines all processes with a specific ruleset.
      *
+     * <!-- Used in RulesetForm to find out whether a ruleset is used in a
+     * process. (Then it may not be deleted.) Is only checked for isEmpty(). -->
+     *
      * @param rulesetId
      *            record number of the ruleset
      * @return list that is not empty if something was found, otherwise empty
      *         list
-     */
-    /*
-     * Used in RulesetForm to find out whether a ruleset is used in a process.
-     * (Then it may not be deleted.) Is only checked for isEmpty().
      */
     public Collection<?> findByRuleset(int rulesetId) throws DataException {
         BeanQuery query = new BeanQuery(Process.class);

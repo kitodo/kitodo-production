@@ -140,6 +140,14 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * <b>Implementation Requirements:</b><br>
      * This function requires that the thread is assigned to a logged-in user.
      *
+     * <!-- Here, an additional function countResults() is specified with
+     * additional parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future. -->
+     * 
      * @param filters
      *            a map with exactly one entry, only the value is important, in
      *            which the content of the filter field is passed
@@ -159,15 +167,6 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *             database access error
      * @throws DataException
      *             index access error
-     */
-    /*
-     * Here, an additional function countResults() is specified with additional
-     * parameters, and the generally specified function from
-     * SearchDatabaseServiceInterface is not used. However, in
-     * DatabaseTemplateServiceInterface, a value is set that affects the
-     * generally specified functions countResults() and loadData() in
-     * SearchDatabaseServiceInterface. This could be equalized at some point in
-     * the future.
      */
     public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
                              boolean showAutomaticTasks, List<TaskStatus> taskStatus)
@@ -196,6 +195,14 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * <b>API Note:</b><br>
      * This function filters the data according to the client, for which the
      * logged in user is currently working.
+     *
+     * <!-- Here, an additional function loadData() is specified with additional
+     * parameters, and the generally specified function from
+     * SearchDatabaseServiceInterface is not used. However, in
+     * DatabaseTemplateServiceInterface, a value is set that affects the
+     * generally specified functions countResults() and loadData() in
+     * SearchDatabaseServiceInterface. This could be equalized at some point in
+     * the future. -->
      * 
      * <p>
      * <b>Implementation Requirements:</b><br>
@@ -242,23 +249,14 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * @throws DataException
      *             if processes cannot be loaded from search index
      */
-    /*
-     * Here, an additional function loadData() is specified with additional
-     * parameters, and the generally specified function from
-     * SearchDatabaseServiceInterface is not used. However, in
-     * DatabaseTemplateServiceInterface, a value is set that affects the
-     * generally specified functions countResults() and loadData() in
-     * SearchDatabaseServiceInterface. This could be equalized at some point in
-     * the future.
-     */
-    public List<Task> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters,
+    public List<Task> loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
             throws DataException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), first, pageSize);
+        return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
     private BeanQuery formBeanQuery(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
@@ -645,8 +643,8 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            record number of the process whose tasks are being searched
      * @return the tasks in between
      */
-    public List<Task> getAllTasksInBetween(Integer orderingMax, Integer orderingMin, Integer processId) {
-        return dao.getAllTasksInBetween(orderingMax, orderingMin, processId);
+    public List<Task> getAllTasksInBetween(Integer previousOrdering, Integer laterOrdering, Integer processId) {
+        return dao.getAllTasksInBetween(previousOrdering, laterOrdering, processId);
     }
 
     /**

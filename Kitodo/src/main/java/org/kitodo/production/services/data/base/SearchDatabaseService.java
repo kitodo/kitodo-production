@@ -111,7 +111,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @throws DataException
      *             if processes cannot be loaded from search index
      */
-    public abstract List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
+    public abstract List loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters)
             throws DataException;
 
     /**
