@@ -38,11 +38,11 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.HibernateUtil;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
 
 @Entity
 @Table(name = "process")

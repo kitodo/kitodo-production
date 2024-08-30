@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.data.elasticsearch.index.converter;
+package org.kitodo.data.database.converter;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
