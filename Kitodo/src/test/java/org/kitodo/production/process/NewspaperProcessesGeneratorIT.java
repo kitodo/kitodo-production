@@ -243,8 +243,7 @@ public class NewspaperProcessesGeneratorIT {
         generatesNewspaperProcessesThread.start();
         DAOException dataException = assertThrows(DAOException.class,
                 () -> ServiceManager.getProcessService().findById(11));
-        Assert.assertEquals("Process should not have been created",
-            "org.kitodo.data.database.exceptions.DAOException: Process 11 cannot be found in database",
+        Assert.assertEquals("Process should not have been created", "Process 11 cannot be found in database",
             dataException.getMessage());
     }
 
