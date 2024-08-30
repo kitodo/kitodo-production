@@ -47,7 +47,6 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
@@ -188,7 +187,7 @@ public class ProcessForm extends TemplateBaseForm {
             try {
                 ServiceManager.getProcessService().save(this.process, true);
                 return processesPage;
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
             }
@@ -523,7 +522,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Task status up.
      */
-    public void setTaskStatusUp() throws DataException, IOException, DAOException {
+    public void setTaskStatusUp() throws DAOException, IOException, DAOException {
         workflowControllerService.setTaskStatusUp(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
@@ -641,7 +640,7 @@ public class ProcessForm extends TemplateBaseForm {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DataException | IOException | InvalidImagesException e) {
+        } catch (DAOException | IOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
@@ -951,7 +950,7 @@ public class ProcessForm extends TemplateBaseForm {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
-        } catch (IOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
                 logger, e);
         }
@@ -976,7 +975,7 @@ public class ProcessForm extends TemplateBaseForm {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
-        } catch (IOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                     logger, e);
         }

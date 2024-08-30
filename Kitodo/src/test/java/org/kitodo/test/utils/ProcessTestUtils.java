@@ -36,7 +36,6 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.forms.createprocess.ProcessTextMetadata;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -98,9 +97,9 @@ public class ProcessTestUtils {
      * @param filename filename of metadata file to copy
      * @throws IOException when copying test metadata file fails
      * @throws DAOException when copying test metadata file fails
-     * @throws DataException when copying test metadata file fails
+     * @throws DAOException when copying test metadata file fails
      */
-    public static void copyTestFiles(int processId, String filename) throws IOException, DAOException, DataException {
+    public static void copyTestFiles(int processId, String filename) throws IOException, DAOException, DAOException {
         // copy test meta xml
         copyTestMetadataFile(processId, filename);
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
@@ -150,10 +149,10 @@ public class ProcessTestUtils {
      * @param filename filename of metadata file
      * @throws IOException when subdirectory cannot be created or metadata file cannot be copied
      * @throws DAOException when retrieving process from database fails
-     * @throws DataException when saving process fails
+     * @throws DAOException when saving process fails
      */
     public static void copyTestMetadataFile(int processId, String filename) throws IOException, DAOException,
-            DataException {
+            DAOException {
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
                 .toUri();
         URI processDirTargetFile = Paths.get(ConfigCore.getKitodoDataDirectory(), processId
@@ -175,9 +174,9 @@ public class ProcessTestUtils {
      * @param processTitle title of process to add
      * @return created process
      * @throws DAOException when adding process fails
-     * @throws DataException when adding process fails
+     * @throws DAOException when adding process fails
      */
-    public static Process addProcess(String processTitle) throws DAOException, DataException {
+    public static Process addProcess(String processTitle) throws DAOException, DAOException {
         return MockDatabase.addProcess(processTitle, TEST_PROJECT_ID, TEST_TEMPLATE_ID);
     }
 
@@ -208,10 +207,10 @@ public class ProcessTestUtils {
      * @param processTitlesAndIds Map containing process titles as keys and IDs as values
      * @throws IOException when copying test resources for a process fails
      * @throws DAOException when copying test resources for a process or loading the process from the database fails
-     * @throws DataException when saving a test process fails
+     * @throws DAOException when saving a test process fails
      */
     public static void copyHierarchyTestFiles(Map<String, Integer> processTitlesAndIds) throws IOException,
-            DAOException, DataException {
+            DAOException, DAOException {
         for (Map.Entry<String, String> hierarchyProcess : hierarchyProcessTitlesAndFiles.entrySet()) {
             int processId = processTitlesAndIds.get(hierarchyProcess.getKey());
             ProcessTestUtils.copyTestFiles(processId, hierarchyProcess.getValue());
@@ -226,9 +225,9 @@ public class ProcessTestUtils {
      * @param processId ID of process
      * @throws DAOException when process cannot be loaded from test database
      * @throws IOException when metadata file of process cannot be read or saved
-     * @throws DataException when process cannot be re-saved
+     * @throws DAOException when process cannot be re-saved
      */
-    public static void updateIdentifier(int processId) throws DAOException, IOException, DataException {
+    public static void updateIdentifier(int processId) throws DAOException, IOException, DAOException {
         Process process = ServiceManager.getProcessService().getById(processId);
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
         try (InputStream fileContent = ServiceManager.getFileService().readMetadataFile(process)) {

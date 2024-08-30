@@ -76,7 +76,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CatalogException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ConfigException;
@@ -967,7 +966,7 @@ public class ImportService {
                             break;
                         }
                     }
-                } catch (DataException e) {
+                } catch (DAOException e) {
                     logger.error(e.getLocalizedMessage());
                 }
             }
@@ -1022,7 +1021,7 @@ public class ImportService {
      *
      * @param mainProcess main process to which list of child processes are attached
      * @param childProcesses list of child processes that are attached to the main process
-     * @throws DataException thrown if saving a process fails
+     * @throws DAOException thrown if saving a process fails
      * @throws InvalidMetadataValueException thrown if process workpiece contains invalid metadata
      * @throws NoSuchMetadataFieldException thrown if process workpiece contains undefined metadata
      * @throws ProcessGenerationException thrown if process title cannot be created
@@ -1030,7 +1029,7 @@ public class ImportService {
     public static void processProcessChildren(Process mainProcess, LinkedList<TempProcess> childProcesses,
                                               RulesetManagementInterface rulesetManagement, String acquisitionStage,
                                               List<Locale.LanguageRange> priorityList)
-            throws DataException, InvalidMetadataValueException, NoSuchMetadataFieldException,
+            throws DAOException, InvalidMetadataValueException, NoSuchMetadataFieldException,
             ProcessGenerationException, IOException {
         for (TempProcess tempProcess : childProcesses) {
             if (Objects.isNull(tempProcess) || Objects.isNull(tempProcess.getProcess())) {
@@ -1215,7 +1214,7 @@ public class ImportService {
         } catch (DAOException | IOException | ProcessGenerationException | XPathExpressionException
                 | ParserConfigurationException | NoRecordFoundException | UnsupportedFormatException
                 | URISyntaxException | SAXException | InvalidMetadataValueException | NoSuchMetadataFieldException
-                | DataException | CommandException | TransformerException | CatalogException e) {
+                | CommandException | TransformerException | CatalogException e) {
             logger.error(e);
             throw new ImportException(e.getLocalizedMessage());
         }

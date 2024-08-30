@@ -44,7 +44,6 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
@@ -638,7 +637,7 @@ public class AddDocStrucTypeDialog {
             for (int processId : ids) {
                 processes.add(ServiceManager.getProcessService().getById(processId));
             }
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             logger.catching(e);
             alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.error", e.getMessage()));
         }

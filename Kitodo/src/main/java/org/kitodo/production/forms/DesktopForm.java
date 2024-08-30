@@ -26,7 +26,6 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -82,7 +81,7 @@ public class DesktopForm extends BaseForm {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList() && taskList.isEmpty()) {
                 taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap<>());
             }
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TASK.getTranslationPlural() }, logger,
                 e);
         }
@@ -99,7 +98,7 @@ public class DesktopForm extends BaseForm {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProcessList() && processList.isEmpty()) {
                 processList = ServiceManager.getProcessService().loadData(0, 10, SORT_ID, SortOrder.DESCENDING, null);
             }
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
                 logger, e);
         }
@@ -116,7 +115,7 @@ public class DesktopForm extends BaseForm {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList() && projectList.isEmpty()) {
                 projectList = ServiceManager.getProjectService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, null);
             }
-        } catch (DataException | JsonException e) {
+        } catch (DAOException | JsonException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
         }
@@ -132,7 +131,7 @@ public class DesktopForm extends BaseForm {
         try {
             ProcessService.deleteProcess(processID);
             emptyCache();
-        } catch (DataException | DAOException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         }
@@ -147,7 +146,7 @@ public class DesktopForm extends BaseForm {
         try {
             ProjectService.delete(projectID);
             emptyCache();
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
                     e);
         } catch (ProjectDeletionException e) {
@@ -161,7 +160,7 @@ public class DesktopForm extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
         }

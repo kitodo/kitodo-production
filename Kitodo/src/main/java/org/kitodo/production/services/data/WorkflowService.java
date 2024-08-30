@@ -21,7 +21,6 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
@@ -71,19 +70,15 @@ public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DataException {
-        try {
-            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
-                ServiceManager.getUserService().getSessionClientId());
-            return countDatabaseRows("SELECT COUNT(*) FROM Workflow WHERE client_id = :sessionClientId", parameters);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Long countResults(Map<?, String> filters) throws DAOException {
+        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
+                .getSessionClientId());
+        return countDatabaseRows("SELECT COUNT(*) FROM Workflow WHERE client_id = :sessionClientId", parameters);
     }
 
     @Override
     public List<Workflow> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<?, String> filters) throws DataException {
+            Map<?, String> filters) throws DAOException {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);

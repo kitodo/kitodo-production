@@ -31,7 +31,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.TemplateDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -85,22 +84,17 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DataException {
-        try {
-            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
-                ServiceManager.getUserService().getSessionClientId());
-            return countDatabaseRows(this.showInactiveTemplates
-                    ? "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId"
-                    : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = 1",
-                parameters);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Long countResults(Map<?, String> filters) throws DAOException {
+        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
+                .getSessionClientId());
+        return countDatabaseRows(this.showInactiveTemplates
+                ? "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId"
+                : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = 1", parameters);
     }
 
     @Override
     public List<Template> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
-            throws DataException {
+            throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
@@ -140,20 +134,16 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
      *            {@code null}.
      * @return process templates that can be assigned
      */
-    public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DataException {
-        try {
-            Map<String, Object> parameters = new HashMap<>();
-            parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-            List<Template> templates = getByQuery("FROM Template WHERE client_id = :sessionClientId AND active = 1",
-                parameters);
-            if (Objects.nonNull(projectId)) {
-                List<Template> assigned = ServiceManager.getProjectService().getById(projectId).getTemplates();
-                templates.removeAll(assigned);
-            }
-            return templates;
-        } catch (DAOException e) {
-            throw new DataException(e);
+    public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DAOException {
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
+        List<Template> templates = getByQuery("FROM Template WHERE client_id = :sessionClientId AND active = 1",
+            parameters);
+        if (Objects.nonNull(projectId)) {
+            List<Template> assigned = ServiceManager.getProjectService().getById(projectId).getTemplates();
+            templates.removeAll(assigned);
         }
+        return templates;
     }
 
     /**
@@ -189,7 +179,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
      * @return list that is not empty if something was found, otherwise empty
      *         list
      */
-    public Collection<?> findByDocket(int docketId) throws DataException {
+    public Collection<?> findByDocket(int docketId) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("docketId", docketId);
         return getByQuery("FROM Template WHERE docket_id = :docketId", parameters, 1);
     }
@@ -206,7 +196,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
      * Used in RulesetForm to find out whether a ruleset is used in a process
      * template. (Then it may not be deleted.) Is only checked for isEmpty().
      */
-    public Collection<?> findByRuleset(int rulesetId) throws DataException {
+    public Collection<?> findByRuleset(int rulesetId) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("rulesetId", rulesetId);
         return getByQuery("FROM Template WHERE ruleset_id = :rulesetId", parameters, 1);
     }

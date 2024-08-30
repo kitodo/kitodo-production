@@ -34,7 +34,7 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
@@ -97,7 +97,7 @@ public class KitodoScriptService {
      *            from frontend passed as String
      */
     public void execute(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         this.parameters = new HashMap<>();
         // decompose and capture all script parameters
         StrTokenizer tokenizer = new StrTokenizer(script, ' ', '\"');
@@ -125,7 +125,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "importFromFileSystem":
@@ -170,7 +170,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeOtherScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "runscript":
@@ -210,7 +210,7 @@ public class KitodoScriptService {
     }
 
     private boolean executeRemainingScript(List<Process> processes, String script)
-            throws DataException, IOException, InvalidImagesException, MediaNotFoundException {
+            throws DAOException, IOException, InvalidImagesException, MediaNotFoundException {
         // call the correct method via the parameter
         switch (this.parameters.get("action")) {
             case "generateImages":
@@ -363,7 +363,7 @@ public class KitodoScriptService {
                 try {
                     ServiceManager.getProcessService().deleteProcess(process);
                     Helper.setMessage("Process " + title + " deleted.");
-                } catch (DataException | IOException e) {
+                } catch (DAOException | IOException e) {
                     Helper.setErrorMessage("errorDeleting",
                         new Object[] {Helper.getTranslation("process") + " " + title }, logger, e);
                 }
@@ -457,7 +457,7 @@ public class KitodoScriptService {
         }
     }
 
-    private void runScript(List<Process> processes, String taskName, String scriptName) throws DataException {
+    private void runScript(List<Process> processes, String taskName, String scriptName) throws DAOException {
         for (Process process : processes) {
             for (Task task : process.getTasks()) {
                 if (task.getTitle().equalsIgnoreCase(taskName)) {
@@ -542,7 +542,7 @@ public class KitodoScriptService {
                 process.setRuleset(ruleset);
                 ServiceManager.getProcessService().save(process);
             }
-        } catch (DataException | RuntimeException e) {
+        } catch (DAOException | RuntimeException e) {
             Helper.setErrorMessage(e);
             logger.error(e.getMessage(), e);
         }
@@ -754,7 +754,7 @@ public class KitodoScriptService {
             try {
                 ExportDms dms = new ExportDms(!withoutImages);
                 dms.startExport(process);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 logger.error(e.getMessage(), e);
             }
         }
@@ -771,7 +771,7 @@ public class KitodoScriptService {
     private void saveProcess(Process process) {
         try {
             ServiceManager.getProcessService().save(process);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("Error while saving process: " + process.getTitle(), logger, e);
         }
     }
@@ -779,7 +779,7 @@ public class KitodoScriptService {
     private void saveTask(String processTitle, Task task) {
         try {
             ServiceManager.getTaskService().save(task);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("Error while saving - " + processTitle, logger, e);
         }
     }

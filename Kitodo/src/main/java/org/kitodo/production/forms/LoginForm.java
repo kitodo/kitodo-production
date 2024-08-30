@@ -24,7 +24,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.controller.SessionClientController;
 import org.kitodo.production.security.CustomLoginSuccessHandler;
 import org.kitodo.production.services.ServiceManager;
@@ -96,7 +95,7 @@ public class LoginForm implements Serializable {
     /**
      * Check if index is up-to-date and if user has multiple clients and display corresponding notification dialogs.
      */
-    public void performPostLoginChecks() throws DataException, DAOException, IOException {
+    public void performPostLoginChecks() throws DAOException, DAOException, IOException {
 
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         SessionClientController controller = new SessionClientController();

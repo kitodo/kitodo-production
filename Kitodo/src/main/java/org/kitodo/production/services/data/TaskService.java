@@ -44,7 +44,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
@@ -123,7 +122,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
+    public Long countResults(Map filters) throws DAOException {
         return countResults(new HashMap<String, String>(filters), false, false, false, null);
     }
 
@@ -165,23 +164,19 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * @return the number of matching objects
      * @throws DAOException
      *             database access error
-     * @throws DataException
+     * @throws DAOException
      *             index access error
      */
     public Long countResults(Map<?, String> filters, boolean onlyOwnTasks, boolean hideCorrectionTasks,
-                             boolean showAutomaticTasks, List<TaskStatus> taskStatus)
-            throws DataException {
-        try {
-            BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
-            return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+            boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
+
+        BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
+        return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
     }
 
     @Override
     public List<Task> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
-            throws DataException {
+            throws DAOException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false,
                 Arrays.asList(TaskStatus.OPEN, TaskStatus.INWORK));
     }
@@ -246,13 +241,13 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            Tasks in what status. Must not be {@code} null. One of: [OPEN,
      *            INWORK], [OPEN], [INWORK] or [].
      * @return the data objects to be displayed
-     * @throws DataException
+     * @throws DAOException
      *             if processes cannot be loaded from search index
      */
     public List<Task> loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters,
                                   boolean onlyOwnTasks, boolean hideCorrectionTasks, boolean showAutomaticTasks,
                                   List<TaskStatus> taskStatus)
-            throws DataException {
+            throws DAOException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
@@ -334,7 +329,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *
      * @return all different task names
      */
-    public List<String> findTaskTitlesDistinct() throws DataException, DAOException {
+    public List<String> findTaskTitlesDistinct() throws DAOException, DAOException {
         throw new UnsupportedOperationException("not yet implemented");
         // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
     }
@@ -470,7 +465,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            object is then immediately updated in the database.
      * @return whether it had a successful outcome
      */
-    public boolean executeScript(Task task, String script, boolean automatic) throws DataException {
+    public boolean executeScript(Task task, String script, boolean automatic) throws DAOException {
         if (Objects.isNull(script) || script.isEmpty()) {
             return false;
         }
@@ -529,7 +524,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            0), and if the outcome is negative it is set to open; and the
      *            object is then immediately updated in the database.
      */
-    public void executeScript(Task task, boolean automatic) throws DataException {
+    public void executeScript(Task task, boolean automatic) throws DAOException {
         String script = task.getScriptPath();
         boolean scriptFinishedSuccessful = true;
         logger.debug("starting script {}", script);
@@ -550,13 +545,13 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            if it is an automatic task
      * @param successful
      *            if the processing was successful
-     * @throws DataException
+     * @throws DAOException
      *             if the task cannot be saved
      * @throws IOException
      *             if the task cannot be closed
      */
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
-            throws DataException, IOException, DAOException {
+            throws DAOException, IOException, DAOException {
         if (automatic) {
             task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
@@ -569,7 +564,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
         }
     }
 
-    private void abortTask(Task task) throws DataException {
+    private void abortTask(Task task) throws DAOException {
         task.setProcessingStatus(TaskStatus.OPEN);
         task.setEditType(TaskEditType.AUTOMATIC);
         save(task);
@@ -589,10 +584,10 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            if so, the task is set to completed if the processing was
      *            completed without errors, and else it is set to open; and the
      *            object is then immediately updated in the database.
-     * @throws DataException
+     * @throws DAOException
      *             if the task cannot be saved
      */
-    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DataException {
+    public void generateImages(EmptyTask executingThread, Task task, boolean automatic) throws DAOException {
         try {
             Process process = task.getProcess();
             Subfolder sourceFolder = new Subfolder(process, process.getProject().getGeneratorSource());
@@ -612,7 +607,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * @param task
      *            as Task object
      */
-    public void executeDmsExport(Task task) throws DataException, IOException, DAOException {
+    public void executeDmsExport(Task task) throws DAOException, IOException, DAOException {
         new ExportDms(task).startExport(task);
     }
 
@@ -683,14 +678,14 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *            record number of the production template
      * @return list that is not empty if something was found, otherwise empty
      *         list
-     * @throws DataException
+     * @throws DAOException
      *             if an error occurred during the search
      */
     /*
      * Used in TemplateForm to find out whether a production template is used in
      * a process. (Then it may not be deleted.) Is only checked for isEmpty().
      */
-    public List<Map<String, Object>> findByTemplateId(Integer id) throws DataException {
+    public List<Map<String, Object>> findByTemplateId(Integer id) throws DAOException {
         throw new UnsupportedOperationException("not yet implemented");
     }
 
@@ -910,11 +905,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * @deprecated Use {@link #getById(Integer)}.
      */
     @Deprecated
-    public Task findById(Integer id) throws DataException {
-        try {
-            return getById(id);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Task findById(Integer id) throws DAOException {
+        return getById(id);
     }
 }

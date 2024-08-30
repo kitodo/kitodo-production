@@ -51,7 +51,6 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigProject;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -278,7 +277,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if the configuration is wrong
      * @throws DAOException
      *             if an error occurs while saving in the database
-     * @throws DataException
+     * @throws DAOException
      *             if an error occurs while saving in the database
      * @throws IOException
      *             if something goes wrong when reading or writing one of the
@@ -287,7 +286,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
      */
-    public boolean nextStep() throws ConfigurationException, DAOException, DataException, IOException,
+    public boolean nextStep() throws ConfigurationException, DAOException, DAOException, IOException,
             ProcessGenerationException, DoctypeMissingException, CommandException {
 
         if (currentStep == 0) {
@@ -501,7 +500,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                     (one, another) -> one + ", " + another));
     }
 
-    private void createProcess(int index) throws DAOException, DataException, IOException, ProcessGenerationException,
+    private void createProcess(int index) throws DAOException, DAOException, IOException, ProcessGenerationException,
             CommandException {
         final long begin = System.nanoTime();
 
@@ -651,7 +650,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
-            throws DAOException, DataException, ProcessGenerationException, IOException, CommandException {
+            throws DAOException, DAOException, ProcessGenerationException, IOException, CommandException {
 
         if (yearMark.equals(currentYear)) {
             return;
@@ -663,7 +662,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         }
     }
 
-    private void saveAndCloseCurrentYearProcess() throws DataException, IOException {
+    private void saveAndCloseCurrentYearProcess() throws DAOException, IOException {
         final long begin = System.nanoTime();
 
         metsService.saveWorkpiece(yearWorkpiece, yearMetadataFileUri);
@@ -726,7 +725,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void createNewYearProcess(String yearMark, Map<String, String> genericFields)
-            throws ProcessGenerationException, DataException, IOException, CommandException {
+            throws ProcessGenerationException, DAOException, IOException, CommandException {
         final long begin = System.nanoTime();
 
         generateProcess(overallProcess.getTemplate().getId(), overallProcess.getProject().getId());
@@ -789,7 +788,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
         return createdChild;
     }
 
-    private void finish() throws DataException, IOException {
+    private void finish() throws DAOException, IOException {
         final long begin = System.nanoTime();
 
         saveAndCloseCurrentYearProcess();
@@ -810,7 +809,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      * Check if process with the same processtitle already exists.
      * @return 'true' if Duplicated titles are found and 'false' if not
      */
-    public boolean isDuplicatedTitles() throws ProcessGenerationException, DataException {
+    public boolean isDuplicatedTitles() throws ProcessGenerationException, DAOException {
         List<List<IndividualIssue>> processes = course.getProcesses();
         List<String> issueTitles = new ArrayList<>();
         boolean check = false;

@@ -30,7 +30,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
@@ -127,7 +126,7 @@ public class ProcessListBaseView extends BaseForm {
                 this.selectedProcesses = processService.findSelectedProcesses(
                     this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter(),
                     new ArrayList<>(excludedProcessIds));
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 logger.error(e.getMessage());
             }
         }
@@ -421,7 +420,7 @@ public class ProcessListBaseView extends BaseForm {
             try {
 
                 export.startExport(processToExport);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             }
@@ -492,7 +491,7 @@ public class ProcessListBaseView extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
         }
@@ -505,10 +504,9 @@ public class ProcessListBaseView extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(ServiceManager.getProcessService().getById(id));
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
-        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         }
@@ -551,7 +549,7 @@ public class ProcessListBaseView extends BaseForm {
             if (processBean.getChildren().isEmpty()) {
                 try {
                     ProcessService.deleteProcess(processBean.getId());
-                } catch (DataException | IOException e) {
+                } catch (DAOException | IOException e) {
                     Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                             logger, e);
                 }

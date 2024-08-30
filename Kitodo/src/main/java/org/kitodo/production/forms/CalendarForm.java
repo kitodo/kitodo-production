@@ -47,7 +47,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.DoctypeMissingException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
@@ -916,7 +915,7 @@ public class CalendarForm implements Serializable {
     /**
      * Check if process with the same processtitle already exists.
      */
-    public void checkDuplicatedTitles() throws ProcessGenerationException, DataException, DAOException,
+    public void checkDuplicatedTitles() throws ProcessGenerationException, DAOException, DAOException,
             ConfigurationException, IOException, DoctypeMissingException {
         if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
             Process process = ServiceManager.getProcessService().getById(parentId);

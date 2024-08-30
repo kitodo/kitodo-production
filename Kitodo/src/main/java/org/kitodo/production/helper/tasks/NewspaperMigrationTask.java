@@ -17,7 +17,6 @@ import javax.naming.ConfigurationException;
 
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.migration.NewspaperProcessesMigrator;
@@ -116,13 +115,13 @@ public class NewspaperMigrationTask extends EmptyTask {
      *             if file syestem I/O fails
      * @throws ProcessGenerationException
      *             if a process cannot be generated
-     * @throws DataException
+     * @throws DAOException
      *             if a process cannot be saved to the database
      * @throws ConfigurationException
      *             if the newspaper division is not well configured in the
      *             ruleset
      */
-    private void next() throws DAOException, IOException, ProcessGenerationException, DataException,
+    private void next() throws DAOException, IOException, ProcessGenerationException, DAOException,
             ConfigurationException, CommandException {
         switch (part) {
             case CONVERT_PROCESSES: {
@@ -163,7 +162,7 @@ public class NewspaperMigrationTask extends EmptyTask {
                 }
             }
             setProgress(100);
-        } catch (ConfigurationException | DAOException | IOException | ProcessGenerationException | DataException
+        } catch (ConfigurationException | DAOException | IOException | ProcessGenerationException
                 | CommandException e) {
             setException(e);
         }

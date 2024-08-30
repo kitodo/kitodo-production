@@ -22,7 +22,6 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
@@ -70,7 +69,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
     }
 
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
+    public Long countResults(Map filters) throws DAOException, DAOException {
         return countDatabaseRows();
     }
 

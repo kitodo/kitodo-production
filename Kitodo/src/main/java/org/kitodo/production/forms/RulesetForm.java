@@ -33,7 +33,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -93,7 +92,7 @@ public class RulesetForm extends BaseForm {
                 Helper.setErrorMessage("rulesetNotFound", new Object[] {this.ruleset.getFile()});
                 return this.stayOnCurrentPage;
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                 e);
             return this.stayOnCurrentPage;
@@ -110,7 +109,7 @@ public class RulesetForm extends BaseForm {
             } else {
                 ServiceManager.getRulesetService().remove(this.ruleset);
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.RULESET.getTranslationSingular() }, logger,
                     e);
         }
@@ -148,7 +147,7 @@ public class RulesetForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DataException {
+    private boolean hasAssignedProcessesOrTemplates(int rulesetId) throws DAOException {
         return !ServiceManager.getProcessService().findByRuleset(rulesetId).isEmpty()
                 || !ServiceManager.getTemplateService().findByRuleset(rulesetId).isEmpty();
     }

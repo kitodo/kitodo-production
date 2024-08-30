@@ -51,7 +51,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -108,7 +107,7 @@ public class ProcessServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProcesses() throws DataException {
+    public void shouldCountAllProcesses() throws DAOException {
         assertEquals("Processes were not counted correctly!", Long.valueOf(7), processService.count());
     }
 
@@ -119,7 +118,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByInChoiceListShown() throws DataException, DAOException {
+    public void shouldFindByInChoiceListShown() throws DAOException, DAOException {
         List<Process> byInChoiceListShown = ServiceManager.getProcessService().getTemplateProcesses();
         Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
     }
@@ -198,33 +197,33 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         Integer expected = 1;
         assertEquals(processNotFound, expected, processService.findById(1).getId());
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
+    public void shouldFindByTitle() throws DAOException {
         assertEquals(processNotFound, 1, processService.findByTitle(firstProcess).size());
     }
 
     @Test
     @Ignore("Data index currently not available")
-    public void shouldFindByMetadata() throws DataException {
+    public void shouldFindByMetadata() throws DAOException {
         assertEquals(processNotFound, 3,
             processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
     @Test
     @Ignore("Data index currently not available")
-    public void shouldNotFindByMetadata() throws DataException {
+    public void shouldNotFindByMetadata() throws DAOException {
         assertEquals("Process was found in index!", 0,
                 processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
     }
 
     @Test
     @Ignore("Data index currently not available")
-    public void shouldFindByLongNumberInMetadata() throws DataException, DAOException, IOException {
+    public void shouldFindByLongNumberInMetadata() throws DAOException, DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
         assertEquals(processNotFound, 1, processService
@@ -237,7 +236,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindLinkableParentProcesses() throws DataException {
+    public void shouldFindLinkableParentProcesses() throws DAOException {
         assertEquals("Processes were not found in index!", 1,
             processService.findLinkableParentProcesses("HierarchyParent", 1, 1).size());
     }
@@ -538,7 +537,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testCountMetadata() throws DAOException, IOException, DataException {
+    public void testCountMetadata() throws DAOException, IOException, DAOException {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         Process process = ServiceManager.getProcessService().getById(testProcessId);

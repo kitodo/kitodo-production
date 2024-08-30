@@ -26,7 +26,6 @@ import org.kitodo.data.database.beans.WorkflowCondition;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 
@@ -65,7 +64,7 @@ public class CurrenTaskFormIT {
      * 
      */
     @Test
-    public void testCloseTaskOnAccept() throws DataException, DAOException {
+    public void testCloseTaskOnAccept() throws DAOException, DAOException {
         Process process = new Process();
         process.setProcessBaseUri(URI.create("5"));
 
@@ -84,7 +83,7 @@ public class CurrenTaskFormIT {
     }
 
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,
-            WorkflowCondition workflowCondition, Boolean typeAcceptClose) throws DataException {
+            WorkflowCondition workflowCondition, Boolean typeAcceptClose) throws DAOException {
         Task task = new Task();
         task.setProcessingStatus(taskStatus);
         task.setEditType(TaskEditType.MANUAL_SINGLE);

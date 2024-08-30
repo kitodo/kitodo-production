@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.TaskService;
@@ -86,7 +86,7 @@ public class LazyTaskDTOModel extends LazyDTOModel {
                         this.taskStatusRestriction);
                 logger.trace("{} entities loaded!", entities.size());
                 return entities;
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 setRowCount(0);
                 logger.error(e.getMessage(), e);
             } catch (FilterException e) {

@@ -42,7 +42,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.ImageHelper;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.thread.RenameMediaThread;
@@ -132,7 +131,7 @@ public class FileServiceIT {
     }
 
     @Test
-    public void testRenamingOfMultipleProcesses() throws DAOException, DataException, IOException, InterruptedException {
+    public void testRenamingOfMultipleProcesses() throws DAOException, DAOException, IOException, InterruptedException {
         mediaRenamingFirstProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_1);
         mediaRenamingSecondProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_2);
         ProcessTestUtils.copyTestFiles(mediaRenamingFirstProcessId, TEST_RENAME_MEDIA_FILE);
@@ -153,7 +152,7 @@ public class FileServiceIT {
     }
 
     @Test
-    public void testRevertingOriginalFilenamesAfterRenamingError() throws DAOException, DataException, IOException,
+    public void testRevertingOriginalFilenamesAfterRenamingError() throws DAOException, DAOException, IOException,
             InterruptedException {
         revertMediaRenamingProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_REVERT_PROCESS);
         ProcessTestUtils.copyTestFiles(revertMediaRenamingProcessId, TEST_RENAME_MEDIA_FILE);

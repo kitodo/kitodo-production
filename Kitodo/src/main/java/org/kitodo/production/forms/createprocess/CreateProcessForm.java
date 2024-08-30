@@ -49,7 +49,6 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
@@ -330,7 +329,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                         + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
             }
             return processListPath;
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         } catch (RulesetNotFoundException e) {
@@ -458,7 +457,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 processDataTab.prepare();
                 showDefaultImportConfigurationDialog();
             }
-        } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
+        } catch (ProcessGenerationException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -506,7 +505,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Create process hierarchy.
      */
     private void createProcessHierarchy()
-            throws DataException, ProcessGenerationException, IOException {
+            throws DAOException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
         if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
@@ -559,10 +558,10 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     /**
      * Save links between child processes and main process.
      *
-     * @throws DataException thrown if child process could not be saved
+     * @throws DAOException thrown if child process could not be saved
      * @throws IOException thrown if link between child and parent process could not be added
      */
-    private void saveChildProcessLinks() throws IOException, DataException {
+    private void saveChildProcessLinks() throws IOException, DAOException {
         this.progress = 0;
         if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
             PrimeFaces.current().executeScript("PF('progressDialog')");
@@ -588,7 +587,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         try {
             ImportService.processProcessChildren(getMainProcess(), childProcesses, rulesetManagement,
                     acquisitionStage, priorityList);
-        } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
+        } catch (DAOException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
         }
@@ -684,7 +683,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 try {
                     ServiceManager.getProcessService().remove(tempProcess.getProcess());
-                } catch (DataException ex) {
+                } catch (DAOException ex) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
                 return false;

@@ -28,7 +28,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ProjectDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -81,13 +80,9 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DataException {
-        try {
-            BeanQuery query = getProjectsQuery();
-            return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Long countResults(Map<?, String> filters) throws DAOException {
+        BeanQuery query = getProjectsQuery();
+        return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
     }
 
     /**
@@ -108,7 +103,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
 
     @Override
     public List<Project> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
-            throws DataException {
+            throws DAOException {
 
         BeanQuery query = getProjectsQuery();
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
@@ -139,7 +134,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
      *            user being edited
      * @return projects that can be assigned
      */
-    public List<Project> findAllAvailableForAssignToUser(User user) throws DataException {
+    public List<Project> findAllAvailableForAssignToUser(User user) throws DAOException {
         Map<String, Object> parameters = new HashMap<>(7);
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         if (user.getProjects().isEmpty()) {
@@ -235,10 +230,10 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
      * The function requires that the thread is assigned to a logged-in user.
      * 
      * @return all projects the user is assigned to for the current client
-     * @throws DataException
+     * @throws DAOException
      *             on errors
      */
-    public List<Project> findAllProjectsForCurrentUser() throws DataException {
+    public List<Project> findAllProjectsForCurrentUser() throws DAOException {
         return ServiceManager.getUserService().getCurrentUser().getProjects();
     }
 
@@ -271,7 +266,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
      *            projects to filter if necessary
      * @return Returns a string with the names, separated by ", "
      */
-    public String getProjectTitles(List<Project> projects) throws DataException {
+    public String getProjectTitles(List<Project> projects) throws DAOException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewProjectList()
                 && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
             return projects.stream().map(Project::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
@@ -288,7 +283,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
      *
      * @param projectID ID of project to be deleted
      */
-    public static void delete(int projectID) throws DAOException, DataException, ProjectDeletionException {
+    public static void delete(int projectID) throws DAOException, DAOException, ProjectDeletionException {
         Project project = ServiceManager.getProjectService().getById(projectID);
         if (!project.getProcesses().isEmpty()) {
             throw new ProjectDeletionException("cannotDeleteProject");
@@ -319,11 +314,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
      */
     @Deprecated
     @SuppressWarnings("unchecked")
-    public List<Project> findAll() throws DataException {
-        try {
-            return (List<Project>) (List<?>) getAll();
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public List<Project> findAll() throws DAOException {
+        return (List<Project>) (List<?>) getAll();
     }
 }

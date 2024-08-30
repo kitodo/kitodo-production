@@ -46,7 +46,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.tasks.EmptyTask;
 import org.kitodo.production.helper.tasks.TaskManager;
@@ -86,7 +85,7 @@ public class KitodoScriptServiceIT {
      * Add metadata test process and metadata file for KitodoScriptService tests.
      */
     @Before
-    public void prepareFileCopy() throws IOException, DAOException, DataException {
+    public void prepareFileCopy() throws IOException, DAOException, DAOException {
         kitodoScriptTestProcessId = MockDatabase.insertTestProcess(testProcessTitle, projectId, templateId, rulesetId);
         ProcessTestUtils.copyTestResources(kitodoScriptTestProcessId, directoryForDerivateGeneration);
         ProcessTestUtils.copyTestMetadataFile(kitodoScriptTestProcessId, metadataWithDuplicatesTestFile);
@@ -96,7 +95,7 @@ public class KitodoScriptServiceIT {
      * Remove test process and metadata file for KitodoScriptService tests.
      */
     @After
-    public void removeKitodoScriptServiceTestFile() throws IOException, DataException, DAOException {
+    public void removeKitodoScriptServiceTestFile() throws IOException, DAOException, DAOException {
         ProcessTestUtils.removeTestProcess(kitodoScriptTestProcessId);
         kitodoScriptTestProcessId = -1;
     }

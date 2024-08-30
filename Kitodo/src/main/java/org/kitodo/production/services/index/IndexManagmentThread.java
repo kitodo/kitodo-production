@@ -18,7 +18,6 @@ import javax.faces.push.PushContext;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.IndexWorkerStatus;
@@ -59,7 +58,7 @@ public class IndexManagmentThread extends Thread {
                             // stop indexing due to failure or cancel
                             break;
                         }
-                    } catch (DataException | DAOException | RuntimeException e) {
+                    } catch (DAOException | RuntimeException e) {
                         logger.error(e);
                         Helper.setErrorMessage(e.getLocalizedMessage(), IndexingService.getLogger(), e);
                     }

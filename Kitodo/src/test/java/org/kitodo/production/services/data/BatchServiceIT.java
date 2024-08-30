@@ -27,7 +27,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -59,7 +58,7 @@ public class BatchServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllBatches() throws DataException {
+    public void shouldCountAllBatches() throws DAOException {
         assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count());
     }
 

@@ -112,7 +112,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.Helper;
@@ -234,7 +233,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
+    public Long countResults(Map filters) throws DAOException {
         return countResults(filters, false, false);
     }
 
@@ -270,38 +269,34 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @return the number of matching objects
      * @throws DAOException
      *             that can be caused by Hibernate
-     * @throws DataException
+     * @throws DAOException
      *             that can be caused by ElasticSearch
      */
     public Long countResults(Map<?, String> filters, boolean showClosedProcesses, boolean showInactiveProjects)
-            throws DataException {
-        try {
-            BeanQuery query = new BeanQuery(Process.class);
-            query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
-            if (Objects.nonNull(filters)) {
-                Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
-                if (filtersIterator.hasNext()) {
-                    String filterString = filtersIterator.next().getValue();
-                    if (StringUtils.isNotBlank(filterString)) {
-                        query.restrictWithUserFilterString(filterString);
-                    }
+            throws DAOException {
+
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        if (Objects.nonNull(filters)) {
+            Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();
+            if (filtersIterator.hasNext()) {
+                String filterString = filtersIterator.next().getValue();
+                if (StringUtils.isNotBlank(filterString)) {
+                    query.restrictWithUserFilterString(filterString);
                 }
             }
-            if (!showClosedProcesses) {
-                query.restrictToNotCompletedProcesses();
-            }
-            Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream()
-                    .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
-                    .collect(Collectors.toList());
-            query.restrictToProjects(projectIDs);
-            return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
-        } catch (DAOException e) {
-            throw new DataException(e);
         }
+        if (!showClosedProcesses) {
+            query.restrictToNotCompletedProcesses();
+        }
+        Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
+            project -> showInactiveProjects || project.isActive()).map(Project::getId).collect(Collectors.toList());
+        query.restrictToProjects(projectIDs);
+        return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
     }
 
     @Override
-    public void save(Process process, boolean updateRelatedObjectsInIndex) throws DataException {
+    public void save(Process process, boolean updateRelatedObjectsInIndex) throws DAOException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
         
         // save parent processes if they are new and do not have an id yet
@@ -322,7 +317,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
 
     @Override
     public void saveToIndex(Process process, boolean forceRefresh)
-            throws DataException, IOException {
+            throws DAOException, IOException {
 
         enrichProcessData(process, false);
 
@@ -409,13 +404,13 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * 
      * @return processes to be offered in the choice list
      */
-    public List<Process> getTemplateProcesses() throws DataException, DAOException {
+    public List<Process> getTemplateProcesses() throws DAOException, DAOException {
         return getByQuery("FROM Process WHERE inChoiceListShown IS true ORDER BY title ASC");
     }
 
     @Override
     public List<Process> loadData(int first, int pageSize, String sortField,
-            org.primefaces.model.SortOrder sortOrder, Map<?, String> filters) throws DataException {
+            org.primefaces.model.SortOrder sortOrder, Map<?, String> filters) throws DAOException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false);
     }
 
@@ -473,11 +468,11 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            whether processes of deactivated projects should be displayed
      *            (usually not)
      * @return the data objects to be displayed
-     * @throws DataException
+     * @throws DAOException
      *             if processes cannot be loaded from search index
      */
     public List<Process> loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters,
-                                     boolean showClosedProcesses, boolean showInactiveProjects) throws DataException {
+                                     boolean showClosedProcesses, boolean showInactiveProjects) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
         if (Objects.nonNull(filters)) {
@@ -528,7 +523,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            whether all metadata entries must be found in the process,
      *            otherwise at least one
      * @return all found processes
-     * @throws DataException
+     * @throws DAOException
      *             if there was an error during the search, or if the metadata
      *             is not indexed
      */
@@ -538,8 +533,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * value the remote ID of the parent process (for example its PPN).
      * exactMatch is always true here.
      */
-    public List<Process> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DataException {
-        throw new DataException("index currently not available");
+    public List<Process> findByMetadata(Map<String, String> metadata, boolean exactMatch) throws DAOException {
+        throw new DAOException("index currently not available");
     }
 
     /**
@@ -549,7 +544,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            key is metadata tag and value is metadata content
      * @return list of Process objects with processes for specific metadata tag
      */
-    public List<Process> findByMetadata(Map<String, String> metadata) throws DataException {
+    public List<Process> findByMetadata(Map<String, String> metadata) throws DAOException {
         return findByMetadata(metadata, false);
     }
 
@@ -564,7 +559,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @return list that is not empty if something was found, otherwise empty
      *         list
      */
-    public Collection<?> findByDocket(int docketId) throws DataException {
+    public Collection<?> findByDocket(int docketId) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("docket.id", docketId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
@@ -581,10 +576,10 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            record number of the production template
      * @return list that is not empty if something was found, otherwise empty
      *         list
-     * @throws DataException
+     * @throws DAOException
      *             if an error occurred during the search
      */
-    public Collection<?> findByTemplate(int templateId) throws DataException {
+    public Collection<?> findByTemplate(int templateId) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("template.id", templateId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
@@ -596,7 +591,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @param title
      *            process name to search for
      * @return all processes with the specified name
-     * @throws DataException
+     * @throws DAOException
      *             when there is an error on conversation
      */
     /*
@@ -604,7 +599,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * .isEmpty(), to see if a process title already exists.
      */
     @SuppressWarnings("unchecked")
-    public Collection<Process> findByTitle(String title) throws DataException {
+    public Collection<Process> findByTitle(String title) throws DAOException {
         return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
     }
 
@@ -619,7 +614,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @return list that is not empty if something was found, otherwise empty
      *         list
      */
-    public Collection<?> findByRuleset(int rulesetId) throws DataException {
+    public Collection<?> findByRuleset(int rulesetId) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("ruleset.id", rulesetId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
@@ -644,11 +639,11 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @param allowedStructuralElementTypes
      *            allowed topmost logical structural elements
      * @return found processes
-     * @throws DataException
+     * @throws DAOException
      *             if the search engine fails
      */
     public List<Process> findLinkableChildProcesses(String searchInput, int rulesetId,
-            Collection<String> allowedStructuralElementTypes) throws DataException {
+            Collection<String> allowedStructuralElementTypes) throws DAOException {
 
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
@@ -669,11 +664,11 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @param rulesetId
      *            the id of the allowed ruleset
      * @return found processes
-     * @throws DataException
+     * @throws DAOException
      *             if the search engine fails
      */
     public List<Process> findLinkableParentProcesses(String searchInput, int projectId, int rulesetId)
-            throws DataException {
+            throws DAOException {
 
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
@@ -702,7 +697,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            process name to be searched for
      * @return number of processes with this title
      */
-    public Long findNumberOfProcessesWithTitle(String title) throws DataException {
+    public Long findNumberOfProcessesWithTitle(String title) throws DAOException {
         int sessionClientId = ServiceManager.getUserService().getSessionClientId();
         String query = "FROM Process process WHERE process.title = '" + title + "' "
                 + "AND process.project.client.id = " + sessionClientId;
@@ -736,11 +731,11 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @param excludedProcessIds
      *            IDs of processes individually deselected after "select all"
      * @return the processes found
-     * @throws DataException
+     * @throws DAOException
      *             if an error occurs
      */
     public List<Process> findSelectedProcesses(boolean showClosedProcesses, boolean showInactiveProjects,
-            String filter, Collection<Integer> excludedProcessIds) throws DataException {
+            String filter, Collection<Integer> excludedProcessIds) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
         if (!excludedProcessIds.isEmpty()) {
@@ -1427,20 +1422,16 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            id of the process whose root type is to be determined
      * @return the type of root element of the logical structure of the
      *         workpiece
-     * @throws DataException
+     * @throws DAOException
      *             if the type cannot be found in the index (e.g. because the
      *             process cannot be found in the index)
      */
-    public String getBaseType(int processId) throws DataException {
-        try {
-            Process process = getById(processId);
-            if (Objects.nonNull(process)) {
-                return process.getBaseType();
-            }
-            return "";
-        } catch (DAOException e) {
-            throw new DataException(e);
+    public String getBaseType(int processId) throws DAOException {
+        Process process = getById(processId);
+        if (Objects.nonNull(process)) {
+            return process.getBaseType();
         }
+        return "";
     }
 
     /**
@@ -1815,17 +1806,17 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @throws DAOException
      *             if a process is referenced with a URI whose ID does not
      *             appear in the database
-     * @throws DataException
+     * @throws DAOException
      *             if the process cannot be saved
      */
     public void updateChildrenFromLogicalStructure(Process process, LogicalDivision logicalStructure)
-            throws DAOException, DataException {
+            throws DAOException, DAOException {
         removeLinksFromNoLongerLinkedProcesses(process, logicalStructure);
         addNewLinks(process, logicalStructure);
     }
 
     private void removeLinksFromNoLongerLinkedProcesses(Process process, LogicalDivision logicalStructure)
-            throws DAOException, DataException {
+            throws DAOException, DAOException {
         ArrayList<Process> childrenToRemove = new ArrayList<>(process.getChildren());
         childrenToRemove.removeAll(getProcessesLinkedInLogicalDivision(logicalStructure));
         for (Process childToRemove : childrenToRemove) {
@@ -1839,7 +1830,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     }
 
     private void addNewLinks(Process process, LogicalDivision logicalStructure)
-            throws DAOException, DataException {
+            throws DAOException, DAOException {
         HashSet<Process> childrenToAdd = getProcessesLinkedInLogicalDivision(logicalStructure);
         process.getChildren().forEach(childrenToAdd::remove);
         for (Process childToAdd : childrenToAdd) {
@@ -1905,7 +1896,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
     }
 
-    public static void deleteProcess(int processID) throws DAOException, DataException, IOException {
+    public static void deleteProcess(int processID) throws DAOException, DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(processID);
         deleteProcess(process);
     }
@@ -1915,7 +1906,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *
      * @param processToDelete process to delete
      */
-    public static void deleteProcess(Process processToDelete) throws DataException, IOException {
+    public static void deleteProcess(Process processToDelete) throws DAOException, IOException {
         deleteMetadataDirectory(processToDelete);
 
         Project project = processToDelete.getProject();
@@ -2017,12 +2008,12 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *            Id of which process should be exported
      * @throws DAOException
      *             Thrown on database error
-     * @throws DataException
+     * @throws DAOException
      *             Thrown on index error
      * @throws IOException
      *             Thrown on I/O error
      */
-    public static void exportMets(int processId) throws DAOException, DataException, IOException {
+    public static void exportMets(int processId) throws DAOException, DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(processId);
         ExportMets export = new ExportMets();
         export.startExport(process);
@@ -2342,12 +2333,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @deprecated Use {@link #getById(Integer)}.
      */
     @Deprecated
-    public Process findById(Integer id) throws DataException {
-        try {
-            return getById(id);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Process findById(Integer id) throws DAOException {
+        return getById(id);
     }
 
     /**
@@ -2356,7 +2343,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @param searchQuery
      *            the query word or phrase
      * @return a List of found Processs
-     * @throws DataException
+     * @throws DAOException
      *             when accessing the elasticsearch server fails
      */
     /*
@@ -2365,7 +2352,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * functionality must be provided in countResults() and loadData().)
      */
     @Deprecated
-    public List<Process> findByAnything(String searchQuery) throws DataException {
+    public List<Process> findByAnything(String searchQuery) throws DAOException {
         throw new UnsupportedOperationException("no longer provided this way");
     }
 }

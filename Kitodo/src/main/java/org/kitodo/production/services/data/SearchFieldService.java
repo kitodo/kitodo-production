@@ -18,7 +18,6 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
@@ -53,7 +52,7 @@ public class SearchFieldService extends SearchDatabaseService<SearchField, Searc
     }
 
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
+    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DAOException {
         return null;
     }
 
@@ -63,7 +62,7 @@ public class SearchFieldService extends SearchDatabaseService<SearchField, Searc
     }
 
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
+    public Long countResults(Map filters) throws DAOException, DAOException {
         return countDatabaseRows();
     }
 }

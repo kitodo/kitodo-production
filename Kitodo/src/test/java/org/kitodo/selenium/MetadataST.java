@@ -32,7 +32,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -62,23 +61,23 @@ public class MetadataST extends BaseTestSelenium {
     private static final String FIRST_STRUCTURE_TREE_NODE_LABEL = "1 : -";
     private static final String SECOND_STRUCTURE_TREE_NODE_LABEL = "2 : -";
 
-    private static void prepareMediaReferenceProcess() throws DAOException, DataException, IOException {
+    private static void prepareMediaReferenceProcess() throws DAOException, DAOException, IOException {
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
     }
 
-    private static void prepareMetadataLockProcess() throws DAOException, DataException, IOException {
+    private static void prepareMetadataLockProcess() throws DAOException, DAOException, IOException {
         insertTestProcessForMetadataLockTest();
         ProcessTestUtils.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
     }
 
-    private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DataException {
+    private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DAOException {
         processHierarchyTestProcessIds = linkProcesses();
         copyTestParentProcessMetadataFile();
         updateChildProcessIdsInParentProcessMetadataFile();
     }
 
-    private static void prepareMediaRenamingProcess() throws DAOException, DataException, IOException {
+    private static void prepareMediaRenamingProcess() throws DAOException, DAOException, IOException {
         insertTestProcessForRenamingMediaFiles();
         copyTestFilesForRenamingMediaFiles();
     }
@@ -86,11 +85,11 @@ public class MetadataST extends BaseTestSelenium {
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
-     * @throws DataException when retrieving test project for test processes fails.
+     * @throws DAOException when retrieving test project for test processes fails.
      * @throws IOException when copying test metadata or image files fails.
      */
     @BeforeClass
-    public static void prepare() throws DAOException, DataException, IOException {
+    public static void prepare() throws DAOException, DAOException, IOException {
         MockDatabase.insertFoldersForSecondProject();
         prepareMetadataLockProcess();
         prepareMediaReferenceProcess();
@@ -241,11 +240,11 @@ public class MetadataST extends BaseTestSelenium {
     /**
      * Cleanup test environment by removing temporal dummy processes from database and index.
      * @throws DAOException when dummy process cannot be removed from database
-     * @throws DataException when dummy process cannot be removed from index
+     * @throws DAOException when dummy process cannot be removed from index
      * @throws IOException when deleting test files fails.
      */
     @AfterClass
-    public static void cleanup() throws DAOException, DataException, IOException {
+    public static void cleanup() throws DAOException, DAOException, IOException {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);
         }
@@ -259,24 +258,24 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getLoginPage().goTo().performLogin(metadataUser);
     }
 
-    private static void insertTestProcessForMediaReferencesTest() throws DAOException, DataException {
+    private static void insertTestProcessForMediaReferencesTest() throws DAOException, DAOException {
         mediaReferencesProcessId = MockDatabase.insertTestProcessForMediaReferencesTestIntoSecondProject();
     }
 
-    private static void insertTestProcessForMetadataLockTest() throws DAOException, DataException {
+    private static void insertTestProcessForMetadataLockTest() throws DAOException, DAOException {
         metadataLockProcessId = MockDatabase.insertTestProcessForMetadataLockTestIntoSecondProject();
     }
 
-    private static void insertTestProcessForRenamingMediaFiles() throws DAOException, DataException {
+    private static void insertTestProcessForRenamingMediaFiles() throws DAOException, DAOException {
         renamingMediaProcessId = MockDatabase.insertTestProcessForRenamingMediaTestIntoSecondProject();
     }
 
     /**
      * Creates dummy parent process and links first two test processes as child processes to parent process.
      * @throws DAOException if loading of processes fails
-     * @throws DataException if saving of processes fails
+     * @throws DAOException if saving of processes fails
      */
-    private static List<Integer> linkProcesses() throws DAOException, DataException {
+    private static List<Integer> linkProcesses() throws DAOException, DAOException {
         List<Integer> processIds = new LinkedList<>();
         List<Process> childProcesses = new LinkedList<>();
         childProcesses.add(ProcessTestUtils.addProcess(FIRST_CHILD_PROCESS_TITLE));
@@ -294,15 +293,15 @@ public class MetadataST extends BaseTestSelenium {
         return processIds;
     }
 
-    private static void copyTestFilesForMediaReferences() throws IOException, DAOException, DataException {
+    private static void copyTestFilesForMediaReferences() throws IOException, DAOException, DAOException {
         ProcessTestUtils.copyTestFiles(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
     }
 
-    private static void copyTestFilesForRenamingMediaFiles() throws IOException, DAOException, DataException {
+    private static void copyTestFilesForRenamingMediaFiles() throws IOException, DAOException, DAOException {
         ProcessTestUtils.copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
     }
 
-    private static void copyTestParentProcessMetadataFile() throws IOException, DAOException, DataException {
+    private static void copyTestParentProcessMetadataFile() throws IOException, DAOException, DAOException {
         ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
     }
 

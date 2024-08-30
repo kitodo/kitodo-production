@@ -41,7 +41,6 @@ import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.services.file.FileService;
@@ -346,7 +345,7 @@ public class WorkflowControllerServiceIT {
     }
 
     @Test
-    public void shouldCloseForProcessWithSkippedTask() throws DataException, DAOException, IOException {
+    public void shouldCloseForProcessWithSkippedTask() throws DAOException, DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         Process process = ServiceManager.getProcessService().getById(processId);
         process.getTasks().clear();
@@ -390,7 +389,7 @@ public class WorkflowControllerServiceIT {
     }
 
     private Task createAndSaveTask(TaskStatus taskStatus, int ordering, Process process,
-            WorkflowCondition workflowCondition) throws DataException {
+            WorkflowCondition workflowCondition) throws DAOException {
         Task task = new Task();
         task.setProcessingStatus(taskStatus);
         task.setOrdering(ordering);

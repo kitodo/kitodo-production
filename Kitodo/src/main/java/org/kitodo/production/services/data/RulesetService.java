@@ -31,7 +31,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -85,19 +84,15 @@ public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO> {
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
-        try {
-            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
-                ServiceManager.getUserService().getSessionClientId());
-            return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Long countResults(Map filters) throws DAOException {
+        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
+                .getSessionClientId());
+        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
     }
 
     @Override
     public List<Ruleset> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
-            throws DataException {
+            throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);

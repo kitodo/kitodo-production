@@ -30,7 +30,6 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.IndexStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -163,7 +162,7 @@ public class IndexingService {
      * @throws ArithmeticException
      *             if the value will not fit in a {@code long}
      */
-    public long getAllIndexed() throws DataException {
+    public long getAllIndexed() throws DAOException {
         long allIndexed = 0;
         for (ObjectType objectType : objectTypes) {
             allIndexed = Math.addExact(allIndexed, getNumberOfIndexedObjects(objectType));
@@ -179,7 +178,7 @@ public class IndexingService {
      *
      * @return number of indexed objects
      */
-    public long getNumberOfIndexedObjects(ObjectType objectType) throws DataException {
+    public long getNumberOfIndexedObjects(ObjectType objectType) throws DAOException {
         return searchServices.get(objectType).count();
     }
 
@@ -202,7 +201,7 @@ public class IndexingService {
      *            type objects that get indexed
      */
     public IndexWorkerStatus runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) 
-            throws DataException, DAOException {
+            throws DAOException, DAOException {
         SearchDatabaseService<?, ?> searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
 
@@ -374,7 +373,7 @@ public class IndexingService {
      *            the ObjectType for which the progress will be determined
      * @return the progress of the current indexing process in percent
      */
-    public int getProgress(ObjectType currentType, PushContext pollingChannel) throws DataException {
+    public int getProgress(ObjectType currentType, PushContext pollingChannel) throws DAOException {
         long numberOfObjects = countDatabaseObjects.get(currentType);
         long nrOfIndexedObjects = getNumberOfIndexedObjects(currentType);
         int progress = numberOfObjects > 0 ? (int) ((nrOfIndexedObjects / (float) numberOfObjects) * 100) : 0;

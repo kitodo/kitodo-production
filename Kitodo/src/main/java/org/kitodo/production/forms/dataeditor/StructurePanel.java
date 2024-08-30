@@ -43,7 +43,7 @@ import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Template;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.UnknownTreeNodeDataException;
 import org.kitodo.production.helper.Helper;
@@ -606,7 +606,7 @@ public class StructurePanel implements Serializable {
                         node = new StructureTreeNode("[" + child.getId() + "] " + view.getLabel() + " - "
                                 + child.getTitle(), null, view.isUndefined(), true, structure);
                     }
-                } catch (DataException e) {
+                } catch (DAOException e) {
                     Helper.setErrorMessage("metadataReadError", e.getMessage(), logger, e);
                     node = new StructureTreeNode(child.getTitle(), null, true, true, child);
                 }

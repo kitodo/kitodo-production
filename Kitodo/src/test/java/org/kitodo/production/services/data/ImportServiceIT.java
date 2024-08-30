@@ -64,7 +64,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.UrlParameter;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -152,12 +151,12 @@ public class ImportServiceIT {
      * Tests whether basic catalog metadata import to a single process succeeds or not.
      *
      * @throws DAOException when loading ImportConfiguration or removing test process from test database fails.
-     * @throws DataException when counting processes in test database fails
+     * @throws DAOException when counting processes in test database fails
      * @throws ImportException when importing metadata fails
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcess() throws DAOException, DataException, ImportException, IOException {
+    public void testImportProcess() throws DAOException, DAOException, ImportException, IOException {
         Assert.assertEquals("Not the correct amount of processes found", 7, (long) processService.count());
         Process importedProcess = importProcess(RECORD_ID, MockDatabase.getK10PlusImportConfiguration());
         try {
@@ -227,11 +226,11 @@ public class ImportServiceIT {
      * @throws DAOException when test ruleset cannot be loaded from database
      * @throws ProcessGenerationException when checking for parent process fails
      * @throws IOException when checking for parent process fails
-     * @throws DataException when copying test metadata file fails
+     * @throws DAOException when copying test metadata file fails
      */
     @Test
     @Ignore("index currently not available")
-    public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException, DataException {
+    public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException, DAOException {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
@@ -444,11 +443,11 @@ public class ImportServiceIT {
      * Tests whether ensuring non-empty process titles succeeds or not.
      *
      * @throws DAOException when preparing test process fails
-     * @throws DataException when copying test metadata file fails
+     * @throws DAOException when copying test metadata file fails
      * @throws IOException when loading workpiece fails
      */
     @Test
-    public void shouldEnsureNonEmptyTitles() throws DAOException, DataException, IOException {
+    public void shouldEnsureNonEmptyTitles() throws DAOException, DAOException, IOException {
         int parentProcessId = MockDatabase.insertTestProcess("", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         try {
             ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_KITODO_METADATA_FILE);

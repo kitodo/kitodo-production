@@ -20,7 +20,6 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
@@ -69,19 +68,15 @@ public class DocketService extends SearchDatabaseService<Docket, DocketDAO> {
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DataException {
-        try {
-            Map<String, Object> parameters = Collections.singletonMap("sessionClientId",
-                ServiceManager.getUserService().getSessionClientId());
-            return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Long countResults(Map<?, String> filters) throws DAOException {
+        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
+                .getSessionClientId());
+        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
     }
 
     @Override
     public List<Docket> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
-            throws DataException {
+            throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         String desiredOrder = SORT_FIELD_MAPPING.getOrDefault(sortField, sortField) + ' '

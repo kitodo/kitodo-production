@@ -34,7 +34,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.migration.TaskComparer;
 import org.kitodo.production.migration.TemplateComparer;
@@ -180,9 +179,9 @@ public class MigrationService {
      * Adds a list of processes to a given template.
      * @param template The template to add the processes to.
      * @param processesToAddToTemplate the processes to be added to the template
-     * @throws DataException is thrown if database access fails
+     * @throws DAOException is thrown if database access fails
      */
-    public void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DataException {
+    public void addProcessesToTemplate(Template template, List<Process> processesToAddToTemplate) throws DAOException {
         int numberOfProcesses = processesToAddToTemplate.size();
         HashMap<Project,String> projects = new HashMap<>();
         for (int currentProcess = 0; currentProcess < numberOfProcesses; currentProcess++) {

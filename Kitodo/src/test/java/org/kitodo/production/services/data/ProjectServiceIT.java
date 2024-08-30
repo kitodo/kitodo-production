@@ -29,7 +29,6 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -64,7 +63,7 @@ public class ProjectServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProjects() throws DataException {
+    public void shouldCountAllProjects() throws DAOException {
         assertEquals("Projects were not counted correctly!", Long.valueOf(3), projectService.count());
     }
 
@@ -85,7 +84,7 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldFindAllProjects() throws DataException {
+    public void shouldFindAllProjects() throws DAOException {
         assertEquals("Not all projects were found in index!", 3, projectService.findAll().size());
     }
 
@@ -152,10 +151,10 @@ public class ProjectServiceIT {
     }
 
     @Test
-    public void shouldNotSaveProjectWithAlreadyExistingTitle() throws DataException {
+    public void shouldNotSaveProjectWithAlreadyExistingTitle() throws DAOException {
         Project project = new Project();
         project.setTitle(firstProject);
-        exception.expect(DataException.class);
+        exception.expect(DAOException.class);
         projectService.save(project);
     }
 

@@ -45,7 +45,6 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.forms.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
@@ -237,7 +236,7 @@ public class ProjectForm extends BaseForm {
                 ServiceManager.getProjectService().save(project, true);
 
                 return projectsPage;
-            } catch (DAOException | DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
@@ -305,7 +304,7 @@ public class ProjectForm extends BaseForm {
     public void delete(int projectId) {
         try {
             ProjectService.delete(projectId);
-        } catch (DAOException | DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROJECT.getTranslationSingular() }, logger,
                 e);
         } catch (ProjectDeletionException e) {
@@ -374,7 +373,7 @@ public class ProjectForm extends BaseForm {
     public List<Template> getTemplates() {
         try {
             return ServiceManager.getTemplateService().findAllAvailableForAssignToProject(this.project.getId());
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.TEMPLATE.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();
@@ -828,7 +827,7 @@ public class ProjectForm extends BaseForm {
     public List<Project> getProjects() {
         try {
             return ServiceManager.getProjectService().findAll();
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
             return new LinkedList<>();

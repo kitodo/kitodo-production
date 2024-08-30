@@ -29,7 +29,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
@@ -80,7 +79,7 @@ public class ImportingST extends BaseTestSelenium {
     }
 
     @AfterClass
-    public static void cleanup() throws DAOException, DataException, IOException {
+    public static void cleanup() throws DAOException, DAOException, IOException {
         ProcessService.deleteProcess(multiVolumeWorkId);
     }
 

@@ -28,7 +28,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.production.services.data.TaskService;
@@ -197,7 +196,7 @@ public class MigrationServiceIT {
     }
 
     @Test
-    public void testAddToTemplate() throws DAOException, DataException {
+    public void testAddToTemplate() throws DAOException, DAOException {
         ProcessService processService = ServiceManager.getProcessService();
         Project project = ServiceManager.getProjectService().getById(1);
         Process firstProcess = new Process();
@@ -230,7 +229,7 @@ public class MigrationServiceIT {
     }
 
     @Test
-    public void addProcessesToTemplateTest() throws DAOException, DataException {
+    public void addProcessesToTemplateTest() throws DAOException, DAOException {
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Template secondTemplate = ServiceManager.getTemplateService().getById(2);
 

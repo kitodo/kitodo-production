@@ -44,7 +44,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.UserDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
@@ -365,7 +364,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         try {
             addFilterToUser(user, filter);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             logger.error("Cannot not add filter to user with id {}", user.getId(), e);
         }
     }
@@ -384,7 +383,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         try {
             removeFilterFromUser(user, filter);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             logger.error("Cannot not remove filter from user with id {}", user.getId(), e);
         }
     }
@@ -408,7 +407,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @param userFilter
      *            String
      */
-    private void addFilterToUser(User user, String userFilter) throws DataException {
+    private void addFilterToUser(User user, String userFilter) throws DAOException {
         Filter filter = new Filter();
         filter.setValue(userFilter);
         filter.setCreationDate(new Date());
@@ -440,7 +439,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      * @param userFilter
      *            String
      */
-    private void removeFilterFromUser(User user, String userFilter) throws DataException {
+    private void removeFilterFromUser(User user, String userFilter) throws DAOException {
         List<Filter> filters = user.getFilters();
         for (Filter filter : filters) {
             if (filter.getValue().equals(userFilter)) {

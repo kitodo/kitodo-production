@@ -25,7 +25,6 @@ import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.SQLGrammarException;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
@@ -97,7 +96,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
                 entities = searchService.loadData(first, pageSize, sortField, sortOrder, filterMap);
                 logger.info("{} entities loaded!", entities.size());
                 return entities;
-            } catch (DAOException | DataException
+            } catch (DAOException
                     | SQLGrammarException e) {
                 setRowCount(0);
                 logger.error(e.getMessage(), e);

@@ -18,7 +18,6 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.MappingFileDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
@@ -64,7 +63,7 @@ public class MappingFileService extends SearchDatabaseService<MappingFile, Mappi
     }
 
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
+    public Long countResults(Map filters) throws DAOException, DAOException {
         return countDatabaseRows();
     }
 }

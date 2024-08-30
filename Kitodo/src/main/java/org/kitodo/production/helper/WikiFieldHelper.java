@@ -41,7 +41,6 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -68,7 +67,7 @@ public class WikiFieldHelper {
      * @param process
      *            process as object.
      */
-    public static Process transformWikiFieldToComment(Process process) throws DAOException, DataException, ParseException {
+    public static Process transformWikiFieldToComment(Process process) throws DAOException, DAOException, ParseException {
         String wikiField = process.getWikiField();
         wikiField = wikiField.replaceAll("Ã¼", "ue");
         wikiField = wikiField.replaceAll("&uuml;", "ue");
@@ -176,7 +175,7 @@ public class WikiFieldHelper {
         return null;
     }
 
-    private static void deleteProperty(Process process, Property property) throws DAOException, DataException {
+    private static void deleteProperty(Process process, Property property) throws DAOException, DAOException {
         property.getProcesses().clear();
         process.getProperties().remove(property);
         ServiceManager.getProcessService().save(process);
@@ -189,7 +188,7 @@ public class WikiFieldHelper {
      * test Korrektur f&uuml;r Schritt Scanning: bla bla
      */
     private static void transformNewFormatWikiFieldToComments(String[] messages, Process process)
-            throws DAOException, DataException, ParseException {
+            throws DAOException, DAOException, ParseException {
         List<Comment> newComments = new ArrayList<>();
         for (String message : messages) {
             String lang = getMessageLanguage(message);
@@ -361,7 +360,7 @@ public class WikiFieldHelper {
         return null;
     }
 
-    private static Process deleteProcessCorrectionProperties(Process process) throws DAOException, DataException {
+    private static Process deleteProcessCorrectionProperties(Process process) throws DAOException, DAOException {
         List<Property> properties = new ArrayList<>(process.getProperties());
 
         for (Property property : properties) {

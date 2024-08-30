@@ -26,7 +26,6 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Pages;
@@ -64,7 +63,7 @@ public class CalendarST extends BaseTestSelenium {
     }
 
     @AfterClass
-    public static void cleanup() throws DAOException, DataException, IOException {
+    public static void cleanup() throws DAOException, DAOException, IOException {
         ProcessTestUtils.removeTestProcess(newspaperTestProcessId);
     }
 

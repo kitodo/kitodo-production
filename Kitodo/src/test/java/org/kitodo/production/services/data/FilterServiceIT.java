@@ -23,7 +23,7 @@ import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -52,7 +52,7 @@ public class FilterServiceIT {
     }
 
     @Test
-    public void shouldCountAllFilters() throws DataException {
+    public void shouldCountAllFilters() throws DAOException {
         assertEquals("Filters were not counted correctly!", Long.valueOf(2), filterService.count());
     }
 

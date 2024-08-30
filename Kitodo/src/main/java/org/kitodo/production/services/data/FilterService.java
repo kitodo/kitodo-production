@@ -37,7 +37,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FilterDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -88,7 +87,7 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO> {
 
     // functions countResults() and loadData() are not used in filters
     @Override
-    public Long countResults(Map filters) throws DataException {
+    public Long countResults(Map filters) throws DAOException {
         return (long) 0;
     }
 
@@ -488,7 +487,7 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO> {
         List<Project> projectsSortedByTitle = Collections.emptyList();
         try {
             projectsSortedByTitle = ServiceManager.getProjectService().findAllProjectsForCurrentUser();
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorInitializingProjects", logger, e);
         }
 
@@ -513,7 +512,7 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO> {
         List<String> taskTitles = new ArrayList<>();
         try {
             taskTitles = ServiceManager.getTaskService().findTaskTitlesDistinct();
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
         return taskTitles;

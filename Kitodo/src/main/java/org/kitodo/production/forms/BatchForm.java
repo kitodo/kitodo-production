@@ -32,7 +32,6 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
@@ -257,7 +256,7 @@ public class BatchForm extends BaseForm {
         try {
             ServiceManager.getBatchService().removeAll(this.selectedBatches);
             filterAll();
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
@@ -297,7 +296,6 @@ public class BatchForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                 e);
-        } catch (DataException e) {
             Helper.setErrorMessage("errorSaveList", logger, e);
         }
     }
@@ -305,7 +303,7 @@ public class BatchForm extends BaseForm {
     /**
      * Remove processes from Batch.
      */
-    public void removeProcessesFromBatch() throws DAOException, DataException {
+    public void removeProcessesFromBatch() throws DAOException, DAOException {
         if (areSelectedListsEmpty()) {
             return;
         }
@@ -353,7 +351,7 @@ public class BatchForm extends BaseForm {
                         return;
                     }
                 }
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() },
                     logger, e);
             }
@@ -363,7 +361,7 @@ public class BatchForm extends BaseForm {
     /**
      * Create new Batch.
      */
-    public void createNew() throws DAOException, DataException {
+    public void createNew() throws DAOException, DAOException {
         if (selectedProcesses.isEmpty()) {
             Helper.setErrorMessage(NO_PROCESS_SELECTED);
         } else {
@@ -432,7 +430,7 @@ public class BatchForm extends BaseForm {
                             ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                     dms.startExport(process);
                 }
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;

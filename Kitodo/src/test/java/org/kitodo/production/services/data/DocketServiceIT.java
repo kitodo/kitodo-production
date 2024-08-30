@@ -28,7 +28,6 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -64,7 +63,7 @@ public class DocketServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllDockets() throws DataException {
+    public void shouldCountAllDockets() throws DAOException {
         assertEquals("Dockets were not counted correctly!", Long.valueOf(4), docketService.count());
     }
 
@@ -100,7 +99,7 @@ public class DocketServiceIT {
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
+    public void shouldFindByTitle() throws DAOException {
         assertEquals(docketNotFound, 1, docketService.getByTitle(defaultDocket).size());
     }
 

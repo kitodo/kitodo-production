@@ -37,7 +37,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.exceptions.ProcessGenerationException;
@@ -282,14 +281,14 @@ public final class ImportProcesses extends EmptyTask {
                 }
             }
             // error barrier
-        } catch (IOException | DAOException | DataException | ProcessGenerationException | MediaNotFoundException
+        } catch (IOException | DAOException | ProcessGenerationException | MediaNotFoundException
                 | InvalidImagesException | RuntimeException exception) {
             Helper.setErrorMessage(exception.getLocalizedMessage(), logger, exception);
             super.setException(exception);
         }
     }
 
-    void run(int setStep) throws IOException, DAOException, DataException, ProcessGenerationException,
+    void run(int setStep) throws IOException, DAOException, DAOException, ProcessGenerationException,
             MediaNotFoundException, InvalidImagesException {
 
         step = setStep;
@@ -330,7 +329,7 @@ public final class ImportProcesses extends EmptyTask {
         }
     }
 
-    private void copyFilesAndCreateDatabaseEntry(int step, Path processesPath) throws IOException, DAOException, DataException,
+    private void copyFilesAndCreateDatabaseEntry(int step, Path processesPath) throws IOException, DAOException, DAOException,
             ProcessGenerationException, MediaNotFoundException, InvalidImagesException {
         if (nextAction == numberOfRemainingActions && step < totalActions - 1) {
             currentlyImporting = importingProcessesIterator.next();

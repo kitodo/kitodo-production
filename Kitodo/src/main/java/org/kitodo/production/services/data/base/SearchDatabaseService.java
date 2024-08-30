@@ -28,7 +28,6 @@ import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.primefaces.model.SortOrder;
 
 public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
@@ -107,11 +106,11 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            which the content of the filter field is passed
      *
      * @return the data objects to be displayed
-     * @throws DataException
+     * @throws DAOException
      *             if processes cannot be loaded from search index
      */
     public abstract List loadData(int offset, int limit, String sortField, SortOrder sortOrder, Map<?, String> filters)
-            throws DataException;
+            throws DAOException;
 
     /**
      * Stores an object in the database.
@@ -218,10 +217,10 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @return the number of matching objects
      * @throws DAOException
      *             that can be caused by Hibernate
-     * @throws DataException
+     * @throws DAOException
      *             that can be caused by ElasticSearch
      */
-    public abstract Long countResults(Map<?, String> filters) throws DAOException, DataException;
+    public abstract Long countResults(Map<?, String> filters) throws DAOException, DAOException;
 
     /**
      * Gets an object by its database record number.
@@ -434,7 +433,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *             therefore now also be omitted.
      */
     @Deprecated
-    public List<Integer> findAllIDs(Long startIndex, int limit) throws DataException {
+    public List<Integer> findAllIDs(Long startIndex, int limit) throws DAOException {
         return Collections.emptyList();
     }
 
@@ -463,12 +462,8 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Use {@link #removeFromDatabase(BaseBean)}.
      */
     @Deprecated
-    public void remove(T baseIndexedBean) throws DataException {
-        try {
-            removeFromDatabase(baseIndexedBean);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public void remove(T baseIndexedBean) throws DAOException {
+        removeFromDatabase(baseIndexedBean);
     }
 
     /**
@@ -480,7 +475,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DataException {
+    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DAOException {
     }
 
     /**
@@ -491,12 +486,8 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Use {@link #saveToDatabase(BaseBean)}.
      */
     @Deprecated
-    public void save(T object) throws DataException {
-        try {
-            saveToDatabase(object);
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public void save(T object) throws DAOException {
+        saveToDatabase(object);
     }
 
     /**
@@ -524,7 +515,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Use {@link #saveToDatabase(BaseBean)}.
      */
     @Deprecated
-    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DataException {
+    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DAOException {
         save(baseIndexedBean);
     }
 
@@ -537,12 +528,8 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Use {@link #countDatabaseRows()}.
      */
     @Deprecated
-    public Long count() throws DataException {
-        try {
-            return countDatabaseRows();
-        } catch (DAOException e) {
-            throw new DataException(e);
-        }
+    public Long count() throws DAOException {
+        return countDatabaseRows();
     }
 
     // === functions no longer used ===
@@ -558,6 +545,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws DataException, IOException {
+    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws DAOException, IOException {
     }
 }

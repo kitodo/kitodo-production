@@ -28,7 +28,6 @@ import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -65,7 +64,7 @@ public class RulesetServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllRulesets() throws DataException {
+    public void shouldCountAllRulesets() throws DAOException {
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), rulesetService.count());
     }
 
@@ -100,7 +99,7 @@ public class RulesetServiceIT {
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
+    public void shouldFindByTitle() throws DAOException {
         assertEquals(rulesetNotFound, 1, rulesetService.getByTitle(slubDD).size());
     }
 

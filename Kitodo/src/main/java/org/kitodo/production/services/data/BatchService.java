@@ -20,7 +20,6 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
@@ -63,7 +62,7 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO> {
 
     // functions countResults() and loadData() are not used in batches
     @Override
-    public Long countResults(Map<?, String> filters) throws DataException {
+    public Long countResults(Map<?, String> filters) throws DAOException {
         return (long) 0;
     }
 
@@ -83,7 +82,7 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO> {
      * @param batches
      *            batches to delete
      */
-    public void removeAll(Collection<Batch> batches) throws DataException {
+    public void removeAll(Collection<Batch> batches) throws DAOException {
         for (Batch batch : batches) {
             remove(batch);
         }

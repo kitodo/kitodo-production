@@ -33,7 +33,6 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.model.LazyDTOModel;
@@ -93,7 +92,7 @@ public class DocketForm extends BaseForm {
                 Helper.setErrorMessage("docketNotFound");
                 return this.stayOnCurrentPage;
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -114,7 +113,7 @@ public class DocketForm extends BaseForm {
             } else {
                 ServiceManager.getDocketService().remove(this.docket);
             }
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.DOCKET.getTranslationSingular() }, logger,
                 e);
         }
@@ -137,7 +136,7 @@ public class DocketForm extends BaseForm {
         }
     }
 
-    private boolean hasAssignedProcessesOrTemplates(int docketId) throws DataException {
+    private boolean hasAssignedProcessesOrTemplates(int docketId) throws DAOException {
         return !ServiceManager.getProcessService().findByDocket(docketId).isEmpty()
                 || !ServiceManager.getTemplateService().findByDocket(docketId).isEmpty();
     }

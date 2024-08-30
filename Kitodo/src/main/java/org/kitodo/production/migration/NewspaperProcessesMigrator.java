@@ -51,7 +51,6 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ProcessState;
@@ -618,7 +617,7 @@ public class NewspaperProcessesMigrator {
      *             if the process cannot be generated
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
-     * @throws DataException
+     * @throws DAOException
      *             if there is an error saving the process
      * @throws DAOException
      *             if a process cannot be load from the database

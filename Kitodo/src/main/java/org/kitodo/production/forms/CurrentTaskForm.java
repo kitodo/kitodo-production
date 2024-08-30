@@ -37,7 +37,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.TiffHeader;
 import org.kitodo.production.enums.GenerationMode;
@@ -147,7 +146,7 @@ public class CurrentTaskForm extends BaseForm {
                     this.workflowControllerService.assignTaskToUser(this.currentTask);
                     ServiceManager.getTaskService().save(this.currentTask);
                 }
-            } catch (DataException | IOException | DAOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
@@ -231,7 +230,7 @@ public class CurrentTaskForm extends BaseForm {
 
         try {
             ServiceManager.getTaskService().save(task);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
     }
@@ -274,7 +273,7 @@ public class CurrentTaskForm extends BaseForm {
     public String releaseTask() {
         try {
             this.workflowControllerService.unassignTaskFromUser(this.currentTask);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -289,7 +288,7 @@ public class CurrentTaskForm extends BaseForm {
     public String closeTaskByUser() {
         try {
             this.workflowControllerService.closeTaskByUser(this.currentTask);
-        } catch (DataException | IOException | DAOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -368,7 +367,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Execute script.
      */
-    public void executeScript() throws DAOException, DataException {
+    public void executeScript() throws DAOException, DAOException {
         Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
         if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
             Helper.setMessageWithoutDescription(
@@ -445,7 +444,7 @@ public class CurrentTaskForm extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.currentTask.getProcess());
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle() }, logger, e);
         }
     }
@@ -652,7 +651,7 @@ public class CurrentTaskForm extends BaseForm {
             }
             ServiceManager.getProcessService().save(this.myProcess);
             Helper.setMessage("propertiesSaved");
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
