@@ -24,13 +24,13 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.DataInterface;
+import org.kitodo.data.interfaces.BaseBeanInterface;
 
 /**
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseIndexedBean, S extends DataInterface, V extends BaseDAO<T>>
+public abstract class SearchService<T extends BaseIndexedBean, S extends BaseBeanInterface, V extends BaseDAO<T>>
         extends SearchDatabaseService<T, V> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);

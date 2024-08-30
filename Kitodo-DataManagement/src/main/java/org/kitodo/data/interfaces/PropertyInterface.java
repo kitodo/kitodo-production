@@ -21,7 +21,7 @@ import java.util.Objects;
  * that can be added to processes by third-party modules. They should not be
  * used to store technical metadata. Such should be part of the business domain.
  */
-public interface PropertyInterface extends DataInterface {
+public interface PropertyInterface extends BaseBeanInterface {
     /**
      * Returns the key of the property's key-value pair.
      *

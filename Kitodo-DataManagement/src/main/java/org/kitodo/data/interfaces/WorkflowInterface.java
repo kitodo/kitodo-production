@@ -16,7 +16,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.kitodo.data.database.enums.WorkflowStatus;
 
-public interface WorkflowInterface extends DataInterface {
+public interface WorkflowInterface extends BaseBeanInterface {
 
     /**
      * Returns the label of the workflow.

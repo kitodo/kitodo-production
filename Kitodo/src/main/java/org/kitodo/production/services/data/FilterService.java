@@ -37,7 +37,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FilterDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.interfaces.DataInterface;
+import org.kitodo.data.interfaces.BaseBeanInterface;
 import org.kitodo.data.interfaces.ProjectInterface;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;
@@ -122,9 +122,9 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO>
         return filter;
     }
 
-    Set<Integer> collectIds(List<? extends DataInterface> dtos) {
+    Set<Integer> collectIds(List<? extends BaseBeanInterface> dtos) {
         Set<Integer> ids = new HashSet<>();
-        for (DataInterface process : dtos) {
+        for (BaseBeanInterface process : dtos) {
             ids.add(process.getId());
         }
         return ids;

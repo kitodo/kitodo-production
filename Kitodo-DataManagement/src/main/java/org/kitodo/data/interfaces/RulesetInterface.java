@@ -17,7 +17,7 @@ package org.kitodo.data.interfaces;
  * describes which division must or may be marked with which metadata. It also
  * contains visual settings of the editor GUI.
  */
-public interface RulesetInterface extends DataInterface {
+public interface RulesetInterface extends BaseBeanInterface {
 
     /**
      * Returns the name of the configuration file, without a path. The file must

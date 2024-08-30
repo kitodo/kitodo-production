@@ -17,7 +17,7 @@ import java.util.List;
  * Interface for batches of processes. Processes can be assembled in batches to
  * take on or complete tasks for entire batches with a single user interaction.
  */
-public interface BatchInterface extends DataInterface {
+public interface BatchInterface extends BaseBeanInterface {
 
     /**
      * Returns the title of the batch. Using titles for batches is optional, the

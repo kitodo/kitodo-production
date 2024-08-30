@@ -18,7 +18,7 @@ import java.util.List;
  * are allowed to use this instance of Production for their own projects. Users
  * can work for several clients or just one.
  */
-public interface ClientInterface extends DataInterface {
+public interface ClientInterface extends BaseBeanInterface {
 
     /**
      * Returns the name of the client.

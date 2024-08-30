@@ -17,7 +17,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-public interface TemplateInterface extends DataInterface {
+public interface TemplateInterface extends BaseBeanInterface {
 
     /**
      * Returns the process template name.

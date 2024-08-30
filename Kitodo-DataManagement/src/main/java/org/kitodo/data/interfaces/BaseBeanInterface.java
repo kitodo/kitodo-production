@@ -14,7 +14,7 @@ package org.kitodo.data.interfaces;
 /**
  * Meta interface over the data interfaces of this interface.
  */
-public interface DataInterface {
+public interface BaseBeanInterface {
 
     static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 

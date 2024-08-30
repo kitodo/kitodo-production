@@ -19,7 +19,7 @@ import java.util.Optional;
 /**
  * An interface for editing users of the web application.
  */
-public interface UserInterface extends DataInterface {
+public interface UserInterface extends BaseBeanInterface {
 
     /**
      * Returns the user's login name.

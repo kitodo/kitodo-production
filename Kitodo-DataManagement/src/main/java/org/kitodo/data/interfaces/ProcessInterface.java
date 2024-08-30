@@ -26,7 +26,7 @@ import org.kitodo.data.database.enums.CorrectionComments;
  * a production template. It consists of several tasks that must be carried out
  * by humans or automatically.
  */
-public interface ProcessInterface extends DataInterface {
+public interface ProcessInterface extends BaseBeanInterface {
 
     /**
      * Returns the process name.

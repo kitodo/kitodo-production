@@ -21,7 +21,7 @@ import java.util.Optional;
  * or general-administrative roles, including different roles for different
  * clients they work for. A role is always assigned to one client.
  */
-public interface RoleInterface extends DataInterface {
+public interface RoleInterface extends BaseBeanInterface {
 
     /**
      * Returns the name of the role.

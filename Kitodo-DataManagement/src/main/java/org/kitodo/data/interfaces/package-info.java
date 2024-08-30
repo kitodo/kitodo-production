@@ -24,7 +24,7 @@
  * batches ({@link BatchInterface})
  * </ul>
  * The interface objects are based on the common interface
- * {@link DataInterface}. The factory methods are provided by the
+ * {@link BaseBeanInterface}. The factory methods are provided by the
  * {@link DataFactoryInterface}.
  */
 package org.kitodo.data.interfaces;

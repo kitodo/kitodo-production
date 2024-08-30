@@ -20,7 +20,7 @@ import java.util.Objects;
 /**
  * An interface to manage digitization projects.
  */
-public interface ProjectInterface extends DataInterface {
+public interface ProjectInterface extends BaseBeanInterface {
 
     /**
      * Returns the name of the project.

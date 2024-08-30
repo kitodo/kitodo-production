@@ -14,7 +14,7 @@ package org.kitodo.data.interfaces;
 /**
  * Interface for configuring the docket generator.
  */
-public interface DocketInterface extends DataInterface {
+public interface DocketInterface extends BaseBeanInterface {
 
     /**
      * Returns the name of the configuration file, without a path. The file must

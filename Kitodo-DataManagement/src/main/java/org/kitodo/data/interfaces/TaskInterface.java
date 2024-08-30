@@ -22,7 +22,7 @@ import java.util.Optional;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 
-public interface TaskInterface extends DataInterface {
+public interface TaskInterface extends BaseBeanInterface {
 
     /**
      * Returns the name of the task. This is usually a human-readable,

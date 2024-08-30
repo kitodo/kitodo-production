@@ -14,7 +14,7 @@ package org.kitodo.data.interfaces;
 /**
  * Interface for persisting search queries from users.
  */
-public interface FilterInterface extends DataInterface {
+public interface FilterInterface extends BaseBeanInterface {
 
     /**
      * Returns the search query string.
