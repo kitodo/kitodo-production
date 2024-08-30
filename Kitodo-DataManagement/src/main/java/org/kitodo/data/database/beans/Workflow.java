@@ -67,22 +67,49 @@ public class Workflow extends BaseIndexedBean {
         this.title = title;
     }
 
-    @Override
+    /**
+     * Returns the label of the workflow.
+     *
+     * @return the label
+     */
     public String getTitle() {
         return title;
     }
 
-    @Override
+    /**
+     * Sets the label of the workflow.
+     *
+     * @param title
+     *            label to set
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Override
+    /**
+     * Returns the stage of the workflow. Statuses:
+     *
+     * <dl>
+     * <dt>DRAFT</dt>
+     * <dd>the workflow is being created</dd>
+     * <dt>ACTIVE</dt>
+     * <dd>the workflow is in use</dd>
+     * <dt>ARCHIVED</dt>
+     * <dd>the workflow is no longer used</dd>
+     * </dl>
+     *
+     * @return the stage
+     */
     public WorkflowStatus getStatus() {
         return status;
     }
 
-    @Override
+    /**
+     * Sets the stage of the workflow.
+     *
+     * @param status
+     *            as String
+     */
     public void setStatus(WorkflowStatus status) {
         this.status = status;
     }

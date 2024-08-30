@@ -384,8 +384,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *            the processBase field
      * @return the record number
      */
-    default String getProcessDataDirectory(Process process) {
-        return getProcessDataDirectory((Process) process, false).toString();
+    default URI getProcessDataDirectory(Process process) {
+        return getProcessDataDirectory((Process) process, false);
     }
 
     /**

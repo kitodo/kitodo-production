@@ -257,7 +257,6 @@ public class ProcessDTO extends BaseTemplateDTO {
         return processBaseUri;
     }
 
-    @Override
     public URI getProcessBaseUri() {
         return Objects.isNull(processBaseUri) ? null : URI.create(processBaseUri);
     }
@@ -272,7 +271,6 @@ public class ProcessDTO extends BaseTemplateDTO {
         this.processBaseUri = processBaseUri;
     }
 
-    @Override
     public void setProcessBaseUri(URI processBaseUri) {
         this.processBaseUri = Objects.isNull(processBaseUri) ? null : processBaseUri.toString();
     }

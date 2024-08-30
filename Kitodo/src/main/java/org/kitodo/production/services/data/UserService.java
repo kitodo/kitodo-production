@@ -314,10 +314,6 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         return false;
     }
 
-    public String getFullName(User user) {
-        return user.getSurname() + ", " + user.getName();
-    }
-
     /**
      * At that moment only add this method.
      *

@@ -180,9 +180,11 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * {@inheritDoc} In case of {@code null}, it returns 0.
+     * Returns the number of media in a process. This is a business statistical
+     * characteristic. In case of {@code null}, it returns 0.
+     *
+     * @return the number of media in a process
      */
-    @Override
     public Integer getSortHelperImages() {
         if (this.sortHelperImages == null) {
             this.sortHelperImages = 0;
@@ -190,15 +192,27 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperImages;
     }
 
-    @Override
+    /**
+     * Sets the number of media in a process. Since counting all media files on
+     * the file system for many processes is slow, the number can be stored here
+     * when saving, so that statistics on the number of media can be obtained
+     * with an acceptable response time.
+     *
+     * @param sortHelperImages
+     *            the number of media in a process
+     */
     public void setSortHelperImages(Integer sortHelperImages) {
         this.sortHelperImages = sortHelperImages;
     }
 
     /**
-     * {@inheritDoc} In case of {@code null}, it returns 0.
+     * Returns the sort count. Sort counting is applicable to a process, if it
+     * is a child process and is a counted item of a series. This allows to sort
+     * the children according to their count. Can be {@code null} if there is no
+     * count. In case of {@code null}, it returns 0.
+     *
+     * @return the sort count
      */
-    @Override
     public Integer getSortHelperArticles() {
         if (this.sortHelperArticles == null) {
             this.sortHelperArticles = 0;
@@ -206,15 +220,22 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperArticles;
     }
 
-    @Override
+    /**
+     * Sets the sort count.
+     *
+     * @param sortHelperArticles
+     *            the sort count
+     */
     public void setSortHelperArticles(Integer sortHelperArticles) {
         this.sortHelperArticles = sortHelperArticles;
     }
 
     /**
-     * {@inheritDoc} In case of {@code null}, it returns 0.
+     * Returns the number of outline elements in a process. This is a business
+     * statistical characteristic. In case of {@code null}, it returns 0.
+     *
+     * @return the number of outline elements in a process
      */
-    @Override
     public Integer getSortHelperDocstructs() {
         if (this.sortHelperDocstructs == null) {
             this.sortHelperDocstructs = 0;
@@ -222,15 +243,25 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperDocstructs;
     }
 
-    @Override
+    /**
+     * Sets the number of outline elements in a process. Since the detailed
+     * business objects are in a file, the number can be stored here when
+     * saving, so that statistics on the number of outline elements can be
+     * obtained with an acceptable response time.
+     *
+     * @param sortHelperDocstructs
+     *            the number of outline elements in a process
+     */
     public void setSortHelperDocstructs(Integer sortHelperDocstructs) {
         this.sortHelperDocstructs = sortHelperDocstructs;
     }
 
     /**
-     * {@inheritDoc} In case of {@code null}, it returns 0.
+     * Returns the number of metadata entries in a process. This is a business
+     * statistical characteristic. In case of {@code null}, it returns 0.
+     *
+     * @return the number of media in a process
      */
-    @Override
     public Integer getSortHelperMetadata() {
         if (this.sortHelperMetadata == null) {
             this.sortHelperMetadata = 0;
@@ -238,27 +269,61 @@ public class Process extends BaseTemplateBean {
         return this.sortHelperMetadata;
     }
 
-    @Override
+    /**
+     * Sets the number of metadata entries in a process. Since the detailed
+     * business objects are in a file, the number can be stored here when
+     * saving, so that statistics on the number of metadata entries can be
+     * obtained with an acceptable response time.
+     *
+     * @param sortHelperMetadata
+     *            the number of metadata entries in a process
+     */
     public void setSortHelperMetadata(Integer sortHelperMetadata) {
         this.sortHelperMetadata = sortHelperMetadata;
     }
 
-    @Override
+    /**
+     * Returns the contents of the wiki field as HTML. Wiki means that something
+     * can be changed quickly by anyone. It is a kind of sticky note on which
+     * editors can exchange information about a process.
+     *
+     * @return wiki field as HTML
+     */
     public String getWikiField() {
         return this.wikiField;
     }
 
-    @Override
+    /**
+     * Sets the content of the wiki field. Primitive HTML tags formatting may be
+     * used.
+     *
+     * @param wikiField
+     *            wiki field as HTML
+     */
     public void setWikiField(String wikiField) {
         this.wikiField = wikiField;
     }
 
-    @Override
+    /**
+     * Returns a process identifier URI. Internally, this is the record number
+     * of the process in the processes table of the database, but for external
+     * data it can also be another identifier that resolves to a directory in
+     * the application's processes directory on the file system.
+     *
+     * @return the union resource identifier of the process
+     */
     public URI getProcessBaseUri() {
         return Objects.isNull(processBaseUri) ? null : URI.create(processBaseUri);
     }
 
-    @Override
+    /**
+     * Sets the union resource identifier of the process. This should only be
+     * set manually if the data comes from a third party source, otherwise, this
+     * is the process record number set by the database.
+     *
+     * @param processBaseUri
+     *            the identification URI of the process
+     */
     public void setProcessBaseUri(URI processBaseUri) {
         this.processBaseUri = Objects.isNull(processBaseUri) ? null : processBaseUri.toString();
     }
@@ -282,25 +347,18 @@ public class Process extends BaseTemplateBean {
         this.ordering = ordering;
     }
 
-    @Override
+    /**
+     * Returns the project the process belongs to. Digitization processes are
+     * organized in projects.
+     *
+     * @return the project the process belongs to
+     */
     public Project getProject() {
         return this.project;
     }
 
-    @Override
-    public void setProject(Project project) {
-        this.project = (Project) project;
-    }
-
     /**
      * Specifies the project to which the process belongs.
-     * 
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setProject(Project)} as a setter for the
-     * property {@code project} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param project
      *            project to which the process should belong
@@ -309,25 +367,17 @@ public class Process extends BaseTemplateBean {
         this.project = project;
     }
 
-    @Override
+    /**
+     * Returns the business domain specification this process is using.
+     *
+     * @return the business domain specification
+     */
     public Ruleset getRuleset() {
         return this.ruleset;
     }
 
-    @Override
-    public void setRuleset(Ruleset ruleset) {
-        this.ruleset = (Ruleset) ruleset;
-    }
-
     /**
      * Sets the business domain specification this process is using.
-     * 
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setRuleset(Ruleset)} as a setter for the
-     * property {@code ruleset} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param ruleset
      *            the business domain specification
@@ -336,32 +386,25 @@ public class Process extends BaseTemplateBean {
         this.ruleset = ruleset;
     }
 
-    @Override
+    /**
+     * Returns the docket generation statement to use when creating a docket for
+     * this process.
+     *
+     * @return the docket generation statement
+     */
     public Docket getDocket() {
         return docket;
-    }
-
-    @Override
-    public void setDocket(Docket docket) {
-        this.docket = (Docket) docket;
     }
 
     /**
      * Sets the docket generation statement to use when creating a docket for
      * this process.
-     * 
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setDocket(Docket)} as a setter for the property
-     * {@code docket} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param docket
      *            the docket generation statement
      */
     public void setDocket(Docket docket) {
-        this.docket = docket;
+        this.docket = (Docket) docket;
     }
 
     /**
@@ -425,7 +468,11 @@ public class Process extends BaseTemplateBean {
         this.children = children;
     }
 
-    @Override
+    /**
+     * Returns the task list of this process.
+     *
+     * @return the task list
+     */
     public List<Task> getTasks() {
         initialize(new ProcessDAO(), this.tasks);
         if (Objects.isNull(this.tasks)) {
@@ -434,10 +481,14 @@ public class Process extends BaseTemplateBean {
         return this.tasks;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the task list of this process.
+     *
+     * @param tasks
+     *            the task list
+     */
     public void setTasks(List<Task> tasks) {
-        this.tasks = (List<Task>) tasks;
+        this.tasks = tasks;
     }
 
     /**
@@ -487,7 +538,13 @@ public class Process extends BaseTemplateBean {
         this.workpieces = workpieces;
     }
 
-    @Override
+    /**
+     * Specifies the batches to which the process is assigned. A process can
+     * belong to several batches, but for batch automation to work, a process
+     * must be assigned to exactly one batch.
+     *
+     * @return the batches to which the process is assigned
+     */
     public List<Batch> getBatches() {
         initialize(new ProcessDAO(), this.batches);
         if (Objects.isNull(this.batches)) {
@@ -496,17 +553,21 @@ public class Process extends BaseTemplateBean {
         return this.batches;
     }
 
-    /*
-     * Set batches, if list is empty just set, if not first clear and next set.
+    /**
+     * Sets the list that specifies the batches to which the process is
+     * associated. A process can belong to several batches, but but for batch
+     * automation to work, a process must be assigned to exactly one batch. The
+     * list should not contain duplicates, and must not contain {@code null}s.
+     *
+     * @param batches
+     *            list of batches to which the process is associated
      */
-    @Override
-    @SuppressWarnings("unchecked")
     public void setBatches(List<Batch> batches) {
         if (this.batches == null) {
-            this.batches = (List<Batch>) batches;
+            this.batches = batches;
         } else {
             this.batches.clear();
-            this.batches.addAll((List<? extends Batch>) batches);
+            this.batches.addAll(batches);
         }
     }
 
@@ -532,7 +593,14 @@ public class Process extends BaseTemplateBean {
         this.comments = comments;
     }
 
-    @Override
+    /**
+     * Returns the operational properties of the process. Properties are a tool
+     * for third-party modules to store operational properties as key-value
+     * pairs, that the application has no knowledge of. This list is not
+     * guaranteed to be in reliable order.
+     *
+     * @return list of properties
+     */
     public List<Property> getProperties() {
         initialize(new ProcessDAO(), this.properties);
         if (Objects.isNull(this.properties)) {
@@ -541,10 +609,15 @@ public class Process extends BaseTemplateBean {
         return this.properties;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the list of operational properties of the process. This list is not
+     * guaranteed to preserve its order. It must not contain {@code null}s.
+     *
+     * @param properties
+     *            list of properties as Property
+     */
     public void setProperties(List<Property> properties) {
-        this.properties = (List<Property>) properties;
+        this.properties = properties;
     }
 
     /**
@@ -583,22 +656,48 @@ public class Process extends BaseTemplateBean {
         this.metadata = metadata;
     }
 
-    @Override
+    /**
+     * Returns the user who is currently blocking the process's business data.
+     * Since the business data is in a file, a user can be granted exclusive
+     * access to this file, so that several users do not overwrite concurrent
+     * changes by each other. Can be {@code null} if the business data is not
+     * currently blocked by any user.
+     *
+     * @return the user blocking the process
+     */
     public User getBlockedUser() {
         return blockedUser;
     }
 
-    @Override
+    /**
+     * Sets exclusive (write) access to the business data in this process for a
+     * user. Or, set {@code null} to release the blockage. This is a transient
+     * value that is not persisted.
+     *
+     * @param blockedUser
+     *            user to grant write access to
+     */
     public void setBlockedUser(User blockedUser) {
         this.blockedUser = blockedUser;
     }
 
-    @Override
+    /**
+     * Returns the media form of the business object at runtime. Can be
+     * {@code null} if no runtime value is available.
+     *
+     * @return the id of the division representing the media form
+     */
     public String getBaseType() {
         return baseType;
     }
 
-    @Override
+    /**
+     * Sets the media form of the business object in the database. This is a
+     * transient value that is not persisted.
+     *
+     * @param baseType
+     *            id of the division representing the media form
+     */
     public void setBaseType(String baseType) {
         this.baseType = baseType;
     }
@@ -650,32 +749,65 @@ public class Process extends BaseTemplateBean {
         return Objects.hash(this.getId());
     }
 
-    @Override
+    /**
+     * Returns the number of outline elements in a process. Can be {@code null}
+     * if no runtime value is available.
+     *
+     * @return the number of outline elements in a process
+     */
     public Integer getNumberOfStructures() {
         return numberOfStructures;
     }
 
-    @Override
+    /**
+     * Returns the amount of metadata of the process at runtime. Can be
+     * {@code null} if no runtime value is available.
+     *
+     * @return the amount of metadata
+     */
     public Integer getNumberOfMetadata() {
         return numberOfMetadata;
     }
 
-    @Override
+    /**
+     * Sets the number of metadata entries in a process. This is a transient
+     * value that is not persisted.
+     *
+     * @param numberOfMetadata
+     *            the number of metadata entries in a process
+     */
     public void setNumberOfMetadata(Integer numberOfMetadata) {
         this.numberOfMetadata = numberOfMetadata;
     }
 
-    @Override
+    /**
+     * Returns the number of media in a process at runtime. Can be {@code null}
+     * if no runtime value is available.
+     *
+     * @return the number of media in a process
+     */
     public Integer getNumberOfImages() {
         return numberOfImages;
     }
 
-    @Override
+    /**
+     * Sets the number of media in a process. This is a transient value that is
+     * not persisted.
+     *
+     * @param numberOfImages
+     *            the number of media in a process
+     */
     public void setNumberOfImages(Integer numberOfImages) {
         this.numberOfImages = numberOfImages;
     }
 
-    @Override
+    /**
+     * Sets the number of outline elements in a process at runtime. This is a
+     * transient value that is not persisted.
+     *
+     * @param numberOfStructures
+     *            the number of outline elements in a process
+     */
     public void setNumberOfStructures(Integer numberOfStructures) {
         this.numberOfStructures = numberOfStructures;
     }
@@ -699,7 +831,13 @@ public class Process extends BaseTemplateBean {
         this.ocrdWorkflowId = ocrdWorkflowId;
     }
 
-    @Override
+    /**
+     * Returns the percentage of tasks in the process that are completed. The
+     * total of tasks awaiting preconditions, startable, in progress, and
+     * completed is {@code 100.0d}.
+     *
+     * @return percentage of tasks completed
+     */
     public Double getProgressClosed() {
         if (CollectionUtils.isEmpty(tasks)) {
             return 0.0;
@@ -707,7 +845,13 @@ public class Process extends BaseTemplateBean {
         return getProgressPercentageExact(TaskStatus.DONE);
     }
 
-    @Override
+    /**
+     * Returns the percentage of tasks in the process that are currently being
+     * processed. The progress total of tasks waiting for preconditions,
+     * startable, in progress, and completed is {@code 100.0d}.
+     *
+     * @return percentage of tasks in progress
+     */
     public Double getProgressInProcessing() {
         if (CollectionUtils.isEmpty(tasks)) {
             return 0.0;
@@ -715,7 +859,14 @@ public class Process extends BaseTemplateBean {
         return getProgressPercentageExact(TaskStatus.INWORK);
     }
 
-    @Override
+    /**
+     * Returns the percentage of tasks in the process, that cannot yet be
+     * carried out, because previous tasks have not yet been completed. The
+     * progress total of tasks waiting for preconditions, startable, in
+     * progress, and completed is {@code 100.0d}.
+     *
+     * @return percentage of tasks waiting
+     */
     public Double getProgressLocked() {
         if (CollectionUtils.isEmpty(tasks)) {
             return 100.0;
@@ -724,7 +875,14 @@ public class Process extends BaseTemplateBean {
 
     }
 
-    @Override
+    /**
+     * Returns the percentage of the process's tasks that are now ready to be
+     * processed but have not yet been started. The progress total of tasks
+     * waiting for preconditions, startable, in progress, and completed is
+     * {@code 100.0d}.
+     *
+     * @return percentage of startable tasks
+     */
     public Double getProgressOpen() {
         if (CollectionUtils.isEmpty(tasks)) {
             return 0.0;
@@ -737,28 +895,59 @@ public class Process extends BaseTemplateBean {
         return taskProgress.get(status);
     }
 
-    @Override
+    /**
+     * Returns a coded overview of the progress of the process. The larger the
+     * number, the more advanced the process is, so it can be used to sort by
+     * progress. The numeric code consists of twelve digits, each three digits
+     * from 000 to 100 indicate the percentage of tasks completed, currently in
+     * progress, ready to start and not yet ready, in that order. For example,
+     * 000000025075 means that 25% of the tasks are ready to be started and 75%
+     * of the tasks are not yet ready to be started because previous tasks have
+     * not yet been processed.
+     * 
+     * @return overview of the processing status
+     */
     public String getProgressCombined() {
         Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
         return ProcessConverter.getCombinedProgressFromTaskPercentages(taskProgress);
     }
 
-    @Override
+    /**
+     * Returns all batches to which the process belongs. A comma-space-separated
+     * list of the batch labels is returned. If not, it's a blank string.
+     *
+     * @return batches to which the process belongs
+     */
     public String getBatchID() {
         return batches.stream().map(Batch::getTitle).collect(Collectors.joining(", "));
     }
 
-    @Override
+    /**
+     * Returns the record number of the parent process, if any. Is {@code null}
+     * if there is no parent process above.
+     *
+     * @return record number of the parent process
+     */
     public Integer getParentID() {
         return Objects.nonNull(parent) ? parent.getId() : null;
     }
 
-    @Override
+    /**
+     * Sets a parent process based on its record number. Or {@code null} to not
+     * set a parent process.
+     *
+     * @param parentID
+     *            record number of the parent process
+     */
     public void setParentID(Integer parentID) {
         this.parent = HibernateUtil.getSession().get(Process.class, parentID);
     }
 
-    @Override
+    /**
+     * Returns whether the process has children.
+     *
+     * @return whether the process has children
+     */
     public boolean hasChildren() {
         try {
             return CollectionUtils.isNotEmpty(children);
@@ -767,7 +956,18 @@ public class Process extends BaseTemplateBean {
         }
     }
 
-    @Override
+    /**
+     * Sets whether the process is a parent. The setter can be used when
+     * representing data from a third-party source. Internally, parenthood
+     * results from a parent relationship of the process in the database.
+     * Setting this to true cannot insert child processes into the database.
+     *
+     * @param hasChildren
+     *            whether the process has children
+     * @throws UnsupportedOperationException
+     *             when trying to set this to true for a process without
+     *             children
+     */
     public void setHasChildren(boolean hasChildren) {
         if (!hasChildren && Objects.nonNull(children)) {
             children.forEach(child -> child.setParent(null));
@@ -777,32 +977,64 @@ public class Process extends BaseTemplateBean {
         }
     }
 
-    @Override
+    /**
+     * Returns the name of the last user who was involved in the process. This
+     * is the user who recently has a task of the process in progress, or who
+     * most recently had one in progress. The name is returned comma-separated,
+     * last name first. Can be {@code null} if no user has worked on the process
+     * yet.
+     *
+     * @return name of last user handling task
+     */
     public String getLastEditingUser() {
         return ProcessConverter.getLastEditingUser(this);
     }
 
-    @Override
+    /**
+     * Returns time day on which a task of this process was last started.
+     *
+     * @return time on which a task of this process was last started
+     */
     public Date getProcessingBeginLastTask() {
         return ProcessConverter.getLastProcessingBegin(this);
     }
 
-    @Override
+    /**
+     * Returns the time on which a task from this process was last completed.
+     *
+     * @return time on which a task from this process was last completed
+     */
     public Date getProcessingEndLastTask() {
         return ProcessConverter.getLastProcessingEnd(this);
     }
 
-    @Override
+    /**
+     * Returns the error corrections processing state of the process. The value
+     * is specified as integer of {@link CorrectionComments}.
+     * 
+     * @return the error corrections processing state
+     */
     public Integer getCorrectionCommentStatus() {
         return ProcessConverter.getCorrectionCommentStatus(this).getValue();
     }
 
-    @Override
+    /**
+     * Returns whether the process has any comments.
+     *
+     * @return whether the process has comments
+     */
     public boolean hasComments() {
         return CollectionUtils.isNotEmpty(comments);
     }
 
-    @Override
+    /**
+     * Sets whether the process has any comments. This should only be set if the
+     * data comes from a third party; internally, it is determined in the
+     * database.
+     *
+     * @param hasComments
+     *            whether the process has comments
+     */
     public void setHasComments(boolean hasComments) {
         if (!hasComments && Objects.nonNull(comments)) {
             comments.forEach(comment -> comment.setProcess(null));

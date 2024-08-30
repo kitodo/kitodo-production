@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kitodo.data.database.beans.BaseBean;
 
 public abstract class BaseTemplateDTO extends BaseDTO {
 
@@ -131,7 +132,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     public Date getCreationDate() {
         try {
             return StringUtils.isNotBlank(this.creationDate)
-                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.creationDate)
+                    ? new SimpleDateFormat(BaseBean.DATE_FORMAT).parse(this.creationDate)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
@@ -145,7 +146,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      *            as Date
      */
     public void setCreationDate(Date creationDate) {
-        this.creationDate = Objects.nonNull(creationDate) ? new SimpleDateFormat(DATE_FORMAT).format(creationDate)
+        this.creationDate = Objects.nonNull(creationDate) ? new SimpleDateFormat(BaseBean.DATE_FORMAT).format(creationDate)
                 : null;
     }
 }

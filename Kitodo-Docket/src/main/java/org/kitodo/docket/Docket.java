@@ -18,9 +18,9 @@ import java.net.URI;
 import java.util.Collection;
 
 import org.kitodo.api.docket.DocketData;
-import org.kitodo.api.docket.Docket;
+import org.kitodo.api.docket.DocketInterface;
 
-public class Docket {
+public class Docket implements DocketInterface {
 
     @Override
     public File generateDocket(DocketData docketData, URI xslFileUri) throws IOException {

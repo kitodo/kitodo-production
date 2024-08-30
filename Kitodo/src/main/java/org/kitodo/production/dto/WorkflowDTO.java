@@ -26,7 +26,6 @@ public class WorkflowDTO extends BaseDTO {
      *
      * @return value of title
      */
-    @Override
     public String getTitle() {
         return title;
     }
@@ -37,7 +36,6 @@ public class WorkflowDTO extends BaseDTO {
      * @param title
      *            as String
      */
-    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -47,7 +45,6 @@ public class WorkflowDTO extends BaseDTO {
      *
      * @return value of status
      */
-    @Override
     public String getWorkflowStatus() {
         return status.toLowerCase();
     }
@@ -58,17 +55,14 @@ public class WorkflowDTO extends BaseDTO {
      * @param status
      *            as String
      */
-    @Override
     public void setWorkflowStatus(String status) {
         this.status = status;
     }
 
-    @Override
     public WorkflowStatus getStatus() {
         return StringUtils.isNotBlank(status) ? WorkflowStatus.valueOf(status) : null;
     }
 
-    @Override
     public void setStatus(WorkflowStatus status) {
         this.status = Objects.nonNull(status) ? status.toString() : null;
     }

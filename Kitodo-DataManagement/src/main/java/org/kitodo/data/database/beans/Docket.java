@@ -40,22 +40,44 @@ public class Docket extends BaseIndexedBean {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_docket_client_id"))
     private Client client;
 
-    @Override
+    /**
+     * Returns the display name of the configuration. It is displayed to the
+     * user in a selection dialog.
+     *
+     * @return the display name
+     */
     public String getTitle() {
         return title;
     }
 
-    @Override
+    /**
+     * Sets the display name of the configuration.
+     *
+     * @param title
+     *            the display name
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Override
+    /**
+     * Returns the name of the configuration file, without a path. The file must
+     * exist in the XSLT directory. The directory is set in the configuration
+     * file.
+     *
+     * @return the XSLT file name
+     */
     public String getFile() {
         return file;
     }
 
-    @Override
+    /**
+     * Sets the name of the configuration file. The file must exist in the XSLT
+     * directory. The file name must be specified without a path.
+     *
+     * @param file
+     *            XSLT file name
+     */
     public void setFile(String file) {
         this.file = file;
     }
@@ -81,12 +103,27 @@ public class Docket extends BaseIndexedBean {
         this.active = active;
     }
 
-    @Override
+    /**
+     * Returns the client that this docket generator configuration is associated
+     * with. Technically, multiple client can use the same docket generator
+     * configuration (file), but they must be made available independently for
+     * each client using one configuration object each. This determines which
+     * docket generator configurations are visible to a client at all, and they
+     * can be named differently.
+     *
+     * @return client that this docket is associated with
+     */
     public Client getClient() {
         return this.client;
     }
 
-    @Override
+    /**
+     * Sets the client to which this docket generator configuration is
+     * associated.
+     *
+     * @param client
+     *            client to which this docket is associated
+     */
     public void setClient(Client client) {
         this.client = (Client) client;
     }

@@ -13,61 +13,76 @@ package org.kitodo.production.services.data;
 
 import java.net.URI;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.junit.Assert;
 import org.junit.Test;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.PropertyDTO;
 import org.kitodo.production.services.ServiceManager;
 
 public class ProcessServiceTest {
 
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() throws ParseException {
-        final Process process = new ProcessDTO();
+        final Process process = new Process();
 
-        Property firstProperty = new PropertyDTO();
+        Property firstProperty = new Property();
         firstProperty.setId(1);
         firstProperty.setTitle("Korrektur notwendig");
         firstProperty.setValue("Fix it");
-        firstProperty.setCreationTime(null);
+        setCreationTime(firstProperty, null);
 
-        Property secondProperty = new PropertyDTO();
+        Property secondProperty = new Property();
         secondProperty.setId(2);
         secondProperty.setTitle("Korrektur notwendig");
         secondProperty.setValue("Fix it also");
-        secondProperty.setCreationTime(null);
+        setCreationTime(secondProperty, null);
 
-        Property thirdProperty = new PropertyDTO();
+        Property thirdProperty = new Property();
         thirdProperty.setId(3);
         thirdProperty.setTitle("Other title");
         thirdProperty.setValue("Other value");
-        thirdProperty.setCreationTime("2017-12-01");
+        setCreationTime(thirdProperty, "2017-12-01");
 
-        Property fourthProperty = new PropertyDTO();
+        Property fourthProperty = new Property();
         fourthProperty.setId(4);
         fourthProperty.setTitle("Korrektur durchgef\u00FChrt");
         fourthProperty.setValue("Fixed second");
-        fourthProperty.setCreationTime("2017-12-05");
+        setCreationTime(fourthProperty, "2017-12-05");
 
-        Property fifthProperty = new PropertyDTO();
+        Property fifthProperty = new Property();
         fifthProperty.setId(5);
         fifthProperty.setTitle("Korrektur durchgef\u00FChrt");
         fifthProperty.setValue("Fixed first");
-        fifthProperty.setCreationTime("2017-12-03");
+        setCreationTime(fifthProperty, "2017-12-03");
 
-        @SuppressWarnings("unchecked")
-        List<Property> properties = (List<Property>) process.getProperties();
+        List<Property> properties = process.getProperties();
         properties.add(firstProperty);
         properties.add(secondProperty);
         properties.add(thirdProperty);
         properties.add(fourthProperty);
         properties.add(fifthProperty);
 
+    }
+
+    /**
+     * Sets the creation time of the property. The string must be parsable with
+     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     *
+     * @param creationDate
+     *            creation time to set
+     * @throws ParseException
+     *             if the time cannot be converted
+     * @deprecated Use {@link #setCreationDate(Date)}.
+     */
+    @Deprecated
+    private void setCreationTime(Property property, String creationDate) throws ParseException {
+        property.setCreationDate(Objects.nonNull(creationDate) ? new SimpleDateFormat("yyyy-MM-dd").parse(creationDate)
+                : null);
     }
 
     @Test

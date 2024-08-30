@@ -32,7 +32,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "role")
-public class Role extends BaseBean, Comparable<Role> {
+public class Role extends BaseBean implements Comparable<Role> {
 
     @Column(name = "title", nullable = false)
     private String title;
@@ -63,7 +63,11 @@ public class Role extends BaseBean, Comparable<Role> {
         this.authorities = new ArrayList<>();
     }
 
-    @Override
+    /**
+     * Returns the name of the role.
+     *
+     * @return the name of the role
+     */
     public String getTitle() {
         if (this.title == null) {
             return "";
@@ -72,7 +76,12 @@ public class Role extends BaseBean, Comparable<Role> {
         }
     }
 
-    @Override
+    /**
+     * Sets the name of the role.
+     *
+     * @param title
+     *            name of the role to set
+     */
     public void setTitle(String title) {
         this.title = title;
     }
@@ -100,7 +109,12 @@ public class Role extends BaseBean, Comparable<Role> {
         this.authorities = authorities;
     }
 
-    @Override
+    /**
+     * Specifies the users who hold this role. This list is not guaranteed to be
+     * in reliable order.
+     *
+     * @return list of users who hold this role
+     */
     public List<User> getUsers() {
         initialize(new RoleDAO(), this.users);
         if (Objects.isNull(this.users)) {
@@ -109,10 +123,14 @@ public class Role extends BaseBean, Comparable<Role> {
         return this.users;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the list of users who hold this role.
+     *
+     * @param users
+     *            list of users who hold this role to set
+     */
     public void setUsers(List<User> users) {
-        this.users = (List<User>) users;
+        this.users = users;
     }
 
     /**
@@ -138,25 +156,17 @@ public class Role extends BaseBean, Comparable<Role> {
         this.tasks = tasks;
     }
 
-    @Override
+    /**
+     * Returns the client in whose realm this role grants permissions.
+     *
+     * @return the client in whose realm this role grants permissions
+     */
     public Client getClient() {
         return client;
     }
 
-    @Override
-    public void setClient(Client client) {
-        this.client = (Client) client;
-    }
-
     /**
      * Sets the client in whose realm this role grants permissions.
-     * 
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setClient(Client)} as a setter for the property
-     * {@code client} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param client
      *            client in whose realm this role grants permissions to set.

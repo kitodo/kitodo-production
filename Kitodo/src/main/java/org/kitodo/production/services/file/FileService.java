@@ -728,17 +728,6 @@ public class FileService {
      *
      * @param process
      *            the process to get the metadata.xml for.
-     * @return The URI to the metadata.xml
-     */
-    public URI getMetadataFilePath(Process process) throws IOException {
-        return getMetadataFilePath(process, true);
-    }
-
-    /**
-     * Gets the URI of the metadata.xml of a given process.
-     *
-     * @param process
-     *            the process to get the metadata.xml for.
      * @param mustExist
      *            whether the file must exist
      * @return The URI to the metadata.xml
@@ -897,24 +886,6 @@ public class FileService {
     }
 
     /**
-     * This method is needed for migration purposes. It maps existing filePaths
-     * to the correct URI. File.separator doesn't work because on Windows it
-     * appends backslash to URI.
-     *
-     * @param process
-     *            the process, the uri is needed for.
-     * @return the URI.
-     */
-    public String getProcessBaseUriForExistingProcess(Process process) {
-        String processBaseUri = process.getProcessBase();
-        if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
-            process.setProcessBase(
-                fileManagementModule.createUriForExistingProcess(process.getId().toString()).toString());
-        }
-        return process.getProcessBase();
-    }
-
-    /**
      * Get the URI for a process sub-location. Possible locations are listed in
      * ProcessSubType.
      *
@@ -963,23 +934,6 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
-        return getProcessSubTypeURI(process, processSubType, resourceName, false);
-    }
-
-    /**
-     * Gets the URI for a Process Sub-location. Possible Locations are listed
-     * in ProcessSubType
-     *
-     * @param process
-     *            the process to get the sublocation for.
-     * @param processSubType
-     *            The subType.
-     * @param resourceName
-     *            the name of the single object (e.g. image) if null, the root
-     *            folder of the sublocation is returned
-     * @return The URI of the requested location
-     */
     private URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName,
             boolean forIndexingAll) {
 
@@ -1005,14 +959,14 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    private URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
+    public URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
-        String processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
+        URI processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
 
         if (Objects.isNull(resourceName)) {
             resourceName = "";
         }
-        return fileManagementModule.getProcessSubTypeUri(URI.create(processDataDirectory),
+        return fileManagementModule.getProcessSubTypeUri(processDataDirectory,
                 Helper.getNormalizedTitle(process.getTitle()), processSubType, resourceName);
     }
 

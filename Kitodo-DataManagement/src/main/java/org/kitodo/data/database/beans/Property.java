@@ -30,7 +30,7 @@ import org.kitodo.data.database.beans.Property;
 
 @Entity
 @Table(name = "property")
-public class Property extends BaseIndexedBean, Comparable<Property> {
+public class Property extends BaseIndexedBean implements Comparable<Property> {
 
     @Column(name = "title")
     private String title;
@@ -69,22 +69,40 @@ public class Property extends BaseIndexedBean, Comparable<Property> {
         this.creationDate = new Date();
     }
 
-    @Override
+    /**
+     * Returns the key of the property's key-value pair.
+     *
+     * @return the key
+     */
     public String getTitle() {
         return this.title;
     }
 
-    @Override
+    /**
+     * Sets the key of the property's key-value pair.
+     *
+     * @param title
+     *            key to set
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Override
+    /**
+     * Returns the value of the property's key-value pair.
+     *
+     * @return the value
+     */
     public String getValue() {
         return this.value;
     }
 
-    @Override
+    /**
+     * Sets the value of the property's key-value pair.
+     *
+     * @param value
+     *            value to set
+     */
     public void setValue(String value) {
         this.value = value;
     }
@@ -130,12 +148,25 @@ public class Property extends BaseIndexedBean, Comparable<Property> {
         this.obligatory = obligatory;
     }
 
-    @Override
+    /**
+     * Returns the creation time of the property. {@link Date} is a specific
+     * instant in time, with millisecond precision.
+     *
+     * @return the creation time
+     */
     public Date getCreationDate() {
         return this.creationDate;
     }
 
-    @Override
+    /**
+     * Sets the creation time of the property. The string must be parsable with
+     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     *
+     * @param creationDate
+     *            creation time to set
+     * @throws ParseException
+     *             if the time cannot be converted
+     */
     public void setCreationDate(Date creationDate) {
         this.creationDate = creationDate;
     }

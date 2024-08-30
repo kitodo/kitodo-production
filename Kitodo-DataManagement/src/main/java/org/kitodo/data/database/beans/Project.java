@@ -48,7 +48,7 @@ import org.kitodo.data.database.beans.User;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean, Comparable<Project> {
+public class Project extends BaseIndexedBean implements Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
@@ -212,17 +212,30 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         this.hasProcesses = CollectionUtils.isNotEmpty(processes);
     }
 
-    @Override
+    /**
+     * Returns the name of the project.
+     *
+     * @return the name of the project
+     */
     public String getTitle() {
         return this.title;
     }
 
-    @Override
+    /**
+     * Sets the name of the project.
+     *
+     * @param title
+     *            the name of the project
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
-    @Override
+    /**
+     * Returns the users contributing to this project.
+     *
+     * @return the users contributing to this project
+     */
     public List<User> getUsers() {
         initialize(new ProjectDAO(), this.users);
         if (Objects.isNull(this.users)) {
@@ -231,10 +244,14 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         return this.users;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Specifies the users who will contribute to this project.
+     *
+     * @param users
+     *            the users contributing to this project
+     */
     public void setUsers(List<User> users) {
-        this.users = (List<User>) users;
+        this.users = users;
     }
 
     /**
@@ -308,12 +325,24 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         this.folders = folders;
     }
 
-    @Override
+    /**
+     * Returns the name of the copyright holder of the business objects. These
+     * are often the digitizing institution and also the sponsor.
+     *
+     * @return metsRightsOwner the name of the copyright holder
+     */
     public String getMetsRightsOwner() {
         return this.metsRightsOwner;
     }
 
-    @Override
+    /**
+     * Sets the name of the copyright owner of the business objects. The
+     * effective maximum length of this VARCHAR field is subject to the maximum
+     * row size of 64k shared by all columns, and the charset.
+     *
+     * @param metsRightsOwner
+     *            the name of the copyright holder
+     */
     public void setMetsRightsOwner(String metsRightsOwner) {
         this.metsRightsOwner = metsRightsOwner;
     }
@@ -383,12 +412,12 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
     }
 
     /**
-     * Get number of volumes.
+     * Returns the number of physical archival items to be digitized. This is a
+     * freely configurable value, not a collected statistical value. The value
+     * can be used to monitor whether the project is on time.
      *
-     * @return number of volumes for this project
+     * @return number of volumes as Integer
      */
-
-    @Override
     public Integer getNumberOfVolumes() {
         if (this.numberOfVolumes == null) {
             this.numberOfVolumes = 0;
@@ -397,18 +426,24 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
     }
 
     /**
-     * Set number of volumes.
+     * Sets the number of physical archival materials to be digitized. This is
+     * usually roughly determined as part of project planning and can be stored
+     * here as a reminder.
      *
      * @param numberOfVolumes
-     *            for this project
+     *            as Integer
      */
-
-    @Override
     public void setNumberOfVolumes(Integer numberOfVolumes) {
         this.numberOfVolumes = numberOfVolumes;
     }
 
-    @Override
+    /**
+     * Returns the number of media objects to produce. This is a freely
+     * configurable value, not a determined statistic. The value can be used to
+     * monitor whether the project is on time.
+     *
+     * @return the number of media objects to produce
+     */
     public Integer getNumberOfPages() {
         if (this.numberOfPages == null) {
             this.numberOfPages = 0;
@@ -416,12 +451,26 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         return this.numberOfPages;
     }
 
-    @Override
+    /**
+     * Sets the number of media objects to produce. This is usually roughly
+     * determined as part of project planning and can be stored here as a
+     * reminder.
+     *
+     * @param numberOfPages
+     *            the number of media objects to produce
+     */
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
 
-    @Override
+    /**
+     * Returns the start time of the project. {@link Date} is a specific instant
+     * in time, with millisecond precision. It is a freely configurable value,
+     * not the date the project object was created in the database. This can be,
+     * for example, the start of the funding period.
+     *
+     * @return the start time
+     */
     public Date getStartDate() {
         if (this.startDate == null) {
             this.startDate = new Date();
@@ -429,12 +478,25 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         return this.startDate;
     }
 
-    @Override
+    /**
+     * Sets the start time of the project.
+     *
+     * @param startDate
+     *            the start time
+     */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    @Override
+    /**
+     * Returns the project end time. {@link Date} is a specific instant in time,
+     * with millisecond precision. This is a freely configurable value,
+     * regardless of when the project was last actually worked on. For example,
+     * this can be the time at which the project must be completed in order to
+     * be billed. The timing can be used to monitor that the project is on time.
+     *
+     * @return the end time
+     */
     public Date getEndDate() {
         if (this.endDate == null) {
             this.endDate = new Date();
@@ -442,27 +504,57 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         return this.endDate;
     }
 
-    @Override
+    /**
+     * Sets the project end time. The string must be parsable with
+     * {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
+     *
+     * @param endDate
+     *            the end time
+     * @throws ParseException
+     *             if the time cannot be converted
+     */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
-    @Override
+    /**
+     * Sets whether the project is active. Deactivated projects are hidden from
+     * general operation.
+     *
+     * @param active
+     *            whether project is active
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
 
-    @Override
+    /**
+     * Returns whether the project is active. Completed projects are typically
+     * not hard deleted, but are simply marked as completed. This means that
+     * even in the event of complaints, the old stocks can still be accessed and
+     * corrected.
+     *
+     * @return whether the project is active
+     */
     public boolean isActive() {
         return this.active;
     }
 
-    @Override
+    /**
+     * Returns the client running this project.
+     *
+     * @return the client
+     */
     public Client getClient() {
         return client;
     }
 
-    @Override
+    /**
+     * Specifies the tenant that is executing this project.
+     *
+     * @param client
+     *            the client
+     */
     public void setClient(Client client) {
         this.client = (Client) client;
     }
@@ -717,7 +809,12 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         return this.title == null ? 0 : this.title.hashCode();
     }
 
-    @Override
+    /**
+     * Returns the non-deactivated production templates associated with the
+     * project.
+     *
+     * @return the active production templates
+     */
     public List<Template> getActiveTemplates() {
         if (Objects.isNull(templates)) {
             return null;
@@ -725,8 +822,13 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         return templates.stream().filter(template -> template.isActive()).collect(Collectors.toList());
     }
 
-    @SuppressWarnings("unchecked")
-    @Override
+    /**
+     * Sets the active production templates associated with the project. This
+     * list is not guaranteed to be in reliable order.
+     *
+     * @param templates
+     *            the active production templates
+     */
     public void setActiveTemplates(List<Template> activeTemplates) {
         if (Objects.isNull(activeTemplates)) {
             activeTemplates = Collections.emptyList();
@@ -746,7 +848,12 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         }
     }
 
-    @Override
+    /**
+     * Returns whether processes exist in the project. A project that contains
+     * processes cannot be deleted.
+     *
+     * @return whether processes exist in the project
+     */
     public boolean hasProcesses() {
         try {
             return CollectionUtils.isNotEmpty(processes);
@@ -755,7 +862,18 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
         }
     }
 
-    @Override
+    /**
+     * Set whether project has processes. The setter can be used when
+     * representing data from a third-party source. Internally it depends on,
+     * whether there are process objects in the database for a project. Setting
+     * this to true cannot insert processes into the database.
+     *
+     * @param hasProcesses
+     *            as boolean
+     * @throws UnsupportedOperationException
+     *             when trying to set this to true for a project without
+     *             processes
+     */
     public void setHasProcesses(boolean hasProcesses) {
         if (!hasProcesses && CollectionUtils.isNotEmpty(processes)) {
             processes.clear();

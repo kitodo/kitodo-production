@@ -21,7 +21,6 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.Batch;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.data.interfaces.DatabaseBatchServiceInterface;
@@ -123,30 +122,6 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
      */
     public String getLabel(Batch batch) {
         return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
-    }
-
-    /**
-     * Returns a readable label for the batch, which is
-     * either its title, if defined, or, for batches not having a title (in
-     * recent versions of Production, batches didn’t support titles) its ancient
-     * label, consisting of the prefix “Batch ” (in the desired translation)
-     * together with its id number.
-     *
-     * @return a readable label for the batch
-     */
-    public String getLabel(Batch batch) {
-        return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
-    }
-
-    /**
-     * Returns a readable label for the batch,
-     * consisting of the prefix “Batch ” (in the desired translation) together
-     * with its id number.
-     *
-     * @return a readable label for the batch
-     */
-    private String getNumericLabel(Batch batch) {
-        return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 
     /**

@@ -89,7 +89,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.docket.DocketData;
-import org.kitodo.api.docket.Docket;
+import org.kitodo.api.docket.DocketInterface;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
@@ -668,14 +668,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return process.getProcessBaseUri();
     }
 
-    @Override
-    public String getProcessDataDirectory(Process process) {
-        if (Objects.isNull(process.getProcessBase())) {
-            process.setProcessBase(fileService.getProcessBaseUriForExistingProcess(process));
-        }
-        return process.getProcessBase();
-    }
-
     /**
      * Get process data directory.
      *
@@ -943,7 +935,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             // write run note to servlet output stream
-            Docket module = initialiseDocketModule();
+            DocketInterface module = initialiseDocketModule();
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
             writeToOutputStream(facesContext, file, Helper.getNormalizedTitle(process.getTitle()) + ".pdf");
@@ -965,7 +957,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         URI xsltFile = ServiceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            Docket module = initialiseDocketModule();
+            DocketInterface module = initialiseDocketModule();
             File file = module.generateMultipleDockets(getDocketData(processes),
                 xsltFile);
 
@@ -1093,8 +1085,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return table;
     }
 
-    private static Docket initialiseDocketModule() {
-        KitodoServiceLoader<Docket> loader = new KitodoServiceLoader<>(Docket.class);
+    private static DocketInterface initialiseDocketModule() {
+        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
         return loader.loadModule();
     }
 
@@ -1865,7 +1857,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      * Starts generation of xml logfile for current process.
      */
     public static void createXML(Process process, User user) throws IOException {
-        Docket xmlExport = initialiseDocketModule();
+        DocketInterface xmlExport = initialiseDocketModule();
         String directory = new File(ServiceManager.getUserService().getHomeDirectory(user)).getPath();
         String destination = directory + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_log.xml";
         xmlExport.exportXmlLog(getDocketData(process), destination);

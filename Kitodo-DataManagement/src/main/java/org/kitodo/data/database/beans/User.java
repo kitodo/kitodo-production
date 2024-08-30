@@ -187,32 +187,63 @@ public class User extends BaseBean {
         }
     }
 
-    @Override
+    /**
+     * Returns the user's login name.
+     *
+     * @return the user name
+     */
     public String getLogin() {
         return this.login;
     }
 
-    @Override
+    /**
+     * Sets the user's login name. Since the user is also created as a Linux
+     * system user, the user name should follow the naming conventions and not
+     * match any existing Linux user. To avoid hassle when accessing file space
+     * using case-insensitive CIFS, it is recommended to only use lowercase
+     * letters in the name.
+     *
+     * @param login
+     *            user name to set
+     */
     public void setLogin(String login) {
         this.login = login;
     }
 
-    @Override
+    /**
+     * Returns the user's first name.
+     *
+     * @return the first name
+     */
     public String getName() {
         return this.name;
     }
 
-    @Override
+    /**
+     * Sets the user's first name.
+     *
+     * @param name
+     *            first name to set
+     */
     public void setName(String name) {
         this.name = name;
     }
 
-    @Override
+    /**
+     * Returns the user's surname.
+     *
+     * @return the surname
+     */
     public String getSurname() {
         return this.surname;
     }
 
-    @Override
+    /**
+     * Sets the user's surname.
+     *
+     * @param surname
+     *            surname to set
+     */
     public void setSurname(String surname) {
         this.surname = surname;
     }
@@ -225,12 +256,23 @@ public class User extends BaseBean {
         this.password = inputPassword;
     }
 
-    @Override
+    /**
+     * Returns whether the user is logged in. This allows a administrators to
+     * check whether they can stop the application for maintenance purposes, or
+     * who they needs to call first.
+     *
+     * @return whether the user is logged in
+     */
     public boolean isActive() {
         return this.active;
     }
 
-    @Override
+    /**
+     * Sets whether the user is logged in.
+     *
+     * @param active
+     *            as boolean
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -243,12 +285,23 @@ public class User extends BaseBean {
         this.deleted = deleted;
     }
 
-    @Override
+    /**
+     * Returns the user's location. Users from different locations collaborate
+     * in this web application. Specifying the location simplifies user
+     * maintenance.
+     *
+     * @return the location
+     */
     public String getLocation() {
         return this.location;
     }
 
-    @Override
+    /**
+     * Sets the user's location.
+     *
+     * @param location
+     *            place name
+     */
     public void setLocation(String location) {
         this.location = location;
     }
@@ -303,7 +356,12 @@ public class User extends BaseBean {
         this.ldapGroup = ldapGroup;
     }
 
-    @Override
+    /**
+     * Returns all of the user's roles. This list is not guaranteed to be in
+     * reliable order.
+     *
+     * @return a list of all roles of the user
+     */
     public List<Role> getRoles() {
         initialize(new UserDAO(), this.roles);
         if (Objects.isNull(this.roles)) {
@@ -312,13 +370,21 @@ public class User extends BaseBean {
         return this.roles;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets a list of all of the user's roles.
+     *
+     * @param roles
+     *            list to set
+     */
     public void setRoles(List<Role> roles) {
         this.roles = (List<Role>) roles;
     }
 
-    @Override
+    /**
+     * Returns all tasks the user is currently working on.
+     *
+     * @return all tasks the user is working on
+     */
     public List<Task> getProcessingTasks() {
         initialize(new UserDAO(), this.processingTasks);
         if (Objects.isNull(this.processingTasks)) {
@@ -327,13 +393,21 @@ public class User extends BaseBean {
         return this.processingTasks;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets a list of all tasks that the user should work on.
+     *
+     * @param processingTasks
+     *            list of tasks to set
+     */
     public void setProcessingTasks(List<Task> processingTasks) {
         this.processingTasks = (List<Task>) processingTasks;
     }
 
-    @Override
+    /**
+     * Returns all projects the user collaborates on.
+     *
+     * @return all projects
+     */
     public List<Project> getProjects() {
         initialize(new UserDAO(), this.projects);
         if (Objects.isNull(this.projects)) {
@@ -342,13 +416,21 @@ public class User extends BaseBean {
         return this.projects;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the list of all projects the user is working on.
+     *
+     * @param projects
+     *            list of projects to set
+     */
     public void setProjects(List<Project> projects) {
         this.projects = (List<Project>) projects;
     }
 
-    @Override
+    /**
+     * Returns all clients the user interacts with.
+     *
+     * @return the clients
+     */
     public List<Client> getClients() {
         initialize(new UserDAO(), this.clients);
         if (Objects.isNull(this.clients)) {
@@ -357,10 +439,14 @@ public class User extends BaseBean {
         return this.clients;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the list of all clients that the user interacts with.
+     *
+     * @param clients
+     *            clients to set
+     */
     public void setClients(List<Client> clients) {
-        this.clients = (List<Client>) clients;
+        this.clients = clients;
     }
 
     public boolean isConfigProductionDateShow() {
@@ -407,17 +493,37 @@ public class User extends BaseBean {
         this.language = language;
     }
 
-    @Override
+    /**
+     * Returns the login name to the directory service. This provides the
+     * ability to use a username independent of the Linux username to
+     * authenticate against a corporate directory service. For logging into the
+     * web application, the user can use either username.
+     *
+     * @return different user name for the directory service
+     */
     public String getLdapLogin() {
         return this.ldapLogin;
     }
 
-    @Override
+    /**
+     * Sets a different user name for the directory service. The emphasis here
+     * is on <i>different</i>, the remote username must not be the same as
+     * <i>any</i> primary username. Multiple local users can not be mapped to
+     * the same remote username either.
+     *
+     * @param ldapLogin
+     *            different user name to set
+     */
     public void setLdapLogin(String ldapLogin) {
         this.ldapLogin = ldapLogin;
     }
 
-    @Override
+    /**
+     * Returns the user's saved search queries. This list is not guaranteed to
+     * be in reliable order.
+     *
+     * @return the saved search queries
+     */
     public List<Filter> getFilters() {
         initialize(new UserDAO(), this.filters);
         if (Objects.isNull(this.filters)) {
@@ -426,8 +532,13 @@ public class User extends BaseBean {
         return this.filters;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets a list of the user's saved searches. The list should not contain
+     * duplicates, and must not contain {@code null}s.
+     *
+     * @param filters
+     *            list of saved search queries to set
+     */
     public void setFilters(List<Filter> filters) {
         this.filters = (List<Filter>) filters;
     }
@@ -530,7 +641,11 @@ public class User extends BaseBean {
     // Here will be methods which should be in UserService but are used by jsp
     // files
 
-    @Override
+    /**
+     * Returns the user's full name. The spelling is last name—comma—first name.
+     *
+     * @return the full name
+     */
     public String getFullName() {
         return this.getSurname() + ", " + this.getName();
     }

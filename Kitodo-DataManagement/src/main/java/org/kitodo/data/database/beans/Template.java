@@ -87,7 +87,13 @@ public class Template extends BaseTemplateBean {
         this.creationDate = new Date();
     }
 
-    @Override
+    /**
+     * Returns whether this production template is active. Production templates
+     * that are no not to be used (anymore) can be deactivated. If processes
+     * exist from them, they cannot be deleted.
+     *
+     * @return whether this production template is active
+     */
     public boolean isActive() {
         if (Objects.isNull(this.active)) {
             this.active = true;
@@ -95,7 +101,12 @@ public class Template extends BaseTemplateBean {
         return this.active;
     }
 
-    @Override
+    /**
+     * Sets whether this production template is active.
+     *
+     * @param active
+     *            whether this production template is active
+     */
     public void setActive(boolean active) {
         this.active = active;
     }
@@ -119,26 +130,19 @@ public class Template extends BaseTemplateBean {
         this.client = client;
     }
 
-    @Override
+    /**
+     * Returns the docket generation statement to use when creating dockets for
+     * processes derived from this process template.
+     *
+     * @return the docket generation statement
+     */
     public Docket getDocket() {
         return docket;
-    }
-
-    @Override
-    public void setDocket(Docket docket) {
-        this.docket = (Docket) docket;
     }
 
     /**
      * Sets the docket generation statement to use when creating dockets for
      * processes derived from this process template.
-     *
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setDocket(Docket)} as a setter for the property
-     * {@code docket} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param docket
      *            the docket generation statement
@@ -147,26 +151,19 @@ public class Template extends BaseTemplateBean {
         this.docket = docket;
     }
 
-    @Override
+    /**
+     * Returns the business domain specification derived from this process
+     * template template shall be using.
+     *
+     * @return the business domain specification
+     */
     public Ruleset getRuleset() {
         return this.ruleset;
-    }
-
-    @Override
-    public void setRuleset(Ruleset ruleset) {
-        this.ruleset = (Ruleset) ruleset;
     }
 
     /**
      * Sets the business domain specification derived from this process template
      * template shall be using.
-     *
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setRuleset(Ruleset)} as a setter for the
-     * property {@code ruleset} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param ruleset
      *            the business domain specification
@@ -175,25 +172,19 @@ public class Template extends BaseTemplateBean {
         this.ruleset = ruleset;
     }
     
-    @Override
+    /**
+     * Returns the workflow from which the production template was created. The
+     * tasks of the production template are not created directly in the
+     * production template, but are edited using the workflow.
+     *
+     * @return the workflow
+     */
     public Workflow getWorkflow() {
         return workflow;
     }
 
-    @Override
-    public void setWorkflow(Workflow workflow) {
-        this.workflow = (Workflow) workflow;
-    }
-
     /**
      * Sets the workflow from which the production template was created.
-     *
-     * <p>
-     * <b>API Note:</b><br>
-     * This function exists because Faces does not recognize the more generic
-     * function {@link #setWorkflow(Workflow)} as a setter for the
-     * property {@code workflow} and otherwise throws a
-     * {@code PropertyNotWritableException}.
      *
      * @param workflow
      *            workflow to set
@@ -221,7 +212,13 @@ public class Template extends BaseTemplateBean {
         this.ocrdWorkflowId = ocrdWorkflowId;
     }
 
-    @Override
+    /**
+     * Returns the list of all projects that use this production template. A
+     * production template can be used in multiple projects, even across
+     * multiple clients. This list is not guaranteed to be in reliable order.
+     *
+     * @return the list of all projects that use this production template
+     */
     public List<Project> getProjects() {
         initialize(new TemplateDAO(), this.projects);
         if (Objects.isNull(this.projects)) {
@@ -230,8 +227,13 @@ public class Template extends BaseTemplateBean {
         return this.projects;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the list of all projects that use this production template. The list
+     * should not contain duplicates, and must not contain {@code null}s.
+     *
+     * @param projects
+     *            projects list to set
+     */
     public void setProjects(List<Project> projects) {
         this.projects = (List<Project>) projects;
     }
@@ -258,7 +260,11 @@ public class Template extends BaseTemplateBean {
         this.processes = processes;
     }
 
-    @Override
+    /**
+     * Returns the task list of this process template.
+     *
+     * @return the task list
+     */
     public List<Task> getTasks() {
         initialize(new TemplateDAO(), this.tasks);
         if (Objects.isNull(this.tasks)) {
@@ -267,10 +273,14 @@ public class Template extends BaseTemplateBean {
         return this.tasks;
     }
 
-    @Override
-    @SuppressWarnings("unchecked")
+    /**
+     * Sets the task list of this process template.
+     *
+     * @param tasks
+     *            the task list
+     */
     public void setTasks(List<Task> tasks) {
-        this.tasks = (List<Task>) tasks;
+        this.tasks = tasks;
     }
 
     /**
@@ -301,7 +311,13 @@ public class Template extends BaseTemplateBean {
         return Objects.hash(client, docket, ruleset, workflow);
     }
 
-    @Override
+    /**
+     * Returns whether the production template is valid. To do this, it must
+     * contain at least one task and each task must have at least one role
+     * assigned to it.
+     *
+     * @return whether the production template is valid
+     */
     public boolean isCanBeUsedForProcess() {
         if (Objects.isNull(tasks)) {
             return false;

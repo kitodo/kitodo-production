@@ -40,12 +40,21 @@ public class Filter extends BaseIndexedBean {
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_filter_user_id"))
     private User user;
 
-    @Override
+    /**
+     * Returns the search query string.
+     * 
+     * @return the search query
+     */
     public String getValue() {
         return value;
     }
 
-    @Override
+    /**
+     * Sets the search query string.
+     * 
+     * @param value
+     *            query string to specify
+     */
     public void setValue(String value) {
         this.value = value;
     }

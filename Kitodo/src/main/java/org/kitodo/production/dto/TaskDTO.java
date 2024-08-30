@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 
@@ -58,7 +59,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return title as String
      */
-    @Override
     public String getTitle() {
         return title;
     }
@@ -69,7 +69,6 @@ public class TaskDTO extends BaseDTO {
      * @param title
      *            as String
      */
-    @Override
     public void setTitle(String title) {
         this.title = title;
     }
@@ -79,7 +78,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return localized title as String
      */
-    @Override
     public String getLocalizedTitle() {
         return localizedTitle;
     }
@@ -90,7 +88,6 @@ public class TaskDTO extends BaseDTO {
      * @param localizedTitle
      *            as String
      */
-    @Override
     public void setLocalizedTitle(String localizedTitle) {
         this.localizedTitle = localizedTitle;
     }
@@ -100,7 +97,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return ordering as Integer
      */
-    @Override
     public Integer getOrdering() {
         return this.ordering;
     }
@@ -111,7 +107,6 @@ public class TaskDTO extends BaseDTO {
      * @param ordering
      *            as Integer
      */
-    @Override
     public void setOrdering(Integer ordering) {
         this.ordering = ordering;
     }
@@ -121,7 +116,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return processing status as TaskStatus object
      */
-    @Override
     public TaskStatus getProcessingStatus() {
         return processingStatus;
     }
@@ -132,7 +126,6 @@ public class TaskDTO extends BaseDTO {
      * @param processingStatus
      *            as TaskStatus object
      */
-    @Override
     public void setProcessingStatus(TaskStatus processingStatus) {
         this.processingStatus = processingStatus;
     }
@@ -142,7 +135,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return processing status title as String
      */
-    @Override
     public String getProcessingStatusTitle() {
         return processingStatusTitle;
     }
@@ -153,7 +145,6 @@ public class TaskDTO extends BaseDTO {
      * @param processingStatusTitle
      *            as String
      */
-    @Override
     public void setProcessingStatusTitle(String processingStatusTitle) {
         this.processingStatusTitle = processingStatusTitle;
     }
@@ -163,7 +154,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return current edit type
      */
-    @Override
     public TaskEditType getEditType() {
         return editType;
     }
@@ -174,7 +164,6 @@ public class TaskDTO extends BaseDTO {
      * @param editType
      *            as {@link TaskEditType}
      */
-    @Override
     public void setEditType(TaskEditType editType) {
         this.editType = editType;
     }
@@ -184,7 +173,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return current edit type title as String
      */
-    @Override
     public String getEditTypeTitle() {
         return editTypeTitle;
     }
@@ -195,7 +183,6 @@ public class TaskDTO extends BaseDTO {
      * @param editTypeTitle
      *            as String
      */
-    @Override
     public void setEditTypeTitle(String editTypeTitle) {
         this.editTypeTitle = editTypeTitle;
     }
@@ -205,7 +192,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return processing user as UserDTO
      */
-    @Override
     public UserDTO getProcessingUser() {
         return processingUser;
     }
@@ -216,7 +202,6 @@ public class TaskDTO extends BaseDTO {
      * @param processingUser
      *            as UserDTO
      */
-    @Override
     public void setProcessingUser(UserDTO processingUser) {
         this.processingUser = processingUser;
     }
@@ -226,7 +211,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return processing time as String
      */
-    @Override
     public String getProcessingMoment() {
         return processingTime;
     }
@@ -237,7 +221,6 @@ public class TaskDTO extends BaseDTO {
      * @param processingTime
      *            as String
      */
-    @Override
     public void setProcessingMoment(String processingTime) {
         this.processingTime = processingTime;
     }
@@ -247,7 +230,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return processing begin time as String
      */
-    @Override
     public String getProcessingBeginTime() {
         return processingBegin;
     }
@@ -258,7 +240,6 @@ public class TaskDTO extends BaseDTO {
      * @param processingBegin
      *            as String
      */
-    @Override
     public void setProcessingBeginTime(String processingBegin) {
         this.processingBegin = processingBegin;
     }
@@ -268,7 +249,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return processing end time as String
      */
-    @Override
     public String getProcessingEndTime() {
         return processingEnd;
     }
@@ -279,7 +259,6 @@ public class TaskDTO extends BaseDTO {
      * @param processingEnd
      *            as String
      */
-    @Override
     public void setProcessingEndTime(String processingEnd) {
         this.processingEnd = processingEnd;
     }
@@ -289,7 +268,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return process as ProcessDTO
      */
-    @Override
     public ProcessDTO getProcess() {
         return process;
     }
@@ -300,7 +278,6 @@ public class TaskDTO extends BaseDTO {
      * @param process
      *            as ProcessDTO
      */
-    @Override
     public void setProcess(ProcessDTO process) {
         this.process = process;
     }
@@ -310,7 +287,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return project as ProjectDTO
      */
-    @Override
     public ProjectDTO getProject() {
         return project;
     }
@@ -321,7 +297,6 @@ public class TaskDTO extends BaseDTO {
      * @param project
      *            as ProjectDTO
      */
-    @Override
     public void setProject(ProjectDTO project) {
         this.project = project;
     }
@@ -331,7 +306,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return template as TemplateDTO
      */
-    @Override
     public TemplateDTO getTemplate() {
         return template;
     }
@@ -342,7 +316,6 @@ public class TaskDTO extends BaseDTO {
      * @param template
      *            as TemplateDTO
      */
-    @Override
     public void setTemplate(TemplateDTO template) {
         this.template = template;
     }
@@ -352,7 +325,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return list of role ids as Integer
      */
-    @Override
     public List<Integer> getRoleIds() {
         return roleIds;
     }
@@ -363,7 +335,6 @@ public class TaskDTO extends BaseDTO {
      * @param roleIds
      *            list of role ids as Integer
      */
-    @Override
     public void setRoleIds(List<Integer> roleIds) {
         this.roleIds = roleIds;
     }
@@ -373,7 +344,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return the size of the roles list
      */
-    @Override
     public int getRolesSize() {
         return this.rolesSize;
     }
@@ -384,7 +354,6 @@ public class TaskDTO extends BaseDTO {
      * @param rolesSize
      *            as int
      */
-    @Override
     public void setRolesSize(int rolesSize) {
         this.rolesSize = rolesSize;
     }
@@ -394,7 +363,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return value of correction
      */
-    @Override
     public boolean isCorrection() {
         return correction;
     }
@@ -404,7 +372,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @param correction as boolean
      */
-    @Override
     public void setCorrection(boolean correction) {
         this.correction = correction;
     }
@@ -414,7 +381,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return true or false
      */
-    @Override
     public boolean isTypeAutomatic() {
         return typeAutomatic;
     }
@@ -425,7 +391,6 @@ public class TaskDTO extends BaseDTO {
      * @param typeAutomatic
      *            as boolean
      */
-    @Override
     public void setTypeAutomatic(boolean typeAutomatic) {
         this.typeAutomatic = typeAutomatic;
     }
@@ -435,7 +400,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return true or false
      */
-    @Override
     public boolean isTypeMetadata() {
         return typeMetadata;
     }
@@ -446,7 +410,6 @@ public class TaskDTO extends BaseDTO {
      * @param typeMetadata
      *            as boolean
      */
-    @Override
     public void setTypeMetadata(boolean typeMetadata) {
         this.typeMetadata = typeMetadata;
     }
@@ -456,7 +419,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return true or false
      */
-    @Override
     public boolean isTypeImagesRead() {
         return typeImagesRead;
     }
@@ -467,7 +429,6 @@ public class TaskDTO extends BaseDTO {
      * @param typeImagesRead
      *            as boolean
      */
-    @Override
     public void setTypeImagesRead(boolean typeImagesRead) {
         this.typeImagesRead = typeImagesRead;
     }
@@ -477,7 +438,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return true or false
      */
-    @Override
     public boolean isTypeImagesWrite() {
         return typeImagesWrite;
     }
@@ -488,7 +448,6 @@ public class TaskDTO extends BaseDTO {
      * @param typeImagesWrite
      *            as boolean
      */
-    @Override
     public void setTypeImagesWrite(boolean typeImagesWrite) {
         this.typeImagesWrite = typeImagesWrite;
     }
@@ -498,7 +457,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return true or false
      */
-    @Override
     public boolean isBatchStep() {
         return batchStep;
     }
@@ -510,7 +468,6 @@ public class TaskDTO extends BaseDTO {
      * @param batchAvailable
      *            as boolean
      */
-    @Override
     public void setBatchAvailable(boolean batchAvailable) {
         this.batchAvailable = batchAvailable;
     }
@@ -521,7 +478,6 @@ public class TaskDTO extends BaseDTO {
      *
      * @return true or false
      */
-    @Override
     public boolean isBatchAvailable() {
         return batchAvailable;
     }
@@ -532,7 +488,6 @@ public class TaskDTO extends BaseDTO {
      * @param batchStep
      *            as boolean
      */
-    @Override
     public void setBatchStep(boolean batchStep) {
         this.batchStep = batchStep;
     }
@@ -542,7 +497,6 @@ public class TaskDTO extends BaseDTO {
      * 
      * @return the correction comment status as integer
      */
-    @Override
     public Integer getCorrectionCommentStatus() {
         return this.correctionCommentStatus;
     }
@@ -552,60 +506,53 @@ public class TaskDTO extends BaseDTO {
      * 
      * @param status the status as integer
      */
-    @Override
     public void setCorrectionCommentStatus(Integer status) {
         this.correctionCommentStatus = status;
     }
 
-    @Override
     public Date getProcessingTime() {
         try {
             return StringUtils.isNotBlank(this.processingTime)
-                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingTime)
+                    ? new SimpleDateFormat(BaseBean.DATE_FORMAT).parse(this.processingTime)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
-    @Override
     public void setProcessingTime(Date processingTime) {
-        this.processingTime = Objects.nonNull(processingTime) ? new SimpleDateFormat(DATE_FORMAT).format(processingTime)
+        this.processingTime = Objects.nonNull(processingTime) ? new SimpleDateFormat(BaseBean.DATE_FORMAT).format(processingTime)
                 : null;
     }
 
-    @Override
     public Date getProcessingBegin() {
         try {
             return StringUtils.isNotBlank(this.processingBegin)
-                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingBegin)
+                    ? new SimpleDateFormat(BaseBean.DATE_FORMAT).parse(this.processingBegin)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
-    @Override
     public void setProcessingBegin(Date processingBegin) {
         this.processingBegin = Objects.nonNull(processingBegin)
-                ? new SimpleDateFormat(DATE_FORMAT).format(processingBegin)
+                ? new SimpleDateFormat(BaseBean.DATE_FORMAT).format(processingBegin)
                 : null;
     }
 
-    @Override
     public Date getProcessingEnd() {
         try {
             return StringUtils.isNotBlank(this.processingEnd)
-                    ? new SimpleDateFormat(DATE_FORMAT).parse(this.processingEnd)
+                    ? new SimpleDateFormat(BaseBean.DATE_FORMAT).parse(this.processingEnd)
                     : null;
         } catch (ParseException e) {
             throw new IllegalStateException(e.getMessage(), e);
         }
     }
 
-    @Override
     public void setProcessingEnd(Date processingEnd) {
-        this.processingEnd = Objects.nonNull(processingEnd) ? new SimpleDateFormat(DATE_FORMAT).format(processingEnd)
+        this.processingEnd = Objects.nonNull(processingEnd) ? new SimpleDateFormat(BaseBean.DATE_FORMAT).format(processingEnd)
                 : null;
     }
 }
