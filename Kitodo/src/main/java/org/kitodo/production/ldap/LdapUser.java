@@ -279,7 +279,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public Attributes getAttributes(String name) throws NamingException {
-        if (StringUtils.isBlank(name)) {
+        if (!StringUtils.isBlank(name)) {
             throw new NameNotFoundException();
         }
         return (Attributes) this.attributes.clone();
@@ -292,7 +292,7 @@ public class LdapUser implements DirContext {
 
     @Override
     public Attributes getAttributes(String name, String[] ids) throws NamingException {
-        if (StringUtils.isBlank(name)) {
+        if (!StringUtils.isBlank(name)) {
             throw new NameNotFoundException();
         }
 
