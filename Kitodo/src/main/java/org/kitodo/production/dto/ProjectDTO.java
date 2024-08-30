@@ -285,6 +285,14 @@ public class ProjectDTO extends BaseDTO {
         this.hasProcesses = hasProcesses;
     }
 
+    /**
+     * Returns the start time of the project. {@link Date} is a specific instant
+     * in time, with millisecond precision. It is a freely configurable value,
+     * not the date the project object was created in the database. This can be,
+     * for example, the start of the funding period.
+     *
+     * @return the start time
+     */
     public Date getStartDate() {
         try {
             return StringUtils.isNotBlank(this.startDate) ? new SimpleDateFormat(BaseBean.DATE_FORMAT).parse(this.startDate)
@@ -298,6 +306,15 @@ public class ProjectDTO extends BaseDTO {
         this.startDate = Objects.nonNull(startDate) ? new SimpleDateFormat(BaseBean.DATE_FORMAT).format(startDate) : null;
     }
 
+    /**
+     * Returns the project end time. {@link Date} is a specific instant in time,
+     * with millisecond precision. This is a freely configurable value,
+     * regardless of when the project was last actually worked on. For example,
+     * this can be the time at which the project must be completed in order to
+     * be billed. The timing can be used to monitor that the project is on time.
+     *
+     * @return the end time
+     */
     public Date getEndDate() {
         try {
             return StringUtils.isNotBlank(this.endDate) ? new SimpleDateFormat(BaseBean.DATE_FORMAT).parse(this.endDate) : null;

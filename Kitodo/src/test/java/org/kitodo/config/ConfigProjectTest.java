@@ -11,6 +11,8 @@
 
 package org.kitodo.config;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -19,8 +21,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.kitodo.FileLoader;
 import org.kitodo.exceptions.DoctypeMissingException;
-
-import static org.junit.Assert.assertEquals;
 
 public class ConfigProjectTest {
 

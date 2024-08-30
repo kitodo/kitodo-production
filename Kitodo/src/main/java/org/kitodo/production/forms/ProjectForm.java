@@ -46,8 +46,6 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.Project;
-import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.forms.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;

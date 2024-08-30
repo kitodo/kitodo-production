@@ -26,7 +26,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.dataformat.MetsService;
@@ -481,7 +480,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *            by which column the data should be sorted. Must not be
      *            {@code null} or empty.
      *
-     *            <p>
+     * <p>
      *            One of:
      *            <ul>
      *            <li>"id": ID</li>

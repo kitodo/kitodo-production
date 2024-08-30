@@ -510,6 +510,13 @@ public class TaskDTO extends BaseDTO {
         this.correctionCommentStatus = status;
     }
 
+    /**
+     * Returns the time the task status was last changed. This references
+     * <i>any</i> activity on the task that involves a change in status.
+     * {@link Date} is a specific instant in time, with millisecond precision.
+     *
+     * @return the time the task status was last changed
+     */
     public Date getProcessingTime() {
         try {
             return StringUtils.isNotBlank(this.processingTime)
@@ -525,6 +532,11 @@ public class TaskDTO extends BaseDTO {
                 : null;
     }
 
+    /**
+     * Returns the time when the task was accepted for processing.
+     *
+     * @return the time when the task was accepted for processing
+     */
     public Date getProcessingBegin() {
         try {
             return StringUtils.isNotBlank(this.processingBegin)
@@ -535,12 +547,23 @@ public class TaskDTO extends BaseDTO {
         }
     }
 
+    /**
+     * Sets the time the task was accepted for processing.
+     *
+     * @param processingBegin
+     *            time to set
+     */
     public void setProcessingBegin(Date processingBegin) {
         this.processingBegin = Objects.nonNull(processingBegin)
                 ? new SimpleDateFormat(BaseBean.DATE_FORMAT).format(processingBegin)
                 : null;
     }
 
+    /**
+     * Returns the time when the task was completed.
+     *
+     * @return the time when the task was completed
+     */
     public Date getProcessingEnd() {
         try {
             return StringUtils.isNotBlank(this.processingEnd)

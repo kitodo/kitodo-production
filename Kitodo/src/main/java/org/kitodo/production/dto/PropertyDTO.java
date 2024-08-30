@@ -85,6 +85,12 @@ public class PropertyDTO extends BaseDTO {
         this.creationDate = creationDate;
     }
 
+    /**
+     * Returns the creation time of the property. {@link Date} is a specific
+     * instant in time, with millisecond precision.
+     *
+     * @return the creation time
+     */
     public Date getCreationDate() {
         try {
             return StringUtils.isNotBlank(this.creationDate)

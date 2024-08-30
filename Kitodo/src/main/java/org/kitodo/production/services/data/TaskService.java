@@ -45,7 +45,6 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.Task;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
@@ -168,7 +167,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
         query.restrictToProjects(projectIDs);
         List<Role> userRoles = ServiceManager.getUserService().getCurrentUser().getRoles();
         final Client currentClient = ServiceManager.getUserService().getSessionClientOfAuthenticatedUser();
-        List<Role> userClientRoles = userRoles.stream().filter(ρ -> Objects.equals(ρ.getClient(), currentClient))
+        List<Role> userClientRoles = userRoles.stream().filter(role -> Objects.equals(role.getClient(), currentClient))
                 .collect(Collectors.toList());
         query.restrictToRoles(userClientRoles);
         Iterator<? extends Entry<?, String>> filtersIterator = filters.entrySet().iterator();

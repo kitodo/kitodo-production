@@ -13,22 +13,17 @@ package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Filter;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.Task;
-import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
 
 /**

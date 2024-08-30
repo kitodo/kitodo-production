@@ -23,11 +23,11 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.kitodo.selenium.testframework.pages.ProjectsPage;
-import org.kitodo.production.services.ServiceManager;
 
 public class ListingSessionClientST extends BaseTestSelenium {
 

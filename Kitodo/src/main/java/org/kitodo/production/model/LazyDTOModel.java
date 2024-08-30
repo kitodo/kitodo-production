@@ -13,7 +13,6 @@ package org.kitodo.production.model;
 
 import static java.lang.Math.toIntExact;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -24,12 +23,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.hibernate.exception.SQLGrammarException;
-import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.exceptions.FilterException;
 import org.kitodo.production.services.data.FilterService;
 import org.kitodo.production.services.data.base.SearchDatabaseService;

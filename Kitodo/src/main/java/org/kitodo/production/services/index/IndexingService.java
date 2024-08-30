@@ -13,10 +13,6 @@ package org.kitodo.production.services.index;
 
 import static java.lang.Math.toIntExact;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.StringReader;
-import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,11 +24,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadFactory;
 
 import javax.faces.push.PushContext;
-import javax.json.Json;
-import javax.json.JsonObject;
-import javax.json.JsonReader;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;

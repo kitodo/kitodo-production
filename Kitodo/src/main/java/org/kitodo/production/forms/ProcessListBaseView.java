@@ -31,7 +31,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.data.database.beans.Process;
 import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
