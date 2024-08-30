@@ -28,40 +28,40 @@ public class ProcessServiceTest {
 
     @Test
     public void shouldGetSortedCorrectionSolutionMessages() throws ParseException {
-        final ProcessInterface process = new ProcessDTO();
+        final Process process = new ProcessDTO();
 
-        PropertyInterface firstProperty = new PropertyDTO();
+        Property firstProperty = new PropertyDTO();
         firstProperty.setId(1);
         firstProperty.setTitle("Korrektur notwendig");
         firstProperty.setValue("Fix it");
         firstProperty.setCreationTime(null);
 
-        PropertyInterface secondProperty = new PropertyDTO();
+        Property secondProperty = new PropertyDTO();
         secondProperty.setId(2);
         secondProperty.setTitle("Korrektur notwendig");
         secondProperty.setValue("Fix it also");
         secondProperty.setCreationTime(null);
 
-        PropertyInterface thirdProperty = new PropertyDTO();
+        Property thirdProperty = new PropertyDTO();
         thirdProperty.setId(3);
         thirdProperty.setTitle("Other title");
         thirdProperty.setValue("Other value");
         thirdProperty.setCreationTime("2017-12-01");
 
-        PropertyInterface fourthProperty = new PropertyDTO();
+        Property fourthProperty = new PropertyDTO();
         fourthProperty.setId(4);
         fourthProperty.setTitle("Korrektur durchgef\u00FChrt");
         fourthProperty.setValue("Fixed second");
         fourthProperty.setCreationTime("2017-12-05");
 
-        PropertyInterface fifthProperty = new PropertyDTO();
+        Property fifthProperty = new PropertyDTO();
         fifthProperty.setId(5);
         fifthProperty.setTitle("Korrektur durchgef\u00FChrt");
         fifthProperty.setValue("Fixed first");
         fifthProperty.setCreationTime("2017-12-03");
 
         @SuppressWarnings("unchecked")
-        List<PropertyInterface> properties = (List<PropertyInterface>) process.getProperties();
+        List<Property> properties = (List<Property>) process.getProperties();
         properties.add(firstProperty);
         properties.add(secondProperty);
         properties.add(thirdProperty);

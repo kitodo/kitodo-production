@@ -92,7 +92,7 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldHasCompleteTasks() throws Exception {
-        TemplateInterface template = templateService.getById(1);
+        Template template = templateService.getById(1);
         boolean condition = templateService.hasCompleteTasks(template.getTasks());
         assertTrue("Process doesn't have complete tasks!", condition);
 

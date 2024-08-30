@@ -151,16 +151,16 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Retrieve and return process property value of property with given name
-     * 'propertyName' from given ProcessInterface 'process'.
+     * 'propertyName' from given Process 'process'.
      *
      * @param process
-     *            the ProcessInterface object from which the property value is retrieved
+     *            the Process object from which the property value is retrieved
      * @param propertyName
      *            name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName',
      *         empty String otherwise
      */
-    public static String getPropertyValue(ProcessInterface process, String propertyName) {
+    public static String getPropertyValue(Process process, String propertyName) {
         return ProcessService.getPropertyValue(process, propertyName);
     }
 
@@ -168,10 +168,10 @@ public class ProcessForm extends TemplateBaseForm {
      * Calculate and return age of given process as a String.
      *
      * @param process
-     *            ProcessInterface object whose duration/age is calculated
+     *            Process object whose duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessInterface process) {
+    public static String getProcessDuration(Process process) {
         return ProcessService.getProcessDuration(process);
     }
 
@@ -205,7 +205,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param process the process to create a child for.
      * @return path to createProcessForm
      */
-    public String createProcessAsChild(ProcessInterface process) {
+    public String createProcessAsChild(Process process) {
         try {
             Process processBean = ServiceManager.getProcessService().getById(process.getId());
             if (Objects.nonNull(processBean.getTemplate()) && Objects.nonNull(processBean.getProject())) {
@@ -652,11 +652,11 @@ public class ProcessForm extends TemplateBaseForm {
 
     private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
-        List<ProcessInterface> filteredProcesses = new ArrayList<>();
+        List<Process> filteredProcesses = new ArrayList<>();
         for (Object object : lazyDTOModel.load(0, 100000, "",
                 SortOrder.ASCENDING, null)) {
-            if (object instanceof ProcessInterface) {
-                filteredProcesses.add((ProcessInterface) object);
+            if (object instanceof Process) {
+                filteredProcesses.add((Process) object);
             }
         }
         List<Process> processesForActions = new ArrayList<>();
@@ -1077,7 +1077,7 @@ public class ProcessForm extends TemplateBaseForm {
      *          process for which current task titles are returned
      * @return String containing titles of current tasks of given process
      */
-    public String getCurrentTaskTitles(ProcessInterface process) {
+    public String getCurrentTaskTitles(Process process) {
         return ServiceManager.getProcessService().createProgressTooltip(process);
     }
 
@@ -1133,7 +1133,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @param process process as Interface object
      * @return List of filtered tasks as Interface objects
      */
-    public List<TaskInterface> getCurrentTasksForUser(ProcessInterface process) {
+    public List<Task> getCurrentTasksForUser(Process process) {
         return ServiceManager.getProcessService().getCurrentTasksForUser(process,
             ServiceManager.getUserService().getCurrentUser());
     }
@@ -1211,7 +1211,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (process instanceof Process) {
             return ((Process) process).getId();
         } else {
-            return ((ProcessInterface) process).getId();
+            return ((Process) process).getId();
         }
     }
 

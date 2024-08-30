@@ -142,7 +142,7 @@ public class Process extends BaseTemplateBean {
     private String ocrdWorkflowId;
 
     @Transient
-    private UserInterface blockedUser;
+    private User blockedUser;
 
     @Transient
     private List<Map<String, Object>> metadata;
@@ -288,7 +288,7 @@ public class Process extends BaseTemplateBean {
     }
 
     @Override
-    public void setProject(ProjectInterface project) {
+    public void setProject(Project project) {
         this.project = (Project) project;
     }
 
@@ -298,7 +298,7 @@ public class Process extends BaseTemplateBean {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setProject(ProjectInterface)} as a setter for the
+     * function {@link #setProject(Project)} as a setter for the
      * property {@code project} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *
@@ -315,7 +315,7 @@ public class Process extends BaseTemplateBean {
     }
 
     @Override
-    public void setRuleset(RulesetInterface ruleset) {
+    public void setRuleset(Ruleset ruleset) {
         this.ruleset = (Ruleset) ruleset;
     }
 
@@ -325,7 +325,7 @@ public class Process extends BaseTemplateBean {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setRuleset(RulesetInterface)} as a setter for the
+     * function {@link #setRuleset(Ruleset)} as a setter for the
      * property {@code ruleset} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *
@@ -342,7 +342,7 @@ public class Process extends BaseTemplateBean {
     }
 
     @Override
-    public void setDocket(DocketInterface docket) {
+    public void setDocket(Docket docket) {
         this.docket = (Docket) docket;
     }
 
@@ -353,7 +353,7 @@ public class Process extends BaseTemplateBean {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setDocket(DocketInterface)} as a setter for the property
+     * function {@link #setDocket(Docket)} as a setter for the property
      * {@code docket} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *
@@ -584,12 +584,12 @@ public class Process extends BaseTemplateBean {
     }
 
     @Override
-    public UserInterface getBlockedUser() {
+    public User getBlockedUser() {
         return blockedUser;
     }
 
     @Override
-    public void setBlockedUser(UserInterface blockedUser) {
+    public void setBlockedUser(User blockedUser) {
         this.blockedUser = blockedUser;
     }
 

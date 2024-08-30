@@ -87,7 +87,7 @@ public class Docket extends BaseIndexedBean {
     }
 
     @Override
-    public void setClient(ClientInterface client) {
+    public void setClient(Client client) {
         this.client = (Client) client;
     }
 

@@ -98,7 +98,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      *
      * @return the docket generation statement
      */
-    DocketInterface getDocket();
+    Docket getDocket();
 
     /**
      * Sets the docket generation statement to use when creating a docket for
@@ -107,14 +107,14 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param docket
      *            the docket generation statement
      */
-    void setDocket(DocketInterface docket);
+    void setDocket(Docket docket);
 
     /**
      * Returns the business domain specification this process is using.
      *
      * @return the business domain specification
      */
-    RulesetInterface getRuleset();
+    Ruleset getRuleset();
 
     /**
      * Sets the business domain specification this process is using.
@@ -122,7 +122,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param ruleset
      *            the business domain specification
      */
-    void setRuleset(RulesetInterface ruleset);
+    void setRuleset(Ruleset ruleset);
 
     /**
      * Returns the task list of this process.
@@ -145,7 +145,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      *
      * @return the project the process belongs to
      */
-    ProjectInterface getProject();
+    Project getProject();
 
     /**
      * Specifies the project to which the process belongs.
@@ -153,7 +153,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param project
      *            project to which the process should belong
      */
-    void setProject(ProjectInterface project);
+    void setProject(Project project);
 
     /**
      * Specifies the batches to which the process is assigned. A process can
@@ -190,7 +190,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * guaranteed to preserve its order. It must not contain {@code null}s.
      *
      * @param properties
-     *            list of properties as PropertyInterface
+     *            list of properties as Property
      */
     void setProperties(List<Property> properties);
 
@@ -203,7 +203,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      *
      * @return the user blocking the process
      */
-    UserInterface getBlockedUser();
+    User getBlockedUser();
 
     /**
      * Sets exclusive (write) access to the business data in this process for a
@@ -213,7 +213,7 @@ public interface ProcessInterface extends BaseBeanInterface {
      * @param blockedUser
      *            user to grant write access to
      */
-    void setBlockedUser(UserInterface blockedUser);
+    void setBlockedUser(User blockedUser);
 
     /**
      * Returns the percentage of tasks in the process that are completed. The

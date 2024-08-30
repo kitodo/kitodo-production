@@ -23,7 +23,7 @@ public class RoleDTO extends BaseDTO {
     private String title;
     private List<UserDTO> users = new ArrayList<>();
     private Integer usersSize;
-    private ClientInterface client;
+    private ClientDTO client;
 
     /**
      * Get title.
@@ -47,7 +47,7 @@ public class RoleDTO extends BaseDTO {
     /**
      * Get list of users.
      *
-     * @return list of users as UserInterface
+     * @return list of users as UserDTO
      */
     public List<UserDTO> getUsers() {
         return users;
@@ -57,7 +57,7 @@ public class RoleDTO extends BaseDTO {
      * Set list of users.
      *
      * @param users
-     *            list of users as UserInterface
+     *            list of users as UserDTO
      */
     public void setUsers(List<UserDTO> users) {
         this.users = users;
@@ -87,7 +87,7 @@ public class RoleDTO extends BaseDTO {
      *
      * @return the client Interface object
      */
-    public ClientInterface getClient() {
+    public ClientDTO getClient() {
         return client;
     }
 
@@ -96,7 +96,7 @@ public class RoleDTO extends BaseDTO {
      *
      * @param client as Interface object.
      */
-    public void setClient(ClientInterface client) {
+    public void setClient(ClientDTO client) {
         this.client = client;
     }
 }

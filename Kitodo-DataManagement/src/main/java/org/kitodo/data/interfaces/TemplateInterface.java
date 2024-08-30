@@ -88,7 +88,7 @@ public interface TemplateInterface extends BaseBeanInterface {
      *
      * @return the docket generation statement
      */
-    DocketInterface getDocket();
+    Docket getDocket();
 
     /**
      * Sets the docket generation statement to use when creating dockets for
@@ -97,7 +97,7 @@ public interface TemplateInterface extends BaseBeanInterface {
      * @param docket
      *            the docket generation statement
      */
-    void setDocket(DocketInterface docket);
+    void setDocket(Docket docket);
 
     /**
      * Returns the business domain specification derived from this process
@@ -105,7 +105,7 @@ public interface TemplateInterface extends BaseBeanInterface {
      *
      * @return the business domain specification
      */
-    RulesetInterface getRuleset();
+    Ruleset getRuleset();
 
     /**
      * Sets the business domain specification derived from this process template
@@ -114,7 +114,7 @@ public interface TemplateInterface extends BaseBeanInterface {
      * @param ruleset
      *            the business domain specification
      */
-    void setRuleset(RulesetInterface ruleset);
+    void setRuleset(Ruleset ruleset);
 
     /**
      * Returns the task list of this process template.
@@ -154,7 +154,7 @@ public interface TemplateInterface extends BaseBeanInterface {
      * @param workflow
      *            workflow to set
      */
-    void setWorkflow(WorkflowInterface workflow);
+    void setWorkflow(Workflow workflow);
 
     /**
      * Returns the workflow from which the production template was created. The
@@ -163,7 +163,7 @@ public interface TemplateInterface extends BaseBeanInterface {
      *
      * @return the workflow
      */
-    WorkflowInterface getWorkflow();
+    Workflow getWorkflow();
 
     /**
      * Returns whether the production template is valid. To do this, it must

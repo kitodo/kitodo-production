@@ -18,7 +18,7 @@ import java.net.URI;
 import java.util.Collection;
 
 import org.kitodo.api.docket.DocketData;
-import org.kitodo.api.docket.DocketInterface;
+import org.kitodo.api.docket.Docket;
 
 public class Docket {
 

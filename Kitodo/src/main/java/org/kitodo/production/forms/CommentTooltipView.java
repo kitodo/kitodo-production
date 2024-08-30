@@ -31,7 +31,7 @@ import org.kitodo.production.services.ServiceManager;
 @RequestScoped
 public class CommentTooltipView {
 
-    private final Map<ProcessInterface, List<Comment>> comments;
+    private final Map<Process, List<Comment>> comments;
 
     /**
      * Default constructor.
@@ -43,10 +43,10 @@ public class CommentTooltipView {
     /**
      * Get comments of given process.
      *
-     * @param process process as ProcessInterface
+     * @param process process as Process
      * @return List of Comment objects
      */
-    public List<Comment> getComments(ProcessInterface process) {
+    public List<Comment> getComments(Process process) {
         if (comments.containsKey(process)) {
             return comments.get(process);
         }
@@ -62,10 +62,10 @@ public class CommentTooltipView {
     /**
      * Get comments of process containing the given task.
      *
-     * @param task task as TaskInterface
+     * @param task task as Task
      * @return List of Comment objects
      */
-    public List<Comment> getComments(TaskInterface task) {
+    public List<Comment> getComments(Task task) {
         return getComments(task.getProcess());
     }
 }

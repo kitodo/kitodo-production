@@ -60,7 +60,7 @@ public interface DocketInterface extends BaseBeanInterface {
      *
      * @return client that this docket is associated with
      */
-    ClientInterface getClient();
+    Client getClient();
 
     /**
      * Sets the client to which this docket generator configuration is
@@ -69,5 +69,5 @@ public interface DocketInterface extends BaseBeanInterface {
      * @param client
      *            client to which this docket is associated
      */
-    void setClient(ClientInterface client);
+    void setClient(Client client);
 }

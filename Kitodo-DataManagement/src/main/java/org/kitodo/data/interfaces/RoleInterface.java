@@ -99,7 +99,7 @@ public interface RoleInterface extends BaseBeanInterface {
      *
      * @return the client in whose realm this role grants permissions
      */
-    ClientInterface getClient();
+    Client getClient();
 
     /**
      * Sets the client in whose realm this role grants permissions.
@@ -107,5 +107,5 @@ public interface RoleInterface extends BaseBeanInterface {
      * @param client
      *            client in whose realm this role grants permissions to set.
      */
-    void setClient(ClientInterface client);
+    void setClient(Client client);
 }

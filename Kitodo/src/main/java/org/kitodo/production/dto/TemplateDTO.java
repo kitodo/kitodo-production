@@ -18,7 +18,7 @@ import java.util.List;
 public class TemplateDTO extends BaseTemplateDTO {
 
     private boolean active;
-    private WorkflowInterface workflow;
+    private WorkflowDTO workflow;
     private boolean canBeUsedForProcess;
     private List<ProjectDTO> projects = new ArrayList<>();
 
@@ -44,9 +44,9 @@ public class TemplateDTO extends BaseTemplateDTO {
     /**
      * Set workflow.
      *
-     * @param workflow as org.kitodo.production.dto.WorkflowInterface
+     * @param workflow as org.kitodo.production.dto.WorkflowDTO
      */
-    public void setWorkflow(WorkflowInterface workflow) {
+    public void setWorkflow(WorkflowDTO workflow) {
         this.workflow = workflow;
     }
 
@@ -55,7 +55,7 @@ public class TemplateDTO extends BaseTemplateDTO {
      *
      * @return value of workflow
      */
-    public WorkflowInterface getWorkflow() {
+    public WorkflowDTO getWorkflow() {
         return workflow;
     }
 
@@ -91,7 +91,7 @@ public class TemplateDTO extends BaseTemplateDTO {
      * Set projects.
      *
      * @param projects
-     *            as List of ProjectInterface
+     *            as List of ProjectDTO
      */
     public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;

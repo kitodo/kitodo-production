@@ -173,7 +173,7 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of filters.
      *
-     * @return list of filters as FilterInterface
+     * @return list of filters as FilterDTO
      */
     public List<FilterDTO> getFilters() {
         return filters;
@@ -183,7 +183,7 @@ public class UserDTO extends BaseDTO {
      * Set list of filters.
      *
      * @param filters
-     *            list of filters as FilterInterface
+     *            list of filters as FilterDTO
      */
     public void setFilters(List<FilterDTO> filters) {
         this.filters = filters;
@@ -211,7 +211,7 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of roles.
      *
-     * @return list of roles as RoleInterface
+     * @return list of roles as RoleDTO
      */
     public List<RoleDTO> getRoles() {
         return roles;
@@ -221,7 +221,7 @@ public class UserDTO extends BaseDTO {
      * Set list of roles.
      *
      * @param roles
-     *            list of roles as RoleInterface
+     *            list of roles as RoleDTO
      */
     public void setRoles(List<RoleDTO> roles) {
         this.roles = roles;
@@ -285,7 +285,7 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of projects.
      *
-     * @return list of projects as ProjectInterface
+     * @return list of projects as ProjectDTO
      */
     public List<ProjectDTO> getProjects() {
         return projects;
@@ -295,7 +295,7 @@ public class UserDTO extends BaseDTO {
      * Set list of projects.
      *
      * @param projects
-     *            list of projects as ProjectInterface
+     *            list of projects as ProjectDTO
      */
     public void setProjects(List<ProjectDTO> projects) {
         this.projects = projects;
@@ -324,7 +324,7 @@ public class UserDTO extends BaseDTO {
     /**
      * Get list of processing tasks.
      *
-     * @return list of processing tasks as TaskInterface
+     * @return list of processing tasks as TaskDTO
      */
     public List<TaskDTO> getProcessingTasks() {
         return processingTasks;
@@ -334,7 +334,7 @@ public class UserDTO extends BaseDTO {
      * Set list of processing tasks.
      *
      * @param processingTasks
-     *            list of processing tasks as TaskInterface
+     *            list of processing tasks as TaskDTO
      */
     public void setProcessingTasks(List<TaskDTO> processingTasks) {
         this.processingTasks = processingTasks;

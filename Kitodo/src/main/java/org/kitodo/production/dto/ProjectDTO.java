@@ -34,7 +34,7 @@ public class ProjectDTO extends BaseDTO {
     private Integer numberOfPages;
     private Integer numberOfVolumes;
     private Boolean active = true;
-    private ClientInterface client;
+    private ClientDTO client;
     private List<TemplateDTO> templates = new ArrayList<>();
     private List<UserDTO> users = new ArrayList<>();
     private boolean hasProcesses;
@@ -234,7 +234,7 @@ public class ProjectDTO extends BaseDTO {
      * @return The client.
      */
     @Override
-    public ClientInterface getClient() {
+    public ClientDTO getClient() {
         return client;
     }
 
@@ -244,7 +244,7 @@ public class ProjectDTO extends BaseDTO {
      * @param client The client.
      */
     @Override
-    public void setClient(ClientInterface client) {
+    public void setClient(ClientDTO client) {
         this.client = client;
     }
 

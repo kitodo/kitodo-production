@@ -23,10 +23,10 @@ import java.util.Objects;
  */
 public class ProcessDTO extends BaseTemplateDTO {
 
-    private ProjectInterface project;
+    private ProjectDTO project;
     private List<BatchDTO> batches = new ArrayList<>();
     private List<PropertyDTO> properties = new ArrayList<>();
-    private UserInterface blockedUser;
+    private UserDTO blockedUser;
     private Double progressClosed;
     private Double progressInProcessing;
     private Double progressOpen;
@@ -55,9 +55,9 @@ public class ProcessDTO extends BaseTemplateDTO {
     /**
      * Get project.
      *
-     * @return project as ProjectInterface
+     * @return project as ProjectDTO
      */
-    public ProjectInterface getProject() {
+    public ProjectDTO getProject() {
         return project;
     }
 
@@ -65,16 +65,16 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set project.
      *
      * @param project
-     *            as ProjectInterface
+     *            as ProjectDTO
      */
-    public void setProject(ProjectInterface project) {
-        this.project = (ProjectInterface) project;
+    public void setProject(ProjectDTO project) {
+        this.project = (ProjectDTO) project;
     }
 
     /**
      * Get list of batches.
      *
-     * @return list of batches as BatchInterface
+     * @return list of batches as BatchDTO
      */
     public List<BatchDTO> getBatches() {
         return batches;
@@ -84,7 +84,7 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set list of batches.
      *
      * @param batches
-     *            list of batches as BatchInterface
+     *            list of batches as BatchDTO
      */
     public void setBatches(List batches) {
         this.batches = batches;
@@ -93,7 +93,7 @@ public class ProcessDTO extends BaseTemplateDTO {
     /**
      * Get list of properties.
      *
-     * @return list of properties as PropertyInterface
+     * @return list of properties as PropertyDTO
      */
     public List<PropertyDTO> getProperties() {
         if (Objects.isNull(this.properties)) {
@@ -106,7 +106,7 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set list of properties.
      *
      * @param properties
-     *            list of properties as PropertyInterface
+     *            list of properties as PropertyDTO
      */
     public void setProperties(List<PropertyDTO> properties) {
         this.properties = properties;
@@ -115,9 +115,9 @@ public class ProcessDTO extends BaseTemplateDTO {
     /**
      * Get blocked user.
      *
-     * @return blocked user as UserInterface
+     * @return blocked user as UserDTO
      */
-    public UserInterface getBlockedUser() {
+    public UserDTO getBlockedUser() {
         return blockedUser;
     }
 
@@ -125,9 +125,9 @@ public class ProcessDTO extends BaseTemplateDTO {
      * Set blocked user.
      *
      * @param blockedUser
-     *            as UserInterface
+     *            as UserDTO
      */
-    public void setBlockedUser(UserInterface blockedUser) {
+    public void setBlockedUser(UserDTO blockedUser) {
         this.blockedUser = blockedUser;
     }
 

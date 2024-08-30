@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
 
-public interface DocketInterface {
+public interface Docket {
 
     /**
      * Generates a docket from given data.

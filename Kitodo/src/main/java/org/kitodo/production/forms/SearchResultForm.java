@@ -48,8 +48,8 @@ public class SearchResultForm extends ProcessListBaseView {
     private static final String SEARCH_RESULT_VIEW_ID = "/pages/searchResult.xhtml";
     private static final String SEARCH_RESULT_TABLE_ID = "searchResultTabView:searchResultForm:searchResultTable";
 
-    private List<ProcessInterface> filteredList = new ArrayList<>();
-    private List<ProcessInterface> resultList = new ArrayList<>();
+    private List<Process> filteredList = new ArrayList<>();
+    private List<Process> resultList = new ArrayList<>();
     private String searchQuery;
     private String currentTaskFilter;
     private Integer currentProjectFilter;
@@ -64,11 +64,11 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     public String searchForProcessesBySearchQuery() {
         ProcessService processService = ServiceManager.getProcessService();
-        HashMap<Integer, ProcessInterface> resultHash = new HashMap<>();
-        List<ProcessInterface> results;
+        HashMap<Integer, Process> resultHash = new HashMap<>();
+        List<Process> results;
         try {
             results = processService.findByAnything(searchQuery);
-            for (ProcessInterface process : results) {
+            for (Process process : results) {
                 resultHash.put(process.getId(), process);
             }
             this.resultList = new ArrayList<>(resultHash.values());
@@ -99,9 +99,9 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     void filterListByTaskAndStatus() {
         if (Objects.nonNull(currentTaskFilter) && Objects.nonNull(currentTaskStatusFilter)) {
-            for (ProcessInterface process : new ArrayList<>(this.filteredList)) {
+            for (Process process : new ArrayList<>(this.filteredList)) {
                 boolean remove = true;
-                for (TaskInterface task : process.getTasks()) {
+                for (Task task : process.getTasks()) {
                     if (task.getTitle().equalsIgnoreCase(currentTaskFilter)
                             && task.getProcessingStatus().getValue().equals(currentTaskStatusFilter)) {
                         remove = false;
@@ -131,9 +131,9 @@ public class SearchResultForm extends ProcessListBaseView {
      *
      * @return A list of projects for filter list
      */
-    public Collection<ProjectInterface> getProjectsForFiltering() {
-        HashMap<Integer, ProjectInterface> projectsForFiltering = new HashMap<>();
-        for (ProcessInterface process : this.resultList) {
+    public Collection<Project> getProjectsForFiltering() {
+        HashMap<Integer, Project> projectsForFiltering = new HashMap<>();
+        for (Process process : this.resultList) {
             projectsForFiltering.put(process.getProject().getId(), process.getProject());
         }
         return projectsForFiltering.values();
@@ -144,10 +144,10 @@ public class SearchResultForm extends ProcessListBaseView {
      *
      * @return A list of tasks for filter list
      */
-    public Collection<TaskInterface> getTasksForFiltering() {
-        HashMap<String, TaskInterface> tasksForFiltering = new HashMap<>();
-        for (ProcessInterface process : this.resultList) {
-            for (TaskInterface currentTask : process.getTasks()) {
+    public Collection<Task> getTasksForFiltering() {
+        HashMap<String, Task> tasksForFiltering = new HashMap<>();
+        for (Process process : this.resultList) {
+            for (Task currentTask : process.getTasks()) {
                 tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
         }
@@ -174,7 +174,7 @@ public class SearchResultForm extends ProcessListBaseView {
      *            process to delete.
      */
     @Override
-    public void delete(ProcessInterface process) {
+    public void delete(Process process) {
         try {
             Process processBean = ServiceManager.getProcessService().getById(process.getId());
             if (processBean.getChildren().isEmpty()) {
@@ -213,9 +213,9 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Gets the filtered list.
      *
-     * @return a list of ProcessInterface
+     * @return a list of Process
      */
-    public List<ProcessInterface> getFilteredList() {
+    public List<Process> getFilteredList() {
         return this.filteredList;
     }
 
@@ -223,9 +223,9 @@ public class SearchResultForm extends ProcessListBaseView {
      * Sets the filtered list.
      *
      * @param filteredList
-     *            a list of ProcessInterface
+     *            a list of Process
      */
-    public void setFilteredList(List<ProcessInterface> filteredList) {
+    public void setFilteredList(List<Process> filteredList) {
         this.filteredList = filteredList;
     }
 

@@ -25,7 +25,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new batch
      */
-    BatchInterface newBatch();
+    Batch newBatch();
 
     /**
      * Returns a new client. The client has not yet been persisted and does not
@@ -33,7 +33,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new client
      */
-    ClientInterface newClient();
+    Client newClient();
 
     /**
      * Returns a new docket generation statement. The client has not yet been
@@ -41,7 +41,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new docket generation
      */
-    DocketInterface newDocket();
+    Docket newDocket();
 
     /**
      * Returns a new store for a search string. The filter string has not yet
@@ -49,7 +49,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new search string
      */
-    FilterInterface newFilter();
+    Filter newFilter();
 
     /**
      * Returns a new process. The process has not yet been persisted and does
@@ -57,7 +57,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new process
      */
-    ProcessInterface newProcess();
+    Process newProcess();
 
     /**
      * Returns a new project. The project has not yet been persisted and does
@@ -65,7 +65,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new project
      */
-    ProjectInterface newProject();
+    Project newProject();
 
     /**
      * Returns a new container for a property key-value pair. The property has
@@ -73,7 +73,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new property
      */
-    PropertyInterface newProperty();
+    Property newProperty();
 
     /**
      * Returns a new storage for the business domain specification. The ruleset
@@ -81,7 +81,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new business specification
      */
-    RulesetInterface newRuleset();
+    Ruleset newRuleset();
 
     /**
      * Returns a new task. The task has not yet been persisted and does not yet
@@ -89,7 +89,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new task
      */
-    TaskInterface newTask();
+    Task newTask();
 
     /**
      * Returns a new production template. The production template has not yet
@@ -97,7 +97,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new template
      */
-    TemplateInterface newTemplate();
+    Template newTemplate();
 
     /**
      * Returns a new user. The user has not yet been persisted and does not yet
@@ -105,7 +105,7 @@ public interface DataFactoryInterface {
      * 
      * @return a new user
      */
-    UserInterface newUser();
+    User newUser();
 
     /**
      * Returns a new workflow. Returns a new workflow reference. The workflow
@@ -114,5 +114,5 @@ public interface DataFactoryInterface {
      * 
      * @return a new batch
      */
-    WorkflowInterface newWorkflow();
+    Workflow newWorkflow();
 }

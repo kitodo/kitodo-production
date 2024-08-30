@@ -286,7 +286,7 @@ public interface DatabaseTaskServiceInterface extends SearchDatabaseServiceInter
      * @deprecated Use {@link #getById(Integer)}.
      */
     @Deprecated
-    default TaskInterface findById(Integer id) throws DataException {
+    default Task findById(Integer id) throws DataException {
         try {
             return getById(id);
         } catch (DAOException e) {

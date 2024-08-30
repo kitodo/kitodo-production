@@ -276,7 +276,7 @@ public interface ProjectInterface extends BaseBeanInterface {
      *
      * @return the client
      */
-    ClientInterface getClient();
+    Client getClient();
 
     /**
      * Specifies the tenant that is executing this project.
@@ -284,7 +284,7 @@ public interface ProjectInterface extends BaseBeanInterface {
      * @param client
      *            the client
      */
-    void setClient(ClientInterface client);
+    void setClient(Client client);
 
     /**
      * Returns the non-deactivated production templates associated with the

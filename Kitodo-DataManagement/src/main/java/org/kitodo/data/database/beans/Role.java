@@ -144,7 +144,7 @@ public class Role extends BaseBean, Comparable<Role> {
     }
 
     @Override
-    public void setClient(ClientInterface client) {
+    public void setClient(Client client) {
         this.client = (Client) client;
     }
 
@@ -154,7 +154,7 @@ public class Role extends BaseBean, Comparable<Role> {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setClient(ClientInterface)} as a setter for the property
+     * function {@link #setClient(Client)} as a setter for the property
      * {@code client} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *

@@ -76,7 +76,7 @@ public class IndexingFormIT {
 
         indexingForm.countDatabaseObjects();
 
-        ProcessInterface processOne = ServiceManager.getProcessService().findById(1);
+        Process processOne = ServiceManager.getProcessService().findById(1);
         Assert.assertNull("process should not be found in index", processOne.getTitle());
         indexingForm.startAllIndexing();
         given().ignoreExceptions().await()

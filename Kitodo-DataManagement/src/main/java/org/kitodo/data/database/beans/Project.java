@@ -463,7 +463,7 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
     }
 
     @Override
-    public void setClient(ClientInterface client) {
+    public void setClient(Client client) {
         this.client = (Client) client;
     }
 
@@ -732,7 +732,7 @@ public class Project extends BaseIndexedBean, Comparable<Project> {
             activeTemplates = Collections.emptyList();
         }
         Map<Integer, Template> activeTemplatesMap = activeTemplates.stream()
-                .collect(Collectors.toMap(TemplateInterface::getId, Function.identity()));
+                .collect(Collectors.toMap(Template::getId, Function.identity()));
 
         if (Objects.isNull(this.templates) && CollectionUtils.isNotEmpty(activeTemplates)) {
             this.templates = new ArrayList<>();

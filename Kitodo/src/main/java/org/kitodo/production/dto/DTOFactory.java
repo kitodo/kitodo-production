@@ -33,62 +33,62 @@ public class DTOFactory implements DataFactoryInterface {
     }
 
     @Override
-    public BatchInterface newBatch() {
+    public BatchDTO newBatch() {
         return new BatchDTO();
     }
 
     @Override
-    public ClientInterface newClient() {
+    public ClientDTO newClient() {
         return new ClientDTO();
     }
 
     @Override
-    public DocketInterface newDocket() {
+    public DocketDTO newDocket() {
         return new DocketDTO();
     }
 
     @Override
-    public FilterInterface newFilter() {
+    public FilterDTO newFilter() {
         return new FilterDTO();
     }
 
     @Override
-    public ProcessInterface newProcess() {
+    public ProcessDTO newProcess() {
         return new ProcessDTO();
     }
 
     @Override
-    public ProjectInterface newProject() {
+    public ProjectDTO newProject() {
         return new ProjectDTO();
     }
 
     @Override
-    public PropertyInterface newProperty() {
+    public PropertyDTO newProperty() {
         return new PropertyDTO();
     }
 
     @Override
-    public RulesetInterface newRuleset() {
+    public RulesetDTO newRuleset() {
         return new RulesetDTO();
     }
 
     @Override
-    public TaskInterface newTask() {
+    public TaskDTO newTask() {
         return new TaskDTO();
     }
 
     @Override
-    public TemplateInterface newTemplate() {
+    public TemplateDTO newTemplate() {
         return new TemplateDTO();
     }
 
     @Override
-    public UserInterface newUser() {
+    public UserDTO newUser() {
         return new UserDTO();
     }
 
     @Override
-    public WorkflowInterface newWorkflow() {
+    public WorkflowDTO newWorkflow() {
         return new WorkflowDTO();
     }
 }

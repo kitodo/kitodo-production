@@ -827,7 +827,7 @@ public class ProjectForm extends BaseForm {
      *
      * @return list of projects
      */
-    public List<ProjectInterface> getProjects() {
+    public List<Project> getProjects() {
         try {
             return ServiceManager.getProjectService().findAll();
         } catch (DataException e) {

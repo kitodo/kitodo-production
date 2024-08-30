@@ -14,17 +14,17 @@
  * application. Data objects from the database or third-party sources can be
  * used agnostically in the implementation via the interface. These are:
  * <ul>
- * <li>for access management: users ({@link UserInterface}) with roles
- * ({@link RoleInterface}) who work for clients ({@link ClientInterface})
+ * <li>for access management: users ({@link User}) with roles
+ * ({@link Role}) who work for clients ({@link Client})
  * <li>for project management: business domain configurations
- * ({@link RulesetInterface}), workflows ({@link WorkflowInterface}), production
- * templates ({@link TemplateInterface}) and runnotes ({@link DocketInterface})
- * <li>for operations: processes ({@link ProcessInterface}) with properties
- * ({@link PropertyInterface}), with their tasks ({@link TaskInterface}), in
- * batches ({@link BatchInterface})
+ * ({@link Ruleset}), workflows ({@link Workflow}), production
+ * templates ({@link Template}) and runnotes ({@link Docket})
+ * <li>for operations: processes ({@link Process}) with properties
+ * ({@link Property}), with their tasks ({@link Task}), in
+ * batches ({@link Batch})
  * </ul>
  * The interface objects are based on the common interface
- * {@link BaseBeanInterface}. The factory methods are provided by the
+ * {@link BaseBean}. The factory methods are provided by the
  * {@link DataFactoryInterface}.
  */
 package org.kitodo.data.interfaces;

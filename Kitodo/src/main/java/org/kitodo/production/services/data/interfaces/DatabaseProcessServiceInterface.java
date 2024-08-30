@@ -105,7 +105,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *
      * @param searchQuery
      *            the query word or phrase
-     * @return a List of found ProcessInterfaces
+     * @return a List of found Processs
      * @throws DataException
      *             when accessing the elasticsearch server fails
      */
@@ -114,7 +114,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * development. No new implementation required here. (However, the
      * functionality must be provided in countResults() and loadData().)
      */
-    default List<ProcessInterface> findByAnything(String searchQuery) throws DataException {
+    default List<Process> findByAnything(String searchQuery) throws DataException {
         throw new UnsupportedOperationException("no longer provided this way");
     }
 
@@ -151,7 +151,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * value the remote ID of the parent process (for example its PPN).
      * exactMatch is always true here.
      */
-    default List<ProcessInterface> findByMetadata(Map<String, String> metadata, boolean exactMatch)
+    default List<Process> findByMetadata(Map<String, String> metadata, boolean exactMatch)
             throws DataException {
         throw new DataException("index currently not available");
     }
@@ -200,8 +200,8 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * .isEmpty(), to see if a process title already exists.
      */
     @SuppressWarnings("unchecked")
-    default List<ProcessInterface> findByTitle(String title) throws DataException {
-        return (List<ProcessInterface>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
+    default List<Process> findByTitle(String title) throws DataException {
+        return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
     }
 
     /**
@@ -384,7 +384,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      *            the processBase field
      * @return the record number
      */
-    default String getProcessDataDirectory(ProcessInterface process) {
+    default String getProcessDataDirectory(Process process) {
         return getProcessDataDirectory((Process) process, false).toString();
     }
 
@@ -564,7 +564,7 @@ public interface DatabaseProcessServiceInterface extends SearchDatabaseServiceIn
      * @deprecated Use {@link #getById(Integer)}.
      */
     @Deprecated
-    default ProcessInterface findById(Integer id) throws DataException {
+    default Process findById(Integer id) throws DataException {
         try {
             return getById(id);
         } catch (DAOException e) {

@@ -334,7 +334,7 @@ public class Task extends BaseIndexedBean {
     }
 
     @Override
-    public void setProcessingUser(UserInterface processingUser) {
+    public void setProcessingUser(User processingUser) {
         this.processingUser = (User) processingUser;
     }
 
@@ -344,7 +344,7 @@ public class Task extends BaseIndexedBean {
     }
 
     @Override
-    public void setProcess(ProcessInterface process) {
+    public void setProcess(Process process) {
         this.process = (Process) process;
     }
 
@@ -354,7 +354,7 @@ public class Task extends BaseIndexedBean {
     }
 
     @Override
-    public void setTemplate(TemplateInterface template) {
+    public void setTemplate(Template template) {
         this.template = (Template) template;
     }
 
@@ -670,6 +670,6 @@ public class Task extends BaseIndexedBean {
         if (Objects.isNull(roles)) {
             return null;
         }
-        return getRoles().stream().map(RoleInterface::getId).collect(Collectors.toList());
+        return getRoles().stream().map(Role::getId).collect(Collectors.toList());
     }
 }

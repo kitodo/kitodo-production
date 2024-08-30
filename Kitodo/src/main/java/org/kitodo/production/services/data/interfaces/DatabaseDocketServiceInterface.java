@@ -60,7 +60,7 @@ public interface DatabaseDocketServiceInterface extends SearchDatabaseServiceInt
      * @return Interface object
      * @deprecated Use {@link #getById(Integer)}.
      */
-    default DocketInterface findById(Integer id) throws DataException {
+    default Docket findById(Integer id) throws DataException {
         try {
             return getById(id);
         } catch (DAOException e) {

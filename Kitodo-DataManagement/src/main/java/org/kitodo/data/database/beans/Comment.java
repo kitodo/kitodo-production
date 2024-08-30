@@ -217,9 +217,9 @@ public class Comment extends BaseBean {
     /**
      * Set currentTask.
      *
-     * @param currentTask as org.kitodo.data.interfaces.TaskInterface
+     * @param currentTask as org.kitodo.data.interfaces.Task
      */
-    public void setCurrentTask(TaskInterface currentTask) {
+    public void setCurrentTask(Task currentTask) {
         this.currentTask = (Task) currentTask;
     }
 

@@ -29,7 +29,7 @@ import org.primefaces.PrimeFaces;
 public class SelectTemplateDialogView implements Serializable {
 
     private int selectedTemplateId = 0;
-    private ProjectInterface project;
+    private Project project;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
     private static final String MASSIMPORT_PATH = "/pages/massImport.jsf?faces-redirect=true";
@@ -40,16 +40,16 @@ public class SelectTemplateDialogView implements Serializable {
      *
      * @return value of project
      */
-    public ProjectInterface getProject() {
+    public Project getProject() {
         return project;
     }
 
     /**
      * Set project.
      *
-     * @param project as org.kitodo.production.dto.ProjectInterface
+     * @param project as org.kitodo.production.dto.Project
      */
-    public void setProject(ProjectInterface project) {
+    public void setProject(Project project) {
         this.project = project;
     }
 
@@ -65,7 +65,7 @@ public class SelectTemplateDialogView implements Serializable {
     /**
      * Set selectedTemplateId.
      *
-     * @param selectedTemplateId as org.kitodo.production.dto.TemplateInterface
+     * @param selectedTemplateId as org.kitodo.production.dto.Template
      */
     public void setSelectedTemplateId(int selectedTemplateId) {
         this.selectedTemplateId = selectedTemplateId;

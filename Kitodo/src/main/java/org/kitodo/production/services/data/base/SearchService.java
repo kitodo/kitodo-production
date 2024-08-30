@@ -30,7 +30,7 @@ import org.kitodo.data.database.beans.BaseBean;
  * Class for implementing methods used by all service classes which search in
  * ElasticSearch index.
  */
-public abstract class SearchService<T extends BaseIndexedBean, S extends BaseBeanInterface, V extends BaseDAO<T>>
+public abstract class SearchService<T extends BaseIndexedBean, S extends BaseBean, V extends BaseDAO<T>>
         extends SearchDatabaseService<T, V> {
 
     private static final Logger logger = LogManager.getLogger(SearchService.class);

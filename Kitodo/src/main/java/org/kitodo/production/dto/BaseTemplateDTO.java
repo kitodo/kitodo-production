@@ -24,8 +24,8 @@ public abstract class BaseTemplateDTO extends BaseDTO {
 
     private String title;
     protected String creationDate;
-    private DocketInterface docket;
-    private RulesetInterface ruleset;
+    private DocketDTO docket;
+    private RulesetDTO ruleset;
     private List<TaskDTO> tasks = new ArrayList<>();
 
     /**
@@ -69,9 +69,9 @@ public abstract class BaseTemplateDTO extends BaseDTO {
     /**
      * Get docket.
      *
-     * @return docket as DocketInterface
+     * @return docket as DocketDTO
      */
-    public DocketInterface getDocket() {
+    public DocketDTO getDocket() {
         return docket;
     }
 
@@ -79,18 +79,18 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * Set docket.
      *
      * @param docket
-     *            as DocketInterface
+     *            as DocketDTO
      */
-    public void setDocket(DocketInterface docket) {
+    public void setDocket(DocketDTO docket) {
         this.docket = docket;
     }
 
     /**
      * Get ruleset.
      *
-     * @return ruleset as RulesetInterface
+     * @return ruleset as RulesetDTO
      */
-    public RulesetInterface getRuleset() {
+    public RulesetDTO getRuleset() {
         return ruleset;
     }
 
@@ -98,16 +98,16 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * Set ruleset.
      *
      * @param ruleset
-     *            as RulesetInterface
+     *            as RulesetDTO
      */
-    public void setRuleset(RulesetInterface ruleset) {
+    public void setRuleset(RulesetDTO ruleset) {
         this.ruleset = ruleset;
     }
 
     /**
      * Get list of tasks.
      *
-     * @return list of tasks as TaskInterface
+     * @return list of tasks as TaskDTO
      */
     public List<TaskDTO> getTasks() {
         return tasks;
@@ -117,7 +117,7 @@ public abstract class BaseTemplateDTO extends BaseDTO {
      * Set list of tasks.
      *
      * @param tasks
-     *            list of tasks as TaskInterface
+     *            list of tasks as TaskDTO
      */
     public void setTasks(List<TaskDTO> tasks) {
         this.tasks = tasks;

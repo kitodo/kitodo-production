@@ -97,7 +97,7 @@ public interface RulesetInterface extends BaseBeanInterface {
      *
      * @return client that this ruleset is associated with
      */
-    ClientInterface getClient();
+    Client getClient();
 
     /**
      * Sets the client to which this ruleset is associated.
@@ -105,6 +105,6 @@ public interface RulesetInterface extends BaseBeanInterface {
      * @param client
      *            client to which this ruleset is associated
      */
-    void setClient(ClientInterface client);
+    void setClient(Client client);
 
 }

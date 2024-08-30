@@ -238,7 +238,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "PDM1.0");
 
-        final List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        final List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
 
         String script = "action:addData " + "key:" + metadataKey + " value:PDM1.0";
@@ -247,7 +247,7 @@ public class KitodoScriptServiceIT {
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
-        final List<ProcessInterface> processByMetadataAfter = ServiceManager.getProcessService()
+        final List<Process> processByMetadataAfter = ServiceManager.getProcessService()
                 .findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
     }
@@ -357,7 +357,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Kollektion2");
 
-        final List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        final List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should not contain metadata beforehand", 1, processByMetadata.size() );
 
         String script = "action:copyDataToChildren " + "key:" + metadataKey + " source:" + metadataKey;
@@ -366,7 +366,7 @@ public class KitodoScriptServiceIT {
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
-        final List<ProcessInterface> processByMetadataAfter = ServiceManager.getProcessService()
+        final List<Process> processByMetadataAfter = ServiceManager.getProcessService()
                 .findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 3, processByMetadataAfter.size() );
         ProcessTestUtils.removeTestProcess(testProcessIds.get(MockDatabase.HIERARCHY_PARENT));
@@ -380,7 +380,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "legal note");
 
-        final List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap, true);
+        final List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap, true);
         Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
 
         String script = "action:addData " + "key:" + metadataKey + " \"value:legal note\"";
@@ -389,7 +389,7 @@ public class KitodoScriptServiceIT {
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
-        final List<ProcessInterface> processByMetadataAfter = ServiceManager.getProcessService()
+        final List<Process> processByMetadataAfter = ServiceManager.getProcessService()
                 .findByMetadata(metadataSearchMap, true);
         Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size() );
     }
@@ -404,7 +404,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> secondMetadataSearchMap = new HashMap<>();
         secondMetadataSearchMap.put(metadataKey, "secondNote");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should not contain metadata beforehand", 0, processByMetadata.size() );
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
@@ -417,7 +417,7 @@ public class KitodoScriptServiceIT {
         KitodoScriptService kitodoScript = ServiceManager.getKitodoScriptService();
         kitodoScript.execute(processes, script);
         Thread.sleep(2000);
-        List<ProcessInterface> processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size());
         processByMetadataAfter = ServiceManager.getProcessService().findByMetadata(secondMetadataSearchMap);
         Assert.assertEquals("does not contain metadata", 1, processByMetadataAfter.size());
@@ -431,7 +431,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 0, processByMetadata.size() );
 
         String script = "action:addData " + "key:" + metadataKey + " source:TSL_ATS";
@@ -453,7 +453,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, String.valueOf(kitodoScriptTestProcessId));
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("does not contain metadata", 0, processByMetadata.size() );
 
         String script = "action:addData " + "key:" + metadataKey + " variable:(processid)";
@@ -475,7 +475,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         String script = "action:deleteData " + "key:" + metadataKey;
@@ -497,7 +497,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         String script = "action:deleteData " + "key:" + metadataKey + " value:SecondMetaShort";
@@ -519,7 +519,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "Proc");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         String script = "action:deleteData " + "key:" + metadataKey;
@@ -541,7 +541,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         String script = "action:deleteData " + "key:" + metadataKey + " source:TitleDocMainShort";
@@ -563,7 +563,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> metadataSearchMap = new HashMap<>();
         metadataSearchMap.put(metadataKey, "SecondMetaShort");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(metadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         String script = "action:deleteData" + " key:" + metadataKey + " value:SecondMetaLong";
@@ -587,7 +587,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
         newMetadataSearchMap.put(metadataKey, "Overwritten");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
@@ -618,7 +618,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
         newMetadataSearchMap.put(metadataKey, "Second process");
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);
@@ -649,7 +649,7 @@ public class KitodoScriptServiceIT {
         HashMap<String, String> newMetadataSearchMap = new HashMap<>();
         newMetadataSearchMap.put(metadataKey, String.valueOf(kitodoScriptTestProcessId));
 
-        List<ProcessInterface> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
+        List<Process> processByMetadata = ServiceManager.getProcessService().findByMetadata(oldMetadataSearchMap);
         Assert.assertEquals("should contain metadata", 1, processByMetadata.size() );
 
         processByMetadata = ServiceManager.getProcessService().findByMetadata(newMetadataSearchMap);

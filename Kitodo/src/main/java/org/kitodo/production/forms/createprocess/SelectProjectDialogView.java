@@ -39,7 +39,7 @@ public class SelectProjectDialogView implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(SelectProjectDialogView.class);
     private int selectedProjectId = 0;
-    private TemplateInterface template;
+    private Template template;
     protected static final String ERROR_LOADING_ONE = "errorLoadingOne";
     private static final String CREATE_PROCESS_PATH = "/pages/processFromTemplate.jsf?faces-redirect=true";
 
@@ -48,16 +48,16 @@ public class SelectProjectDialogView implements Serializable {
      *
      * @return value of template
      */
-    public TemplateInterface getTemplate() {
+    public Template getTemplate() {
         return template;
     }
 
     /**
      * Set template.
      *
-     * @param template as org.kitodo.data.interfaces.TemplateInterface
+     * @param template as org.kitodo.data.interfaces.Template
      */
-    public void setTemplate(TemplateInterface template) {
+    public void setTemplate(Template template) {
         this.template = template;
     }
 

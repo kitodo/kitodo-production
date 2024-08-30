@@ -125,7 +125,7 @@ public class Template extends BaseTemplateBean {
     }
 
     @Override
-    public void setDocket(DocketInterface docket) {
+    public void setDocket(Docket docket) {
         this.docket = (Docket) docket;
     }
 
@@ -136,7 +136,7 @@ public class Template extends BaseTemplateBean {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setDocket(DocketInterface)} as a setter for the property
+     * function {@link #setDocket(Docket)} as a setter for the property
      * {@code docket} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *
@@ -153,7 +153,7 @@ public class Template extends BaseTemplateBean {
     }
 
     @Override
-    public void setRuleset(RulesetInterface ruleset) {
+    public void setRuleset(Ruleset ruleset) {
         this.ruleset = (Ruleset) ruleset;
     }
 
@@ -164,7 +164,7 @@ public class Template extends BaseTemplateBean {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setRuleset(RulesetInterface)} as a setter for the
+     * function {@link #setRuleset(Ruleset)} as a setter for the
      * property {@code ruleset} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *
@@ -181,7 +181,7 @@ public class Template extends BaseTemplateBean {
     }
 
     @Override
-    public void setWorkflow(WorkflowInterface workflow) {
+    public void setWorkflow(Workflow workflow) {
         this.workflow = (Workflow) workflow;
     }
 
@@ -191,7 +191,7 @@ public class Template extends BaseTemplateBean {
      * <p>
      * <b>API Note:</b><br>
      * This function exists because Faces does not recognize the more generic
-     * function {@link #setWorkflow(WorkflowInterface)} as a setter for the
+     * function {@link #setWorkflow(Workflow)} as a setter for the
      * property {@code workflow} and otherwise throws a
      * {@code PropertyNotWritableException}.
      *

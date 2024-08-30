@@ -222,7 +222,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO>
                 && ServiceManager.getSecurityAccessService().hasAuthorityToViewClientList()) {
             return projects.stream().map(Project::getTitle).collect(Collectors.joining(COMMA_DELIMITER));
         } else {
-            List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(ProjectInterface::getId)
+            List<Integer> userProjectIds = findAllProjectsForCurrentUser().stream().map(Project::getId)
                     .collect(Collectors.toList());
             return projects.stream().filter(project -> userProjectIds.contains(project.getId())).map(Project::getTitle)
                     .collect(Collectors.joining(COMMA_DELIMITER));

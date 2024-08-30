@@ -108,7 +108,7 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
-    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessInterface process) {
+    private void prepareRow(int rowCounter, HSSFSheet sheet, Process process) {
         HSSFRow row = sheet.createRow(rowCounter);
         row.createCell(0).setCellValue(process.getTitle());
         row.createCell(1).setCellValue(process.getId());

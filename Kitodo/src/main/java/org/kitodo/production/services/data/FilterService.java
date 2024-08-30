@@ -124,7 +124,7 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO>
 
     Set<Integer> collectIds(List<BaseBean> dtos) {
         Set<Integer> ids = new HashSet<>();
-        for (BaseBeanInterface process : dtos) {
+        for (BaseBean process : dtos) {
             ids.add(process.getId());
         }
         return ids;
@@ -495,7 +495,7 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO>
             Helper.setErrorMessage("errorInitializingProjects", logger, e);
         }
 
-        return projectsSortedByTitle.stream().map(ProjectInterface::getTitle).sorted().collect(Collectors.toList());
+        return projectsSortedByTitle.stream().map(Project::getTitle).sorted().collect(Collectors.toList());
     }
 
     /**

@@ -61,7 +61,7 @@ public interface DatabaseRulesetServiceInterface extends SearchDatabaseServiceIn
      * @deprecated Use {@link #getById(Integer)}.
      */
     @Deprecated
-    default RulesetInterface findById(Integer id) throws DataException {
+    default Ruleset findById(Integer id) throws DataException {
         try {
             return getById(id);
         } catch (DAOException e) {

@@ -177,7 +177,7 @@ public interface TaskInterface extends BaseBeanInterface {
      *
      * @return the user who last worked on the task
      */
-    UserInterface getProcessingUser();
+    User getProcessingUser();
 
     /**
      * Sets the user who last worked on the task.
@@ -185,7 +185,7 @@ public interface TaskInterface extends BaseBeanInterface {
      * @param processingUser
      *            user to set
      */
-    void setProcessingUser(UserInterface processingUser);
+    void setProcessingUser(User processingUser);
 
     /**
      * Returns the time the task status was last changed. This references
@@ -331,7 +331,7 @@ public interface TaskInterface extends BaseBeanInterface {
      *
      * @return the process this task belongs to
      */
-    ProcessInterface getProcess();
+    Process getProcess();
 
     /**
      * Sets the process this task belongs to. A task can only ever be assigned
@@ -340,7 +340,7 @@ public interface TaskInterface extends BaseBeanInterface {
      * @param process
      *            process this task belongs to
      */
-    void setProcess(ProcessInterface process);
+    void setProcess(Process process);
 
     /**
      * Returns the project the process belongs to.
@@ -349,7 +349,7 @@ public interface TaskInterface extends BaseBeanInterface {
      * @deprecated Use {@link #getProcess()}{@code .getProject()}.
      */
     @Deprecated
-    default ProjectInterface getProject() {
+    default Project getProject() {
         return getProcess().getProject();
     }
 
@@ -359,10 +359,10 @@ public interface TaskInterface extends BaseBeanInterface {
      * @param project
      *            project to set
      * @deprecated Use
-     *             {@link #getProcess()}{@code .setProject(ProjectInterface)}.
+     *             {@link #getProcess()}{@code .setProject(Project)}.
      */
     @Deprecated
-    default void setProject(ProjectInterface project) {
+    default void setProject(Project project) {
         getProcess().setProject(project);
     }
 
@@ -372,7 +372,7 @@ public interface TaskInterface extends BaseBeanInterface {
      *
      * @return the production template this task belongs to
      */
-    TemplateInterface getTemplate();
+    Template getTemplate();
 
     /**
      * Sets the production template this task belongs to. A task can only ever
@@ -381,7 +381,7 @@ public interface TaskInterface extends BaseBeanInterface {
      * @param template
      *            template this task belongs to
      */
-    void setTemplate(TemplateInterface template);
+    void setTemplate(Template template);
 
     /**
      * Returns a list of the IDs of the roles, whose holders are allowed to

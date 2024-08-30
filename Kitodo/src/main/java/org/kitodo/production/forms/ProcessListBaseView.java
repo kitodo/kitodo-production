@@ -115,7 +115,7 @@ public class ProcessListBaseView extends BaseForm {
 
     /**
      * Returns the list of the processes currently selected in the user interface.
-     * Converts ProcessInterface instances to Process instances in case of displaying search results.
+     * Converts Process instances to Process instances in case of displaying search results.
      *
      * @return value of selectedProcesses
      */
@@ -133,11 +133,11 @@ public class ProcessListBaseView extends BaseForm {
             }
         }
         if (!selectedProcesses.isEmpty()) {
-            if (selectedProcesses.get(0) instanceof ProcessInterface) {
-                // list contains ProcessInterface instances
+            if (selectedProcesses.get(0) instanceof Process) {
+                // list contains Process instances
                 try {
                     result = ServiceManager.getProcessService()
-                            .convertDtosToBeans((List<ProcessInterface>) selectedProcesses);
+                            .convertDtosToBeans((List<Process>) selectedProcesses);
                 } catch (DAOException e) {
                     Helper.setErrorMessage(ERROR_LOADING_MANY,
                             new Object[]{ObjectType.PROCESS.getTranslationPlural()}, logger, e);
@@ -436,7 +436,7 @@ public class ProcessListBaseView extends BaseForm {
      *            the process dto to check.
      * @return true if processes are created with calendar, false otherwise
      */
-    public boolean createProcessesWithCalendar(ProcessInterface process) {
+    public boolean createProcessesWithCalendar(Process process) {
         try {
             return ProcessService.canCreateProcessWithCalendar(process);
         } catch (IOException | DAOException e) {
@@ -453,7 +453,7 @@ public class ProcessListBaseView extends BaseForm {
      *            the process dto to check.
      * @return true if processes can be created as child, false otherwise
      */
-    public boolean createProcessAsChildPossible(ProcessInterface process) {
+    public boolean createProcessAsChildPossible(Process process) {
         try {
             return ProcessService.canCreateChildProcess(process);
         } catch (IOException | DAOException e) {
@@ -479,7 +479,7 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Starts generation of xml logfile for current process.
      */
-    public void createXML(ProcessInterface process) {
+    public void createXML(Process process) {
         try {
             ProcessService.createXML(ServiceManager.getProcessService().getById(process.getId()), getUser());
         } catch (IOException | DAOException e) {
@@ -529,7 +529,7 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Upload from home for single process.
      */
-    public void uploadFromHome(ProcessInterface process) {
+    public void uploadFromHome(Process process) {
         try {
             WebDav myDav = new WebDav();
             myDav.uploadFromHome(ServiceManager.getProcessService().getById(process.getId()));
@@ -546,7 +546,7 @@ public class ProcessListBaseView extends BaseForm {
      * @param process
      *            process to delete.
      */
-    public void delete(ProcessInterface process) {
+    public void delete(Process process) {
         try {
             Process processBean = ServiceManager.getProcessService().getById(process.getId());
             if (processBean.getChildren().isEmpty()) {
@@ -597,9 +597,9 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Returns the list of currently selected processes. This list is used both when displaying search results 
      * and when displaying the process list, which is why it may contain either instances of Process or 
-     * instances of ProcessInterface.
+     * instances of Process.
      * 
-     * @return list of instances of Process or ProcessInterface
+     * @return list of instances of Process or Process
      */
     public List<? extends Object> getSelectedProcessesOrProcessDTOs() {
         return selectedProcesses;

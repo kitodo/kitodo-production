@@ -631,7 +631,7 @@ public class AddDocStrucTypeDialog {
                     .getAllowedSubstructuralElements().keySet();
             List<Integer> ids = ServiceManager.getProcessService().findLinkableChildProcesses(processNumber,
                 dataEditor.getProcess().getRuleset().getId(), allowedSubstructuralElements)
-                    .stream().map(ProcessInterface::getId).collect(Collectors.toList());
+                    .stream().map(Process::getId).collect(Collectors.toList());
             if (ids.isEmpty()) {
                 alert(Helper.getTranslation("dialogAddDocStrucType.searchButtonClick.noHits"));
             }

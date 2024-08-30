@@ -325,7 +325,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
      *            object as UserDTo
      * @return full name of the user as String
      */
-    public String getFullName(UserInterface user) {
+    public String getFullName(User user) {
         return user.getSurname() + ", " + user.getName();
     }
 

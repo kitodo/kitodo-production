@@ -134,7 +134,7 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
      *
      * @return a readable label for the batch
      */
-    public String getLabel(BatchInterface batch) {
+    public String getLabel(Batch batch) {
         return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
     }
 
@@ -156,7 +156,7 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO>
      *
      * @return a readable label for the batch
      */
-    private String getNumericLabel(BatchInterface batch) {
+    private String getNumericLabel(Batch batch) {
         return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 

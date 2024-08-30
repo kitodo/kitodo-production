@@ -314,7 +314,7 @@ public class TitleRecordLinkTab {
             }
             indicationOfMoreHitsVisible = processes.size() > MAXIMUM_NUMBER_OF_HITS;
             possibleParentProcesses = new ArrayList<>();
-            for (ProcessInterface process : processes.subList(0, Math.min(processes.size(), MAXIMUM_NUMBER_OF_HITS))) {
+            for (Process process : processes.subList(0, Math.min(processes.size(), MAXIMUM_NUMBER_OF_HITS))) {
                 possibleParentProcesses.add(new SelectItem(process.getId().toString(), process.getTitle()));
             }
         } catch (DataException e) {

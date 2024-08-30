@@ -730,7 +730,7 @@ public class FileService {
      *            the process to get the metadata.xml for.
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(ProcessInterface process) throws IOException {
+    public URI getMetadataFilePath(Process process) throws IOException {
         return getMetadataFilePath(process, true);
     }
 
@@ -760,7 +760,7 @@ public class FileService {
      *            whether the file must exist
      * @return The URI to the metadata.xml
      */
-    public URI getMetadataFilePath(ProcessInterface process, boolean mustExist) throws IOException {
+    public URI getMetadataFilePath(Process process, boolean mustExist) throws IOException {
         URI metadataFilePath = getProcessSubTypeURI(process, ProcessSubType.META_XML, null);
         if (mustExist && !fileExist(metadataFilePath)) {
             throw new IOException(Helper.getTranslation("metadataFileNotFound", metadataFilePath.getPath()));
@@ -905,7 +905,7 @@ public class FileService {
      *            the process, the uri is needed for.
      * @return the URI.
      */
-    public String getProcessBaseUriForExistingProcess(ProcessInterface process) {
+    public String getProcessBaseUriForExistingProcess(Process process) {
         String processBaseUri = process.getProcessBase();
         if (Objects.isNull(processBaseUri) && Objects.nonNull(process.getId())) {
             process.setProcessBase(
@@ -1005,7 +1005,7 @@ public class FileService {
      *            folder of the sublocation is returned
      * @return The URI of the requested location
      */
-    private URI getProcessSubTypeURI(ProcessInterface process, ProcessSubType processSubType, String resourceName) {
+    private URI getProcessSubTypeURI(Process process, ProcessSubType processSubType, String resourceName) {
 
         String processDataDirectory = ServiceManager.getProcessService().getProcessDataDirectory(process);
 

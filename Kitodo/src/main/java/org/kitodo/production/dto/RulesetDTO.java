@@ -21,7 +21,7 @@ public class RulesetDTO extends BaseDTO {
     private String title;
     private Boolean orderMetadataByRuleset = false;
     private Boolean active = true;
-    private ClientInterface client;
+    private ClientDTO client;
 
     /**
      * Get file.
@@ -104,7 +104,7 @@ public class RulesetDTO extends BaseDTO {
      *
      * @return value of client
      */
-    public ClientInterface getClient() {
+    public ClientDTO getClient() {
         return client;
     }
 
@@ -112,9 +112,9 @@ public class RulesetDTO extends BaseDTO {
      * Set client object.
      *
      * @param client
-     *            as org.kitodo.production.dto.ClientInterface
+     *            as org.kitodo.production.dto.ClientDTO
      */
-    public void setClient(ClientInterface client) {
+    public void setClient(ClientDTO client) {
         this.client = client;
     }
 }

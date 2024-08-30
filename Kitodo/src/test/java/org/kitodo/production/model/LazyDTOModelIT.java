@@ -80,11 +80,11 @@ public class LazyDTOModelIT {
         List dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
         assertEquals(2, dockets.size());
 
-        DocketInterface docket = (DocketInterface) dockets.get(0);
+        Docket docket = (Docket) dockets.get(0);
         assertEquals("default", docket.getTitle());
 
         dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
-        docket = (DocketInterface) dockets.get(0);
+        docket = (Docket) dockets.get(0);
         assertEquals("tester", docket.getTitle());
     }
 }

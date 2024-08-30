@@ -142,7 +142,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> implements
     }
 
     @Override
-    public List<TaskInterface> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
+    public List<Task> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
             throws DataException {
         return loadData(first, pageSize, sortField, sortOrder, filters, false, false, false,
                 Arrays.asList(TaskStatus.OPEN, TaskStatus.INWORK));

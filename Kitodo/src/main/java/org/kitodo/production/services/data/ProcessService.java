@@ -89,7 +89,7 @@ import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.docket.DocketData;
-import org.kitodo.api.docket.DocketInterface;
+import org.kitodo.api.docket.Docket;
 import org.kitodo.api.filemanagement.ProcessSubType;
 import org.kitodo.api.filemanagement.filters.FileNameBeginsAndEndsWithFilter;
 import org.kitodo.api.filemanagement.filters.FileNameEndsAndDoesNotBeginWithFilter;
@@ -420,9 +420,9 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *
      * @param metadata
      *            key is metadata tag and value is metadata content
-     * @return list of ProcessInterface objects with processes for specific metadata tag
+     * @return list of Process objects with processes for specific metadata tag
      */
-    public List<ProcessInterface> findByMetadata(Map<String, String> metadata) throws DataException {
+    public List<Process> findByMetadata(Map<String, String> metadata) throws DataException {
         return findByMetadata(metadata, false);
     }
 
@@ -499,9 +499,9 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *            list of Interface objects
      * @return list of beans
      */
-    public List<Process> convertDtosToBeans(List<ProcessInterface> dtos) throws DAOException {
+    public List<Process> convertDtosToBeans(List<Process> dtos) throws DAOException {
         List<Process> processes = new ArrayList<>();
-        for (ProcessInterface process : dtos) {
+        for (Process process : dtos) {
             processes.add(getById(process.getId()));
         }
         return processes;
@@ -669,7 +669,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     @Override
-    public String getProcessDataDirectory(ProcessInterface process) {
+    public String getProcessDataDirectory(Process process) {
         if (Objects.isNull(process.getProcessBase())) {
             process.setProcessBase(fileService.getProcessBaseUriForExistingProcess(process));
         }
@@ -721,12 +721,12 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *
      * @return the batches the process is in
      */
-    public String getBatchID(ProcessInterface process) {
+    public String getBatchID(Process process) {
         if (process.getBatches().isEmpty()) {
             return null;
         }
         StringBuilder result = new StringBuilder();
-        for (BatchInterface batch : process.getBatches()) {
+        for (Batch batch : process.getBatches()) {
             if (result.length() > 0) {
                 result.append(", ");
             }
@@ -753,12 +753,12 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return currentTasks;
     }
 
-    private List<TaskInterface> getOpenTasks(ProcessInterface process) {
+    private List<Task> getOpenTasks(Process process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.OPEN.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
 
-    private List<TaskInterface> getTasksInWork(ProcessInterface process) {
+    private List<Task> getTasksInWork(Process process) {
         return process.getTasks().stream()
                 .filter(t -> TaskStatus.INWORK.equals(t.getProcessingStatus())).collect(Collectors.toList());
     }
@@ -771,7 +771,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *          process for which the tooltop is created
      * @return String containing the progress tooltip for the given process
      */
-    public String createProgressTooltip(ProcessInterface process) {
+    public String createProgressTooltip(Process process) {
         String openTasks = getOpenTasks(process).stream()
                 .map(t -> " - " + Helper.getTranslation(t.getTitle())).collect(Collectors.joining(NEW_LINE_ENTITY));
         if (!openTasks.isEmpty()) {
@@ -800,8 +800,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *            Interfaceobject
      * @return current task
      */
-    public TaskInterface getCurrentTask(ProcessInterface process) {
-        for (TaskInterface task : process.getTasks()) {
+    public Task getCurrentTask(Process process) {
+        for (Task task : process.getTasks()) {
             if (task.getProcessingStatus().equals(TaskStatus.OPEN)
                     || task.getProcessingStatus().equals(TaskStatus.INWORK)) {
                 return task;
@@ -943,7 +943,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
             // write run note to servlet output stream
-            DocketInterface module = initialiseDocketModule();
+            Docket module = initialiseDocketModule();
 
             File file = module.generateDocket(getDocketData(process), xsltFile);
             writeToOutputStream(facesContext, file, Helper.getNormalizedTitle(process.getTitle()) + ".pdf");
@@ -965,7 +965,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         URI xsltFile = ServiceManager.getFileService().createResource(rootPath, "docket_multipage.xsl");
         FacesContext facesContext = FacesContext.getCurrentInstance();
         if (!facesContext.getResponseComplete()) {
-            DocketInterface module = initialiseDocketModule();
+            Docket module = initialiseDocketModule();
             File file = module.generateMultipleDockets(getDocketData(processes),
                 xsltFile);
 
@@ -1093,8 +1093,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
         return table;
     }
 
-    private static DocketInterface initialiseDocketModule() {
-        KitodoServiceLoader<DocketInterface> loader = new KitodoServiceLoader<>(DocketInterface.class);
+    private static Docket initialiseDocketModule() {
+        KitodoServiceLoader<Docket> loader = new KitodoServiceLoader<>(Docket.class);
         return loader.loadModule();
     }
 
@@ -1148,7 +1148,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     @Override
     public String getBaseType(int processId) throws DataException {
         try {
-            ProcessInterface process = getById(processId);
+            Process process = getById(processId);
             if (Objects.nonNull(process)) {
                 return process.getBaseType();
             }
@@ -1483,17 +1483,17 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
 
     /**
      * Retrieve and return process property value of property with given name
-     * 'propertyName' from given ProcessInterface 'process'.
+     * 'propertyName' from given Process 'process'.
      *
      * @param process
-     *            the ProcessInterface object from which the property value is retrieved
+     *            the Process object from which the property value is retrieved
      * @param propertyName
      *            name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName',
      *         empty String otherwise
      */
-    public static String getPropertyValue(ProcessInterface process, String propertyName) {
-        for (PropertyInterface property : process.getProperties()) {
+    public static String getPropertyValue(Process process, String propertyName) {
+        for (Property property : process.getProperties()) {
             if (property.getTitle().equals(propertyName)) {
                 return property.getValue();
             }
@@ -1505,10 +1505,10 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      * Calculate and return duration/age of given process as a String.
      *
      * @param process
-     *            ProcessInterface object for which duration/age is calculated
+     *            Process object for which duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessInterface process) {
+    public static String getProcessDuration(Process process) {
         String creationDateTimeString = process.getCreationTime();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
@@ -1804,20 +1804,20 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      *
      * @throws DAOException thrown when process cannot be loaded from database
      */
-    public List<Comment> getComments(ProcessInterface process) throws DAOException {
+    public List<Comment> getComments(Process process) throws DAOException {
         Process processBean = ServiceManager.getProcessService().getById(process.getId());
         return ServiceManager.getCommentService().getAllCommentsByProcess(processBean);
     }
 
     /**
-     * Check and return if child process for given ProcessInterface process can be created via calendar or not.
+     * Check and return if child process for given Process process can be created via calendar or not.
      *
-     * @param process ProcessInterface for which child processes may be created via calendar
-     * @return whether child processes for the given ProcessInterface can be created via the calendar or not
+     * @param process Process for which child processes may be created via calendar
+     * @return whether child processes for the given Process can be created via the calendar or not
      * @throws DAOException if process could not be loaded from database
      * @throws IOException if ruleset file could not be read
      */
-    public static boolean canCreateProcessWithCalendar(ProcessInterface process)
+    public static boolean canCreateProcessWithCalendar(Process process)
             throws DAOException, IOException {
         Collection<String> functionalDivisions;
         if (Objects.isNull(process.getRuleset())) {
@@ -1836,14 +1836,14 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     }
 
     /**
-     * Check and return if child process for given ProcessInterface process can be created or not.
+     * Check and return if child process for given Process process can be created or not.
      *
-     * @param process ProcessInterface for which child processes may be created
-     * @return whether child processes for the given ProcessInterface can be created via the calendar or not
+     * @param process Process for which child processes may be created
+     * @return whether child processes for the given Process can be created via the calendar or not
      * @throws DAOException if process could not be loaded from database
      * @throws IOException if ruleset file could not be read
      */
-    public static boolean canCreateChildProcess(ProcessInterface process) throws DAOException,
+    public static boolean canCreateChildProcess(Process process) throws DAOException,
             IOException {
         Collection<String> functionalDivisions;
         if (Objects.isNull(process.getRuleset())) {
@@ -1865,7 +1865,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      * Starts generation of xml logfile for current process.
      */
     public static void createXML(Process process, User user) throws IOException {
-        DocketInterface xmlExport = initialiseDocketModule();
+        Docket xmlExport = initialiseDocketModule();
         String directory = new File(ServiceManager.getUserService().getHomeDirectory(user)).getPath();
         String destination = directory + "/" + Helper.getNormalizedTitle(process.getTitle()) + "_log.xml";
         xmlExport.exportXmlLog(getDocketData(process), destination);
@@ -1972,7 +1972,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
     public Map<String, Integer> getProcessTaskStates(List<Process> processes) {
         Map<String, Integer> processTaskStates = new LinkedHashMap<>();
         for (Process process : processes) {
-            TaskInterface currentTask = ServiceManager.getProcessService().getCurrentTask(process);
+            Task currentTask = ServiceManager.getProcessService().getCurrentTask(process);
             if (Objects.nonNull(currentTask)) {
                 String currentTaskTitle = currentTask.getTitle();
                 if (processTaskStates.containsKey(currentTaskTitle)) {
@@ -1991,7 +1991,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO>
      * @param user user to filter the tasks for
      * @return List of filtered tasks as Interface objects
      */
-    public List<TaskInterface> getCurrentTasksForUser(ProcessInterface process, User user) {
+    public List<Task> getCurrentTasksForUser(Process process, User user) {
         Set<Integer> userRoles = user.getRoles().stream()
                 .map(Role::getId)
                 .collect(Collectors.toSet());

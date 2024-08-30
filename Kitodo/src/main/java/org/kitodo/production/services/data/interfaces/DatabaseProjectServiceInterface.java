@@ -94,7 +94,7 @@ public interface DatabaseProjectServiceInterface extends SearchDatabaseServiceIn
 
         Stream<Project> projectsStream = projects.stream();
         if (permissions.hasAuthorityToViewProjectList() && permissions.hasAuthorityToViewClientList()) {
-            List<Integer> permitted = findAllProjectsForCurrentUser().stream().map(ProjectInterface::getId)
+            List<Integer> permitted = findAllProjectsForCurrentUser().stream().map(Project::getId)
                     .collect(Collectors.toList());
             projectsStream = projectsStream.filter(project -> permitted.contains(project.getId()));
         }
@@ -127,9 +127,9 @@ public interface DatabaseProjectServiceInterface extends SearchDatabaseServiceIn
      */
     @Deprecated
     @SuppressWarnings("unchecked")
-    default List<ProjectInterface> findAll() throws DataException {
+    default List<Project> findAll() throws DataException {
         try {
-            return (List<ProjectInterface>) (List<?>) getAll();
+            return (List<Project>) (List<?>) getAll();
         } catch (DAOException e) {
             throw new DataException(e);
         }

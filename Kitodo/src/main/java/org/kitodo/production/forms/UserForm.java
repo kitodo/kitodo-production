@@ -563,10 +563,10 @@ public class UserForm extends BaseForm {
      *
      * @return list of projects available for assignment to the user
      */
-    public List<ProjectInterface> getProjects() {
+    public List<Project> getProjects() {
         try {
             return ServiceManager.getProjectService().findAllAvailableForAssignToUser(this.userObject)
-                    .stream().sorted(Comparator.comparing(ProjectInterface::getTitle)).collect(Collectors.toList());
+                    .stream().sorted(Comparator.comparing(Project::getTitle)).collect(Collectors.toList());
         } catch (DataException e) {
             Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROJECT.getTranslationPlural() },
                 logger, e);
@@ -626,11 +626,11 @@ public class UserForm extends BaseForm {
     }
 
     /**
-     * Check and return whether given UserInterface 'user' is logged in.
+     * Check and return whether given User 'user' is logged in.
      *
      * @param user
-     *            UserInterface to check
-     * @return whether given UserInterface is checked in
+     *            User to check
+     * @return whether given User is checked in
      */
     public static boolean checkUserLoggedIn(User user) {
         for (SecuritySession securitySession : ServiceManager.getSessionService().getActiveSessions()) {

@@ -227,7 +227,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         if (list.isEmpty()) {
             return false;
         }
-        for (TaskInterface task : list) {
+        for (Task task : list) {
             if (task.getRolesSize() == 0) {
                 return false;
             }

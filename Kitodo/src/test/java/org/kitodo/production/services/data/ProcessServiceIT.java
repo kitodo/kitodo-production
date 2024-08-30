@@ -360,7 +360,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldGetBatchId() throws Exception {
-        ProcessInterface process = processService.findById(1);
+        Process process = processService.findById(1);
         String batchId = processService.getBatchID(process);
         boolean condition = batchId.equals("First batch, Third batch");
         assertTrue("BatchId doesn't match to given plain text!", condition);
@@ -369,7 +369,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
-        TaskInterface actual = processService.getCurrentTask(process);
+        Task actual = processService.getCurrentTask(process);
         assertEquals("Task doesn't match to given task!", 8, actual.getId().intValue());
     }
 
@@ -507,13 +507,13 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessInterface process = processService.findById(2);
+        Process process = processService.findById(2);
         assertTrue(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
     public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessInterface process = processService.findById(1);
+        Process process = processService.findById(1);
         assertFalse(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 

@@ -42,7 +42,7 @@ public class DesktopForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(DesktopForm.class);
     private static final String SORT_TITLE = "title";
     private static final String SORT_ID = "id";
-    private List<TaskInterface> taskList = new ArrayList<>();
+    private List<Task> taskList = new ArrayList<>();
     private List<Process> processList = new ArrayList<>();
     private List<Project> projectList = new ArrayList<>();
 
@@ -77,7 +77,7 @@ public class DesktopForm extends BaseForm {
      *
      * @return task list
      */
-    public List<TaskInterface> getTasks() {
+    public List<Task> getTasks() {
         try {
             if (ServiceManager.getSecurityAccessService().hasAuthorityToViewTaskList() && taskList.isEmpty()) {
                 taskList = ServiceManager.getTaskService().loadData(0, 10, SORT_TITLE, SortOrder.ASCENDING, new HashMap<>());

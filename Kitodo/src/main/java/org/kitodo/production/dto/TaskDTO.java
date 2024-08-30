@@ -34,13 +34,13 @@ public class TaskDTO extends BaseDTO {
     private String processingStatusTitle;
     private TaskEditType editType;
     private String editTypeTitle;
-    private UserInterface processingUser;
+    private UserDTO processingUser;
     private String processingTime;
     private String processingBegin;
     private String processingEnd;
-    private ProcessInterface process;
-    private ProjectInterface project;
-    private TemplateInterface template;
+    private ProcessDTO process;
+    private ProjectDTO project;
+    private TemplateDTO template;
     private List<Integer> roleIds = new ArrayList<>();
     private int rolesSize;
     private boolean correction;
@@ -201,23 +201,23 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Get processing user as UserInterface.
+     * Get processing user as UserDTO.
      *
-     * @return processing user as UserInterface
+     * @return processing user as UserDTO
      */
     @Override
-    public UserInterface getProcessingUser() {
+    public UserDTO getProcessingUser() {
         return processingUser;
     }
 
     /**
-     * Set processing user as UserInterface.
+     * Set processing user as UserDTO.
      *
      * @param processingUser
-     *            as UserInterface
+     *            as UserDTO
      */
     @Override
-    public void setProcessingUser(UserInterface processingUser) {
+    public void setProcessingUser(UserDTO processingUser) {
         this.processingUser = processingUser;
     }
 
@@ -285,33 +285,33 @@ public class TaskDTO extends BaseDTO {
     }
 
     /**
-     * Get process as ProcessInterface.
+     * Get process as ProcessDTO.
      *
-     * @return process as ProcessInterface
+     * @return process as ProcessDTO
      */
     @Override
-    public ProcessInterface getProcess() {
+    public ProcessDTO getProcess() {
         return process;
     }
 
     /**
-     * Set process as ProcessInterface.
+     * Set process as ProcessDTO.
      *
      * @param process
-     *            as ProcessInterface
+     *            as ProcessDTO
      */
     @Override
-    public void setProcess(ProcessInterface process) {
+    public void setProcess(ProcessDTO process) {
         this.process = process;
     }
 
     /**
      * Get project.
      *
-     * @return project as ProjectInterface
+     * @return project as ProjectDTO
      */
     @Override
-    public ProjectInterface getProject() {
+    public ProjectDTO getProject() {
         return project;
     }
 
@@ -319,31 +319,31 @@ public class TaskDTO extends BaseDTO {
      * Set project.
      *
      * @param project
-     *            as ProjectInterface
+     *            as ProjectDTO
      */
     @Override
-    public void setProject(ProjectInterface project) {
+    public void setProject(ProjectDTO project) {
         this.project = project;
     }
 
     /**
-     * Get template as TemplateInterface.
+     * Get template as TemplateDTO.
      *
-     * @return template as TemplateInterface
+     * @return template as TemplateDTO
      */
     @Override
-    public TemplateInterface getTemplate() {
+    public TemplateDTO getTemplate() {
         return template;
     }
 
     /**
-     * Set template as TemplateInterface.
+     * Set template as TemplateDTO.
      *
      * @param template
-     *            as TemplateInterface
+     *            as TemplateDTO
      */
     @Override
-    public void setTemplate(TemplateInterface template) {
+    public void setTemplate(TemplateDTO template) {
         this.template = template;
     }
 
