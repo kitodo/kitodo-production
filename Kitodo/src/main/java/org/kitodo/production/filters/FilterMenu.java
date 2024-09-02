@@ -220,14 +220,24 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
                 break;
             case PROPERTY:
-                suggestions.addAll(createStringSuggestionsMatchingInput(input,
-                    filterService.initProcessPropertyTitles(), FilterPart.VALUE));
+                suggestions.addAll(createStringSuggestionsMatchingInput(input, initProcessPropertyTitles(), FilterPart.VALUE));
                 break;
             default:
                 // Do nothing
                 break;
         }
         return suggestions;
+    }
+
+    /**
+     * Get list of process properties and format them with a trailing colon.
+     *
+     * @return List of formatted process property keys
+     */
+    private List<String> initProcessPropertyTitles() {
+        return ServiceManager.getFilterService().initProcessPropertyTitles().stream()
+                .map(propertyTitle -> propertyTitle + ":")
+                .collect(Collectors.toList());
     }
 
     private List<Suggestion> createSuggestionsForTaskValue(FilterString category, String input) {
@@ -246,8 +256,7 @@ public class FilterMenu {
                 suggestions.addAll(createStringSuggestionsMatchingInput(input, filterService.initProjects(), FilterPart.VALUE));
                 break;
             case PROPERTY:
-                suggestions.addAll(createStringSuggestionsMatchingInput(input,
-                    filterService.initProcessPropertyTitles(), FilterPart.VALUE));
+                suggestions.addAll(createStringSuggestionsMatchingInput(input, initProcessPropertyTitles(), FilterPart.VALUE));
                 break;
             default:
                 // Do nothing
