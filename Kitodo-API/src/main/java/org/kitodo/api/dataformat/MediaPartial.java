@@ -29,7 +29,7 @@ public class MediaPartial {
      *
      * @param begin
      *         The begin as formatted time in form of
-     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
+     *         {@see org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
      */
     public MediaPartial(String begin) {
         this.begin = begin;
@@ -40,10 +40,10 @@ public class MediaPartial {
      *
      * @param begin
      *         The begin as formatted time in form of
-     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
+     *         {@see org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
      * @param extent
      *         The extent as formatted time in form of
-     *         HH:MM:SS.mmm (hour, minutes, seconds, milliseconds)
+     *         {@see org.kitodo.production.helper.metadata.MediaPartialHelper#FORMATTED_TIME_PATTERN}
      */
     public MediaPartial(String begin, String extent) {
         this(begin);
