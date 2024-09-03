@@ -20,8 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.beans.Docket;
-
 @Entity
 @Table(name = "docket")
 public class Docket extends BaseBean {

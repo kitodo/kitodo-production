@@ -20,9 +20,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.kitodo.data.database.beans.Client;
-import org.kitodo.data.database.beans.Ruleset;
-
 @Entity
 @Table(name = "ruleset")
 public class Ruleset extends BaseBean {
