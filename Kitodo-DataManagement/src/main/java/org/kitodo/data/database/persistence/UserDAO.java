@@ -87,6 +87,6 @@ public class UserDAO extends BaseDAO<User> {
      * @return sorted list of all active users as User objects
      */
     public List<User> getAllActiveUsersSortedByNameAndSurname() {
-        return getByQuery("FROM User WHERE active = 1 AND deleted = 0 ORDER BY surname ASC, name ASC");
+        return getByQuery("FROM User WHERE active = true AND deleted = false ORDER BY surname ASC, name ASC");
     }
 }

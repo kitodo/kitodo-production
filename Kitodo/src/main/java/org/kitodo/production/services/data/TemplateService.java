@@ -89,7 +89,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
                 .getSessionClientId());
         return countDatabaseRows(this.showInactiveTemplates
                 ? "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId"
-                : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = 1", parameters);
+                : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = true", parameters);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
         String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
         return getByQuery("FROM Template WHERE client_id = :sessionClientId "
-                + (this.showInactiveTemplates ? "" : "AND active = 1 ") + "ORDER BY " + desiredOrder,
+                + (this.showInactiveTemplates ? "" : "AND active = true ") + "ORDER BY " + desiredOrder,
                 parameters, first, pageSize);
     }
 
@@ -137,7 +137,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
     public List<Template> findAllAvailableForAssignToProject(Integer projectId) throws DAOException {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        List<Template> templates = getByQuery("FROM Template WHERE client_id = :sessionClientId AND active = 1",
+        List<Template> templates = getByQuery("FROM Template WHERE client_id = :sessionClientId AND active = true",
             parameters);
         if (Objects.nonNull(projectId)) {
             List<Template> assigned = ServiceManager.getProjectService().getById(projectId).getTemplates();
