@@ -955,14 +955,13 @@ public class ImportService {
                 parentIDMetadata.put(identifierMetadata, parentId);
                 try {
                     for (Process process : ServiceManager.getProcessService().findByMetadata(parentIDMetadata, true)) {
-                        Process processBean = ServiceManager.getProcessService().getById(process.getId());
-                        if (Objects.isNull(processBean.getRuleset()) || Objects.isNull(processBean.getRuleset().getId())) {
+                        if (Objects.isNull(process.getRuleset()) || Objects.isNull(process.getRuleset().getId())) {
                             throw new ProcessGenerationException("Ruleset or ruleset ID of potential parent process "
-                                    + processBean.getId() + " is null!");
+                                    + process.getId() + " is null!");
                         }
-                        if (processBean.getProject().getId() == projectId
-                                && processBean.getRuleset().getId().equals(ruleset.getId())) {
-                            parentProcess = processBean;
+                        if (process.getProject().getId() == projectId && process.getRuleset().getId().equals(ruleset
+                                .getId())) {
+                            parentProcess = process;
                             break;
                         }
                     }

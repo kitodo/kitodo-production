@@ -449,8 +449,6 @@ public class WorkflowControllerService {
             activateConcurrentTasks(concurrentTasksForOpen);
         }
 
-        process = ServiceManager.getProcessService().getById(process.getId());
-
         URI imagesOrigDirectory = ServiceManager.getProcessService().getImagesOriginDirectory(true, process);
         Integer numberOfFiles = ServiceManager.getFileService().getNumberOfFiles(imagesOrigDirectory);
         if (!process.getSortHelperImages().equals(numberOfFiles)) {
@@ -458,7 +456,6 @@ public class WorkflowControllerService {
         }
 
         ServiceManager.getProcessService().save(process);
-        process = ServiceManager.getProcessService().getById(process.getId());
 
         for (Task automaticTask : automaticTasks) {
             automaticTask.setProcessingBegin(new Date());

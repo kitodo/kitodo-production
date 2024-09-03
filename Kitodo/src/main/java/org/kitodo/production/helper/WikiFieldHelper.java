@@ -372,7 +372,7 @@ public class WikiFieldHelper {
                 ServiceManager.getPropertyService().removeFromDatabase(property);
                 property.getProcesses().remove(process);
                 ServiceManager.getPropertyService().removeFromDatabase(property);
-                return ServiceManager.getProcessService().getById(process.getId());
+                return process;
             }
         }
 

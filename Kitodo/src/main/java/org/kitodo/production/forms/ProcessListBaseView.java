@@ -479,8 +479,8 @@ public class ProcessListBaseView extends BaseForm {
      */
     public void createXML(Process process) {
         try {
-            ProcessService.createXML(ServiceManager.getProcessService().getById(process.getId()), getUser());
-        } catch (IOException | DAOException e) {
+            ProcessService.createXML(process, getUser());
+        } catch (IOException e) {
             Helper.setErrorMessage("Error creating log file in home directory", logger, e);
         }
     }
@@ -527,14 +527,9 @@ public class ProcessListBaseView extends BaseForm {
      * Upload from home for single process.
      */
     public void uploadFromHome(Process process) {
-        try {
-            WebDav myDav = new WebDav();
-            myDav.uploadFromHome(ServiceManager.getProcessService().getById(process.getId()));
-            Helper.setMessage("directoryRemoved", process.getTitle());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), process.getId() }, logger, e);
-        }
+        WebDav myDav = new WebDav();
+        myDav.uploadFromHome(process);
+        Helper.setMessage("directoryRemoved", process.getTitle());
     }
 
     /**
@@ -544,23 +539,18 @@ public class ProcessListBaseView extends BaseForm {
      *            process to delete.
      */
     public void delete(Process process) {
-        try {
-            Process processBean = ServiceManager.getProcessService().getById(process.getId());
-            if (processBean.getChildren().isEmpty()) {
-                try {
-                    ProcessService.deleteProcess(processBean.getId());
-                } catch (DAOException | IOException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                            logger, e);
-                }
-            } else {
-                this.deleteProcessDialog = new DeleteProcessDialog();
-                this.deleteProcessDialog.setProcess(processBean);
-                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+        Process processBean = process;
+        if (processBean.getChildren().isEmpty()) {
+            try {
+                ProcessService.deleteProcess(processBean.getId());
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+        } else {
+            this.deleteProcessDialog = new DeleteProcessDialog();
+            this.deleteProcessDialog.setProcess(processBean);
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
     }
 

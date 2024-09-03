@@ -326,16 +326,10 @@ public class CommentForm extends BaseForm {
      * @param process Object process to refresh
      */
     private void refreshProcess(Process process) {
-        try {
-            if (!Objects.equals(process.getId(), 0)) {
-                if (Objects.nonNull(this.currentTask)) {
-                    this.currentTask.setProcess(ServiceManager.getProcessService().getById(process.getId()));
-                }
+        if (!Objects.equals(process.getId(), 0)) {
+            if (Objects.nonNull(this.currentTask)) {
+                this.currentTask.setProcess(process);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), this.currentTask.getProcess().getId()},
-                    logger, e);
         }
     }
 

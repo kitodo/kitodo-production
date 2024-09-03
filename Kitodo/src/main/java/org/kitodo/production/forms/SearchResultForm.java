@@ -173,24 +173,18 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     @Override
     public void delete(Process process) {
-        try {
-            Process processBean = ServiceManager.getProcessService().getById(process.getId());
-            if (processBean.getChildren().isEmpty()) {
-                try {
-                    ProcessService.deleteProcess(processBean);
-                    this.filteredList.remove(processBean);
-                } catch (DAOException | IOException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                            logger, e);
-                }
-            } else {
-                this.deleteProcessDialog = new DeleteProcessDialog();
-                this.deleteProcessDialog.setProcess(processBean);
-                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+        if (process.getChildren().isEmpty()) {
+            try {
+                ProcessService.deleteProcess(process);
+                this.filteredList.remove(process);
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+        } else {
+            this.deleteProcessDialog = new DeleteProcessDialog();
+            this.deleteProcessDialog.setProcess(process);
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
     }
 

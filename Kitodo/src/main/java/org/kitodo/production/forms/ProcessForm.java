@@ -203,15 +203,9 @@ public class ProcessForm extends TemplateBaseForm {
      * @return path to createProcessForm
      */
     public String createProcessAsChild(Process process) {
-        try {
-            Process processBean = ServiceManager.getProcessService().getById(process.getId());
-            if (Objects.nonNull(processBean.getTemplate()) && Objects.nonNull(processBean.getProject())) {
-                return CREATE_PROCESS_PATH + "&templateId=" + processBean.getTemplate().getId() + "&projectId="
-                        + processBean.getProject().getId() + "&parentId=" + processBean.getId();
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
+        if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
+            return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
+                    + process.getProject().getId() + "&parentId=" + process.getId();
         }
         return "processes";
     }

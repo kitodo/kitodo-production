@@ -2104,8 +2104,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @throws DAOException thrown when process cannot be loaded from database
      */
     public List<Comment> getComments(Process process) throws DAOException {
-        Process processBean = ServiceManager.getProcessService().getById(process.getId());
-        return ServiceManager.getCommentService().getAllCommentsByProcess(processBean);
+        return ServiceManager.getCommentService().getAllCommentsByProcess(process);
     }
 
     /**
