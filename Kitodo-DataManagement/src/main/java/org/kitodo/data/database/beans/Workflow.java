@@ -31,7 +31,7 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 
 @Entity
 @Table(name = "workflow")
-public class Workflow extends BaseIndexedBean {
+public class Workflow extends BaseBean {
 
     @Column(name = "title")
     private String title;

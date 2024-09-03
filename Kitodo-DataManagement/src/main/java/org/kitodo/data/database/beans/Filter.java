@@ -28,7 +28,7 @@ import org.kitodo.data.database.beans.Filter;
  */
 @Entity
 @Table(name = "filter")
-public class Filter extends BaseIndexedBean {
+public class Filter extends BaseBean {
 
     @Column(name = "value", columnDefinition = "longtext")
     private String value;

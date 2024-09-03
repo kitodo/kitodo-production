@@ -38,7 +38,7 @@ import org.kitodo.data.database.persistence.TaskDAO;
 
 @Entity
 @Table(name = "task")
-public class Task extends BaseIndexedBean {
+public class Task extends BaseBean {
 
     @Column(name = "title")
     private String title;

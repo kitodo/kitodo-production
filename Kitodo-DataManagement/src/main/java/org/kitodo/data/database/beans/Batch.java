@@ -39,7 +39,7 @@ import org.kitodo.data.database.persistence.BatchDAO;
  */
 @Entity
 @Table(name = "batch")
-public class Batch extends BaseIndexedBean {
+public class Batch extends BaseBean {
 
     /**
      * The batch title. Using titles for batches is optional, the field may be

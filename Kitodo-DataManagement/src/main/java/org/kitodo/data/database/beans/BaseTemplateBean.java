@@ -23,7 +23,7 @@ import javax.persistence.MappedSuperclass;
  * This bean contains properties common for Template and Process.
  */
 @MappedSuperclass
-public abstract class BaseTemplateBean extends BaseIndexedBean {
+public abstract class BaseTemplateBean extends BaseBean {
 
     @Column(name = "title")
     protected String title;

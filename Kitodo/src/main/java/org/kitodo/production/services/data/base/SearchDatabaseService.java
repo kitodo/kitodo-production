@@ -415,12 +415,12 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     /**
      * Method adds all object found in database to Elastic Search index.
      *
-     * @param baseIndexedBeans
-     *            List of BaseIndexedBean objects
+     * @param baseBeans
+     *            List of BaseBean objects
      * @deprecated Does nothing anymore and can be deleted.
      */
     @Deprecated
-    public void addAllObjectsToIndex(List<T> baseIndexedBeans) throws DAOException,
+    public void addAllObjectsToIndex(List<T> baseBeans) throws DAOException,
             IOException {
     }
 

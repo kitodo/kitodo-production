@@ -29,7 +29,7 @@ import org.kitodo.data.database.persistence.PropertyDAO;
 
 @Entity
 @Table(name = "property")
-public class Property extends BaseIndexedBean implements Comparable<Property> {
+public class Property extends BaseBean implements Comparable<Property> {
 
     @Column(name = "title")
     private String title;

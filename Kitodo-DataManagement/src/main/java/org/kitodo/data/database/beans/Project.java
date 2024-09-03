@@ -44,7 +44,7 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean implements Comparable<Project> {
+public class Project extends BaseBean implements Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;

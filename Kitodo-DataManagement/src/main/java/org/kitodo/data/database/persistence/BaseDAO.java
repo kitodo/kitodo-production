@@ -32,7 +32,6 @@ import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.database.beans.BaseIndexedBean;
 import org.kitodo.data.database.exceptions.DAOException;
 
 /**
@@ -388,7 +387,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
 
     void storeAsIndexed(List<T> baseBeans) throws DAOException {
         for (BaseBean baseBean : baseBeans) {
-            BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
+            BaseBean entity = getById(baseBean.getId());
             storeObject((T) entity);
         }
     }
