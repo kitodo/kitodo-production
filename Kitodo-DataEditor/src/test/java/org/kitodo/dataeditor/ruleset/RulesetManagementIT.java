@@ -1206,8 +1206,8 @@ public class RulesetManagementIT {
             List<MetadataViewWithValuesInterface> metadataViewWithValuesInterfaceList, String keyId) {
         return (ComplexMetadataViewInterface) metadataViewWithValuesInterfaceList.stream()
                 .filter(mvwvi -> mvwvi.getMetadata().isPresent())
-                .filter(metadataViewWithValues -> keyId
-                        .equals(metadataViewWithValues.getMetadata().get().getId()))
+                .filter(metadataViewWithValuesInterface -> keyId
+                        .equals(metadataViewWithValuesInterface.getMetadata().get().getId()))
                 .findAny().get().getMetadata().get();
     }
 
@@ -1235,8 +1235,8 @@ public class RulesetManagementIT {
      */
     private List<String> ids(List<MetadataViewWithValuesInterface> metadataViewWithValuesInterfaceList) {
         return metadataViewWithValuesInterfaceList.stream()
-                .filter(metadataViewWithValues -> metadataViewWithValues.getMetadata().isPresent())
-                .map(metadataViewWithValues -> metadataViewWithValues.getMetadata().get().getId())
+                .filter(metadataViewWithValuesInterface -> metadataViewWithValuesInterface.getMetadata().isPresent())
+                .map(metadataViewWithValuesInterface -> metadataViewWithValuesInterface.getMetadata().get().getId())
                 .collect(Collectors.toList());
     }
 
