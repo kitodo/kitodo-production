@@ -222,6 +222,7 @@ public class MigrationServiceIT {
 
         migrationService.addProcessesToTemplate(template, processes);
 
+        ServiceManager.getTemplateService().refresh(template);
         Assert.assertEquals(2, template.getProcesses().size());
         Assert.assertEquals(5, (long) firstProcess.getTemplate().getId());
         Assert.assertEquals(5, (long) secondProcess.getTemplate().getId());
