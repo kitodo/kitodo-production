@@ -54,6 +54,7 @@
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
         <hamcrest.version>2.2-rc1</hamcrest.version>
         <hibernate.version>5.6.10.Final</hibernate.version>
+        <hibernate-search.version>6.2.4.Final</hibernate-search.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.6</jaxb.glassfish-runtime.version>
         <jaxb2-basics-runtime.version>1.11.1</jaxb2-basics-runtime.version>
