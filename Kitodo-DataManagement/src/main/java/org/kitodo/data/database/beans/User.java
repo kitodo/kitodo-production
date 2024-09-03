@@ -394,7 +394,7 @@ public class User extends BaseBean {
      *            list of tasks to set
      */
     public void setProcessingTasks(List<Task> processingTasks) {
-        this.processingTasks = (List<Task>) processingTasks;
+        this.processingTasks = processingTasks;
     }
 
     /**
@@ -417,7 +417,7 @@ public class User extends BaseBean {
      *            list of projects to set
      */
     public void setProjects(List<Project> projects) {
-        this.projects = (List<Project>) projects;
+        this.projects = projects;
     }
 
     /**

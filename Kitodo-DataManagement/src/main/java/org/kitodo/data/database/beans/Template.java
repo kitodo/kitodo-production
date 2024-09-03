@@ -229,7 +229,7 @@ public class Template extends BaseTemplateBean {
      *            projects list to set
      */
     public void setProjects(List<Project> projects) {
-        this.projects = (List<Project>) projects;
+        this.projects = projects;
     }
 
     /**
