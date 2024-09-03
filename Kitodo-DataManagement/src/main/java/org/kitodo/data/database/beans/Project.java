@@ -549,7 +549,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      *            the client
      */
     public void setClient(Client client) {
-        this.client = (Client) client;
+        this.client = client;
     }
 
     /**

@@ -122,7 +122,7 @@ public class Docket extends BaseBean {
      *            client to which this docket is associated
      */
     public void setClient(Client client) {
-        this.client = (Client) client;
+        this.client = client;
     }
 
     @Override

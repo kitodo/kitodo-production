@@ -151,7 +151,7 @@ public class Ruleset extends BaseBean {
      *            client to which this ruleset is associated
      */
     public void setClient(Client client) {
-        this.client = (Client) client;
+        this.client = client;
     }
 
     @Override

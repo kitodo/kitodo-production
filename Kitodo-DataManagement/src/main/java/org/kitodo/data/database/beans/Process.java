@@ -397,7 +397,7 @@ public class Process extends BaseTemplateBean {
      *            the docket generation statement
      */
     public void setDocket(Docket docket) {
-        this.docket = (Docket) docket;
+        this.docket = docket;
     }
 
     /**

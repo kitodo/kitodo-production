@@ -448,7 +448,7 @@ public class Task extends BaseBean {
      *            user to set
      */
     public void setProcessingUser(User processingUser) {
-        this.processingUser = (User) processingUser;
+        this.processingUser = processingUser;
     }
 
     /**
@@ -469,7 +469,7 @@ public class Task extends BaseBean {
      *            process this task belongs to
      */
     public void setProcess(Process process) {
-        this.process = (Process) process;
+        this.process = process;
     }
 
     /**
