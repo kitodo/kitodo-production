@@ -79,7 +79,7 @@ public class ImportingST extends BaseTestSelenium {
     }
 
     @AfterClass
-    public static void cleanup() throws DAOException, DAOException, IOException {
+    public static void cleanup() throws DAOException, IOException {
         ProcessService.deleteProcess(multiVolumeWorkId);
     }
 

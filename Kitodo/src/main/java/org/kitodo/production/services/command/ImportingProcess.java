@@ -407,7 +407,7 @@ final class ImportingProcess {
      * @throws MediaNotFoundException
      *             if media files are missing
      */
-    void executeAction(int action) throws IOException, DAOException, DAOException, ProcessGenerationException,
+    void executeAction(int action) throws IOException, DAOException, ProcessGenerationException,
             MediaNotFoundException, InvalidImagesException {
 
         assert action >= 0 && action <= numberOfFileSystemItems + 1
@@ -494,7 +494,7 @@ final class ImportingProcess {
      *            the newly created process
      */
     private void copyAndAdjustMetsFile(Process process)
-            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException, DAOException {
+            throws IOException, InvalidImagesException, MediaNotFoundException, DAOException {
 
         Workpiece workpiece = metsService.loadWorkpiece(sourceDir.resolve(META_FILE_NAME).toUri());
         workpiece.setId(processId.toString());
@@ -512,7 +512,7 @@ final class ImportingProcess {
         logger.info("Wrote METS file " + outputMetsFile);
     }
 
-    private void addLinkInDatabase(Process parent, Integer childProcessId) throws DAOException, DAOException {
+    private void addLinkInDatabase(Process parent, Integer childProcessId) throws DAOException {
         Process child = processService.getById(childProcessId);
         child.setParent(parent);
         parent.getChildren().add(child);

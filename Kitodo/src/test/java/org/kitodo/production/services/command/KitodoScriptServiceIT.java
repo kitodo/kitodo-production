@@ -85,7 +85,7 @@ public class KitodoScriptServiceIT {
      * Add metadata test process and metadata file for KitodoScriptService tests.
      */
     @Before
-    public void prepareFileCopy() throws IOException, DAOException, DAOException {
+    public void prepareFileCopy() throws IOException, DAOException {
         kitodoScriptTestProcessId = MockDatabase.insertTestProcess(testProcessTitle, projectId, templateId, rulesetId);
         ProcessTestUtils.copyTestResources(kitodoScriptTestProcessId, directoryForDerivateGeneration);
         ProcessTestUtils.copyTestMetadataFile(kitodoScriptTestProcessId, metadataWithDuplicatesTestFile);
@@ -95,7 +95,7 @@ public class KitodoScriptServiceIT {
      * Remove test process and metadata file for KitodoScriptService tests.
      */
     @After
-    public void removeKitodoScriptServiceTestFile() throws IOException, DAOException, DAOException {
+    public void removeKitodoScriptServiceTestFile() throws IOException, DAOException {
         ProcessTestUtils.removeTestProcess(kitodoScriptTestProcessId);
         kitodoScriptTestProcessId = -1;
     }

@@ -69,7 +69,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
     }
 
     @Override
-    public Long countResults(Map filters) throws DAOException, DAOException {
+    public Long countResults(Map filters) throws DAOException {
         return countDatabaseRows();
     }
 

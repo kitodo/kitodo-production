@@ -85,7 +85,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     private void processAction(MapMessageObjectReader mapMessageObjectReader, TaskAction taskAction, Task currentTask)
-            throws JMSException, ProcessorException, DAOException, DAOException, IOException {
+            throws JMSException, ProcessorException, DAOException, IOException {
         Comment comment = null;
         if (mapMessageObjectReader.hasField(KEY_MESSAGE)) {
             comment = buildComment(currentTask, mapMessageObjectReader.getMandatoryString(KEY_MESSAGE));
@@ -143,7 +143,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     private void actionErrorOpen(MapMessageObjectReader mapMessageObjectReader, Comment comment)
-            throws ProcessorException, JMSException, DAOException, DAOException {
+            throws ProcessorException, JMSException, DAOException {
         if (mapMessageObjectReader.hasField(KEY_CORRECTION_TASK_ID)) {
             Integer correctionTaskId = mapMessageObjectReader.getMandatoryInteger(KEY_CORRECTION_TASK_ID);
             Task correctionTask = taskService.getById(correctionTaskId);
@@ -166,7 +166,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     private void actionErrorClose(MapMessageObjectReader mapMessageObjectReader, Task currentTask, User currentUser)
-            throws JMSException, DAOException, DAOException, IOException {
+            throws JMSException, DAOException, IOException {
         currentTask.setProcessingStatus(TaskStatus.OPEN);
         currentTask.setEditType(TaskEditType.QUEUE);
         currentTask.setProcessingBegin(null);
@@ -182,12 +182,12 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         }
     }
 
-    private void markErrorCommentAsCorrected(Task currentTask) throws DAOException, DAOException, IOException {
+    private void markErrorCommentAsCorrected(Task currentTask) throws DAOException, IOException {
         markErrorCommentAsCorrected(currentTask, null);
     }
 
     private void markErrorCommentAsCorrected(Task currentTask, Integer correctionTaskId)
-            throws DAOException, DAOException, IOException {
+            throws DAOException, IOException {
         List<Comment> comments = ServiceManager.getCommentService().getAllCommentsByTask(currentTask);
         Optional<Comment> optionalComment;
         optionalComment = comments.stream().filter(currentTaskComment -> CommentType.ERROR.equals(

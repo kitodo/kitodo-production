@@ -173,7 +173,7 @@ public class WorkflowForm extends BaseForm {
      * Update the tasks of the templates associated with the current workflow and delete associated
      * editor settings.
      */
-    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DAOException {
+    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException {
         Converter converter = new Converter(this.workflow.getTitle());
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());

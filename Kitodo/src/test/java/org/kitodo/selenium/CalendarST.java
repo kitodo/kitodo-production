@@ -63,7 +63,7 @@ public class CalendarST extends BaseTestSelenium {
     }
 
     @AfterClass
-    public static void cleanup() throws DAOException, DAOException, IOException {
+    public static void cleanup() throws DAOException, IOException {
         ProcessTestUtils.removeTestProcess(newspaperTestProcessId);
     }
 

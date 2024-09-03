@@ -220,7 +220,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @throws DAOException
      *             that can be caused by ElasticSearch
      */
-    public abstract Long countResults(Map<?, String> filters) throws DAOException, DAOException;
+    public abstract Long countResults(Map<?, String> filters) throws DAOException;
 
     /**
      * Gets an object by its database record number.

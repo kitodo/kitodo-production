@@ -114,7 +114,7 @@ public class NewspaperProcessesGeneratorIT {
      * @throws IOException when copying test metadata file fails
      */
     @Before
-    public void prepareNewspaperProcess() throws DAOException, DAOException, IOException {
+    public void prepareNewspaperProcess() throws DAOException, IOException {
         newspaperTestProcessId = MockDatabase.insertTestProcess(NEWSPAPER_TEST_PROCESS_TITLE, 1, 1, rulesetId);
         ProcessTestUtils.copyTestFiles(newspaperTestProcessId, NEWSPAPER_TEST_METADATA_FILE);
     }
@@ -126,13 +126,13 @@ public class NewspaperProcessesGeneratorIT {
      * @throws IOException when deleting metadata test files fails
      */
     @After
-    public void cleanupNewspaperProcess() throws DAOException, DAOException, IOException {
+    public void cleanupNewspaperProcess() throws DAOException, IOException {
         if (newspaperTestProcessId > 0) {
             deleteProcessHierarchy(ServiceManager.getProcessService().getById(newspaperTestProcessId));
         }
     }
 
-    private static void deleteProcessHierarchy(Process process) throws DAOException, DAOException, IOException {
+    private static void deleteProcessHierarchy(Process process) throws DAOException, IOException {
         for (Process childProcess : process.getChildren()) {
             deleteProcessHierarchy(childProcess);
         }
@@ -235,7 +235,7 @@ public class NewspaperProcessesGeneratorIT {
     }
 
     @Test
-    public void shouldNotGenerateDuplicateProcessTitle() throws DAOException, DAOException {
+    public void shouldNotGenerateDuplicateProcessTitle() throws DAOException {
         Process completeEdition = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         Course course = NewspaperCourse.getDuplicatedCourse();
         course.splitInto(Granularity.DAYS);

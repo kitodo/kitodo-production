@@ -345,7 +345,7 @@ public class WorkflowControllerServiceIT {
     }
 
     @Test
-    public void shouldCloseForProcessWithSkippedTask() throws DAOException, DAOException, IOException {
+    public void shouldCloseForProcessWithSkippedTask() throws DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         Process process = ServiceManager.getProcessService().getById(processId);
         process.getTasks().clear();

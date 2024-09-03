@@ -915,7 +915,7 @@ public class CalendarForm implements Serializable {
     /**
      * Check if process with the same processtitle already exists.
      */
-    public void checkDuplicatedTitles() throws ProcessGenerationException, DAOException, DAOException,
+    public void checkDuplicatedTitles() throws ProcessGenerationException, DAOException,
             ConfigurationException, IOException, DoctypeMissingException {
         if (course.parallelStream().noneMatch(block -> Objects.equals(block.checkIssuesWithSameHeading(), true))) {
             Process process = ServiceManager.getProcessService().getById(parentId);

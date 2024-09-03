@@ -99,7 +99,7 @@ public class ProcessTestUtils {
      * @throws DAOException when copying test metadata file fails
      * @throws DAOException when copying test metadata file fails
      */
-    public static void copyTestFiles(int processId, String filename) throws IOException, DAOException, DAOException {
+    public static void copyTestFiles(int processId, String filename) throws IOException, DAOException {
         // copy test meta xml
         copyTestMetadataFile(processId, filename);
         URI processDir = Paths.get(ConfigCore.getKitodoDataDirectory(), String.valueOf(processId))
@@ -176,7 +176,7 @@ public class ProcessTestUtils {
      * @throws DAOException when adding process fails
      * @throws DAOException when adding process fails
      */
-    public static Process addProcess(String processTitle) throws DAOException, DAOException {
+    public static Process addProcess(String processTitle) throws DAOException {
         return MockDatabase.addProcess(processTitle, TEST_PROJECT_ID, TEST_TEMPLATE_ID);
     }
 
@@ -210,7 +210,7 @@ public class ProcessTestUtils {
      * @throws DAOException when saving a test process fails
      */
     public static void copyHierarchyTestFiles(Map<String, Integer> processTitlesAndIds) throws IOException,
-            DAOException, DAOException {
+            DAOException {
         for (Map.Entry<String, String> hierarchyProcess : hierarchyProcessTitlesAndFiles.entrySet()) {
             int processId = processTitlesAndIds.get(hierarchyProcess.getKey());
             ProcessTestUtils.copyTestFiles(processId, hierarchyProcess.getValue());
@@ -227,7 +227,7 @@ public class ProcessTestUtils {
      * @throws IOException when metadata file of process cannot be read or saved
      * @throws DAOException when process cannot be re-saved
      */
-    public static void updateIdentifier(int processId) throws DAOException, IOException, DAOException {
+    public static void updateIdentifier(int processId) throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(processId);
         URI metadataFileUri = ServiceManager.getFileService().getMetadataFilePath(process);
         try (InputStream fileContent = ServiceManager.getFileService().readMetadataFile(process)) {

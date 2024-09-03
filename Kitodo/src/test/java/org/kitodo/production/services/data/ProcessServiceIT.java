@@ -118,7 +118,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByInChoiceListShown() throws DAOException, DAOException {
+    public void shouldFindByInChoiceListShown() throws DAOException {
         List<Process> byInChoiceListShown = ServiceManager.getProcessService().getTemplateProcesses();
         Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
     }
@@ -223,7 +223,7 @@ public class ProcessServiceIT {
 
     @Test
     @Ignore("Data index currently not available")
-    public void shouldFindByLongNumberInMetadata() throws DAOException, DAOException, IOException {
+    public void shouldFindByLongNumberInMetadata() throws DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
         assertEquals(processNotFound, 1, processService
@@ -537,7 +537,7 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testCountMetadata() throws DAOException, IOException, DAOException {
+    public void testCountMetadata() throws DAOException, IOException {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         Process process = ServiceManager.getProcessService().getById(testProcessId);

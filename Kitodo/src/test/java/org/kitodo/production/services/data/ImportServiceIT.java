@@ -156,7 +156,7 @@ public class ImportServiceIT {
      * @throws IOException when importing metadata fails
      */
     @Test
-    public void testImportProcess() throws DAOException, DAOException, ImportException, IOException {
+    public void testImportProcess() throws DAOException, ImportException, IOException {
         Assert.assertEquals("Not the correct amount of processes found", 7, (long) processService.count());
         Process importedProcess = importProcess(RECORD_ID, MockDatabase.getK10PlusImportConfiguration());
         try {
@@ -230,7 +230,7 @@ public class ImportServiceIT {
      */
     @Test
     @Ignore("index currently not available")
-    public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException, DAOException {
+    public void shouldCheckForParent() throws DAOException, ProcessGenerationException, IOException {
         int parentTestId = MockDatabase.insertTestProcess("Test parent process", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         ProcessTestUtils.copyTestMetadataFile(parentTestId, TEST_KITODO_METADATA_FILE);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(RULESET_ID);
@@ -447,7 +447,7 @@ public class ImportServiceIT {
      * @throws IOException when loading workpiece fails
      */
     @Test
-    public void shouldEnsureNonEmptyTitles() throws DAOException, DAOException, IOException {
+    public void shouldEnsureNonEmptyTitles() throws DAOException, IOException {
         int parentProcessId = MockDatabase.insertTestProcess("", PROJECT_ID, TEMPLATE_ID, RULESET_ID);
         try {
             ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_KITODO_METADATA_FILE);

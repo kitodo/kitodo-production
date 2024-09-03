@@ -201,7 +201,7 @@ public class IndexingService {
      *            type objects that get indexed
      */
     public IndexWorkerStatus runIndexing(ObjectType type, PushContext pushContext, boolean indexAllObjects) 
-            throws DAOException, DAOException {
+            throws DAOException {
         SearchDatabaseService<?, ?> searchService = searchServices.get(type);
         int indexLimit = ConfigCore.getIntParameterOrDefaultValue(ParameterCore.ELASTICSEARCH_INDEXLIMIT);
 

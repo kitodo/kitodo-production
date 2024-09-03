@@ -59,7 +59,7 @@ public class ExportMets {
      * @param process
      *            Process object
      */
-    public boolean startExport(Process process) throws DAOException, DAOException, IOException {
+    public boolean startExport(Process process) throws DAOException, IOException {
         User user = ServiceManager.getUserService().getAuthenticatedUser();
         URI userHome = ServiceManager.getUserService().getHomeDirectory(user);
         boolean exportSuccessful = startExport(process, userHome);

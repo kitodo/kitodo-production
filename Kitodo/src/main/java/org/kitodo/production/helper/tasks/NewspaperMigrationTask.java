@@ -121,7 +121,7 @@ public class NewspaperMigrationTask extends EmptyTask {
      *             if the newspaper division is not well configured in the
      *             ruleset
      */
-    private void next() throws DAOException, IOException, ProcessGenerationException, DAOException,
+    private void next() throws DAOException, IOException, ProcessGenerationException,
             ConfigurationException, CommandException {
         switch (part) {
             case CONVERT_PROCESSES: {

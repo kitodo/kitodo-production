@@ -67,7 +67,7 @@ public class WikiFieldHelper {
      * @param process
      *            process as object.
      */
-    public static Process transformWikiFieldToComment(Process process) throws DAOException, DAOException, ParseException {
+    public static Process transformWikiFieldToComment(Process process) throws DAOException, ParseException {
         String wikiField = process.getWikiField();
         wikiField = wikiField.replaceAll("Ã¼", "ue");
         wikiField = wikiField.replaceAll("&uuml;", "ue");
@@ -175,7 +175,7 @@ public class WikiFieldHelper {
         return null;
     }
 
-    private static void deleteProperty(Process process, Property property) throws DAOException, DAOException {
+    private static void deleteProperty(Process process, Property property) throws DAOException {
         property.getProcesses().clear();
         process.getProperties().remove(property);
         ServiceManager.getProcessService().save(process);
@@ -188,7 +188,7 @@ public class WikiFieldHelper {
      * test Korrektur f&uuml;r Schritt Scanning: bla bla
      */
     private static void transformNewFormatWikiFieldToComments(String[] messages, Process process)
-            throws DAOException, DAOException, ParseException {
+            throws DAOException, ParseException {
         List<Comment> newComments = new ArrayList<>();
         for (String message : messages) {
             String lang = getMessageLanguage(message);
@@ -360,7 +360,7 @@ public class WikiFieldHelper {
         return null;
     }
 
-    private static Process deleteProcessCorrectionProperties(Process process) throws DAOException, DAOException {
+    private static Process deleteProcessCorrectionProperties(Process process) throws DAOException {
         List<Property> properties = new ArrayList<>(process.getProperties());
 
         for (Property property : properties) {

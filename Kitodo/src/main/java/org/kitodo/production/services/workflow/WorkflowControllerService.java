@@ -70,7 +70,7 @@ public class WorkflowControllerService {
      * @param task
      *            to change status up
      */
-    public void setTaskStatusUp(Task task) throws DAOException, IOException, DAOException {
+    public void setTaskStatusUp(Task task) throws DAOException, IOException {
         setTaskStatusUp(Collections.singletonList(task));
     }
 
@@ -80,7 +80,7 @@ public class WorkflowControllerService {
      * @param tasks
      *            to change status up
      */
-    public void setTaskStatusUp(List<Task> tasks) throws DAOException, IOException, DAOException {
+    public void setTaskStatusUp(List<Task> tasks) throws DAOException, IOException {
         for (Task task : tasks) {
             if (task.getProcessingStatus() != TaskStatus.DONE) {
                 setProcessingStatusUp(task);
@@ -134,7 +134,7 @@ public class WorkflowControllerService {
      * @param process
      *            object
      */
-    public void setTasksStatusUp(Process process) throws DAOException, IOException, DAOException {
+    public void setTasksStatusUp(Process process) throws DAOException, IOException {
         List<Task> currentTask = ServiceManager.getProcessService().getCurrentTasks(process);
         if (currentTask.isEmpty()) {
             activateNextTasks(process.getTasks());
@@ -200,7 +200,7 @@ public class WorkflowControllerService {
      * @param task
      *            object
      */
-    public void closeTaskByUser(Task task) throws DAOException, IOException, DAOException {
+    public void closeTaskByUser(Task task) throws DAOException, IOException {
         // if the result of the task is to be verified first, then if necessary,
         // cancel the completion
         if (task.isTypeCloseVerify()) {
@@ -236,7 +236,7 @@ public class WorkflowControllerService {
      * @param task
      *            as Task object
      */
-    public void close(Task task) throws DAOException, IOException, DAOException {
+    public void close(Task task) throws DAOException, IOException {
         task.setProcessingStatus(TaskStatus.DONE);
         task.setCorrection(false);
         task.setProcessingTime(new Date());
@@ -384,7 +384,7 @@ public class WorkflowControllerService {
      *         as Comment object
      */
     public void solveProblem(Comment comment, TaskEditType taskEditType)
-            throws DAOException, DAOException, IOException {
+            throws DAOException, IOException {
         if (Objects.nonNull(comment.getCorrectionTask())) {
             closeTaskByUser(comment.getCorrectionTask());
             comment.setCorrectionTask(ServiceManager.getTaskService().getById(comment.getCorrectionTask().getId()));
@@ -433,7 +433,7 @@ public class WorkflowControllerService {
         }
     }
 
-    private void activateTasksForClosedTask(Task closedTask) throws DAOException, IOException, DAOException {
+    private void activateTasksForClosedTask(Task closedTask) throws DAOException, IOException {
         Process process = closedTask.getProcess();
 
         // check if there are tasks that take place in parallel but are not yet
@@ -542,7 +542,7 @@ public class WorkflowControllerService {
     /**
      * Activate the concurrent tasks.
      */
-    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DAOException, IOException, DAOException {
+    private void activateConcurrentTasks(List<Task> concurrentTasks) throws DAOException, IOException {
         for (Task concurrentTask : concurrentTasks) {
             if (concurrentTask.getProcessingStatus().equals(TaskStatus.LOCKED)) {
                 activateTask(concurrentTask);
@@ -553,7 +553,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    public void activateNextTasks(List<Task> allHigherTasks) throws DAOException, IOException, DAOException {
+    public void activateNextTasks(List<Task> allHigherTasks) throws DAOException, IOException {
         List<Task> nextTasks = getNextTasks(allHigherTasks);
 
         for (Task nextTask : nextTasks) {
@@ -610,7 +610,7 @@ public class WorkflowControllerService {
     /**
      * If no open parallel tasks are available, activate the next tasks.
      */
-    private void activateTask(Task task) throws DAOException, IOException, DAOException {
+    private void activateTask(Task task) throws DAOException, IOException {
         if ((!task.isCorrection() || task.isRepeatOnCorrection())
                 && isWorkflowConditionFulfilled(task.getProcess(), task.getWorkflowCondition())) {
             // activate the task if it is not fully automatic

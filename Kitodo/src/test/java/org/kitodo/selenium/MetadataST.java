@@ -61,23 +61,23 @@ public class MetadataST extends BaseTestSelenium {
     private static final String FIRST_STRUCTURE_TREE_NODE_LABEL = "1 : -";
     private static final String SECOND_STRUCTURE_TREE_NODE_LABEL = "2 : -";
 
-    private static void prepareMediaReferenceProcess() throws DAOException, DAOException, IOException {
+    private static void prepareMediaReferenceProcess() throws DAOException, IOException {
         insertTestProcessForMediaReferencesTest();
         copyTestFilesForMediaReferences();
     }
 
-    private static void prepareMetadataLockProcess() throws DAOException, DAOException, IOException {
+    private static void prepareMetadataLockProcess() throws DAOException, IOException {
         insertTestProcessForMetadataLockTest();
         ProcessTestUtils.copyTestMetadataFile(metadataLockProcessId, TEST_METADATA_LOCK_FILE);
     }
 
-    private static void prepareProcessHierarchyProcesses() throws DAOException, IOException, DAOException {
+    private static void prepareProcessHierarchyProcesses() throws DAOException, IOException {
         processHierarchyTestProcessIds = linkProcesses();
         copyTestParentProcessMetadataFile();
         updateChildProcessIdsInParentProcessMetadataFile();
     }
 
-    private static void prepareMediaRenamingProcess() throws DAOException, DAOException, IOException {
+    private static void prepareMediaRenamingProcess() throws DAOException, IOException {
         insertTestProcessForRenamingMediaFiles();
         copyTestFilesForRenamingMediaFiles();
     }
@@ -89,7 +89,7 @@ public class MetadataST extends BaseTestSelenium {
      * @throws IOException when copying test metadata or image files fails.
      */
     @BeforeClass
-    public static void prepare() throws DAOException, DAOException, IOException {
+    public static void prepare() throws DAOException, IOException {
         MockDatabase.insertFoldersForSecondProject();
         prepareMetadataLockProcess();
         prepareMediaReferenceProcess();
@@ -244,7 +244,7 @@ public class MetadataST extends BaseTestSelenium {
      * @throws IOException when deleting test files fails.
      */
     @AfterClass
-    public static void cleanup() throws DAOException, DAOException, IOException {
+    public static void cleanup() throws DAOException, IOException {
         for (int processId : processHierarchyTestProcessIds) {
             ProcessService.deleteProcess(processId);
         }
@@ -258,15 +258,15 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getLoginPage().goTo().performLogin(metadataUser);
     }
 
-    private static void insertTestProcessForMediaReferencesTest() throws DAOException, DAOException {
+    private static void insertTestProcessForMediaReferencesTest() throws DAOException {
         mediaReferencesProcessId = MockDatabase.insertTestProcessForMediaReferencesTestIntoSecondProject();
     }
 
-    private static void insertTestProcessForMetadataLockTest() throws DAOException, DAOException {
+    private static void insertTestProcessForMetadataLockTest() throws DAOException {
         metadataLockProcessId = MockDatabase.insertTestProcessForMetadataLockTestIntoSecondProject();
     }
 
-    private static void insertTestProcessForRenamingMediaFiles() throws DAOException, DAOException {
+    private static void insertTestProcessForRenamingMediaFiles() throws DAOException {
         renamingMediaProcessId = MockDatabase.insertTestProcessForRenamingMediaTestIntoSecondProject();
     }
 
@@ -275,7 +275,7 @@ public class MetadataST extends BaseTestSelenium {
      * @throws DAOException if loading of processes fails
      * @throws DAOException if saving of processes fails
      */
-    private static List<Integer> linkProcesses() throws DAOException, DAOException {
+    private static List<Integer> linkProcesses() throws DAOException {
         List<Integer> processIds = new LinkedList<>();
         List<Process> childProcesses = new LinkedList<>();
         childProcesses.add(ProcessTestUtils.addProcess(FIRST_CHILD_PROCESS_TITLE));
@@ -293,15 +293,15 @@ public class MetadataST extends BaseTestSelenium {
         return processIds;
     }
 
-    private static void copyTestFilesForMediaReferences() throws IOException, DAOException, DAOException {
+    private static void copyTestFilesForMediaReferences() throws IOException, DAOException {
         ProcessTestUtils.copyTestFiles(mediaReferencesProcessId, TEST_MEDIA_REFERENCES_FILE);
     }
 
-    private static void copyTestFilesForRenamingMediaFiles() throws IOException, DAOException, DAOException {
+    private static void copyTestFilesForRenamingMediaFiles() throws IOException, DAOException {
         ProcessTestUtils.copyTestFiles(renamingMediaProcessId, TEST_RENAME_MEDIA_FILE);
     }
 
-    private static void copyTestParentProcessMetadataFile() throws IOException, DAOException, DAOException {
+    private static void copyTestParentProcessMetadataFile() throws IOException, DAOException {
         ProcessTestUtils.copyTestMetadataFile(parentProcessId, TEST_PARENT_PROCESS_METADATA_FILE);
     }
 

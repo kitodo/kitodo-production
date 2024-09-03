@@ -69,7 +69,7 @@ public class WorkflowFormIT {
      *
      */
     @Test
-    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException, DAOException,
+    public void shouldUpdateTemplateTasksAndDeleteOnlyAffectedDataEditorSettings() throws DAOException,
             WorkflowException, IOException {
         //Get first template which already has template tasks assigned and assign it to the new workflow
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
@@ -130,7 +130,7 @@ public class WorkflowFormIT {
         return task;
     }
 
-    private void createAndSaveDataEditorSetting(int templateTaskId) throws DAOException, DAOException {
+    private void createAndSaveDataEditorSetting(int templateTaskId) throws DAOException {
         DataEditorSetting dataEditorSetting = new DataEditorSetting();
         dataEditorSetting.setUserId(1);
         dataEditorSetting.setTaskId(templateTaskId);

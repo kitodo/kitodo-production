@@ -286,7 +286,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
      *             if there is a "CurrentNo" item in the projects configuration,
      *             but its value cannot be evaluated to an integer
      */
-    public boolean nextStep() throws ConfigurationException, DAOException, DAOException, IOException,
+    public boolean nextStep() throws ConfigurationException, DAOException, IOException,
             ProcessGenerationException, DoctypeMissingException, CommandException {
 
         if (currentStep == 0) {
@@ -500,7 +500,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
                     (one, another) -> one + ", " + another));
     }
 
-    private void createProcess(int index) throws DAOException, DAOException, IOException, ProcessGenerationException,
+    private void createProcess(int index) throws DAOException, IOException, ProcessGenerationException,
             CommandException {
         final long begin = System.nanoTime();
 
@@ -650,7 +650,7 @@ public class NewspaperProcessesGenerator extends ProcessGenerator {
     }
 
     private void prepareTheAppropriateYearProcess(String yearMark, Map<String, String> genericFields)
-            throws DAOException, DAOException, ProcessGenerationException, IOException, CommandException {
+            throws DAOException, ProcessGenerationException, IOException, CommandException {
 
         if (yearMark.equals(currentYear)) {
             return;

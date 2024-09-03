@@ -64,7 +64,7 @@ public class CurrenTaskFormIT {
      * 
      */
     @Test
-    public void testCloseTaskOnAccept() throws DAOException, DAOException {
+    public void testCloseTaskOnAccept() throws DAOException {
         Process process = new Process();
         process.setProcessBaseUri(URI.create("5"));
 

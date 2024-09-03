@@ -131,7 +131,7 @@ public class FileServiceIT {
     }
 
     @Test
-    public void testRenamingOfMultipleProcesses() throws DAOException, DAOException, IOException, InterruptedException {
+    public void testRenamingOfMultipleProcesses() throws DAOException, IOException, InterruptedException {
         mediaRenamingFirstProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_1);
         mediaRenamingSecondProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_PROCESS_2);
         ProcessTestUtils.copyTestFiles(mediaRenamingFirstProcessId, TEST_RENAME_MEDIA_FILE);
@@ -152,7 +152,7 @@ public class FileServiceIT {
     }
 
     @Test
-    public void testRevertingOriginalFilenamesAfterRenamingError() throws DAOException, DAOException, IOException,
+    public void testRevertingOriginalFilenamesAfterRenamingError() throws DAOException, IOException,
             InterruptedException {
         revertMediaRenamingProcessId = MockDatabase.insertTestProcessIntoSecondProject(RENAME_MEDIA_REVERT_PROCESS);
         ProcessTestUtils.copyTestFiles(revertMediaRenamingProcessId, TEST_RENAME_MEDIA_FILE);

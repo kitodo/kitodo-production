@@ -63,7 +63,7 @@ public class MappingFileService extends SearchDatabaseService<MappingFile, Mappi
     }
 
     @Override
-    public Long countResults(Map filters) throws DAOException, DAOException {
+    public Long countResults(Map filters) throws DAOException {
         return countDatabaseRows();
     }
 }

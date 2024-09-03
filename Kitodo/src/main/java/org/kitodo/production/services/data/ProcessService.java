@@ -404,7 +404,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * 
      * @return processes to be offered in the choice list
      */
-    public List<Process> getTemplateProcesses() throws DAOException, DAOException {
+    public List<Process> getTemplateProcesses() throws DAOException {
         return getByQuery("FROM Process WHERE inChoiceListShown IS true ORDER BY title ASC");
     }
 
@@ -1810,13 +1810,13 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *             if the process cannot be saved
      */
     public void updateChildrenFromLogicalStructure(Process process, LogicalDivision logicalStructure)
-            throws DAOException, DAOException {
+            throws DAOException {
         removeLinksFromNoLongerLinkedProcesses(process, logicalStructure);
         addNewLinks(process, logicalStructure);
     }
 
     private void removeLinksFromNoLongerLinkedProcesses(Process process, LogicalDivision logicalStructure)
-            throws DAOException, DAOException {
+            throws DAOException {
         ArrayList<Process> childrenToRemove = new ArrayList<>(process.getChildren());
         childrenToRemove.removeAll(getProcessesLinkedInLogicalDivision(logicalStructure));
         for (Process childToRemove : childrenToRemove) {
@@ -1830,7 +1830,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     }
 
     private void addNewLinks(Process process, LogicalDivision logicalStructure)
-            throws DAOException, DAOException {
+            throws DAOException {
         HashSet<Process> childrenToAdd = getProcessesLinkedInLogicalDivision(logicalStructure);
         process.getChildren().forEach(childrenToAdd::remove);
         for (Process childToAdd : childrenToAdd) {
@@ -1896,7 +1896,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
         return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
     }
 
-    public static void deleteProcess(int processID) throws DAOException, DAOException, IOException {
+    public static void deleteProcess(int processID) throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(processID);
         deleteProcess(process);
     }
@@ -2013,7 +2013,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @throws IOException
      *             Thrown on I/O error
      */
-    public static void exportMets(int processId) throws DAOException, DAOException, IOException {
+    public static void exportMets(int processId) throws DAOException, IOException {
         Process process = ServiceManager.getProcessService().getById(processId);
         ExportMets export = new ExportMets();
         export.startExport(process);

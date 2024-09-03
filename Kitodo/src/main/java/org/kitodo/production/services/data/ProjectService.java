@@ -283,7 +283,7 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
      *
      * @param projectID ID of project to be deleted
      */
-    public static void delete(int projectID) throws DAOException, DAOException, ProjectDeletionException {
+    public static void delete(int projectID) throws DAOException, ProjectDeletionException {
         Project project = ServiceManager.getProjectService().getById(projectID);
         if (!project.getProcesses().isEmpty()) {
             throw new ProjectDeletionException("cannotDeleteProject");

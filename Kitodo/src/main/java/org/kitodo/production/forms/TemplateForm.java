@@ -450,7 +450,7 @@ public class TemplateForm extends TemplateBaseForm {
         this.task = task;
     }
 
-    private void prepareTasks() throws DAOException, IOException, WorkflowException, DAOException {
+    private void prepareTasks() throws DAOException, IOException, WorkflowException {
         List<Task> templateTasks = new ArrayList<>(this.template.getTasks());
         if (!templateTasks.isEmpty()) {
             this.template.getTasks().clear();

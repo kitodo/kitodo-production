@@ -140,7 +140,7 @@ public class TitleRecordLinkTab {
      * @throws IOException
      *             if the METS file cannot be read
      */
-    public void createInsertionPositionSelectionTree() throws DAOException, DAOException, IOException {
+    public void createInsertionPositionSelectionTree() throws DAOException, IOException {
         if (Objects.isNull(titleRecordProcess)) {
             return;
         }
@@ -187,7 +187,7 @@ public class TitleRecordLinkTab {
      */
     private void createInsertionPositionSelectionTreeRecursive(String positionPrefix,
             LogicalDivision currentLogicalDivision, TreeNode parentNode,
-            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException, DAOException {
+            RulesetManagementInterface ruleset, List<LanguageRange> priorityList) throws IOException, DAOException {
 
         String type;
         List<String> tooltip = Collections.emptyList();

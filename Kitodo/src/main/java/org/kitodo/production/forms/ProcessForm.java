@@ -522,7 +522,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Task status up.
      */
-    public void setTaskStatusUp() throws DAOException, IOException, DAOException {
+    public void setTaskStatusUp() throws DAOException, IOException {
         workflowControllerService.setTaskStatusUp(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();

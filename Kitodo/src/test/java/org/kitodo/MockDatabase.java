@@ -405,7 +405,7 @@ public class MockDatabase {
         }
     }
 
-    private static void insertBatches() throws DAOException, DAOException {
+    private static void insertBatches() throws DAOException {
         Batch firstBatch = new Batch();
         firstBatch.setTitle("First batch");
         firstBatch.getProcesses().add(ServiceManager.getProcessService().getById(1));
@@ -451,7 +451,7 @@ public class MockDatabase {
         ServiceManager.getDataEditorSettingService().saveToDatabase(thirdSetting);
     }
 
-    public static void insertDockets() throws DAOException, DAOException {
+    public static void insertDockets() throws DAOException {
         Client client = ServiceManager.getClientService().getById(1);
 
         Docket firstDocket = new Docket();
@@ -505,7 +505,7 @@ public class MockDatabase {
         ServiceManager.getLdapGroupService().saveToDatabase(firstLdapGroup);
     }
 
-    private static void insertProcesses() throws DAOException, DAOException {
+    private static void insertProcesses() throws DAOException {
         Project projectOne = ServiceManager.getProjectService().getById(1);
         Template template = ServiceManager.getTemplateService().getById(1);
 
@@ -561,7 +561,7 @@ public class MockDatabase {
      * @throws DAOException when retrieving project or ruleset from database fails
      * @throws DAOException when saving new process object fails
      */
-    public static int insertMultiVolumeWork() throws DAOException, DAOException {
+    public static int insertMultiVolumeWork() throws DAOException {
         Process multiVolumeWork = new Process();
         multiVolumeWork.setBaseType("MultiVolumeWork");
         multiVolumeWork.setTitle("Multi volume work test process");
@@ -578,7 +578,7 @@ public class MockDatabase {
      * @throws DAOException when loading required objects from database fails
      * @throws DAOException when saving process or import configuration fails
      */
-    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException, DAOException {
+    public static void addDefaultChildProcessImportConfigurationToFirstProject() throws DAOException {
 
         // create template process
         Project firstProject = ServiceManager.getProjectService().getById(1);
@@ -604,7 +604,7 @@ public class MockDatabase {
         ServiceManager.getImportService().setUsingTemplates(true);
     }
 
-    public static Map<String, Integer> insertProcessesForHierarchyTests() throws DAOException, DAOException {
+    public static Map<String, Integer> insertProcessesForHierarchyTests() throws DAOException {
         Map<String, Integer> testProcesses = new HashMap<>();
         Process parentProcess = new Process();
         parentProcess.setProject(ServiceManager.getProjectService().getById(1));
@@ -662,7 +662,7 @@ public class MockDatabase {
         return ruleset.getId();
     }
 
-    private static void insertTemplates() throws DAOException, DAOException {
+    private static void insertTemplates() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
 
         Template firstTemplate = new Template();
@@ -711,7 +711,7 @@ public class MockDatabase {
         ServiceManager.getTemplateService().save(fourthTemplate, true);
     }
 
-    private static void insertProcessProperties() throws DAOException, DAOException {
+    private static void insertProcessProperties() throws DAOException {
         Process firstProcess = ServiceManager.getProcessService().getById(1);
 
         Property firstProcessProperty = new Property();
@@ -769,7 +769,7 @@ public class MockDatabase {
 
     }
 
-    private static void insertProcessPropertiesForWorkflow() throws DAOException, DAOException {
+    private static void insertProcessPropertiesForWorkflow() throws DAOException {
         Process firstProcess = ServiceManager.getProcessService().getById(1);
 
         Property firstProcessProperty = new Property();
@@ -896,7 +896,7 @@ public class MockDatabase {
         ServiceManager.getUserService().saveToDatabase(sixthUser);
     }
 
-    private static void insertFolders() throws DAOException, DAOException {
+    private static void insertFolders() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(1);
 
         Folder firstFolder = new Folder();
@@ -983,7 +983,7 @@ public class MockDatabase {
      * @throws DAOException when retrieving project fails
      * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException, DAOException {
+    public static int insertTestProcessForMediaReferencesTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(MEDIA_REFERENCES_TEST_PROCESS_TITLE);
     }
 
@@ -993,7 +993,7 @@ public class MockDatabase {
      * @throws DAOException when retrieving project fails
      * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException, DAOException {
+    public static int insertTestProcessForMetadataLockTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(METADATA_LOCK_TEST_PROCESS_TITLE);
     }
 
@@ -1003,7 +1003,7 @@ public class MockDatabase {
      * @throws DAOException when retrieving project fails
      * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessForRenamingMediaTestIntoSecondProject() throws DAOException, DAOException {
+    public static int insertTestProcessForRenamingMediaTestIntoSecondProject() throws DAOException {
         return insertTestProcessIntoSecondProject(MEDIA_RENAMING_TEST_PROCESS_TITLE);
     }
 
@@ -1013,7 +1013,7 @@ public class MockDatabase {
      * @throws DAOException when loading test project fails
      * @throws DAOException when saving test process fails
      */
-    public static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException, DAOException {
+    public static int insertTestProcessIntoSecondProject(String processTitle) throws DAOException {
         Project projectTwo = ServiceManager.getProjectService().getById(2);
         Template template = projectTwo.getTemplates().get(0);
         Process mediaReferencesProcess = new Process();
@@ -1037,7 +1037,7 @@ public class MockDatabase {
      * @throws DAOException when saving test process fails
      */
     public static int insertTestProcess(String processTitle, int projectId, int templateId, int rulesetId)
-            throws DAOException, DAOException {
+            throws DAOException {
         Project project = ServiceManager.getProjectService().getById(projectId);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         Ruleset ruleset = ServiceManager.getRulesetService().getById(rulesetId);
@@ -1056,7 +1056,7 @@ public class MockDatabase {
      * @throws DAOException when loading project or template fails
      * @throws DAOException when saving project or template fails
      */
-    public static void insertFoldersForSecondProject() throws DAOException, DAOException {
+    public static void insertFoldersForSecondProject() throws DAOException {
         Project project = ServiceManager.getProjectService().getById(2);
 
         Template template = ServiceManager.getTemplateService().getById(1);
@@ -1105,7 +1105,7 @@ public class MockDatabase {
         ServiceManager.getProjectService().save(project);
     }
 
-    public static void insertRulesets() throws DAOException, DAOException {
+    public static void insertRulesets() throws DAOException {
         Client client = ServiceManager.getClientService().getById(1);
 
         Ruleset firstRuleset = new Ruleset();
@@ -1283,7 +1283,7 @@ public class MockDatabase {
         return Arrays.asList(firstTask, secondTask, thirdTask, fourthTask, fifthTask);
     }
 
-    private static void insertTemplateProperties() throws DAOException, DAOException {
+    private static void insertTemplateProperties() throws DAOException {
         Process template = ServiceManager.getProcessService().getById(1);
 
         Property firstTemplateProperty = new Property();
@@ -1499,7 +1499,7 @@ public class MockDatabase {
         ServiceManager.getRoleService().saveToDatabase(renameMediaRole);
     }
 
-    private static void insertUserFilters() throws DAOException, DAOException {
+    private static void insertUserFilters() throws DAOException {
         User user = ServiceManager.getUserService().getById(1);
 
         Filter firstUserFilter = new Filter();
@@ -1521,7 +1521,7 @@ public class MockDatabase {
         ServiceManager.getUserService().saveToDatabase(user);
     }
 
-    private static void insertWorkpieceProperties() throws DAOException, DAOException {
+    private static void insertWorkpieceProperties() throws DAOException {
         Process workpiece = ServiceManager.getProcessService().getById(1);
 
         Property firstWorkpieceProperty = new Property();
@@ -1551,7 +1551,7 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(workpiece);
     }
 
-    public static void insertWorkflows() throws DAOException, DAOException {
+    public static void insertWorkflows() throws DAOException {
         Workflow firstWorkflow = new Workflow(TEST);
         firstWorkflow.setStatus(WorkflowStatus.ACTIVE);
         firstWorkflow.setClient(ServiceManager.getClientService().getById(1));
@@ -1589,7 +1589,7 @@ public class MockDatabase {
         ServiceManager.getMappingFileService().saveToDatabase(mappingFilePicaToKitodo);
     }
 
-    public static void insertImportConfigurations() throws DAOException, DAOException {
+    public static void insertImportConfigurations() throws DAOException {
 
         // add GBV import configuration, including id and default search fields
         ImportConfiguration gbvConfiguration = new ImportConfiguration();
@@ -1747,7 +1747,7 @@ public class MockDatabase {
         ServiceManager.getImportConfigurationService().saveToDatabase(customConfiguration);
     }
 
-    private static void insertDataForParallelTasks() throws DAOException, DAOException, IOException, WorkflowException {
+    private static void insertDataForParallelTasks() throws DAOException, IOException, WorkflowException {
         Client client = ServiceManager.getClientService().getById(1);
 
         Workflow workflow = new Workflow("gateway-test1");
@@ -1872,7 +1872,7 @@ public class MockDatabase {
         ServiceManager.getProcessService().save(sixthProcess);
     }
 
-    private static void insertDataForScriptParallelTasks() throws DAOException, DAOException, IOException, WorkflowException {
+    private static void insertDataForScriptParallelTasks() throws DAOException, IOException, WorkflowException {
         Workflow workflow = new Workflow("gateway-test5");
         workflow.setStatus(WorkflowStatus.ACTIVE);
         workflow.setClient(ServiceManager.getClientService().getById(1));
@@ -1945,7 +1945,7 @@ public class MockDatabase {
         transaction.commit();
     }
 
-    private static void insertRemovableObjects() throws DAOException, DAOException {
+    private static void insertRemovableObjects() throws DAOException {
         removableObjectIDs = new HashMap<>();
 
         Client client = new Client();
@@ -2048,7 +2048,7 @@ public class MockDatabase {
      * @throws DAOException when saving new process to database fails
      */
     public static Process addProcess(String processTitle, int projectId, int templateId)
-            throws DAOException, DAOException {
+            throws DAOException {
         Project projectOne = ServiceManager.getProjectService().getById(projectId);
         Template template = ServiceManager.getTemplateService().getById(templateId);
         LocalDate localDate = LocalDate.of(2023, 1, 3);

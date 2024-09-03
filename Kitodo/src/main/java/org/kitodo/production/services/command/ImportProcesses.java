@@ -288,7 +288,7 @@ public final class ImportProcesses extends EmptyTask {
         }
     }
 
-    void run(int setStep) throws IOException, DAOException, DAOException, ProcessGenerationException,
+    void run(int setStep) throws IOException, DAOException, ProcessGenerationException,
             MediaNotFoundException, InvalidImagesException {
 
         step = setStep;
@@ -329,7 +329,7 @@ public final class ImportProcesses extends EmptyTask {
         }
     }
 
-    private void copyFilesAndCreateDatabaseEntry(int step, Path processesPath) throws IOException, DAOException, DAOException,
+    private void copyFilesAndCreateDatabaseEntry(int step, Path processesPath) throws IOException, DAOException,
             ProcessGenerationException, MediaNotFoundException, InvalidImagesException {
         if (nextAction == numberOfRemainingActions && step < totalActions - 1) {
             currentlyImporting = importingProcessesIterator.next();

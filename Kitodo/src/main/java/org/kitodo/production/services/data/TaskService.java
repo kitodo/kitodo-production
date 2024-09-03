@@ -329,7 +329,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *
      * @return all different task names
      */
-    public List<String> findTaskTitlesDistinct() throws DAOException, DAOException {
+    public List<String> findTaskTitlesDistinct() throws DAOException {
         throw new UnsupportedOperationException("not yet implemented");
         // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
     }
@@ -551,7 +551,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      *             if the task cannot be closed
      */
     private void finishOrReturnAutomaticTask(Task task, boolean automatic, boolean successful)
-            throws DAOException, IOException, DAOException {
+            throws DAOException, IOException {
         if (automatic) {
             task.setEditType(TaskEditType.AUTOMATIC);
             if (successful) {
@@ -607,7 +607,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      * @param task
      *            as Task object
      */
-    public void executeDmsExport(Task task) throws DAOException, IOException, DAOException {
+    public void executeDmsExport(Task task) throws DAOException, IOException {
         new ExportDms(task).startExport(task);
     }
 

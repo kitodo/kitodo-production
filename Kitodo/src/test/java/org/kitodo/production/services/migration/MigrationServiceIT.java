@@ -196,7 +196,7 @@ public class MigrationServiceIT {
     }
 
     @Test
-    public void testAddToTemplate() throws DAOException, DAOException {
+    public void testAddToTemplate() throws DAOException {
         ProcessService processService = ServiceManager.getProcessService();
         Project project = ServiceManager.getProjectService().getById(1);
         Process firstProcess = new Process();
@@ -229,7 +229,7 @@ public class MigrationServiceIT {
     }
 
     @Test
-    public void addProcessesToTemplateTest() throws DAOException, DAOException {
+    public void addProcessesToTemplateTest() throws DAOException {
         Template firstTemplate = ServiceManager.getTemplateService().getById(1);
         Template secondTemplate = ServiceManager.getTemplateService().getById(2);
 

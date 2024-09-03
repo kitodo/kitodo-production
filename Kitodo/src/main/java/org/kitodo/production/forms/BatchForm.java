@@ -303,7 +303,7 @@ public class BatchForm extends BaseForm {
     /**
      * Remove processes from Batch.
      */
-    public void removeProcessesFromBatch() throws DAOException, DAOException {
+    public void removeProcessesFromBatch() throws DAOException {
         if (areSelectedListsEmpty()) {
             return;
         }
@@ -361,7 +361,7 @@ public class BatchForm extends BaseForm {
     /**
      * Create new Batch.
      */
-    public void createNew() throws DAOException, DAOException {
+    public void createNew() throws DAOException {
         if (selectedProcesses.isEmpty()) {
             Helper.setErrorMessage(NO_PROCESS_SELECTED);
         } else {

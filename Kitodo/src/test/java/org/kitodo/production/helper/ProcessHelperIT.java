@@ -69,7 +69,7 @@ public class ProcessHelperIT {
     }
 
     @Before
-    public void prepareTestProcess() throws DAOException, DAOException, IOException {
+    public void prepareTestProcess() throws DAOException, IOException {
         processHelperTestProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processHelperTestProcessId, metadataTestfile);
     }

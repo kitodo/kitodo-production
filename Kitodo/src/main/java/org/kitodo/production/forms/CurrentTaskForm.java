@@ -367,7 +367,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Execute script.
      */
-    public void executeScript() throws DAOException, DAOException {
+    public void executeScript() throws DAOException {
         Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
         if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
             Helper.setMessageWithoutDescription(
