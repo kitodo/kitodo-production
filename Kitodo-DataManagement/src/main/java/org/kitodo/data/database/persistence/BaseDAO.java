@@ -429,6 +429,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      *
      * @param object
      *            to be associated with the session
+     * @return a new object in the current session, with the data from the input
+     *         object
      */
     @SuppressWarnings("unchecked")
     @CheckReturnValue
