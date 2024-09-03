@@ -33,14 +33,15 @@ import org.kitodo.production.enums.IndexStates;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.index.IndexingService;
 import org.omnifaces.util.Ajax;
 
 @Named
 @ApplicationScoped
 public class IndexingForm {
-
     private static final List<ObjectType> objectTypes = ObjectType.getIndexableObjectTypes();
     private static final String POLLING_CHANNEL_NAME = "togglePollingChannel";
+    private final IndexingService indexingService = ServiceManager.getIndexingService();
     private String indexingStartedUser = "";
     private LocalDateTime indexingStartedTime = null;
 
@@ -204,7 +205,7 @@ public class IndexingForm {
      * @return String information about the server
      */
     public String getServerInformation() {
-        return "";
+        return indexingService.getServerInformation();
     }
 
     /**
