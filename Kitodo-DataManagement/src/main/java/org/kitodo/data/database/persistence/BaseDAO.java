@@ -167,7 +167,8 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      * Merge given bean object.
      *
      * @param baseBean
-     *            bean to Merge
+     *            bean to merge
+     * @return the merged bean
      */
     @CheckReturnValue
     public T merge(T baseBean) {
