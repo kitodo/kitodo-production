@@ -79,7 +79,7 @@ public class ProcessHelper {
     /**
      * Create and return an instance of 'ProcessFieldedMetadata' for the given
      * LogicalDivision 'structure', RulesetManagementInterface
-     * 'management', acquisition stage String 'stage' and List of
+     * 'managementInterface', acquisition stage String 'stage' and List of
      * LanguageRange 'priorityList'.
      *
      * @param structure
