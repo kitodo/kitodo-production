@@ -103,7 +103,7 @@ public class Ruleset extends BaseBean {
      * @return whether the elements should be in declared order
      */
     public boolean isOrderMetadataByRuleset() {
-         if (this.orderMetadataByRuleset == null) {
+        if (this.orderMetadataByRuleset == null) {
             this.orderMetadataByRuleset = false;
         }
         return this.orderMetadataByRuleset;
