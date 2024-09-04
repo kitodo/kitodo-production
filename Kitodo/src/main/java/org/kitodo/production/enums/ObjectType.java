@@ -66,23 +66,29 @@ public enum ObjectType {
 
     private final String messageKeyPlural;
 
-    private final Class<? extends BaseBean> aClass;
+    private final Class<? extends BaseBean> beanClass;
 
     private final boolean indexable;
 
     /**
-     * Constructor setting the message key of the object type, used to retrieve it's
-     * translation from the messages resource bundle.
+     * Constructor setting the message key of the object type, used to retrieve
+     * it's translation from the messages resource bundle.
      *
      * @param messageKeySingular
      *            used for translating the object types name
+     * @param messageKeyPlural
+     *            used for translating the object types name
+     * @param indexable
+     *            if the object is indexable
+     * @param beanClass
+     *            bean class to index
      */
     ObjectType(String messageKeySingular, String messageKeyPlural, boolean indexable,
-            Class<? extends BaseBean> aClass) {
+            Class<? extends BaseBean> beanClass) {
         this.messageKeySingular = messageKeySingular;
         this.messageKeyPlural = messageKeyPlural;
         this.indexable = indexable;
-        this.aClass = aClass;
+        this.beanClass = beanClass;
     }
 
     /**
@@ -112,8 +118,13 @@ public enum ObjectType {
         return indexable;
     }
 
-    public Class<? extends BaseBean> getaClass() {
-        return aClass;
+    /**
+     * Returns the bean class indicated by the constant.
+     *
+     * @return the bean class
+     */
+    public Class<? extends BaseBean> getBeanClass() {
+        return beanClass;
     }
 
     /**

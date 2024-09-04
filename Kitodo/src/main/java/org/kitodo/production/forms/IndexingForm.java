@@ -55,7 +55,7 @@ public class IndexingForm {
         indexingRows = new EnumMap<>(ObjectType.class);
         for (ObjectType objectType : ObjectType.values()) {
             if (objectType.isIndexable()) {
-                indexingRows.put(objectType, new IndexingRow(objectType.getaClass()));
+                indexingRows.put(objectType, new IndexingRow(objectType.getBeanClass()));
             }
         }
     }
