@@ -31,7 +31,6 @@
                         <tr>
                             <th><h:outputText value="#{msgs.objectType}"/></th>
                             <th><h:outputText value="#{msgs.startIndexingAll}"/></th>
-                            <th><h:outputText value="#{msgs.startIndexingRemaining}"/></th>
                             <th><h:outputText value="#{msgs.progress}"/></th>
                             <th><h:outputText value="#{msgs.indexedEntries}"/></th>
                             <th><h:outputText value="#{msgs.status}"/></th>
@@ -59,15 +58,6 @@
                                                  onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                  value="#{msgs.startIndexing}"
                                                  action="#{indexingForm.startAllIndexing()}"
-                                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress())}"/>
-                            </td>
-                            <td>
-                                <p:commandButton widgetVar="startIndexingAll"
-                                                 id="startIndexingAllRemainingButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
-                                                 onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
-                                                 value="#{msgs.startIndexing}"
-                                                 action="#{indexingForm.startAllIndexingRemaining()}"
                                                  disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress())}"/>
                             </td>
                             <td>

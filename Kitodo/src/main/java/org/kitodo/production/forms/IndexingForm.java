@@ -126,16 +126,6 @@ public class IndexingForm {
     }
 
     /**
-     * Index all objects of given type 'objectType'.
-     *
-     * @param type
-     *            type objects that get indexed
-     */
-    public void callIndexingRemaining(ObjectType type) {
-        throw new UnsupportedOperationException("currently not implemented");
-    }
-
-    /**
      * Starts the process of indexing all objects to the ElasticSearch index.
      */
     public void startAllIndexing() {
@@ -150,13 +140,6 @@ public class IndexingForm {
         } catch (InterruptedException e) {
             Helper.setErrorMessage(e);
         }
-    }
-
-    /**
-     * Starts the process of indexing all objects to the ElasticSearch index.
-     */
-    public void startAllIndexingRemaining() {
-        throw new UnsupportedOperationException("currently not implemented");
     }
 
     /**
