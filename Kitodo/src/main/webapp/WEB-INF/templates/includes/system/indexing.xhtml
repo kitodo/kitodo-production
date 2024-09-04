@@ -58,7 +58,7 @@
                                                  onclick="PF('allProgress').start();toggleButtons(false, #{indexingForm.objectTypesAsJson});"
                                                  value="#{msgs.startIndexing}"
                                                  action="#{indexingForm.startAllIndexing()}"
-                                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress())}"/>
+                                                 disabled="#{indexingForm.indexingInProgress(true)}"/>
                             </td>
                             <td>
                                 <p:progressBar widgetVar="allProgress"
@@ -76,7 +76,7 @@
                                 <p:graphicImage alt="in progress"
                                                 value="/pages/images/ajax-loader.gif"
                                                 style="max-height: 20px;"
-                                                rendered="#{indexingForm.indexingInProgress()}"/>
+                                                rendered="#{indexingForm.indexingInProgress(false)}"/>
                                 <!--@elvariable id="INDEXING_FAILED" type="org.kitodo.production.enums.IndexStates"-->
                                 <p:graphicImage alt="failed"
                                                 value="/pages/images/fail.svg"
@@ -86,7 +86,7 @@
                                 <p:graphicImage alt="success"
                                                 value="/pages/images/success.svg"
                                                 style="max-height: 20px;"
-                                                rendered="#{indexingForm.allObjectsIndexingState == 'INDEXING_SUCCESSFUL' and not indexingForm.indexingInProgress()}" />
+                                                rendered="#{indexingForm.allObjectsIndexingState == 'INDEXING_SUCCESSFUL' and not indexingForm.indexingInProgress(false)}" />
                             </td>
                         </tr>
                         </tbody>

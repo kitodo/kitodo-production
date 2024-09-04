@@ -66,7 +66,7 @@ public enum ObjectType {
 
     private final String messageKeyPlural;
 
-    private final Class aClass;
+    private final Class<? extends BaseBean> aClass;
 
     private final boolean indexable;
 
@@ -77,7 +77,8 @@ public enum ObjectType {
      * @param messageKeySingular
      *            used for translating the object types name
      */
-    ObjectType(String messageKeySingular, String messageKeyPlural, boolean indexable, Class aClass) {
+    ObjectType(String messageKeySingular, String messageKeyPlural, boolean indexable,
+            Class<? extends BaseBean> aClass) {
         this.messageKeySingular = messageKeySingular;
         this.messageKeyPlural = messageKeyPlural;
         this.indexable = indexable;
@@ -111,7 +112,7 @@ public enum ObjectType {
         return indexable;
     }
 
-    public Class getaClass() {
+    public Class<? extends BaseBean> getaClass() {
         return aClass;
     }
 

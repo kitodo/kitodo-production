@@ -15,6 +15,13 @@ import java.util.Objects;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.hibernate.search.mapper.orm.Search;
+import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
+import org.hibernate.search.mapper.pojo.massindexing.MassIndexingMonitor;
+import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.persistence.HibernateUtil;
+import org.kitodo.production.enums.IndexStates;
+import org.kitodo.production.forms.IndexingRow;
 import org.kitodo.production.helper.Helper;
 
 public class IndexingService {
@@ -85,5 +92,22 @@ public class IndexingService {
             Helper.setErrorMessage("elasticSearchNotRunning");
         }
         return this.serverInformation;
+    }
+
+    public void startIndexing(Class<? extends BaseBean> type, MassIndexingMonitor monitor) {
+        MassIndexer massIndexer = Search.session(HibernateUtil.getSession()).massIndexer(type);
+        massIndexer.dropAndCreateSchemaOnStart(true);
+        massIndexer.monitor(monitor);
+        massIndexer.start().whenComplete((unused, throwable) -> {
+            if (Objects.isNull(throwable)) {
+                logger.info("Indexing complete for {}", type.getSimpleName());
+            } else {
+                logger.error(throwable);
+            }
+            if (monitor instanceof IndexingRow) {
+                ((IndexingRow) monitor).setObjectIndexState(Objects.isNull(throwable) ? IndexStates.INDEXING_SUCCESSFUL
+                        : IndexStates.INDEXING_FAILED);
+            }
+        });
     }
 }

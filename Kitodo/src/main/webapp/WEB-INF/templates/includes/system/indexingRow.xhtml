@@ -27,7 +27,7 @@
                                  value="#{msgs.startIndexing}"
                                  action="#{indexingForm.callIndexing(objectType)}"
                                  styleClass="indexing-button"
-                                 disabled="#{!indexingForm.indexExists() or indexingForm.mappingEmpty or (indexingForm.indexingInProgress() or indexingForm.countDatabaseObjects[objectType] lt 1)}"/>
+                                 disabled="#{indexingForm.indexingInProgress(objectType)}"/>
             </td>
             <td>
                 <p:progressBar widgetVar="#{objectType}Progress"
@@ -39,7 +39,7 @@
                 </p:progressBar>
             </td>
             <td style="text-align: right;">
-                <h:outputText value="#{indexingForm.getNumberOfIndexedObjects(objectType)} / #{indexingForm.countDatabaseObjects[objectType]}"/>
+                <h:outputText value="#{indexingForm.getNumberOfObjects(objectType)}"/>
             </td>
             <td>
                 <!--@elvariable id="INDEXING_STARTED" type="org.kitodo.production.enums.IndexStates"-->
