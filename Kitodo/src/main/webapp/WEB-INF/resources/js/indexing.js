@@ -58,8 +58,6 @@ function toggleProgressPolling(message) {
 
 function toggleButtons(state, objectTypes) {
     if(state) {
-        PF('createMapping').enable();
-        PF('deleteIndex').enable();
         for (var i = 0; i < objectTypes.length; i++) {
             if (objectTypes[i] !== 'NONE') {
                 PF('startIndexing' + objectTypes[i]).enable();
@@ -67,8 +65,6 @@ function toggleButtons(state, objectTypes) {
         }
         PF('startIndexingAll').enable();
     } else {
-        PF('createMapping').disable();
-        PF('deleteIndex').disable();
         for (var i = 0; i < objectTypes.length; i++) {
             if (objectTypes[i] !== 'NONE') {
                 PF('startIndexing' + objectTypes[i]).disable();

@@ -26,53 +26,6 @@
             </ui:fragment>
             <ui:fragment rendered="#{not empty indexingForm.serverInformation}">
                 <p:panel widgetVar="indexingTable" id="indexingTable">
-                    <table>
-                        <thead>
-                        <tr>
-                            <th colspan="3"><h:outputText value="#{msgs.mapping}"/></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <!-- Create Mapping -->
-                        <tr>
-                            <td colspan="2">
-                                <p:commandButton widgetVar="createMapping"
-                                                 id="createMappingButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
-                                                 value="#{msgs.createMapping}"
-                                                 style="width: 100%;"
-                                                 action="#{indexingForm.createMapping(true)}"
-                                                 disabled="#{indexingForm.indexExists() or indexingForm.indexingInProgress()}"
-                                                 update="indexingTable"
-                                                 onclick="createMapping(#{indexingForm.objectTypesAsJson});"/>
-                            </td>
-                            <td>
-                                <p:graphicImage id="create-mapping-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
-                                <p:graphicImage id="create-mapping-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'CREATING_MAPPING_FAILED'}"/>
-                                <p:graphicImage id="create-mapping-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'CREATING_MAPPING_SUCCESSFUL'}"/>
-                            </td>
-                        </tr>
-                        <!-- Delete Index -->
-                        <tr>
-                            <td colspan="2">
-                                <p:commandButton widgetVar="deleteIndex"
-                                                 id="deleteIndexButton"
-                                                 rendered="#{SecurityAccessController.hasAuthorityToEditIndex()}"
-                                                 value="#{msgs.deleteIndex}"
-                                                 style="width: 100%;"
-                                                 action="#{indexingForm.deleteIndex()}"
-                                                 disabled="#{!indexingForm.indexExists() or indexingForm.indexingInProgress()}"
-                                                 update="indexingTable"
-                                                 onclick="return confirm('Do you REALLY want to delete the whole index?');deleteIndex(#{indexingForm.objectTypesAsJson});"/>
-                            </td>
-                            <td>
-                                <p:graphicImage id="delete-index-loading" alt="in progress" value="/pages/images/ajax-loader.gif" style="max-height: 20px; display: none;"/>
-                                <p:graphicImage id="delete-index-error" alt="failed" value="/pages/images/fail.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETING_FAILED'}"/>
-                                <p:graphicImage id="delete-index-success" alt="success" value="/pages/images/success.svg" style="max-height: 20px;" rendered="#{!indexingForm.indexingInProgress() and indexingForm.indexState == 'DELETING_SUCCESSFUL'}"/>
-                            </td>
-                        </tr>
-                        </tbody>
-                    </table>
                     <table id="indexingTable">
                         <thead>
                         <tr>

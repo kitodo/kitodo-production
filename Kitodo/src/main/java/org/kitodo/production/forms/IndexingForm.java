@@ -180,25 +180,6 @@ public class IndexingForm {
     }
 
     /**
-     * Create mapping which enables sorting and other aggregation functions.
-     *
-     * @param updatePollingChannel
-     *            flag indicating whether the web socket channel to the frontend
-     *            should be updated with the success status of the mapping creation
-     *            or not.
-     */
-    public void createMapping(boolean updatePollingChannel) {
-        throw new UnsupportedOperationException("currently not implemented");
-    }
-
-    /**
-     * Delete whole ElasticSearch index.
-     */
-    public void deleteIndex() {
-        throw new UnsupportedOperationException("currently not implemented");
-    }
-
-    /**
      * Return server information provided by the searchService and gathered by the
      * rest client.
      *
