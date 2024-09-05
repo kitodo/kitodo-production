@@ -12,9 +12,7 @@
 package org.kitodo.data.database.beans;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Objects;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -97,19 +95,6 @@ public abstract class BaseTemplateBean extends BaseBean {
      */
     public Date getCreationDate() {
         return this.creationDate;
-    }
-
-    /**
-     * Returns the time the process was created. The string is formatted
-     * according to {@link SimpleDateFormat}{@code ("yyyy-MM-dd HH:mm:ss")}.
-     *
-     * @return the creation time
-     * @deprecated Use {@link #getCreationDate()}.
-     */
-    @Deprecated
-    public String getCreationTime() {
-        Date creationDate = getCreationDate();
-        return Objects.nonNull(creationDate) ? new SimpleDateFormat(DATE_FORMAT).format(creationDate) : null;
     }
 
     /**

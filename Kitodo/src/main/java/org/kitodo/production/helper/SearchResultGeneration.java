@@ -11,7 +11,10 @@
 
 package org.kitodo.production.helper;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
@@ -19,12 +22,14 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.kitodo.data.database.beans.BaseTemplateBean;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
 
 public class SearchResultGeneration {
 
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat(BaseTemplateBean.DATE_FORMAT);
     private String filter;
     private boolean showClosedProcesses;
     private boolean showInactiveProjects;
@@ -111,7 +116,7 @@ public class SearchResultGeneration {
         HSSFRow row = sheet.createRow(rowCounter);
         row.createCell(0).setCellValue(process.getTitle());
         row.createCell(1).setCellValue(process.getId());
-        row.createCell(2).setCellValue(process.getCreationTime());
+        row.createCell(2).setCellValue(dateFormatter.format(process.getCreationDate()));
         row.createCell(3).setCellValue(process.getNumberOfImages());
         row.createCell(4).setCellValue(process.getNumberOfStructures());
         row.createCell(5).setCellValue(process.getNumberOfMetadata());

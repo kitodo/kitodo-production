@@ -39,6 +39,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1785,9 +1786,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      * @return process age of given process
      */
     public static String getProcessDuration(Process process) {
-        String creationDateTimeString = process.getCreationTime();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
+        LocalDateTime createLocalDate = process.getCreationDate().toInstant().atZone(ZoneId.systemDefault())
+                .toLocalDateTime();
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
         return String.format("%sd; %sh", duration.toDays(),
             duration.toHours() - TimeUnit.DAYS.toHours(duration.toDays()));
