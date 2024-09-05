@@ -46,7 +46,6 @@ import org.kitodo.production.services.dataeditor.RulesetManagementService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.image.ImageService;
-import org.kitodo.production.services.index.IndexingService;
 import org.kitodo.production.services.migration.MigrationService;
 import org.kitodo.production.services.ocr.OcrdWorkflowService;
 import org.kitodo.production.services.schema.SchemaService;
@@ -72,7 +71,6 @@ public class ServiceManager {
     private static FolderService folderService;
     private static ImageService imageService;
     private static ImportService importService;
-    private static IndexingService indexingService;
     private static KitodoScriptService kitodoScriptService;
     private static LdapGroupService ldapGroupService;
     private static LdapServerService ldapServerService;
@@ -326,12 +324,6 @@ public class ServiceManager {
     private static void initializeCommentService() {
         if (Objects.isNull(commentService)) {
             commentService = CommentService.getInstance();
-        }
-    }
-
-    private static void initializeIndexingService() {
-        if (Objects.isNull(indexingService)) {
-            indexingService = IndexingService.getInstance();
         }
     }
 
@@ -748,16 +740,6 @@ public class ServiceManager {
     public static CommentService getCommentService() {
         initializeCommentService();
         return commentService;
-    }
-
-    /**
-     * Initialize IndexingService if it is not yet initialize and return it.
-     *
-     * @return IndexingService object
-     */
-    public static IndexingService getIndexingService() {
-        initializeIndexingService();
-        return indexingService;
     }
 
     /**

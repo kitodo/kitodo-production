@@ -355,14 +355,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
         return Math.toIntExact(Workpiece.treeStream(workpiece.getLogicalStructure()).count());
     }
 
-    @Override
-    public void addAllObjectsToIndex(List<Process> processes) throws DAOException, IOException {
-        for (Process process : processes) {
-            enrichProcessData(process, true);
-        }
-        super.addAllObjectsToIndex(processes);
-    }
-
     private void enrichProcessData(Process process, boolean forIndexingAll) throws IOException {
         process.setMetadata(getMetadataForIndex(process, forIndexingAll));
         URI metadataFilePath = fileService.getMetadataFilePath(process, false, forIndexingAll);
