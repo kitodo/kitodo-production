@@ -49,13 +49,13 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.security.password.SecurityPasswordEncoder;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class UserService extends ClientSearchDatabaseService<User, UserDAO> implements UserDetailsService {
+public class UserService extends SearchDatabaseService<User, UserDAO> implements UserDetailsService {
 
     private static final Logger logger = LogManager.getLogger(UserService.class);
     private static volatile UserService instance = null;
@@ -117,7 +117,11 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         return 0L;
     }
 
-    @Override
+    /**
+     * Get list of all objects for selected client from database.
+     *
+     * @return list of all objects for selected client from database
+     */
     public List<User> getAllForSelectedClient() {
         return getByQuery(
             "SELECT u FROM User AS u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = false",

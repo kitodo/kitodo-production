@@ -27,10 +27,10 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchDatabaseService;
+import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
+public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
 
     private static volatile RoleService instance = null;
 
@@ -79,7 +79,11 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
         return 0L;
     }
 
-    @Override
+    /**
+     * Get list of all objects for selected client from database.
+     *
+     * @return list of all objects for selected client from database
+     */
     public List<Role> getAllForSelectedClient() {
         return dao.getByQuery("SELECT r FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
             Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()));
