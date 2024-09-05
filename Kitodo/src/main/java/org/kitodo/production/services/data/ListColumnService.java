@@ -29,10 +29,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ListColumnDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class ListColumnService extends SearchDatabaseService<ListColumn, ListColumnDAO> {
+public class ListColumnService extends BaseBeanService<ListColumn, ListColumnDAO> {
 
     private static volatile ListColumnService instance = null;
 

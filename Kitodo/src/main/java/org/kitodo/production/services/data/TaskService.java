@@ -57,7 +57,6 @@ import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.command.CommandService;
 import org.kitodo.production.services.command.KitodoScriptService;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.file.SubfolderFactoryService;
 import org.kitodo.production.services.image.ImageGenerator;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -68,7 +67,7 @@ import org.primefaces.model.SortOrder;
  * functions on the task because the task itself is a database bean and
  * therefore may not include functionality.
  */
-public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
+public class TaskService extends BaseBeanService<Task, TaskDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 

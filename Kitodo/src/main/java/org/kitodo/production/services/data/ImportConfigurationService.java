@@ -24,10 +24,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class ImportConfigurationService extends SearchDatabaseService<ImportConfiguration, ImportConfigurationDAO> {
+public class ImportConfigurationService extends BaseBeanService<ImportConfiguration, ImportConfigurationDAO> {
 
     private static volatile ImportConfigurationService instance = null;
 

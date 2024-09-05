@@ -24,10 +24,9 @@ import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.AuthorityDAO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class AuthorityService extends SearchDatabaseService<Authority, AuthorityDAO> {
+public class AuthorityService extends BaseBeanService<Authority, AuthorityDAO> {
 
     private static final Logger logger = LogManager.getLogger(AuthorityService.class);
 

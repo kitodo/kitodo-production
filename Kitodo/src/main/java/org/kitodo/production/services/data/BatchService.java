@@ -21,10 +21,9 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends SearchDatabaseService<Batch, BatchDAO> {
+public class BatchService extends BaseBeanService<Batch, BatchDAO> {
 
     private static volatile BatchService instance = null;
     private static final String BATCH = "batch";

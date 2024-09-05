@@ -20,10 +20,9 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Property;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.PropertyDAO;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class PropertyService extends SearchDatabaseService<Property, PropertyDAO> {
+public class PropertyService extends BaseBeanService<Property, PropertyDAO> {
 
     private static volatile PropertyService instance = null;
 

@@ -23,10 +23,9 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO> {
+public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 

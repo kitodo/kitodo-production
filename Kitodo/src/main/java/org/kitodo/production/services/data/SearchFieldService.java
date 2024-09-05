@@ -18,10 +18,9 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class SearchFieldService extends SearchDatabaseService<SearchField, SearchFieldDAO> {
+public class SearchFieldService extends BaseBeanService<SearchField, SearchFieldDAO> {
 
     private static volatile SearchFieldService instance = null;
 

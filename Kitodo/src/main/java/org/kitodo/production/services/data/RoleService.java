@@ -27,10 +27,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RoleDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class RoleService extends SearchDatabaseService<Role, RoleDAO> {
+public class RoleService extends BaseBeanService<Role, RoleDAO> {
 
     private static volatile RoleService instance = null;
 

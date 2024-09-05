@@ -19,13 +19,13 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.kitodo.production.services.data.BaseBeanService;
 
 class TemplateBaseForm extends ProcessListBaseView {
 
     private static final Logger logger = LogManager.getLogger(TemplateBaseForm.class);
 
-    void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
+    void saveTask(Task task, BaseBean baseBean, String message, BaseBeanService baseBeanService) {
         try {
             ServiceManager.getTaskService().save(task);
             ServiceManager.getTaskService().evict(task);

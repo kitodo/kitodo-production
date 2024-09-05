@@ -21,10 +21,9 @@ import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends SearchDatabaseService<Docket, DocketDAO> {
+public class DocketService extends BaseBeanService<Docket, DocketDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 

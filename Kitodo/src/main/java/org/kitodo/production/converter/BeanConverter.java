@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
+import org.kitodo.production.services.data.BaseBeanService;
 
 public abstract class BeanConverter {
 
@@ -30,7 +30,7 @@ public abstract class BeanConverter {
     /**
      * Get as object for bean convert.
      *
-     * @param searchDatabaseService
+     * @param baseBeanService
      *            service used for query the object
      * @param value
      *            id of object as String
@@ -38,12 +38,12 @@ public abstract class BeanConverter {
      *         database, "0" when id is incorrect or object with this id doesn't
      *         exist in database
      */
-    protected Object getAsObject(SearchDatabaseService searchDatabaseService, String value) {
+    protected Object getAsObject(BaseBeanService baseBeanService, String value) {
         if (StringUtils.isEmpty(value)) {
             return null;
         } else {
             try {
-                return searchDatabaseService.getById(Integer.parseInt(value));
+                return baseBeanService.getById(Integer.parseInt(value));
             } catch (DAOException | NumberFormatException e) {
                 logger.error(e.getMessage(), e);
                 return "0";

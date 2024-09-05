@@ -9,7 +9,7 @@
  * GPL3-License.txt file that was distributed with this source code.
  */
 
-package org.kitodo.production.services.data.base;
+package org.kitodo.production.services.data;
 
 import io.reactivex.annotations.CheckReturnValue;
 
@@ -28,7 +28,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.primefaces.model.SortOrder;
 
-public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDAO<T>> {
+public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> {
 
     protected static final EnumMap<SortOrder, String> SORT_ORDER_MAPPING;
 
@@ -38,7 +38,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
         SORT_ORDER_MAPPING.put(SortOrder.DESCENDING, "DESC");
     }
 
-    private static final Logger logger = LogManager.getLogger(SearchDatabaseService.class);
+    private static final Logger logger = LogManager.getLogger(BaseBeanService.class);
     private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
 
     protected S dao;
@@ -49,7 +49,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param dao
      *            for executing queries
      */
-    public SearchDatabaseService(S dao) {
+    public BaseBeanService(S dao) {
         this.dao = dao;
     }
 

@@ -31,10 +31,9 @@ import org.kitodo.data.database.persistence.ProjectDAO;
 import org.kitodo.exceptions.ProjectDeletionException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
+public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 

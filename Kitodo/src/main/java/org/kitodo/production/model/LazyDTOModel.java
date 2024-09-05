@@ -26,8 +26,8 @@ import org.hibernate.exception.SQLGrammarException;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.FilterException;
+import org.kitodo.production.services.data.BaseBeanService;
 import org.kitodo.production.services.data.FilterService;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
@@ -35,7 +35,7 @@ import org.primefaces.model.SortOrder;
 
 public class LazyDTOModel extends LazyDataModel<Object> {
 
-    final transient SearchDatabaseService searchService;
+    final transient BaseBeanService searchService;
     static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
     transient List entities = new ArrayList<>();
     String filterString = "";
@@ -49,7 +49,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
      *            the searchService which is used to retrieve data from the data
      *            source
      */
-    public LazyDTOModel(SearchDatabaseService searchService) {
+    public LazyDTOModel(BaseBeanService searchService) {
         this.searchService = searchService;
 
         try {

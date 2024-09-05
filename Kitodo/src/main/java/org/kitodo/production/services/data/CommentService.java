@@ -21,10 +21,9 @@ import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.CommentDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
+public class CommentService extends BaseBeanService<Comment, CommentDAO> {
 
     private static volatile CommentService instance = null;
 

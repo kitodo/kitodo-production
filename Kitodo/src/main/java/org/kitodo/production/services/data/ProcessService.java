@@ -128,7 +128,6 @@ import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.metadata.copier.CopierData;
 import org.kitodo.production.metadata.copier.DataCopier;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -146,7 +145,7 @@ import org.primefaces.model.charts.pie.PieChartModel;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
+public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 

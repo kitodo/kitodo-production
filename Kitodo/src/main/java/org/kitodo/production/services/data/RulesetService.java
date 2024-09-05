@@ -35,10 +35,9 @@ import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO> {
+public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
 
     private static final Map<String, String> SORT_FIELD_MAPPING;
 

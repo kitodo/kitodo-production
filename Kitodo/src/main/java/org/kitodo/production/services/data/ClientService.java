@@ -23,10 +23,9 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ClientDAO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class ClientService extends SearchDatabaseService<Client, ClientDAO> {
+public class ClientService extends BaseBeanService<Client, ClientDAO> {
 
     private static volatile ClientService instance = null;
 

@@ -25,10 +25,9 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FolderDAO;
 import org.kitodo.production.model.Subfolder;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class FolderService extends SearchDatabaseService<Folder, FolderDAO> {
+public class FolderService extends BaseBeanService<Folder, FolderDAO> {
 
     /**
      * Creates a new folder service.

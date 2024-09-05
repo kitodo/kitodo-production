@@ -18,10 +18,9 @@ import java.util.Map;
 import org.kitodo.data.database.beans.LdapGroup;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.LdapGroupDAO;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class LdapGroupService extends SearchDatabaseService<LdapGroup, LdapGroupDAO> {
+public class LdapGroupService extends BaseBeanService<LdapGroup, LdapGroupDAO> {
 
     public LdapGroupService() {
         super(new LdapGroupDAO());

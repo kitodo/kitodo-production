@@ -40,13 +40,12 @@ import org.kitodo.data.database.persistence.FilterDAO;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
 /**
  * Service for Filter bean.
  */
-public class FilterService extends SearchDatabaseService<Filter, FilterDAO> {
+public class FilterService extends BaseBeanService<Filter, FilterDAO> {
 
     private static final Logger logger = LogManager.getLogger(FilterService.class);
     private static volatile FilterService instance = null;
