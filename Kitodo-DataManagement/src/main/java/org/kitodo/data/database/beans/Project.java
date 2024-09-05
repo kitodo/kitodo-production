@@ -810,7 +810,7 @@ public class Project extends BaseBean implements Comparable<Project> {
      */
     public List<Template> getActiveTemplates() {
         if (Objects.isNull(templates)) {
-            return null;
+            return Collections.emptyList();
         }
         return templates.stream().filter(template -> template.isActive()).collect(Collectors.toList());
     }

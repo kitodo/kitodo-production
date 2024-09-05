@@ -916,7 +916,7 @@ public class Task extends BaseBean {
      */
     public List<Integer> getRoleIds() {
         if (Objects.isNull(roles)) {
-            return null;
+            return Collections.emptyList();
         }
         return getRoles().stream().map(Role::getId).collect(Collectors.toList());
     }
