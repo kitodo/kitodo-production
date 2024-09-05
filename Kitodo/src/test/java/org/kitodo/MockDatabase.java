@@ -870,7 +870,6 @@ public class MockDatabase {
         secondUser.getProjects().add(firstProject);
         sixthUser.getProjects().add(secondProject);
         ServiceManager.getUserService().saveToDatabase(firstUser);
-        ServiceManager.getProjectService().saveToIndex(secondProject, true);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
@@ -1193,7 +1192,6 @@ public class MockDatabase {
         role.getTasks().add(eleventhTask);
         ServiceManager.getTaskService().save(eleventhTask, true);
         firstUser.getProcessingTasks().add(eleventhTask);
-        ServiceManager.getTaskService().saveToIndex(eleventhTask, true);
 
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
@@ -1209,7 +1207,6 @@ public class MockDatabase {
         ServiceManager.getTaskService().save(twelfthTask, true);
         firstUser.getProcessingTasks().add(twelfthTask);
         ServiceManager.getUserService().saveToDatabase(firstUser);
-        ServiceManager.getTaskService().saveToIndex(twelfthTask, true);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");

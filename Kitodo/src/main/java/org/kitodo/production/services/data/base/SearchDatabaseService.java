@@ -478,20 +478,4 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     public Long count() throws DAOException {
         return countDatabaseRows();
     }
-
-    // === functions no longer used ===
-
-    /**
-     * Method saves document to the index of Elastic Search.
-     *
-     * @param baseIndexedBean
-     *            object
-     * @param forceRefresh
-     *            force index refresh - if true, time of execution is longer but
-     *            object is right after that available for display
-     * @deprecated Does nothing anymore and can be deleted.
-     */
-    @Deprecated
-    public void saveToIndex(T baseIndexedBean, boolean forceRefresh) throws DAOException, IOException {
-    }
 }

@@ -106,8 +106,7 @@ public abstract class EditDataScript {
         try (OutputStream out = ServiceManager.getFileService()
                 .write(ServiceManager.getFileService().getMetadataFilePath(process))) {
             ServiceManager.getMetsService().save(workpiece, out);
-            ServiceManager.getProcessService().saveToIndex(process, false);
-        } catch (IOException | DAOException e) {
+        } catch (IOException e) {
             logger.error(e.getMessage());
         }
     }

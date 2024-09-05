@@ -316,15 +316,6 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
         }
     }
 
-    @Override
-    public void saveToIndex(Process process, boolean forceRefresh)
-            throws DAOException, IOException {
-
-        enrichProcessData(process, false);
-
-        super.saveToIndex(process, forceRefresh);
-    }
-
     /**
      * Find all parent processes for a process ordered such that the root parent comes first.
      * 

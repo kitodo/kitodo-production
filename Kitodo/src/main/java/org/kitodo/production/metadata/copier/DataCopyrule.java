@@ -55,8 +55,7 @@ public class DataCopyrule {
             try (OutputStream out = ServiceManager.getFileService()
                     .write(ServiceManager.getFileService().getMetadataFilePath(data.getProcess()))) {
                 ServiceManager.getMetsService().save(workpiece, out);
-                ServiceManager.getProcessService().saveToIndex(data.getProcess(), false);
-            } catch (IOException | DAOException e) {
+            } catch (IOException e) {
                 logger.error("Exception while saving Metadata file", e, e.getMessage());
             }
         }
