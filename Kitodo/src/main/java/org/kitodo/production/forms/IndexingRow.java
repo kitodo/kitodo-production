@@ -30,12 +30,17 @@ public class IndexingRow implements MassIndexingMonitor {
     private AtomicLong documentsBuilt = new AtomicLong();
     private AtomicLong documentsAdded = new AtomicLong();
     private AtomicLong totalCount = new AtomicLong();
+    private long numberOfObjects;
 
     IndexingRow(Class<? extends BaseBean> type) {
         this.type = type;
     }
 
     void callIndexing() {
+        long count = totalCount.get();
+        if (count > 0) {
+            numberOfObjects = count;
+        }
         objectIndexState = IndexStates.INDEXING_STARTED;
         entitiesLoaded.set(0);
         documentsBuilt.set(0);
@@ -45,8 +50,9 @@ public class IndexingRow implements MassIndexingMonitor {
     }
 
     long getCount() {
-        return Math.max(Math.max(documentsAdded.get(), documentsBuilt.get()),
+        long objectCount = Math.max(Math.max(documentsAdded.get(), documentsBuilt.get()),
             Math.max(entitiesLoaded.get(), totalCount.get()));
+        return objectCount == 0 ? numberOfObjects : objectCount;
     }
 
     long getIndexed() {
@@ -55,8 +61,12 @@ public class IndexingRow implements MassIndexingMonitor {
     }
 
     String getNumberOfObjects() {
+        long objectCount = totalCount.get();
+        if (objectCount == 0) {
+            objectCount = numberOfObjects;
+        }
         if (IndexStates.NO_STATE.equals(objectIndexState)) {
-            return Long.toString(totalCount.get());
+            return Long.toString(objectCount);
         } else {
             StringBuilder numberOfObjects = new StringBuilder(40);
             numberOfObjects.append(entitiesLoaded.get());
@@ -65,7 +75,7 @@ public class IndexingRow implements MassIndexingMonitor {
             numberOfObjects.append(" \u2012 ");
             numberOfObjects.append(documentsAdded.get());
             numberOfObjects.append(" / ");
-            numberOfObjects.append(totalCount.get());
+            numberOfObjects.append(objectCount);
             return numberOfObjects.toString();
         }
     }
@@ -86,10 +96,8 @@ public class IndexingRow implements MassIndexingMonitor {
         return IndexStates.INDEXING_STARTED.equals(objectIndexState);
     }
 
-    void setNumberOfDatabaseObjects(long count) {
-        if (IndexStates.NO_STATE.equals(objectIndexState)) {
-            totalCount.set(count);
-        }
+    void setNumberOfDatabaseObjects(long numberOfDatabaseObjects) {
+        this.numberOfObjects = numberOfDatabaseObjects;
     }
 
     public void setObjectIndexState(IndexStates objectIndexState) {
