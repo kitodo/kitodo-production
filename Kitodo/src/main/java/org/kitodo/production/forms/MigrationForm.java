@@ -583,7 +583,7 @@ public class MigrationForm extends BaseForm {
             if (StringUtils.isNotBlank(managerPassword) && !AESUtil.isEncrypted(managerPassword)) {
                 try {
                     ldapServer.setManagerPassword(AESUtil.encrypt(managerPassword, securitySecret));
-                    ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+                    ServiceManager.getLdapServerService().save(ldapServer);
                 } catch (DAOException | NoSuchPaddingException | NoSuchAlgorithmException
                         | InvalidAlgorithmParameterException | InvalidKeyException | BadPaddingException
                         | IllegalBlockSizeException | InvalidKeySpecException e) {

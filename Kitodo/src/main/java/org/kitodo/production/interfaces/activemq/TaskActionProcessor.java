@@ -127,7 +127,7 @@ public class TaskActionProcessor extends ActiveMQProcessor {
         }
 
         if (Objects.nonNull(comment)) {
-            ServiceManager.getCommentService().saveToDatabase(comment);
+            ServiceManager.getCommentService().save(comment);
         }
     }
 

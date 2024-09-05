@@ -190,23 +190,23 @@ public class DesktopForm extends BaseForm {
         try {
             switch (objectType) {
                 case TASK:
-                    return ServiceManager.getTaskService().countDatabaseRows();
+                    return ServiceManager.getTaskService().count();
                 case USER:
-                    return ServiceManager.getUserService().countDatabaseRows();
+                    return ServiceManager.getUserService().count();
                 case DOCKET:
-                    return ServiceManager.getDocketService().countDatabaseRows();
+                    return ServiceManager.getDocketService().count();
                 case PROCESS:
-                    return ServiceManager.getProcessService().countDatabaseRows();
+                    return ServiceManager.getProcessService().count();
                 case PROJECT:
-                    return ServiceManager.getProjectService().countDatabaseRows();
+                    return ServiceManager.getProjectService().count();
                 case RULESET:
-                    return ServiceManager.getRulesetService().countDatabaseRows();
+                    return ServiceManager.getRulesetService().count();
                 case TEMPLATE:
-                    return ServiceManager.getTemplateService().countDatabaseRows();
+                    return ServiceManager.getTemplateService().count();
                 case ROLE:
-                    return ServiceManager.getRoleService().countDatabaseRows();
+                    return ServiceManager.getRoleService().count();
                 case WORKFLOW:
-                    return ServiceManager.getWorkflowService().countDatabaseRows();
+                    return ServiceManager.getWorkflowService().count();
                 default:
                     return 0L;
             }

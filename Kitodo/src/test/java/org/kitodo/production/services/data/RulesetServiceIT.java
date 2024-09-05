@@ -70,7 +70,7 @@ public class RulesetServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
-        Long amount = rulesetService.countDatabaseRows();
+        Long amount = rulesetService.count();
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), amount);
     }
 

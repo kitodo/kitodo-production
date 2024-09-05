@@ -58,7 +58,7 @@ public class FilterServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForFilters() throws Exception {
-        Long amount = filterService.countDatabaseRows();
+        Long amount = filterService.count();
         assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
     }
 

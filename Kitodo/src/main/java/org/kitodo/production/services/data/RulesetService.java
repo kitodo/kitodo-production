@@ -79,15 +79,15 @@ public class RulesetService extends SearchDatabaseService<Ruleset, RulesetDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Ruleset");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Ruleset");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
                 .getSessionClientId());
-        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
+        return count("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
     }
 
     @Override

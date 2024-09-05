@@ -56,8 +56,8 @@ public class BatchService extends SearchDatabaseService<Batch, BatchDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Batch");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Batch");
     }
 
     // functions countResults() and loadData() are not used in batches

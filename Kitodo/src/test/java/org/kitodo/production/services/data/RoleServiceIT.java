@@ -57,7 +57,7 @@ public class RoleServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForRoles() throws Exception {
-        Long amount = roleService.countDatabaseRows();
+        Long amount = roleService.count();
         assertEquals("Roles were not counted correctly!", Long.valueOf(EXPECTED_ROLES_COUNT), amount);
     }
 
@@ -85,22 +85,22 @@ public class RoleServiceIT {
     public void shouldRemoveRole() throws Exception {
         Role role = new Role();
         role.setTitle("To Remove");
-        roleService.saveToDatabase(role);
+        roleService.save(role);
         Role foundRole = roleService.getByQuery("FROM Role WHERE title = 'To Remove'").get(0);
         assertEquals("Additional user group was not inserted in database!", "To Remove", foundRole.getTitle());
 
-        roleService.removeFromDatabase(foundRole);
+        roleService.remove(foundRole);
         exception.expect(DAOException.class);
         exception.expectMessage("");
         roleService.getById(foundRole.getId());
 
         role = new Role();
         role.setTitle("To remove");
-        roleService.saveToDatabase(role);
+        roleService.save(role);
         foundRole = roleService.getByQuery("FROM Role WHERE title = 'To remove'").get(0);
         assertEquals("Additional user group was not inserted in database!", "To remove", foundRole.getTitle());
 
-        roleService.removeFromDatabase(foundRole.getId());
+        roleService.remove(foundRole.getId());
         exception.expect(DAOException.class);
         exception.expectMessage("");
     }
@@ -111,24 +111,24 @@ public class RoleServiceIT {
 
         User user = new User();
         user.setLogin("Cascados");
-        userService.saveToDatabase(user);
+        userService.save(user);
 
         Role role = new Role();
         role.setTitle("Cascados Group");
         role.getUsers().add(userService.getByQuery("FROM User WHERE login = 'Cascados' ORDER BY id DESC").get(0));
-        roleService.saveToDatabase(role);
+        roleService.save(role);
 
         Role foundRole = roleService.getByQuery("FROM Role WHERE title = 'Cascados Group'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascados Group", foundRole.getTitle());
 
-        roleService.removeFromDatabase(foundRole);
+        roleService.remove(foundRole);
         int size = roleService.getByQuery("FROM Role WHERE title = 'Cascados Group'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
         size = userService.getByQuery("FROM User WHERE login = 'Cascados'").size();
         assertEquals("User was removed from database!", 1, size);
 
-        userService.removeFromDatabase(userService.getByQuery("FROM User WHERE login = 'Cascados'").get(0));
+        userService.remove(userService.getByQuery("FROM User WHERE login = 'Cascados'").get(0));
     }
 
     @Test
@@ -154,12 +154,12 @@ public class RoleServiceIT {
 
         Authority authority = new Authority();
         authority.setTitle("newAuthorization");
-        ServiceManager.getAuthorityService().saveToDatabase(authority);
+        ServiceManager.getAuthorityService().save(authority);
 
         authorities.add(authority);
 
         role.setAuthorities(authorities);
-        roleService.saveToDatabase(role);
+        roleService.save(role);
 
         role = roleService.getById(1);
 

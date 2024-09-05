@@ -73,7 +73,7 @@ public class MappingFileListView extends BaseForm {
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getMappingFileService().removeFromDatabase(id);
+            ServiceManager.getMappingFileService().remove(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.MAPPING_FILE.getTranslationSingular() }, logger, e);
         }

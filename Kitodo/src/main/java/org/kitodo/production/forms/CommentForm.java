@@ -158,7 +158,7 @@ public class CommentForm extends BaseForm {
             comment.setType(CommentType.INFO);
         }
         try {
-            ServiceManager.getCommentService().saveToDatabase(comment);
+            ServiceManager.getCommentService().save(comment);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, logger, e);
         }
@@ -176,7 +176,7 @@ public class CommentForm extends BaseForm {
     public void saveEditedComment() {
         if (Objects.nonNull(this.editedComment) && this.editedComment.getType().equals(CommentType.INFO)) {
             try {
-                ServiceManager.getCommentService().saveToDatabase(this.editedComment);
+                ServiceManager.getCommentService().save(this.editedComment);
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, logger, e);
             }

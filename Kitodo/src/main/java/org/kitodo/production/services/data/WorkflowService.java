@@ -65,15 +65,15 @@ public class WorkflowService extends SearchDatabaseService<Workflow, WorkflowDAO
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Workflow");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Workflow");
     }
 
     @Override
     public Long countResults(Map<?, String> filters) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
                 .getSessionClientId());
-        return countDatabaseRows("SELECT COUNT(*) FROM Workflow WHERE client_id = :sessionClientId", parameters);
+        return count("SELECT COUNT(*) FROM Workflow WHERE client_id = :sessionClientId", parameters);
     }
 
     @Override

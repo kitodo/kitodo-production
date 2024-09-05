@@ -55,9 +55,9 @@ public class ClientForm extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getClientService().saveToDatabase(this.client);
+            ServiceManager.getClientService().save(this.client);
             for (Role role : rolesForClient) {
-                ServiceManager.getRoleService().saveToDatabase(role);
+                ServiceManager.getRoleService().save(role);
             }
             rolesForClient = null;
             return usersPage;
@@ -135,7 +135,7 @@ public class ClientForm extends BaseForm {
     public void delete() {
         try {
             this.client.getListColumns().clear();
-            ServiceManager.getClientService().removeFromDatabase(this.client);
+            ServiceManager.getClientService().remove(this.client);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.CLIENT.getTranslationSingular() }, logger, e);
         }

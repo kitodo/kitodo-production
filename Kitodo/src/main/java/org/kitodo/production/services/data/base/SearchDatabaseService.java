@@ -13,9 +13,7 @@ package org.kitodo.production.services.data.base;
 
 import io.reactivex.annotations.CheckReturnValue;
 
-import java.io.IOException;
 import java.util.AbstractCollection;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -118,18 +116,37 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param baseIndexedBean
      *            object to save
      */
-    public void saveToDatabase(T baseIndexedBean) throws DAOException {
+    public void save(T baseIndexedBean) throws DAOException {
         dao.save(baseIndexedBean);
     }
 
     /**
-     * Method saves objects to database.
+     * Method saves object to database and document to the index of Elastic
+     * Search. This method binds three other methods: save to database, save to
+     * index and save dependencies to index.
      *
-     * @param baseIndexedBeans
-     *            beans object to store as indexed
+     * <p>
+     * First step sets up the flag indexAction to state Index and saves to
+     * database. It informs that object was updated in database but not yet in
+     * index. If this step fails, method breaks. If it is successful, method
+     * saves changes to index, first document and next its dependencies. If one
+     * of this steps fails, method retries up to 5 times operations on index. If
+     * it continues to fail, method breaks. If save to index was successful,
+     * indexAction flag is changed to Done and database is again updated. There
+     * is possibility that last step fails and in that case, even if index is up
+     * to date, in some point of the future it will be reindexed by
+     * administrator.
+     *
+     * @param baseIndexedBean
+     *            object
+     *
+     * @param updateRelatedObjectsInIndex
+     *            if relatedObjects need to be updated in Index
+     * @deprecated Use {@link #save(BaseBean)}.
      */
-    public void saveAsIndexed(List<T> baseIndexedBeans) throws DAOException {
-        dao.saveAsIndexed(baseIndexedBeans);
+    @Deprecated
+    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DAOException {
+        save(baseIndexedBean);
     }
 
     /**
@@ -138,7 +155,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param baseIndexedBean
      *            object to remove
      */
-    public void removeFromDatabase(T baseIndexedBean) throws DAOException {
+    public void remove(T baseIndexedBean) throws DAOException {
         dao.remove(baseIndexedBean);
     }
 
@@ -148,7 +165,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      * @param id
      *            of object
      */
-    public void removeFromDatabase(Integer id) throws DAOException {
+    public void remove(Integer id) throws DAOException {
         dao.remove(id);
     }
 
@@ -161,7 +178,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *
      * @return the number of objects
      */
-    public abstract Long countDatabaseRows() throws DAOException;
+    public abstract Long count() throws DAOException;
 
     /**
      * Count rows in database according to given query.
@@ -170,7 +187,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            for database search
      * @return amount of rows in database according to given query
      */
-    public Long countDatabaseRows(String query) throws DAOException {
+    public Long count(String query) throws DAOException {
         logger.debug(query);
         return dao.count(query);
     }
@@ -184,7 +201,7 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
      *            for query
      * @return amount of rows in database according to given query
      */
-    public Long countDatabaseRows(String query, Map<String, Object> parameters) throws DAOException {
+    public Long count(String query, Map<String, Object> parameters) throws DAOException {
         debugLogQuery(query, parameters);
         return dao.count(query, parameters);
     }
@@ -408,74 +425,5 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
             }
             logger.debug(resolved);
         }
-    }
-
-    // === functions no longer used ===
-
-    /**
-     * Method removes object from database and document from the index of
-     * Elastic Search.
-     *
-     * @param baseIndexedBean
-     *            object
-     * @deprecated Use {@link #removeFromDatabase(BaseBean)}.
-     */
-    @Deprecated
-    public void remove(T baseIndexedBean) throws DAOException {
-        removeFromDatabase(baseIndexedBean);
-    }
-
-    /**
-     * calls save method with default updateRelatedObjectsInIndex=false.
-     * 
-     * @param object
-     *            the object to save
-     * @deprecated Use {@link #saveToDatabase(BaseBean)}.
-     */
-    @Deprecated
-    public void save(T object) throws DAOException {
-        saveToDatabase(object);
-    }
-
-    /**
-     * Method saves object to database and document to the index of Elastic
-     * Search. This method binds three other methods: save to database, save to
-     * index and save dependencies to index.
-     *
-     * <p>
-     * First step sets up the flag indexAction to state Index and saves to
-     * database. It informs that object was updated in database but not yet in
-     * index. If this step fails, method breaks. If it is successful, method
-     * saves changes to index, first document and next its dependencies. If one
-     * of this steps fails, method retries up to 5 times operations on index. If
-     * it continues to fail, method breaks. If save to index was successful,
-     * indexAction flag is changed to Done and database is again updated. There
-     * is possibility that last step fails and in that case, even if index is up
-     * to date, in some point of the future it will be reindexed by
-     * administrator.
-     *
-     * @param baseIndexedBean
-     *            object
-     *
-     * @param updateRelatedObjectsInIndex
-     *            if relatedObjects need to be updated in Index
-     * @deprecated Use {@link #saveToDatabase(BaseBean)}.
-     */
-    @Deprecated
-    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DAOException {
-        save(baseIndexedBean);
-    }
-
-    // === alternative functions that are no longer required ===
-
-    /**
-     * Count all objects in index.
-     *
-     * @return amount of all objects
-     * @deprecated Use {@link #countDatabaseRows()}.
-     */
-    @Deprecated
-    public Long count() throws DAOException {
-        return countDatabaseRows();
     }
 }

@@ -229,8 +229,8 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate"));
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Process WHERE " + BaseDAO.getDateFilter("creationDate"));
     }
 
     @Override
@@ -293,7 +293,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
         Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
             project -> showInactiveProjects || project.isActive()).map(Project::getId).collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
+        return count(query.formCountQuery(), query.getQueryParameters());
     }
 
     @Override
@@ -917,7 +917,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
             process.setProcessBaseUri(fileService.getProcessBaseUriForExistingProcess(process));
             if (!forIndexingAll) {
                 try {
-                    saveToDatabase(process);
+                    save(process);
                 } catch (DAOException e) {
                     logger.error(e.getMessage(), e);
                     return URI.create("");
@@ -1876,7 +1876,7 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
      *             when query to database fails
      */
     public int getNumberOfChildren(int processId) throws DAOException {
-        return Math.toIntExact(countDatabaseRows("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
+        return Math.toIntExact(count("SELECT COUNT(*) FROM Process WHERE parent_id = " + processId));
     }
 
     public static void deleteProcess(int processID) throws DAOException, IOException {

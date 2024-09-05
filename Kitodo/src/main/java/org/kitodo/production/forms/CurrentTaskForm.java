@@ -645,7 +645,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void saveCurrentProperty() {
         try {
-            ServiceManager.getPropertyService().saveToDatabase(this.property);
+            ServiceManager.getPropertyService().save(this.property);
             if (!this.myProcess.getProperties().contains(this.property)) {
                 this.myProcess.getProperties().add(this.property);
             }
@@ -665,7 +665,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             newProperty.getProcesses().add(this.myProcess);
             this.myProcess.getProperties().add(newProperty);
-            ServiceManager.getPropertyService().saveToDatabase(newProperty);
+            ServiceManager.getPropertyService().save(newProperty);
             Helper.setMessage("propertySaved");
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);

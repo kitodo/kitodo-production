@@ -256,10 +256,10 @@ public class ProjectForm extends BaseForm {
         }
 
         for (Template template : project.getTemplates()) {
-            ServiceManager.getTemplateService().saveToDatabase(template);
+            ServiceManager.getTemplateService().save(template);
         }
         for (Template template : deletedTemplates) {
-            ServiceManager.getTemplateService().saveToDatabase(template);
+            ServiceManager.getTemplateService().save(template);
         }
 
         deletedTemplates = new ArrayList<>();
@@ -293,8 +293,8 @@ public class ProjectForm extends BaseForm {
             User user = ServiceManager.getUserService().getCurrentUser();
             user.getProjects().add(this.project);
             this.project.getUsers().add(user);
-            ServiceManager.getProjectService().saveToDatabase(this.project);
-            ServiceManager.getUserService().saveToDatabase(user);
+            ServiceManager.getProjectService().save(this.project);
+            ServiceManager.getUserService().save(user);
         }
     }
 
@@ -332,7 +332,7 @@ public class ProjectForm extends BaseForm {
         if (!this.project.getFolders().contains(this.myFolder)) {
             this.project.getFolders().add(this.myFolder);
             try {
-                ServiceManager.getProjectService().saveToDatabase(this.project);
+                ServiceManager.getProjectService().save(this.project);
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROJECT.getTranslationSingular() },
                         logger, e);

@@ -91,8 +91,8 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = false");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM User WHERE deleted = false");
     }
 
     @Override
@@ -105,12 +105,12 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
         }
         String sqlFilterString = ServiceManager.getFilterService().mapToSQLFilterString(filterMap.keySet());
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewUserList()) {
-            return countDatabaseRows("SELECT COUNT(*) FROM User WHERE deleted = false" + sqlFilterString, filterMap);
+            return count("SELECT COUNT(*) FROM User WHERE deleted = false" + sqlFilterString, filterMap);
         }
 
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewUserList()) {
             filterMap.put(CLIENT_ID, getSessionClientId());
-            return countDatabaseRows(
+            return count(
                 "SELECT COUNT(*) FROM User u INNER JOIN u.clients AS c WITH c.id = :clientId WHERE deleted = false"
                         + sqlFilterString, filterMap);
         }
@@ -478,7 +478,7 @@ public class UserService extends ClientSearchDatabaseService<User, UserDAO> impl
             userWithNewPassword = user;
         }
         userWithNewPassword.setPassword(passwordEncoder.encrypt(newPassword));
-        saveToDatabase(userWithNewPassword);
+        save(userWithNewPassword);
     }
 
     /**

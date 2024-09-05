@@ -203,7 +203,7 @@ public class UserForm extends BaseForm {
             if (Objects.isNull(userObject.getId()) && Objects.nonNull(passwordToEncrypt)) {
                 userObject.setPassword(passwordEncoder.encrypt(passwordToEncrypt));
             }
-            userService.saveToDatabase(userObject);
+            userService.save(userObject);
 
             if (userService.getAuthenticatedUser().getId().equals(this.userObject.getId())) {
                 loginForm.setLoggedUser(this.userObject);
@@ -289,7 +289,7 @@ public class UserForm extends BaseForm {
 
     void deleteUser(User user) {
         try {
-            userService.removeFromDatabase(user);
+            userService.remove(user);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[]{ObjectType.USER.getTranslationSingular()}, logger, e);
         }

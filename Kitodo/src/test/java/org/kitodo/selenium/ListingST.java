@@ -97,39 +97,39 @@ public class ListingST extends BaseTestSelenium {
 
         List<String> statistics = desktopPage.getStatistics();
 
-        long countInDatabase = ServiceManager.getTaskService().countDatabaseRows();
+        long countInDatabase = ServiceManager.getTaskService().count();
         long countDisplayed = Long.parseLong(statistics.get(0));
         assertEquals("Displayed wrong count for task statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getUserService().countDatabaseRows();
+        countInDatabase = ServiceManager.getUserService().count();
         countDisplayed = Long.parseLong(statistics.get(1));
         assertEquals("Displayed wrong count for user statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getProcessService().countDatabaseRows();
+        countInDatabase = ServiceManager.getProcessService().count();
         countDisplayed = Long.parseLong(statistics.get(2));
         assertEquals("Displayed wrong count for process statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getDocketService().countDatabaseRows();
+        countInDatabase = ServiceManager.getDocketService().count();
         countDisplayed = Long.parseLong(statistics.get(3));
         assertEquals("Displayed wrong count for docket statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getProjectService().countDatabaseRows();
+        countInDatabase = ServiceManager.getProjectService().count();
         countDisplayed = Long.parseLong(statistics.get(4));
         assertEquals("Displayed wrong count for project statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getRulesetService().countDatabaseRows();
+        countInDatabase = ServiceManager.getRulesetService().count();
         countDisplayed = Long.parseLong(statistics.get(5));
         assertEquals("Displayed wrong count for ruleset statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getTemplateService().countDatabaseRows();
+        countInDatabase = ServiceManager.getTemplateService().count();
         countDisplayed = Long.parseLong(statistics.get(6));
         assertEquals("Displayed wrong count for template statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getRoleService().countDatabaseRows();
+        countInDatabase = ServiceManager.getRoleService().count();
         countDisplayed = Long.parseLong(statistics.get(7));
         assertEquals("Displayed wrong count for role statistics", countInDatabase, countDisplayed);
 
-        countInDatabase = ServiceManager.getWorkflowService().countDatabaseRows();
+        countInDatabase = ServiceManager.getWorkflowService().count();
         countDisplayed = Long.parseLong(statistics.get(8));
         assertEquals("Displayed wrong count for workflow statistics", countInDatabase, countDisplayed);
     }

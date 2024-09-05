@@ -79,15 +79,15 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Template");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Template");
     }
 
     @Override
     public Long countResults(Map<?, String> filters) throws DAOException {
         Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
                 .getSessionClientId());
-        return countDatabaseRows(this.showInactiveTemplates
+        return count(this.showInactiveTemplates
                 ? "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId"
                 : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = true", parameters);
     }
@@ -273,7 +273,7 @@ public class TemplateService extends SearchDatabaseService<Template, TemplateDAO
      *
      * <p>
      * <b>API Note:</b><br>
-     * Affects the results of functions {@link #countDatabaseRows()} and
+     * Affects the results of functions {@link #count()} and
      * {@link #loadData(int, int, String, SortOrder, Map)} in
      * {@link SearchDatabaseServiceInterface}.
      * 

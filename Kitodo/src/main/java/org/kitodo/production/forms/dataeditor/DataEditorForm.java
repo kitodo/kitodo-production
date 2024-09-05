@@ -1050,7 +1050,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
             try {
-                ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                ServiceManager.getDataEditorSettingService().save(dataEditorSetting);
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);

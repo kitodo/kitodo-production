@@ -113,7 +113,7 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
-        Long amount = processService.countDatabaseRows();
+        Long amount = processService.count();
         assertEquals("Processes were not counted correctly!", Long.valueOf(7), amount);
     }
 

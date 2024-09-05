@@ -64,7 +64,7 @@ public class BatchServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForBatches() throws Exception {
-        Long amount = batchService.countDatabaseRows();
+        Long amount = batchService.count();
         assertEquals("Batches were not counted correctly!", Long.valueOf(4), amount);
     }
 

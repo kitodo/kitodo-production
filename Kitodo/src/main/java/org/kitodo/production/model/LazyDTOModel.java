@@ -53,7 +53,7 @@ public class LazyDTOModel extends LazyDataModel<Object> {
         this.searchService = searchService;
 
         try {
-            this.setRowCount(toIntExact(searchService.countDatabaseRows()));
+            this.setRowCount(toIntExact(searchService.count()));
         } catch (DAOException e) {
             logger.error(e.getMessage());
             this.setRowCount(0);

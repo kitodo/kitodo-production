@@ -75,14 +75,14 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Project");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Project");
     }
 
     @Override
     public Long countResults(Map<?, String> filters) throws DAOException {
         BeanQuery query = getProjectsQuery();
-        return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
+        return count(query.formCountQuery(), query.getQueryParameters());
     }
 
     /**
@@ -290,11 +290,11 @@ public class ProjectService extends SearchDatabaseService<Project, ProjectDAO> {
         }
         for (User user : project.getUsers()) {
             user.getProjects().remove(project);
-            ServiceManager.getUserService().saveToDatabase(user);
+            ServiceManager.getUserService().save(user);
         }
         for (Template template : project.getTemplates()) {
             template.getProjects().remove(project);
-            ServiceManager.getTemplateService().saveToDatabase(template);
+            ServiceManager.getTemplateService().save(template);
         }
         ServiceManager.getProjectService().remove(project);
     }

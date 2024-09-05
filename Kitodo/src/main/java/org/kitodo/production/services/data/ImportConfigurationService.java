@@ -64,13 +64,13 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM ImportConfiguration");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM ImportConfiguration");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     /**
@@ -82,7 +82,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
      *         default child configuration to at least one project
      */
     @Override
-    public void removeFromDatabase(Integer id) throws DAOException, ImportConfigurationInUseException {
+    public void remove(Integer id) throws DAOException, ImportConfigurationInUseException {
         for (Project project : ServiceManager.getProjectService().getAll()) {
             ImportConfiguration defaultConfiguration = project.getDefaultImportConfiguration();
             if (Objects.nonNull(defaultConfiguration) && Objects.equals(defaultConfiguration.getId(), id)) {

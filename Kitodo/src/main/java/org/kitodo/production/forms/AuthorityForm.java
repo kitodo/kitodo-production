@@ -99,7 +99,7 @@ public class AuthorityForm extends BaseForm {
     public String save() {
         try {
             this.authority.setTitle(this.title + "_" + this.type);
-            ServiceManager.getAuthorityService().saveToDatabase(this.authority);
+            ServiceManager.getAuthorityService().save(this.authority);
             return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.AUTHORITY.getTranslationSingular() }, logger,
@@ -117,7 +117,7 @@ public class AuthorityForm extends BaseForm {
                 Helper.setErrorMessage("authorityAssignedError");
                 return;
             }
-            ServiceManager.getAuthorityService().removeFromDatabase(this.authority);
+            ServiceManager.getAuthorityService().remove(this.authority);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.AUTHORITY.getTranslationSingular() },
                 logger, e);

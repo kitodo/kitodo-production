@@ -81,8 +81,8 @@ public class FilterService extends SearchDatabaseService<Filter, FilterDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Filter");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Filter");
     }
 
     // functions countResults() and loadData() are not used in filters

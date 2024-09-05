@@ -348,7 +348,7 @@ public class MockDatabase {
         authorities.add(new Authority("renameMedia" + CLIENT_ASSIGNABLE));
 
         for (Authority authority : authorities) {
-            ServiceManager.getAuthorityService().saveToDatabase(authority);
+            ServiceManager.getAuthorityService().save(authority);
         }
     }
 
@@ -401,7 +401,7 @@ public class MockDatabase {
         listColumns.add(new ListColumn("ldapgroup.gidNumber"));
 
         for (ListColumn listColumn : listColumns) {
-            ServiceManager.getListColumnService().saveToDatabase(listColumn);
+            ServiceManager.getListColumnService().save(listColumn);
         }
     }
 
@@ -432,7 +432,7 @@ public class MockDatabase {
         firstSetting.setStructureWidth(0.2f);
         firstSetting.setMetadataWidth(0.4f);
         firstSetting.setGalleryWidth(0.4f);
-        ServiceManager.getDataEditorSettingService().saveToDatabase(firstSetting);
+        ServiceManager.getDataEditorSettingService().save(firstSetting);
 
         DataEditorSetting secondSetting = new DataEditorSetting();
         secondSetting.setUserId(1);
@@ -440,7 +440,7 @@ public class MockDatabase {
         secondSetting.setStructureWidth(0f);
         secondSetting.setMetadataWidth(0.5f);
         secondSetting.setGalleryWidth(0.5f);
-        ServiceManager.getDataEditorSettingService().saveToDatabase(secondSetting);
+        ServiceManager.getDataEditorSettingService().save(secondSetting);
 
         DataEditorSetting thirdSetting = new DataEditorSetting();
         thirdSetting.setUserId(1);
@@ -448,7 +448,7 @@ public class MockDatabase {
         thirdSetting.setStructureWidth(1f);
         thirdSetting.setMetadataWidth(0f);
         thirdSetting.setGalleryWidth(0f);
-        ServiceManager.getDataEditorSettingService().saveToDatabase(thirdSetting);
+        ServiceManager.getDataEditorSettingService().save(thirdSetting);
     }
 
     public static void insertDockets() throws DAOException {
@@ -488,7 +488,7 @@ public class MockDatabase {
         ldapServer.setPasswordEncryption(PasswordEncryption.SHA);
         ldapServer.setUseSsl(false);
 
-        ServiceManager.getLdapServerService().saveToDatabase(ldapServer);
+        ServiceManager.getLdapServerService().save(ldapServer);
     }
 
     public static void insertLdapGroups() throws DAOException {
@@ -502,7 +502,7 @@ public class MockDatabase {
         firstLdapGroup.setDisplayName("Name");
         firstLdapGroup.setLdapServer(ServiceManager.getLdapServerService().getById(1));
 
-        ServiceManager.getLdapGroupService().saveToDatabase(firstLdapGroup);
+        ServiceManager.getLdapGroupService().save(firstLdapGroup);
     }
 
     private static void insertProcesses() throws DAOException {
@@ -596,8 +596,8 @@ public class MockDatabase {
         ImportConfiguration templateProcessConfiguration = new ImportConfiguration();
         templateProcessConfiguration.setConfigurationType(ImportConfigurationType.PROCESS_TEMPLATE.name());
         templateProcessConfiguration.setDefaultTemplateProcess(newProcess);
-        ServiceManager.getImportConfigurationService().saveToDatabase(templateProcessConfiguration);
-        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().countDatabaseRows());
+        ServiceManager.getImportConfigurationService().save(templateProcessConfiguration);
+        int numberOfConfigs = Math.toIntExact(ServiceManager.getImportConfigurationService().count());
         ImportConfiguration savedConfig = ServiceManager.getImportConfigurationService().getById(numberOfConfigs);
         firstProject.setDefaultChildProcessImportConfiguration(savedConfig);
         ServiceManager.getProjectService().save(firstProject);
@@ -723,7 +723,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 14);
         firstProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
+        ServiceManager.getPropertyService().save(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("Korrektur notwendig");
@@ -734,7 +734,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 15);
         secondProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
+        ServiceManager.getPropertyService().save(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
         thirdProcessProperty.setTitle("Korrektur notwendig");
@@ -745,7 +745,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 7, 15);
         thirdProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
+        ServiceManager.getPropertyService().save(thirdProcessProperty);
 
         Process secondProcess = ServiceManager.getProcessService().getById(2);
         Property fourthProcessProperty = new Property();
@@ -757,7 +757,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 7, 15);
         fourthProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         fourthProcessProperty.getProcesses().add(secondProcess);
-        ServiceManager.getPropertyService().saveToDatabase(fourthProcessProperty);
+        ServiceManager.getPropertyService().save(fourthProcessProperty);
 
         firstProcess.getProperties().add(firstProcessProperty);
         firstProcess.getProperties().add(secondProcessProperty);
@@ -781,7 +781,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 14);
         firstProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(firstProcessProperty);
+        ServiceManager.getPropertyService().save(firstProcessProperty);
 
         Property secondProcessProperty = new Property();
         secondProcessProperty.setTitle("Korrektur notwendig");
@@ -792,7 +792,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 15);
         secondProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(secondProcessProperty);
+        ServiceManager.getPropertyService().save(secondProcessProperty);
 
         Property thirdProcessProperty = new Property();
         thirdProcessProperty.setTitle("Korrektur notwendig");
@@ -803,7 +803,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 7, 15);
         thirdProcessProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         thirdProcessProperty.getProcesses().add(firstProcess);
-        ServiceManager.getPropertyService().saveToDatabase(thirdProcessProperty);
+        ServiceManager.getPropertyService().save(thirdProcessProperty);
 
         firstProcess.getProperties().add(firstProcessProperty);
         firstProcess.getProperties().add(secondProcessProperty);
@@ -817,17 +817,17 @@ public class MockDatabase {
         Client client = new Client();
         client.setName("First client");
         client = ServiceManager.getClientService().addStandardListColumns(client);
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
 
         Client secondClient = new Client();
         secondClient.setName("Second client");
         secondClient = ServiceManager.getClientService().addStandardListColumns(secondClient);
-        ServiceManager.getClientService().saveToDatabase(secondClient);
+        ServiceManager.getClientService().save(secondClient);
 
         Client thirdClient = new Client();
         thirdClient.setName("Not used client");
         thirdClient = ServiceManager.getClientService().addStandardListColumns(thirdClient);
-        ServiceManager.getClientService().saveToDatabase(thirdClient);
+        ServiceManager.getClientService().save(thirdClient);
     }
 
     private static void insertProjects() throws Exception {
@@ -869,7 +869,7 @@ public class MockDatabase {
         firstUser.getProjects().add(secondProject);
         secondUser.getProjects().add(firstProject);
         sixthUser.getProjects().add(secondProject);
-        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getUserService().save(firstUser);
 
         Project thirdProject = new Project();
         thirdProject.setTitle("Inactive project");
@@ -890,9 +890,9 @@ public class MockDatabase {
         secondUser.getProjects().add(thirdProject);
         thirdUser.getProjects().add(thirdProject);
         sixthUser.getProjects().add(firstProject);
-        ServiceManager.getUserService().saveToDatabase(secondUser);
-        ServiceManager.getUserService().saveToDatabase(thirdUser);
-        ServiceManager.getUserService().saveToDatabase(sixthUser);
+        ServiceManager.getUserService().save(secondUser);
+        ServiceManager.getUserService().save(thirdUser);
+        ServiceManager.getUserService().save(sixthUser);
     }
 
     private static void insertFolders() throws DAOException {
@@ -1168,9 +1168,9 @@ public class MockDatabase {
             ServiceManager.getTaskService().save(task, true);
         }
 
-        ServiceManager.getUserService().saveToDatabase(firstUser);
-        ServiceManager.getUserService().saveToDatabase(secondUser);
-        ServiceManager.getUserService().saveToDatabase(blockedUser);
+        ServiceManager.getUserService().save(firstUser);
+        ServiceManager.getUserService().save(secondUser);
+        ServiceManager.getUserService().save(blockedUser);
 
         WorkflowControllerService.updateProcessSortHelperStatus(firstProcess);
         ServiceManager.getProcessService().save(firstProcess);
@@ -1206,7 +1206,7 @@ public class MockDatabase {
         role.getTasks().add(twelfthTask);
         ServiceManager.getTaskService().save(twelfthTask, true);
         firstUser.getProcessingTasks().add(twelfthTask);
-        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getUserService().save(firstUser);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");
@@ -1220,7 +1220,7 @@ public class MockDatabase {
         role.getTasks().add(thirteenTask);
         ServiceManager.getTaskService().save(thirteenTask, true);
 
-        ServiceManager.getRoleService().saveToDatabase(role);
+        ServiceManager.getRoleService().save(role);
 
         WorkflowControllerService.updateProcessSortHelperStatus(secondProcess);
         ServiceManager.getProcessService().save(secondProcess);
@@ -1292,7 +1292,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 14);
         firstTemplateProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstTemplateProperty.getTemplates().add(template);
-        ServiceManager.getPropertyService().saveToDatabase(firstTemplateProperty);
+        ServiceManager.getPropertyService().save(firstTemplateProperty);
 
         Property secondTemplateProperty = new Property();
         secondTemplateProperty.setTitle("template");
@@ -1303,7 +1303,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 15);
         secondTemplateProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondTemplateProperty.getTemplates().add(template);
-        ServiceManager.getPropertyService().saveToDatabase(secondTemplateProperty);
+        ServiceManager.getPropertyService().save(secondTemplateProperty);
 
         template.getTemplates().add(firstTemplateProperty);
         template.getTemplates().add(secondTemplateProperty);
@@ -1339,7 +1339,7 @@ public class MockDatabase {
         firstUser.getRoles().add(databaseRole);
         firstUser.getRoles().add(renameMediaRole);
         firstUser.getClients().add(firstClient);
-        ServiceManager.getUserService().saveToDatabase(firstUser);
+        ServiceManager.getUserService().save(firstUser);
 
         User secondUser = new User();
         secondUser.setName("Adam");
@@ -1354,7 +1354,7 @@ public class MockDatabase {
         secondUser.getRoles().add(projectRoleForSecondClient);
         secondUser.getClients().add(firstClient);
         secondUser.getClients().add(secondClient);
-        ServiceManager.getUserService().saveToDatabase(secondUser);
+        ServiceManager.getUserService().save(secondUser);
 
         User thirdUser = new User();
         thirdUser.setName("Anna");
@@ -1365,7 +1365,7 @@ public class MockDatabase {
         thirdUser.setLanguage("de");
         thirdUser.setActive(false);
         thirdUser.getRoles().add(adminRole);
-        ServiceManager.getUserService().saveToDatabase(thirdUser);
+        ServiceManager.getUserService().save(thirdUser);
 
         User fourthUser = new User();
         fourthUser.setName("Max");
@@ -1377,7 +1377,7 @@ public class MockDatabase {
         fourthUser.setTableSize(20);
         fourthUser.setLanguage("de");
         fourthUser.getRoles().add(withoutAuthoritiesRole);
-        ServiceManager.getUserService().saveToDatabase(fourthUser);
+        ServiceManager.getUserService().save(fourthUser);
 
         User fifthUser = new User();
         fifthUser.setName("Last");
@@ -1388,7 +1388,7 @@ public class MockDatabase {
         fifthUser.setLocation("Dresden");
         fifthUser.setTableSize(20);
         fifthUser.setLanguage("de");
-        ServiceManager.getUserService().saveToDatabase(fifthUser);
+        ServiceManager.getUserService().save(fifthUser);
 
         User sixthUser = new User();
         sixthUser.setName("Very last");
@@ -1398,7 +1398,7 @@ public class MockDatabase {
         sixthUser.getClients().add(firstClient);
         sixthUser.getRoles().add(metadataRole);
         sixthUser.setMetadataLanguage("de");
-        ServiceManager.getUserService().saveToDatabase(sixthUser);
+        ServiceManager.getUserService().save(sixthUser);
     }
 
     private static void insertRoles() throws DAOException {
@@ -1414,7 +1414,7 @@ public class MockDatabase {
             firstRole.getAuthorities().add(allAuthorities.get(i));
         }
 
-        ServiceManager.getRoleService().saveToDatabase(firstRole);
+        ServiceManager.getRoleService().save(firstRole);
 
         Role secondRole = new Role();
         secondRole.setTitle("General");
@@ -1425,7 +1425,7 @@ public class MockDatabase {
             secondRole.getAuthorities().add(allAuthorities.get(i));
         }
 
-        ServiceManager.getRoleService().saveToDatabase(secondRole);
+        ServiceManager.getRoleService().save(secondRole);
 
         Role thirdRole = new Role();
         thirdRole.setTitle("Random for first");
@@ -1437,7 +1437,7 @@ public class MockDatabase {
         userAuthoritiesForFirst.add(ServiceManager.getAuthorityService().getByTitle("viewAllProjects" + CLIENT_ASSIGNABLE));
         thirdRole.setAuthorities(userAuthoritiesForFirst);
 
-        ServiceManager.getRoleService().saveToDatabase(thirdRole);
+        ServiceManager.getRoleService().save(thirdRole);
 
         Role fourthRole = new Role();
         fourthRole.setTitle("Random for second");
@@ -1455,12 +1455,12 @@ public class MockDatabase {
         userAuthoritiesForSecond.add(ServiceManager.getAuthorityService().getByTitle("viewAllDockets" + CLIENT_ASSIGNABLE));
         fourthRole.setAuthorities(userAuthoritiesForSecond);
 
-        ServiceManager.getRoleService().saveToDatabase(fourthRole);
+        ServiceManager.getRoleService().save(fourthRole);
 
         Role fifthUserGroup = new Role();
         fifthUserGroup.setTitle("Without authorities");
         fifthUserGroup.setClient(client);
-        ServiceManager.getRoleService().saveToDatabase(fifthUserGroup);
+        ServiceManager.getRoleService().save(fifthUserGroup);
 
         Role sixthRole = new Role();
         sixthRole.setTitle("With partial metadata editor authorities");
@@ -1473,7 +1473,7 @@ public class MockDatabase {
         userMetadataAuthorities.add(ServiceManager.getAuthorityService().getByTitle("editProcessMetaData" + CLIENT_ASSIGNABLE));
         sixthRole.setAuthorities(userMetadataAuthorities);
 
-        ServiceManager.getRoleService().saveToDatabase(sixthRole);
+        ServiceManager.getRoleService().save(sixthRole);
 
         // insert database authority
         Role databaseStatisticsRole = new Role();
@@ -1484,7 +1484,7 @@ public class MockDatabase {
         databaseStatisticAuthorities.add(ServiceManager.getAuthorityService().getByTitle("viewDatabaseStatistic" + GLOBAL_ASSIGNABLE));
         databaseStatisticsRole.setAuthorities(databaseStatisticAuthorities);
 
-        ServiceManager.getRoleService().saveToDatabase(databaseStatisticsRole);
+        ServiceManager.getRoleService().save(databaseStatisticsRole);
 
         // insert media renaming role
         Role renameMediaRole = new Role();
@@ -1493,7 +1493,7 @@ public class MockDatabase {
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + GLOBAL_ASSIGNABLE)));
         renameMediaRole.setAuthorities(Collections.singletonList(ServiceManager.getAuthorityService().getByTitle("renameMedia" + CLIENT_ASSIGNABLE)));
 
-        ServiceManager.getRoleService().saveToDatabase(renameMediaRole);
+        ServiceManager.getRoleService().save(renameMediaRole);
     }
 
     private static void insertUserFilters() throws DAOException {
@@ -1515,7 +1515,7 @@ public class MockDatabase {
 
         user.getFilters().add(firstUserFilter);
         user.getFilters().add(secondUserFilter);
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
     }
 
     private static void insertWorkpieceProperties() throws DAOException {
@@ -1530,7 +1530,7 @@ public class MockDatabase {
         LocalDate localDate = LocalDate.of(2017, 1, 13);
         firstWorkpieceProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         firstWorkpieceProperty.getWorkpieces().add(workpiece);
-        ServiceManager.getPropertyService().saveToDatabase(firstWorkpieceProperty);
+        ServiceManager.getPropertyService().save(firstWorkpieceProperty);
 
         Property secondWorkpieceProperty = new Property();
         secondWorkpieceProperty.setTitle("workpiece");
@@ -1541,7 +1541,7 @@ public class MockDatabase {
         localDate = LocalDate.of(2017, 1, 14);
         secondWorkpieceProperty.setCreationDate(Date.from(localDate.atStartOfDay().atZone(ZoneId.systemDefault()).toInstant()));
         secondWorkpieceProperty.getWorkpieces().add(workpiece);
-        ServiceManager.getPropertyService().saveToDatabase(secondWorkpieceProperty);
+        ServiceManager.getPropertyService().save(secondWorkpieceProperty);
 
         workpiece.getWorkpieces().add(firstWorkpieceProperty);
         workpiece.getWorkpieces().add(secondWorkpieceProperty);
@@ -1575,7 +1575,7 @@ public class MockDatabase {
         mappingFileModsToKitodo.setTitle("MODS to Kitodo mapping");
         mappingFileModsToKitodo.setInputMetadataFormat(MetadataFormat.MODS.name());
         mappingFileModsToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
-        ServiceManager.getMappingFileService().saveToDatabase(mappingFileModsToKitodo);
+        ServiceManager.getMappingFileService().save(mappingFileModsToKitodo);
 
         // add PICA to Kitodo mapping file
         MappingFile mappingFilePicaToKitodo = new MappingFile();
@@ -1583,7 +1583,7 @@ public class MockDatabase {
         mappingFilePicaToKitodo.setTitle("PICA to Kitodo mapping");
         mappingFilePicaToKitodo.setInputMetadataFormat(MetadataFormat.PICA.name());
         mappingFilePicaToKitodo.setOutputMetadataFormat(MetadataFormat.KITODO.name());
-        ServiceManager.getMappingFileService().saveToDatabase(mappingFilePicaToKitodo);
+        ServiceManager.getMappingFileService().save(mappingFilePicaToKitodo);
     }
 
     public static void insertImportConfigurations() throws DAOException {
@@ -1610,7 +1610,7 @@ public class MockDatabase {
         gbvConfiguration.setSearchFields(Collections.singletonList(ppnField));
         gbvConfiguration.setIdSearchField(gbvConfiguration.getSearchFields().get(0));
         gbvConfiguration.setDefaultSearchField(gbvConfiguration.getSearchFields().get(0));
-        ServiceManager.getImportConfigurationService().saveToDatabase(gbvConfiguration);
+        ServiceManager.getImportConfigurationService().save(gbvConfiguration);
 
         // add Kalliope import configuration, including id search field
         ImportConfiguration kalliopeConfiguration = new ImportConfiguration();
@@ -1644,11 +1644,11 @@ public class MockDatabase {
         kalliopeSearchFields.add(parentIdSearchFieldKalliope);
 
         kalliopeConfiguration.setSearchFields(kalliopeSearchFields);
-        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+        ServiceManager.getImportConfigurationService().save(kalliopeConfiguration);
 
         kalliopeConfiguration.setIdSearchField(kalliopeConfiguration.getSearchFields().get(0));
         kalliopeConfiguration.setParentSearchField(kalliopeConfiguration.getSearchFields().get(1));
-        ServiceManager.getImportConfigurationService().saveToDatabase(kalliopeConfiguration);
+        ServiceManager.getImportConfigurationService().save(kalliopeConfiguration);
 
         // add K10Plus import configuration, including id search field
         ImportConfiguration k10plusConfiguration = new ImportConfiguration();
@@ -1682,11 +1682,11 @@ public class MockDatabase {
         k10SearchFields.add(parentIdSearchFieldK10Plus);
 
         k10plusConfiguration.setSearchFields(k10SearchFields);
-        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+        ServiceManager.getImportConfigurationService().save(k10plusConfiguration);
 
         k10plusConfiguration.setIdSearchField(k10plusConfiguration.getSearchFields().get(0));
         k10plusConfiguration.setParentSearchField(k10plusConfiguration.getSearchFields().get(1));
-        ServiceManager.getImportConfigurationService().saveToDatabase(k10plusConfiguration);
+        ServiceManager.getImportConfigurationService().save(k10plusConfiguration);
 
         for (Project project : ServiceManager.getProjectService().getAll()) {
             project.setDefaultImportConfiguration(k10plusConfiguration);
@@ -1741,7 +1741,7 @@ public class MockDatabase {
         urlParameters.add(secondParameter);
         customConfiguration.setUrlParameters(urlParameters);
 
-        ServiceManager.getImportConfigurationService().saveToDatabase(customConfiguration);
+        ServiceManager.getImportConfigurationService().save(customConfiguration);
     }
 
     private static void insertDataForParallelTasks() throws DAOException, IOException, WorkflowException {
@@ -1947,7 +1947,7 @@ public class MockDatabase {
 
         Client client = new Client();
         client.setName("Removable client");
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
         removableObjectIDs.put(ObjectType.CLIENT.name(), client.getId());
 
         Client assignableClient = ServiceManager.getClientService().getById(1);
@@ -1967,13 +1967,13 @@ public class MockDatabase {
         User user = new User();
         user.setName("Removable user");
         user.getClients().add(assignableClient);
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
         removableObjectIDs.put(ObjectType.USER.name(), user.getId());
 
         Role role = new Role();
         role.setTitle("Removable role");
         role.setClient(assignableClient);
-        ServiceManager.getRoleService().saveToDatabase(role);
+        ServiceManager.getRoleService().save(role);
         removableObjectIDs.put(ObjectType.ROLE.name(), role.getId());
 
     }

@@ -63,17 +63,17 @@ public class RoleService extends ClientSearchDatabaseService<Role, RoleDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Role");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Role");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
         if (ServiceManager.getSecurityAccessService().hasAuthorityGlobalToViewRoleList()) {
-            return countDatabaseRows();
+            return count();
         }
         if (ServiceManager.getSecurityAccessService().hasAuthorityToViewRoleList()) {
-            return countDatabaseRows("SELECT COUNT(*) FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
+            return count("SELECT COUNT(*) FROM Role AS r INNER JOIN r.client AS c WITH c.id = :clientId",
                     Collections.singletonMap(CLIENT_ID, ServiceManager.getUserService().getSessionClientId()));
         }
         return 0L;

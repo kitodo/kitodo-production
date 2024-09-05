@@ -351,7 +351,7 @@ public class WorkflowControllerServiceIT {
         process.getTasks().clear();
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForHierarchyParent);
         WorkflowCondition workflowCondition = new WorkflowCondition("xpath", "/mets:nothing");
-        ServiceManager.getWorkflowConditionService().saveToDatabase(workflowCondition);
+        ServiceManager.getWorkflowConditionService().save(workflowCondition);
         Task taskToClose =  createAndSaveTask(TaskStatus.INWORK, 1, process, null);
         Task skippedTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, workflowCondition);
         Task secondSkippedTask = createAndSaveTask(TaskStatus.LOCKED, 2, process, workflowCondition);
@@ -438,7 +438,7 @@ public class WorkflowControllerServiceIT {
         problem.setCorrected(Boolean.FALSE);
         problem.setCreationDate(new Date());
 
-        ServiceManager.getCommentService().saveToDatabase(problem);
+        ServiceManager.getCommentService().save(problem);
 
         workflowService.reportProblem(problem, TaskEditType.MANUAL_SINGLE);
 
@@ -474,7 +474,7 @@ public class WorkflowControllerServiceIT {
         correctionComment.setCorrected(Boolean.FALSE);
         correctionComment.setCreationDate(new Date());
 
-        ServiceManager.getCommentService().saveToDatabase(correctionComment);
+        ServiceManager.getCommentService().save(correctionComment);
 
         workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
         workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);

@@ -68,8 +68,8 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM ListColumn");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM ListColumn");
     }
 
     @Override
@@ -138,7 +138,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
 
         client.setListColumns(new ArrayList<>(allClientColumns));
 
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
     }
 
     private ArrayList<String> getPrefixesFromListColumns(List<ListColumn> columns) throws Exception {
@@ -187,7 +187,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
             for (ListColumn cc : customColumns) {
                 client.getListColumns().remove(cc);
             }
-            ServiceManager.getClientService().saveToDatabase(client);
+            ServiceManager.getClientService().save(client);
         }
 
         // remove custom columns themselves
@@ -195,7 +195,7 @@ public class ListColumnService extends SearchDatabaseService<ListColumn, ListCol
                 .map(ListColumn::getId)
                 .collect(Collectors.toList());
         for (int id : columnIds) {
-            removeFromDatabase(id);
+            remove(id);
         }
     }
 }

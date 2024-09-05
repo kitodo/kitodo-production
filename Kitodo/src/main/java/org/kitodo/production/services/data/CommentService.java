@@ -60,13 +60,13 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Comment");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Comment");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 
     public List<Comment> getAllCommentsByProcess(Process process) {
@@ -100,6 +100,6 @@ public class CommentService extends SearchDatabaseService<Comment, CommentDAO> {
      */
     public void removeComment(Comment comment) throws DAOException {
         comment.getProcess().getComments().remove(comment);
-        ServiceManager.getCommentService().removeFromDatabase(comment);
+        ServiceManager.getCommentService().remove(comment);
     }
 }

@@ -57,12 +57,12 @@ public class SearchFieldService extends SearchDatabaseService<SearchField, Searc
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM searchfield");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM searchfield");
     }
 
     @Override
     public Long countResults(Map filters) throws DAOException {
-        return countDatabaseRows();
+        return count();
     }
 }

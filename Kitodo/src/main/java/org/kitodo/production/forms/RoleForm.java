@@ -75,7 +75,7 @@ public class RoleForm extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getRoleService().saveToDatabase(this.role);
+            ServiceManager.getRoleService().save(this.role);
             return usersPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
@@ -93,7 +93,7 @@ public class RoleForm extends BaseForm {
                     user.getRoles().remove(this.role);
                 }
                 this.role.setUsers(new ArrayList<>());
-                ServiceManager.getRoleService().saveToDatabase(this.role);
+                ServiceManager.getRoleService().save(this.role);
             }
             if (!this.role.getTasks().isEmpty()) {
                 Helper.setErrorMessage("roleAssignedError");
@@ -101,9 +101,9 @@ public class RoleForm extends BaseForm {
             }
             if (!this.role.getAuthorities().isEmpty()) {
                 this.role.setAuthorities(new ArrayList<>());
-                ServiceManager.getRoleService().saveToDatabase(this.role);
+                ServiceManager.getRoleService().save(this.role);
             }
-            ServiceManager.getRoleService().removeFromDatabase(this.role);
+            ServiceManager.getRoleService().remove(this.role);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.ROLE.getTranslationSingular() }, logger, e);
         }

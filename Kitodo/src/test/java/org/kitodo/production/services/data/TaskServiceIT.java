@@ -62,7 +62,7 @@ public class TaskServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForTasks() throws Exception {
-        Long amount = taskService.countDatabaseRows();
+        Long amount = taskService.count();
         assertEquals("Tasks were not counted correctly!", Long.valueOf(AMOUNT_TASKS), amount);
     }
 

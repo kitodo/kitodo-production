@@ -117,8 +117,8 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin"));
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Task WHERE " + BaseDAO.getDateFilter("processingBegin"));
     }
 
     @Override
@@ -171,7 +171,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
             boolean showAutomaticTasks, List<TaskStatus> taskStatus) throws DAOException {
 
         BeanQuery query = formBeanQuery(filters, onlyOwnTasks, hideCorrectionTasks, showAutomaticTasks, taskStatus);
-        return countDatabaseRows(query.formCountQuery(), query.getQueryParameters());
+        return count(query.formCountQuery(), query.getQueryParameters());
     }
 
     @Override
@@ -331,7 +331,7 @@ public class TaskService extends SearchDatabaseService<Task, TaskDAO> {
      */
     public List<String> findTaskTitlesDistinct() throws DAOException {
         throw new UnsupportedOperationException("not yet implemented");
-        // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, countDatabaseRows());
+        // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, count());
     }
 
     /**

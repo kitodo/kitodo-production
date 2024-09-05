@@ -53,7 +53,7 @@ public class DataEditorSettingServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForDataEditorSettings() throws DAOException {
-        Long amount = dataEditorSettingService.countDatabaseRows();
+        Long amount = dataEditorSettingService.count();
         assertEquals("DataEditorSettings were not counted correctly!", Long.valueOf(3), amount);
     }
 

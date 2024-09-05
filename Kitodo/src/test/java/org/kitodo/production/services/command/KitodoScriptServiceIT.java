@@ -212,7 +212,7 @@ public class KitodoScriptServiceIT {
         Process processTwo = ServiceManager.getProcessService().getById(kitodoScriptTestProcessId);
         Project project = processTwo.getProject();
         generatorSource.setProject(project);
-        ServiceManager.getFolderService().saveToDatabase(generatorSource);
+        ServiceManager.getFolderService().save(generatorSource);
         project.setGeneratorSource(generatorSource);
         ServiceManager.getProjectService().save(project);
         List<Process> processes = new ArrayList<>();

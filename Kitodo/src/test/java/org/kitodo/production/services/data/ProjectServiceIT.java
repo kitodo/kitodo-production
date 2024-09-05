@@ -69,7 +69,7 @@ public class ProjectServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForProjects() throws Exception {
-        Long amount = projectService.countDatabaseRows();
+        Long amount = projectService.count();
         assertEquals("Projects were not counted correctly!", Long.valueOf(3), amount);
     }
 

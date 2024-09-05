@@ -153,7 +153,7 @@ public class LanguageForm implements Serializable {
         try {
             User user = ServiceManager.getUserService().getById(ServiceManager.getUserService().getAuthenticatedUser().getId());
             user.setLanguage(locale.toString());
-            ServiceManager.getUserService().saveToDatabase(user);
+            ServiceManager.getUserService().save(user);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular()}, logger, e);
         }

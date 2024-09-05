@@ -69,7 +69,7 @@ public class DocketServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForDockets() throws Exception {
-        Long amount = docketService.countDatabaseRows();
+        Long amount = docketService.count();
         assertEquals("Dockets were not counted correctly!", Long.valueOf(4), amount);
     }
 

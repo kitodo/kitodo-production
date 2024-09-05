@@ -137,7 +137,7 @@ public class WorkflowFormIT {
         dataEditorSetting.setStructureWidth(0.5f);
         dataEditorSetting.setMetadataWidth(0.6f);
         dataEditorSetting.setGalleryWidth(0.6f);
-        dataEditorSettingService.saveToDatabase(dataEditorSetting);
+        dataEditorSettingService.save(dataEditorSetting);
     }
 
 }

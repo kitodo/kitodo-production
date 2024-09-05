@@ -37,9 +37,9 @@ public class IndexingFormIT {
     public static void setUp() throws Exception {
         MockDatabase.startNodeWithoutMapping();
         Client client = new Client();
-        ServiceManager.getClientService().saveToDatabase(client);
+        ServiceManager.getClientService().save(client);
         User user = new User();
-        ServiceManager.getUserService().saveToDatabase(user);
+        ServiceManager.getUserService().save(user);
         SecurityTestUtils.addUserDataToSecurityContext(user, 1);
         await().until(() -> {
             SecurityTestUtils.addUserDataToSecurityContext(user, 1);
@@ -67,11 +67,11 @@ public class IndexingFormIT {
         Project project = new Project();
         project.setTitle("TestProject");
         project.setClient(ServiceManager.getClientService().getById(1));
-        ServiceManager.getProjectService().saveToDatabase(project);
+        ServiceManager.getProjectService().save(project);
         Process process = new Process();
         process.setTitle("testIndex");
         process.setProject(project);
-        ServiceManager.getProcessService().saveToDatabase(process);
+        ServiceManager.getProcessService().save(process);
 
         indexingForm.countDatabaseObjects();
 

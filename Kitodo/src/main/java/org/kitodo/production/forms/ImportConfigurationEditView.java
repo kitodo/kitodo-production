@@ -117,7 +117,7 @@ public class ImportConfigurationEditView extends BaseForm {
      */
     public String save() {
         try {
-            ServiceManager.getImportConfigurationService().saveToDatabase(importConfiguration);
+            ServiceManager.getImportConfigurationService().save(importConfiguration);
             return projectsPage;
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING,

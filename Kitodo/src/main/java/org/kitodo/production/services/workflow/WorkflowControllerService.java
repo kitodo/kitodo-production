@@ -401,7 +401,7 @@ public class WorkflowControllerService {
         comment.setCorrected(Boolean.TRUE);
         comment.setCorrectionDate(new Date());
         try {
-            ServiceManager.getCommentService().saveToDatabase(comment);
+            ServiceManager.getCommentService().save(comment);
         } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {"comment"}, logger, e);
         }

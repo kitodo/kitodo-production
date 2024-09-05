@@ -179,7 +179,7 @@ public class WikiFieldHelper {
         property.getProcesses().clear();
         process.getProperties().remove(property);
         ServiceManager.getProcessService().save(process);
-        ServiceManager.getPropertyService().removeFromDatabase(property);
+        ServiceManager.getPropertyService().remove(property);
     }
 
     /*
@@ -369,9 +369,9 @@ public class WikiFieldHelper {
                     || "Korrektur durchgef\\u00FChrt".equals(title) || "Correction performed".equals(title)) {
                 process.getProperties().remove(property);
                 ServiceManager.getProcessService().save(process);
-                ServiceManager.getPropertyService().removeFromDatabase(property);
+                ServiceManager.getPropertyService().remove(property);
                 property.getProcesses().remove(process);
-                ServiceManager.getPropertyService().removeFromDatabase(property);
+                ServiceManager.getPropertyService().remove(property);
                 return process;
             }
         }
