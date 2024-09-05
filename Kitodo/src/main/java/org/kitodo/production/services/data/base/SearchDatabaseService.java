@@ -413,22 +413,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     // === functions no longer used ===
 
     /**
-     * Get all not indexed objects from database in given range. Not indexed
-     * means that row has index action INDEX or NULL.
-     *
-     * @param offset
-     *            result - important, numeration starts since 0
-     * @param size
-     *            amount of results
-     * @return list of all not indexed objects from database in given range
-     * @deprecated Use {@link #getAll(int, int)}.
-     */
-    @Deprecated
-    public List<T> getAllNotIndexed(int offset, int size) throws DAOException {
-        return getAll(offset, size);
-    }
-
-    /**
      * Method removes object from database and document from the index of
      * Elastic Search.
      *
@@ -439,18 +423,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     @Deprecated
     public void remove(T baseIndexedBean) throws DAOException {
         removeFromDatabase(baseIndexedBean);
-    }
-
-    /**
-     * Removes all objects from index, which are no longer in Database.
-     * 
-     * @param baseIndexedBeansId
-     *            the list of beans to check for missing db eintries.
-     *
-     * @deprecated Does nothing anymore and can be deleted.
-     */
-    @Deprecated
-    public void removeLooseIndexData(List<Integer> baseIndexedBeansId) throws DAOException {
     }
 
     /**
