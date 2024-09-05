@@ -83,11 +83,11 @@ public class ImportProcessesIT {
         template.setDocket(ServiceManager.getDocketService().getById(1));
         template.getProjects().add(ServiceManager.getProjectService().getById(1));
         template.setRuleset(ruleset);
-        ServiceManager.getTemplateService().save(template, true);
+        ServiceManager.getTemplateService().save(template);
 
         task.setTemplate(template);
         template.getTasks().add(task);
-        ServiceManager.getTemplateService().save(template, true);
+        ServiceManager.getTemplateService().save(template);
         ServiceManager.getTaskService().save(task);
 
         Folder local = ServiceManager.getFolderService().getById(6);

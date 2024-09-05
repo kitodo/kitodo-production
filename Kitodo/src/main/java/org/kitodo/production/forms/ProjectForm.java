@@ -233,7 +233,7 @@ public class ProjectForm extends BaseForm {
                 commitTemplates();
                 commitFolders();
 
-                ServiceManager.getProjectService().save(project, true);
+                ServiceManager.getProjectService().save(project);
 
                 return projectsPage;
             } catch (DAOException e) {

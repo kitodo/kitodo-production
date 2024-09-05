@@ -297,23 +297,17 @@ public class ProcessService extends SearchDatabaseService<Process, ProcessDAO> {
     }
 
     @Override
-    public void save(Process process, boolean updateRelatedObjectsInIndex) throws DAOException {
+    public void save(Process process) throws DAOException {
         WorkflowControllerService.updateProcessSortHelperStatus(process);
         
         // save parent processes if they are new and do not have an id yet
         List<Process> parents = findParentProcesses(process);
         for (Process parent: parents) {
             if (Objects.isNull(parent.getId())) {
-                super.save(parent, updateRelatedObjectsInIndex);
+                super.save(parent);
             }
         }
-        
-        super.save(process, updateRelatedObjectsInIndex);
-
-        // save parent processes in order to refresh ElasticSearch index
-        for (Process parent : parents) {
-            super.save(parent, updateRelatedObjectsInIndex);
-        }
+        super.save(process);
     }
 
     /**

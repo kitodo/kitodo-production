@@ -165,7 +165,7 @@ public class ProcessTestUtils {
         ServiceManager.getFileService().copyFile(metaFileUri, processDirTargetFile);
         // re-save process to add meta xml contents to index
         Process process = ServiceManager.getProcessService().getById(processId);
-        ServiceManager.getProcessService().save(process, true);
+        ServiceManager.getProcessService().save(process);
     }
 
     /**

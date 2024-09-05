@@ -186,7 +186,7 @@ public class WorkflowForm extends BaseForm {
                 workflowTemplate.getTasks().clear();
                 TemplateService templateService = ServiceManager.getTemplateService();
                 converter.convertWorkflowToTemplate(workflowTemplate);
-                templateService.save(workflowTemplate, true);
+                templateService.save(workflowTemplate);
                 new WorkflowControllerService().activateNextTasks(workflowTemplate.getTasks());
             }
         }
@@ -327,7 +327,7 @@ public class WorkflowForm extends BaseForm {
 
     private void saveWorkflow() {
         try {
-            ServiceManager.getWorkflowService().save(this.workflow, true);
+            ServiceManager.getWorkflowService().save(this.workflow);
         } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }

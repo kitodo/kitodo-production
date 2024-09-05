@@ -121,35 +121,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     }
 
     /**
-     * Method saves object to database and document to the index of Elastic
-     * Search. This method binds three other methods: save to database, save to
-     * index and save dependencies to index.
-     *
-     * <p>
-     * First step sets up the flag indexAction to state Index and saves to
-     * database. It informs that object was updated in database but not yet in
-     * index. If this step fails, method breaks. If it is successful, method
-     * saves changes to index, first document and next its dependencies. If one
-     * of this steps fails, method retries up to 5 times operations on index. If
-     * it continues to fail, method breaks. If save to index was successful,
-     * indexAction flag is changed to Done and database is again updated. There
-     * is possibility that last step fails and in that case, even if index is up
-     * to date, in some point of the future it will be reindexed by
-     * administrator.
-     *
-     * @param baseIndexedBean
-     *            object
-     *
-     * @param updateRelatedObjectsInIndex
-     *            if relatedObjects need to be updated in Index
-     * @deprecated Use {@link #save(BaseBean)}.
-     */
-    @Deprecated
-    public void save(T baseIndexedBean, boolean updateRelatedObjectsInIndex) throws DAOException {
-        save(baseIndexedBean);
-    }
-
-    /**
      * Removes an object from the database.
      *
      * @param baseIndexedBean

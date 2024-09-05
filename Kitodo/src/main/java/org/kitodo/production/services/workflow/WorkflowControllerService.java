@@ -727,7 +727,7 @@ public class WorkflowControllerService {
         for (Process processForStatus : processes) {
             try {
                 setTasksStatusDown(processForStatus);
-                ServiceManager.getProcessService().save(processForStatus, true);
+                ServiceManager.getProcessService().save(processForStatus);
                 updateProcessSortHelperStatus(processForStatus);
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorChangeTaskStatus",

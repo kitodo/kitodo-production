@@ -185,7 +185,7 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                ServiceManager.getProcessService().save(this.process, true);
+                ServiceManager.getProcessService().save(this.process);
                 return processesPage;
             } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },

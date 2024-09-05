@@ -1037,7 +1037,7 @@ public class ImportService {
             }
             processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
             Process childProcess = tempProcess.getProcess();
-            ServiceManager.getProcessService().save(childProcess, true);
+            ServiceManager.getProcessService().save(childProcess);
             ProcessService.setParentRelations(mainProcess, childProcess);
         }
     }
@@ -1201,7 +1201,7 @@ public class ImportService {
             } else if (ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title) > 0) {
                 throw new ProcessGenerationException(Helper.getTranslation("processTitleAlreadyInUse", title));
             }
-            ServiceManager.getProcessService().save(tempProcess.getProcess(), true);
+            ServiceManager.getProcessService().save(tempProcess.getProcess());
             URI processBaseUri = ServiceManager.getFileService().createProcessLocation(tempProcess.getProcess());
             tempProcess.getProcess().setProcessBaseUri(processBaseUri);
             OutputStream out = ServiceManager.getFileService()

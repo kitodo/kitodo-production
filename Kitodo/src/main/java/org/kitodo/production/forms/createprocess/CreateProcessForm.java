@@ -517,7 +517,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved, so they have IDs before creating their process directories
-        ServiceManager.getProcessService().save(getMainProcess(), true);
+        ServiceManager.getProcessService().save(getMainProcess());
         if (!createProcessesLocation(this.processes)) {
             throw new IOException("Unable to create directories for process hierarchy!");
         }
@@ -529,7 +529,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         // TODO: do the same 'ensureNonEmptyTitles' for child processes?
         if (ImportService.ensureNonEmptyTitles(this.processes)) {
             // saving the main process automatically saves its parent and ancestor processes as well!
-            ServiceManager.getProcessService().save(getMainProcess(), true);
+            ServiceManager.getProcessService().save(getMainProcess());
         }
 
         // add links between child processes and main process
@@ -552,7 +552,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
-        ServiceManager.getProcessService().save(getMainProcess(), true);
+        ServiceManager.getProcessService().save(getMainProcess());
     }
 
     /**
@@ -712,6 +712,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
+    @Override
     public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
         if (Objects.isNull(treeNode.getParent().getParent())) {
             if (Objects.nonNull(currentProcess.getProcessMetadata().getSelectedMetadataTreeNode())
@@ -745,6 +746,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param metadataNode TreeNode for which the check is performed
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
+    @Override
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
             return !(DataEditorService.getAddableMetadataForGroup(getMainProcess().getRuleset(), metadataNode).isEmpty());
@@ -756,6 +758,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Prepare addable metadata for metadata group.
      * @param treeNode metadataGroup treeNode
      */
+    @Override
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(getMainProcess().getRuleset(), treeNode);
     }

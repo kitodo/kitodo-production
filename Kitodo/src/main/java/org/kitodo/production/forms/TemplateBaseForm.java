@@ -27,7 +27,7 @@ class TemplateBaseForm extends ProcessListBaseView {
 
     void saveTask(Task task, BaseBean baseBean, String message, SearchDatabaseService searchDatabaseService) {
         try {
-            ServiceManager.getTaskService().save(task, true);
+            ServiceManager.getTaskService().save(task);
             ServiceManager.getTaskService().evict(task);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
