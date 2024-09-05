@@ -413,19 +413,6 @@ public abstract class SearchDatabaseService<T extends BaseBean, S extends BaseDA
     // === functions no longer used ===
 
     /**
-     * Get all ids from index in a given range.
-     *
-     * @return List of ids in given range
-     * @deprecated The function was only used in the context of the no longer
-     *             existing function {@link #removeLooseIndexData(List)} and can
-     *             therefore now also be omitted.
-     */
-    @Deprecated
-    public List<Integer> findAllIDs(Long startIndex, int limit) throws DAOException {
-        return Collections.emptyList();
-    }
-
-    /**
      * Get all not indexed objects from database in given range. Not indexed
      * means that row has index action INDEX or NULL.
      *
