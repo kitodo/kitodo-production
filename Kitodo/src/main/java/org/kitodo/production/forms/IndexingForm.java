@@ -86,11 +86,15 @@ public class IndexingForm {
                     case TASK:
                         count = ServiceManager.getTaskService().count();
                         break;
+                    case TEMPLATE:
+                        count = ServiceManager.getTemplateService().count();
+                        break;
                     case WORKFLOW:
                         count = ServiceManager.getWorkflowService().count();
                         break;
                     default:
-                        throw new IllegalStateException("this is no class for indexing");
+                        throw new IllegalStateException(entry.getKey().getTranslationSingular()
+                                + " is no class for indexing");
                 }
             } catch (DAOException e) {
                 logger.error(e);
