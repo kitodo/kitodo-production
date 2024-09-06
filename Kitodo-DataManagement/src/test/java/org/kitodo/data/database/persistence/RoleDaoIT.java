@@ -16,13 +16,26 @@ import static org.junit.Assert.assertEquals;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class RoleDaoIT {
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        MockIndex.startNode();
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        MockIndex.stopNode();
+    }
 
     @Rule
     public final ExpectedException exception = ExpectedException.none();
