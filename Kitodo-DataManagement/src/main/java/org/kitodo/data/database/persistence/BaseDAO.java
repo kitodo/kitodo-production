@@ -14,6 +14,7 @@ package org.kitodo.data.database.persistence;
 import edu.umd.cs.findbugs.annotations.CheckReturnValue;
 
 import java.io.Serializable;
+import java.util.AbstractCollection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +26,8 @@ import java.util.stream.Collectors;
 
 import javax.persistence.PersistenceException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
@@ -38,7 +41,8 @@ import org.kitodo.data.database.exceptions.DAOException;
  * Base class for DAOs.
  */
 public abstract class BaseDAO<T extends BaseBean> implements Serializable {
-
+    private static final Logger logger = LogManager.getLogger(BaseDAO.class);
+    private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
     private static final Object lockObject = new Object();
 
     /**
@@ -178,6 +182,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters, int first, int max) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters, first, max);
             Query<T> q = session.createQuery(query);
             q.setFirstResult(first);
             q.setMaxResults(max);
@@ -200,6 +205,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
             Query<T> q = session.createQuery(query);
             addParameters(q, parameters);
             return q.list();
@@ -216,6 +222,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<T> getByQuery(String query) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, Collections.emptyMap());
             List<T> baseBeanObjects = session.createQuery(query).list();
             if (Objects.isNull(baseBeanObjects)) {
                 baseBeanObjects = new ArrayList<>();
@@ -236,6 +243,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     public List<String> getStringsByQuery(String query, Map<String, Object> parameters) {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
             Query<String> queryObject = session.createQuery(query);
             addParameters(queryObject, parameters);
             return queryObject.list();
@@ -253,6 +261,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public Long count(String query, Map<String, Object> parameters) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, parameters);
             Query<?> q = session.createQuery(query);
             addParameters(q, parameters);
             return (Long) q.uniqueResult();
@@ -270,6 +279,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public Long count(String query) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, Collections.emptyMap());
             return (Long) session.createQuery(query).uniqueResult();
         } catch (PersistenceException e) {
             throw new DAOException(e);
@@ -348,6 +358,7 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveObjects(String query, int first, int max) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
+            debugLogQuery(query, Collections.emptyMap(), first, max);
             Query<T> sessionQuery = session.createQuery(query);
             sessionQuery.setFirstResult(first);
             sessionQuery.setMaxResults(max);
@@ -367,8 +378,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     @SuppressWarnings("unchecked")
     List<T> retrieveAllObjects(Class<T> cls) throws DAOException {
         try (Session session = HibernateUtil.getSession()) {
-            Query<T> query = session.createQuery(String.format("FROM %s ORDER BY id ASC", cls.getSimpleName()));
-            return query.list();
+            String query = String.format("FROM %s ORDER BY id ASC", cls.getSimpleName());
+            debugLogQuery(query, Collections.emptyMap());
+            return session.createQuery(query).list();
         } catch (PersistenceException e) {
             throw new DAOException(e);
         }
@@ -504,5 +516,59 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         return Arrays.stream(databaseSubsetDates)
                 .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asMatchPredicate())
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters, Integer.MIN_VALUE, Integer.MIN_VALUE);
+    }
+
+    /**
+     * Enters a search query into the log when it is running in debug level.
+     * Placeholders are replaced with their parameter values.
+     * 
+     * @param query
+     *            search query
+     * @param parameters
+     *            parameter values
+     * @param initPointer
+     *            can initialize the object pointer to a later object (sets
+     *            {@linkplain Query#setFirstResult(int)})
+     * @param stopCount
+     *            the search stops after count hits (sets
+     *            {@linkplain Query#setMaxResults(int)})
+     */
+    private static void debugLogQuery(String query, Map<String, Object> parameters, int initPointer, int stopCount) {
+        if (logger.isDebugEnabled()) {
+            String resolved = PARAMETER_PATTERN.matcher(query).replaceAll(matchResult -> {
+                Object parameter = parameters.get(matchResult.group(1));
+                if (Objects.isNull(parameter)) {
+                    return matchResult.group();
+                }
+                if (parameter instanceof String) {
+                    return '\'' + ((String) parameter) + '\'';
+                }
+                if (parameter instanceof AbstractCollection) {
+                    return Objects.toString(parameter).replaceFirst("^\\[(.*)\\]$", "$1");
+                }
+                return Objects.toString(parameter);
+            });
+            if (initPointer != Integer.MIN_VALUE || stopCount != Integer.MIN_VALUE) {
+                if (stopCount != Integer.MIN_VALUE) {
+                    resolved = String.format("%s (limit=%d)", resolved, stopCount);
+                } else {
+                    resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
+                }
+            }
+            logger.debug(resolved);
+        }
     }
 }
