@@ -117,6 +117,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     @GenericField
     private Boolean active = true;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     @IndexedEmbedded(includePaths = {"surname", "name", "id", "login"})
     private List<User> users;
@@ -143,6 +144,7 @@ public class Project extends BaseBean implements Comparable<Project> {
             foreignKey = @ForeignKey(name = "FK_project_default_child_process_importconfiguration_id"))
     private ImportConfiguration defaultChildProcessImportConfiguration;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     @IndexedEmbedded(includePaths = {"path", "urlStructure", "fileGroup", "mimeType"})
     private List<Folder> folders;
