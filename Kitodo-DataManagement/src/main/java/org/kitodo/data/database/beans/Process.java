@@ -116,6 +116,7 @@ public class Process extends BaseTemplateBean {
     @Transient
     private boolean hasChildren = true;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
     @IndexedEmbedded(includePaths = {"title", "id"})
     @OrderBy("ordering")
@@ -126,6 +127,7 @@ public class Process extends BaseTemplateBean {
     @IndexedEmbedded(includePaths = {"message"})
     private List<Comment> comments;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
     @IndexedEmbedded(includePaths = {"id", "title", "value"})
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
@@ -134,6 +136,7 @@ public class Process extends BaseTemplateBean {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
     @IndexedEmbedded(includePaths = {"id", "title", "value"})
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
@@ -142,6 +145,7 @@ public class Process extends BaseTemplateBean {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
     private List<Property> templates;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
     @IndexedEmbedded(includePaths = {"id", "title", "value"})
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)

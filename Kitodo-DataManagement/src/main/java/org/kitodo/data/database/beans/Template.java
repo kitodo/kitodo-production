@@ -78,6 +78,7 @@ public class Template extends BaseTemplateBean {
     @IndexedEmbedded(includePaths = {"id", "title"})
     private List<Task> tasks;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.PERSIST)
     @IndexedEmbedded(includePaths = {"id", "active", "title"})
     @JoinTable(name = "project_x_template", joinColumns = {

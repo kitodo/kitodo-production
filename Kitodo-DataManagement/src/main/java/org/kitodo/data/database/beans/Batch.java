@@ -64,7 +64,6 @@ public class Batch extends BaseBean {
      * Holds the processes that belong to the batch.
      */
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @IndexedEmbedded(includePaths = {"title"})
     @JoinTable(name = "batch_x_process", joinColumns = {
         @JoinColumn(name = "batch_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_batch_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_batch_x_process_process_id")) })
