@@ -57,7 +57,7 @@ import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.forms.dataeditor.GalleryViewMode;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.security.DynamicAuthenticationProvider;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.password.KitodoPassword;
@@ -99,17 +99,17 @@ public class UserForm extends BaseForm {
     private final String userEditPath = MessageFormat.format(REDIRECT_PATH, "userEdit");
 
     /**
-     * Default constructor with inject login form that also sets the LazyDTOModel
-     * instance of this bean.
+     * Default constructor with inject login form that also sets the
+     * LazyBeanModel instance of this bean.
      *
      * @param loginForm
-     *            is used for update logged user in case updated user is currently
-     *            logged user
+     *            is used for update logged user in case updated user is
+     *            currently logged user
      */
     @Inject
     public UserForm(LoginForm loginForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(userService));
+        super.setLazyBeanModel(new LazyBeanModel(userService));
         this.loginForm = loginForm;
     }
 
@@ -730,7 +730,7 @@ public class UserForm extends BaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
     }
 
     /**

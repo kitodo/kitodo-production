@@ -36,7 +36,7 @@ import org.kitodo.export.ExportDms;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchProcessHelper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.BeanQuery;
 import org.kitodo.production.services.data.ProcessService;
@@ -68,7 +68,7 @@ public class BatchForm extends BaseForm {
      */
     public BatchForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getBatchService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getBatchService()));
         filterAll();
     }
 

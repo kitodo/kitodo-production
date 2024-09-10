@@ -644,7 +644,7 @@ public class ProcessForm extends TemplateBaseForm {
     private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
         List<Process> filteredProcesses = new ArrayList<>();
-        for (Object object : lazyDTOModel.load(0, 100000, "",
+        for (Object object : lazyBeanModel.load(0, 100000, "",
                 SortOrder.ASCENDING, null)) {
             if (object instanceof Process) {
                 filteredProcesses.add((Process) object);
@@ -1057,7 +1057,7 @@ public class ProcessForm extends TemplateBaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
     }
 
     /**
@@ -1135,7 +1135,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return amount of processes
      */
     public String getAmount() throws DAOException {
-        return Integer.toString(lazyDTOModel.getRowCount());
+        return Integer.toString(lazyBeanModel.getRowCount());
     }
 
     /**

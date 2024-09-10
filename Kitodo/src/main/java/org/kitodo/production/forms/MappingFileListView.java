@@ -24,7 +24,7 @@ import org.kitodo.data.database.beans.MappingFile;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("MappingFileListView")
@@ -35,11 +35,12 @@ public class MappingFileListView extends BaseForm {
     private final String mappingFileEditPath = MessageFormat.format(REDIRECT_PATH, "mappingFileEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this bean.
+     * Empty default constructor that also sets the LazyBeanModel instance of
+     * this bean.
      */
     public MappingFileListView() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getMappingFileService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getMappingFileService()));
     }
 
     /**

@@ -48,7 +48,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TemplateService;
@@ -83,7 +83,7 @@ public class WorkflowForm extends BaseForm {
      * Constructor.
      */
     public WorkflowForm() {
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getWorkflowService()));
     }
 
     /**

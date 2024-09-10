@@ -28,7 +28,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
 
-public class LazyTaskDTOModel extends LazyDTOModel {
+public class LazyTaskModel extends LazyBeanModel {
 
     /**
      * The elastic search field that is used to sort tasks by their processing status.
@@ -51,14 +51,15 @@ public class LazyTaskDTOModel extends LazyDTOModel {
     private List<TaskStatus> taskStatusRestriction = new LinkedList<>();
 
     /**
-     * Creates a LazyTaskDTOModel instance that allows fetching data from the data
-     * source lazily, e.g. only the number of datasets that will be displayed in the
-     * frontend.
+     * Creates a lazyBeanModel instance that allows fetching data from the data
+     * source lazily, e.g. only the number of datasets that will be displayed in
+     * the frontend.
      *
-     * @param taskService the TaskService which is used to retrieve data from the data
-     *                      source
+     * @param taskService
+     *            the TaskService which is used to retrieve data from the data
+     *            source
      */
-    public LazyTaskDTOModel(TaskService taskService) {
+    public LazyTaskModel(TaskService taskService) {
         super(taskService);
         this.taskStatusRestriction.add(TaskStatus.OPEN);
         this.taskStatusRestriction.add(TaskStatus.INWORK);

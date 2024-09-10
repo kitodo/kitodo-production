@@ -29,7 +29,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
 import org.kitodo.production.services.data.RoleService;
@@ -42,7 +42,7 @@ public class BaseForm implements Serializable {
     protected String stayOnCurrentPage = null;
     protected String filter = "";
     protected User user;
-    protected LazyDTOModel lazyDTOModel = null;
+    protected LazyBeanModel lazyBeanModel = null;
     private static final String REDIRECT_PARAMETER = "faces-redirect=true";
     private static final String TEMPLATE_ROOT = "/pages/";
     private int activeTabIndex = 0;
@@ -105,22 +105,22 @@ public class BaseForm implements Serializable {
     }
 
     /**
-     * Getter: return lazyDTOModel.
+     * Getter: return lazyBeanModel.
      *
-     * @return LazyDTOModel
+     * @return LazyBeanModel
      */
-    public LazyDTOModel getLazyDTOModel() {
-        return lazyDTOModel;
+    public LazyBeanModel getLazyBeanModel() {
+        return lazyBeanModel;
     }
 
     /**
-     * Setter: set lazyDTOModel.
+     * Setter: set lazyBeanModel.
      *
-     * @param lazyDTOModel
-     *            LazyDTOModel to set for this class
+     * @param lazyBeanModel
+     *            LazyBeanModel to set for this class
      */
-    public void setLazyDTOModel(LazyDTOModel lazyDTOModel) {
-        this.lazyDTOModel = lazyDTOModel;
+    public void setLazyBeanModel(LazyBeanModel lazyBeanModel) {
+        this.lazyBeanModel = lazyBeanModel;
     }
 
     /**

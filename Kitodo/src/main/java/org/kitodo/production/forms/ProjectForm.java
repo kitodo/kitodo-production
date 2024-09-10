@@ -50,7 +50,7 @@ import org.kitodo.forms.FolderGenerator;
 import org.kitodo.production.controller.SecurityAccessController;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProjectService;
 
@@ -130,12 +130,12 @@ public class ProjectForm extends BaseForm {
     private Map<String, String> mimeTypes = Collections.emptyMap();
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of
+     * Empty default constructor that also sets the LazyBeanModel instance of
      * this bean.
      */
     public ProjectForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getProjectService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getProjectService()));
     }
 
     /**

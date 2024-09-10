@@ -33,23 +33,23 @@ import org.primefaces.model.FilterMeta;
 import org.primefaces.model.LazyDataModel;
 import org.primefaces.model.SortOrder;
 
-public class LazyDTOModel extends LazyDataModel<Object> {
+public class LazyBeanModel extends LazyDataModel<Object> {
 
     final transient BaseBeanService searchService;
-    static final Logger logger = LogManager.getLogger(LazyDTOModel.class);
+    static final Logger logger = LogManager.getLogger(LazyBeanModel.class);
     transient List entities = new ArrayList<>();
     String filterString = "";
 
     /**
-     * Creates a LazyDTOModel instance that allows fetching data from the data
-     * source lazily, e.g. only the number of datasets that will be displayed in the
-     * frontend.
+     * Creates a lazyBeanModel instance that allows fetching data from the data
+     * source lazily, e.g. only the number of datasets that will be displayed in
+     * the frontend.
      *
      * @param searchService
      *            the searchService which is used to retrieve data from the data
      *            source
      */
-    public LazyDTOModel(BaseBeanService searchService) {
+    public LazyBeanModel(BaseBeanService searchService) {
         this.searchService = searchService;
 
         try {

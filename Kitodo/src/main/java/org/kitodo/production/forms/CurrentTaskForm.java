@@ -48,7 +48,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
-import org.kitodo.production.model.LazyTaskDTOModel;
+import org.kitodo.production.model.LazyTaskModel;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -94,7 +94,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public CurrentTaskForm() {
         super();
-        super.setLazyDTOModel(new LazyTaskDTOModel(ServiceManager.getTaskService()));
+        super.setLazyBeanModel(new LazyTaskModel(ServiceManager.getTaskService()));
     }
 
     /**
@@ -450,7 +450,7 @@ public class CurrentTaskForm extends BaseForm {
     }
 
     public void setTaskStatusRestriction(List<TaskStatus> taskStatus) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setTaskStatusRestriction(taskStatus);
+        ((LazyTaskModel)this.lazyBeanModel).setTaskStatusRestriction(taskStatus);
     }
 
     /**
@@ -460,7 +460,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setOnlyOwnTasks(onlyOwnTasks);
+        ((LazyTaskModel)this.lazyBeanModel).setOnlyOwnTasks(onlyOwnTasks);
     }
 
     /**
@@ -576,7 +576,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setShowAutomaticTasks(showAutomaticTasks);
+        ((LazyTaskModel)this.lazyBeanModel).setShowAutomaticTasks(showAutomaticTasks);
     }
 
     /**
@@ -585,7 +585,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return boolean
      */
     public boolean isHideCorrectionTasks() {
-        return ((LazyTaskDTOModel)this.lazyDTOModel).isHideCorrectionTasks();
+        return ((LazyTaskModel)this.lazyBeanModel).isHideCorrectionTasks();
     }
 
     /**
@@ -595,7 +595,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setHideCorrectionTasks(hideCorrectionTasks);
+        ((LazyTaskModel)this.lazyBeanModel).setHideCorrectionTasks(hideCorrectionTasks);
     }
 
     /**
@@ -791,7 +791,7 @@ public class CurrentTaskForm extends BaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
     }
 
     /**

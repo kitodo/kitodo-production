@@ -26,16 +26,16 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ClientService;
 import org.primefaces.model.SortOrder;
 
-public class LazyDTOModelIT {
+public class LazyBeanModelIT {
 
     private static final ClientService clientService = ServiceManager.getClientService();
-    private static LazyDTOModel lazyDTOModel = null;
+    private static LazyBeanModel lazyBeanModel = null;
 
     @BeforeClass
     public static void setUp() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertClients();
-        lazyDTOModel = new LazyDTOModel(clientService);
+        lazyBeanModel = new LazyBeanModel(clientService);
     }
 
     @AfterClass
@@ -48,22 +48,22 @@ public class LazyDTOModelIT {
     public void shouldGetRowData() throws Exception {
         List clients = clientService.getAll();
         Client firstClient = (Client) clients.get(0);
-        Client lazyClient = (Client) lazyDTOModel.getRowData(String.valueOf(firstClient.getId()));
+        Client lazyClient = (Client) lazyBeanModel.getRowData(String.valueOf(firstClient.getId()));
         assertEquals(firstClient.getName(), lazyClient.getName());
     }
 
     @Test
     public void shouldLoadFromDatabase() {
-        List clients = lazyDTOModel.load(0, 2, "name", SortOrder.ASCENDING, null);
+        List clients = lazyBeanModel.load(0, 2, "name", SortOrder.ASCENDING, null);
         assertEquals(2, clients.size());
 
-        clients = lazyDTOModel.load(0, 10, "name", SortOrder.ASCENDING, null);
+        clients = lazyBeanModel.load(0, 10, "name", SortOrder.ASCENDING, null);
         assertEquals(3, clients.size());
 
         Client client = (Client) clients.get(0);
         assertEquals("First client", client.getName());
 
-        clients = lazyDTOModel.load(0, 2, "name", SortOrder.DESCENDING, null);
+        clients = lazyBeanModel.load(0, 2, "name", SortOrder.DESCENDING, null);
         client = (Client) clients.get(0);
         assertEquals("Second client", client.getName());
     }
@@ -75,15 +75,15 @@ public class LazyDTOModelIT {
         MockDatabase.insertDockets();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
 
-        LazyDTOModel lazyDTOModelDocket = new LazyDTOModel(ServiceManager.getDocketService());
+        LazyBeanModel lazyBeanModelDocket = new LazyBeanModel(ServiceManager.getDocketService());
 
-        List dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
+        List dockets = lazyBeanModelDocket.load(0, 2, "title", SortOrder.ASCENDING, null);
         assertEquals(2, dockets.size());
 
         Docket docket = (Docket) dockets.get(0);
         assertEquals("default", docket.getTitle());
 
-        dockets = lazyDTOModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
+        dockets = lazyBeanModelDocket.load(0, 2, "title", SortOrder.DESCENDING, null);
         docket = (Docket) dockets.get(0);
         assertEquals("tester", docket.getTitle());
     }

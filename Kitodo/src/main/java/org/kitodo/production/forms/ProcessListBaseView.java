@@ -35,7 +35,7 @@ import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
-import org.kitodo.production.model.LazyProcessDTOModel;
+import org.kitodo.production.model.LazyProcessModel;
 import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -71,7 +71,7 @@ public class ProcessListBaseView extends BaseForm {
      */
     public ProcessListBaseView() {
         super();
-        super.setLazyDTOModel(new LazyProcessDTOModel(ServiceManager.getProcessService()));
+        super.setLazyBeanModel(new LazyProcessModel(ServiceManager.getProcessService()));
     }
 
     /**
@@ -295,7 +295,7 @@ public class ProcessListBaseView extends BaseForm {
      *         not
      */
     public boolean isShowClosedProcesses() {
-        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowClosedProcesses();
+        return ((LazyProcessModel)this.lazyBeanModel).isShowClosedProcesses();
     }
 
     /**
@@ -306,7 +306,7 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
-        ((LazyProcessDTOModel)this.lazyDTOModel).setShowClosedProcesses(showClosedProcesses);
+        ((LazyProcessModel)this.lazyBeanModel).setShowClosedProcesses(showClosedProcesses);
     }
 
     /**
@@ -317,7 +317,7 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
-        ((LazyProcessDTOModel)this.lazyDTOModel).setShowInactiveProjects(showInactiveProjects);
+        ((LazyProcessModel)this.lazyBeanModel).setShowInactiveProjects(showInactiveProjects);
     }
 
     /**
@@ -327,7 +327,7 @@ public class ProcessListBaseView extends BaseForm {
      *         or not
      */
     public boolean isShowInactiveProjects() {
-        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowInactiveProjects();
+        return ((LazyProcessModel)this.lazyBeanModel).isShowInactiveProjects();
     }
 
     /**

@@ -38,7 +38,7 @@ import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -64,7 +64,7 @@ public class TemplateForm extends TemplateBaseForm {
      * Constructor.
      */
     public TemplateForm() {
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getTemplateService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getTemplateService()));
     }
 
     /**

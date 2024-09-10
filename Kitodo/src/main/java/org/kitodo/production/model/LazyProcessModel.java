@@ -27,7 +27,7 @@ import org.primefaces.PrimeFaces;
 import org.primefaces.model.FilterMeta;
 import org.primefaces.model.SortOrder;
 
-public class LazyProcessDTOModel extends LazyDTOModel {
+public class LazyProcessModel extends LazyBeanModel {
 
     /**
      * The elastic search field that is used to sort processes by their correction comment status.
@@ -48,14 +48,15 @@ public class LazyProcessDTOModel extends LazyDTOModel {
     private boolean showInactiveProjects = false;
 
     /**
-     * Creates a LazyDTOModel instance that allows fetching data from the data
-     * source lazily, e.g. only the number of datasets that will be displayed in the
-     * frontend.
+     * Creates a lazyBeanModel instance that allows fetching data from the data
+     * source lazily, e.g. only the number of datasets that will be displayed in
+     * the frontend.
      *
-     * @param searchService the searchService which is used to retrieve data from the data
-     *                      source
+     * @param searchService
+     *            the searchService which is used to retrieve data from the data
+     *            source
      */
-    public LazyProcessDTOModel(ProcessService searchService) {
+    public LazyProcessModel(ProcessService searchService) {
         super(searchService);
     }
 

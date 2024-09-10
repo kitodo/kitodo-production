@@ -35,7 +35,7 @@ import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 
 @Named("RulesetForm")
@@ -50,8 +50,8 @@ public class RulesetForm extends BaseForm {
     private final ProjectForm projectForm;
 
     /**
-     * Default constructor with inject project form that also sets the LazyDTOModel
-     * instance of this bean.
+     * Default constructor with inject project form that also sets the
+     * LazyBeanModel instance of this bean.
      *
      * @param projectForm
      *            managed bean
@@ -59,7 +59,7 @@ public class RulesetForm extends BaseForm {
     @Inject
     public RulesetForm(ProjectForm projectForm) {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getRulesetService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getRulesetService()));
         this.projectForm = projectForm;
     }
 
