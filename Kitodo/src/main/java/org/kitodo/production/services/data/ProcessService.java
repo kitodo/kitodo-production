@@ -244,7 +244,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * <p>
      * <b>API Note:</b><br>
      * This function counts the data records for the client, for which the
-     * logged in user is currently working.
+     * logged-in user is currently working.
      * 
      * <p>
      * <b>Implementation Requirements:</b><br>
@@ -399,7 +399,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * <p>
      * <b>API Note:</b><br>
      * This function filters the data according to the client, for which the
-     * logged in user is currently working.
+     * logged-in user is currently working.
      *
      * <p>
      * <b>Implementation Requirements:</b><br>
@@ -661,7 +661,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * <p>
      * <b>API Note:</b><br>
      * This function counts the data records for the client, for which the
-     * logged in user is currently working.
+     * logged-in user is currently working.
      * 
      * <p>
      * <b>Implementation Requirements:</b><br>
@@ -689,7 +689,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * <p>
      * <b>API Note:</b><br>
      * This function counts the data records for the client, for which the
-     * logged in user is currently working. <b>Use it with caution, only if the
+     * logged-in user is currently working. <b>Use it with caution, only if the
      * number of objects is manageable.</b>
      * 
      * <p>

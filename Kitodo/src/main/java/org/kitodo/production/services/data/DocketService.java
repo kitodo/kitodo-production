@@ -84,7 +84,7 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
 
     /**
      * Returns all docket configuration objects of the client, for which the
-     * logged in user is currently working.
+     * logged-in user is currently working.
      * 
      * <p>
      * <b>Implementation Requirements:</b><br>

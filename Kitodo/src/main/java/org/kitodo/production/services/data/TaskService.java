@@ -132,7 +132,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * <p>
      * <b>API Note:</b><br>
      * This function counts the data records for the client, for which the
-     * logged in user is currently working.
+     * logged-in user is currently working.
      * 
      * <p>
      * <b>Implementation Requirements:</b><br>
@@ -188,7 +188,7 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * <p>
      * <b>API Note:</b><br>
      * This function filters the data according to the client, for which the
-     * logged in user is currently working.
+     * logged-in user is currently working.
      *
      * <!-- Here, an additional function loadData() is specified with additional
      * parameters, and the generally specified function from

@@ -534,7 +534,7 @@ public class WorkflowForm extends BaseForm {
     /**
      * Get language.
      *
-     * @return language of the currently logged in user
+     * @return language of the currently logged-in user
      */
     public String getLanguage() {
         return ServiceManager.getUserService().getCurrentUser().getLanguage();

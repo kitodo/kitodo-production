@@ -85,7 +85,7 @@ public class ProjectService extends BaseBeanService<Project, ProjectDAO> {
     }
 
     /**
-     * Returns all projects of the client, for which the logged in user is
+     * Returns all projects of the client, for which the logged-in user is
      * currently working.
      * 
      * <p>
