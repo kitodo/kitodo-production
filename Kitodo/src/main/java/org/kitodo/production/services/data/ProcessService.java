@@ -879,9 +879,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     /**
      * Sets [sic!] the record number of the process into the processBaseUri
      * field. Can also save the process.
-     * 
-     * <!-- Since the moment this was introduced, I've never understood why this
-     * exists. Nor why property processBaseUri exists at all. See #5856 -->
      *
      * @param process
      *            process for which the data record number should be placed in
@@ -889,6 +886,8 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
      * @param forIndexingAll
      *            whether the process should <b>not</b> be saved
      * @return the record number in a URI object
+     *
+     * @see "https://github.com/kitodo/kitodo-production/issues/5856"
      */
     public URI getProcessDataDirectory(Process process, boolean forIndexingAll) {
         if (Objects.isNull(process.getProcessBaseUri())) {
@@ -2226,7 +2225,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * @param process process as Interface object
+     * @param process process as Process object
      * @param user user to filter the tasks for
      * @return List of filtered tasks as Interface objects
      */
