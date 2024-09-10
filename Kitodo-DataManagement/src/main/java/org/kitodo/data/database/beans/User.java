@@ -251,7 +251,7 @@ public class User extends BaseBean {
     }
 
     /**
-     * Returns whether the user is logged in. This allows a administrators to
+     * Returns whether the user is logged in. This allows administrators to
      * check whether they can stop the application for maintenance purposes, or
      * who they needs to call first.
      *
