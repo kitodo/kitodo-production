@@ -315,10 +315,9 @@ public class CommentForm extends BaseForm {
      * @param process Object process to refresh
      */
     private void refreshProcess(Process process) {
-        if (!Objects.equals(process.getId(), 0)) {
-            if (Objects.nonNull(this.currentTask)) {
-                this.currentTask.setProcess(process);
-            }
+        if (!Objects.equals(process.getId(), 0) && Objects.nonNull(this.currentTask)) {
+            ServiceManager.getProcessService().refresh(process);
+            this.currentTask.setProcess(process);
         }
     }
 
