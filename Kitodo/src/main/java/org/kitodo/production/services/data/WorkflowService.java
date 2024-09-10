@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -69,20 +70,19 @@ public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DAOException {
-        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
-                .getSessionClientId());
-        return count("SELECT COUNT(*) FROM Workflow WHERE client_id = :sessionClientId", parameters);
+    public Long countResults(Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Workflow.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        return count(beanQuery.formCountQuery(), beanQuery.getQueryParameters());
     }
 
     @Override
     public List<Workflow> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
-            Map<?, String> filters) throws DAOException {
-        Map<String, Object> parameters = new HashMap<>(7);
-        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
-        return getByQuery("FROM Workflow WHERE client_id = :sessionClientId ORDER BY ".concat(desiredOrder), parameters,
-            first, pageSize);
+            Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Workflow.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
     /**

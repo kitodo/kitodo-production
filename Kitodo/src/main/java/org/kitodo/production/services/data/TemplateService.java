@@ -27,6 +27,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -83,23 +84,25 @@ public class TemplateService extends BaseBeanService<Template, TemplateDAO> {
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DAOException {
-        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
-                .getSessionClientId());
-        return count(this.showInactiveTemplates
-                ? "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId"
-                : "SELECT COUNT(*) FROM Template WHERE client_id = :sessionClientId AND active = true", parameters);
+    public Long countResults(Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Template.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        if (!this.showInactiveTemplates) {
+            beanQuery.addBooleanRestriction("active", Boolean.TRUE);
+        }
+        return count(beanQuery.formCountQuery(), beanQuery.getQueryParameters());
     }
 
     @Override
-    public List<Template> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
-            throws DAOException {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        String desiredOrder = SORT_FIELD_MAPPING.get(sortField) + ' ' + SORT_ORDER_MAPPING.get(sortOrder);
-        return getByQuery("FROM Template WHERE client_id = :sessionClientId "
-                + (this.showInactiveTemplates ? "" : "AND active = true ") + "ORDER BY " + desiredOrder,
-                parameters, first, pageSize);
+    public List<Template> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Template.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        if (!this.showInactiveTemplates) {
+            beanQuery.addBooleanRestriction("active", Boolean.TRUE);
+        }
+        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
     /**

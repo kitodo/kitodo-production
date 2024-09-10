@@ -67,21 +67,19 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
     }
 
     @Override
-    public Long countResults(Map<?, String> filters) throws DAOException {
-        Map<String, Object> parameters = Collections.singletonMap("sessionClientId", ServiceManager.getUserService()
-                .getSessionClientId());
-        return count("SELECT COUNT(*) FROM Docket WHERE client_id = :sessionClientId", parameters);
+    public Long countResults(Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Docket.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        return count(beanQuery.formCountQuery(), beanQuery.getQueryParameters());
     }
 
     @Override
-    public List<Docket> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters)
-            throws DAOException {
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("sessionClientId", ServiceManager.getUserService().getSessionClientId());
-        String desiredOrder = SORT_FIELD_MAPPING.getOrDefault(sortField, sortField) + ' '
-            + SORT_ORDER_MAPPING.get(sortOrder);
-        return getByQuery("FROM Docket WHERE client_id = :sessionClientId ORDER BY ".concat(desiredOrder), parameters,
-            first, pageSize);
+    public List<Docket> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Docket.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
     /**

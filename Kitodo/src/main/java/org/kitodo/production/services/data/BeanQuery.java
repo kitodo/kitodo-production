@@ -165,11 +165,14 @@ public class BeanQuery {
      */
     public void restrictToClient(int sessionClientId) {
         switch (objectClass) {
+            case "Docket":
+            case "Project":
+            case "Ruleset":
+            case "Template":
+                restrictions.add(varName + ".client.id = :sessionClientId");
+                break;
             case "Process":
                 restrictions.add(varName + ".project.client.id = :sessionClientId");
-                break;
-            case "Project":
-                restrictions.add(varName + ".client.id = :sessionClientId");
                 break;
             case "Task":
                 restrictions.add(varName + ".process.project.client.id = :sessionClientId");

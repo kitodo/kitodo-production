@@ -29,15 +29,6 @@ import org.kitodo.data.database.persistence.BaseDAO;
 import org.primefaces.model.SortOrder;
 
 public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> {
-
-    protected static final EnumMap<SortOrder, String> SORT_ORDER_MAPPING;
-
-    static {
-        SORT_ORDER_MAPPING = new EnumMap<>(SortOrder.class);
-        SORT_ORDER_MAPPING.put(SortOrder.ASCENDING, "ASC");
-        SORT_ORDER_MAPPING.put(SortOrder.DESCENDING, "DESC");
-    }
-
     private static final Logger logger = LogManager.getLogger(BaseBeanService.class);
     private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
 
