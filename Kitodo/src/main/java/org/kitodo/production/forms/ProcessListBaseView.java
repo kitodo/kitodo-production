@@ -522,17 +522,16 @@ public class ProcessListBaseView extends BaseForm {
      *            process to delete.
      */
     public void delete(Process process) {
-        Process processBean = process;
-        if (processBean.getChildren().isEmpty()) {
+        if (process.getChildren().isEmpty()) {
             try {
-                ProcessService.deleteProcess(processBean.getId());
+                ProcessService.deleteProcess(process.getId());
             } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
             }
         } else {
             this.deleteProcessDialog = new DeleteProcessDialog();
-            this.deleteProcessDialog.setProcess(processBean);
+            this.deleteProcessDialog.setProcess(process);
             PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
     }
