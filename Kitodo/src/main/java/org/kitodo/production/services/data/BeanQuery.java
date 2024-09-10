@@ -27,8 +27,10 @@ import org.kitodo.data.database.beans.Role;
 import org.kitodo.production.enums.ProcessState;
 import org.primefaces.model.SortOrder;
 
+/**
+ * Provides programmatic composition of Hibernate queries.
+ */
 public class BeanQuery {
-
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
     private final String objectClass;
     private final String varName;
@@ -37,13 +39,19 @@ public class BeanQuery {
     private Pair<String, String> sorting = Pair.of("id", "ASC");
     private final Map<String, Object> parameters = new HashMap<>();
 
+    /**
+     * Constructor. Creates a new query builder instance.
+     * 
+     * @param beanClass
+     *            class of beans to search for
+     */
     public BeanQuery(Class<? extends BaseBean> beanClass) {
         objectClass = beanClass.getSimpleName();
         varName = objectClass.toLowerCase();
     }
 
     /**
-     * Requires that the hits in a specific column must have a specific value.
+     * Requires that the hits in a specific field must have a specific value.
      * 
      * @param fieldName
      *            class field that must have the specified value
@@ -72,37 +80,42 @@ public class BeanQuery {
     }
 
     /**
-     * Requires that the hits in a specific column must have a specific value.
+     * Requires that the hits in a specific field must have a specific value.
      * 
-     * @param column
-     *            column that must have the specified value
+     * @param field
+     *            field that must have the specified value
      * @param value
-     *            value that the column must have
+     *            value that the field must have
      */
-    public void addIntegerRestriction(String column, int value) {
-        String parameterName = varName(column);
-        restrictions.add(varName + '.' + column + " = :" + parameterName);
+    public void addIntegerRestriction(String field, int value) {
+        String parameterName = varName(field);
+        restrictions.add(varName + '.' + field + " = :" + parameterName);
         parameters.put(parameterName, value);
     }
 
     /**
      * Requires that the hits do not correspond to any of the specified values
-     * in the specified database column ​​(exclusion).
+     * in the specified database field ​​(exclusion).
      * 
-     * @param column
-     *            column in which the value must not be
+     * @param field
+     *            field in which the value must not be
      * @param values
-     *            value that the column must not accept
+     *            value that the field must not accept
      */
-    public void addNotInCollectionRestriction(String column, Collection<Integer> values) {
-        String parameterName = varName(column);
-        restrictions.add(varName + '.' + column + " NOT IN (:" + parameterName + ')');
+    public void addNotInCollectionRestriction(String field, Collection<Integer> values) {
+        String parameterName = varName(field);
+        restrictions.add(varName + '.' + field + " NOT IN (:" + parameterName + ')');
         parameters.put(parameterName, values);
     }
 
-
-    public void addNullRestriction(String column) {
-        restrictions.add(varName + '.' + column + " IS NULL");
+    /**
+     * Requires that the value in the given field is {@code null}.
+     * 
+     * @param field
+     *            field that should be {@code null}
+     */
+    public void addNullRestriction(String field) {
+        restrictions.add(varName + '.' + field + " IS NULL");
     }
 
     /**
@@ -116,7 +129,7 @@ public class BeanQuery {
      */
     public void addXIdRestriction(String xField, Integer id) {
         String otherName = varName(xField).replaceFirst("s$", "");
-        String joker = otherName + "Id";
+        String joker = otherName.concat("Id");
         extensions.add(varName + "." + xField + " AS " + otherName + " WITH " + otherName + ".id = :" + joker);
         parameters.put(joker, id);
     }
@@ -178,7 +191,8 @@ public class BeanQuery {
                 restrictions.add(varName + ".process.project.client.id = :sessionClientId");
                 break;
             default:
-                throw new IllegalStateException("complete switch");
+                throw new IllegalStateException("BeanQuery.restrictToClient() not yet implemented for "
+                    .concat(objectClass));
         }
         parameters.put("sessionClientId", sessionClientId);
     }
@@ -208,7 +222,8 @@ public class BeanQuery {
                 restrictions.add(varName + ".process.project.id IN (:projectIDs)");
                 break;
             default:
-                throw new IllegalStateException("complete switch");
+                throw new IllegalStateException("BeanQuery.restrictToProjects() not yet implemented for "
+                    .concat(objectClass));
         }
         parameters.put("projectIDs", projectIDs);
     }
@@ -264,17 +279,22 @@ public class BeanQuery {
      * @return a query to count all objects
      */
     public String formCountQuery() {
-        String query = "SELECT COUNT(*) FROM " + objectClass;
+        StringBuilder query = new StringBuilder(512);
+        query.append("SELECT COUNT(*) FROM ").append(objectClass);
         if (!restrictions.isEmpty() || !extensions.isEmpty()) {
-            query += " AS " + varName;
+            query.append(" AS ").append(varName);
         }
         for (String extension : extensions) {
-            query += " INNER JOIN " + extension;
+            query.append(" INNER JOIN ").append(extension);
         }
         if (!restrictions.isEmpty()) {
-            query += " WHERE " + String.join(" AND ", restrictions);
+            boolean first = true;
+            for (String restriction : restrictions) {
+                query.append(first ? " WHERE " : " AND ").append(restriction);
+                first = false;
+            }
         }
-        return query;
+        return query.toString();
     }
 
     /**
@@ -283,16 +303,23 @@ public class BeanQuery {
      * @return a query for all objects
      */
     public String formQueryForAll() {
-        String query = extensions.isEmpty() ? "" : "SELECT " + varName + ' ';
-        query += "FROM " + objectClass + " AS " + varName;
+        StringBuilder query = new StringBuilder(512);
+        if (!extensions.isEmpty()) {
+            query.append("SELECT ").append(varName).append(' ');
+        }
+        query.append("FROM ").append(objectClass).append(" AS ").append(varName);
         for (String extension : extensions) {
-            query += " INNER JOIN " + extension;
+            query.append(" INNER JOIN ").append(extension);
         }
         if (!restrictions.isEmpty()) {
-            query += " WHERE " + String.join(" AND ", restrictions);
+            boolean first = true;
+            for (String restriction : restrictions) {
+                query.append(first ? " WHERE " : " AND ").append(restriction);
+                first = false;
+            }
         }
-        query += " ORDER BY " + sorting.getKey() + ' ' + sorting.getValue();
-        return query;
+        query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
+        return query.toString();
     }
 
     public Map<String, Object> getQueryParameters() {
