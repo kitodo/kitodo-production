@@ -57,7 +57,7 @@ public class ProcessListBaseView extends BaseForm {
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
-    List<? extends Object> selectedProcesses = new ArrayList<>();
+    List<Process> selectedProcesses = new ArrayList<>();
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
@@ -117,9 +117,7 @@ public class ProcessListBaseView extends BaseForm {
      *
      * @return value of selectedProcesses
      */
-    @SuppressWarnings("unchecked")
     public List<Process> getSelectedProcesses() {
-        List<Process> result = new ArrayList<>();
         ProcessService processService = ServiceManager.getProcessService();
         if (allSelected) {
             try {
@@ -130,22 +128,7 @@ public class ProcessListBaseView extends BaseForm {
                 logger.error(e.getMessage());
             }
         }
-        if (!selectedProcesses.isEmpty()) {
-            if (selectedProcesses.get(0) instanceof Process) {
-                // list contains Process instances
-                try {
-                    result = ServiceManager.getProcessService()
-                            .convertDtosToBeans((List<Process>) selectedProcesses);
-                } catch (DAOException e) {
-                    Helper.setErrorMessage(ERROR_LOADING_MANY,
-                            new Object[]{ObjectType.PROCESS.getTranslationPlural()}, logger, e);
-                }
-            } else if (selectedProcesses.get(0) instanceof Process) {
-                // list contains Process instances
-                result = (List<Process>) selectedProcesses;
-            }
-        }
-        return result;
+        return selectedProcesses;
     }
 
     /**
@@ -579,21 +562,6 @@ public class ProcessListBaseView extends BaseForm {
             Helper.setErrorMessage(e);
             return false;
         }
-    }
-
-    /**
-     * Returns the list of currently selected processes. This list is used both when displaying search results 
-     * and when displaying the process list, which is why it may contain either instances of Process or 
-     * instances of Process.
-     * 
-     * @return list of instances of Process or Process
-     */
-    public List<? extends Object> getSelectedProcessesOrProcessDTOs() {
-        return selectedProcesses;
-    }
-
-    public void setSelectedProcessesOrProcessDTOs(List<? extends Object> selectedProcesses) {
-        this.selectedProcesses = selectedProcesses;
     }
 
     /**
