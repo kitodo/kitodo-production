@@ -250,7 +250,7 @@ public class BeanQuery {
     }
 
     public void restrictWithUserFilterString(String s) {
-        // full user filters not yet implemented
+        // full user filters not yet implemented -- TODO
         forIdOrInTitle(s);
     }
 
