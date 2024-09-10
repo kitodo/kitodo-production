@@ -52,6 +52,7 @@ import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPre
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.CommentService;
 import org.kitodo.production.services.data.TaskService;
 import org.kitodo.production.thread.TaskScriptThread;
 
@@ -63,6 +64,7 @@ public class WorkflowControllerService {
     private final WebDav webDav = new WebDav();
     private static final Logger logger = LogManager.getLogger(WorkflowControllerService.class);
     private final TaskService taskService = ServiceManager.getTaskService();
+    private final CommentService commentService = ServiceManager.getCommentService();
 
     /**
      * Set Task status up.
@@ -372,7 +374,11 @@ public class WorkflowControllerService {
             correctionTask.setProcessingEnd(null);
             correctionTask.setCorrection(true);
             taskService.save(correctionTask);
-            lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask);
+            if (lockTasksBetweenCurrentAndCorrectionTask(currentTask, correctionTask)
+                    && Objects.nonNull(comment.getId())) {
+                commentService.refresh(comment);
+                currentTask = comment.getCurrentTask();
+            }
         }
         updateProcessSortHelperStatus(currentTask.getProcess());
     }
@@ -474,7 +480,8 @@ public class WorkflowControllerService {
         }
     }
 
-    private void lockTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask) throws DAOException {
+    private boolean lockTasksBetweenCurrentAndCorrectionTask(Task currentTask, Task correctionTask)
+            throws DAOException {
         List<Task> allTasksInBetween = taskService.getAllTasksInBetween(correctionTask.getOrdering(),
             currentTask.getOrdering(), currentTask.getProcess().getId());
         for (Task taskInBetween : allTasksInBetween) {
@@ -483,6 +490,7 @@ public class WorkflowControllerService {
             taskInBetween.setProcessingEnd(null);
             taskService.save(taskInBetween);
         }
+        return !allTasksInBetween.isEmpty();
     }
 
     private List<Task> getAllHigherTasks(List<Task> tasks, Task task) {
