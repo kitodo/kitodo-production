@@ -19,6 +19,7 @@ import java.util.Objects;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
@@ -57,6 +58,12 @@ public class FilterServiceIT {
     }
 
     @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountAllFiltersAccordingToQuery() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
     public void shouldCountAllDatabaseRowsForFilters() throws Exception {
         Long amount = filterService.count();
         assertEquals("Filters were not counted correctly!", Long.valueOf(2), amount);
@@ -79,5 +86,140 @@ public class FilterServiceIT {
     public void shouldGetAllFiltersInGivenRange() throws Exception {
         List<Filter> filters = filterService.getAll(1, 10);
         assertEquals("Not all filters were found in database!", 1, filters.size());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByProcessServiceByProcessId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByProcessServiceByProjectTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByProcessServiceByProcessTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByProcessServiceByTaskTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByProcessServiceByBatchId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    /**
+     * find by properties.
+     */
+    @Ignore
+    @Test
+    public void shouldBuildQueryAndFindByProcessServiceByProperty() throws Exception {
+        // TODO
+    }
+
+    /**
+     * find by multiple conditions.
+     */
+    @Ignore
+    @Test
+    public void shouldBuildQueryAndFindByProcessServiceByMultipleConditions() throws Exception {
+        // TODO
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByProcessId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByProjectTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByProcessTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByTaskTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    /**
+     * find tasks by property.
+     */
+    @Ignore
+    @Test
+    public void shouldBuildQueryAndFindByTaskServiceByProperty() throws Exception {
+        // TODO
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByClosedTasks() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByOpenTasks() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByInProgressTasks() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Ignore("problem with steplocked")
+    @Test
+    public void shouldBuildQueryAndFindByTaskServiceByLockedTasks() throws Exception {
+        // TODO
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceWithDisjunctions() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryAndFindByTaskServiceByMultipleConditions() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryForDefaultConditions() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldBuildQueryForEmptyConditions() throws Exception {
+        // TODO delete test stub
     }
 }

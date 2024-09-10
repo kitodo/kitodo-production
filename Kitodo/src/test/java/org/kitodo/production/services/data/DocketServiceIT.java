@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -68,6 +69,12 @@ public class DocketServiceIT {
     }
 
     @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountAllDocketsAccordingToQuery() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
     public void shouldCountAllDatabaseRowsForDockets() throws Exception {
         Long amount = docketService.count();
         assertEquals("Dockets were not counted correctly!", Long.valueOf(4), amount);
@@ -101,6 +108,60 @@ public class DocketServiceIT {
     @Test
     public void shouldFindByTitle() throws DAOException {
         assertEquals(docketNotFound, 1, docketService.getByTitle(defaultDocket).size());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByClientId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByClientId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByTitleOrFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByTitleOrFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleOrFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindAllDocketsDocuments() throws Exception {
+        // TODO delete test stub
     }
 
     @Test

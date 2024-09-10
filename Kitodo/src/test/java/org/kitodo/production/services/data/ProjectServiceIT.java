@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -65,6 +66,12 @@ public class ProjectServiceIT {
     @Test
     public void shouldCountAllProjects() throws DAOException {
         assertEquals("Projects were not counted correctly!", Long.valueOf(3), projectService.count());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountAllProjectsAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
@@ -162,5 +169,10 @@ public class ProjectServiceIT {
     public void shouldGetClientOfProject() throws Exception {
         Project project = projectService.getById(1);
         assertEquals("Client names doesnt match", "First client", project.getClient().getName());
+    }
+
+    @Test
+    public void findByIds() throws Exception {
+        // TODO
     }
 }

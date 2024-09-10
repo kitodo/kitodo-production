@@ -112,6 +112,12 @@ public class ProcessServiceIT {
     }
 
     @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountProcessesAccordingToQuery() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
         Long amount = processService.count();
         assertEquals("Processes were not counted correctly!", Long.valueOf(7), amount);
@@ -222,6 +228,15 @@ public class ProcessServiceIT {
     }
 
     @Test
+    @Ignore("Only used in SearchResultForm, which will be thrown out. No new implementation here")
+    public void shouldFindByMetadataContent() throws Exception {
+        int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
+        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
+        assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
+        ProcessTestUtils.removeTestProcess(testProcessId);
+    }
+
+    @Test
     @Ignore("Data index currently not available")
     public void shouldFindByLongNumberInMetadata() throws DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
@@ -233,6 +248,60 @@ public class ProcessServiceIT {
         assertEquals(processNotFound, 1, processService
                 .findByMetadata(Collections.singletonMap("CatalogIDDigital", "999999999999999999999999991")).size());
         ProcessTestUtils.removeTestProcess(processId);
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindProcessWithUnderscore() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByProjectTitleWithWildcard() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByAnything() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByMetadataGroupContent() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByProperty() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByWrongPropertyTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByWrongPropertyTitleAndValue() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTokenizedPropertyTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
@@ -391,6 +460,12 @@ public class ProcessServiceIT {
     }
 
     @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void testGetQueryForClosedProcesses() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
     public void shouldGetProgressOpen() throws Exception {
         Process process = processService.getById(1);
 
@@ -534,6 +609,12 @@ public class ProcessServiceIT {
             assertEquals("Child should have parent as parent", process, child.getParent());
         }
         assertNull("Process to remove should have no parent", processService.getById(6).getParent());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void testFindAllIDs() throws Exception {
+        // TODO delete test stub
     }
 
     @Test

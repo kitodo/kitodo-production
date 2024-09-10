@@ -20,6 +20,7 @@ import java.util.List;
 
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -69,6 +70,12 @@ public class RulesetServiceIT {
     }
 
     @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountAllRulesetsAccordingToQuery() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
     public void shouldCountAllDatabaseRowsForRulesets() throws Exception {
         Long amount = rulesetService.count();
         assertEquals("Rulesets were not counted correctly!", Long.valueOf(3), amount);
@@ -101,6 +108,60 @@ public class RulesetServiceIT {
     @Test
     public void shouldFindByTitle() throws DAOException {
         assertEquals(rulesetNotFound, 1, rulesetService.getByTitle(slubDD).size());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByClientId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore
+    public void shouldFindOneByClientId() throws Exception, DAOException {
+        // TODO
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByClientId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleAndFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByTitleOrFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByTitleOrFile() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTitleOrFile() throws Exception {
+        // TODO delete test stub
     }
 
     @Test

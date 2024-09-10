@@ -20,6 +20,7 @@ import java.util.Objects;
 
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -60,6 +61,12 @@ public class BatchServiceIT {
     @Test
     public void shouldCountAllBatches() throws DAOException {
         assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountAllBatchesAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
@@ -116,6 +123,60 @@ public class BatchServiceIT {
     public void shouldFindById() throws DAOException {
         String expected = "First batch";
         assertEquals(BATCH_NOT_FOUND, expected, batchService.getById(1).getTitle());
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByType() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByProcessId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByProcessId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByProcessId() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByProcessTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByProcessTitle() throws Exception {
+        // TODO delete test stub
+    }
+
+    @Test
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByProcessTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
