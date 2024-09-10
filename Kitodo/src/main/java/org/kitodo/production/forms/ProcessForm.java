@@ -650,16 +650,7 @@ public class ProcessForm extends TemplateBaseForm {
                 filteredProcesses.add((Process) object);
             }
         }
-        List<Process> processesForActions = new ArrayList<>();
-
-        try {
-            processesForActions = ServiceManager.getProcessService().convertDtosToBeans(filteredProcesses);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
-                logger, e);
-        }
-
-        return processesForActions;
+        return filteredProcesses;
     }
 
     /**

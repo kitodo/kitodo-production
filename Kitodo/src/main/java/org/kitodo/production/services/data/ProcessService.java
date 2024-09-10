@@ -732,21 +732,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * Convert list of Interfaces to list of beans.
-     *
-     * @param dtos
-     *            list of Interface objects
-     * @return list of beans
-     */
-    public List<Process> convertDtosToBeans(List<Process> dtos) throws DAOException {
-        List<Process> processes = new ArrayList<>();
-        for (Process process : dtos) {
-            processes.add(getById(process.getId()));
-        }
-        return processes;
-    }
-
-    /**
      * Check if process is assigned only to one batch.
      *
      * @param list
