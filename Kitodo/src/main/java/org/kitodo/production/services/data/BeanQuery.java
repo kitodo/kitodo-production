@@ -30,12 +30,12 @@ import org.primefaces.model.SortOrder;
 public class BeanQuery {
 
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
-    private String objectClass;
-    private String varName;
-    private Collection<String> extensions = new ArrayList<>();
-    private Collection<String> restrictions = new ArrayList<>();
+    private final String objectClass;
+    private final String varName;
+    private final Collection<String> extensions = new ArrayList<>();
+    private final Collection<String> restrictions = new ArrayList<>();
     private Pair<String, String> sorting = Pair.of("id", "ASC");
-    private Map<String, Object> parameters = new HashMap<>();
+    private final Map<String, Object> parameters = new HashMap<>();
 
     public BeanQuery(Class<? extends BaseBean> beanClass) {
         objectClass = beanClass.getSimpleName();
