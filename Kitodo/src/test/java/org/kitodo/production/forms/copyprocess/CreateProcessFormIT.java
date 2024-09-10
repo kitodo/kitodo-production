@@ -110,7 +110,7 @@ public class CreateProcessFormIT {
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();
-        processService.deleteProcess(newProcess);
+        ProcessService.deleteProcess(newProcess);
         fileService.delete(URI.create(processId.toString()));
     }
 
@@ -145,7 +145,7 @@ public class CreateProcessFormIT {
 
         // clean up database, index and file system
         Integer processId = newProcess.getId();
-        processService.deleteProcess(newProcess);
+        ProcessService.deleteProcess(newProcess);
         fileService.delete(URI.create(processId.toString()));
     }
 }
