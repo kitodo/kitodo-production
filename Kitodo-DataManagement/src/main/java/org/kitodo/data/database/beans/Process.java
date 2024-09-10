@@ -853,22 +853,6 @@ public class Process extends BaseTemplateBean {
     }
 
     /**
-     * Returns the percentage of tasks in the process, that cannot yet be
-     * carried out, because previous tasks have not yet been completed. The
-     * progress total of tasks waiting for preconditions, startable, in
-     * progress, and completed is {@code 100.0d}.
-     *
-     * @return percentage of tasks waiting
-     */
-    public Double getProgressLocked() {
-        if (CollectionUtils.isEmpty(tasks)) {
-            return 100.0;
-        }
-        return getProgressPercentageExact(TaskStatus.LOCKED);
-
-    }
-
-    /**
      * Returns the percentage of the process's tasks that are now ready to be
      * processed but have not yet been started. The progress total of tasks
      * waiting for preconditions, startable, in progress, and completed is
@@ -903,16 +887,6 @@ public class Process extends BaseTemplateBean {
     public String getProgressCombined() {
         Map<TaskStatus, Double> taskProgress = ProcessConverter.getTaskProgressPercentageOfProcess(this, true);
         return ProcessConverter.getCombinedProgressFromTaskPercentages(taskProgress);
-    }
-
-    /**
-     * Returns all batches to which the process belongs. A comma-space-separated
-     * list of the batch labels is returned. If not, it's a blank string.
-     *
-     * @return batches to which the process belongs
-     */
-    public String getBatchID() {
-        return batches.stream().map(Batch::getTitle).collect(Collectors.joining(", "));
     }
 
     /**

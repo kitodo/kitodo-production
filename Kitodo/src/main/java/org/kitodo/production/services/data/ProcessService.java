@@ -962,26 +962,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
-     * The function getBatchID returns the batches the process is associated
-     * with as readable text as read-only property "batchID".
-     *
-     * @return the batches the process is in
-     */
-    public String getBatchID(Process process) {
-        if (process.getBatches().isEmpty()) {
-            return null;
-        }
-        StringBuilder result = new StringBuilder();
-        for (Batch batch : process.getBatches()) {
-            if (result.length() > 0) {
-                result.append(", ");
-            }
-            result.append(ServiceManager.getBatchService().getLabel(batch));
-        }
-        return result.toString();
-    }
-
-    /**
      * Get current tasks.
      *
      * @param process

@@ -421,14 +421,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetBatchId() throws Exception {
-        Process process = processService.findById(1);
-        String batchId = processService.getBatchID(process);
-        boolean condition = batchId.equals("First batch, Third batch");
-        assertTrue("BatchId doesn't match to given plain text!", condition);
-    }
-
-    @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
