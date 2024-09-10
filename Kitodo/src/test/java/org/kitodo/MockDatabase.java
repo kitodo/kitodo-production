@@ -125,13 +125,11 @@ public class MockDatabase {
     }
 
     public static void startNode() throws Exception {
-        startNodeWithoutMapping();
-    }
-
-    public static void startNodeWithoutMapping() throws Exception {
+        // TODO start an OpenSearch service for Hibernate Search
     }
 
     public static void stopNode() throws Exception {
+        // TODO stop OpenSearch service
     }
 
     public static void setUpAwaitility() {
