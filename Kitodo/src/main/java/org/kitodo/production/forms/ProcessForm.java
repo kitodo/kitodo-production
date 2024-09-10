@@ -1135,7 +1135,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return amount of processes
      */
     public String getAmount() throws DAOException {
-        return ServiceManager.getProcessService().count().toString();
+        return Integer.toString(lazyDTOModel.getRowCount());
     }
 
     /**
