@@ -183,6 +183,7 @@ public class BeanQuery {
             case "Project":
             case "Ruleset":
             case "Template":
+            case "Workflow":
                 restrictions.add(varName + ".client.id = :sessionClientId");
                 break;
             case "Process":
