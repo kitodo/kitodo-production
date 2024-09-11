@@ -312,7 +312,7 @@ public class BeanQuery {
      */
     public String formQueryForDistinct(String field, boolean sorted) {
         StringBuilder query = new StringBuilder(512);
-        query.append("SELECT DISTINCT ").append(varName).append('.').append(field);
+        query.append("SELECT DISTINCT ").append(varName).append('.').append(field).append(' ');
         innerFormQuery(query);
         query.append(" ORDER BY ").append(varName).append('.').append(field).append(" ASC");
         return query.toString();
