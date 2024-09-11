@@ -563,6 +563,10 @@ public class ProcessListBaseView extends BaseForm {
         }
     }
 
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
+        this.selectedProcesses = selectedProcesses;
+    }
+
     /**
      * Update selection and first row to show in datatable on PageEvent.
      * @param pageEvent PageEvent triggered by data tables paginator
