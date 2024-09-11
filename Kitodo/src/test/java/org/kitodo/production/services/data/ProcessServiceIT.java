@@ -205,7 +205,7 @@ public class ProcessServiceIT {
     @Test
     public void shouldFindById() throws DAOException {
         Integer expected = 1;
-        assertEquals(processNotFound, expected, processService.findById(1).getId());
+        assertEquals(processNotFound, expected, processService.getById(1).getId());
     }
 
     @Test
@@ -567,13 +567,13 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
-        Process process = processService.findById(2);
+        Process process = processService.getById(2);
         assertTrue(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
     public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
-        Process process = processService.findById(1);
+        Process process = processService.getById(1);
         assertFalse(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 

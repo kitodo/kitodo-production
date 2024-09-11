@@ -242,7 +242,7 @@ public class NewspaperProcessesGeneratorIT {
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
         generatesNewspaperProcessesThread.start();
         DAOException dataException = assertThrows(DAOException.class,
-                () -> ServiceManager.getProcessService().findById(11));
+            () -> ServiceManager.getProcessService().getById(11));
         Assert.assertEquals("Process should not have been created", "Process 11 cannot be found in database",
             dataException.getMessage());
     }

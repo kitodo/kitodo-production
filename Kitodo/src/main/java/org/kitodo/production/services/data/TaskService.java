@@ -44,6 +44,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.TaskDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.export.ExportDms;
@@ -329,8 +330,9 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      * @return all different task names
      */
     public List<String> findTaskTitlesDistinct() throws DAOException {
-        throw new UnsupportedOperationException("not yet implemented");
-        // return findDistinctValues(QueryBuilders.matchAllQuery(), "title.keyword", true, count());
+        BeanQuery beanQuery = new BeanQuery(Task.class);
+        return super.dao.getStringsByQuery(beanQuery.formQueryForDistinct("title", true),
+                beanQuery.getQueryParameters());
     }
 
     /**
@@ -668,6 +670,18 @@ public class TaskService extends BaseBeanService<Task, TaskDAO> {
      */
     public List<Task> getPreviousTasksForProblemReporting(Integer ordering, Integer processId) {
         return dao.getPreviousTasksForProblemReporting(ordering, processId);
+    }
+
+    /**
+     * Find tasks by id of process.
+     *
+     * @param id
+     *            of process
+     * @return list of JSON objects with tasks for specific process id
+     */
+    List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**

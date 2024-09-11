@@ -263,6 +263,23 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
     }
 
     /**
+     * Gets a collection of strings based on a search query.
+     *
+     * @param query
+     *            query in Hibernate Query Language
+     * @param parameters
+     *            used in query. If the query string contains a placeholder
+     *            "{@code :joker}", this mapping must contain a mapping for the
+     *            string "{@code joker}" to a value for it. A replacement for
+     *            injection into the SQL query, to prevent attacks.
+     * @return list of strings
+     */
+    public List<String> getStringList(String query, Map<String, Object> parameters) {
+        debugLogQuery(query, parameters);
+        return dao.getStringsByQuery(query, parameters);
+    }
+
+    /**
      * Returns all objects of the implementing type from the database.
      * 
      * <p>

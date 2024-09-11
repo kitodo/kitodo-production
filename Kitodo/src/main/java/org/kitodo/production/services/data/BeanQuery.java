@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -280,20 +281,8 @@ public class BeanQuery {
      */
     public String formCountQuery() {
         StringBuilder query = new StringBuilder(512);
-        query.append("SELECT COUNT(*) FROM ").append(objectClass);
-        if (!restrictions.isEmpty() || !extensions.isEmpty()) {
-            query.append(" AS ").append(varName);
-        }
-        for (String extension : extensions) {
-            query.append(" INNER JOIN ").append(extension);
-        }
-        if (!restrictions.isEmpty()) {
-            boolean first = true;
-            for (String restriction : restrictions) {
-                query.append(first ? " WHERE " : " AND ").append(restriction);
-                first = false;
-            }
-        }
+        query.append("SELECT COUNT(*) ");
+        innerFormQuery(query);
         return query.toString();
     }
 
@@ -307,6 +296,28 @@ public class BeanQuery {
         if (!extensions.isEmpty()) {
             query.append("SELECT ").append(varName).append(' ');
         }
+        innerFormQuery(query);
+        query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
+        return query.toString();
+    }
+
+    /**
+     * Forms and returns a query for a unique collection of strings.
+     * 
+     * @param field
+     *            field of the bean being queried
+     * @param sorted
+     *            whether the list should be sorted
+     */
+    public String formQueryForDistinct(String field, boolean sorted) {
+        StringBuilder query = new StringBuilder(512);
+        query.append("SELECT DISTINCT ").append(varName).append('.').append(field);
+        innerFormQuery(query);
+        query.append(" ORDER BY ").append(varName).append('.').append(field).append(" ASC");
+        return query.toString();
+    }
+
+    private void innerFormQuery(StringBuilder query) {
         query.append("FROM ").append(objectClass).append(" AS ").append(varName);
         for (String extension : extensions) {
             query.append(" INNER JOIN ").append(extension);
@@ -318,8 +329,6 @@ public class BeanQuery {
                 first = false;
             }
         }
-        query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
-        return query.toString();
     }
 
     public Map<String, Object> getQueryParameters() {

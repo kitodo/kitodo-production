@@ -35,7 +35,7 @@ public class IndexingFormIT {
 
     @BeforeClass
     public static void setUp() throws Exception {
-        MockDatabase.startNodeWithoutMapping();
+        MockDatabase.startNode();
         Client client = new Client();
         ServiceManager.getClientService().save(client);
         User user = new User();
@@ -75,12 +75,12 @@ public class IndexingFormIT {
 
         indexingForm.countDatabaseObjects();
 
-        Process processOne = ServiceManager.getProcessService().findById(1);
+        Process processOne = ServiceManager.getProcessService().getById(1);
         Assert.assertNull("process should not be found in index", processOne.getTitle());
         indexingForm.startAllIndexing();
         given().ignoreExceptions().await()
-                .until(() -> Objects.nonNull(ServiceManager.getProcessService().findById(1).getTitle()));
-        processOne = ServiceManager.getProcessService().findById(1);
+                .until(() -> Objects.nonNull(ServiceManager.getProcessService().getById(1).getTitle()));
+        processOne = ServiceManager.getProcessService().getById(1);
         Assert.assertEquals("process should be found", "testIndex",processOne.getTitle());
     }
 }

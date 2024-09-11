@@ -13,6 +13,7 @@ package org.kitodo.production.services.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -20,6 +21,7 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.helper.Helper;
 import org.primefaces.model.SortOrder;
 
@@ -88,8 +90,34 @@ public class BatchService extends BaseBeanService<Batch, BatchDAO> {
     }
 
     /**
-     * Returns true if the title (if set) or the
-     * id-based label contain the specified sequence of char values.
+     * Find batches by id of process.
+     *
+     * @param id
+     *            of process
+     * @return list of JSON objects with batches for specific process id
+     */
+    @Deprecated
+    public List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find batches by title of process.
+     *
+     * @param title
+     *            of process
+     * @return list of JSON objects with batches for specific process title
+     */
+    @Deprecated
+    public List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Returns true if the title (if set) or the id-based label contain the
+     * specified sequence of char values.
      *
      * @param sequence
      *            the sequence to search for

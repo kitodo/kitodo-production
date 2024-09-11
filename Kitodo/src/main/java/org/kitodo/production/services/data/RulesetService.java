@@ -31,6 +31,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.RulesetDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.RulesetNotFoundException;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
@@ -128,6 +129,58 @@ public class RulesetService extends BaseBeanService<Ruleset, RulesetDAO> {
      */
     public List<Ruleset> getByTitle(String title) {
         return dao.getByQuery("FROM Ruleset WHERE title = :title", Collections.singletonMap("title", title));
+    }
+
+    /**
+     * Find ruleset with exact file.
+     *
+     * @param file
+     *            of the searched ruleset
+     * @return search result
+     */
+    public Map<String, Object> findByFile(String file) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find rulesets for client id.
+     *
+     * @param clientId
+     *            of the searched rulesets
+     * @return search result
+     */
+    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find ruleset with exact title and file name.
+     *
+     * @param title
+     *            of the searched ruleset
+     * @param file
+     *            of the searched ruleset
+     * @return search result
+     */
+    public Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find ruleset with exact title or file name.
+     *
+     * @param title
+     *            of the searched ruleset
+     * @param file
+     *            of the searched ruleset
+     * @return search result
+     */
+    public List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**

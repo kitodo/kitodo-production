@@ -1051,7 +1051,7 @@ public class SecurityAccessService extends SecurityAccess {
 
     private boolean hasAuthorityForProcess(int processId) throws DAOException {
         Integer projectId = processId == 0 ? 0
-                : ServiceManager.getProcessService().findById(processId).getProject().getId();
+                : ServiceManager.getProcessService().getById(processId).getProject().getId();
         return hasAuthorityForProject(projectId);
     }
 

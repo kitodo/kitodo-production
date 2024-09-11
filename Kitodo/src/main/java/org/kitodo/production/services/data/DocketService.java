@@ -20,6 +20,7 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.model.SortOrder;
 
@@ -112,5 +113,61 @@ public class DocketService extends BaseBeanService<Docket, DocketDAO> {
      */
     public List<Docket> getByTitle(String title) {
         return dao.getByQuery("FROM Docket WHERE title = :title", Collections.singletonMap("title", title));
+    }
+
+    /**
+     * Find docket with exact file name.
+     *
+     * @param file
+     *            of the searched docket
+     * @return search result
+     */
+    @Deprecated
+    Map<String, Object> findByFile(String file) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find dockets for client id.
+     *
+     * @param clientId
+     *            of the searched dockets
+     * @return search result
+     */
+    @Deprecated
+    List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find docket with exact title and file name.
+     * 
+     * @param title
+     *            of the searched docket
+     * @param file
+     *            of the searched docket
+     * @return search result
+     */
+    @Deprecated
+    Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Find docket with exact title or file name.
+     *
+     * @param title
+     *            of the searched docket
+     * @param file
+     *            of the searched docket
+     * @return search result
+     */
+    @Deprecated
+    List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 }

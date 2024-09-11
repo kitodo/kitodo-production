@@ -225,6 +225,24 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
+     * Retrieves String objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @param parameters
+     *            for query
+     * @return list of beans objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getStringsByQuery(String query, Map<String, Object> parameters) {
+        try (Session session = HibernateUtil.getSession()) {
+            Query<String> queryObject = session.createQuery(query);
+            addParameters(queryObject, parameters);
+            return queryObject.list();
+        }
+    }
+
+    /**
      * Count all rows in database.
      *
      * @param query
@@ -487,5 +505,4 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asMatchPredicate())
                 .collect(Collectors.toList());
     }
-
 }

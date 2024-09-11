@@ -113,6 +113,7 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.kitodo.data.database.persistence.ProcessDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.export.ExportMets;
 import org.kitodo.production.helper.Helper;
@@ -473,6 +474,21 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
+     * Compare two list and return difference between them.
+     *
+     * @param firstList
+     *            list from which records can be remove
+     * @param secondList
+     *            records stored here will be removed from firstList
+     * @return difference between two lists
+     */
+    @Deprecated
+    private List<Integer> findMissingValues(List<Integer> firstList, List<Integer> secondList) {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
      * Saves multiple processes in the database.
      * 
      * <p>
@@ -489,6 +505,12 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     @Override
     public void refresh(Process process) {
         dao.refresh(process);
+    }
+
+    @Deprecated
+    List<Map<String, Object>> findForCurrentSessionClient() throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -526,6 +548,57 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     }
 
     /**
+     * Find processes by metadata across all projects of the current client.
+     *
+     * @param metadata
+     *            key is metadata tag and value is metadata content
+     * @return list of ProcessDTO objects with processes for specific metadata tag
+     */
+    @Deprecated
+    public List<Process> findByMetadataInAllProjects(Map<String, String> metadata, boolean exactMatch) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
+     * Finds all processes with the specified name.
+     *
+     * @param title
+     *            process name to search for
+     * @return all processes with the specified name
+     * @throws DAOException
+     *             when there is an error on conversation
+     */
+    /*
+     * Only used in NewspaperProcessesGenerator and only checked there on
+     * .isEmpty(), to see if a process title already exists.
+     */
+    @SuppressWarnings("unchecked")
+    public Collection<Process> findByTitle(String title) throws DAOException {
+        return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
+    }
+
+    /**
+     * Finds processes by searchQuery for a number of fields.
+     *
+     * @param searchQuery
+     *            the query word or phrase
+     * @return a List of found Processs
+     * @throws DAOException
+     *             when accessing the elasticsearch server fails
+     */
+    /*
+     * Only used in SearchResultForm. SearchResultForm is thrown out in further
+     * development. No new implementation required here. (However, the
+     * functionality must be provided in countResults() and loadData().)
+     */
+    @Deprecated
+    public List<Process> findByAnything(String searchQuery) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
      * Determines all processes with a specific docket.
      *
      * <!-- Used in DocketForm to find out whether a docket is used in a
@@ -560,24 +633,6 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("template.id", templateId);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
-    }
-
-    /**
-     * Finds all processes with the specified name.
-     *
-     * @param title
-     *            process name to search for
-     * @return all processes with the specified name
-     * @throws DAOException
-     *             when there is an error on conversation
-     */
-    /*
-     * Only used in NewspaperProcessesGenerator and only checked there on
-     * .isEmpty(), to see if a process title already exists.
-     */
-    @SuppressWarnings("unchecked")
-    public Collection<Process> findByTitle(String title) throws DAOException {
-        return (List<Process>) (List<?>) getByQuery("FROM Process WHERE title = '" + title + "'");
     }
 
     /**
@@ -653,6 +708,27 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         query.addIntegerRestriction("ruleset.id", rulesetId);
         query.forIdOrInTitle(searchInput);
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
+    }
+
+    /**
+     * Find processes by property.
+     *
+     * @param title
+     *            of property
+     * @param value
+     *            of property
+     * @return list of JSON objects with processes for specific property
+     */
+    @Deprecated
+    public List<Process> findByProperty(String title, String value) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    @Deprecated
+    List<Process> findByProjectIds(Set<Integer> projectIds, boolean related) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -2259,39 +2335,5 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
             return true;
         }
         return FileService.hasImages(process, generatorSource);
-    }
-
-    // === alternative functions that are no longer required ===
-
-    /**
-     * Find object in ES and convert it to Interface.
-     *
-     * @param id
-     *            object id
-     * @return Interface object
-     * @deprecated Use {@link #getById(Integer)}.
-     */
-    @Deprecated
-    public Process findById(Integer id) throws DAOException {
-        return getById(id);
-    }
-
-    /**
-     * Finds processes by searchQuery for a number of fields.
-     *
-     * @param searchQuery
-     *            the query word or phrase
-     * @return a List of found Processs
-     * @throws DAOException
-     *             when accessing the elasticsearch server fails
-     */
-    /*
-     * Only used in SearchResultForm. SearchResultForm is thrown out in further
-     * development. No new implementation required here. (However, the
-     * functionality must be provided in countResults() and loadData().)
-     */
-    @Deprecated
-    public List<Process> findByAnything(String searchQuery) throws DAOException {
-        throw new UnsupportedOperationException("no longer provided this way");
     }
 }

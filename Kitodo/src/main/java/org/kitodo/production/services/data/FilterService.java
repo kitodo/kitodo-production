@@ -37,6 +37,7 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.FilterDAO;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.enums.FilterString;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -96,10 +97,27 @@ public class FilterService extends BaseBeanService<Filter, FilterDAO> {
     }
 
     /**
+     * Find filters with exact value.
+     *
+     * @param value
+     *            of the searched filter
+     * @param contains
+     *            of the searched filter
+     * @return list of JSON objects with properties
+     */
+    @Deprecated
+    List<Map<String, Object>> findByValue(String value, boolean contains) throws DataException {
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
+    }
+
+    /**
      * Splits a filter into multiple alternative conditions.
      * 
-     * @param filter the filter string (that was enclosed in double quotes)
-     * @return a list of conditions after splitting the filter at the "|" character
+     * @param filter
+     *            the filter string (that was enclosed in double quotes)
+     * @return a list of conditions after splitting the filter at the "|"
+     *         character
      */
     private List<String> splitConditions(String filter) {
         return CONDITION_PATTERN.matcher(filter).results()
