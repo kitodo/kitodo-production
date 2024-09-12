@@ -1201,6 +1201,7 @@ public class MockDatabase {
                 secondUser.getProcessingTasks().add(task);
             }
             ServiceManager.getTaskService().save(task);
+            firstProcess.getTasks().add(task);
         }
 
         ServiceManager.getUserService().save(firstUser);
@@ -1227,6 +1228,7 @@ public class MockDatabase {
         role.getTasks().add(eleventhTask);
         ServiceManager.getTaskService().save(eleventhTask);
         firstUser.getProcessingTasks().add(eleventhTask);
+        secondProcess.getTasks().add(eleventhTask);
 
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
@@ -1242,6 +1244,7 @@ public class MockDatabase {
         ServiceManager.getTaskService().save(twelfthTask);
         firstUser.getProcessingTasks().add(twelfthTask);
         ServiceManager.getUserService().save(firstUser);
+        secondProcess.getTasks().add(twelfthTask);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");
@@ -1254,6 +1257,7 @@ public class MockDatabase {
         thirteenTask.getRoles().add(role);
         role.getTasks().add(thirteenTask);
         ServiceManager.getTaskService().save(thirteenTask);
+        secondProcess.getTasks().add(thirteenTask);
 
         ServiceManager.getRoleService().save(role);
 

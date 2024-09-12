@@ -1047,4 +1047,9 @@ public class Process extends BaseTemplateBean {
             throw new UnsupportedOperationException("cannot insert comments");
         }
     }
+
+    @Override
+    public String toString() {
+        return title + " [" + id + "]";
+    }
 }

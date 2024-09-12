@@ -692,7 +692,10 @@ public class WorkflowControllerService {
     public static void updateProcessSortHelperStatus(Process process) {
         if (!process.getTasks().isEmpty()) {
             String value = ProcessConverter.getCombinedProgressAsString(process, false);
+            logger.trace("Setting sortHelperStatus for process {} to '{}'", process, value);
             process.setSortHelperStatus(value);
+        } else {
+            logger.trace("Cannot set sortHelperStatus for process {}: process has no tasks", process);
         }
     }
 
