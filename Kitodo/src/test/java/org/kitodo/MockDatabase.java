@@ -18,6 +18,7 @@ import static com.xebialabs.restito.semantics.Condition.parameter;
 import com.xebialabs.restito.semantics.Action;
 import com.xebialabs.restito.server.StubServer;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -39,6 +40,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -51,6 +53,7 @@ import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.api.externaldatamanagement.SearchInterfaceType;
 import org.kitodo.api.schemaconverter.FileFormat;
 import org.kitodo.api.schemaconverter.MetadataFormat;
+import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.Authority;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Client;
@@ -91,14 +94,22 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.model.Converter;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.opensearch.common.settings.Settings;
+import org.opensearch.env.Environment;
+import org.opensearch.node.Node;
+import org.opensearch.transport.Netty4Plugin;
+import java.nio.file.Path;
 
 /**
  * Insert data to test database.
  */
 public class MockDatabase {
 
+    private static Node node;
     private static final String GLOBAL_ASSIGNABLE = "_globalAssignable";
     private static final String CLIENT_ASSIGNABLE = "_clientAssignable";
+    private static final String HTTP_TRANSPORT_PORT = "9305";
+    private static final String TARGET = "target";
     private static final String CHOICE = "choice";
     private static final String TEST = "test";
     private static final String FIRST_VALUE = "first value";
@@ -125,11 +136,17 @@ public class MockDatabase {
     }
 
     public static void startNode() throws Exception {
-        // TODO start an OpenSearch service for Hibernate Search
+        final String nodeName = "index";
+        final String port = ConfigMain.getParameter("elasticsearch.port", "9205");
+        Environment environment = prepareEnvironment(port, nodeName, Paths.get("target", "classes"));
+        removeOldDataDirectories("target/" + nodeName);
+        node = new ExtendedNode(environment, Collections.singleton(Netty4Plugin.class));
+        node.start();
     }
 
     public static void stopNode() throws Exception {
-        // TODO stop OpenSearch service
+        node.close();
+        node = null;
     }
 
     public static void setUpAwaitility() {
@@ -203,6 +220,26 @@ public class MockDatabase {
         insertProjects();
         insertTemplates();
         insertDataEditorSettings();
+    }
+
+    private static void removeOldDataDirectories(String dataDirectory) throws Exception {
+        File dataDir = new File(dataDirectory);
+        if (dataDir.exists()) {
+            FileUtils.deleteDirectory(dataDir);
+        }
+    }
+
+    private static Environment prepareEnvironment(String httpPort, String nodeName, Path configPath) {
+        Settings settings = Settings.builder().put("node.name", nodeName)
+                .put("path.data", TARGET)
+                .put("path.logs", TARGET)
+                .put("path.home", TARGET)
+                .put("http.type", "netty4")
+                .put("http.port", httpPort)
+                .put("transport.tcp.port", HTTP_TRANSPORT_PORT)
+                .put("transport.type", "netty4")
+                .put("action.auto_create_index", "false").build();
+        return new Environment(settings, configPath);
     }
 
     public static void insertAuthorities() throws DAOException {
@@ -1164,6 +1201,7 @@ public class MockDatabase {
                 secondUser.getProcessingTasks().add(task);
             }
             ServiceManager.getTaskService().save(task);
+            firstProcess.getTasks().add(task);
         }
 
         ServiceManager.getUserService().save(firstUser);
@@ -1190,6 +1228,7 @@ public class MockDatabase {
         role.getTasks().add(eleventhTask);
         ServiceManager.getTaskService().save(eleventhTask);
         firstUser.getProcessingTasks().add(eleventhTask);
+        secondProcess.getTasks().add(eleventhTask);
 
         Task twelfthTask = new Task();
         twelfthTask.setTitle("Processed and Some");
@@ -1205,6 +1244,7 @@ public class MockDatabase {
         ServiceManager.getTaskService().save(twelfthTask);
         firstUser.getProcessingTasks().add(twelfthTask);
         ServiceManager.getUserService().save(firstUser);
+        secondProcess.getTasks().add(twelfthTask);
 
         Task thirteenTask = new Task();
         thirteenTask.setTitle("Next Open");
@@ -1217,6 +1257,7 @@ public class MockDatabase {
         thirteenTask.getRoles().add(role);
         role.getTasks().add(thirteenTask);
         ServiceManager.getTaskService().save(thirteenTask);
+        secondProcess.getTasks().add(thirteenTask);
 
         ServiceManager.getRoleService().save(role);
 

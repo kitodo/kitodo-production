@@ -39,65 +39,91 @@ import org.apache.commons.collections.CollectionUtils;
 import org.hibernate.LazyInitializationException;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
+@Indexed(index = "kitodo-project")
 @Table(name = "project")
 public class Project extends BaseBean implements Comparable<Project> {
 
+    @GenericField
     @Column(name = "title", nullable = false, unique = true)
     private String title;
 
+    @FullTextField
     @Column(name = "dmsImportRootPath")
     private String dmsImportRootPath;
 
+    @FullTextField
     @Column(name = "metsRightsOwner")
     private String metsRightsOwner = "";
 
+    @FullTextField
     @Column(name = "metsRightsOwnerLogo")
     private String metsRightsOwnerLogo = "";
 
+    @FullTextField
     @Column(name = "metsRightsOwnerSite")
     private String metsRightsOwnerSite = "";
 
+    @FullTextField
     @Column(name = "metsRightsOwnerMail")
     private String metsRightsOwnerMail = "";
 
+    @FullTextField
     @Column(name = "metsDigiprovReference")
     private String metsDigiprovReference = "";
 
+    @FullTextField
     @Column(name = "metsDigiprovPresentation")
     private String metsDigiprovPresentation = "";
 
+    @FullTextField
     @Column(name = "metsPointerPath")
     private String metsPointerPath = "";
 
+    @FullTextField
     @Column(name = "metsPurl")
     private String metsPurl = "";
 
+    @FullTextField
     @Column(name = "metsContentId")
     private String metsContentIDs = "";
 
     @Column(name = "startDate")
+    @GenericField
     private Date startDate;
 
     @Column(name = "endDate")
+    @GenericField
     private Date endDate;
 
     @Column(name = "numberOfPages")
+    @GenericField
     private Integer numberOfPages;
 
     @Column(name = "numberOfVolumes")
+    @GenericField
     private Integer numberOfVolumes;
 
     @Column(name = "active")
+    @GenericField
     private Boolean active = true;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    @IndexedEmbedded(includePaths = {"surname", "name", "id", "login"})
     private List<User> users;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @IndexedEmbedded(includePaths = {"id", "title"})
     private List<Process> processes;
 
     @Transient
@@ -105,6 +131,7 @@ public class Project extends BaseBean implements Comparable<Project> {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
+    @IndexedEmbedded(includePaths = {"id", "title"})
     private List<Template> templates;
 
     @ManyToOne
@@ -117,10 +144,14 @@ public class Project extends BaseBean implements Comparable<Project> {
             foreignKey = @ForeignKey(name = "FK_project_default_child_process_importconfiguration_id"))
     private ImportConfiguration defaultChildProcessImportConfiguration;
 
+    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
+    @IndexedEmbedded(includePaths = {"path", "urlStructure", "fileGroup", "mimeType"})
     private List<Folder> folders;
 
     @ManyToOne
+    @IndexedEmbedded(includePaths = {"id", "name"})
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
     private Client client;
 

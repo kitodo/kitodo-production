@@ -12,7 +12,9 @@
 package org.kitodo.config;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -235,6 +237,27 @@ public class KitodoConfig extends Config {
             logger.catching(Level.TRACE, e);
             return Optional.empty();
         }
+    }
+
+    /**
+     * Returns the URL of the search server.
+     * 
+     * @return the URL
+     * @throws MalformedURLException
+     *             if an unknown protocol, or the port is a negative number
+     *             other than -1
+     */
+    public static URL getSearchServerUrl() throws MalformedURLException {
+        String host = getParameter("elasticsearch.host", "localhost");
+        int port = getIntParameter(new ParameterInterface() {
+            @Override
+            public String getName() {
+                return "elasticsearch.port";
+            }
+        }, 9200);
+        String protocol = getParameter("elasticsearch.protocol", "http");
+        String path = getParameter("elasticsearch.path", "/");
+        return new URL(protocol, host, port, path);
     }
 
     /**

@@ -53,17 +53,8 @@ public class IndexingFormIT {
     }
 
     @Test
-    @Ignore("currently not implemented")
-    public void shouldCreateMapping() {
-        Assert.assertFalse(indexingForm.indexExists());
-        indexingForm.createMapping(false);
-        Assert.assertTrue(indexingForm.indexExists());
-    }
-
-    @Test
     @Ignore("Not working due to CDI injection problems")
     public void indexingAll() throws Exception {
-        indexingForm.createMapping(false);
         Project project = new Project();
         project.setTitle("TestProject");
         project.setClient(ServiceManager.getClientService().getById(1));
@@ -73,7 +64,7 @@ public class IndexingFormIT {
         process.setProject(project);
         ServiceManager.getProcessService().save(process);
 
-        indexingForm.countDatabaseObjects();
+        IndexingForm.setNumberOfDatabaseObjects();
 
         Process processOne = ServiceManager.getProcessService().getById(1);
         Assert.assertNull("process should not be found in index", processOne.getTitle());
