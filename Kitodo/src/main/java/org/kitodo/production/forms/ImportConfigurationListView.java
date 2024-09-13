@@ -28,7 +28,7 @@ import org.kitodo.exceptions.ConfigException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.primefaces.PrimeFaces;
 
@@ -40,11 +40,12 @@ public class ImportConfigurationListView extends BaseForm {
     private final String importConfigurationEditPath = MessageFormat.format(REDIRECT_PATH, "importConfigurationEdit");
 
     /**
-     * Empty default constructor that also sets the LazyDTOModel instance of this bean.
+     * Empty default constructor that also sets the LazyBeanModel instance of
+     * this bean.
      */
     public ImportConfigurationListView() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getImportConfigurationService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getImportConfigurationService()));
     }
 
     /**
@@ -78,7 +79,7 @@ public class ImportConfigurationListView extends BaseForm {
      */
     public void deleteById(int id) {
         try {
-            ServiceManager.getImportConfigurationService().removeFromDatabase(id);
+            ServiceManager.getImportConfigurationService().remove(id);
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.IMPORT_CONFIGURATION.getTranslationSingular() }, logger, e);
         } catch (ImportConfigurationInUseException e) {

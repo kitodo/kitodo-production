@@ -11,6 +11,9 @@
 
 package org.kitodo.production.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -20,9 +23,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.production.services.ServiceManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class WorkflowServiceIT {
 

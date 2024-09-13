@@ -35,11 +35,10 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.TemplateService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
@@ -65,7 +64,7 @@ public class TemplateForm extends TemplateBaseForm {
      * Constructor.
      */
     public TemplateForm() {
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getTemplateService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getTemplateService()));
     }
 
     /**
@@ -144,7 +143,7 @@ public class TemplateForm extends TemplateBaseForm {
         if (isTitleValid()) {
             try {
                 prepareTasks();
-            } catch (DAOException | DataException | IOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage("errorDiagram", new Object[] {this.template.getWorkflow().getTitle() },
                     logger, e);
                 return this.stayOnCurrentPage;
@@ -158,10 +157,10 @@ public class TemplateForm extends TemplateBaseForm {
             this.template.getProjects().addAll(assignedProjects);
 
             try {
-                ServiceManager.getTemplateService().save(this.template, true);
+                ServiceManager.getTemplateService().save(this.template);
                 template = ServiceManager.getTemplateService().getById(this.template.getId());
                 new WorkflowControllerService().activateNextTasks(template.getTasks());
-            } catch (DataException | IOException | DAOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TEMPLATE.getTranslationSingular() },
                     logger, e);
                 return this.stayOnCurrentPage;
@@ -222,8 +221,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to templateEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
-            ServiceManager.getTemplateService());
+        super.saveTask(this.task);
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 
@@ -235,6 +233,20 @@ public class TemplateForm extends TemplateBaseForm {
     public InputStream getTasksDiagram() {
         if (Objects.nonNull(this.template.getWorkflow())) {
             return ServiceManager.getTemplateService().getTasksDiagram(this.template.getWorkflow().getTitle());
+        }
+        return ServiceManager.getTemplateService().getTasksDiagram("");
+    }
+
+    /**
+     * Returns a read handle for the SVG image of this production template's
+     * workflow. If the file cannot be read (due to an error), returns an empty
+     * input stream.
+     *
+     * @return read file handle for the SVG
+     */
+    public InputStream getDiagramImage(String title) {
+        if (Objects.nonNull(title)) {
+            return ServiceManager.getTemplateService().getTasksDiagram(title);
         }
         return ServiceManager.getTemplateService().getTasksDiagram("");
     }
@@ -437,12 +449,12 @@ public class TemplateForm extends TemplateBaseForm {
         this.task = task;
     }
 
-    private void prepareTasks() throws DAOException, IOException, WorkflowException, DataException {
+    private void prepareTasks() throws DAOException, IOException, WorkflowException {
         List<Task> templateTasks = new ArrayList<>(this.template.getTasks());
         if (!templateTasks.isEmpty()) {
             this.template.getTasks().clear();
             TemplateService templateService = ServiceManager.getTemplateService();
-            templateService.save(template, true);
+            templateService.save(template);
         }
         if (Objects.nonNull(template.getWorkflow())) {
             Converter converter = new Converter(this.template.getWorkflow().getTitle());
@@ -460,7 +472,7 @@ public class TemplateForm extends TemplateBaseForm {
     public boolean isTemplateUsed(int templateId) {
         try {
             return !ServiceManager.getProcessService().findByTemplate(templateId).isEmpty();
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(e);
             return false;
         }

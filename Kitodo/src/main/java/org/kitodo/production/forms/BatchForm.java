@@ -22,11 +22,9 @@ import javax.faces.event.ValueChangeEvent;
 import javax.faces.view.ViewScoped;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
@@ -34,20 +32,23 @@ import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.CommentType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.batch.BatchProcessHelper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.BeanQuery;
+import org.kitodo.production.services.data.ProcessService;
+import org.primefaces.model.SortOrder;
 
 @Named("BatchForm")
 @ViewScoped
 public class BatchForm extends BaseForm {
 
     private static final Logger logger = LogManager.getLogger(BatchForm.class);
+
+    private final ProcessService processService = ServiceManager.getProcessService();
 
     private List<Process> currentProcesses;
     private List<Process> selectedProcesses = new ArrayList<>();
@@ -67,7 +68,7 @@ public class BatchForm extends BaseForm {
      */
     public BatchForm() {
         super();
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getBatchService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getBatchService()));
         filterAll();
     }
 
@@ -108,35 +109,19 @@ public class BatchForm extends BaseForm {
      * Filter processes.
      */
     public void filterProcesses() {
-        List<ProcessDTO> processDTOS = new ArrayList<>();
-        QueryBuilder query = new BoolQueryBuilder();
-
-        if (Objects.nonNull(this.processfilter)) {
-            try {
-                query = ServiceManager.getFilterService().queryBuilder(this.processfilter, ObjectType.PROCESS, false,
-                    false);
-            } catch (DataException e) {
-                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            }
+        BeanQuery query = new BeanQuery(Process.class);
+        query.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        if (StringUtils.isNotBlank(this.processfilter)) {
+            query.forIdOrInTitle(this.processfilter);
         }
-
+        query.defineSorting("creationDate", SortOrder.DESCENDING);
         int batchMaxSize = ConfigCore.getIntParameter(ParameterCore.BATCH_DISPLAY_LIMIT, -1);
-        try {
-            if (batchMaxSize > 0) {
-                processDTOS = ServiceManager.getProcessService().findByQuery(query,
-                    ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), 0, batchMaxSize, false);
-            } else {
-                processDTOS = ServiceManager.getProcessService().findByQuery(query,
-                    ServiceManager.getProcessService().sortByCreationDate(SortOrder.DESC), false);
-            }
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
-        try {
-            this.currentProcesses = ServiceManager.getProcessService().convertDtosToBeans(processDTOS);
-        } catch (DAOException e) {
-            this.currentProcesses = new ArrayList<>();
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        if (batchMaxSize > 0) {
+            this.currentProcesses = processService.getByQuery(query.formQueryForAll(), query
+                    .getQueryParameters(), batchMaxSize);
+        } else {
+            this.currentProcesses = processService.getByQuery(query.formQueryForAll(), query
+                    .getQueryParameters());
         }
     }
 
@@ -271,7 +256,7 @@ public class BatchForm extends BaseForm {
         try {
             ServiceManager.getBatchService().removeAll(this.selectedBatches);
             filterAll();
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger, e);
         }
     }
@@ -301,7 +286,7 @@ public class BatchForm extends BaseForm {
         try {
             for (Batch selectedBatch : this.selectedBatches) {
                 selectedBatch.getProcesses().addAll(this.selectedProcesses);
-                ServiceManager.getBatchService().save(selectedBatch, true);
+                ServiceManager.getBatchService().save(selectedBatch);
                 if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                     addCommentsToBatchProcesses(Helper.getTranslation("addToBatch",
                             ServiceManager.getBatchService().getLabel(selectedBatch)));
@@ -311,7 +296,6 @@ public class BatchForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                 e);
-        } catch (DataException e) {
             Helper.setErrorMessage("errorSaveList", logger, e);
         }
     }
@@ -319,14 +303,14 @@ public class BatchForm extends BaseForm {
     /**
      * Remove processes from Batch.
      */
-    public void removeProcessesFromBatch() throws DAOException, DataException {
+    public void removeProcessesFromBatch() throws DAOException {
         if (areSelectedListsEmpty()) {
             return;
         }
 
         for (Batch selectedBatch : this.selectedBatches) {
             selectedBatch.getProcesses().removeAll(this.selectedProcesses);
-            ServiceManager.getBatchService().save(selectedBatch, true);
+            ServiceManager.getBatchService().save(selectedBatch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 addCommentsToBatchProcesses(Helper.getTranslation("removeFromBatch",
                         ServiceManager.getBatchService().getLabel(selectedBatch)));
@@ -367,7 +351,7 @@ public class BatchForm extends BaseForm {
                         return;
                     }
                 }
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_RELOADING, new Object[] {ObjectType.BATCH.getTranslationSingular() },
                     logger, e);
             }
@@ -377,7 +361,7 @@ public class BatchForm extends BaseForm {
     /**
      * Create new Batch.
      */
-    public void createNew() throws DAOException, DataException {
+    public void createNew() throws DAOException {
         if (selectedProcesses.isEmpty()) {
             Helper.setErrorMessage(NO_PROCESS_SELECTED);
         } else {
@@ -388,7 +372,7 @@ public class BatchForm extends BaseForm {
                 batch = new Batch(selectedProcesses);
             }
 
-            ServiceManager.getBatchService().save(batch, true);
+            ServiceManager.getBatchService().save(batch);
             if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.BATCHES_LOG_CHANGES)) {
                 addCommentsToBatchProcesses(Helper.getTranslation("addToBatch", ServiceManager.getBatchService().getLabel(batch)));
                 ServiceManager.getProcessService().saveList(selectedProcesses);
@@ -446,7 +430,7 @@ public class BatchForm extends BaseForm {
                             ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.EXPORT_WITH_IMAGES));
                     dms.startExport(process);
                 }
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.BATCH.getTranslationSingular() }, logger,
                     e);
                 return this.stayOnCurrentPage;

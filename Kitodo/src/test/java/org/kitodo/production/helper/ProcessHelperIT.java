@@ -31,7 +31,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.process.TitleGenerator;
@@ -70,7 +69,7 @@ public class ProcessHelperIT {
     }
 
     @Before
-    public void prepareTestProcess() throws DAOException, DataException, IOException {
+    public void prepareTestProcess() throws DAOException, IOException {
         processHelperTestProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processHelperTestProcessId, metadataTestfile);
     }

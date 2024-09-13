@@ -45,11 +45,10 @@ import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.WorkflowException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.model.LazyDTOModel;
+import org.kitodo.production.model.LazyBeanModel;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.DataEditorSettingService;
 import org.kitodo.production.services.data.TemplateService;
@@ -84,7 +83,7 @@ public class WorkflowForm extends BaseForm {
      * Constructor.
      */
     public WorkflowForm() {
-        super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
+        super.setLazyBeanModel(new LazyBeanModel(ServiceManager.getWorkflowService()));
     }
 
     /**
@@ -160,7 +159,7 @@ public class WorkflowForm extends BaseForm {
             } else {
                 return this.stayOnCurrentPage;
             }
-        } catch (IOException | DAOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
@@ -174,7 +173,7 @@ public class WorkflowForm extends BaseForm {
      * Update the tasks of the templates associated with the current workflow and delete associated
      * editor settings.
      */
-    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException, DataException {
+    public void updateTemplateTasks() throws DAOException, IOException, WorkflowException {
         Converter converter = new Converter(this.workflow.getTitle());
         for (Template workflowTemplate : this.workflow.getTemplates()) {
             List<Task> templateTasks = new ArrayList<>(workflowTemplate.getTasks());
@@ -187,7 +186,7 @@ public class WorkflowForm extends BaseForm {
                 workflowTemplate.getTasks().clear();
                 TemplateService templateService = ServiceManager.getTemplateService();
                 converter.convertWorkflowToTemplate(workflowTemplate);
-                templateService.save(workflowTemplate, true);
+                templateService.save(workflowTemplate);
                 new WorkflowControllerService().activateNextTasks(workflowTemplate.getTasks());
             }
         }
@@ -209,7 +208,7 @@ public class WorkflowForm extends BaseForm {
         if (migration) {
             try {
                 ServiceManager.getWorkflowService().remove(workflow);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {this.workflow.getTitle(), e.getMessage() }, logger,
                     e);
                 return this.stayOnCurrentPage;
@@ -247,7 +246,7 @@ public class WorkflowForm extends BaseForm {
 
                 fileService.delete(svgDiagramURI);
                 fileService.delete(xmlDiagramURI);
-            } catch (DataException | IOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.WORKFLOW.getTranslationSingular() },
                     logger, e);
             }
@@ -328,8 +327,8 @@ public class WorkflowForm extends BaseForm {
 
     private void saveWorkflow() {
         try {
-            ServiceManager.getWorkflowService().save(this.workflow, true);
-        } catch (DataException e) {
+            ServiceManager.getWorkflowService().save(this.workflow);
+        } catch (DAOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -535,7 +534,7 @@ public class WorkflowForm extends BaseForm {
     /**
      * Get language.
      *
-     * @return language of the currently logged in user
+     * @return language of the currently logged-in user
      */
     public String getLanguage() {
         return ServiceManager.getUserService().getCurrentUser().getLanguage();

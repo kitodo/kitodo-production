@@ -18,11 +18,9 @@ import java.util.Objects;
 import org.kitodo.data.database.beans.SearchField;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.SearchFieldDAO;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class SearchFieldService extends SearchDatabaseService<SearchField, SearchFieldDAO> {
+public class SearchFieldService extends BaseBeanService<SearchField, SearchFieldDAO> {
 
     private static volatile SearchFieldService instance = null;
 
@@ -52,41 +50,18 @@ public class SearchFieldService extends SearchDatabaseService<SearchField, Searc
         return localReference;
     }
 
-    /**
-     * Load data for frontend lists. Data can be loaded from database or index.
-     *
-     * @param first     searched objects
-     * @param pageSize  size of page
-     * @param sortField field by which data should be sorted
-     * @param sortOrder order ascending or descending
-     * @param filters   for search query
-     * @return loaded data
-     */
     @Override
-    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DataException {
+    public List loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) throws DAOException {
         return null;
     }
 
-    /**
-     * Count all rows in database.
-     *
-     * @return amount of all rows
-     */
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM searchfield");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM searchfield");
     }
 
-    /**
-     * This function is used for count amount of results for frontend lists.
-     *
-     * @param filters Map of parameters used for filtering
-     * @return amount of results
-     * @throws DAOException  that can be caused by Hibernate
-     * @throws DataException that can be caused by ElasticSearch
-     */
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
-        return countDatabaseRows();
+    public Long countResults(Map filters) throws DAOException {
+        return count();
     }
 }

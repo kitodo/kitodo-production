@@ -27,12 +27,11 @@ import javax.inject.Named;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.ProjectDTO;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
@@ -48,8 +47,8 @@ public class SearchResultForm extends ProcessListBaseView {
     private static final String SEARCH_RESULT_VIEW_ID = "/pages/searchResult.xhtml";
     private static final String SEARCH_RESULT_TABLE_ID = "searchResultTabView:searchResultForm:searchResultTable";
 
-    private List<ProcessDTO> filteredList = new ArrayList<>();
-    private List<ProcessDTO> resultList = new ArrayList<>();
+    private List<Process> filteredList = new ArrayList<>();
+    private List<Process> resultList = new ArrayList<>();
     private String searchQuery;
     private String currentTaskFilter;
     private Integer currentProjectFilter;
@@ -64,12 +63,12 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     public String searchForProcessesBySearchQuery() {
         ProcessService processService = ServiceManager.getProcessService();
-        HashMap<Integer, ProcessDTO> resultHash = new HashMap<>();
-        List<ProcessDTO> results;
+        HashMap<Integer, Process> resultHash = new HashMap<>();
+        List<Process> results;
         try {
             results = processService.findByAnything(searchQuery);
-            for (ProcessDTO processDTO : results) {
-                resultHash.put(processDTO.getId(), processDTO);
+            for (Process process : results) {
+                resultHash.put(process.getId(), process);
             }
             this.resultList = new ArrayList<>(resultHash.values());
             refreshFilteredList();
@@ -99,9 +98,9 @@ public class SearchResultForm extends ProcessListBaseView {
      */
     void filterListByTaskAndStatus() {
         if (Objects.nonNull(currentTaskFilter) && Objects.nonNull(currentTaskStatusFilter)) {
-            for (ProcessDTO processDTO : new ArrayList<>(this.filteredList)) {
+            for (Process process : new ArrayList<>(this.filteredList)) {
                 boolean remove = true;
-                for (TaskDTO task : processDTO.getTasks()) {
+                for (Task task : process.getTasks()) {
                     if (task.getTitle().equalsIgnoreCase(currentTaskFilter)
                             && task.getProcessingStatus().getValue().equals(currentTaskStatusFilter)) {
                         remove = false;
@@ -109,7 +108,7 @@ public class SearchResultForm extends ProcessListBaseView {
                     }
                 }
                 if (remove) {
-                    this.filteredList.remove(processDTO);
+                    this.filteredList.remove(process);
                 }
 
             }
@@ -131,9 +130,9 @@ public class SearchResultForm extends ProcessListBaseView {
      *
      * @return A list of projects for filter list
      */
-    public Collection<ProjectDTO> getProjectsForFiltering() {
-        HashMap<Integer, ProjectDTO> projectsForFiltering = new HashMap<>();
-        for (ProcessDTO process : this.resultList) {
+    public Collection<Project> getProjectsForFiltering() {
+        HashMap<Integer, Project> projectsForFiltering = new HashMap<>();
+        for (Process process : this.resultList) {
             projectsForFiltering.put(process.getProject().getId(), process.getProject());
         }
         return projectsForFiltering.values();
@@ -144,10 +143,10 @@ public class SearchResultForm extends ProcessListBaseView {
      *
      * @return A list of tasks for filter list
      */
-    public Collection<TaskDTO> getTasksForFiltering() {
-        HashMap<String, TaskDTO> tasksForFiltering = new HashMap<>();
-        for (ProcessDTO processDTO : this.resultList) {
-            for (TaskDTO currentTask : processDTO.getTasks()) {
+    public Collection<Task> getTasksForFiltering() {
+        HashMap<String, Task> tasksForFiltering = new HashMap<>();
+        for (Process process : this.resultList) {
+            for (Task currentTask : process.getTasks()) {
                 tasksForFiltering.put(currentTask.getTitle(), currentTask);
             }
         }
@@ -170,29 +169,23 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Delete Process.
      *
-     * @param processDTO
+     * @param process
      *            process to delete.
      */
     @Override
-    public void delete(ProcessDTO processDTO) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (process.getChildren().isEmpty()) {
-                try {
-                    ProcessService.deleteProcess(process);
-                    this.filteredList.remove(processDTO);
-                } catch (DataException | IOException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                            logger, e);
-                }
-            } else {
-                this.deleteProcessDialog = new DeleteProcessDialog();
-                this.deleteProcessDialog.setProcess(process);
-                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+    public void delete(Process process) {
+        if (process.getChildren().isEmpty()) {
+            try {
+                ProcessService.deleteProcess(process);
+                this.filteredList.remove(process);
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+        } else {
+            this.deleteProcessDialog = new DeleteProcessDialog();
+            this.deleteProcessDialog.setProcess(process);
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
     }
 
@@ -213,9 +206,9 @@ public class SearchResultForm extends ProcessListBaseView {
     /**
      * Gets the filtered list.
      *
-     * @return a list of ProcessDTO
+     * @return a list of Process
      */
-    public List<ProcessDTO> getFilteredList() {
+    public List<Process> getFilteredList() {
         return this.filteredList;
     }
 
@@ -223,9 +216,9 @@ public class SearchResultForm extends ProcessListBaseView {
      * Sets the filtered list.
      *
      * @param filteredList
-     *            a list of ProcessDTO
+     *            a list of Process
      */
-    public void setFilteredList(List<ProcessDTO> filteredList) {
+    public void setFilteredList(List<Process> filteredList) {
         this.filteredList = filteredList;
     }
 

@@ -11,6 +11,10 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import static org.awaitility.Awaitility.await;
+
+import java.util.concurrent.TimeUnit;
+
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -18,10 +22,6 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
-
-import java.util.concurrent.TimeUnit;
-
-import static org.awaitility.Awaitility.await;
 
 public class MetadataEditorPage extends Page<MetadataEditorPage> {
 

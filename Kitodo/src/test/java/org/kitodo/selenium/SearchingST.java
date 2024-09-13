@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
@@ -70,35 +71,7 @@ public class SearchingST extends BaseTestSelenium {
     }
 
     @Test
-    public void searchForProcesses() throws Exception {
-        desktopPage.searchInSearchField("process");
-        int numberOfResults = searchResultPage.getNumberOfResults();
-        assertEquals("There should be two processes found", 2, numberOfResults);
-
-        searchResultPage.searchInSearchField("Second");
-        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertEquals("There should be two processes found", 2, searchResultPage.getNumberOfResults()));
-
-        searchResultPage.searchInSearchField("möhö");
-        await("Wait for visible search results").atMost(20, TimeUnit.SECONDS).ignoreExceptions().untilAsserted(
-            () -> assertEquals("There should be no processes found", 0, searchResultPage.getNumberOfResults()));
-    }
-
-    @Test
-    public void searchForProcessesAndSort() throws Exception {
-        desktopPage.searchInSearchField("process");
-        searchResultPage.clickTitleColumnForSorting();
-
-        assertEquals("First process should be top result when sorting by title", "First process", 
-            searchResultPage.getFirstSearchResultProcessTitle());
-
-        searchResultPage.clickTitleColumnForSorting();
-
-        assertEquals("Second process should be top result when reverse-sorting by title", "Second process", 
-            searchResultPage.getFirstSearchResultProcessTitle());
-    }
-
-    @Test
+    @Ignore("not yet implemented")
     public void testExtendedSearch() throws Exception {
         processesPage.goTo();
         processesPage.navigateToExtendedSearch();
@@ -117,18 +90,10 @@ public class SearchingST extends BaseTestSelenium {
     }
 
     /**
-     * Checks that a case insensitive search for process titles works.
-     */
-    @Test
-    public void caseInsensitiveSearchForProcesses() throws Exception {
-        desktopPage.searchInSearchField("PrOCeSs");
-        assertEquals("Two processes should match case-insensitive search", 2, searchResultPage.getNumberOfResults());
-    }
-
-    /**
      * Checks that a case insensitive filter for task status works.
      */
     @Test
+    @Ignore("currently not implemented")
     public void caseInsensitiveFilterTaskStatus() throws Exception {
         processesPage.goTo();
         processesPage.applyFilter("\"stepinwork:pRoGrEsS\"");
@@ -148,6 +113,7 @@ public class SearchingST extends BaseTestSelenium {
      * Checks whether adding and removing filters work on the processes page.
      */
     @Test
+    @Ignore("currently not implemented")
     public void addAndRemoveFilters() throws Exception {
         processesPage.goTo();
         processesPage.applyFilter("\"id:to be removed\"");

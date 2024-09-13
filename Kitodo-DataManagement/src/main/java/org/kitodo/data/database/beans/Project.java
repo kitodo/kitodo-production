@@ -12,9 +12,13 @@
 package org.kitodo.data.database.beans;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -26,14 +30,21 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.PostLoad;
+import javax.persistence.PostUpdate;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.hibernate.LazyInitializationException;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 import org.kitodo.data.database.enums.PreviewHoverMode;
 import org.kitodo.data.database.persistence.ProjectDAO;
 
 @Entity
 @Table(name = "project")
-public class Project extends BaseIndexedBean implements Comparable<Project> {
+public class Project extends BaseBean implements Comparable<Project> {
 
     @Column(name = "title", nullable = false, unique = true)
     private String title;
@@ -89,6 +100,10 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Process> processes;
 
+    @Transient
+    private boolean hasProcesses;
+
+    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<Template> templates;
 
@@ -187,18 +202,35 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.dmsImportRootPath = "";
     }
 
+    @PostLoad
+    @PostUpdate
+    private void onPostLoad() {
+        this.hasProcesses = CollectionUtils.isNotEmpty(processes);
+    }
+
+    /**
+     * Returns the name of the project.
+     *
+     * @return the name of the project
+     */
     public String getTitle() {
         return this.title;
     }
 
+    /**
+     * Sets the name of the project.
+     *
+     * @param title
+     *            the name of the project
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
     /**
-     * Returns the list of users of this project.
+     * Returns the users contributing to this project.
      *
-     * @return the folders
+     * @return the users contributing to this project
      */
     public List<User> getUsers() {
         initialize(new ProjectDAO(), this.users);
@@ -208,6 +240,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.users;
     }
 
+    /**
+     * Specifies the users who will contribute to this project.
+     *
+     * @param users
+     *            the users contributing to this project
+     */
     public void setUsers(List<User> users) {
         this.users = users;
     }
@@ -283,10 +321,24 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         this.folders = folders;
     }
 
+    /**
+     * Returns the name of the copyright holder of the business objects. These
+     * are often the digitizing institution and also the sponsor.
+     *
+     * @return metsRightsOwner the name of the copyright holder
+     */
     public String getMetsRightsOwner() {
         return this.metsRightsOwner;
     }
 
+    /**
+     * Sets the name of the copyright owner of the business objects. The
+     * effective maximum length of this VARCHAR field is subject to the maximum
+     * row size of 64k shared by all columns, and the charset.
+     *
+     * @param metsRightsOwner
+     *            the name of the copyright holder
+     */
     public void setMetsRightsOwner(String metsRightsOwner) {
         this.metsRightsOwner = metsRightsOwner;
     }
@@ -356,11 +408,12 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Get number of volumes.
+     * Returns the number of physical archival items to be digitized. This is a
+     * freely configurable value, not a collected statistical value. The value
+     * can be used to monitor whether the project is on time.
      *
-     * @return number of volumes for this project
+     * @return number of volumes as Integer
      */
-
     public Integer getNumberOfVolumes() {
         if (this.numberOfVolumes == null) {
             this.numberOfVolumes = 0;
@@ -369,20 +422,23 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Set number of volumes.
+     * Sets the number of physical archival materials to be digitized. This is
+     * usually roughly determined as part of project planning and can be stored
+     * here as a reminder.
      *
      * @param numberOfVolumes
-     *            for this project
+     *            as Integer
      */
-
     public void setNumberOfVolumes(Integer numberOfVolumes) {
         this.numberOfVolumes = numberOfVolumes;
     }
 
     /**
-     * Get number of pages.
+     * Returns the number of media objects to produce. This is a freely
+     * configurable value, not a determined statistic. The value can be used to
+     * monitor whether the project is on time.
      *
-     * @return number of pages
+     * @return the number of media objects to produce
      */
     public Integer getNumberOfPages() {
         if (this.numberOfPages == null) {
@@ -392,19 +448,24 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Set number of pages.
+     * Sets the number of media objects to produce. This is usually roughly
+     * determined as part of project planning and can be stored here as a
+     * reminder.
      *
      * @param numberOfPages
-     *            the number of pages to set
+     *            the number of media objects to produce
      */
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
     }
 
     /**
-     * Get start date.
+     * Returns the start time of the project. {@link Date} is a specific instant
+     * in time, with millisecond precision. It is a freely configurable value,
+     * not the date the project object was created in the database. This can be,
+     * for example, the start of the funding period.
      *
-     * @return the start date
+     * @return the start time
      */
     public Date getStartDate() {
         if (this.startDate == null) {
@@ -413,14 +474,24 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.startDate;
     }
 
+    /**
+     * Sets the start time of the project.
+     *
+     * @param startDate
+     *            the start time
+     */
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
     /**
-     * Get end date.
+     * Returns the project end time. {@link Date} is a specific instant in time,
+     * with millisecond precision. This is a freely configurable value,
+     * regardless of when the project was last actually worked on. For example,
+     * this can be the time at which the project must be completed in order to
+     * be billed. The timing can be used to monitor that the project is on time.
      *
-     * @return the end date
+     * @return the end time
      */
     public Date getEndDate() {
         if (this.endDate == null) {
@@ -429,12 +500,19 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.endDate;
     }
 
+    /**
+     * Sets the project end time.
+     *
+     * @param endDate
+     *            the end time
+     */
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
     /**
-     * Set if project is active.
+     * Sets whether the project is active. Deactivated projects are hidden from
+     * general operation.
      *
      * @param active
      *            whether project is active
@@ -444,28 +522,31 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
     }
 
     /**
-     * Get if project is active.
+     * Returns whether the project is active. Completed projects are typically
+     * not hard deleted, but are simply marked as completed. This means that
+     * even in the event of complaints, the old stocks can still be accessed and
+     * corrected.
      *
-     * @return whether project is active
+     * @return whether the project is active
      */
     public boolean isActive() {
         return this.active;
     }
 
     /**
-     * Gets client.
+     * Returns the client running this project.
      *
-     * @return The client.
+     * @return the client
      */
     public Client getClient() {
         return client;
     }
 
     /**
-     * Sets client.
+     * Specifies the tenant that is executing this project.
      *
      * @param client
-     *            The client.
+     *            the client
      */
     public void setClient(Client client) {
         this.client = client;
@@ -721,4 +802,76 @@ public class Project extends BaseIndexedBean implements Comparable<Project> {
         return this.title == null ? 0 : this.title.hashCode();
     }
 
+    /**
+     * Returns the non-deactivated production templates associated with the
+     * project.
+     *
+     * @return the active production templates
+     */
+    public List<Template> getActiveTemplates() {
+        if (Objects.isNull(templates)) {
+            return Collections.emptyList();
+        }
+        return templates.stream().filter(template -> template.isActive()).collect(Collectors.toList());
+    }
+
+    /**
+     * Sets the active production templates associated with the project. This
+     * list is not guaranteed to be in reliable order.
+     *
+     * @param activeTemplates
+     *            the active production templates
+     */
+    public void setActiveTemplates(List<Template> activeTemplates) {
+        if (Objects.isNull(activeTemplates)) {
+            activeTemplates = Collections.emptyList();
+        }
+        Map<Integer, Template> activeTemplatesMap = activeTemplates.stream()
+                .collect(Collectors.toMap(Template::getId, Function.identity()));
+
+        if (Objects.isNull(this.templates) && CollectionUtils.isNotEmpty(activeTemplates)) {
+            this.templates = new ArrayList<>();
+        }
+        for (Template assignedTemplate : this.templates) {
+            assignedTemplate.setActive(Objects.nonNull(activeTemplatesMap.remove(assignedTemplate.getId())));
+        }
+        for (Template unassignedTemplate : ((Map<Integer, Template>) activeTemplatesMap).values()) {
+            unassignedTemplate.setActive(true);
+            this.templates.add(unassignedTemplate);
+        }
+    }
+
+    /**
+     * Returns whether processes exist in the project. A project that contains
+     * processes cannot be deleted.
+     *
+     * @return whether processes exist in the project
+     */
+    public boolean hasProcesses() {
+        try {
+            return CollectionUtils.isNotEmpty(processes);
+        } catch (LazyInitializationException e) {
+            return this.hasProcesses;
+        }
+    }
+
+    /**
+     * Set whether project has processes. The setter can be used when
+     * representing data from a third-party source. Internally it depends on,
+     * whether there are process objects in the database for a project. Setting
+     * this to true cannot insert processes into the database.
+     *
+     * @param hasProcesses
+     *            as boolean
+     * @throws UnsupportedOperationException
+     *             when trying to set this to true for a project without
+     *             processes
+     */
+    public void setHasProcesses(boolean hasProcesses) {
+        if (!hasProcesses && CollectionUtils.isNotEmpty(processes)) {
+            processes.clear();
+        } else if (hasProcesses && CollectionUtils.isEmpty(processes)) {
+            throw new UnsupportedOperationException("cannot add processes");
+        }
+    }
 }

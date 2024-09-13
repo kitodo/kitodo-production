@@ -30,9 +30,8 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Folder;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Task;
+import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ExportException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.enums.ProcessState;
@@ -86,7 +85,7 @@ public class ExportDms extends ExportMets {
      *             a subsequent task, or the METS file cannot be read when
      *             evaluating an XPath condition
      */
-    public void startExport(Task task) throws DataException, IOException, DAOException {
+    public void startExport(Task task) throws DAOException, IOException {
         if (startExport(task.getProcess())) {
             new WorkflowControllerService().close(task);
         }
@@ -99,7 +98,7 @@ public class ExportDms extends ExportMets {
      *            Process object
      */
     @Override
-    public boolean startExport(Process process) throws DataException {
+    public boolean startExport(Process process) throws DAOException {
         if (!exportCompletedChildren(process.getChildren())) {
             return false;
         }
@@ -207,7 +206,7 @@ public class ExportDms extends ExportMets {
         return prepareExportLocation(process, gdzfile);
     }
 
-    private boolean exportCompletedChildren(List<Process> children) throws DataException {
+    private boolean exportCompletedChildren(List<Process> children) throws DAOException {
         for (Process child:children) {
             if (ProcessConverter.getCombinedProgressAsString(child, false).equals(ProcessState.COMPLETED.getValue())
                     && !child.isExported()) {

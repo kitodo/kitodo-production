@@ -12,28 +12,29 @@
 package org.kitodo.production.services.data;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.WorkflowDAO;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.WorkflowType;
-import org.kitodo.data.elasticsearch.index.type.enums.WorkflowTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.WorkflowDTO;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, WorkflowDAO> {
+public class WorkflowService extends BaseBeanService<Workflow, WorkflowDAO> {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("active", "active");
+    }
 
     private static volatile WorkflowService instance = null;
 
@@ -41,8 +42,7 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
      * Private constructor with Searcher and Indexer assigning.
      */
     private WorkflowService() {
-        super(new WorkflowDAO(), new WorkflowType(), new Indexer<>(Workflow.class), new Searcher(Workflow.class),
-                WorkflowTypeField.CLIENT_ID.getKey());
+        super(new WorkflowDAO());
     }
 
     /**
@@ -65,52 +65,24 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Workflow");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Workflow");
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    public Long countResults(Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Workflow.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        return count(beanQuery.formCountQuery(), beanQuery.getQueryParameters());
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(getWorkflowsForCurrentUserQuery());
-    }
-
-    @Override
-    public List<WorkflowDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
-            throws DataException {
-        return findByQuery(getWorkflowsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
-    }
-
-    @Override
-    public List<Workflow> getAllNotIndexed() {
-        return getByQuery("FROM Workflow WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Workflow> getAllForSelectedClient() {
-        return dao.getByQuery("SELECT w FROM Workflow AS w INNER JOIN w.client AS c WITH c.id = :clientId",
-            Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
-    }
-
-    @Override
-    public WorkflowDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        WorkflowDTO workflowDTO = new WorkflowDTO();
-        workflowDTO.setId(getIdFromJSONObject(jsonObject));
-        workflowDTO.setTitle(WorkflowTypeField.TITLE.getStringValue(jsonObject));
-        workflowDTO.setStatus(WorkflowTypeField.STATUS.getStringValue(jsonObject));
-        return workflowDTO;
-    }
-
-    private QueryBuilder getWorkflowsForCurrentUserQuery() {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(WorkflowTypeField.CLIENT_ID.getKey(),
-            ServiceManager.getUserService().getSessionClientId(), true));
-        return query;
+    public List<Workflow> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Workflow.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
     /**
@@ -131,18 +103,30 @@ public class WorkflowService extends ClientSearchService<Workflow, WorkflowDTO, 
     }
 
     /**
-     * Get available workflows - available means that workflow has status active
-     * and is assigned to selected session client.
+     * Returns all available workflows. These are all workflows that are in
+     * {@link WorkflowStatus} {@code ACTIVE} for the client for which the
+     * current user is working at the moment.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
      *
-     * @return list of available Workflow objects
+     * @return all available workflows
      */
     public List<Workflow> getAvailableWorkflows() {
         return dao.getAvailableWorkflows(ServiceManager.getUserService().getSessionClientId());
     }
 
     /**
-     * Get all workflows with status 'active'.
-     * @return a list of active workflows
+     * Returns all active workflows. These are all workflows that are in
+     * {@link WorkflowStatus} {@code ACTIVE}.
+     *
+     * <p>
+     * <b>API Note:</b><br>
+     * This method actually returns all objects of all clients and is therefore
+     * more suitable for operational purposes, rather not for display purposes.
+     * 
+     * @return all active workflows
      */
     public List<Workflow> getAllActiveWorkflows() {
         return dao.getAllActive();

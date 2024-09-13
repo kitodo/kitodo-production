@@ -30,15 +30,32 @@ import org.kitodo.data.database.persistence.BaseDAO;
 @MappedSuperclass
 public abstract class BaseBean implements Serializable {
 
+    public static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     protected Integer id;
 
+    /**
+     * Returns the record number of the object in the database. Can be
+     * {@code null} if the object has not yet been persisted.
+     *
+     * @return the record number
+     */
     public Integer getId() {
         return id;
     }
 
+    /**
+     * Sets the data record number of the object. This should only happen when
+     * data from a third-party source is integrated during operation, or in
+     * tests. Normally the data record number is assigned by the database when
+     * the object is saved.
+     *
+     * @param id
+     *            data record number to use
+     */
     public void setId(Integer id) {
         this.id = id;
     }

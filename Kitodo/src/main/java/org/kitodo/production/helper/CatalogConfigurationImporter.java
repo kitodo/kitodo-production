@@ -104,7 +104,7 @@ public class CatalogConfigurationImporter {
             importConfiguration.setMappingFiles(getMappingFiles(importConfiguration));
             importConfiguration.setPrestructuredImport(OPACConfig.isPrestructuredImport(catalogName));
         }
-        ServiceManager.getImportConfigurationService().saveToDatabase(importConfiguration);
+        ServiceManager.getImportConfigurationService().save(importConfiguration);
     }
 
     private void setUrl(ImportConfiguration importConfiguration, String opacTitle)
@@ -192,7 +192,7 @@ public class CatalogConfigurationImporter {
         fileUploadConfiguration.setMappingFiles(getMappingFiles(fileUploadConfiguration));
         // update title to include "File upload" postfix! (original title is required until here to load mapping files!)
         fileUploadConfiguration.setTitle(fileUploadConfigurationTitle);
-        ServiceManager.getImportConfigurationService().saveToDatabase(fileUploadConfiguration);
+        ServiceManager.getImportConfigurationService().save(fileUploadConfiguration);
     }
 
     private void setParentMappingFile(ImportConfiguration config) throws DAOException {
@@ -294,7 +294,7 @@ public class CatalogConfigurationImporter {
         mappingFile.setInputMetadataFormat(formatName);
         mappingFile.setOutputMetadataFormat(metadataFormatConversion.getTargetFormat().name());
         mappingFile.setImportConfigurations(new LinkedList<>());
-        ServiceManager.getMappingFileService().saveToDatabase(mappingFile);
+        ServiceManager.getMappingFileService().save(mappingFile);
         return mappingFile;
     }
 

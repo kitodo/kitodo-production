@@ -11,6 +11,8 @@
 
 package org.kitodo.production.process;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
@@ -44,8 +46,6 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.helper.tasks.GeneratesNewspaperProcessesThread;
 import org.kitodo.production.model.bibliography.course.Course;
 import org.kitodo.production.model.bibliography.course.Granularity;
@@ -110,11 +110,11 @@ public class NewspaperProcessesGeneratorIT {
     /**
      * Create newspaper test process and copy corresponding meta.xml file.
      * @throws DAOException when inserting test or dummy processes fails
-     * @throws DataException when inserting test or dummy processes fails
+     * @throws DAOException when inserting test or dummy processes fails
      * @throws IOException when copying test metadata file fails
      */
     @Before
-    public void prepareNewspaperProcess() throws DAOException, DataException, IOException {
+    public void prepareNewspaperProcess() throws DAOException, IOException {
         newspaperTestProcessId = MockDatabase.insertTestProcess(NEWSPAPER_TEST_PROCESS_TITLE, 1, 1, rulesetId);
         ProcessTestUtils.copyTestFiles(newspaperTestProcessId, NEWSPAPER_TEST_METADATA_FILE);
     }
@@ -122,17 +122,17 @@ public class NewspaperProcessesGeneratorIT {
     /**
      * Remove newspaper test processes.
      * @throws DAOException when removing dummy processes from database fails
-     * @throws DataException when deleting newspaper test processes fails
+     * @throws DAOException when deleting newspaper test processes fails
      * @throws IOException when deleting metadata test files fails
      */
     @After
-    public void cleanupNewspaperProcess() throws DAOException, DataException, IOException {
+    public void cleanupNewspaperProcess() throws DAOException, IOException {
         if (newspaperTestProcessId > 0) {
             deleteProcessHierarchy(ServiceManager.getProcessService().getById(newspaperTestProcessId));
         }
     }
 
-    private static void deleteProcessHierarchy(Process process) throws DAOException, DataException, IOException {
+    private static void deleteProcessHierarchy(Process process) throws DAOException, IOException {
         for (Process childProcess : process.getChildren()) {
             deleteProcessHierarchy(childProcess);
         }
@@ -235,15 +235,16 @@ public class NewspaperProcessesGeneratorIT {
     }
 
     @Test
-    public void shouldNotGenerateDuplicateProcessTitle() throws DAOException, DataException {
+    public void shouldNotGenerateDuplicateProcessTitle() throws DAOException {
         Process completeEdition = ServiceManager.getProcessService().getById(newspaperTestProcessId);
         Course course = NewspaperCourse.getDuplicatedCourse();
         course.splitInto(Granularity.DAYS);
         GeneratesNewspaperProcessesThread generatesNewspaperProcessesThread = new GeneratesNewspaperProcessesThread(completeEdition, course);
         generatesNewspaperProcessesThread.start();
-
-        ProcessDTO byId = ServiceManager.getProcessService().findById(11);
-        Assert.assertNull("Process should not have been created", byId.getTitle());
+        DAOException dataException = assertThrows(DAOException.class,
+            () -> ServiceManager.getProcessService().getById(11));
+        Assert.assertEquals("Process should not have been created", "Process 11 cannot be found in database",
+            dataException.getMessage());
     }
 
     private void dayChecksOfShouldGenerateSeasonProcesses(Process seasonProcess, Workpiece seasonYearWorkpiece) {

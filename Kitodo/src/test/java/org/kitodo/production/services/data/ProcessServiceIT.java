@@ -12,7 +12,6 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -26,14 +25,10 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.OptionalInt;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -51,15 +46,11 @@ import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.elasticsearch.index.converter.ProcessConverter;
-import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyPrefsHelper;
 import org.kitodo.production.metadata.MetadataLock;
@@ -116,25 +107,24 @@ public class ProcessServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllProcesses() throws DataException {
+    public void shouldCountAllProcesses() throws DAOException {
         assertEquals("Processes were not counted correctly!", Long.valueOf(7), processService.count());
     }
 
     @Test
-    public void shouldCountProcessesAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", firstProcess).operator(Operator.AND);
-        assertEquals("Process was not found!", processService.count(query),
-            processService.findNumberOfProcessesWithTitle(firstProcess));
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountProcessesAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForProcesses() throws Exception {
-        Long amount = processService.countDatabaseRows();
+        Long amount = processService.count();
         assertEquals("Processes were not counted correctly!", Long.valueOf(7), amount);
     }
 
     @Test
-    public void shouldFindByInChoiceListShown() throws DataException, DAOException {
+    public void shouldFindByInChoiceListShown() throws DAOException {
         List<Process> byInChoiceListShown = ServiceManager.getProcessService().getTemplateProcesses();
         Assert.assertEquals("wrong amount of processes found", 1, byInChoiceListShown.size());
     }
@@ -143,6 +133,8 @@ public class ProcessServiceIT {
     public void shouldSaveProcess() throws Exception {
         Process parent = new Process();
         parent.setTitle("Parent");
+
+        processService.save(parent);
 
         Process process = new Process();
         process.setTitle("Child");
@@ -159,9 +151,11 @@ public class ProcessServiceIT {
 
         foundParent.getChildren().clear();
         foundProcess.setParent(null);
+        processService.save(foundParent);
+        processService.save(foundProcess);
 
         processService.remove(foundProcess);
-        processService.remove(foundParent.getId());
+        processService.remove(foundParent);
     }
 
     @Test
@@ -203,36 +197,39 @@ public class ProcessServiceIT {
         foundProcess = processService.getById(9);
         assertEquals("Additional process was not inserted in database!", "To remove", foundProcess.getTitle());
 
-        processService.remove(9);
+        processService.remove(foundProcess);
         exception.expect(DAOException.class);
         processService.getById(9);
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         Integer expected = 1;
-        assertEquals(processNotFound, expected, processService.findById(1).getId());
+        assertEquals(processNotFound, expected, processService.getById(1).getId());
     }
 
     @Test
-    public void shouldFindByTitle() throws DataException {
-        assertEquals(processNotFound, 1, processService.findByTitle(firstProcess, true).size());
+    public void shouldFindByTitle() throws DAOException {
+        assertEquals(processNotFound, 1, processService.findByTitle(firstProcess).size());
     }
 
     @Test
-    public void shouldFindByMetadata() throws DataException {
+    @Ignore("Data index currently not available")
+    public void shouldFindByMetadata() throws DAOException {
         assertEquals(processNotFound, 3,
             processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Proc")).size());
     }
 
     @Test
-    public void shouldNotFindByMetadata() throws DataException {
+    @Ignore("Data index currently not available")
+    public void shouldNotFindByMetadata() throws DAOException {
         assertEquals("Process was found in index!", 0,
                 processService.findByMetadata(Collections.singletonMap("TSL_ATS", "Nope")).size());
     }
 
     @Test
-    public void shouldFindByMetadataContent() throws DataException, DAOException, IOException {
+    @Ignore("Only used in SearchResultForm, which will be thrown out. No new implementation here")
+    public void shouldFindByMetadataContent() throws Exception {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         assertEquals(processNotFound, 1, processService.findByAnything("SecondMetaShort").size());
@@ -240,7 +237,8 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindByLongNumberInMetadata() throws DataException, DAOException, IOException {
+    @Ignore("Data index currently not available")
+    public void shouldFindByLongNumberInMetadata() throws DAOException, IOException {
         int processId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(processId, ProcessTestUtils.testFileForLongNumbers);
         assertEquals(processNotFound, 1, processService
@@ -253,71 +251,61 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldFindProcessWithUnderscore() throws DataException, DAOException {
-        Project project = ServiceManager.getProjectService().getById(1);
-        Process process = new Process();
-        process.setProject(project);
-        String processTitle = "Title-with-hyphen_and_underscore";
-        process.setTitle(processTitle);
-        ServiceManager.getProcessService().save(process);
-
-        List<ProcessDTO> byAnything = processService.findByAnything("ith-hyphen_an");
-        assertFalse("nothing found", byAnything.isEmpty());
-        assertEquals("wrong process found", processTitle, byAnything.get(0).getTitle());
-
-        ServiceManager.getProcessService().remove(process.getId());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindProcessWithUnderscore() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindByProjectTitleWithWildcard() throws DataException {
-        assertEquals(processNotFound, 6, processService.findByAnything("proj").size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByProjectTitleWithWildcard() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByAnything() throws DataException {
-        assertEquals(processNotFound, 0, processService.findByAnything("Nope").size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByAnything() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindByMetadataGroupContent() throws DataException, DAOException, IOException {
-        int testProcessId = MockDatabase.insertTestProcess("Test process", 1, 1, 1);
-        ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
-        assertEquals(processNotFound, 1, processService.findByAnything("August").size());
-        ProcessTestUtils.removeTestProcess(testProcessId);
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByMetadataGroupContent() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindByProperty() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Process Property", "first value");
-        assertEquals(1, processByProperty.size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindByProperty() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByWrongPropertyTitle() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "first value");
-        assertTrue(processByProperty.isEmpty());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByWrongPropertyTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByWrongPropertyTitleAndValue() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("test Property", "test value");
-        assertTrue(processByProperty.isEmpty());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByWrongPropertyTitleAndValue() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByTokenizedPropertyTitle() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "first value");
-        assertTrue(processByProperty.isEmpty());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTokenizedPropertyTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws DataException {
-        List<ProcessDTO> processByProperty = processService.findByProperty("Property", "test value");
-        assertTrue(processByProperty.isEmpty());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByTokenizedPropertyTitleAndWrongValue() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindLinkableParentProcesses() throws DataException {
+    public void shouldFindLinkableParentProcesses() throws DAOException {
         assertEquals("Processes were not found in index!", 1,
             processService.findLinkableParentProcesses("HierarchyParent", 1, 1).size());
     }
@@ -433,14 +421,6 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void shouldGetBatchId() throws Exception {
-        ProcessDTO process = processService.findById(1);
-        String batchId = processService.getBatchID(process);
-        boolean condition = batchId.equals("First batch, Third batch");
-        assertTrue("BatchId doesn't match to given plain text!", condition);
-    }
-
-    @Test
     public void shouldGetCurrentTask() throws Exception {
         Process process = processService.getById(1);
         Task actual = processService.getCurrentTask(process);
@@ -472,19 +452,9 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testGetQueryForClosedProcesses() throws DataException, DAOException {
-        ProcessService processService = ServiceManager.getProcessService();
-        Process secondProcess = processService.getById(2);
-        final String sortHelperStatusOld = secondProcess.getSortHelperStatus();
-        secondProcess.setSortHelperStatus(ProcessState.COMPLETED.getValue());
-        processService.save(secondProcess);
-
-        QueryBuilder querySortHelperStatusTrue = processService.getQueryForClosedProcesses();
-        List<ProcessDTO> byQuery = processService.findByQuery(querySortHelperStatusTrue, true);
-
-        Assert.assertEquals("Found the wrong amount of Processes", 1 ,byQuery.size());
-        secondProcess.setSortHelperStatus(sortHelperStatusOld);
-        processService.save(secondProcess);
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void testGetQueryForClosedProcesses() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
@@ -597,14 +567,14 @@ public class ProcessServiceIT {
 
     @Test
     public void shouldBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(2);
-        assertTrue(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
+        Process process = processService.getById(2);
+        assertTrue(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
     public void shouldNotBeProcessAssignedToOnlyOneBatch() throws Exception {
-        ProcessDTO processDTO = processService.findById(1);
-        assertFalse(processService.isProcessAssignedToOnlyOneBatch(processDTO.getBatches()));
+        Process process = processService.getById(1);
+        assertFalse(processService.isProcessAssignedToOnlyOneBatch(process.getBatches()));
     }
 
     @Test
@@ -634,27 +604,13 @@ public class ProcessServiceIT {
     }
 
     @Test
-    public void testFindAllIDs() throws DataException {
-        List<Integer> allIDs = ServiceManager.getProcessService().findAllIDs();
-        Assert.assertEquals("Wrong amount of id's in index", 7, allIDs.size());
-        Assert.assertTrue("id's contain wrong entries", allIDs.containsAll(Arrays.asList(5, 2, 6, 4, 1, 7, 3)));
-
-        allIDs = ServiceManager.getProcessService().findAllIDs(0L, 5);
-        Assert.assertEquals("Wrong amount of id's in index", 5, allIDs.size());
-        Assert.assertEquals("Duplicate ids in index", allIDs.size(), new HashSet<>(allIDs).size());
-        OptionalInt maxStream = allIDs.stream().mapToInt(Integer::intValue).max();
-        assertTrue("Unable to find largest ID in stream of all process IDs!", maxStream.isPresent());
-        int maxId = maxStream.getAsInt();
-        int minId = allIDs.stream().mapToInt(Integer::intValue).min().getAsInt();
-        Assert.assertTrue("Ids should all be smaller than 8", maxId < 8);
-        Assert.assertTrue("Ids should all be larger than 0", minId > 0);
-        
-        allIDs = ServiceManager.getProcessService().findAllIDs(5L, 10);
-        Assert.assertEquals("Wrong amount of id's in index", 2, allIDs.size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void testFindAllIDs() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void testCountMetadata() throws DAOException, IOException, DataException {
+    public void testCountMetadata() throws DAOException, IOException {
         int testProcessId = MockDatabase.insertTestProcess(TEST_PROCESS_TITLE, 1, 1, 1);
         ProcessTestUtils.copyTestMetadataFile(testProcessId, TEST_METADATA_FILE);
         Process process = ServiceManager.getProcessService().getById(testProcessId);

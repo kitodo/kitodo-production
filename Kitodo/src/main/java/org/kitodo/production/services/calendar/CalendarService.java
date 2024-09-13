@@ -36,7 +36,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterfac
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.model.bibliography.course.Block;
@@ -75,7 +75,7 @@ public class CalendarService {
      * @return list of allowed metadata as SelectItem objects
      * @throws IOException when ruleset file could not be read
      */
-    public static List<MetadataViewInterface> getAddableMetadata(Process completeEdition) throws IOException, DataException {
+    public static List<MetadataViewInterface> getAddableMetadata(Process completeEdition) throws IOException, DAOException {
         final String acquisitionStage = "create";
 
         // get an instance of the ruleset module
@@ -210,7 +210,7 @@ public class CalendarService {
      * @return list of allowed metadata as List of ProcessDetail
      * @throws IOException when ruleset file could not be read
      */
-    public static List<ProcessDetail> getAddableMetadataTable(Process completeEdition) throws IOException, DataException {
+    public static List<ProcessDetail> getAddableMetadataTable(Process completeEdition) throws IOException, DAOException {
         ProcessFieldedMetadata table = new ProcessFieldedMetadata();
         List<MetadataViewInterface> metadataViewInterfaceList = getAddableMetadata(completeEdition);
         for (MetadataViewInterface keyView : metadataViewInterfaceList) {

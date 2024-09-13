@@ -22,13 +22,11 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.ImportConfigurationDAO;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.ImportConfigurationInUseException;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.SearchDatabaseService;
 import org.primefaces.model.SortOrder;
 
-public class ImportConfigurationService extends SearchDatabaseService<ImportConfiguration, ImportConfigurationDAO> {
+public class ImportConfigurationService extends BaseBeanService<ImportConfiguration, ImportConfigurationDAO> {
 
     private static volatile ImportConfigurationService instance = null;
 
@@ -58,43 +56,20 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
         return localReference;
     }
 
-    /**
-     * Load data for frontend lists. Data can be loaded from database or index.
-     *
-     * @param first     searched objects
-     * @param pageSize  size of page
-     * @param sortField field by which data should be sorted
-     * @param sortOrder order ascending or descending
-     * @param filters   for search query
-     * @return loaded data
-     */
     @Override
     @SuppressWarnings("unchecked")
     public List<ImportConfiguration> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
         return dao.getByQuery("FROM ImportConfiguration"  + getSort(sortField, sortOrder), filters, first, pageSize);
     }
 
-    /**
-     * Count all rows in database.
-     *
-     * @return amount of all rows
-     */
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM ImportConfiguration");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM ImportConfiguration");
     }
 
-    /**
-     * This function is used for count amount of results for frontend lists.
-     *
-     * @param filters Map of parameters used for filtering
-     * @return amount of results
-     * @throws DAOException  that can be caused by Hibernate
-     * @throws DataException that can be caused by ElasticSearch
-     */
     @Override
-    public Long countResults(Map filters) throws DAOException, DataException {
-        return countDatabaseRows();
+    public Long countResults(Map filters) throws DAOException {
+        return count();
     }
 
     /**
@@ -106,7 +81,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
      *         default child configuration to at least one project
      */
     @Override
-    public void removeFromDatabase(Integer id) throws DAOException, ImportConfigurationInUseException {
+    public void remove(Integer id) throws DAOException, ImportConfigurationInUseException {
         for (Project project : ServiceManager.getProjectService().getAll()) {
             ImportConfiguration defaultConfiguration = project.getDefaultImportConfiguration();
             if (Objects.nonNull(defaultConfiguration) && Objects.equals(defaultConfiguration.getId(), id)) {
@@ -139,11 +114,7 @@ public class ImportConfigurationService extends SearchDatabaseService<ImportConf
         return getAllImportConfigurations(ImportConfigurationType.FILE_UPLOAD);
     }
 
-    /**
-     * Load and return all ImportConfigurations sorted by title.
-     * @return list of all ImportConfigurations sorted by title
-     * @throws DAOException when ImportConfigurations could not be loaded
-     */
+    @Override
     public List<ImportConfiguration> getAll() throws DAOException {
         return super.getAll().stream().sorted(Comparator.comparing(ImportConfiguration::getTitle))
                 .collect(Collectors.toList());

@@ -18,7 +18,7 @@
         xmlns:p="http://primefaces.org/ui">
     <!--@elvariable id="item" type="org.kitodo.production.dto.ProjectDTO"-->
     <p:dataTable var="item"
-                 value="#{ProjectForm.lazyDTOModel}"
+                 value="#{ProjectForm.lazyBeanModel}"
                  first="#{ProjectForm.firstRow}"
                  lazy="true"
                  id="projectsTable"
@@ -78,10 +78,10 @@
             <h:form id="projectActionForm">
 
                 <h:panelGroup styleClass="action"
-                              title="#{item.templates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
+                              title="#{item.activeTemplates.size() gt 0 ? msgs['createNewProcess'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="createProcessFromTemplate"
                                    action="#{SelectTemplateDialogView.createProcessForProject()}"
-                                   disabled="#{item.templates.size() lt 1}"
+                                   disabled="#{item.activeTemplates.size() lt 1}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{item}"/>
@@ -133,10 +133,10 @@
                 </h:commandLink>
 
                 <h:panelGroup styleClass="action"
-                              title="#{item.templates.size() gt 0 ? msgs['massImport'] : msgs['noTemplatesConfigured']}">
+                              title="#{item.activeTemplates.size() gt 0 ? msgs['massImport'] : msgs['noTemplatesConfigured']}">
                     <p:commandLink id="massImport"
                                    action="#{SelectTemplateDialogView.openMassImportForProject()}"
-                                   disabled="#{item.templates.size() lt 1}"
+                                   disabled="#{item.activeTemplates.size() lt 1}"
                                    rendered="#{SecurityAccessController.hasAuthorityToAddProcess()}">
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.selectedTemplateId}" value="0"/>
                         <f:setPropertyActionListener target="#{SelectTemplateDialogView.project}" value="#{item}"/>
@@ -182,7 +182,7 @@
                                          columns="2"
                                          columnClasses="label, actionsColumn" >
                                 <p:repeat id="templates"
-                                          value="#{item.templates}"
+                                          value="#{item.activeTemplates}"
                                           var="template">
                                     <div class="project-template-action">
                                         <h:outputText value="#{template.title}"

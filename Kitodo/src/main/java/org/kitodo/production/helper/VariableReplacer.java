@@ -289,7 +289,7 @@ public class VariableReplacer {
             return variableFinder.group(1);
         }
 
-        if (StringUtils.isNotEmpty(process.getOcrdWorkflowId())) {
+        if (StringUtils.isNotBlank(process.getOcrdWorkflowId())) {
             return variableFinder.group(1) + process.getOcrdWorkflowId();
         }
 

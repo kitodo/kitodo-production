@@ -48,7 +48,7 @@ public class AuthorityServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForAuthorities() throws Exception {
-        Long amount = authorityService.countDatabaseRows();
+        Long amount = authorityService.count();
         assertEquals("Authorizations were not counted correctly!", Long.valueOf(EXPECTED_AUTHORITIES_COUNT), amount);
     }
 
@@ -76,7 +76,7 @@ public class AuthorityServiceIT {
         Authority adminAuthority = new Authority();
         adminAuthority.setTitle("viewAllClients_globalAssignable");
         exception.expect(DAOException.class);
-        authorityService.saveToDatabase(adminAuthority);
+        authorityService.save(adminAuthority);
     }
 
     @Test

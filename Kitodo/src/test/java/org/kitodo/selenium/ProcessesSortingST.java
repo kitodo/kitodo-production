@@ -49,7 +49,7 @@ public class ProcessesSortingST extends BaseTestSelenium {
         // sorting by process status makes sense (otherwise both processes have the same status)
         Task task = ServiceManager.getTaskService().getById(8);
         task.setProcessingStatus(TaskStatus.DONE);
-        ServiceManager.getTaskService().save(task, true);
+        ServiceManager.getTaskService().save(task);
     }
 
     @Before

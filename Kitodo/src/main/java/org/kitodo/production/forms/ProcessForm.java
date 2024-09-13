@@ -47,12 +47,9 @@ import org.kitodo.data.database.beans.Workflow;
 import org.kitodo.data.database.enums.PropertyType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.InvalidImagesException;
 import org.kitodo.exceptions.MediaNotFoundException;
 import org.kitodo.production.controller.SecurityAccessController;
-import org.kitodo.production.dto.ProcessDTO;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
 import org.kitodo.production.helper.CustomListColumnInitializer;
@@ -151,28 +148,28 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Retrieve and return process property value of property with given name
-     * 'propertyName' from given ProcessDTO 'process'.
+     * 'propertyName' from given Process 'process'.
      *
      * @param process
-     *            the ProcessDTO object from which the property value is retrieved
+     *            the Process object from which the property value is retrieved
      * @param propertyName
      *            name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName',
      *         empty String otherwise
      */
-    public static String getPropertyValue(ProcessDTO process, String propertyName) {
+    public static String getPropertyValue(Process process, String propertyName) {
         return ProcessService.getPropertyValue(process, propertyName);
     }
 
     /**
      * Calculate and return age of given process as a String.
      *
-     * @param processDTO
-     *            ProcessDTO object whose duration/age is calculated
+     * @param process
+     *            Process object whose duration/age is calculated
      * @return process age of given process
      */
-    public static String getProcessDuration(ProcessDTO processDTO) {
-        return ProcessService.getProcessDuration(processDTO);
+    public static String getProcessDuration(Process process) {
+        return ProcessService.getProcessDuration(process);
     }
 
     /**
@@ -188,9 +185,9 @@ public class ProcessForm extends TemplateBaseForm {
             }
 
             try {
-                ServiceManager.getProcessService().save(this.process, true);
+                ServiceManager.getProcessService().save(this.process);
                 return processesPage;
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
             }
@@ -202,19 +199,13 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Create Child for given Process.
-     * @param processDTO the process to create a child for.
+     * @param process the process to create a child for.
      * @return path to createProcessForm
      */
-    public String createProcessAsChild(ProcessDTO processDTO) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
-                return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
-                        + process.getProject().getId() + "&parentId=" + process.getId();
-            }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                e);
+    public String createProcessAsChild(Process process) {
+        if (Objects.nonNull(process.getTemplate()) && Objects.nonNull(process.getProject())) {
+            return CREATE_PROCESS_PATH + "&templateId=" + process.getTemplate().getId() + "&projectId="
+                    + process.getProject().getId() + "&parentId=" + process.getId();
         }
         return "processes";
     }
@@ -410,7 +401,7 @@ public class ProcessForm extends TemplateBaseForm {
      * @return url to processEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.process, ObjectType.PROCESS.getTranslationSingular(), ServiceManager.getTaskService());
+        super.saveTask(this.task);
         return processEditPath + "&id=" + (Objects.isNull(this.process.getId()) ? 0 : this.process.getId());
     }
 
@@ -525,7 +516,7 @@ public class ProcessForm extends TemplateBaseForm {
     /**
      * Task status up.
      */
-    public void setTaskStatusUp() throws DataException, IOException, DAOException {
+    public void setTaskStatusUp() throws DAOException, IOException {
         workflowControllerService.setTaskStatusUp(this.task);
         ProcessService.deleteSymlinksFromUserHomes(this.task);
         refreshParent();
@@ -643,7 +634,7 @@ public class ProcessForm extends TemplateBaseForm {
         KitodoScriptService service = ServiceManager.getKitodoScriptService();
         try {
             service.execute(processes, kitodoScript);
-        } catch (DataException | IOException | InvalidImagesException e) {
+        } catch (DAOException | IOException | InvalidImagesException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         } catch (MediaNotFoundException e) {
             Helper.setWarnMessage(e.getMessage());
@@ -652,23 +643,14 @@ public class ProcessForm extends TemplateBaseForm {
 
     private List<Process> getProcessesForActions() {
         // TODO: find a way to pass filters
-        List<ProcessDTO> filteredProcesses = new ArrayList<>();
-        for (Object object : lazyDTOModel.load(0, 100000, "",
+        List<Process> filteredProcesses = new ArrayList<>();
+        for (Object object : lazyBeanModel.load(0, 100000, "",
                 SortOrder.ASCENDING, null)) {
-            if (object instanceof ProcessDTO) {
-                filteredProcesses.add((ProcessDTO) object);
+            if (object instanceof Process) {
+                filteredProcesses.add((Process) object);
             }
         }
-        List<Process> processesForActions = new ArrayList<>();
-
-        try {
-            processesForActions = ServiceManager.getProcessService().convertDtosToBeans(filteredProcesses);
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_MANY, new Object[] {ObjectType.PROCESS.getTranslationPlural() },
-                logger, e);
-        }
-
-        return processesForActions;
+        return filteredProcesses;
     }
 
     /**
@@ -953,7 +935,7 @@ public class ProcessForm extends TemplateBaseForm {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
-        } catch (IOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.PROCESS.getTranslationSingular(), id },
                 logger, e);
         }
@@ -978,7 +960,7 @@ public class ProcessForm extends TemplateBaseForm {
                 ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
                 context.redirect(DEFAULT_LINK);
             }
-        } catch (IOException | DataException e) {
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.TASK.getTranslationSingular(), id },
                     logger, e);
         }
@@ -1059,26 +1041,26 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     private String filterList() {
-        this.selectedProcessesOrProcessDTOs.clear();
+        this.selectedProcesses.clear();
         return processesPage;
     }
 
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
     }
 
     /**
      * Returns a String containing titles of all current tasks of the given process, e.g. "OPEN" tasks and tasks
      * "INWORK".
      *
-     * @param processDTO
+     * @param process
      *          process for which current task titles are returned
      * @return String containing titles of current tasks of given process
      */
-    public String getCurrentTaskTitles(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().createProgressTooltip(processDTO);
+    public String getCurrentTaskTitles(Process process) {
+        return ServiceManager.getProcessService().createProgressTooltip(process);
     }
 
     /**
@@ -1130,25 +1112,21 @@ public class ProcessForm extends TemplateBaseForm {
 
     /**
      * Get all tasks of given process which should be visible to the user.
-     * @param processDTO process as DTO object
-     * @return List of filtered tasks as DTO objects
+     * @param process process as Interface object
+     * @return List of filtered tasks as Interface objects
      */
-    public List<TaskDTO> getCurrentTasksForUser(ProcessDTO processDTO) {
-        return ServiceManager.getProcessService().getCurrentTasksForUser(processDTO, ServiceManager.getUserService().getCurrentUser());
+    public List<Task> getCurrentTasksForUser(Process process) {
+        return ServiceManager.getProcessService().getCurrentTasksForUser(process,
+            ServiceManager.getUserService().getCurrentUser());
     }
 
     /**
      * Gets the amount of processes for the current filter.
+     * 
      * @return amount of processes
      */
-    public String getAmount() {
-        try {
-            return ServiceManager.getProcessService().count(ServiceManager.getProcessService()
-                    .getQueryForFilter(isShowClosedProcesses(), isShowInactiveProjects(), filter)).toString();
-        } catch (DataException e) {
-            Helper.setErrorMessage(e);
-            return "";
-        }
+    public String getAmount() throws DAOException {
+        return Integer.toString(lazyBeanModel.getRowCount());
     }
 
     /**
@@ -1215,7 +1193,7 @@ public class ProcessForm extends TemplateBaseForm {
         if (process instanceof Process) {
             return ((Process) process).getId();
         } else {
-            return ((ProcessDTO) process).getId();
+            return ((Process) process).getId();
         }
     }
 

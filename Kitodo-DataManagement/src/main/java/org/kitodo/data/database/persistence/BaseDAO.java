@@ -11,6 +11,8 @@
 
 package org.kitodo.data.database.persistence;
 
+import edu.umd.cs.findbugs.annotations.CheckReturnValue;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,8 +32,6 @@ import org.hibernate.exception.SQLGrammarException;
 import org.hibernate.query.Query;
 import org.kitodo.config.ConfigMain;
 import org.kitodo.data.database.beans.BaseBean;
-import org.kitodo.data.database.beans.BaseIndexedBean;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 /**
@@ -95,19 +95,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     }
 
     /**
-     * Saves base bean objects as indexed.
-     *
-     * @param baseBeans
-     *            list of base beans
-     * @throws DAOException
-     *             if the current session can't be retrieved or an exception is
-     *             thrown while performing the rollback
-     */
-    public void saveAsIndexed(List<T> baseBeans) throws DAOException {
-        storeAsIndexed(baseBeans);
-    }
-
-    /**
      * Removes BaseBean object specified by the given id from the database.
      *
      * @param id
@@ -161,6 +148,18 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
      */
     public void evict(T baseBean) {
         evictObject(baseBean);
+    }
+
+    /**
+     * Merge given bean object.
+     *
+     * @param baseBean
+     *            bean to merge
+     * @return the merged bean
+     */
+    @CheckReturnValue
+    public T merge(T baseBean) {
+        return mergeObject(baseBean);
     }
 
     /**
@@ -222,6 +221,24 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 baseBeanObjects = new ArrayList<>();
             }
             return baseBeanObjects;
+        }
+    }
+
+    /**
+     * Retrieves String objects from database by given query.
+     *
+     * @param query
+     *            as String
+     * @param parameters
+     *            for query
+     * @return list of beans objects
+     */
+    @SuppressWarnings("unchecked")
+    public List<String> getStringsByQuery(String query, Map<String, Object> parameters) {
+        try (Session session = HibernateUtil.getSession()) {
+            Query<String> queryObject = session.createQuery(query);
+            addParameters(queryObject, parameters);
+            return queryObject.list();
         }
     }
 
@@ -374,14 +391,6 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
         }
     }
 
-    void storeAsIndexed(List<T> baseBeans) throws DAOException {
-        for (BaseBean baseBean : baseBeans) {
-            BaseIndexedBean entity = (BaseIndexedBean) getById(baseBean.getId());
-            entity.setIndexAction(IndexAction.DONE);
-            storeObject((T) entity);
-        }
-    }
-
     /**
      * Store given list of objects.
      *
@@ -410,6 +419,22 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
     private void evictObject(T object) {
         try (Session session = HibernateUtil.getSession()) {
             session.evict(object);
+        }
+    }
+
+    /**
+     * Merge object into the session.
+     *
+     * @param object
+     *            to be associated with the session
+     * @return a new object in the current session, with the data from the input
+     *         object
+     */
+    @SuppressWarnings("unchecked")
+    @CheckReturnValue
+    private T mergeObject(T object) {
+        try (Session session = HibernateUtil.getSession()) {
+            return (T) session.merge(object);
         }
     }
 
@@ -480,5 +505,4 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 .filter(Pattern.compile("\\d{4}|\\d{4}-\\d{2}|\\d{4}-\\d{2}-\\d{2}").asMatchPredicate())
                 .collect(Collectors.toList());
     }
-
 }

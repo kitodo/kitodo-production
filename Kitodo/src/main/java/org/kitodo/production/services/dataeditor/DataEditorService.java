@@ -213,9 +213,9 @@ public class DataEditorService {
                                                                          Collection<Metadata> existingMetadata,
                                                                          Collection<String> additionalFields, Ruleset ruleset) {
         List<SelectItem> addableMetadata = new ArrayList<>();
-        Collection<MetadataViewInterface> viewInterfaces = structureView
+        Collection<MetadataViewInterface> views = structureView
                 .getAddableMetadata(existingMetadata, additionalFields);
-        for (MetadataViewInterface keyView : viewInterfaces) {
+        for (MetadataViewInterface keyView : views) {
             addableMetadata.add(
                     new SelectItem(keyView.getId(), keyView.getLabel(),
                             keyView instanceof SimpleMetadataViewInterface

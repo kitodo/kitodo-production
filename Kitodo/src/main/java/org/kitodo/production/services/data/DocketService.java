@@ -12,28 +12,27 @@
 package org.kitodo.production.services.data;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.DocketType;
-import org.kitodo.data.elasticsearch.index.type.enums.DocketTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.ClientDTO;
-import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.ClientSearchService;
 import org.primefaces.model.SortOrder;
 
-public class DocketService extends ClientSearchService<Docket, DocketDTO, DocketDAO> {
+public class DocketService extends BaseBeanService<Docket, DocketDAO> {
+
+    private static final Map<String, String> SORT_FIELD_MAPPING;
+
+    static {
+        SORT_FIELD_MAPPING = new HashMap<>();
+        SORT_FIELD_MAPPING.put("title.keyword", "title");
+        SORT_FIELD_MAPPING.put("file.keyword", "file");
+    }
 
     private static volatile DocketService instance = null;
 
@@ -41,8 +40,7 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
      * Constructor with Searcher and Indexer assigning.
      */
     private DocketService() {
-        super(new DocketDAO(), new DocketType(), new Indexer<>(Docket.class), new Searcher(Docket.class),
-                DocketTypeField.CLIENT_ID.getKey());
+        super(new DocketDAO());
     }
 
     /**
@@ -65,58 +63,52 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Docket");
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Docket");
     }
 
     @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
+    public Long countResults(Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Docket.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        return count(beanQuery.formCountQuery(), beanQuery.getQueryParameters());
     }
 
     @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(getDocketsForCurrentUserQuery());
+    public List<Docket> loadData(int first, int pageSize, String sortField, SortOrder sortOrder,
+            Map<?, String> filtersNotImplemented) throws DAOException {
+        BeanQuery beanQuery = new BeanQuery(Docket.class);
+        beanQuery.restrictToClient(ServiceManager.getUserService().getSessionClientId());
+        beanQuery.defineSorting(SORT_FIELD_MAPPING.getOrDefault(sortField, sortField), sortOrder);
+        return getByQuery(beanQuery.formQueryForAll(), beanQuery.getQueryParameters(), first, pageSize);
     }
 
-    @Override
-    public List<DocketDTO> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters)
-            throws DataException {
-        return findByQuery(getDocketsForCurrentUserQuery(), getSortBuilder(sortField, sortOrder), first, pageSize,
-            false);
-    }
-
-    @Override
-    public List<Docket> getAllNotIndexed() {
-        return getByQuery("FROM Docket WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
+    /**
+     * Returns all docket configuration objects of the client, for which the
+     * logged-in user is currently working.
+     * 
+     * <p>
+     * <b>Implementation Requirements:</b><br>
+     * The function requires that the thread is assigned to a logged-in user.
+     * 
+     * @return all dockets for the selected client
+     */
     public List<Docket> getAllForSelectedClient() {
         return dao.getByQuery("SELECT d FROM Docket AS d INNER JOIN d.client AS c WITH c.id = :clientId",
             Collections.singletonMap("clientId", ServiceManager.getUserService().getSessionClientId()));
     }
 
-    @Override
-    public DocketDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        DocketDTO docketDTO = new DocketDTO();
-        docketDTO.setId(getIdFromJSONObject(jsonObject));
-        docketDTO.setTitle(DocketTypeField.TITLE.getStringValue(jsonObject));
-        docketDTO.setFile(DocketTypeField.FILE.getStringValue(jsonObject));
-
-        ClientDTO clientDTO = new ClientDTO();
-        clientDTO.setId(DocketTypeField.CLIENT_ID.getIntValue(jsonObject));
-        clientDTO.setName(DocketTypeField.CLIENT_NAME.getStringValue(jsonObject));
-
-        docketDTO.setClientDTO(clientDTO);
-        return docketDTO;
-    }
-
     /**
-     * Get list of dockets for given title.
+     * Returns all docket configuration objects with the specified label. This
+     * can be used to check whether a label is still available.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * There is currently no filtering by client, so a label used by one client
+     * cannot be used by another client.
      * 
      * @param title
-     *            for get from database
+     *            name to search for
      * @return list of dockets
      */
     public List<Docket> getByTitle(String title) {
@@ -130,9 +122,10 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
      *            of the searched docket
      * @return search result
      */
+    @Deprecated
     Map<String, Object> findByFile(String file) throws DataException {
-        QueryBuilder query = createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND);
-        return findDocument(query);
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -142,9 +135,10 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
      *            of the searched dockets
      * @return search result
      */
+    @Deprecated
     List<Map<String, Object>> findByClientId(Integer clientId) throws DataException {
-        QueryBuilder query = createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(), clientId, true);
-        return findDocuments(query);
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -156,11 +150,10 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
      *            of the searched docket
      * @return search result
      */
+    @Deprecated
     Map<String, Object> findByTitleAndFile(String title, String file) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(DocketTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.must(createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND));
-        return findDocument(query);
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -172,17 +165,9 @@ public class DocketService extends ClientSearchService<Docket, DocketDTO, Docket
      *            of the searched docket
      * @return search result
      */
+    @Deprecated
     List<Map<String, Object>> findByTitleOrFile(String title, String file) throws DataException {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.should(createSimpleQuery(DocketTypeField.TITLE.getKey(), title, true, Operator.AND));
-        query.should(createSimpleQuery(DocketTypeField.FILE.getKey(), file, true, Operator.AND));
-        return findDocuments(query);
-    }
-
-    private QueryBuilder getDocketsForCurrentUserQuery() {
-        BoolQueryBuilder query = new BoolQueryBuilder();
-        query.must(createSimpleQuery(DocketTypeField.CLIENT_ID.getKey(),
-                ServiceManager.getUserService().getSessionClientId(), true));
-        return query;
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 }

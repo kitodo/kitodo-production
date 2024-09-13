@@ -11,33 +11,21 @@
 
 package org.kitodo.production.services.data;
 
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.kitodo.data.database.beans.Batch;
-import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BatchDAO;
-import org.kitodo.data.elasticsearch.exceptions.CustomResponseException;
-import org.kitodo.data.elasticsearch.index.Indexer;
-import org.kitodo.data.elasticsearch.index.type.BatchType;
-import org.kitodo.data.elasticsearch.index.type.enums.BatchTypeField;
-import org.kitodo.data.elasticsearch.search.Searcher;
 import org.kitodo.data.exceptions.DataException;
-import org.kitodo.production.dto.BatchDTO;
 import org.kitodo.production.helper.Helper;
-import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.data.base.TitleSearchService;
 import org.primefaces.model.SortOrder;
 
-public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> {
+public class BatchService extends BaseBeanService<Batch, BatchDAO> {
 
     private static volatile BatchService instance = null;
     private static final String BATCH = "batch";
@@ -46,7 +34,7 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * Constructor with Searcher and Indexer assigning.
      */
     private BatchService() {
-        super(new BatchDAO(), new BatchType(), new Indexer<>(Batch.class), new Searcher(Batch.class));
+        super(new BatchDAO());
     }
 
     /**
@@ -68,58 +56,34 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
         return localReference;
     }
 
-    /**
-     * Method saves processes related to modified batch.
-     *
-     * @param batch
-     *            object
-     */
     @Override
-    protected void manageDependenciesForIndex(Batch batch) throws CustomResponseException, DataException, IOException {
-        if (batch.getIndexAction() == IndexAction.DELETE) {
-            for (Process process : batch.getProcesses()) {
-                process.getBatches().remove(batch);
-                ServiceManager.getProcessService().saveToIndex(process, false);
-            }
-        } else {
-            for (Process process : batch.getProcesses()) {
-                ServiceManager.getProcessService().saveToIndex(process, false);
-            }
-        }
+    public Long count() throws DAOException {
+        return count("SELECT COUNT(*) FROM Batch");
+    }
+
+    // functions countResults() and loadData() are not used in batches
+    @Override
+    public Long countResults(Map<?, String> filters) throws DAOException {
+        return (long) 0;
     }
 
     @Override
-    public Long countDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Batch");
-    }
-
-    @Override
-    public Long countNotIndexedDatabaseRows() throws DAOException {
-        return countDatabaseRows("SELECT COUNT(*) FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public Long countResults(Map filters) throws DataException {
-        return countDocuments(QueryBuilders.matchAllQuery());
-    }
-
-    @Override
-    public List<Batch> getAllNotIndexed() {
-        return getByQuery("FROM Batch WHERE indexAction = 'INDEX' OR indexAction IS NULL");
-    }
-
-    @Override
-    public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map filters) {
+    public List<Batch> loadData(int first, int pageSize, String sortField, SortOrder sortOrder, Map<?, String> filters) {
         return new ArrayList<>();
     }
 
     /**
-     * Remove all passed batches.
+     * Deletes all given batches from the database.
+     * 
+     * <p>
+     * <b>Implementation Note:</b><br>
+     * The function must get all processes from each batch and delete the
+     * batches to be deleted in each process, before it deletes the batches.
      *
      * @param batches
-     *            to remove
+     *            batches to delete
      */
-    public void removeAll(Iterable<Batch> batches) throws DataException {
+    public void removeAll(Collection<Batch> batches) throws DAOException {
         for (Batch batch : batches) {
             remove(batch);
         }
@@ -132,9 +96,10 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of process
      * @return list of JSON objects with batches for specific process id
      */
+    @Deprecated
     public List<Map<String, Object>> findByProcessId(Integer id) throws DataException {
-        QueryBuilder query = createSimpleQuery("processes.id", id, true);
-        return findDocuments(query);
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
@@ -144,30 +109,15 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      *            of process
      * @return list of JSON objects with batches for specific process title
      */
+    @Deprecated
     public List<Map<String, Object>> findByProcessTitle(String title) throws DataException {
-        QueryBuilder query = createSimpleQuery("processes.title", title, true, Operator.AND);
-        return findDocuments(query);
-    }
-
-    @Override
-    public BatchDTO convertJSONObjectToDTO(Map<String, Object> jsonObject, boolean related) throws DataException {
-        BatchDTO batchDTO = new BatchDTO();
-        batchDTO.setId(getIdFromJSONObject(jsonObject));
-        batchDTO.setTitle(BatchTypeField.TITLE.getStringValue(jsonObject));
-        if (!related) {
-            convertRelatedJSONObjects(jsonObject, batchDTO);
-        }
-        return batchDTO;
-    }
-
-    private void convertRelatedJSONObjects(Map<String, Object> jsonObject, BatchDTO batchDTO) throws DataException {
-        batchDTO.setProcesses(convertRelatedJSONObjectToDTO(jsonObject, BatchTypeField.PROCESSES.getKey(),
-            ServiceManager.getProcessService()));
+        // TODO delete method stub
+        throw new UnsupportedOperationException("no longer used function");
     }
 
     /**
-     * Returns true if the title (if set) or the
-     * id-based label contain the specified sequence of char values.
+     * Returns true if the title (if set) or the id-based label contain the
+     * specified sequence of char values.
      *
      * @param sequence
      *            the sequence to search for
@@ -203,19 +153,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
     }
 
     /**
-     * Returns a readable label for the batch, which is
-     * either its title, if defined, or, for batches not having a title (in
-     * recent versions of Production, batches didn’t support titles) its ancient
-     * label, consisting of the prefix “Batch ” (in the desired translation)
-     * together with its id number.
-     *
-     * @return a readable label for the batch
-     */
-    public String getLabel(BatchDTO batch) {
-        return Objects.nonNull(batch.getTitle()) ? batch.getTitle() : getNumericLabel(batch);
-    }
-
-    /**
      * Returns a readable label for the batch,
      * consisting of the prefix “Batch ” (in the desired translation) together
      * with its id number.
@@ -223,17 +160,6 @@ public class BatchService extends TitleSearchService<Batch, BatchDTO, BatchDAO> 
      * @return a readable label for the batch
      */
     private String getNumericLabel(Batch batch) {
-        return Helper.getTranslation(BATCH) + ' ' + batch.getId();
-    }
-
-    /**
-     * Returns a readable label for the batch,
-     * consisting of the prefix “Batch ” (in the desired translation) together
-     * with its id number.
-     *
-     * @return a readable label for the batch
-     */
-    private String getNumericLabel(BatchDTO batch) {
         return Helper.getTranslation(BATCH) + ' ' + batch.getId();
     }
 

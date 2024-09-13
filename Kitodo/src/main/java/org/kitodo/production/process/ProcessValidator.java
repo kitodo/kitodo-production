@@ -20,7 +20,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Property;
-import org.kitodo.data.exceptions.DataException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
@@ -127,7 +127,7 @@ public final class ProcessValidator {
             long amount;
             try {
                 amount = ServiceManager.getProcessService().findNumberOfProcessesWithTitle(title);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_READ, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
                 return false;

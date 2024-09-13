@@ -11,6 +11,9 @@
 
 package org.kitodo.config.enums;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 
@@ -21,9 +24,6 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.FileLoader;
 import org.kitodo.config.ConfigCore;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public class KitodoConfigFileTest {
 

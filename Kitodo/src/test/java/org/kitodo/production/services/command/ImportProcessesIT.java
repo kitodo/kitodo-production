@@ -83,16 +83,16 @@ public class ImportProcessesIT {
         template.setDocket(ServiceManager.getDocketService().getById(1));
         template.getProjects().add(ServiceManager.getProjectService().getById(1));
         template.setRuleset(ruleset);
-        ServiceManager.getTemplateService().save(template, true);
+        ServiceManager.getTemplateService().save(template);
 
         task.setTemplate(template);
         template.getTasks().add(task);
-        ServiceManager.getTemplateService().save(template, true);
+        ServiceManager.getTemplateService().save(template);
         ServiceManager.getTaskService().save(task);
 
         Folder local = ServiceManager.getFolderService().getById(6);
         local.setMimeType("image/jpeg");
-        ServiceManager.getFolderService().saveToDatabase(local);
+        ServiceManager.getFolderService().save(local);
 
         User userOne = ServiceManager.getUserService().getById(1);
         SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
@@ -123,7 +123,7 @@ public class ImportProcessesIT {
         String errors = "src/test/resources/errors";
         ImportProcesses underTest = new ImportProcesses(indir, projectId, templateId, errors);
 
-        int processesBefore = ServiceManager.getProcessService().countDatabaseRows().intValue();
+        int processesBefore = ServiceManager.getProcessService().count().intValue();
 
         // initialize
         underTest.run(0);
@@ -211,7 +211,7 @@ public class ImportProcessesIT {
 
         underTest.run(10);
         assertEquals("should have created 1st process,", Long.valueOf(firstProcessId),
-            ServiceManager.getProcessService().countDatabaseRows());
+            ServiceManager.getProcessService().count());
         underTest.run(11);
         assertTrue("should have created process directory", Files.isDirectory(processPath));
         underTest.run(12);
@@ -278,7 +278,7 @@ public class ImportProcessesIT {
 
         underTest.run(31);
         assertEquals("should have created 3rd process,", processesBefore + 3,
-            (long) ServiceManager.getProcessService().countDatabaseRows());
+            (long) ServiceManager.getProcessService().count());
         underTest.run(32);
         assertTrue("should have created process directory", Files.isDirectory(processPath));
         underTest.run(33);
@@ -312,7 +312,7 @@ public class ImportProcessesIT {
 
         // import results
         assertEquals("Should import 3 processes,", processesBefore + 3,
-            (long) ServiceManager.getProcessService().countDatabaseRows());
+            (long) ServiceManager.getProcessService().count());
         assertEquals("Should not import 6 processes,", 6, ERRORS_DIR_PATH.toFile().list().length);
     }
 

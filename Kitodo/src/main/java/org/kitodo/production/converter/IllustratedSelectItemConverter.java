@@ -30,7 +30,7 @@ public class IllustratedSelectItemConverter implements Converter, Serializable {
 
     @Override
     public Object getAsObject(FacesContext context, UIComponent component, String value) {
-        if (StringUtils.isNotEmpty(value)) {
+        if (StringUtils.isNotBlank(value)) {
             List<IllustratedSelectItem> illustratedSelectItems = (List<IllustratedSelectItem>) component.getAttributes()
                     .get("illustratedSelectItems");
             for (IllustratedSelectItem illustratedSelectItem : illustratedSelectItems) {

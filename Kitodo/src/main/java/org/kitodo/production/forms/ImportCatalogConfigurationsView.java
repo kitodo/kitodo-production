@@ -169,7 +169,7 @@ public class ImportCatalogConfigurationsView implements Serializable {
      */
     public void addMappingFile() throws DAOException {
         try {
-            ServiceManager.getMappingFileService().saveToDatabase(currentMappingFile);
+            ServiceManager.getMappingFileService().save(currentMappingFile);
             currentMappingFileIndex++;
             if (currentMappingFileIndex < mappingFilenames.size()) {
                 importMappingFile(mappingFilenames.get(currentMappingFileIndex));

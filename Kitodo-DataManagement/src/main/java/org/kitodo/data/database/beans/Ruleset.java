@@ -22,7 +22,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "ruleset")
-public class Ruleset extends BaseIndexedBean {
+public class Ruleset extends BaseBean {
 
     @Column(name = "title")
     private String title;
@@ -40,26 +40,54 @@ public class Ruleset extends BaseIndexedBean {
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ruleset_client_id"))
     private Client client;
 
+    /**
+     * Returns the display name of the business domain model. It is displayed to
+     * the user in a selection dialog.
+     *
+     * @return the display name
+     */
     public String getTitle() {
         return this.title;
     }
 
+    /**
+     * Sets the display name of the business domain model.
+     *
+     * @param title
+     *            the display name
+     */
     public void setTitle(String title) {
         this.title = title;
     }
 
+    /**
+     * Returns the name of the configuration file, without a path. The file must
+     * exist in the ruleset directory. The directory is set in the configuration
+     * file.
+     *
+     * @return the XML file name
+     */
     public String getFile() {
         return this.file;
     }
 
+    /**
+     * Sets the name of the configuration file. The file must exist in the
+     * ruleset directory. The file name must be specified without a path.
+     *
+     * @param file
+     *            XML file name
+     */
     public void setFile(String file) {
         this.file = file;
     }
 
     /**
-     * Check if metadata should be ordered by ruleset.
+     * Returns whether the elements of the ruleset should be displayed in the
+     * declared order. If not, they are displayed alphabetically. It varies at
+     * which points this sorting takes effect and what is sorted on.
      *
-     * @return true or false
+     * @return whether the elements should be in declared order
      */
     public boolean isOrderMetadataByRuleset() {
         if (this.orderMetadataByRuleset == null) {
@@ -69,19 +97,22 @@ public class Ruleset extends BaseIndexedBean {
     }
 
     /**
-     * Set if metadata should be ordered by ruleset.
+     * Sets whether the elements of the ruleset should be displayed in the
+     * declared order.
      *
      * @param orderMetadataByRuleset
-     *            true or false
+     *            whether the elements should be in declared order
      */
     public void setOrderMetadataByRuleset(boolean orderMetadataByRuleset) {
         this.orderMetadataByRuleset = orderMetadataByRuleset;
     }
 
     /**
-     * Check if ruleset is active.
+     * Determines whether the ruleset is active. A deactivated rule set is not
+     * offered for selection, but can continue to be used where it is already in
+     * use.
      *
-     * @return true or false
+     * @return whether the ruleset is active
      */
     public Boolean isActive() {
         if (Objects.isNull(this.active)) {
@@ -91,28 +122,33 @@ public class Ruleset extends BaseIndexedBean {
     }
 
     /**
-     * Set ruleset as active.
+     * Sets whether the ruleset is active.
      *
-     * @param active as boolean
+     * @param active
+     *            whether the ruleset is active
      */
     public void setActive(boolean active) {
         this.active = active;
     }
 
     /**
-     * Get client.
+     * Returns the client that this ruleset is associated with. Technically,
+     * multiple client can use the same docket generator configuration (file),
+     * but they must be made available independently for each client using one
+     * configuration object each. This determines which rulesets are visible to
+     * a client at all, and they can be named differently.
      *
-     * @return Client object
+     * @return client that this ruleset is associated with
      */
     public Client getClient() {
         return this.client;
     }
 
     /**
-     * Set client.
+     * Sets the client to which this ruleset is associated.
      *
      * @param client
-     *            as Client object
+     *            client to which this ruleset is associated
      */
     public void setClient(Client client) {
         this.client = client;

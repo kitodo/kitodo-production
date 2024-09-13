@@ -30,14 +30,12 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ChartMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.WebDav;
-import org.kitodo.production.model.LazyProcessDTOModel;
+import org.kitodo.production.model.LazyProcessModel;
 import org.kitodo.production.process.ProcessMetadataStatistic;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -59,7 +57,7 @@ public class ProcessListBaseView extends BaseForm {
     private int numberOfGlobalImages;
     private int numberOfGlobalStructuralElements;
     private int numberOfGlobalMetadata;
-    List<? extends Object> selectedProcessesOrProcessDTOs = new ArrayList<>();
+    List<Process> selectedProcesses = new ArrayList<>();
     private final String doneDirectoryName = ConfigCore.getParameterOrDefaultValue(ParameterCore.DONE_DIRECTORY_NAME);
     DeleteProcessDialog deleteProcessDialog = new DeleteProcessDialog();
 
@@ -73,7 +71,7 @@ public class ProcessListBaseView extends BaseForm {
      */
     public ProcessListBaseView() {
         super();
-        super.setLazyDTOModel(new LazyProcessDTOModel(ServiceManager.getProcessService()));
+        super.setLazyBeanModel(new LazyProcessModel(ServiceManager.getProcessService()));
     }
 
     /**
@@ -115,36 +113,19 @@ public class ProcessListBaseView extends BaseForm {
 
     /**
      * Returns the list of the processes currently selected in the user interface.
-     * Converts ProcessDTO instances to Process instances in case of displaying search results.
+     * Converts Process instances to Process instances in case of displaying search results.
      *
      * @return value of selectedProcesses
      */
-    @SuppressWarnings("unchecked")
     public List<Process> getSelectedProcesses() {
-        List<Process> selectedProcesses = new ArrayList<>();
         ProcessService processService = ServiceManager.getProcessService();
         if (allSelected) {
             try {
-                this.selectedProcessesOrProcessDTOs = processService.findByQuery(processService.getQueryForFilter(
-                                this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter())
-                        .mustNot(processService.createSetQueryForIds(new ArrayList<>(excludedProcessIds))), false);
-            } catch (DataException e) {
+                this.selectedProcesses = processService.findSelectedProcesses(
+                    this.isShowClosedProcesses(), isShowInactiveProjects(), getFilter(),
+                    new ArrayList<>(excludedProcessIds));
+            } catch (DAOException e) {
                 logger.error(e.getMessage());
-            }
-        }
-        if (!selectedProcessesOrProcessDTOs.isEmpty()) {
-            if (selectedProcessesOrProcessDTOs.get(0) instanceof ProcessDTO) {
-                // list contains ProcessDTO instances
-                try {
-                    selectedProcesses = ServiceManager.getProcessService()
-                            .convertDtosToBeans((List<ProcessDTO>) selectedProcessesOrProcessDTOs);
-                } catch (DAOException e) {
-                    Helper.setErrorMessage(ERROR_LOADING_MANY,
-                            new Object[]{ObjectType.PROCESS.getTranslationPlural()}, logger, e);
-                }
-            } else if (selectedProcessesOrProcessDTOs.get(0) instanceof Process) {
-                // list contains Process instances
-                selectedProcesses = (List<Process>) selectedProcessesOrProcessDTOs;
             }
         }
         return selectedProcesses;
@@ -314,7 +295,7 @@ public class ProcessListBaseView extends BaseForm {
      *         not
      */
     public boolean isShowClosedProcesses() {
-        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowClosedProcesses();
+        return ((LazyProcessModel)this.lazyBeanModel).isShowClosedProcesses();
     }
 
     /**
@@ -325,7 +306,7 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowClosedProcesses(boolean showClosedProcesses) {
-        ((LazyProcessDTOModel)this.lazyDTOModel).setShowClosedProcesses(showClosedProcesses);
+        ((LazyProcessModel)this.lazyBeanModel).setShowClosedProcesses(showClosedProcesses);
     }
 
     /**
@@ -336,7 +317,7 @@ public class ProcessListBaseView extends BaseForm {
      *            displayed or not
      */
     public void setShowInactiveProjects(boolean showInactiveProjects) {
-        ((LazyProcessDTOModel)this.lazyDTOModel).setShowInactiveProjects(showInactiveProjects);
+        ((LazyProcessModel)this.lazyBeanModel).setShowInactiveProjects(showInactiveProjects);
     }
 
     /**
@@ -346,7 +327,7 @@ public class ProcessListBaseView extends BaseForm {
      *         or not
      */
     public boolean isShowInactiveProjects() {
-        return ((LazyProcessDTOModel)this.lazyDTOModel).isShowInactiveProjects();
+        return ((LazyProcessModel)this.lazyBeanModel).isShowInactiveProjects();
     }
 
     /**
@@ -422,7 +403,7 @@ public class ProcessListBaseView extends BaseForm {
             try {
 
                 export.startExport(processToExport);
-            } catch (DataException e) {
+            } catch (DAOException e) {
                 Helper.setErrorMessage(ERROR_EXPORTING,
                         new Object[] {ObjectType.PROCESS.getTranslationSingular(), processToExport.getId() }, logger, e);
             }
@@ -432,13 +413,13 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * If processes are generated with calendar.
      *
-     * @param processDTO
+     * @param process
      *            the process dto to check.
      * @return true if processes are created with calendar, false otherwise
      */
-    public boolean createProcessesWithCalendar(ProcessDTO processDTO) {
+    public boolean createProcessesWithCalendar(Process process) {
         try {
-            return ProcessService.canCreateProcessWithCalendar(processDTO);
+            return ProcessService.canCreateProcessWithCalendar(process);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
@@ -449,13 +430,13 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * If a process can be created as child.
      *
-     * @param processDTO
+     * @param process
      *            the process dto to check.
      * @return true if processes can be created as child, false otherwise
      */
-    public boolean createProcessAsChildPossible(ProcessDTO processDTO) {
+    public boolean createProcessAsChildPossible(Process process) {
         try {
-            return ProcessService.canCreateChildProcess(processDTO);
+            return ProcessService.canCreateChildProcess(process);
         } catch (IOException | DAOException e) {
             Helper.setErrorMessage(ERROR_READING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
                     e);
@@ -479,10 +460,10 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Starts generation of xml logfile for current process.
      */
-    public void createXML(ProcessDTO processDTO) {
+    public void createXML(Process process) {
         try {
-            ProcessService.createXML(ServiceManager.getProcessService().getById(processDTO.getId()), getUser());
-        } catch (IOException | DAOException e) {
+            ProcessService.createXML(process, getUser());
+        } catch (IOException e) {
             Helper.setErrorMessage("Error creating log file in home directory", logger, e);
         }
     }
@@ -493,7 +474,7 @@ public class ProcessListBaseView extends BaseForm {
     public void exportMets(int processId) {
         try {
             ProcessService.exportMets(processId);
-        } catch (DAOException | DataException | IOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage("An error occurred while trying to export METS file for process "
                     + processId, logger, e);
         }
@@ -506,10 +487,9 @@ public class ProcessListBaseView extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(ServiceManager.getProcessService().getById(id));
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_EXPORTING,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
-        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE,
                     new Object[] {ObjectType.PROCESS.getTranslationSingular(), id }, logger, e);
         }
@@ -529,41 +509,30 @@ public class ProcessListBaseView extends BaseForm {
     /**
      * Upload from home for single process.
      */
-    public void uploadFromHome(ProcessDTO processDTO) {
-        try {
-            WebDav myDav = new WebDav();
-            myDav.uploadFromHome(ServiceManager.getProcessService().getById(processDTO.getId()));
-            Helper.setMessage("directoryRemoved", processDTO.getTitle());
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_LOADING_ONE,
-                    new Object[] {ObjectType.PROCESS.getTranslationSingular(), processDTO.getId() }, logger, e);
-        }
+    public void uploadFromHome(Process process) {
+        WebDav myDav = new WebDav();
+        myDav.uploadFromHome(process);
+        Helper.setMessage("directoryRemoved", process.getTitle());
     }
 
     /**
      * Delete Process.
      *
-     * @param processDTO
+     * @param process
      *            process to delete.
      */
-    public void delete(ProcessDTO processDTO) {
-        try {
-            Process process = ServiceManager.getProcessService().getById(processDTO.getId());
-            if (process.getChildren().isEmpty()) {
-                try {
-                    ProcessService.deleteProcess(process);
-                } catch (DataException | IOException e) {
-                    Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
-                            logger, e);
-                }
-            } else {
-                this.deleteProcessDialog = new DeleteProcessDialog();
-                this.deleteProcessDialog.setProcess(process);
-                PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
+    public void delete(Process process) {
+        if (process.getChildren().isEmpty()) {
+            try {
+                ProcessService.deleteProcess(process.getId());
+            } catch (DAOException | IOException e) {
+                Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() },
+                    logger, e);
             }
-        } catch (DAOException e) {
-            Helper.setErrorMessage(ERROR_DELETING, new Object[] {ObjectType.PROCESS.getTranslationSingular() }, logger,
-                    e);
+        } else {
+            this.deleteProcessDialog = new DeleteProcessDialog();
+            this.deleteProcessDialog.setProcess(process);
+            PrimeFaces.current().executeScript("PF('deleteChildrenDialog').show();");
         }
     }
 
@@ -594,25 +563,15 @@ public class ProcessListBaseView extends BaseForm {
         }
     }
 
-    /**
-     * Returns the list of currently selected processes. This list is used both when displaying search results 
-     * and when displaying the process list, which is why it may contain either instances of Process or 
-     * instances of ProcessDTO.
-     * 
-     * @return list of instances of Process or ProcessDTO
-     */
-    public List<? extends Object> getSelectedProcessesOrProcessDTOs() {
-        return selectedProcessesOrProcessDTOs;
-    }
-
-    public void setSelectedProcessesOrProcessDTOs(List<? extends Object> selectedProcessesOrProcessDTOs) {
-        this.selectedProcessesOrProcessDTOs = selectedProcessesOrProcessDTOs;
+    public void setSelectedProcesses(List<Process> selectedProcesses) {
+        this.selectedProcesses = selectedProcesses;
     }
 
     /**
      * Update selection and first row to show in datatable on PageEvent.
      * @param pageEvent PageEvent triggered by data tables paginator
      */
+    @Override
     public void onPageChange(PageEvent pageEvent) {
         this.setFirstRow(((DataTable) pageEvent.getSource()).getFirst());
         if (allSelected) {

@@ -11,9 +11,12 @@
 
 package org.kitodo.production.security;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import com.itextpdf.xmp.impl.Base64;
+
 import org.junit.Assert;
 import org.junit.Test;
 

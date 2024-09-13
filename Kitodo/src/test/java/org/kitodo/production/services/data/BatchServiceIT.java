@@ -12,17 +12,15 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -30,7 +28,6 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 /**
@@ -49,7 +46,7 @@ public class BatchServiceIT {
         MockDatabase.insertProcessesFull();
         MockDatabase.setUpAwaitility();
         SecurityTestUtils.addUserDataToSecurityContext(ServiceManager.getUserService().getById(1), 1);
-        given().ignoreExceptions().await().until(() -> Objects.nonNull(batchService.findById(1, true)));
+        given().ignoreExceptions().await().until(() -> Objects.nonNull(batchService.getById(1)));
     }
 
     @AfterClass
@@ -62,19 +59,19 @@ public class BatchServiceIT {
     public final ExpectedException exception = ExpectedException.none();
 
     @Test
-    public void shouldCountAllBatches() throws DataException {
+    public void shouldCountAllBatches() throws DAOException {
         assertEquals("Batches were not counted correctly!", Long.valueOf(4), batchService.count());
     }
 
     @Test
-    public void shouldCountAllBatchesAccordingToQuery() throws DataException {
-        QueryBuilder query = matchQuery("title", "First batch").operator(Operator.AND);
-        assertEquals("Batches were not counted correctly!", Long.valueOf(1), batchService.count(query));
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldCountAllBatchesAccordingToQuery() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
     public void shouldCountAllDatabaseRowsForBatches() throws Exception {
-        Long amount = batchService.countDatabaseRows();
+        Long amount = batchService.count();
         assertEquals("Batches were not counted correctly!", Long.valueOf(4), amount);
     }
 
@@ -117,64 +114,69 @@ public class BatchServiceIT {
         foundBatch = batchService.getById(6);
         assertEquals("Additional batch was not inserted in database!", "To remove", foundBatch.getTitle());
 
-        batchService.remove(6);
+        batchService.remove(foundBatch);
         exception.expect(DAOException.class);
         batchService.getById(6);
     }
 
     @Test
-    public void shouldFindById() throws DataException {
+    public void shouldFindById() throws DAOException {
         String expected = "First batch";
-        assertEquals(BATCH_NOT_FOUND, expected, batchService.findById(1).getTitle());
+        assertEquals(BATCH_NOT_FOUND, expected, batchService.getById(1).getTitle());
     }
 
     @Test
-    public void shouldFindManyByTitle() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 3, batchService.findByTitle("batch", true).size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindOneByTitle() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1,
-                batchService.findByTitle("First batch", true).size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByType() throws DataException {
-        assertEquals("Batch was found in index!", 0, batchService.findByTitle("noBatch", true).size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByType() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindManyByProcessId() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 2, batchService.findByProcessId(1).size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByProcessId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindOneByProcessId() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1, batchService.findByProcessId(2).size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByProcessId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByProcessId() throws DataException {
-        assertEquals("Some batches were found in index!", 0, batchService.findByProcessId(3).size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByProcessId() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindManyByProcessTitle() throws DataException {
-        assertEquals(BATCHES_NOT_FOUND, 2,
-                batchService.findByProcessTitle("First process").size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindManyByProcessTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldFindOneByProcessTitle() throws DataException {
-        assertEquals(BATCH_NOT_FOUND, 1,
-                batchService.findByProcessTitle("Second process").size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldFindOneByProcessTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test
-    public void shouldNotFindByProcessTitle() throws DataException {
-        assertEquals("Some batches were found in index!", 0,
-                batchService.findByProcessTitle("DBConnectionTest").size());
+    @Ignore("functionality nowhere used, no longer implemented")
+    public void shouldNotFindByProcessTitle() throws Exception {
+        // TODO delete test stub
     }
 
     @Test

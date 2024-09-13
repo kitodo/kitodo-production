@@ -20,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Filter;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class FilterDaoIT {
@@ -53,11 +52,9 @@ public class FilterDaoIT {
     private List<Filter> getAuthorities() {
         Filter firstFilter = new Filter();
         firstFilter.setValue("first_filter");
-        firstFilter.setIndexAction(IndexAction.DONE);
 
         Filter secondFilter = new Filter();
         secondFilter.setValue("second_filter");
-        secondFilter.setIndexAction(IndexAction.INDEX);
 
         Filter thirdFilter = new Filter();
         thirdFilter.setValue("third_filter");

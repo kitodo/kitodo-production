@@ -61,9 +61,9 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Gets title.
+     * Returns the name of the role.
      *
-     * @return The title.
+     * @return the name of the role
      */
     public String getTitle() {
         if (this.title == null) {
@@ -74,10 +74,10 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Sets title.
+     * Sets the name of the role.
      *
      * @param title
-     *            The title.
+     *            name of the role to set
      */
     public void setTitle(String title) {
         this.title = title;
@@ -107,9 +107,10 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Gets users.
+     * Specifies the users who hold this role. This list is not guaranteed to be
+     * in reliable order.
      *
-     * @return The users.
+     * @return list of users who hold this role
      */
     public List<User> getUsers() {
         initialize(new RoleDAO(), this.users);
@@ -120,10 +121,10 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Sets users.
+     * Sets the list of users who hold this role.
      *
      * @param users
-     *            The users.
+     *            list of users who hold this role to set
      */
     public void setUsers(List<User> users) {
         this.users = users;
@@ -153,19 +154,19 @@ public class Role extends BaseBean implements Comparable<Role> {
     }
 
     /**
-     * Get client.
+     * Returns the client in whose realm this role grants permissions.
      *
-     * @return the client bean
+     * @return the client in whose realm this role grants permissions
      */
     public Client getClient() {
         return client;
     }
 
     /**
-     * Set client.
+     * Sets the client in whose realm this role grants permissions.
      *
      * @param client
-     *            bean
+     *            client in whose realm this role grants permissions to set.
      */
     public void setClient(Client client) {
         this.client = client;
@@ -195,4 +196,8 @@ public class Role extends BaseBean implements Comparable<Role> {
         return this.getTitle().hashCode();
     }
 
+    @Override
+    public String toString() {
+        return title + '[' + client.getName() + ']';
+    }
 }

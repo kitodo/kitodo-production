@@ -20,7 +20,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.kitodo.data.database.beans.Docket;
-import org.kitodo.data.database.enums.IndexAction;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class DocketDaoIT {
@@ -53,11 +52,9 @@ public class DocketDaoIT {
     private List<Docket> getAuthorities() {
         Docket firstDocket = new Docket();
         firstDocket.setTitle("first_docket");
-        firstDocket.setIndexAction(IndexAction.DONE);
 
         Docket secondDocket = new Docket();
         secondDocket.setTitle("second_docket");
-        secondDocket.setIndexAction(IndexAction.INDEX);
 
         Docket thirdDocket = new Docket();
         thirdDocket.setTitle("third_docket");

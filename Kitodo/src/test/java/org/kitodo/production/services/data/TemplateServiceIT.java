@@ -11,6 +11,10 @@
 
 package org.kitodo.production.services.data;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.List;
 
 import org.junit.AfterClass;
@@ -20,12 +24,7 @@ import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.exceptions.ProcessGenerationException;
-import org.kitodo.production.dto.TemplateDTO;
 import org.kitodo.production.services.ServiceManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 public class TemplateServiceIT {
 
@@ -52,7 +51,7 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldFindAll() throws Exception {
-        List<TemplateDTO> templates = templateService.findAll();
+        List<Template> templates = templateService.getAll();
         assertEquals("Found incorrect amount of templates!", 4, templates.size());
     }
 
@@ -92,12 +91,12 @@ public class TemplateServiceIT {
 
     @Test
     public void shouldHasCompleteTasks() throws Exception {
-        TemplateDTO templateDTO = templateService.findById(1);
-        boolean condition = templateService.hasCompleteTasks(templateDTO.getTasks());
-        assertTrue("Process DTO doesn't have complete tasks!", condition);
+        Template template = templateService.getById(1);
+        boolean condition = templateService.hasCompleteTasks(template.getTasks());
+        assertTrue("Process doesn't have complete tasks!", condition);
 
-        templateDTO = templateService.findById(3);
-        condition = templateService.hasCompleteTasks(templateDTO.getTasks());
-        assertFalse("Process DTO has complete tasks!", condition);
+        template = templateService.getById(3);
+        condition = templateService.hasCompleteTasks(template.getTasks());
+        assertFalse("Process has complete tasks!", condition);
     }
 }

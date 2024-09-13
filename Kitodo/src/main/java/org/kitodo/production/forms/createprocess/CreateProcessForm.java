@@ -49,14 +49,12 @@ import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.beans.Template;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.exceptions.RecordIdentifierMissingDetail;
 import org.kitodo.exceptions.RulesetNotFoundException;
-import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.forms.BaseForm;
 import org.kitodo.production.helper.Helper;
@@ -331,7 +329,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                         + Helper.getTranslation( "youWillBeRedirected") + "','severity':'info'});");
             }
             return processListPath;
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.PROCESS.getTranslationSingular() },
                     logger, e);
         } catch (RulesetNotFoundException e) {
@@ -435,7 +433,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     defaultConfigurationType = null;
                 }
                 if (Objects.nonNull(parentId) && parentId != 0) {
-                    ProcessDTO parentProcess = ServiceManager.getProcessService().findById(parentId);
+                    Process parentProcess = ServiceManager.getProcessService().getById(parentId);
                     RulesetManagementInterface rulesetManagement = ServiceManager.getRulesetService()
                             .openRuleset(ServiceManager.getRulesetService().getById(parentProcess.getRuleset().getId()));
                     Map<String, String> allowedSubstructuralElements = rulesetManagement
@@ -459,7 +457,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 processDataTab.prepare();
                 showDefaultImportConfigurationDialog();
             }
-        } catch (ProcessGenerationException | DataException | DAOException | IOException e) {
+        } catch (ProcessGenerationException | DAOException | IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
     }
@@ -507,7 +505,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Create process hierarchy.
      */
     private void createProcessHierarchy()
-            throws DataException, ProcessGenerationException, IOException {
+            throws DAOException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
         if (this.processes.size() > 1 && Objects.nonNull(this.titleRecordLinkTab.getTitleRecordProcess())
@@ -519,7 +517,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved, so they have IDs before creating their process directories
-        ServiceManager.getProcessService().save(getMainProcess(), true);
+        ServiceManager.getProcessService().save(getMainProcess());
         if (!createProcessesLocation(this.processes)) {
             throw new IOException("Unable to create directories for process hierarchy!");
         }
@@ -531,7 +529,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         // TODO: do the same 'ensureNonEmptyTitles' for child processes?
         if (ImportService.ensureNonEmptyTitles(this.processes)) {
             // saving the main process automatically saves its parent and ancestor processes as well!
-            ServiceManager.getProcessService().save(getMainProcess(), true);
+            ServiceManager.getProcessService().save(getMainProcess());
         }
 
         // add links between child processes and main process
@@ -554,16 +552,16 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 MetadataEditor.addLink(this.processes.get(i + 1).getProcess(), "0", tempProcess.getProcess().getId());
             }
         }
-        ServiceManager.getProcessService().save(getMainProcess(), true);
+        ServiceManager.getProcessService().save(getMainProcess());
     }
 
     /**
      * Save links between child processes and main process.
      *
-     * @throws DataException thrown if child process could not be saved
+     * @throws DAOException thrown if child process could not be saved
      * @throws IOException thrown if link between child and parent process could not be added
      */
-    private void saveChildProcessLinks() throws IOException, DataException {
+    private void saveChildProcessLinks() throws IOException, DAOException {
         this.progress = 0;
         if (Objects.nonNull(PrimeFaces.current()) && Objects.nonNull(FacesContext.getCurrentInstance())) {
             PrimeFaces.current().executeScript("PF('progressDialog')");
@@ -589,7 +587,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         try {
             ImportService.processProcessChildren(getMainProcess(), childProcesses, rulesetManagement,
                     acquisitionStage, priorityList);
-        } catch (DataException | InvalidMetadataValueException | NoSuchMetadataFieldException
+        } catch (DAOException | InvalidMetadataValueException | NoSuchMetadataFieldException
                 | ProcessGenerationException | IOException e) {
             Helper.setErrorMessage("Unable to attach child documents to process: " + e.getMessage());
         }
@@ -685,7 +683,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 try {
                     ServiceManager.getProcessService().remove(tempProcess.getProcess());
-                } catch (DataException ex) {
+                } catch (DAOException ex) {
                     Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
                 return false;
@@ -714,6 +712,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
+    @Override
     public boolean canBeAdded(TreeNode treeNode) throws InvalidMetadataValueException {
         if (Objects.isNull(treeNode.getParent().getParent())) {
             if (Objects.nonNull(currentProcess.getProcessMetadata().getSelectedMetadataTreeNode())
@@ -747,6 +746,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @param metadataNode TreeNode for which the check is performed
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
+    @Override
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         if (metadataNode.getData() instanceof ProcessFieldedMetadata) {
             return !(DataEditorService.getAddableMetadataForGroup(getMainProcess().getRuleset(), metadataNode).isEmpty());
@@ -758,6 +758,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * Prepare addable metadata for metadata group.
      * @param treeNode metadataGroup treeNode
      */
+    @Override
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(getMainProcess().getRuleset(), treeNode);
     }

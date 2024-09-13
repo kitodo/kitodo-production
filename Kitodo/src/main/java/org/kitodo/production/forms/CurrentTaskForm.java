@@ -37,10 +37,8 @@ import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.enums.TaskEditType;
 import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.export.ExportDms;
 import org.kitodo.export.TiffHeader;
-import org.kitodo.production.dto.TaskDTO;
 import org.kitodo.production.enums.GenerationMode;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.filters.FilterMenu;
@@ -50,7 +48,7 @@ import org.kitodo.production.helper.WebDav;
 import org.kitodo.production.helper.batch.BatchTaskHelper;
 import org.kitodo.production.helper.tasks.TaskManager;
 import org.kitodo.production.metadata.MetadataLock;
-import org.kitodo.production.model.LazyTaskDTOModel;
+import org.kitodo.production.model.LazyTaskModel;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.ProcessService;
@@ -66,7 +64,7 @@ public class CurrentTaskForm extends BaseForm {
     private static final Logger logger = LogManager.getLogger(CurrentTaskForm.class);
     private Process myProcess = new Process();
     private Task currentTask = new Task();
-    private List<TaskDTO> selectedTasks = new ArrayList<>();
+    private List<Task> selectedTasks = new ArrayList<>();
     private final WebDav myDav = new WebDav();
     private String scriptPath;
     private transient BatchTaskHelper batchHelper;
@@ -96,7 +94,7 @@ public class CurrentTaskForm extends BaseForm {
      */
     public CurrentTaskForm() {
         super();
-        super.setLazyDTOModel(new LazyTaskDTOModel(ServiceManager.getTaskService()));
+        super.setLazyBeanModel(new LazyTaskModel(ServiceManager.getTaskService()));
     }
 
     /**
@@ -148,7 +146,7 @@ public class CurrentTaskForm extends BaseForm {
                     this.workflowControllerService.assignTaskToUser(this.currentTask);
                     ServiceManager.getTaskService().save(this.currentTask);
                 }
-            } catch (DataException | IOException | DAOException e) {
+            } catch (DAOException | IOException e) {
                 Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger,
                     e);
             }
@@ -232,7 +230,7 @@ public class CurrentTaskForm extends BaseForm {
 
         try {
             ServiceManager.getTaskService().save(task);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
         }
     }
@@ -275,7 +273,7 @@ public class CurrentTaskForm extends BaseForm {
     public String releaseTask() {
         try {
             this.workflowControllerService.unassignTaskFromUser(this.currentTask);
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -290,7 +288,7 @@ public class CurrentTaskForm extends BaseForm {
     public String closeTaskByUser() {
         try {
             this.workflowControllerService.closeTaskByUser(this.currentTask);
-        } catch (DataException | IOException | DAOException e) {
+        } catch (DAOException | IOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.TASK.getTranslationSingular() }, logger, e);
             return this.stayOnCurrentPage;
         }
@@ -369,7 +367,7 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Execute script.
      */
-    public void executeScript() throws DAOException, DataException {
+    public void executeScript() throws DAOException {
         Task task = ServiceManager.getTaskService().getById(this.currentTask.getId());
         if (ServiceManager.getTaskService().executeScript(task, this.scriptPath, false)) {
             Helper.setMessageWithoutDescription(
@@ -417,7 +415,7 @@ public class CurrentTaskForm extends BaseForm {
      *
      * @return List of selected Tasks
      */
-    public List<TaskDTO> getSelectedTasks() {
+    public List<Task> getSelectedTasks() {
         return this.selectedTasks;
     }
 
@@ -427,7 +425,7 @@ public class CurrentTaskForm extends BaseForm {
      * @param selectedTasks
      *            provided by data table
      */
-    public void setSelectedTasks(List<TaskDTO> selectedTasks) {
+    public void setSelectedTasks(List<Task> selectedTasks) {
         this.selectedTasks = selectedTasks;
     }
 
@@ -446,13 +444,13 @@ public class CurrentTaskForm extends BaseForm {
         ExportDms export = new ExportDms();
         try {
             export.startExport(this.currentTask.getProcess());
-        } catch (DataException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage("errorExport", new Object[] {this.currentTask.getProcess().getTitle() }, logger, e);
         }
     }
 
     public void setTaskStatusRestriction(List<TaskStatus> taskStatus) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setTaskStatusRestriction(taskStatus);
+        ((LazyTaskModel)this.lazyBeanModel).setTaskStatusRestriction(taskStatus);
     }
 
     /**
@@ -462,7 +460,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setOnlyOwnTasks(boolean onlyOwnTasks) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setOnlyOwnTasks(onlyOwnTasks);
+        ((LazyTaskModel)this.lazyBeanModel).setOnlyOwnTasks(onlyOwnTasks);
     }
 
     /**
@@ -578,7 +576,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setShowAutomaticTasks(boolean showAutomaticTasks) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setShowAutomaticTasks(showAutomaticTasks);
+        ((LazyTaskModel)this.lazyBeanModel).setShowAutomaticTasks(showAutomaticTasks);
     }
 
     /**
@@ -587,7 +585,7 @@ public class CurrentTaskForm extends BaseForm {
      * @return boolean
      */
     public boolean isHideCorrectionTasks() {
-        return ((LazyTaskDTOModel)this.lazyDTOModel).isHideCorrectionTasks();
+        return ((LazyTaskModel)this.lazyBeanModel).isHideCorrectionTasks();
     }
 
     /**
@@ -597,7 +595,7 @@ public class CurrentTaskForm extends BaseForm {
      *            as boolean
      */
     public void setHideCorrectionTasks(boolean hideCorrectionTasks) {
-        ((LazyTaskDTOModel)this.lazyDTOModel).setHideCorrectionTasks(hideCorrectionTasks);
+        ((LazyTaskModel)this.lazyBeanModel).setHideCorrectionTasks(hideCorrectionTasks);
     }
 
     /**
@@ -647,13 +645,13 @@ public class CurrentTaskForm extends BaseForm {
      */
     public void saveCurrentProperty() {
         try {
-            ServiceManager.getPropertyService().saveToDatabase(this.property);
+            ServiceManager.getPropertyService().save(this.property);
             if (!this.myProcess.getProperties().contains(this.property)) {
                 this.myProcess.getProperties().add(this.property);
             }
             ServiceManager.getProcessService().save(this.myProcess);
             Helper.setMessage("propertiesSaved");
-        } catch (DataException | DAOException e) {
+        } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
         }
         loadProcessProperties();
@@ -667,7 +665,7 @@ public class CurrentTaskForm extends BaseForm {
         try {
             newProperty.getProcesses().add(this.myProcess);
             this.myProcess.getProperties().add(newProperty);
-            ServiceManager.getPropertyService().saveToDatabase(newProperty);
+            ServiceManager.getPropertyService().save(newProperty);
             Helper.setMessage("propertySaved");
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_SAVING, new Object[] {ObjectType.PROPERTY.getTranslationPlural() }, logger, e);
@@ -743,12 +741,12 @@ public class CurrentTaskForm extends BaseForm {
 
     /**
      * Retrieve and return process property value of property with given name 'propertyName' from process of given
-     * TaskDTO 'task'.
-     * @param task the TaskDTO object from which the property value is retrieved
+     * Task 'task'.
+     * @param task the Task object from which the property value is retrieved
      * @param propertyName name of the property for the property value is retrieved
      * @return property value if process has property with name 'propertyName', empty String otherwise
      */
-    public static String getTaskProcessPropertyValue(TaskDTO task, String propertyName) {
+    public static String getTaskProcessPropertyValue(Task task, String propertyName) {
         return ProcessService.getPropertyValue(task.getProcess(), propertyName);
     }
 
@@ -765,10 +763,10 @@ public class CurrentTaskForm extends BaseForm {
     /**
      * Calculate and return age of given tasks process as a String.
      *
-     * @param task TaskDTO object whose process is used
+     * @param task Task object whose process is used
      * @return process age of given tasks process
      */
-    public String getProcessDuration(TaskDTO task) {
+    public String getProcessDuration(Task task) {
         return ProcessService.getProcessDuration(task.getProcess());
     }
 
@@ -793,7 +791,7 @@ public class CurrentTaskForm extends BaseForm {
     @Override
     public void setFilter(String filter) {
         super.filter = filter;
-        this.lazyDTOModel.setFilterString(filter);
+        this.lazyBeanModel.setFilterString(filter);
     }
 
     /**

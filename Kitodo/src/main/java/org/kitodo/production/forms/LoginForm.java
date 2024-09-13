@@ -22,15 +22,12 @@ import javax.inject.Named;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.controller.SessionClientController;
 import org.kitodo.production.security.CustomLoginSuccessHandler;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.security.SecurityAccessService;
-import org.primefaces.PrimeFaces;
 
 @Named("LoginForm")
 @SessionScoped
@@ -98,7 +95,7 @@ public class LoginForm implements Serializable {
     /**
      * Check if index is up-to-date and if user has multiple clients and display corresponding notification dialogs.
      */
-    public void performPostLoginChecks() throws DataException, DAOException, IOException {
+    public void performPostLoginChecks() throws IOException {
 
         ExternalContext context = FacesContext.getCurrentInstance().getExternalContext();
         SessionClientController controller = new SessionClientController();

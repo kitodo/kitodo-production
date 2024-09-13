@@ -514,7 +514,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             ServiceManager.getFileService().createBackupFile(process);
             try (OutputStream out = ServiceManager.getFileService().write(mainFileUri)) {
                 ServiceManager.getMetsService().save(workpiece, out);
-                ServiceManager.getProcessService().saveToIndex(process,false);
                 unsavedUploadedMedia.clear();
                 deleteUnsavedDeletedMedia();
                 if (close) {
@@ -953,6 +952,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
+    @Override
     public boolean canBeAdded(TreeNode treeNode) {
         if (Objects.isNull(treeNode.getParent().getParent())) {
             if (Objects.nonNull(metadataPanel.getSelectedMetadataTreeNode()) || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
@@ -1050,7 +1050,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
             try {
-                ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                ServiceManager.getDataEditorSettingService().save(dataEditorSetting);
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
@@ -1096,6 +1096,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      *
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
+    @Override
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         return metadataPanel.metadataAddableToGroup(metadataNode);
     }
@@ -1103,6 +1104,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     /**
      * Prepare addable metadata for metadata group.
      */
+    @Override
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(treeNode);
     }

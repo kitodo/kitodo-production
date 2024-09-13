@@ -22,6 +22,7 @@ import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.ClientDAO;
@@ -40,20 +41,26 @@ public class Client extends BaseBean {
                     foreignKey = @ForeignKey(name = "FK_column_id"))})
     private List<ListColumn> listColumns;
 
+    @ManyToMany(mappedBy = "clients", cascade = CascadeType.PERSIST)
+    private List<User> users;
+
+    @OneToMany(mappedBy = "client", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Project> projects;
+
     /**
-     * Gets name.
+     * Returns the name of the client.
      *
-     * @return The name.
+     * @return the name of the client
      */
     public String getName() {
         return name;
     }
 
     /**
-     * Sets name.
+     * Sets the name of the client.
      *
      * @param name
-     *            The name.
+     *            the name of the client
      */
     public void setName(String name) {
         this.name = name;
@@ -98,5 +105,47 @@ public class Client extends BaseBean {
      */
     public void setListColumns(List<ListColumn> columns) {
         this.listColumns = columns;
+    }
+
+    /**
+     * Specifies the users who work for this client. This list is not guaranteed
+     * to be in reliable order.
+     *
+     * @return the users who work for this client
+     */
+    public List<User> getUsers() {
+        return users;
+    }
+
+    /**
+     * Sets the list of users working for this client. The list should not
+     * contain duplicates, and must not contain {@code null}s.
+     *
+     * @param users
+     *            The users.
+     */
+    public void setUsers(List<User> users) {
+        this.users = users;
+    }
+
+    /**
+     * Returns the client's projects. This list is not guaranteed to be in
+     * reliable order.
+     *
+     * @return the client's projects
+     */
+    public List<Project> getProjects() {
+        return projects;
+    }
+
+    /**
+     * Sets the lists of the client's projects. The list should not contain
+     * duplicates, and must not contain {@code null}s.
+     *
+     * @param projects
+     *            The projects.
+     */
+    public void setProjects(List<Project> projects) {
+        this.projects = (List<Project>) projects;
     }
 }

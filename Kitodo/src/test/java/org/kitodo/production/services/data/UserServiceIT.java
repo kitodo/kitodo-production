@@ -92,7 +92,7 @@ public class UserServiceIT {
 
     @Test
     public void shouldCountAllDatabaseRowsForUsers() throws Exception {
-        Long amount = userService.countDatabaseRows();
+        Long amount = userService.count();
         assertEquals("Users were not counted correctly!", Long.valueOf(7), amount);
     }
 
@@ -121,21 +121,21 @@ public class UserServiceIT {
     public void shouldRemoveUser() throws Exception {
         User user = new User();
         user.setLogin("Remove");
-        userService.saveToDatabase(user);
+        userService.save(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Remove' ORDER BY id DESC").get(0);
         assertEquals("Additional user was not inserted in database!", "Remove", foundUser.getLogin());
 
-        userService.removeFromDatabase(foundUser);
+        userService.remove(foundUser);
         foundUser = userService.getById(foundUser.getId());
         assertNull("Additional user was not removed from database!", foundUser.getLogin());
 
         user = new User();
         user.setLogin("remove");
-        userService.saveToDatabase(user);
+        userService.save(user);
         foundUser = userService.getByQuery("FROM User WHERE login = 'remove' ORDER BY id DESC").get(0);
         assertEquals("Additional user was not inserted in database!", "remove", foundUser.getLogin());
 
-        userService.removeFromDatabase(foundUser.getId());
+        userService.remove(foundUser.getId());
         foundUser = userService.getById(foundUser.getId());
         assertNull("Additional user was not removed from database!", foundUser.getLogin());
     }
@@ -146,23 +146,23 @@ public class UserServiceIT {
 
         Role role = new Role();
         role.setTitle("Cascade Group");
-        roleService.saveToDatabase(role);
+        roleService.save(role);
 
         User user = new User();
         user.setLogin("Cascade");
         user.getRoles().add(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group' ORDER BY id DESC").get(0));
-        userService.saveToDatabase(user);
+        userService.save(user);
         User foundUser = userService.getByQuery("FROM User WHERE login = 'Cascade'").get(0);
         assertEquals("Additional user was not inserted in database!", "Cascade", foundUser.getLogin());
 
-        userService.removeFromDatabase(foundUser);
+        userService.remove(foundUser);
         int size = userService.getByQuery("FROM User WHERE login = 'Cascade'").size();
         assertEquals("Additional user was not removed from database!", 0, size);
 
         size = roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").size();
         assertEquals("Role was removed from database!", 1, size);
 
-        roleService.removeFromDatabase(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
+        roleService.remove(roleService.getByQuery("FROM Role WHERE title = 'Cascade Group'").get(0));
     }
 
     @Test
@@ -216,7 +216,7 @@ public class UserServiceIT {
         User newUser = new User();
         newUser.setLogin("kowal");
         exception.expect(DAOException.class);
-        userService.saveToDatabase(newUser);
+        userService.save(newUser);
     }
 
     @Test
