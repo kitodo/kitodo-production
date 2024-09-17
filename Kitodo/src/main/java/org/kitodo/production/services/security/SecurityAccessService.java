@@ -1104,4 +1104,13 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToLinkToProcessesOfUnassignedProjects() {
         return hasAnyAuthorityForClient("linkToProcessesOfUnassignedProjects");
     }
+
+    /**
+     * Check if the current user has the permission to use the mass import feature.
+     *
+     * @return true if the current use has the permission to use the mass import feature
+     */
+    public boolean hasAuthorityToUseMassImport() {
+        return hasAnyAuthorityForClient("useMassImport");
+    }
 }
