@@ -735,6 +735,7 @@ section#content-section {
     white-space: nowrap;
 }
 
+.ui-panelgrid-cell > h3 span.set-apart,
 .content-header > .ui-panel-content > h3 span.set-apart {
     color: var(--medium-gray);
     flex-grow: 0;
@@ -2768,10 +2769,65 @@ Column content
     margin-left: 0.3em;
 }
 
-#logicalStructureHeader {
+.metadata-column-menu {
     border-bottom: 1px solid var(--cloudy-gray);
     display: flex;
-    padding: var(--default-half-size);
+    padding: var(--default-half-size) 0 var(--default-half-size) var(--default-half-size);
+}
+
+.ui-widget-content .metadata-column-menu .ui-button {
+    margin-right: var(--default-half-size);
+}
+
+#updateMetadataDialog_content {
+    overflow-y: hidden;
+}
+
+#updateMetadataDialog_content .selected {
+    color: black;
+    font-weight: bold;
+}
+
+#updateMetadataDialog_content .unselected {
+    color: gray;
+    font-weight: bold;
+}
+
+#updateMetadataDialog_content .metadata-value-list {
+    list-style: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable td[role='gridcell']:first-child {
+    vertical-align: top;
+}
+
+#updateMetadataForm\:metadataUpdateTable button.ui-button {
+    background-color: white;
+    color: black;
+}
+
+#updateMetadataForm\:metadataUpdateTable tr {
+    border: 1px solid lightgray;
+}
+
+#updateMetadataForm\:metadataUpdateTable tr .ui-panelgrid-cell div {
+    background-color: var(--light-gray);
+    margin-bottom: 0;
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header,
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header-box {
+    margin-bottom: 0;
+}
+
+#updateMetadataForm\:updateMetadataHelp {
+    float: right;
+    right: 12px;
+    top: -12px;
+}
+
+#updateMetadataForm td[role='gridcell'] {
+    vertical-align: top;
 }
 
 #logicalStructureHeader .logicalStructureTitle {

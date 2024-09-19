@@ -1,0 +1,72 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+
+    <p:dialog id="selectImportConfigurationDialog"
+              widgetVar="selectImportConfigurationDialog"
+              modal="true"
+              resizable="false"
+              dynamic="true"
+              appendTo="@(body)"
+              width="480px">
+        <h3>#{msgs['selectImportConfiguration']}</h3>
+        <h:form id="selectImportConfigurationForm">
+            <h:panelGroup styleClass="select-note ui-messages-info" layout="block">#{msgs['setImportConfigurationForSelectedProcessesText']}</h:panelGroup>
+            <h:panelGroup styleClass="select-selector" layout="block">
+                <p>
+                    <p:selectOneMenu id="importConfigurationMenu"
+                                     autoWidth="false"
+                                     required="#{not empty param['selectImportConfigurationForm:confirmButton']}"
+                                     value="#{SelectImportConfigurationDialogView.selectedImportConfigurationId}">
+                        <f:selectItem itemValue="#{null}"
+                                      itemLabel="#{msgs['selectImportConfiguration']}"
+                                      noSelectionOption="true"/>
+                        <f:selectItems value="#{SelectImportConfigurationDialogView.importConfigurations}"
+                                       var="importConfiguration"
+                                       itemLabel="#{importConfiguration.title}"
+                                       itemValue="#{importConfiguration.id}"/>
+                        <p:ajax update="selectImportConfigurationForm:confirmButton"/>
+                    </p:selectOneMenu>
+                </p>
+                <p:panelGrid>
+                    <p:row>
+                        <p:commandButton id="confirmButton"
+                                         action="#{ProcessForm.startSettingImportConfigurations(SelectImportConfigurationDialogView.selectedImportConfigurationId)}"
+                                         styleClass="primary right"
+                                         iconPos="right"
+                                         icon="fa fa-check"
+                                         disabled="#{SelectImportConfigurationDialogView.selectedImportConfigurationId lt 1}"
+                                         value="#{msgs.select}">
+                            <p:confirm header="#{msgs['setImportConfiguration']}"
+                                       message="#{msgs['setImportConfigurationConfirmMessage']}"
+                                       icon="ui-icon-alert"/>
+                        </p:commandButton>
+                        <p:commandButton id="cancelButton"
+                                         onclick="PF('selectImportConfigurationDialog').hide();"
+                                         type="button"
+                                         value="#{msgs.cancel}"
+                                         styleClass="secondary right"
+                                         icon="fa fa-close"
+                                         iconPos="right"/>
+                    </p:row>
+                </p:panelGrid>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

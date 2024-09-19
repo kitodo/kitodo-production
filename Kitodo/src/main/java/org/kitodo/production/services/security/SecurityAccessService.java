@@ -1113,4 +1113,12 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToUseMassImport() {
         return hasAnyAuthorityForClient("useMassImport");
     }
+
+    public boolean hasAuthorityToSetImportConfiguration() {
+        return hasAuthorityForClient("setImportConfiguration");
+    }
+
+    public boolean hasAuthorityToReimportMetadata() {
+        return hasAuthorityForClient("reimportMetadata");
+    }
 }

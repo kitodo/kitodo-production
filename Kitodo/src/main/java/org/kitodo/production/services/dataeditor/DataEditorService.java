@@ -13,12 +13,15 @@ package org.kitodo.production.services.dataeditor;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -26,32 +29,54 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.faces.model.SelectItem;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.DataEditorInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
+import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.View;
+import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
+import org.kitodo.data.database.beans.ImportConfiguration;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.MetadataException;
+import org.kitodo.exceptions.NoRecordFoundException;
+import org.kitodo.exceptions.NoSuchMetadataFieldException;
+import org.kitodo.exceptions.ProcessGenerationException;
+import org.kitodo.exceptions.UnsupportedFormatException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.forms.dataeditor.DataEditorForm;
 import org.kitodo.production.forms.dataeditor.StructurePanel;
 import org.kitodo.production.forms.dataeditor.StructureTreeNode;
 import org.kitodo.production.helper.Helper;
+import org.kitodo.production.helper.MetadataComparison;
+import org.kitodo.production.helper.ProcessHelper;
+import org.kitodo.production.helper.TempProcess;
+import org.kitodo.production.services.ServiceManager;
 import org.kitodo.serviceloader.KitodoServiceLoader;
 import org.primefaces.model.TreeNode;
+import org.xml.sax.SAXException;
 
 public class DataEditorService {
 
@@ -372,4 +397,167 @@ public class DataEditorService {
         return null;
     }
 
+    /**
+     * Check and return whether catalog metadata of given process can be updated or not. Conditions that must be met are
+     * that the process has an import configuration of type 'OPAC_SEARCH' and functional metadata of type
+     * 'recordIdentifier'.
+     *
+     * @param process Process for which check is performed
+     * @param workpiece Workpiece of process
+     * @return whether catalog metadata update is supported or not
+     * @throws IOException when retrieving functional metadata of type 'recordIdentifier' from process' ruleset fails
+     */
+    public static boolean canUpdateCatalogMetadata(Process process, Workpiece workpiece) throws IOException {
+        return (Objects.nonNull(getRecordIdentifierValueOfProcess(process, workpiece))
+                && Objects.nonNull(process.getImportConfiguration())
+                && ImportConfigurationType.OPAC_SEARCH.name().equals(process.getImportConfiguration().getConfigurationType()));
+    }
+
+    /**
+     * Re-imports catalog metadata of given process and return list of resulting metadata comparison that are displayed
+     * to the user.
+     * @param process Process for which metadata update is performed
+     * @param workpiece Workpiece of given process
+     * @return list of metadata comparisons
+     */
+    public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece)
+            throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
+            ProcessGenerationException, ParserConfigurationException, URISyntaxException, InvalidMetadataValueException,
+            TransformerException, NoSuchMetadataFieldException, SAXException {
+        String recordID = getRecordIdentifierValueOfProcess(process, workpiece);
+        ImportConfiguration importConfig = process.getImportConfiguration();
+        if (Objects.isNull(recordID) || Objects.isNull(importConfig)) {
+            String errorMessage = String.format("Unable to update metadata of process %d; "
+                    + "(either import configuration or record identifier are missing)", process.getId());
+            throw new MetadataException(errorMessage, null);
+        }
+        TempProcess updatedProcess = ServiceManager.getImportService().importTempProcess(importConfig, recordID,
+                process.getTemplate().getId(), process.getProject().getId());
+        if (Objects.isNull(updatedProcess)) {
+            throw new ProcessGenerationException("Unable to re-import process for metadata update");
+        } else {
+            // FIXME: this is a workaround to make existing metadata comparable with update metadata;
+            //  should not be necessary or handled in a more appropriate way!
+            // TODO: apply further "ruleset" settings like default values, min and max limits for metadata etc.
+            for (Metadata metadata : updatedProcess.getWorkpiece().getLogicalStructure().getMetadata()) {
+                metadata.setDomain(MdSec.DMD_SEC);
+            }
+            ProcessHelper.generateAtstslFields(updatedProcess, Collections.emptyList(), "create", false);
+
+            return initializeMetadataComparisons(process, workpiece.getLogicalStructure().getMetadata(),
+                updatedProcess.getWorkpiece().getLogicalStructure().getMetadata());
+        }
+    }
+
+    /**
+     * Load and return functional metadata of type 'recordIdentifier' from current process.
+     *
+     * @param process Process for which recordIdentifier is retrieved
+     * @param workpiece Workpiece of process
+     * @return value of 'recordIdentifier'
+     * @throws IOException when opening process' ruleset fails
+     */
+    public static String getRecordIdentifierValueOfProcess(Process process, Workpiece workpiece) throws IOException {
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
+        HashSet<Metadata> processMetadata = workpiece.getLogicalStructure().getMetadata();
+        for (String recordIdentifierMetadata : ruleset.getFunctionalKeys(FunctionalMetadata.RECORD_IDENTIFIER)) {
+            Optional<Metadata> recordIdMetadata = processMetadata.stream().filter(pm -> recordIdentifierMetadata
+                    .equals(pm.getKey())).findFirst();
+            if (recordIdMetadata.isPresent() && recordIdMetadata.get() instanceof MetadataEntry) {
+                return ((MetadataEntry)recordIdMetadata.get()).getValue();
+            }
+        }
+        return null;
+    }
+
+    private static List<MetadataComparison> initializeMetadataComparisons(Process process,
+                                                                          HashSet<Metadata> oldMetadata,
+                                                                          HashSet<Metadata> newMetadata)
+            throws IOException {
+        RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
+        List<MetadataComparison> metadataComparisons = new LinkedList<>();
+        HashSet<String> metadataKeyCollection = oldMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new));
+        metadataKeyCollection.addAll(newMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new)));
+        for (String metadataKey : metadataKeyCollection) {
+            // determine default mode for metadata from ruleset! (e.g. "keep", "replace", etc.)
+            Reimport selectionMode = ruleset.getMetadataReimport(metadataKey, "edit");
+            // only add metadata comparison when there is a difference between old and new values!
+            HashSet<Metadata> oldValues = filterEntries(metadataKey, oldMetadata);
+            HashSet<Metadata> newValues = filterEntries(metadataKey, newMetadata);
+            if (!Objects.equals(oldValues, newValues)) {
+                // deleting values (e.g. replacing them with empty, new values) is not supported
+                if (newValues.isEmpty()) {
+                    selectionMode = Reimport.KEEP;
+                }
+                metadataComparisons.add(new MetadataComparison(metadataKey, oldValues, newValues, selectionMode));
+            }
+        }
+        return metadataComparisons;
+    }
+
+    private static HashSet<Metadata> filterEntries(String key, HashSet<Metadata> entries) {
+        return entries.stream()
+                .filter(md -> key.equals(md.getKey()))
+                .filter(md -> StringUtils.isNotBlank(metadataToString(md)))
+                .collect(Collectors.toCollection(HashSet::new));
+    }
+
+    /**
+     * Convert given metadata to string and return it. In contrast to 'toString' methods of 'MetadataEntry' and
+     * 'MetadataGroup', this method only returns the value of the metadata. If the given metadata is of type
+     * 'MetadataGroup', the values of the groups entries are concatenated and returned instead. Note: metadata elements
+     * of the group that are 'MetadataGroup's themselves are intentionally not traversed again, so this function does
+     * not work recursively.
+     * @param metadata Metadata to be converted to string
+     * @return String representation of given metadata
+     */
+    public static String metadataToString(Metadata metadata) {
+        if (metadata instanceof MetadataEntry) {
+            return ((MetadataEntry) metadata).getValue();
+        } else if (metadata instanceof MetadataGroup) {
+            StringBuilder groupString = new StringBuilder();
+            for (Metadata groupMetadata : ((MetadataGroup) metadata).getMetadata()) {
+                if (groupMetadata instanceof MetadataEntry) {
+                    groupString.append(((MetadataEntry) groupMetadata).getValue());
+                } else {
+                    groupString.append("...");
+                }
+            }
+            return groupString.toString();
+        } else {
+            return "";
+        }
+    }
+
+    /**
+     * Update metadata of logical root element in given Workpiece by applying given metadata comparisons and selections
+     * old and new values therein.
+     * @param workpiece Workpiece to which metadata update is applied
+     * @param comparisons list of metadata comparisons used for the update
+     */
+    public static void updateMetadataWithNewValues(Workpiece workpiece, List<MetadataComparison> comparisons) {
+        List<Metadata> rootMetadata = new LinkedList<>(workpiece.getLogicalStructure().getMetadata());
+        for (MetadataComparison comparison : comparisons) {
+            for (Metadata metadata : rootMetadata) {
+                if (metadata.getKey().equals(comparison.getMetadataKey())) {
+                    switch (comparison.getSelection()) {
+                        case ADD:
+                            // extend existing values with new values
+                            workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
+                            break;
+                        case REPLACE:
+                            // replace existing values with new values
+                            workpiece.getLogicalStructure().getMetadata().removeAll(comparison.getOldValues());
+                            workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
+                            break;
+                        default:
+                            // keep existing values and discard new values
+                            logger.info("Keep existing values for metadata {}", metadata.getKey());
+                    }
+                    // skip remaining metadata entries of current key because they have all been processed at this point
+                    break;
+                }
+            }
+        }
+    }
 }

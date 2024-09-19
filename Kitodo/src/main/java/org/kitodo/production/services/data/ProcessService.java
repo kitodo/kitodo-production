@@ -2865,4 +2865,18 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     public SortBuilder sortById(SortOrder order) {
         return SortBuilders.fieldSort(ProcessTypeField.ID.getKey()).order(order);
     }
+
+    /**
+     * Set import configuration of given processes.
+     * @param processes list of processes for which import configuration is set
+     * @param configurationId ID of import configuration to assign to processes
+     * @throws DAOException when loading import configuration by ID or saving updated processes fails
+     */
+    public void setImportConfigurationForMultipleProcesses(List<Process> processes, int configurationId)
+            throws DAOException {
+        for (Process process : processes) {
+            process.setImportConfiguration(ServiceManager.getImportConfigurationService().getById(configurationId));
+            saveToDatabase(process);
+        }
+    }
 }

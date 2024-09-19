@@ -22,6 +22,39 @@
               value="#{SecurityAccessController.hasAuthorityToViewProcessMetaData() and not SecurityAccessController.hasAuthorityToEditProcessMetaData()}"
     />
 
+    <p:outputPanel id="logicalMetadataHeader"
+                   styleClass="metadata-column-menu">
+        <p:panelGrid styleClass="ui-noborder full-width"
+                     rendered="#{not readOnly}">
+            <p:row>
+                <h:panelGroup id="addMetadataButtonWrapper"
+                              rendered="#{not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
+                              title="#{DataEditorForm.metadataPanel.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
+                    <p:commandButton id="addMetadataButton"
+                                     icon="fa fa-plus"
+                                     styleClass="secondary"
+                                     update="addMetadataForm"
+                                     disabled="#{not DataEditorForm.metadataPanel.metadataAddableToStructureElement()}"
+                                     action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForStructure(DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
+                                     oncomplete="PF('addMetadataDialog').show();">
+                        <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
+                    </p:commandButton>
+                </h:panelGroup>
+                <h:panelGroup id="updateMetadataButtonWrapper"
+                              rendered="#{SecurityAccessController.hasAuthorityToReimportMetadata()}"
+                              title="#{msgs.updateMetadata}">
+                    <p:commandButton id="updateMetadataButton"
+                                     icon="fa fa-refresh"
+                                     styleClass="secondary"
+                                     action="#{DataEditorForm.updateMetadataDialog.updateCatalogMetadata()}"
+                                     disabled="#{not DataEditorForm.canUpdateMetadata()}"
+                                     onstart="$('#loadingScreen').show()"
+                                     oncomplete="$('#loadingScreen').hide()"/>
+                </h:panelGroup>
+            </p:row>
+        </p:panelGrid>
+    </p:outputPanel>
+
     <p:panel id="logicalMetadataWrapperPanel" styleClass="wrapperPanel">
         <h:form id="metadata">
             <ui:include src="/WEB-INF/templates/includes/metadataTreeTable.xhtml">
@@ -29,26 +62,6 @@
                 <ui:param name="readOnly" value="#{readOnly}" />
                 <ui:param name="Form" value="#{DataEditorForm}"/>
             </ui:include>
-
-            <p:panelGrid style="margin-top:10px;"
-                         styleClass="ui-noborder full-width"
-                         rendered="#{not readOnly}">
-                <p:row>
-                    <h:panelGroup id="addMetadataButtonWrapper"
-                                  rendered="#{not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
-                                  title="#{DataEditorForm.metadataPanel.metadataAddableToStructureElement() ? msgs['dataEditor.addMetadata.newMetadata'] : msgs['dataEditor.addMetadata.noMetadataAddable']}">
-                        <p:commandButton id="addMetadataButton"
-                                         icon="fa fa-plus"
-                                         styleClass="secondary"
-                                         update="addMetadataForm"
-                                         disabled="#{not DataEditorForm.metadataPanel.metadataAddableToStructureElement()}"
-                                         action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForStructure(DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
-                                         oncomplete="PF('addMetadataDialog').show();">
-                            <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
-                        </p:commandButton>
-                    </h:panelGroup>
-                </p:row>
-            </p:panelGrid>
         </h:form>
     </p:panel>
 </ui:composition>

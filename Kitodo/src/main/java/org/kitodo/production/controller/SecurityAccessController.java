@@ -1126,4 +1126,12 @@ public class SecurityAccessController {
     public boolean hasAuthorityToMassImportProcesses() {
         return securityAccessService.hasAuthorityToUseMassImport() && securityAccessService.hasAuthorityToAddProcess();
     }
+
+    public boolean hasAuthorityToSetImportConfiguration() {
+        return securityAccessService.hasAuthorityToSetImportConfiguration();
+    }
+
+    public boolean hasAuthorityToReimportMetadata() {
+        return securityAccessService.hasAuthorityToReimportMetadata();
+    }
 }
