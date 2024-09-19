@@ -105,6 +105,19 @@ public class Searcher extends Index {
     }
 
     /**
+     * Retrieves a mapping of document IDs to their corresponding base type for the given list of IDs.
+     * Delegates to the `SearchRestClient`.
+     *
+     * @param ids
+     *            the list of document IDs to search for.
+     * @return a map where each key is a document ID and the value is the corresponding base type of the document.
+     */
+    public Map<Integer, String> fetchIdToBaseTypeMap(List<Integer> ids) throws CustomResponseException, DataException {
+        SearchRestClient restClient = initiateRestClient();
+        return restClient.fetchIdToBaseTypeMap(this.type,ids);
+    }
+
+    /**
      * Find document by id.
      *
      * @param id

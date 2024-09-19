@@ -20,6 +20,7 @@ import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -453,6 +454,21 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
     public S findById(Integer id, boolean related) throws DataException {
         try {
             return convertJSONObjectToDTO(searcher.findDocument(id), related);
+        } catch (CustomResponseException e) {
+            throw new DataException(e);
+        }
+    }
+
+    /**
+     * Retrieves a mapping of document IDs to their corresponding base types for the given list of IDs.
+     *
+     * @param ids
+     *            list of document IDs to retrieve and process.
+     * @return a map where the keys are document IDs and the values are their associated base types.
+     */
+    public Map<Integer, String> fetchIdToBaseTypeMap(List<Integer> ids) throws DataException {
+        try {
+            return searcher.fetchIdToBaseTypeMap(ids);
         } catch (CustomResponseException e) {
             throw new DataException(e);
         }
