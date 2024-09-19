@@ -18,7 +18,8 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
-    <p:outputPanel id="logicalStructureHeader">
+    <p:outputPanel id="logicalStructureHeader"
+                   styleClass="metadata-column-menu">
         <p:selectOneMenu styleClass="logicalStructureTitle" value="#{DataEditorForm.structurePanel.titleMetadata}"
                          autoWidth="#{false}">
             <f:selectItem itemLabel="#{msgs.typ}" itemValue="type"/>
