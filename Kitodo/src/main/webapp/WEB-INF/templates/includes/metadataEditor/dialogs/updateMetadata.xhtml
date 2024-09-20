@@ -32,10 +32,12 @@
                     <h3>#{msgs['updateMetadata']}<h:panelGroup> <h:outputText styleClass="set-apart" value="(#{DataEditorForm.getProcessRecordIdentifier()})"/></h:panelGroup>
                         <p:commandButton id="updateMetadataHelp"
                                          type="button"
-                                         process="@this"
                                          styleClass="help-button"
                                          icon="fa fa-lg fa-question-circle-o"/>
                     </h3>
+                    <p:tooltip for="updateMetadataHelp" position="left">
+                        #{msgs['dataEditor.updateMetadata.help']}
+                    </p:tooltip>
                 </p:row>
                 <p:row>
                     <h:panelGroup layout="block"
@@ -92,7 +94,6 @@
                                 <f:facet name="header">
                                     <p:commandButton id="selectColumnHeaderButton"
                                                      type="button"
-                                                     style="background-color: var(--cloudy-gray);"
                                                      icon="fa fa-exchange fa-lg" />
                                 </f:facet>
                                 <!-- FIXME: these command buttons should only update the current row, not the complete table,
