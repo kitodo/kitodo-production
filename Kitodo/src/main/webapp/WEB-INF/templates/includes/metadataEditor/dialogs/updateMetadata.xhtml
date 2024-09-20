@@ -68,6 +68,7 @@
                                             rendered="#{comparison.isMetadataGroup()}"
                                             value="#{comparison.oldValuesSorted}"
                                             var="oldGroup"
+                                            styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
                                     <p:dataTable id="oldGroupEntries"
                                                  value="#{comparison.getMetadataSorted(oldGroup)}"
@@ -136,6 +137,7 @@
                                             rendered="#{comparison.isMetadataGroup()}"
                                             value="#{comparison.newValuesSorted}"
                                             var="newGroup"
+                                            styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
                                     <p:dataTable id="newGroupEntries"
                                                  value="#{comparison.getMetadataSorted(newGroup)}"

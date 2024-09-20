@@ -2779,17 +2779,21 @@ Column content
     margin-right: var(--default-half-size);
 }
 
+#updateMetadataDialog .ui-panelgrid-cell div {
+    margin: 0;
+}
+
 #updateMetadataDialog_content {
     overflow-y: hidden;
 }
 
 #updateMetadataDialog_content .selected {
-    color: black;
+    color: var(--carbon-blue);
     font-weight: bold;
 }
 
 #updateMetadataDialog_content .unselected {
-    color: gray;
+    color: var(--medium-gray);
     font-weight: bold;
 }
 
@@ -2797,22 +2801,48 @@ Column content
     list-style: none;
 }
 
-#updateMetadataForm\:metadataUpdateTable td[role='gridcell']:first-child {
-    vertical-align: top;
+#updateMetadataDialog_content .ui-widget-content {
+    background: transparent;
+}
+
+#updateMetadataDialog_content .ui-datalist-empty-message {
+    display: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable > .ui-datatable-scrollable-header {
+    background: var(--cloudy-gray);
+}
+
+#updateMetadataForm\:metadataUpdateTable > .ui-datatable-scrollable-body {
+    background: var(--pure-white);
+}
+
+#updateMetadataForm\:metadataUpdateTable tr:hover {
+    background: var(--trans-blue);
 }
 
 #updateMetadataForm\:metadataUpdateTable button.ui-button {
-    background-color: white;
-    color: black;
+    background: transparent;
+    color: var(--carbon-blue);
 }
 
-#updateMetadataForm\:metadataUpdateTable tr {
-    border: 1px solid lightgray;
+#updateMetadataForm\:metadataUpdateTable button.ui-button:hover {
+    background: var(--focused-blue);
+    color: var(--pure-white);
 }
 
-#updateMetadataForm\:metadataUpdateTable tr .ui-panelgrid-cell div {
-    background-color: var(--light-gray);
-    margin-bottom: 0;
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton,
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton:hover {
+    background: var(--cloudy-gray);
+    color: var(--carbon-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-body tr {
+    border: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-body > table > tbody > tr:not(:first-child) {
+    border-top: solid 1px var(--cloudy-gray);
 }
 
 #updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header,
@@ -2828,6 +2858,11 @@ Column content
 
 #updateMetadataForm td[role='gridcell'] {
     vertical-align: top;
+    padding: var(--group-margin) var(--default-half-size) var(--group-margin) var(--default-full-size);
+}
+
+#updateMetadataForm .metadata-groups li:not(:first-child) {
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 #logicalStructureHeader .logicalStructureTitle {
