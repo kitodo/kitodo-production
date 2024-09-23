@@ -21,8 +21,8 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
@@ -128,7 +128,7 @@ public abstract class MetadataImportDialog {
      *            The linked list of TempProcess instances
      */
     void extendsMetadataTableOfMetadataTab(LinkedList<TempProcess> processes)
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
+            throws InvalidMetadataValueException, NoSuchMetadataFieldException, IOException {
 
         int countOfAddedMetadata = 0;
         if (!processes.isEmpty()) {
@@ -136,8 +136,10 @@ public abstract class MetadataImportDialog {
             if (process.getMetadataNodes().getLength() > 0) {
                 if (createProcessForm.getProcessDataTab().getDocType()
                         .equals(process.getWorkpiece().getLogicalStructure().getType())) {
+                    RulesetManagementInterface rulesetManagementInterface = ServiceManager.getRulesetService()
+                            .openRuleset(process.getProcess().getRuleset());
                     Collection<Metadata> metadata = ProcessHelper
-                            .convertMetadata(process.getMetadataNodes(), MdSec.DMD_SEC);
+                            .convertMetadata(process.getMetadataNodes(), rulesetManagementInterface);
                     countOfAddedMetadata = createProcessForm.getProcessMetadata().getProcessDetails()
                             .addMetadataIfNotExists(metadata);
                 } else {

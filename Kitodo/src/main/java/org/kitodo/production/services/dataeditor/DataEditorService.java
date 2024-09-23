@@ -11,6 +11,8 @@
 
 package org.kitodo.production.services.dataeditor;
 
+import static org.kitodo.constants.StringConstants.EDIT;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -36,7 +38,6 @@ import javax.xml.xpath.XPathExpressionException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
@@ -398,17 +399,23 @@ public class DataEditorService {
     }
 
     /**
-     * Check and return whether catalog metadata of given process can be updated or not. Conditions that must be met are
-     * that the process has an import configuration of type 'OPAC_SEARCH' and functional metadata of type
-     * 'recordIdentifier'.
+     * Check and return whether catalog metadata of given process can be updated or not.
+     * Conditions that must be met:
+     * - process has an import configuration of type 'OPAC_SEARCH'
+     * - process functional metadata of type 'recordIdentifier'.
+     * - selected node is root of logical structure
      *
      * @param process Process for which check is performed
      * @param workpiece Workpiece of process
+     * @param selectedNode currently selected logical structure node
      * @return whether catalog metadata update is supported or not
      * @throws IOException when retrieving functional metadata of type 'recordIdentifier' from process' ruleset fails
      */
-    public static boolean canUpdateCatalogMetadata(Process process, Workpiece workpiece) throws IOException {
+    public static boolean canUpdateCatalogMetadata(Process process, Workpiece workpiece, TreeNode selectedNode) throws IOException {
         return (Objects.nonNull(getRecordIdentifierValueOfProcess(process, workpiece))
+                && Objects.nonNull(selectedNode)
+                && selectedNode.getData() instanceof StructureTreeNode
+                && Objects.equals(((StructureTreeNode) selectedNode.getData()).getDataObject(), workpiece.getLogicalStructure())
                 && Objects.nonNull(process.getImportConfiguration())
                 && ImportConfigurationType.OPAC_SEARCH.name().equals(process.getImportConfiguration().getConfigurationType()));
     }
@@ -420,7 +427,7 @@ public class DataEditorService {
      * @param workpiece Workpiece of given process
      * @return list of metadata comparisons
      */
-    public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece)
+    public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece, TreeNode treeNode)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
             ProcessGenerationException, ParserConfigurationException, URISyntaxException, InvalidMetadataValueException,
             TransformerException, NoSuchMetadataFieldException, SAXException {
@@ -434,17 +441,20 @@ public class DataEditorService {
         TempProcess updatedProcess = ServiceManager.getImportService().importTempProcess(importConfig, recordID,
                 process.getTemplate().getId(), process.getProject().getId());
         if (Objects.isNull(updatedProcess)) {
-            throw new ProcessGenerationException("Unable to re-import process for metadata update");
+            throw new ProcessGenerationException("Unable to re-import data record for metadata update");
         } else {
-            // FIXME: this is a workaround to make existing metadata comparable with update metadata;
-            //  should not be necessary or handled in a more appropriate way!
-            // TODO: apply further "ruleset" settings like default values, min and max limits for metadata etc.
+            RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
             for (Metadata metadata : updatedProcess.getWorkpiece().getLogicalStructure().getMetadata()) {
-                metadata.setDomain(MdSec.DMD_SEC);
+                ProcessHelper.setMetadataDomain(metadata, ruleset);
             }
-            ProcessHelper.generateAtstslFields(updatedProcess, Collections.emptyList(), "create", false);
+            ProcessHelper.generateAtstslFields(updatedProcess, Collections.emptyList(), EDIT, false);
 
-            return initializeMetadataComparisons(process, workpiece.getLogicalStructure().getMetadata(),
+            HashSet<Metadata> oldMetadataSet = new HashSet<>();
+            for (TreeNode child : treeNode.getChildren()) {
+                Collection<Metadata> metadata = ((ProcessDetail) child.getData()).getMetadata(false);
+                oldMetadataSet.addAll(metadata);
+            }
+            return initializeMetadataComparisons(process, oldMetadataSet,
                 updatedProcess.getWorkpiece().getLogicalStructure().getMetadata());
         }
     }
@@ -480,7 +490,7 @@ public class DataEditorService {
         metadataKeyCollection.addAll(newMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new)));
         for (String metadataKey : metadataKeyCollection) {
             // determine default mode for metadata from ruleset! (e.g. "keep", "replace", etc.)
-            Reimport selectionMode = ruleset.getMetadataReimport(metadataKey, "edit");
+            Reimport selectionMode = ruleset.getMetadataReimport(metadataKey, EDIT);
             // only add metadata comparison when there is a difference between old and new values!
             HashSet<Metadata> oldValues = filterEntries(metadataKey, oldMetadata);
             HashSet<Metadata> newValues = filterEntries(metadataKey, newMetadata);
