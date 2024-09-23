@@ -44,10 +44,11 @@ public class UpdateMetadataDialog {
     public void updateCatalogMetadata() {
         try {
             metadataComparisons = DataEditorService.reimportCatalogMetadata(dataEditor.getProcess(),
-                    dataEditor.getWorkpiece());
+                    dataEditor.getWorkpiece(), dataEditor.getMetadataPanel().getLogicalMetadataRows());
             if (metadataComparisons.isEmpty()) {
                 PrimeFaces.current().executeScript("PF('metadataUnchangedDialog').show();");
             } else {
+                PrimeFaces.current().ajax().update("updateMetadataDialog");
                 PrimeFaces.current().executeScript("PF('updateMetadataDialog').show();");
             }
         } catch (Exception e) {

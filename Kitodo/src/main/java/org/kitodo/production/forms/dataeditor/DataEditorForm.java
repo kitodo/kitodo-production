@@ -1294,7 +1294,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public boolean canUpdateMetadata() {
         try {
-            return DataEditorService.canUpdateCatalogMetadata(process, workpiece);
+            return DataEditorService.canUpdateCatalogMetadata(process, workpiece, structurePanel.getSelectedLogicalNode());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return false;
