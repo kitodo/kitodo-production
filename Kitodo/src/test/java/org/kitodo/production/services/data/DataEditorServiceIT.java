@@ -15,6 +15,8 @@ package org.kitodo.production.services.data;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.kitodo.test.utils.TestConstants.TITLE_DOC_MAIN;
 
@@ -32,6 +34,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
+import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -40,6 +43,7 @@ import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
+import org.kitodo.exceptions.MetadataException;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataeditor.DataEditorService;
@@ -55,6 +59,10 @@ public class DataEditorServiceIT {
     private static final String ENGLISH = "en";
     private static final String EDIT = "edit";
     private static final String CONTRIBUTOR_PERSON = "ContributorPerson";
+    private static final String RECORD_ID_METADATA_KEY = "CatalogIDDigital";
+    private static final String RECORD_ID = "1234567890";
+    private static final String EXPECTED_EXCEPTION_MESSAGE = "Unable to update metadata of process %d; " +
+            "(either import configuration or record identifier are missing)";
     private int testProcessId = 0;
 
     @BeforeAll
@@ -148,6 +156,46 @@ public class DataEditorServiceIT {
         List<SelectItem> addableMetadata = DataEditorService.getAddableMetadataForStructureElement(divisionView,
                 Collections.emptyList(), Collections.emptyList(), ruleset);
         assertFalse(addableMetadata.isEmpty(), "List of addable metadata should not be empty");
+    }
+
+    /**
+     * Test retrieving functional metadata of type 'recordIdentifier' from process.
+     * @throws DAOException when adding or loading test process fails
+     * @throws IOException when loading meta xml or ruleset file fails
+     * @throws DataException when adding test processes fails
+     */
+    @Test
+    public void shouldGetRecordIdentifierValueOfProcess() throws DAOException, IOException, DataException {
+        addTestProcess();
+        Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
+        URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
+        String recordIdentifier = DataEditorService.getRecordIdentifierValueOfProcess(testProcess, workpiece);
+        assertNull(recordIdentifier, "RecordIdentifier should be null");
+        MetadataEntry recordIdMetadata = new MetadataEntry();
+        recordIdMetadata.setKey(RECORD_ID_METADATA_KEY);
+        recordIdMetadata.setValue(RECORD_ID);
+        workpiece.getLogicalStructure().getMetadata().add(recordIdMetadata);
+        recordIdentifier = DataEditorService.getRecordIdentifierValueOfProcess(testProcess, workpiece);
+        assertNotNull(recordIdentifier, "RecordIdentifier should not be null");
+    }
+
+    /**
+     * Test throwing 'MetadataException' when re-importing metadata is attempted without all necessary conditions for
+     * metadata re-import being met.
+     * @throws DAOException when adding or loading test process fails
+     * @throws DataException when adding test processes fails
+     * @throws IOException when loading meta xml or ruleset file fails
+     */
+    @Test
+    public void shouldFailToUpdateMetadata() throws DAOException, DataException, IOException {
+        addTestProcess();
+        Process testProcess = ServiceManager.getProcessService().getById(testProcessId);
+        URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
+        Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
+        MetadataException thrown = assertThrows(MetadataException.class, () -> DataEditorService.
+                reimportCatalogMetadata(testProcess, workpiece, null));
+        assertEquals(thrown.getMessage(), String.format(EXPECTED_EXCEPTION_MESSAGE, testProcessId));
     }
 
     private Process addTestProcess() throws DAOException, DataException, IOException {
