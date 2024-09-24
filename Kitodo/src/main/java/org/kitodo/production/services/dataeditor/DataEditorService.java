@@ -526,7 +526,8 @@ public class DataEditorService {
             return ((MetadataEntry) metadata).getValue();
         } else if (metadata instanceof MetadataGroup) {
             StringBuilder groupString = new StringBuilder();
-            for (Metadata groupMetadata : ((MetadataGroup) metadata).getMetadata()) {
+            for (Metadata groupMetadata : ((MetadataGroup) metadata).getMetadata().stream()
+                    .sorted(Comparator.comparing(Metadata::getKey)).collect(Collectors.toList())) {
                 if (groupMetadata instanceof MetadataEntry) {
                     groupString.append(((MetadataEntry) groupMetadata).getValue());
                 } else {
