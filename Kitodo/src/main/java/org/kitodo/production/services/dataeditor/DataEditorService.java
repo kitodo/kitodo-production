@@ -425,9 +425,11 @@ public class DataEditorService {
      * to the user.
      * @param process Process for which metadata update is performed
      * @param workpiece Workpiece of given process
+     * @param oldMetadataSet Set containing old metadata
      * @return list of metadata comparisons
      */
-    public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece, TreeNode treeNode)
+    public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece,
+                                                                   HashSet<Metadata> oldMetadataSet)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
             ProcessGenerationException, ParserConfigurationException, URISyntaxException, InvalidMetadataValueException,
             TransformerException, NoSuchMetadataFieldException, SAXException {
@@ -448,12 +450,6 @@ public class DataEditorService {
                 ProcessHelper.setMetadataDomain(metadata, ruleset);
             }
             ProcessHelper.generateAtstslFields(updatedProcess, Collections.emptyList(), EDIT, false);
-
-            HashSet<Metadata> oldMetadataSet = new HashSet<>();
-            for (TreeNode child : treeNode.getChildren()) {
-                Collection<Metadata> metadata = ((ProcessDetail) child.getData()).getMetadata(false);
-                oldMetadataSet.addAll(metadata);
-            }
             return initializeMetadataComparisons(process, oldMetadataSet,
                 updatedProcess.getWorkpiece().getLogicalStructure().getMetadata());
         }
