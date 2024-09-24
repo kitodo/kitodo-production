@@ -11,13 +11,18 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.kitodo.api.Metadata;
+import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.helper.Helper;
 import org.kitodo.production.helper.MetadataComparison;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.PrimeFaces;
+import org.primefaces.model.TreeNode;
 
 public class UpdateMetadataDialog {
 
@@ -43,8 +48,9 @@ public class UpdateMetadataDialog {
      */
     public void updateCatalogMetadata() {
         try {
+            HashSet<Metadata> existingMetadata = getMetadata(dataEditor.getMetadataPanel().getLogicalMetadataRows());
             metadataComparisons = DataEditorService.reimportCatalogMetadata(dataEditor.getProcess(),
-                    dataEditor.getWorkpiece(), dataEditor.getMetadataPanel().getLogicalMetadataRows());
+                    dataEditor.getWorkpiece(), existingMetadata);
             if (metadataComparisons.isEmpty()) {
                 PrimeFaces.current().executeScript("PF('metadataUnchangedDialog').show();");
             } else {
@@ -54,5 +60,13 @@ public class UpdateMetadataDialog {
         } catch (Exception e) {
             Helper.setErrorMessage(e.getMessage());
         }
+    }
+
+    private HashSet<Metadata> getMetadata(TreeNode treeNode) throws InvalidMetadataValueException {
+        HashSet<Metadata> processDetails = new HashSet<>();
+        for (TreeNode child : treeNode.getChildren()) {
+            processDetails.addAll(((ProcessDetail) child.getData()).getMetadata(false));
+        }
+        return processDetails;
     }
 }

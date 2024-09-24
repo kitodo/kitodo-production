@@ -34,13 +34,14 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
-import org.kitodo.api.MetadataEntry;
+import org.kitodo.SecurityTestUtils;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.MetadataException;
@@ -59,8 +60,6 @@ public class DataEditorServiceIT {
     private static final String ENGLISH = "en";
     private static final String EDIT = "edit";
     private static final String CONTRIBUTOR_PERSON = "ContributorPerson";
-    private static final String RECORD_ID_METADATA_KEY = "CatalogIDDigital";
-    private static final String RECORD_ID = "1234567890";
     private static final String EXPECTED_EXCEPTION_MESSAGE = "Unable to update metadata of process %d; " +
             "(either import configuration or record identifier are missing)";
     private int testProcessId = 0;
@@ -69,6 +68,10 @@ public class DataEditorServiceIT {
     public static void prepareDatabase() throws Exception {
         MockDatabase.startNode();
         MockDatabase.insertProcessesFull();
+        MockDatabase.insertMappingFiles();
+        MockDatabase.insertImportConfigurations();
+        User userOne = ServiceManager.getUserService().getById(1);
+        SecurityTestUtils.addUserDataToSecurityContext(userOne, 1);
     }
 
     @AfterAll
@@ -172,10 +175,7 @@ public class DataEditorServiceIT {
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
         String recordIdentifier = DataEditorService.getRecordIdentifierValueOfProcess(testProcess, workpiece);
         assertNull(recordIdentifier, "RecordIdentifier should be null");
-        MetadataEntry recordIdMetadata = new MetadataEntry();
-        recordIdMetadata.setKey(RECORD_ID_METADATA_KEY);
-        recordIdMetadata.setValue(RECORD_ID);
-        workpiece.getLogicalStructure().getMetadata().add(recordIdMetadata);
+        ProcessTestUtils.addRecordIdentifierToLogicalRoot(workpiece,"1234567890");
         recordIdentifier = DataEditorService.getRecordIdentifierValueOfProcess(testProcess, workpiece);
         assertNotNull(recordIdentifier, "RecordIdentifier should not be null");
     }
