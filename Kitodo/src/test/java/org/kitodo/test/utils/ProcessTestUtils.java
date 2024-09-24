@@ -30,6 +30,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.MockDatabase;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
+import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -48,6 +49,7 @@ public class ProcessTestUtils {
     private static final int TEST_PROJECT_ID = 1;
     private static final int TEST_TEMPLATE_ID = 1;
     private static final String ID_PLACEHOLDER = "IDENTIFIER_PLACEHOLDER";
+    private static final String RECORD_ID_METADATA_KEY = "CatalogIDDigital";
     public static final String testFileForHierarchyParent = "multivalued_metadata.xml";
     public static final String testFileForLongNumbers = "testMetadataWithLongNumbers.xml";
     public static final String testFileChildProcessToKeep = "testMetadataForChildProcessToKeep.xml";
@@ -248,5 +250,18 @@ public class ProcessTestUtils {
         logger.info(" ************* ");
         logger.info(" Process '" + process.getTitle() + "' has ID " + process.getId());
         logger.info(" ************* ");
+    }
+
+    /**
+     * Add record identifier metadata with provided value to given workpiece.
+     *
+     * @param workpiece Workpiece to which record identifier metadata is added
+     * @param idValue value of record identifier metadata to set
+     */
+    public static void addRecordIdentifierToLogicalRoot(Workpiece workpiece, String idValue) {
+        MetadataEntry recordIdMetadata = new MetadataEntry();
+        recordIdMetadata.setKey(RECORD_ID_METADATA_KEY);
+        recordIdMetadata.setValue(idValue);
+        workpiece.getLogicalStructure().getMetadata().add(recordIdMetadata);
     }
 }
