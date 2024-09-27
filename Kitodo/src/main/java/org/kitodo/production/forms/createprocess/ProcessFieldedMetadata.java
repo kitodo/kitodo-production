@@ -44,6 +44,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
 import org.kitodo.production.services.dataeditor.DataEditorService;
@@ -672,7 +673,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
         try {
             if (Objects.nonNull(division)) {
                 division.getContentIds().clear();
-                division.setOrderlabel(null);
+                if (!division.getType().equals(PhysicalDivision.TYPE_PAGE)) {
+                    division.setOrderlabel(null);
+                }
                 division.setLabel(null);
             }
             metadata.clear();
