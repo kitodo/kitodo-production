@@ -36,7 +36,7 @@ class CustomControl extends ol.control.Control {
         element.appendChild(button);
 
         super({
-            element: element,
+            element,
             target: options.target
         });
 
@@ -51,7 +51,7 @@ class CustomControl extends ol.control.Control {
     handleClick(event) {
         // not implemented
     }
-};
+}
 
 /**
  * Custom control that rotates the image 90 degrees to the left.
@@ -154,7 +154,7 @@ class KitodoDetailMap {
      * Remember position, rotation and zoom level such that a new OpenLayers map can be 
      * initialized with the same position, rotation and zoom level when new images are selected.
      */
-    #last_view = {
+    #view = {
         center: null,
         zoom: null,
         rotation: null,
@@ -331,7 +331,7 @@ class KitodoDetailMap {
                 new RotateLeftControl(),
                 new RotateRightControl(),
                 new RotateNorthControl(),
-                new ResetZoomControl({extent: extent})
+                new ResetZoomControl({ extent })
             ]),
             interactions: ol.interaction.defaults({
                 zoomDelta: 5, // zoom delta when using mouse wheel
@@ -345,18 +345,18 @@ class KitodoDetailMap {
             target: 'map',
             view: new ol.View({
                 projection: projection,
-                center: this.unnormalizeCenter(this.#last_view.center, extent), 
-                zoom: this.#last_view.zoom,
-                rotation: this.#last_view.rotation,
+                center: this.unnormalizeCenter(this.#view.center, extent), 
+                zoom: this.#view.zoom,
+                rotation: this.#view.rotation,
                 zoomFactor: 1.1,
-                extent: extent,
+                extent,
                 constrainOnlyCenter: true,
                 smoothExtentConstraint: true,
                 showFullExtent: true,
                 padding: [20, 20, 20, 20]
             })
         });
-        if (this.#last_view.center == null) {
+        if (this.#view.center == null) {
             // fit image to current viewport unless previous zoom and center position is known
             this.#map.getView().fit(extent, {});
         }
@@ -378,7 +378,7 @@ class KitodoDetailMap {
             return [
                 center[0] * this.#image.dimensions[0],
                 center[1] * this.#image.dimensions[1],
-            ]
+            ];
         }
         return ol.extent.getCenter(this.createImageExtent(this.#image.dimensions));
     }
@@ -403,7 +403,7 @@ class KitodoDetailMap {
      * map can be initialized with the same parameters when selecting another image.
      */
     saveCurrentView() {
-        this.#last_view = {
+        this.#view = {
             center: this.normalizeCenter(this.#map.getView().getCenter()),
             zoom: this.#map.getView().getZoom(),
             rotation: this.#map.getView().getRotation(),
