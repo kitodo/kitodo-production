@@ -42,13 +42,8 @@
                  styleClass="no-header"
                  widgetVar="metadataTable"
                  id="metadataTable">
-        <p:ajax event="expand"
-                process="@this"
-                update="@(.ui-tree, .stripe.selected)" />
-
         <p:ajax event="collapse"
-                process="@this"
-                update="@(.ui-tree, .stripe.selected)"/>
+                onstart="return #{request.requestURI.contains('metadataEditor')};"/>
         <p:column>
             <span class="input-wrapper">
                 <!-- field label
