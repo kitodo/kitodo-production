@@ -3242,6 +3242,9 @@ Column content
     left: 16px;
     position: absolute;
     top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
 }
 
 #map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control {
@@ -3263,6 +3266,7 @@ Column content
 }
 
 #map .ol-control {
+    display: inline-block;
     background: transparent;
     padding: 0;
     position: static;

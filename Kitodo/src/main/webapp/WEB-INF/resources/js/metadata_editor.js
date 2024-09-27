@@ -14,7 +14,7 @@
 /*eslint new-cap: ["error", { "capIsNewExceptionPattern": "^PF" }]*/
 /*eslint complexity: ["error", 10]*/
 
-var metadataEditor = {};
+var metadataEditor = metadataEditor || {};
 
 metadataEditor.metadataTree = {
 
@@ -1147,7 +1147,7 @@ metadataEditor.shortcuts = {
             case "PREVIEW":
                 initialize();
                 scrollToSelectedThumbnail();
-                changeToMapView();
+                metadataEditor.detailMap.update();
                 break;
         }
     }
