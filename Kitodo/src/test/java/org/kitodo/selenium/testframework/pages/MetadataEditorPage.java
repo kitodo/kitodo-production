@@ -78,6 +78,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "renamingMediaResultForm:okSuccess")
     private WebElement okButtonRenameMediaFiles;
 
+    @FindBy(id = "imagePreviewForm:previewButton")
+    private WebElement imagePreviewButton;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -222,4 +225,12 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         return Browser.getDriver().findElements(By.cssSelector(".ui-treenode")).stream().filter(WebElement::isDisplayed)
                 .count();
     }
+
+    /**
+     * Open detail view by clicking on image preview button.
+     */
+    public void openDetailView() {
+        imagePreviewButton.click();
+    }
+
 }

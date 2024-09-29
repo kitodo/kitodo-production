@@ -429,6 +429,39 @@ class KitodoDetailMap {
     }
 
     /**
+     * Return current zoom level. Is used by integration tests to verify zoom buttons work.
+     * @returns {number} current zoom level
+     */
+    getZoom() {
+        if (this.#map) {
+            return this.#map.getView().getZoom()
+        }
+        return -1;
+    }
+
+    /** 
+     * Returns true if the canvas is currently animated. Is used by integration tests to wait for animation end. 
+     * @returns {boolean} whether animation is still ongoing
+     */
+    getAnimating() {
+        if (this.#map) {
+            return this.#map.getView().getAnimating();
+        }
+        return false;
+    }
+
+    /**
+     * Return current rotation. Is used by integration tests to verify rotation buttons work.
+     * @returns {number} current rotation
+     */
+    getRotation() {
+        if (this.#map) {
+            return this.#map.getView().getRotation()
+        }
+        return 0;
+    }
+
+    /**
      * Is called when a resize event has happened. Unless debounced, this event is triggered potentially 
      * at 60fps.
      */
