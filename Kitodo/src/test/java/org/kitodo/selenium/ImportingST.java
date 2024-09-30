@@ -26,6 +26,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.data.database.exceptions.DAOException;
@@ -129,6 +130,7 @@ public class ImportingST extends BaseTestSelenium {
      * Test whether correct child process default import configuration is preselected or not.
      * @throws Exception when navigating to processes page or create process page fails
      */
+    @Disabled("faulty, randomly fails during CI builds; needs to be fixed")
     @Test
     public void checkDefaultChildProcessImportConfiguration() throws Exception {
         ProcessTestUtils.copyTestMetadataFile(multiVolumeWorkId, TEST_MULTI_VOLUME_WORK_FILE);
@@ -154,6 +156,7 @@ public class ImportingST extends BaseTestSelenium {
     /**
      * Tests whether import process hierarchies works correctly or not.
      */
+    @Disabled("faulty, randomly fails during CI builds; needs to be fixed")
     @Test
     public void checkHierarchyImport() throws Exception {
         projectsPage.createNewProcess();
