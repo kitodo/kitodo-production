@@ -114,6 +114,9 @@ public class User extends BaseBean {
     @Column(name = "paginate_from_first_page_by_default")
     private boolean paginateFromFirstPageByDefault;
 
+    @Column(name = "show_physical_page_number_below_thumbnail")
+    private boolean showPhysicalPageNumberBelowThumbnail;
+
     /**
      * Constructor for User Entity.
      */
@@ -151,6 +154,7 @@ public class User extends BaseBean {
         this.showPaginationByDefault = user.showPaginationByDefault;
         this.paginateFromFirstPageByDefault = user.paginateFromFirstPageByDefault;
         this.defaultGalleryViewMode = user.defaultGalleryViewMode;
+        this.showPhysicalPageNumberBelowThumbnail = user.showPhysicalPageNumberBelowThumbnail;
 
         if (user.roles != null) {
             this.roles = user.roles;
@@ -512,6 +516,24 @@ public class User extends BaseBean {
      */
     public void setPaginateFromFirstPageByDefault(boolean paginateFromFirstPageByDefault) {
         this.paginateFromFirstPageByDefault = paginateFromFirstPageByDefault;
+    }
+
+    /**
+     * Get showPhysicalPageNumberBelowThumbnail.
+     * 
+     * @return value of showPhysicalPageNumberBelowThumbnail
+     */
+    public boolean isShowPhysicalPageNumberBelowThumbnail() {
+        return showPhysicalPageNumberBelowThumbnail;
+    }
+
+    /**
+     * Set showPhysicalPageNumberBelowThumbnail.
+     * 
+     * @param showPhysicalPageNumberBelowThumbnail as boolean
+     */
+    public void setShowPhysicalPageNumberBelowThumbnail(boolean showPhysicalPageNumberBelowThumbnail) {
+        this.showPhysicalPageNumberBelowThumbnail = showPhysicalPageNumberBelowThumbnail;
     }
 
     /**
