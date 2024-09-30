@@ -102,6 +102,8 @@ public class ProcessForm extends TemplateBaseForm {
     private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
     private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
+    private String settingImportConfigurationResultMessage;
+    private boolean importConfigurationsSetSuccessfully = false;
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -1168,8 +1170,32 @@ public class ProcessForm extends TemplateBaseForm {
         try {
             ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(getSelectedProcesses(),
                     importConfigurationId);
+            settingImportConfigurationResultMessage = Helper.getTranslation("setImportConfigurationSuccessfulDescription",
+                    String.valueOf(importConfigurationId), String.valueOf(selectedProcessesOrProcessDTOs.size()));
+            importConfigurationsSetSuccessfully = true;
         } catch (DAOException e) {
-            Helper.setErrorMessage(e);
+            settingImportConfigurationResultMessage = e.getLocalizedMessage();
+            importConfigurationsSetSuccessfully = false;
         }
+        Ajax.update("importConfigurationsSelectedDialog");
+        PrimeFaces.current().executeScript("PF('importConfigurationsSelectedDialog').show();");
+    }
+
+    /**
+     * Get value of 'settingImportConfigurationResultMessage'.
+     *
+     * @return value of 'settingImportConfigurationResultMessage'
+     */
+    public String getSettingImportConfigurationResultMessage() {
+        return settingImportConfigurationResultMessage;
+    }
+
+    /**
+     * Get value of 'importConfigurationsSetSuccessfully'.
+     *
+     * @return value of 'importConfigurationsSetSuccessfully'
+     */
+    public boolean isImportConfigurationsSetSuccessfully() {
+        return importConfigurationsSetSuccessfully;
     }
 }
