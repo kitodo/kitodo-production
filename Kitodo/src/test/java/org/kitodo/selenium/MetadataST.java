@@ -333,7 +333,7 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
-     * Tests that column layout can be saved to database as is loaded into hidden form inputs.
+     * Tests that column layout can be saved to database and is loaded into hidden form inputs.
      * Does not test whether column layout is actually applied via Javascript (see resize.js).
      */
     @Test

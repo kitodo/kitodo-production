@@ -11,7 +11,7 @@
 
 SET SQL_SAFE_UPDATES = 0;
 
--- allow null in column task_id of table dataeditorsetting to store task-independent layout
+-- allow null in column task_id of table dataeditor_setting to store task-independent layout
 ALTER TABLE dataeditor_setting MODIFY COLUMN task_id INT(11) NULL;
 
 SET SQL_SAFE_UPDATES = 1;
