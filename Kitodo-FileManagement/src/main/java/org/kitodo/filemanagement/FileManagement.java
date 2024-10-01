@@ -563,6 +563,7 @@ public class FileManagement implements FileManagementInterface {
         return decodedPath;
     }
 
+    @Override
     public File getFile(URI uri) {
         uri = fileMapper.mapUriToKitodoDataDirectoryUri(uri);
         return new File(uri);
