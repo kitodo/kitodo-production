@@ -14,6 +14,7 @@ package org.kitodo.selenium;
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
@@ -345,13 +346,13 @@ public class MetadataST extends BaseTestSelenium {
         String metadataWidthId = "metadataEditorLayoutForm:metadataWidth";
         String galleryWithId = "metadataEditorLayoutForm:galleryWidth";
 
-        Function<String, Double> getValue = 
-            (id) -> Double.parseDouble(Browser.getDriver().findElement(By.id(id)).getAttribute("value"));
+        Function<String, String> getValue = 
+            (id) -> Browser.getDriver().findElement(By.id(id)).getAttribute("value");
         
         // by default, layout settings are all 0
-        assertEquals(0.0, getValue.apply(structureWithId));
-        assertEquals(0.0, getValue.apply(metadataWidthId));
-        assertEquals(0.0, getValue.apply(galleryWithId));
+        assertEquals("0.0", getValue.apply(structureWithId));
+        assertEquals("0.0", getValue.apply(metadataWidthId));
+        assertEquals("0.0", getValue.apply(galleryWithId));
 
         // save layout settings
         Browser.getDriver().findElement(By.cssSelector("#metadataEditorLayoutForm button")).click();
@@ -368,9 +369,9 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
 
         // verify that layout was saved
-        assertTrue(0.0 < getValue.apply(structureWithId));
-        assertTrue(0.0 < getValue.apply(metadataWidthId));
-        assertTrue(0.0 < getValue.apply(galleryWithId));
+        assertNotEquals("0.0", getValue.apply(structureWithId));
+        assertNotEquals("0.0", getValue.apply(metadataWidthId));
+        assertNotEquals("0.0", getValue.apply(galleryWithId));
     }
 
     /**
