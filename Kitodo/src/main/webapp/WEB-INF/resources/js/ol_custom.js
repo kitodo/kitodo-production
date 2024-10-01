@@ -434,7 +434,7 @@ class KitodoDetailMap {
      */
     getZoom() {
         if (this.#map) {
-            return this.#map.getView().getZoom()
+            return this.#map.getView().getZoom();
         }
         return -1;
     }
@@ -456,7 +456,7 @@ class KitodoDetailMap {
      */
     getRotation() {
         if (this.#map) {
-            return this.#map.getView().getRotation()
+            return this.#map.getView().getRotation();
         }
         return 0;
     }
