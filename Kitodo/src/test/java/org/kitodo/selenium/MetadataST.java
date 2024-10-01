@@ -364,8 +364,10 @@ public class MetadataST extends BaseTestSelenium {
         // confirm success message
         Browser.getDriver().findElement(By.id("dataEditorSavingResultForm:reload")).click();
 
-        // re-open metadata editor
+        // close metadata editor, wait until closed, and re-open
         Pages.getMetadataEditorPage().closeEditor();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+            .until(() -> Pages.getProcessesPage().isAt());
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
 
         // verify that layout was saved
