@@ -313,10 +313,15 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     private void showDataEditorSettingsLoadedMessage() throws DAOException {
-        String task = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
         Locale locale = LocaleHelper.getCurrentLocale();
         String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
-        String text = MessageFormat.format(Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyText"), task);
+        String text = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyDefaultText");
+        if (templateTaskId > 0) {
+            String task = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
+            text = MessageFormat.format(
+                Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyForTaskText"), task
+            );
+        }        
         String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript("PF('notifications').removeAll();");
@@ -338,16 +343,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     private void loadDataEditorSettings() {
-        if (templateTaskId > 0) {
-            dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(),
-                    templateTaskId);
-            if (Objects.isNull(dataEditorSetting)) {
-                dataEditorSetting = new DataEditorSetting();
-                dataEditorSetting.setUserId(user.getId());
-                dataEditorSetting.setTaskId(templateTaskId);
-            }
-        } else {
-            dataEditorSetting = null;
+        // use template task id if it exists, otherwise use null for task-independent layout
+        Integer taskId = templateTaskId > 0 ? templateTaskId : null;
+        dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(), taskId);
+        if (Objects.isNull(dataEditorSetting)) {
+            dataEditorSetting = new DataEditorSetting();
+            dataEditorSetting.setUserId(user.getId());
+            dataEditorSetting.setTaskId(taskId);
         }
     }
 
@@ -1068,7 +1070,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * Save current metadata editor layout.
      */
     public void saveDataEditorSetting() {
-        if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
+        if (Objects.nonNull(dataEditorSetting)) {
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
@@ -1076,6 +1078,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
             }
         } else {
+            // should never happen any more, since layout settings are always created (even outside of task context)
             logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", user.getId(),
                 templateTaskId);
         }

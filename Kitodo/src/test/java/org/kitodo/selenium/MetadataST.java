@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -328,6 +329,48 @@ public class MetadataST extends BaseTestSelenium {
         structureTree = Browser.getDriver().findElement(By.id("logicalTree"));
         WebElement firstChild = structureTree.findElement(By.id("logicalTree:0_0"));
         assertEquals(structureType, firstChild.getText(), "Added structure element has wrong type!");
+    }
+
+    /**
+     * Tests that column layout can be saved to database as is loaded into hidden form inputs.
+     * Does not test whether column layout is actually applied via Javascript (see resize.js).
+     */
+    @Test
+    public void saveLayoutTest() throws Exception {
+        login("kowal");
+
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        
+        String structureWithId = "metadataEditorLayoutForm:structureWidth";
+        String metadataWidthId = "metadataEditorLayoutForm:metadataWidth";
+        String galleryWithId = "metadataEditorLayoutForm:galleryWidth";
+
+        Function<String, Double> getValue = 
+            (id) -> Double.parseDouble(Browser.getDriver().findElement(By.id(id)).getAttribute("value"));
+        
+        // by default, layout settings are all 0
+        assertEquals(0.0, getValue.apply(structureWithId));
+        assertEquals(0.0, getValue.apply(metadataWidthId));
+        assertEquals(0.0, getValue.apply(galleryWithId));
+
+        // save layout settings
+        Browser.getDriver().findElement(By.cssSelector("#metadataEditorLayoutForm button")).click();
+
+        // wait until success message is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+            .until(Browser.getDriver().findElement(By.id("dataEditorSavingResultDialog_content"))::isDisplayed);
+        
+        // confirm success message
+        Browser.getDriver().findElement(By.id("dataEditorSavingResultForm:reload")).click();
+
+        // re-open metadata editor
+        Pages.getMetadataEditorPage().closeEditor();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // verify that layout was saved
+        assertTrue(0.0 < getValue.apply(structureWithId));
+        assertTrue(0.0 < getValue.apply(metadataWidthId));
+        assertTrue(0.0 < getValue.apply(galleryWithId));
     }
 
     /**

@@ -37,8 +37,7 @@
         <h:form id="metadataEditorLayoutForm">
             <p:commandButton onclick="saveLayout()"
                              action="#{DataEditorForm.saveDataEditorSetting()}"
-                             title="#{DataEditorForm.dataEditorSetting ne null ? msgs['dataEditor.saveLayout'] : msgs['dataEditor.cannotSaveLayout']}"
-                             disabled="#{DataEditorForm.dataEditorSetting eq null}"
+                             title="#{DataEditorForm.dataEditorSetting.taskId ne null ? msgs['dataEditor.saveLayoutForTask'] : msgs['dataEditor.saveLayoutDefault']}"
                              icon="fa fa-wrench"
                              styleClass="secondary"/>
             <h:inputHidden id="structureWidth"
