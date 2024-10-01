@@ -56,22 +56,6 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      */
     abstract ProcessSimpleMetadata getClone();
 
-    protected BiConsumer<Division<?>, String> getStructureFieldSetters(MetadataViewInterface field)
-            throws NoSuchMetadataFieldException {
-        String key = field.getId();
-
-        switch (key.toUpperCase()) {
-            case "LABEL":
-                return Division::setLabel;
-            case "ORDERLABEL":
-                return Division::setOrderlabel;
-            case "CONTENTIDS":
-                return (division, value) -> division.getContentIds().add(URI.create(value));
-            default:
-                throw new NoSuchMetadataFieldException(key, field.getLabel());
-        }
-    }
-
     public SimpleMetadataViewInterface getSettings() {
         return settings;
     }
