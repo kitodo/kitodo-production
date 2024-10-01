@@ -72,6 +72,10 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
         }
     }
 
+    public SimpleMetadataViewInterface getSettings() {
+        return settings;
+    }
+
     /**
      * Returns if the field may be edited. Some fields may be disallowed to be
      * edit from the rule set.

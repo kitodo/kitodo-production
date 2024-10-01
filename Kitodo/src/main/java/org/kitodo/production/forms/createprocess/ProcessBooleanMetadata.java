@@ -96,19 +96,6 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
         return Collections.emptyList();
     }
 
-    @Override
-    Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue()
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-
-        if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-            if (!isValid()) {
-                throw new InvalidMetadataValueException(label, settings.convertBoolean(active).orElse(""));
-            }
-            return Pair.of(super.getStructureFieldSetters(settings), settings.convertBoolean(active).orElse(null));
-        } else {
-            return null;
-        }
-    }
 
     /**
      * Returns whether the switch is on.
