@@ -44,6 +44,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -1333,5 +1334,20 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public String getMetadataLabel(String metadataKey) {
         MetadataViewInterface viewInterface = ruleset.getMetadataView(metadataKey, getAcquisitionStage(), getPriorityList());
         return viewInterface.getLabel();
+    }
+
+    /**
+     * Retrieve and return value of functional metadata 'groupDisplayLabel' from given MetadataGroup 'metadataGroup'.
+     *
+     * @param metadataGroup MetadataGroup for which 'groupDisplayLabel' value is returned
+     * @return value of functional metadata 'groupDisplayLabel'
+     */
+    public String getGroupDisplayLabel(MetadataGroup metadataGroup) {
+        try {
+            return ServiceManager.getRulesetService().getMetadataGroupDisplayLabel(metadataGroup, process.getRuleset());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return "";
+        }
     }
 }

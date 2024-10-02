@@ -1337,6 +1337,16 @@ public class ImportService {
         return getFunctionalMetadata(ruleset, FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
     }
 
+    /**
+     * Load and return keys of functional metadata 'groupDisplayLabel' from provided ruleset.
+     * @param ruleset Ruleset from which keys are loaded and returned
+     * @return list of String containing the keys of functional metadata for type 'groupDisplayLabel'
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    public static Collection<String> getGroupDisplayLabelMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadata(ruleset, FunctionalMetadata.GROUP_DISPLAY_LABEL);
+    }
+
     private DataImport createDataImportFromImportConfiguration(ImportConfiguration importConfiguration) {
         String configType = importConfiguration.getConfigurationType();
         if (!ImportConfigurationType.OPAC_SEARCH.name().equals(configType)) {
