@@ -119,6 +119,32 @@ public class MapMessageObjectReader {
     }
 
     /**
+     * Fetches a String from a map. This is a strict implementation that
+     * requires the string not to be null and not to be empty.
+     *
+     * @param key
+     *            the name of the string to return
+     * @return the string requested
+     * @throws IllegalArgumentException
+     *             in case that get returns null, an inappropriate object, or
+     *             the returned string is of length “0”.
+     */
+    public static String getMandatoryString(Map<?, ?> data, String key) {
+        Object value = data.get(key);
+        if (Objects.isNull(value)) {
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
+        }
+        if (!(value instanceof String)) {
+            throw new IllegalArgumentException(MANDATORY_ARGUMENT + key + " is not a string");
+        }
+        String mandatoryString = (String) value;
+        if (mandatoryString.isEmpty()) {
+            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
+        }
+        return mandatoryString;
+    }
+
+    /**
      * Fetches a {@code Collection<Integer>} from a MapMessage. This is a loose
      * implementation for an optional object with optional content. The
      * collection content is filtered through {@code toString()} and split on
@@ -161,32 +187,6 @@ public class MapMessageObjectReader {
         }
         return ((Collection<?>) collectionObject).stream().filter(Objects::nonNull).map(Object::toString)
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Fetches a String from a map. This is a strict implementation that
-     * requires the string not to be null and not to be empty.
-     *
-     * @param key
-     *            the name of the string to return
-     * @return the string requested
-     * @throws IllegalArgumentException
-     *             in case that get returns null, an inappropriate object, or
-     *             the returned string is of length “0”.
-     */
-    public static String getMandatoryString(Map<?, ?> data, String key) {
-        Object value = data.get(key);
-        if (Objects.isNull(value)) {
-            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
-        }
-        if (!(value instanceof String)) {
-            throw new IllegalArgumentException(MANDATORY_ARGUMENT + key + " is not a string");
-        }
-        String mandatoryString = (String) value;
-        if (mandatoryString.isEmpty()) {
-            throw new IllegalArgumentException(MISSING_ARGUMENT + key + "\"");
-        }
-        return mandatoryString;
     }
 
     /**

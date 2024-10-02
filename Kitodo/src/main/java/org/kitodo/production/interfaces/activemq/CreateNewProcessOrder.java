@@ -28,6 +28,7 @@ import java.util.Optional;
 import javax.jms.JMSException;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
@@ -116,7 +117,7 @@ public class CreateNewProcessOrder {
         this.imports = convertImports(ticket.getList(FIELD_IMPORT));
         this.title = Optional.ofNullable(ticket.getString(FIELD_TITLE));
         this.parentId = Optional.ofNullable(convertProcessId(ticket.getString(FIELD_PARENT)));
-        this.metadata = convertMetadata(ticket.getMapOfString(FIELD_METADATA));
+        this.metadata = convertMetadata(ticket.getMapOfString(FIELD_METADATA), MdSec.DMD_SEC);
     }
 
     /**
@@ -189,7 +190,7 @@ public class CreateNewProcessOrder {
      * Converts metadata details into safe data objects. For {@code null}, it
      * will return an empty collection, never {@code null}.
      */
-    private static final HashSet<Metadata> convertMetadata(@Nullable Map<?, ?> metadata) {
+    private static final HashSet<Metadata> convertMetadata(@Nullable Map<?, ?> metadata, @Nullable MdSec domain) {
 
         HashSet<Metadata> result = new HashSet<>();
         if (Objects.isNull(metadata)) {
@@ -211,12 +212,14 @@ public class CreateNewProcessOrder {
                 if (dubiousValue instanceof Map) {
                     MetadataGroup metadataGroup = new MetadataGroup();
                     metadataGroup.setKey(key);
-                    metadataGroup.setMetadata(convertMetadata((Map<?, ?>) dubiousValue));
+                    metadataGroup.setMetadata(convertMetadata((Map<?, ?>) dubiousValue, null));
+                    metadataGroup.setDomain(domain);
                     result.add(metadataGroup);
                 } else {
                     MetadataEntry metadataEntry = new MetadataEntry();
                     metadataEntry.setKey(key);
                     metadataEntry.setValue(dubiousValue.toString());
+                    metadataEntry.setDomain(domain);
                     result.add(metadataEntry);
                 }
             }
