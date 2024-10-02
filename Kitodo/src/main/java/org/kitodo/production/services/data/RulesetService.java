@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -21,11 +22,15 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
@@ -265,5 +270,42 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return Collections.emptySet();
         }
+    }
+
+    /**
+     * Retrieve and return value of functional metadata 'groupDisplayLabel' for given MetadataGroup 'group' from given
+     * Ruleset 'ruleset'.
+     *
+     * @param group MetadataGroup for which 'groupDisplayLabel' is retrieved
+     * @param ruleset Ruleset from which key of functional metadata 'groupDisplayLabel' is retrieved
+     * @return value of functional metadata 'groupDisplayLabel' for given MetadataGroup 'group'
+     * @throws IOException when retrieving key of functional metadata 'groupDisplayLabel' from ruleset fails
+     */
+    public String getMetadataGroupDisplayLabel(MetadataGroup group, Ruleset ruleset) throws IOException {
+        for (String groupDisplayLabelKey : ImportService.getGroupDisplayLabelMetadata(ruleset)) {
+            String[] keySegments = groupDisplayLabelKey.split("@");
+            String metadataValue = getNestedMetadataValue(group, Arrays.asList(keySegments).subList(1, keySegments.length));
+            if (StringUtils.isNotBlank(metadataValue)) {
+                return metadataValue;
+            }
+        }
+        return "";
+    }
+
+    private String getNestedMetadataValue(Metadata metadata, List<String> keySegments) {
+        if (metadata instanceof MetadataEntry) {
+            return ((MetadataEntry)metadata).getValue();
+        } else {
+            if (Objects.isNull(keySegments) || keySegments.isEmpty()) {
+                return "";
+            }
+            String currentSegment = keySegments.get(0);
+            for (Metadata metadataElement : ((MetadataGroup)metadata).getMetadata()) {
+                if (currentSegment.equals(metadataElement.getKey())) {
+                    return getNestedMetadataValue(metadataElement, keySegments.subList(1, keySegments.size()));
+                }
+            }
+        }
+        return "";
     }
 }

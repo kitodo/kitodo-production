@@ -72,11 +72,13 @@
                                             var="oldGroup"
                                             styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
+                                    <p:outputLabel value="#{DataEditorForm.getGroupDisplayLabel(oldGroup)}"
+                                                   styleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}"/>
                                     <p:dataTable id="oldGroupEntries"
                                                  value="#{comparison.getMetadataSorted(oldGroup)}"
                                                  var="oldGroupMetadata">
                                         <p:column id="oldGroupEntryKeyColumn">
-                                            <!-- FIXME: label of group metadata components not retrieved correctly here -->
+                                            <!-- FIXME: label of group metadata components not retrieved correctly here (key is displayed instead) -->
                                             <h:outputText value="#{DataEditorForm.getMetadataLabel(oldGroupMetadata.key)}"
                                                           title="#{DataEditorForm.getMetadataLabel(oldGroupMetadata.key)}"/>
                                         </p:column>
@@ -96,32 +98,33 @@
                                                      type="button"
                                                      icon="fa fa-exchange fa-lg" />
                                 </f:facet>
-                                <!-- FIXME: these command buttons should only update the current row, not the complete table,
-                                            with something like "metadataUpdateTable:@row(#{rowIdx})", but that doesn't work -->
-                                <p:commandButton id="selectOldValuesButton"
-                                                 partialSubmit="true"
-                                                 process="@this"
-                                                 actionListener="#{comparison.updateComparison()}"
-                                                 update="metadataUpdateTable"
-                                                 disabled="#{empty comparison.newValues}"
-                                                 rendered="#{comparison.selection eq reimportEnum.KEEP}"
-                                                 icon="fa fa-long-arrow-left fa-lg"/>
-                                <p:commandButton id="selectBothValuesButton"
-                                                 partialSubmit="true"
-                                                 process="@this"
-                                                 actionListener="#{comparison.updateComparison()}"
-                                                 update="metadataUpdateTable"
-                                                 disabled="#{empty comparison.newValues}"
-                                                 rendered="#{comparison.selection eq reimportEnum.ADD}"
-                                                 icon="fa fa-arrows-h fa-lg"/>
-                                <p:commandButton id="selectNewValuesButton"
-                                                 partialSubmit="true"
-                                                 process="@this"
-                                                 actionListener="#{comparison.updateComparison()}"
-                                                 update="metadataUpdateTable"
-                                                 disabled="#{empty comparison.newValues}"
-                                                 rendered="#{comparison.selection eq reimportEnum.REPLACE}"
-                                                 icon="fa fa-long-arrow-right fa-lg"/>
+                                <p:outputPanel>
+                                    <!--@elvariable id="rowIdx" type="java.lang.Integer"-->
+                                    <p:commandButton id="selectOldValuesButton"
+                                                     partialSubmit="true"
+                                                     process="@this"
+                                                     actionListener="#{comparison.updateComparison()}"
+                                                     update="metadataUpdateTable:@row(#{rowIdx})"
+                                                     disabled="#{empty comparison.newValues}"
+                                                     rendered="#{comparison.selection eq reimportEnum.KEEP}"
+                                                     icon="fa fa-long-arrow-left fa-lg"/>
+                                    <p:commandButton id="selectBothValuesButton"
+                                                     partialSubmit="true"
+                                                     process="@this"
+                                                     actionListener="#{comparison.updateComparison()}"
+                                                     update="metadataUpdateTable:@row(#{rowIdx})"
+                                                     disabled="#{empty comparison.newValues}"
+                                                     rendered="#{comparison.selection eq reimportEnum.ADD}"
+                                                     icon="fa fa-arrows-h fa-lg"/>
+                                    <p:commandButton id="selectNewValuesButton"
+                                                     partialSubmit="true"
+                                                     process="@this"
+                                                     actionListener="#{comparison.updateComparison()}"
+                                                     update="metadataUpdateTable:@row(#{rowIdx})"
+                                                     disabled="#{empty comparison.newValues}"
+                                                     rendered="#{comparison.selection eq reimportEnum.REPLACE}"
+                                                     icon="fa fa-long-arrow-right fa-lg"/>
+                                </p:outputPanel>
                             </p:column>
                             <p:column id="newValueColumn"
                                       headerText="#{DataEditorForm.process.importConfiguration.title}">
@@ -140,11 +143,13 @@
                                             var="newGroup"
                                             styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
+                                    <p:outputLabel value="#{DataEditorForm.getGroupDisplayLabel(newGroup)}"
+                                                   styleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}"/>
                                     <p:dataTable id="newGroupEntries"
                                                  value="#{comparison.getMetadataSorted(newGroup)}"
                                                  var="newGroupMetadata">
                                         <p:column id="newGroupMetadataKeyColumn">
-                                            <!-- FIXME: label of group metadata components not retrieved correctly here -->
+                                            <!-- FIXME: label of group metadata components not retrieved correctly here (key is displayed instead) -->
                                             <h:outputText value="#{DataEditorForm.getMetadataLabel(newGroupMetadata.key)}"
                                                           title="#{DataEditorForm.getMetadataLabel(newGroupMetadata.key)}"/>
                                         </p:column>
