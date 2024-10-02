@@ -481,6 +481,7 @@
                             <xs:enumeration value="higherlevelIdentifier"/>
                             <xs:enumeration value="processTitle"/>
                             <xs:enumeration value="recordIdentifier"/>
+                            <xs:enumeration value="groupDisplayLabel"/>
                             <xs:enumeration value="title"/>
                         </xs:restriction>
                     </xs:simpleType>
