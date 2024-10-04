@@ -134,4 +134,9 @@
         <p:menuitem value="#{msgs.createNewProcessFromTemplate}" rendered="#{empty ProcessForm.process.title}" icon="fa fa-clipboard"/>
     </ui:define>
 
+    <ui:define name="page-scripts">
+        <h:outputScript name="js/defaultScript.js" target="body"/>
+        <h:outputScript name="js/metadata_editor.js" target="body"/>
+    </ui:define>
+
 </ui:composition>
