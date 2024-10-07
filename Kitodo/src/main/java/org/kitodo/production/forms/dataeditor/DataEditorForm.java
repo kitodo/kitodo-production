@@ -1360,7 +1360,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public String getGroupDisplayLabel(MetadataGroup metadataGroup) {
         try {
             Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(process.getRuleset());
-            return ServiceManager.getRulesetService().getNestedMetadataValue(metadataGroup, groupDisplayLabel);
+            return ServiceManager.getRulesetService().getAnyNestedMetadataValue(metadataGroup, groupDisplayLabel);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";
