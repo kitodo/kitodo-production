@@ -55,6 +55,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -184,12 +185,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia;
 
     /**
-     * The id of the template's task corresponding to the current task that is under edit.
+     * The template task corresponding to the current task that is under edit.
      * This is used for saving and loading the metadata editor settings.
      * The current task, the corresponding template task id and the settings are only available
      * if the user opened the editor from a task.
      */
-    private int templateTaskId;
+    private Task templateTask;
 
     private DataEditorSetting dataEditorSetting;
 
@@ -271,9 +272,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
             this.checkProjectFolderConfiguration();
-            if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
-                this.templateTaskId = Integer.parseInt(taskId);
-            }
+            this.loadTemplateTask(taskId);
             this.loadDataEditorSettings();
             errorMessage = "";
 
@@ -316,10 +315,10 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         Locale locale = LocaleHelper.getCurrentLocale();
         String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
         String text = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyDefaultText");
-        if (templateTaskId > 0) {
-            String task = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
+        if (Objects.nonNull(this.templateTask) && Objects.nonNull(dataEditorSetting) 
+                && templateTask.getId().equals(dataEditorSetting.getTaskId())) {
             text = MessageFormat.format(
-                Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyForTaskText"), task
+                Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyForTaskText"), this.templateTask.getTitle()
             );
         }        
         String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
@@ -342,13 +341,44 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
     }
 
+    /**
+     * Load template task from database.
+     * 
+     * @param taskId the id of the template task
+     * @throws DAOException if loading fails
+     */
+    private void loadTemplateTask(String taskId) throws DAOException {
+        if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
+            int templateTaskId = Integer.parseInt(taskId);
+            if (templateTaskId > 0) {
+                this.templateTask = ServiceManager.getTaskService().getById(templateTaskId);
+            }
+        }
+    }
+
+    /**
+     * Load data editor settings (width of metadata editor columns) from database.
+     * 
+     * Either load task-specific configuration (if it exists) or default configuration (if it exists) or 
+     * initialize new empty data editor setting.
+     */
     private void loadDataEditorSettings() {
         // use template task id if it exists, otherwise use null for task-independent layout
-        Integer taskId = templateTaskId > 0 ? templateTaskId : null;
-        dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(), taskId);
+        Integer taskId = Objects.nonNull(this.templateTask) ? this.templateTask.getId() : null;
+        int userId = user.getId();
+
+        // try to load data editor setting from database
+        dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(userId, taskId);
+
+        // try to load task-independent data editor setting from database
+        if (Objects.isNull(dataEditorSetting)) {
+            dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(userId, null);
+        }
+
+        // initialize empty data editor setting if none were previously saved by the user
         if (Objects.isNull(dataEditorSetting)) {
             dataEditorSetting = new DataEditorSetting();
-            dataEditorSetting.setUserId(user.getId());
+            dataEditorSetting.setUserId(userId);
             dataEditorSetting.setTaskId(taskId);
         }
     }
@@ -1026,8 +1056,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      *
      * @return value of templateTaskId
      */
-    public int getTemplateTaskId() {
-        return templateTaskId;
+    public Task getTemplateTask() {
+        return templateTask;
     }
 
     /**
@@ -1068,9 +1098,18 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     /**
      * Save current metadata editor layout.
+     * 
+     * Either save it as task-specific layout (if editor was opened from a task) or 
+     * as task-independent layout (otherwise).
      */
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting)) {
+            if (Objects.nonNull(templateTask) && !templateTask.getId().equals(dataEditorSetting.getTaskId())) {          
+                // create a copy of the task-independent configuration 
+                // in case the user wants to save it as task-specific config
+                dataEditorSetting = new DataEditorSetting(dataEditorSetting);
+                dataEditorSetting.setTaskId(templateTask.getId());
+            }
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
@@ -1079,8 +1118,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
         } else {
             // should never happen any more, since layout settings are always created (even outside of task context)
-            logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", user.getId(),
-                templateTaskId);
+            int taskId = Objects.nonNull(this.templateTask) ? this.templateTask.getId() : 0;
+            int userId = user.getId();
+            logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", userId, taskId);
         }
     }
 

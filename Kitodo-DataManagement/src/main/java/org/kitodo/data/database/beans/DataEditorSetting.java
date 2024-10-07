@@ -41,6 +41,19 @@ public class DataEditorSetting extends BaseBean {
     }
 
     /**
+     * Copy constructor (without id).
+     * 
+     * @param setting the data editor settings that are copied
+     */
+    public DataEditorSetting(DataEditorSetting setting) {
+        setUserId(setting.getUserId());
+        setTaskId(setting.getTaskId());
+        setStructureWidth(setting.getStructureWidth());
+        setMetadataWidth(setting.getMetadataWidth());
+        setGalleryWidth(setting.getGalleryWidth());
+    }
+
+    /**
      * Get userId.
      *
      * @return value of userId
