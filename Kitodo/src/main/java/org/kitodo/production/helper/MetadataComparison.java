@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
+import org.kitodo.data.database.beans.Ruleset;
+import org.kitodo.production.services.data.RulesetService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 
 /**
@@ -187,21 +191,39 @@ public class MetadataComparison {
     }
 
     /**
-     * List of old metadata entries sorted by their string representation.
+     * List of old metadata groups sorted by their 'groupDisplayLabel'.
      *
-     * @return  old metadata entries sorted by their string representation.
+     * @return old metadata groups sorted by their 'groupDisplayLabel'.
      */
-    public List<Metadata> getOldValuesSorted() {
-        return getValuesSorted(oldValues);
+    public List<Metadata> getOldMetadataGroupsSorted(Ruleset ruleset) {
+        if (isMetadataGroup) {
+            try {
+                return RulesetService.getGroupsSortedByGroupDisplayLabel(oldValues, ruleset);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e);
+                return new ArrayList<>();
+            }
+        } else {
+            return getValuesSorted(oldValues);
+        }
     }
 
     /**
-     * List of new metadata entries sorted by their string representation.
+     * List of new metadata groups sorted by their 'groupDisplayLabel'.
      *
-     * @return new metadata entries sorted by their string representation.
+     * @return new metadata groups sorted by their 'groupDisplayLabel'.
      */
-    public List<Metadata> getNewValuesSorted() {
-        return getValuesSorted(newValues);
+    public List<Metadata> getNewMetadataGroupsSorted(Ruleset ruleset) {
+        if (isMetadataGroup) {
+            try {
+                return RulesetService.getGroupsSortedByGroupDisplayLabel(newValues, ruleset);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e);
+                return new ArrayList<>();
+            }
+        } else {
+            return getValuesSorted(newValues);
+        }
     }
 
     private List<Metadata> getValuesSorted(HashSet<Metadata> metadataSet) {

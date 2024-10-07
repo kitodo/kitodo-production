@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -45,7 +46,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.api.MetadataGroup;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -72,6 +72,7 @@ import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
@@ -1332,8 +1333,22 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @return label of metadata with given key 'metadataKey'
      */
     public String getMetadataLabel(String metadataKey) {
-        MetadataViewInterface viewInterface = ruleset.getMetadataView(metadataKey, getAcquisitionStage(), getPriorityList());
-        return viewInterface.getLabel();
+        return ServiceManager.getRulesetService().getMetadataLabel(ruleset, metadataKey, getAcquisitionStage(),
+                getPriorityList());
+    }
+
+    /**
+     * Get translated label of MetadataEntry with key 'metadataEntryKey' nested in MetadataGroup with key 'groupKey'.
+     *
+     * @param metadataEntryKey key of MetadataEntry nested in MetadataGroup with key 'groupKey' whose label is returned
+     *
+     * @param groupKey key of MetadataGroup to which MetadataEntry with given key 'metadataEntryKey' belongs
+     *
+     * @return label of nested MetadataEntry
+     */
+    public String getMetadataEntryLabel(String metadataEntryKey, String groupKey) {
+        return ServiceManager.getRulesetService().getMetadataEntryLabel(ruleset, metadataEntryKey, groupKey,
+                getAcquisitionStage(), getPriorityList());
     }
 
     /**
@@ -1344,7 +1359,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public String getGroupDisplayLabel(MetadataGroup metadataGroup) {
         try {
-            return ServiceManager.getRulesetService().getMetadataGroupDisplayLabel(metadataGroup, process.getRuleset());
+            Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(process.getRuleset());
+            return ServiceManager.getRulesetService().getNestedMetadataValue(metadataGroup, groupDisplayLabel);
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";

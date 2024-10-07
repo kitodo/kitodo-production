@@ -2797,6 +2797,10 @@ Column content
     font-weight: bold;
 }
 
+#updateMetadataDialog_content .ui-datatable td:nth-child(1) span {
+    font-weight: normal;
+}
+
 #updateMetadataDialog_content .metadata-value-list {
     list-style: none;
 }

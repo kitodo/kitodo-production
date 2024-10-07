@@ -68,7 +68,7 @@
                                 </p:dataList>
                                 <p:dataList id="oldMetadataGroupValues"
                                             rendered="#{comparison.isMetadataGroup()}"
-                                            value="#{comparison.oldValuesSorted}"
+                                            value="#{comparison.getOldMetadataGroupsSorted(DataEditorForm.process.ruleset)}"
                                             var="oldGroup"
                                             styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
@@ -76,16 +76,15 @@
                                                    styleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}"/>
                                     <p:dataTable id="oldGroupEntries"
                                                  value="#{comparison.getMetadataSorted(oldGroup)}"
-                                                 var="oldGroupMetadata">
+                                                 var="oldGroupMetadata"
+                                                 rowStyleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}">
                                         <p:column id="oldGroupEntryKeyColumn">
-                                            <!-- FIXME: label of group metadata components not retrieved correctly here (key is displayed instead) -->
-                                            <h:outputText value="#{DataEditorForm.getMetadataLabel(oldGroupMetadata.key)}"
-                                                          title="#{DataEditorForm.getMetadataLabel(oldGroupMetadata.key)}"/>
+                                            <h:outputText value="#{DataEditorForm.getMetadataEntryLabel(oldGroupMetadata.key, comparison.metadataKey)}"
+                                                          title="#{DataEditorForm.getMetadataEntryLabel(oldGroupMetadata.key, comparison.metadataKey)}"/>
                                         </p:column>
                                         <p:column id="oldGroupEntryValueColumn">
                                             <h:outputText value="#{comparison.getValueAsString(oldGroupMetadata)}"
-                                                          title="#{comparison.getValueAsString(oldGroupMetadata)}"
-                                                          styleClass="${comparison.selection ne reimportEnum.REPLACE ? 'selected' : 'unselected'}"/>
+                                                          title="#{comparison.getValueAsString(oldGroupMetadata)}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </p:dataList>
@@ -139,7 +138,7 @@
                                 </p:dataList>
                                 <p:dataList id="newMetadataGroupValues"
                                             rendered="#{comparison.isMetadataGroup()}"
-                                            value="#{comparison.newValuesSorted}"
+                                            value="#{comparison.getNewMetadataGroupsSorted(DataEditorForm.process.ruleset)}"
                                             var="newGroup"
                                             styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
@@ -147,16 +146,15 @@
                                                    styleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}"/>
                                     <p:dataTable id="newGroupEntries"
                                                  value="#{comparison.getMetadataSorted(newGroup)}"
-                                                 var="newGroupMetadata">
+                                                 var="newGroupMetadata"
+                                                 rowStyleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}">
                                         <p:column id="newGroupMetadataKeyColumn">
-                                            <!-- FIXME: label of group metadata components not retrieved correctly here (key is displayed instead) -->
-                                            <h:outputText value="#{DataEditorForm.getMetadataLabel(newGroupMetadata.key)}"
-                                                          title="#{DataEditorForm.getMetadataLabel(newGroupMetadata.key)}"/>
+                                            <h:outputText value="#{DataEditorForm.getMetadataEntryLabel(newGroupMetadata.key, comparison.metadataKey)}"
+                                                          title="#{DataEditorForm.getMetadataEntryLabel(newGroupMetadata.key, comparison.metadataKey)}"/>
                                         </p:column>
                                         <p:column id="newGroupMetadataValueColumn">
                                             <h:outputText value="#{comparison.getValueAsString(newGroupMetadata)}"
-                                                          title="#{comparison.getValueAsString(newGroupMetadata)}"
-                                                          styleClass="${comparison.selection ne reimportEnum.KEEP ? 'selected' : 'unselected'}"/>
+                                                          title="#{comparison.getValueAsString(newGroupMetadata)}"/>
                                         </p:column>
                                     </p:dataTable>
                                 </p:dataList>

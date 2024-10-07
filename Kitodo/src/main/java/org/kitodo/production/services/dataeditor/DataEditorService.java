@@ -510,10 +510,11 @@ public class DataEditorService {
 
     /**
      * Convert given metadata to string and return it. In contrast to 'toString' methods of 'MetadataEntry' and
-     * 'MetadataGroup', this method only returns the value of the metadata. If the given metadata is of type
-     * 'MetadataGroup', the values of the groups entries are concatenated and returned instead. Note: metadata elements
-     * of the group that are 'MetadataGroup's themselves are intentionally not traversed again, so this function does
-     * not work recursively.
+     * 'MetadataGroup', this method only returns the value of the metadata, without the domain.
+     * If the given metadata is of type 'MetadataGroup', the values of the groups entries are concatenated and returned
+     * instead.
+     * Note: metadata elements of the group that are 'MetadataGroup's themselves are intentionally not traversed again,
+     * so this function does not work recursively.
      * @param metadata Metadata to be converted to string
      * @return String representation of given metadata
      */
