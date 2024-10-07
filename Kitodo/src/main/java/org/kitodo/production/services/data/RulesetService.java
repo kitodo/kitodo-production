@@ -291,19 +291,19 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
             throws IOException {
         Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(ruleset);
         return metadataSet.stream().filter(m -> m instanceof MetadataGroup)
-                .sorted(Comparator.comparing(m -> ServiceManager.getRulesetService().getNestedMetadataValue(m, groupDisplayLabel)))
+                .sorted(Comparator.comparing(m -> ServiceManager.getRulesetService().getAnyNestedMetadataValue(m, groupDisplayLabel)))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Retrieve and return value of functional metadata 'groupDisplayLabel' for given MetadataGroup 'group' from given
-     * Ruleset 'ruleset'.
+     * Retrieve and return value of Metadata with any of the given 'keys' from given Ruleset 'ruleset'. If Metadata
+     * contains no nested metadata with any of the given keys an empty String is returned instead.
      *
      * @param metadata Metadata for which value of nested metadata is retrieved
      * @param keys keys of nested metadata whose value is to be retrieved
      * @return value found of first nested metadata found, identified by provided keys
      */
-    public String getNestedMetadataValue(Metadata metadata, Collection<String> keys) {
+    public String getAnyNestedMetadataValue(Metadata metadata, Collection<String> keys) {
         for (String groupDisplayLabelKey : keys) {
             String[] keySegments = groupDisplayLabelKey.split("@");
             String metadataValue = getNestedMetadataValue(metadata, Arrays.asList(keySegments).subList(1, keySegments.length));
