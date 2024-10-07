@@ -357,10 +357,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Load data editor settings (width of metadata editor columns) from database.
-     * 
-     * Either load task-specific configuration (if it exists) or default configuration (if it exists) or 
-     * initialize new empty data editor setting.
+     * Load data editor settings (width of metadata editor columns) from database. Either load task-specific 
+     * configuration (if it exists) or default configuration (if it exists) or initialize new empty data editor setting.
      */
     private void loadDataEditorSettings() {
         // use template task id if it exists, otherwise use null for task-independent layout
@@ -1097,10 +1095,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
 
     /**
-     * Save current metadata editor layout.
-     * 
-     * Either save it as task-specific layout (if editor was opened from a task) or 
-     * as task-independent layout (otherwise).
+     * Save current metadata editor layout. Either save it as task-specific layout (if editor was opened from a task) 
+     * or as task-independent layout (otherwise).
      */
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting)) {
