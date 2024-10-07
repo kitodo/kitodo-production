@@ -314,6 +314,23 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
         return "";
     }
 
+    private String getNestedMetadataValue(Metadata metadata, List<String> keySegments) {
+        if (metadata instanceof MetadataEntry) {
+            return ((MetadataEntry)metadata).getValue();
+        } else {
+            if (Objects.isNull(keySegments) || keySegments.isEmpty()) {
+                return "";
+            }
+            String currentSegment = keySegments.get(0);
+            for (Metadata metadataElement : ((MetadataGroup)metadata).getMetadata()) {
+                if (currentSegment.equals(metadataElement.getKey())) {
+                    return getNestedMetadataValue(metadataElement, keySegments.subList(1, keySegments.size()));
+                }
+            }
+        }
+        return "";
+    }
+
     /**
      * Retrieve translated label of MetadataEntry with key 'metadataEntryKey' nested in MetadataGroup with key
      * 'groupKey' from provided RulesetManagementInterface 'ruleset'.
@@ -351,22 +368,5 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
                                    List<Locale.LanguageRange> languageRange) {
         MetadataViewInterface viewInterface = ruleset.getMetadataView(metadataKey, acquisitionStage, languageRange);
         return viewInterface.getLabel();
-    }
-
-    private String getNestedMetadataValue(Metadata metadata, List<String> keySegments) {
-        if (metadata instanceof MetadataEntry) {
-            return ((MetadataEntry)metadata).getValue();
-        } else {
-            if (Objects.isNull(keySegments) || keySegments.isEmpty()) {
-                return "";
-            }
-            String currentSegment = keySegments.get(0);
-            for (Metadata metadataElement : ((MetadataGroup)metadata).getMetadata()) {
-                if (currentSegment.equals(metadataElement.getKey())) {
-                    return getNestedMetadataValue(metadataElement, keySegments.subList(1, keySegments.size()));
-                }
-            }
-        }
-        return "";
     }
 }

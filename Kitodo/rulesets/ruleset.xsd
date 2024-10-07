@@ -466,6 +466,9 @@
                     imported metadata entries from the data source can be updated later.
 
                 'title' This field is used as the title to form the author-title key.
+
+                'groupDisplayLabel' keys of this type are displayed in the metadata update dialog of the metadata
+                    editor.
             </xs:documentation>
         </xs:annotation>
         <xs:restriction>
