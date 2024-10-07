@@ -349,9 +349,13 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     private void loadTemplateTask(String taskId) throws DAOException {
         if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
-            int templateTaskId = Integer.parseInt(taskId);
-            if (templateTaskId > 0) {
-                this.templateTask = ServiceManager.getTaskService().getById(templateTaskId);
+            try {
+                int templateTaskId = Integer.parseInt(taskId);
+                if (templateTaskId > 0) {
+                    this.templateTask = ServiceManager.getTaskService().getById(templateTaskId);
+                }
+            } catch (NumberFormatException e) {
+                logger.warn("view parameter 'templateTaskId' is not a valid integer");
             }
         }
     }
