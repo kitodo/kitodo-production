@@ -350,7 +350,7 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
 
         // verify physical page number is now shown below thumbnail
-        assertTrue(0 < Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).size());
+        assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).isEmpty());
     }
 
     /**
