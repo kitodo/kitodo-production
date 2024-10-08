@@ -1794,7 +1794,7 @@ public class StructurePanel implements Serializable {
 
             if (currentSiblings.size() > currentIndex + 1) {
                 TreeNode nextSibling = currentSiblings.get(currentIndex + 1);
-                if(Objects.isNull(getTreeNodeStructuralElement(nextSibling))) {
+                if (Objects.isNull(getTreeNodeStructuralElement(nextSibling))) {
                     // next sibling is not a logical node
                     return null;
                 }
@@ -1805,7 +1805,7 @@ public class StructurePanel implements Serializable {
                 // check sibling has children (with first child being another logical node)
                 while (!nextLogical.getChildren().isEmpty()) {
                     TreeNode firstChild = nextLogical.getChildren().get(0);
-                    if(Objects.isNull(getTreeNodeStructuralElement(firstChild))) {
+                    if (Objects.isNull(getTreeNodeStructuralElement(firstChild))) {
                         // first child is not a logical node
                         return nextLogical;
                     }
