@@ -3444,6 +3444,7 @@ Column content
 .thumbnail + .thumbnail-container video {
     background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+    box-sizing: border-box;
 }
 
 .thumbnail.selected + .thumbnail-container .mediaListIconItem,
@@ -3606,6 +3607,7 @@ Column content
 #imagePreviewForm\:unstructuredMedia ul li > .ui-panel.ui-draggable {
     display: inline-block;
     position: relative;
+    vertical-align: top;
 }
 
 .page-drop-area {
