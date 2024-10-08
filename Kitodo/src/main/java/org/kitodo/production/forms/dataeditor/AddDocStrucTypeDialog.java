@@ -186,6 +186,7 @@ public class AddDocStrucTypeDialog {
             if (Objects.nonNull(selectedLogicalTreeNode)) {
                 this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
                 this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
+                dataEditor.refreshStructurePanel();
             }
             List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
                     .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))
