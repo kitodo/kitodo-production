@@ -26,6 +26,7 @@ public interface DataEditorInterface {
      *            The URI to the xml file to read.
      * @param xsltFileUri
      *            The URI to the xsl file for transformation of old format goobi metadata files.
+     * @throws IOException if reading fails.
      */
     void readData(URI xmlFileUri, URI xsltFileUri) throws IOException;
 

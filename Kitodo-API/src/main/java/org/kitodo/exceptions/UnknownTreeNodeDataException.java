@@ -15,6 +15,7 @@ public class UnknownTreeNodeDataException extends RuntimeException {
 
     /**
      * Constructor with given parameter name for exception message.
+     * @param type String which describes the unexpected type
      */
     public UnknownTreeNodeDataException(String type) {
         super("TreeNode contains data of unexpected type '" + type + "!");
