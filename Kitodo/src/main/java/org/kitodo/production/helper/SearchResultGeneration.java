@@ -19,14 +19,14 @@ import org.apache.logging.log4j.Logger;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.RangeQueryBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
 import org.kitodo.production.enums.ObjectType;
 import org.kitodo.production.services.ServiceManager;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.RangeQueryBuilder;
+import org.opensearch.search.sort.SortOrder;
 
 public class SearchResultGeneration {
 

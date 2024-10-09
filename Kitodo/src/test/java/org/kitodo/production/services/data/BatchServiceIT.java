@@ -12,16 +12,14 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.given;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import java.util.List;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -31,6 +29,8 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * Tests for BatchService class.
