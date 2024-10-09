@@ -137,6 +137,10 @@ public class Process extends BaseTemplateBean {
     @Transient
     private String baseType;
 
+    @ManyToOne
+    @JoinColumn(name = "import_configuration_id", foreignKey = @ForeignKey(name = "FK_process_import_configuration_id"))
+    private ImportConfiguration importConfiguration;
+
     /**
      * Constructor.
      */
@@ -673,4 +677,22 @@ public class Process extends BaseTemplateBean {
     public void setOcrdWorkflowId(String ocrdWorkflowId) {
         this.ocrdWorkflowId = ocrdWorkflowId;
     }
+
+    /**
+     * Get ImportConfiguration used to create this process.
+     *
+     * @return ImportConfiguration used to create this process. "null" if process was created manually.
+     */
+    public ImportConfiguration getImportConfiguration() {
+        return importConfiguration;
+    }
+
+    /**
+     * Set ImportConfiguration used to create this process.
+     * @param importConfiguration ImportConfiguration used to create this process
+     */
+    public void setImportConfiguration(ImportConfiguration importConfiguration) {
+        this.importConfiguration = importConfiguration;
+    }
+
 }

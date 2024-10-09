@@ -23,6 +23,7 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
+import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 
@@ -82,6 +83,11 @@ public class DummyRulesetManagement implements RulesetManagementInterface {
     @Override
     public int updateMetadata(String division, Collection<Metadata> metadata, String acquisitionStage,
             Collection<Metadata> updateItems) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public Reimport getMetadataReimport(String key, String acquisitionStage) {
         throw new UnsupportedOperationException();
     }
 }

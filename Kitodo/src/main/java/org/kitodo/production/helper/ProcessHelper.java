@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import static org.kitodo.constants.StringConstants.EDIT;
+
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashSet;
@@ -22,10 +24,11 @@ import java.util.Optional;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
@@ -36,6 +39,7 @@ import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.ProcessDetail;
 import org.kitodo.production.forms.createprocess.ProcessFieldedMetadata;
 import org.kitodo.production.helper.metadata.legacytypeimplementations.LegacyMetsModsDigitalDocumentHelper;
+import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.process.TiffHeaderGenerator;
 import org.kitodo.production.process.TitleGenerator;
 import org.kitodo.production.services.ServiceManager;
@@ -248,11 +252,11 @@ public class ProcessHelper {
      *
      * @param nodes
      *            node list to convert to metadata
-     * @param domain
-     *            domain of metadata
+     * @param ruleset
+     *            ruleset of process
      * @return metadata from node list
      */
-    public static HashSet<Metadata> convertMetadata(NodeList nodes, MdSec domain) {
+    public static HashSet<Metadata> convertMetadata(NodeList nodes, RulesetManagementInterface ruleset) {
         HashSet<Metadata> allMetadata = new HashSet<>();
         if (Objects.nonNull(nodes)) {
             for (int index = 0; index < nodes.getLength(); index++) {
@@ -270,19 +274,39 @@ public class ProcessHelper {
                         break;
                     case "metadataGroup": {
                         MetadataGroup group = new MetadataGroup();
-                        group.setMetadata(convertMetadata(element.getChildNodes(), null));
+                        group.setMetadata(convertMetadata(element.getChildNodes(), ruleset));
                         metadata = group;
                         break;
                     }
                     default:
                         continue;
                 }
-                metadata.setKey(element.getAttribute("name"));
-                metadata.setDomain(domain);
+                String metadataKey = element.getAttribute("name");
+                metadata.setKey(metadataKey);
+                setMetadataDomain(metadata, ruleset);
                 allMetadata.add(metadata);
             }
         }
         return allMetadata;
+    }
+
+    /**
+     * Sets the domain of the given metadata. This method uses a side effect. It doesn't return a new instance of
+     * metadata but changes the given metadata object.
+     *
+     * @param metadata Metadata instance for which the
+     * @param ruleset RulesetManagementInterface from which domain information about given metadata is retrieved
+     */
+    public static void setMetadataDomain(Metadata metadata, RulesetManagementInterface ruleset) {
+        MetadataViewInterface viewInterface = ruleset.getMetadataView(metadata.getKey(), EDIT, ServiceManager
+                .getUserService().getCurrentMetadataLanguage());
+        if (viewInterface.getDomain().isPresent()) {
+            Domain domain = viewInterface.getDomain().get();
+            // skip domain 'METS_DIV' because it has no equivalent 'MdSec'
+            if (!Domain.METS_DIV.equals(domain)) {
+                metadata.setDomain(MetadataEditor.domainToMdSec(domain));
+            }
+        }
     }
 
     /**
@@ -355,7 +379,7 @@ public class ProcessHelper {
             List<Locale.LanguageRange> priorityList) {
         ProcessFieldedMetadata metadata = initializeProcessDetails(tempProcess.getWorkpiece().getLogicalStructure(),
                 rulesetManagement, acquisitionStage, priorityList);
-        metadata.setMetadata(convertMetadata(tempProcess.getMetadataNodes(), MdSec.DMD_SEC));
+        metadata.setMetadata(convertMetadata(tempProcess.getMetadataNodes(), rulesetManagement));
         return metadata;
     }
 

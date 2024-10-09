@@ -326,6 +326,11 @@
                                 value="#{msgs['renameMediaFiles']}"
                                 action="#{ProcessForm.renameMedia}"
                                 icon="fa fa-files-o"/>
+                    <p:menuitem id="setImportConfiguration"
+                                rendered="#{SecurityAccessController.hasAuthorityToSetImportConfiguration()}"
+                                value="#{msgs['setImportConfiguration']}"
+                                action="#{ProcessForm.setImportConfiguration}"
+                                icon="fa fa-cloud-download "/>
                 </p:menu>
             <p:commandButton id="statisticButton" value="#{msgs.statisticalEvaluation}" styleClass="secondary"
                              icon="fa fa-sort" iconPos="right" process="@this"/>
