@@ -3392,25 +3392,7 @@ Column content
 
 .thumbnail-parent {
     display: block;
-    height: 104px;
-    width: 75px;
     position: relative;
-}
-
-.thumbnail-parent.media-type-video {
-    width: 185px;
-    height: auto;
-}
-
-.thumbnail-parent.media-type-audio {
-    width: 120px;
-    height: auto;
-}
-
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-audio,
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-video {
-    width: 90px;
-    height: auto;
 }
 
 .thumbnail-parent audio,
@@ -3421,6 +3403,8 @@ Column content
 
 .thumbnail-parent video {
     height: auto;
+    vertical-align: bottom;
+    box-sizing: border-box;
 }
 
 .thumbnail {
@@ -3468,13 +3452,27 @@ Column content
     border-style: solid;
 }
 
-
-
 .thumbnail-container {
     display: inline-block;
-    height: 100%;
     position: relative;
-    width: 100%;
+    height: 104px;
+    width: 75px;
+}
+
+.thumbnail-container.media-type-video {
+    width: 185px;
+    height: auto;
+}
+
+.thumbnail-container.media-type-audio {
+    width: 120px;
+    height: auto;
+}
+
+#imagePreviewForm\:thumbnailStripe .thumbnail-container.media-type-audio,
+#imagePreviewForm\:thumbnailStripe .thumbnail-container.media-type-video {
+    width: 90px;
+    height: auto;
 }
 
 .thumbnail-container > .ui-widget-content {
@@ -3578,6 +3576,13 @@ Column content
 
 .thumbnail-container:hover .thumbnail-overlay {
     opacity: .7;
+}
+
+.thumbnail-parent .thumbnail-banner {
+    word-break: break-word;
+    color: var(--pure-white);
+    font-size: smaller;
+    text-align: center;
 }
 
 #imagePreviewForm {
