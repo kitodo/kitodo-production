@@ -72,7 +72,7 @@
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
-                                changeToMapView();
+                                metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 expandMetadata('logical-metadata-tab');"
                     update="galleryHeadingWrapper
@@ -87,7 +87,7 @@
                     onstart="$('#contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
-                                changeToMapView();
+                                metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 PF('contextMenuLogicalTree').show(currentEvent)"
                     update="@(.stripe)

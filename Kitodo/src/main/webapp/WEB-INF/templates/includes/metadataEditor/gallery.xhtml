@@ -65,7 +65,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-file"
-                                     oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView();metadataEditor.gallery.mediaView.update();"
+                                     oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
@@ -290,8 +290,8 @@
                                     galleryWrapperPanel"/>
             </p:contextMenu>
         </h:form>
-        <h:outputStylesheet name="webjars/openlayers/5.2.0/ol.css"/>
-        <h:outputScript library="webjars" name="openlayers/5.2.0/ol.js" />
+        <h:outputStylesheet name="webjars/openlayers/6.14.1/ol.css"/>
+        <h:outputScript library="webjars" name="openlayers/6.14.1/ol.js" />
         <h:outputScript name="js/ol_custom.js"/>
         <h:outputScript name="js/metadataeditor_gallery_drag_drop.js" rendered="#{editImages}" />
     </p:panel>

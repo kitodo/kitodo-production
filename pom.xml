@@ -788,7 +788,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.webjars</groupId>
                 <artifactId>openlayers</artifactId>
-                <version>5.2.0</version>
+                <version>6.14.1</version>
             </dependency>
             <dependency>
                 <groupId>org.webjars</groupId>
