@@ -192,20 +192,6 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
-    Pair<BiConsumer<Division<?>, String>, String> getStructureFieldValue()
-            throws InvalidMetadataValueException, NoSuchMetadataFieldException {
-        if (settings.getDomain().orElse(Domain.DESCRIPTION).equals(Domain.METS_DIV)) {
-            String value = String.join(" ", selectedItems);
-            if (!settings.isValid(value, container.getListForLeadingMetadataFields())) {
-                throw new InvalidMetadataValueException(label, value);
-            }
-            return Pair.of(super.getStructureFieldSetters(settings), value);
-        } else {
-            return null;
-        }
-    }
-
-    @Override
     public boolean isValid() {
         for (String selectedItem : selectedItems) {
             if (!settings.isValid(selectedItem, container.getListForLeadingMetadataFields())) {
