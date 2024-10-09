@@ -1731,6 +1731,17 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
     }
 
     /**
+     * Retrieves a mapping of process IDs to their corresponding base types.
+     *
+     * @param processIds
+     *            list of document IDs to retrieve and process.
+     * @return a map where the keys are document IDs and the values are their associated base types
+     */
+    public Map<Integer, String> getIdBaseTypeMap(List<Integer> processIds) throws DataException {
+        return fetchIdToBaseTypeMap(processIds);
+    }
+
+    /**
      * Filter for correction / solution messages.
      *
      * @param lpe
