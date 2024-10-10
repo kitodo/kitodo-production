@@ -185,7 +185,7 @@
             <dependency>
                 <groupId>commons-logging</groupId>
                 <artifactId>commons-logging</artifactId>
-                <version>1.3.3</version>
+                <version>1.3.4</version>
             </dependency>
             <dependency>
                 <groupId>commons-net</groupId>
@@ -332,7 +332,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
-                <version>3.0.2</version>
+                <version>3.0.3</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -633,7 +633,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.passay</groupId>
                 <artifactId>passay</artifactId>
-                <version>1.6.4</version>
+                <version>1.6.5</version>
             </dependency>
             <dependency>
                 <groupId>org.primefaces.extensions</groupId>
