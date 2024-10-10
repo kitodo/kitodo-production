@@ -87,24 +87,13 @@ public class DataEditorService {
     }
 
     /**
-     * Retrieve and return list of metadata keys that are used for displaying title information in the metadata editors
-     * structure and gallery panels from the Kitodo configuration file.
-     *
-     * @return list of title metadata keys
-     */
-    public static List<String> getTitleKeys() {
-        return Arrays.stream(ConfigCore.getParameter(ParameterCore.TITLE_KEYS, "").split(","))
-                .map(String::trim).collect(Collectors.toList());
-    }
-
-    /**
      * Retrieve and return title value from given IncludedStructuralElement.
      *
      * @param element IncludedStructuralElement for which the title value is returned.
      * @param metadataTitleKey as a String that its value will be displayed.
      * @return title value of given element
      */
-    public static String getTitleValue(LogicalDivision element, String metadataTitleKey) {
+    public static Optional<String> getTitleValue(LogicalDivision element, String metadataTitleKey) {
         String[] metadataPath = metadataTitleKey.split("@");
         int lastIndex = metadataPath.length - 1;
         Collection<Metadata> metadata = element.getMetadata();
@@ -122,7 +111,7 @@ public class DataEditorService {
                 .map(MetadataEntry::getValue)
                 .filter(value -> !value.isEmpty())
                 .findFirst();
-        return metadataTitle.orElse(" - ");
+        return metadataTitle;
     }
 
     /**

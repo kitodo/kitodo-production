@@ -317,12 +317,6 @@ public enum ParameterCore implements ParameterInterface {
      */
     PAGE_SEPARATORS(new Parameter<>("metsEditor.pageSeparators", "\" \"")),
 
-    /**
-     # Priority list of metadata keys used to display title information in the metadata editors structure and gallery
-     panels.
-     */
-    TITLE_KEYS(new Parameter<>("metsEditor.titleMetadata", "")),
-
     /*
      * backup of metadata configuration
      */

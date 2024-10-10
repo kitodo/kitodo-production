@@ -50,7 +50,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataEditor;
 import org.kitodo.production.model.Subfolder;
 import org.kitodo.production.services.ServiceManager;
-import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.primefaces.event.NodeCollapseEvent;
 import org.primefaces.event.NodeExpandEvent;
 import org.primefaces.event.NodeSelectEvent;
@@ -1849,18 +1848,6 @@ public class StructurePanel implements Serializable {
      */
     public void setTitleMetadata(String titleMetadata) {
         this.titleMetadata = titleMetadata;
-    }
-
-    /**
-     * Get list of metadata keys that are used for displaying title information from the Kitodo configuration file.
-     * @return list of title metadata keys
-     */
-    public List<SelectItem> getTitleMetadataItems() {
-        return DataEditorService.getTitleKeys()
-                .stream()
-                .map(key -> new SelectItem(key,dataEditor.getRulesetManagement().getTranslationForKey(
-                        key,dataEditor.getPriorityList()).orElse(key)))
-                .collect(Collectors.toList());
     }
 
     /**
