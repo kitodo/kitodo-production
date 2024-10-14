@@ -376,7 +376,8 @@ public class MetadataST extends BaseTestSelenium {
         assertNotEquals("0.0", getValue.apply(galleryWithId));
     }
 
-    /* Verifies that turning the "show physical page number below thumbnail switch" on in the user settings
+    /**
+     * Verifies that turning the "show physical page number below thumbnail switch" on in the user settings
      * results in thumbnail banner being displayed in the gallery of the metadata editor.
      */
     @Test
