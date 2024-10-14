@@ -84,6 +84,7 @@ public class ProcessTextMetadata extends ProcessSimpleMetadata implements Serial
      * @param skipEmpty boolean
      * @return the metadata from this row
      */
+    @Override
     public Collection<Metadata> getMetadata(boolean skipEmpty) {
         value = value.trim();
         if (skipEmpty && value.isEmpty()) {

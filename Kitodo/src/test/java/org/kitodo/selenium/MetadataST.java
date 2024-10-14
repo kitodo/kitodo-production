@@ -376,6 +376,28 @@ public class MetadataST extends BaseTestSelenium {
         assertNotEquals("0.0", getValue.apply(galleryWithId));
     }
 
+    /* Verifies that turning the "show physical page number below thumbnail switch" on in the user settings
+     * results in thumbnail banner being displayed in the gallery of the metadata editor.
+     */
+    @Test
+    public void showPhysicalPageNumberBelowThumbnailTest() throws Exception {
+        login("kowal");
+       
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+        
+        // verify that physical page number is not shown below thumbnail by default
+        assertEquals(0, Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).size());
+
+        // change user setting
+        Pages.getMetadataEditorPage().closeEditor();
+        Pages.getUserEditPage().toggleShowPhysicalPageNumberBelowThumbnail();
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // verify physical page number is now shown below thumbnail
+        assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).isEmpty());
+    }
+
     /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails

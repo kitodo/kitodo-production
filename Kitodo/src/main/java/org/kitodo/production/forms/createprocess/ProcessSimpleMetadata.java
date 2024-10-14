@@ -87,6 +87,7 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
         return Objects.isNull(settings) || settings.isUndefined();
     }
 
+    @Override
     public boolean isRequired() {
         ComplexMetadataViewInterface containerSettings = container.getMetadataView();
         if (!(containerSettings instanceof StructuralElementViewInterface) && container.getChildMetadata().isEmpty()

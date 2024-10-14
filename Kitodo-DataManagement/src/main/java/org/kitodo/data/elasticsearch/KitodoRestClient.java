@@ -131,6 +131,7 @@ public abstract class KitodoRestClient implements RestClientInterface {
      *
      * @return information about the server
      */
+    @Override
     public String getServerInformation() throws IOException {
         Request request = new Request(HttpMethod.GET, "/");
         request.addParameter("pretty", "true");

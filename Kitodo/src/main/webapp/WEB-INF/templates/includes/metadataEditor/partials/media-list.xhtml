@@ -20,7 +20,7 @@
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 
-    <p:outputPanel styleClass="thumbnail-parent #{fn:startsWith(media.previewMimeType, 'video') ? 'media-type-video' : ''}#{fn:startsWith(media.previewMimeType, 'audio') ? 'media-type-audio' : ''}" >
+    <p:outputPanel styleClass="thumbnail-parent" >
         <c:choose>
             <c:when test="#{uiParamStripeIndex eq '0' || uiParamStripeIndex eq 0}">
                 <c:set var="thumbnailStyleClass"
@@ -33,7 +33,7 @@
         </c:choose>
         <p:outputPanel
                 styleClass="thumbnail #{DataEditorForm.consecutivePagesSelected() ? '' : 'discontinuous'} #{thumbnailStyleClass}"/>
-        <p:outputPanel styleClass="thumbnail-container"
+        <p:outputPanel styleClass="thumbnail-container #{fn:startsWith(media.previewMimeType, 'video') ? 'media-type-video' : ''}#{fn:startsWith(media.previewMimeType, 'audio') ? 'media-type-audio' : ''}"
                        a:data-order="#{media.order}"
                        a:data-stripe="#{uiParamStripeIndex}"
                        a:data-logicalTreeNodeId="#{media.logicalTreeNodeId}">
@@ -95,6 +95,20 @@
             <ui:include src="media-list-content.xhtml"/>
 
         </p:outputPanel>
+        
+        <ui:fragment rendered="#{LoginForm.loggedUser.isShowPhysicalPageNumberBelowThumbnail()}">
+            <p:outputPanel class="thumbnail-banner">
+                <h:outputText rendered="#{media.type eq 'VIDEO'}">
+                    #{msgs.video} #{media.shortId}
+                </h:outputText>
+                <h:outputText rendered="#{media.type eq 'AUDIO'}">
+                    #{msgs.audio} #{media.shortId}
+                </h:outputText>
+                <h:outputText rendered="#{media.type eq 'IMAGE'}">
+                    #{msgs.image} #{media.shortId}
+                </h:outputText>
+            </p:outputPanel>
+        </ui:fragment>
     </p:outputPanel>
 
 </ui:composition>
