@@ -78,6 +78,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "renamingMediaResultForm:okSuccess")
     private WebElement okButtonRenameMediaFiles;
 
+    @FindBy(id = "contextMenuLogicalTree")
+    private WebElement contextMenuLogicalTree;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -89,6 +92,10 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
 
     public boolean isStructureTreeFormVisible() {
         return structureTreeForm.isDisplayed();
+    }
+
+    public boolean isLogicalTreeVisible() {
+        return logicalTree.isDisplayed();
     }
 
     /**
@@ -221,5 +228,47 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     public long getNumberOfDisplayedStructureElements() {
         return Browser.getDriver().findElements(By.cssSelector(".ui-treenode")).stream().filter(WebElement::isDisplayed)
                 .count();
+    }
+
+    /**
+     * Open context menu (right click) for specific structure tree node.
+     * 
+     * @param nodeId the tree node id describing the node in the tree (e.g., "0_1_0_1")
+     */
+    public void openContextMenuForStructureTreeNode(String nodeId) {
+        WebElement treeNode = Browser.getDriver().findElement(By.cssSelector(
+            "#logicalTree\\:" + nodeId +  " .ui-treenode-content"
+        ));
+        new Actions(Browser.getDriver()).contextClick(treeNode).build().perform();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> contextMenuLogicalTree.isDisplayed()
+        );
+    }
+
+    /**
+     * Click on a menu entry in the structure tree context menu.
+     * 
+     * @param menuEntry the menu entry index (starting with 1)
+     */
+    public void clickStructureTreeContextMenuEntry(int menuEntry) {
+        // click on menu entry
+        contextMenuLogicalTree.findElement(By.cssSelector(
+            ".ui-menuitem:nth-child(" + menuEntry +  ") .ui-menuitem-link"
+        )).click();
+        // wait for context menu to disappear
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(() -> !contextMenuLogicalTree.isDisplayed());
+    }
+
+    /**
+     * Check if a structure tree node is marked as "assigned several times".
+     * 
+     * @param nodeId the tree node id describing the node in the tree (e.g., "0_1_0_1")
+     * @return true if "assigned several times"
+     */
+    public Boolean isStructureTreeNodeAssignedSeveralTimes(String nodeId) {
+        return !Browser.getDriver().findElements(By.cssSelector(
+            "#logicalTree\\:" + nodeId + " .assigned-several-times"
+        )).isEmpty();
     }
 }
