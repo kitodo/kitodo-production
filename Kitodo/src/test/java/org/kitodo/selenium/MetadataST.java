@@ -40,6 +40,7 @@ import org.kitodo.production.services.data.ProcessService;
 import org.kitodo.selenium.testframework.BaseTestSelenium;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
+import org.kitodo.selenium.testframework.pages.MetadataEditorPage;
 import org.kitodo.test.utils.ProcessTestUtils;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
@@ -55,15 +56,18 @@ public class MetadataST extends BaseTestSelenium {
     private static final String TEST_MEDIA_REFERENCES_FILE = "testUpdatedMediaReferencesMeta.xml";
     private static final String TEST_METADATA_LOCK_FILE = "testMetadataLockMeta.xml";
     private static final String TEST_RENAME_MEDIA_FILE = "testRenameMediaMeta.xml";
+    private static final String TEST_LINK_PAGE_TO_NEXT_DIVISION_MEDIA_FILE = "testLinkPageToNextDivisionMeta.xml";
     private static int mediaReferencesProcessId = -1;
     private static int metadataLockProcessId = -1;
     private static int parentProcessId = -1;
     private static int renamingMediaProcessId = -1;
     private static int dragndropProcessId = -1;
     private static int createStructureProcessId = -1;
+    private static int linkPageToNextDivisionProcessId = -1;
     private static final String PARENT_PROCESS_TITLE = "Parent process";
     private static final String FIRST_CHILD_PROCESS_TITLE = "First child process";
     private static final String SECOND_CHILD_PROCESS_TITLE = "Second child process";
+    private static final String LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE = "Link page to next division";
     private static final String TEST_PARENT_PROCESS_METADATA_FILE = "testParentProcessMeta.xml";
     private static final String FIRST_CHILD_ID = "FIRST_CHILD_ID";
     private static final String SECOND_CHILD_ID = "SECOND_CHILD_ID";
@@ -102,6 +106,11 @@ public class MetadataST extends BaseTestSelenium {
         copyTestFilesForCreateStructure();
     }
 
+    private static void prepareLinkPageToNextDivision() throws DAOException, DataException, IOException {
+        linkPageToNextDivisionProcessId = MockDatabase.insertTestProcessIntoSecondProject(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
+        ProcessTestUtils.copyTestFiles(linkPageToNextDivisionProcessId, TEST_LINK_PAGE_TO_NEXT_DIVISION_MEDIA_FILE);
+    }
+
     /**
      * Prepare tests by inserting dummy processes into database and index for sub-folders of test metadata resources.
      * @throws DAOException when saving of dummy or test processes fails.
@@ -117,6 +126,7 @@ public class MetadataST extends BaseTestSelenium {
         prepareMediaRenamingProcess();
         prepareDragNDropProcess();
         prepareCreateStructureProcess();
+        prepareLinkPageToNextDivision();
     }
 
     /**
@@ -353,6 +363,50 @@ public class MetadataST extends BaseTestSelenium {
         assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).isEmpty());
     }
 
+    @Test
+    public void linkPageToNextDivision() throws Exception {
+        login("kowal");
+
+        // open metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(LINK_PAGE_TO_NEXT_DIVISION_PROCESS_TITLE);
+
+        MetadataEditorPage metaDataEditor = Pages.getMetadataEditorPage();
+
+        // wait until structure tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(metaDataEditor::isLogicalTreeVisible);       
+
+        // check page "2" is not marked as "linked"
+        assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
+
+        // open context menu for page "2"
+        metaDataEditor.openContextMenuForStructureTreeNode("0_0_0_0");
+
+        // click on 2nd menu entry "assign to next element"
+        metaDataEditor.clickStructureTreeContextMenuEntry(2);
+
+        // verify page "2" is now marked as "linked"
+        assertTrue(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
+
+        // verify linked page "2" was created at correct tree position
+        assertTrue(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_1_0_0"));
+
+        // check page "3" was moved to be 2nd sibling
+        assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_1_0_1"));
+
+        // open context menu for linked page "2"
+        metaDataEditor.openContextMenuForStructureTreeNode("0_1_0_0");
+
+        // click on 2nd menu entry "remove assignment"
+        metaDataEditor.clickStructureTreeContextMenuEntry(2);
+
+        // check page "2" is not marked as "linked" any more
+        assertFalse(metaDataEditor.isStructureTreeNodeAssignedSeveralTimes("0_0_0_0"));
+
+        // check page "3" is now only child of folder again
+        assertTrue(Browser.getDriver().findElements(By.cssSelector("#logicalTree\\:0_1_0_1")).isEmpty());
+    }
+
     /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
@@ -380,6 +434,7 @@ public class MetadataST extends BaseTestSelenium {
         ProcessService.deleteProcess(renamingMediaProcessId);
         ProcessService.deleteProcess(dragndropProcessId);
         ProcessService.deleteProcess(createStructureProcessId);
+        ProcessService.deleteProcess(linkPageToNextDivisionProcessId);
     }
 
     private void login(String username) throws InstantiationException, IllegalAccessException, InterruptedException {
