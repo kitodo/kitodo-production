@@ -25,6 +25,7 @@ public final class TestConstants {
     public static final String NUMBER_OF_CHILD_RECORDS_PATH = "src/test/resources/importRecords/sruNumberOfChildRecords.xml";
     public static final String MULTIPLE_CHILD_RECORDS_PATH = "src/test/resources/importRecords/importMultipleChildRecords.xml";
     public static final String CHILD_RECORD_PATH = "src/test/resources/importRecords/importChildRecord.xml";
+    public static final String REIMPORT_RECORD_PATH = "src/test/resources/importRecords/reimportMetadata.xml";
     public static final String HITLIST_RECORD_PATH = "src/test/resources/importRecords/importHitlist.xml";
     public static final String EAD_ID = "ead.id";
     public static final String EAD_PARENT_ID = "context.ead.id";

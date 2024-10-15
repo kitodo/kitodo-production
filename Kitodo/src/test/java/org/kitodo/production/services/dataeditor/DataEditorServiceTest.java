@@ -12,6 +12,7 @@
 package org.kitodo.production.services.dataeditor;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
@@ -23,6 +24,8 @@ import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.production.services.ServiceManager;
 
 public class DataEditorServiceTest {
@@ -31,6 +34,8 @@ public class DataEditorServiceTest {
     private static byte[] testMetaOldFormat;
     private static final String pathOfOldMetaFormat = "src/test/resources/testmetaOldFormat.xml";
     private static final String metadataFilesDir = "./src/test/resources/metadata/metadataFiles/";
+    private static final String EXPECTED_ENTRY_STRING = "Test-Titel";
+    private static final String EXPECTED_GROUP_STRING = "JohnDoeAuthor";
 
     @BeforeEach
     public void saveFile() throws IOException {
@@ -49,12 +54,35 @@ public class DataEditorServiceTest {
     }
 
     @Test
-    public void shouldReadOldMetadata() throws IOException {
+    public void shouldReadOldMetadata() {
         assertDoesNotThrow(() -> dataEditorService.readData(Paths.get(metadataFilesDir + "testmetaOldFormat.xml").toUri()));
     }
 
     @Test
-    public void shouldNotReadMetadataOfNotExistingFile() throws IOException {
+    public void shouldNotReadMetadataOfNotExistingFile() {
         assertThrows(IOException.class, () -> dataEditorService.readData(Paths.get("notExisting.xml").toUri()));
+    }
+
+    @Test
+    public void shouldConvertMetadataToString() {
+        MetadataEntry metadataEntry = new MetadataEntry();
+        metadataEntry.setKey("TitleMainDoc");
+        metadataEntry.setValue(EXPECTED_ENTRY_STRING);
+        assertEquals(EXPECTED_ENTRY_STRING, DataEditorService.metadataToString(metadataEntry));
+        MetadataGroup metadataGroup = new MetadataGroup();
+        metadataGroup.setKey("Person");
+        MetadataEntry firstNameEntry = new MetadataEntry();
+        firstNameEntry.setKey("FirstName");
+        firstNameEntry.setValue("John");
+        MetadataEntry lastNameEntry = new MetadataEntry();
+        lastNameEntry.setKey("LastName");
+        lastNameEntry.setValue("Doe");
+        MetadataEntry roleEntry = new MetadataEntry();
+        roleEntry.setKey("Role");
+        roleEntry.setValue("Author");
+        metadataGroup.getMetadata().add(firstNameEntry);
+        metadataGroup.getMetadata().add(lastNameEntry);
+        metadataGroup.getMetadata().add(roleEntry);
+        assertEquals(EXPECTED_GROUP_STRING, DataEditorService.metadataToString(metadataGroup));
     }
 }

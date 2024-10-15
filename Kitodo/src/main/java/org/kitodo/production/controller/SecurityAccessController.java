@@ -1126,4 +1126,22 @@ public class SecurityAccessController {
     public boolean hasAuthorityToMassImportProcesses() {
         return securityAccessService.hasAuthorityToUseMassImport() && securityAccessService.hasAuthorityToAddProcess();
     }
+
+    /**
+     * Check if the current user has the permission to set import configurations for processes.
+     *
+     * @return true if the current user has the permission to set import configurations for processes.
+     */
+    public boolean hasAuthorityToSetImportConfiguration() {
+        return securityAccessService.hasAuthorityToSetImportConfiguration();
+    }
+
+    /**
+     * Check if the current user has the permission to re-import metadata in the metadata editor.
+     *
+     * @return true if the current user has the permission to re-import metadata in the metadata editor.
+     */
+    public boolean hasAuthorityToReimportMetadata() {
+        return securityAccessService.hasAuthorityToReimportMetadata();
+    }
 }
