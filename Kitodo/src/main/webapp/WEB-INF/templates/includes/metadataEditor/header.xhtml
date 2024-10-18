@@ -35,10 +35,12 @@
 
         </h3>
 
-        <p:commandButton id="metadataEditorLayoutButton"
-            title="#{msgs['dataEditor.layoutMenuButtonTitle']}"
-            icon="fa fa-wrench"
-            styleClass="secondary"/>
+        <h:form id="metadataEditorLayoutButtonForm">
+            <p:commandButton id="open"
+                title="#{msgs['dataEditor.layoutMenuButtonTitle']}"
+                icon="fa fa-wrench"
+                styleClass="secondary"/>
+        </h:form>
 
         <h:form id="buttonForm">
             <p:commandButton id="close"
