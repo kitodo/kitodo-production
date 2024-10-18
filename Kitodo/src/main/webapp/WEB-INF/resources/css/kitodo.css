@@ -2194,10 +2194,6 @@ Metadata Editor
     pointer-events: all;
 }
 
-#metadataEditorLayoutForm {
-    margin: 0;
-}
-
 #metadataEditorHeader .ui-panel,
 #metadataEditorHeader .ui-panel-content {
     padding: 0;
@@ -2796,6 +2792,30 @@ Column content
 
 #logicalStructureMenuForm ul li {
     padding: 0.5em 0.25em;
+}
+
+#metadataEditorLayoutForm ul {
+    list-style: none;
+    margin: 0.25em 0;
+}
+
+#metadataEditorLayoutForm ul li {
+    padding: 0.25em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#metadataEditorLayoutForm i.fa {
+    margin-right: 0.5em;
+}
+
+#metadataEditorLayoutForm .ui-commandlink {
+    margin-right: 1em;
+}
+
+#metadataEditorLayoutForm a, #metadataEditorLayoutForm a:hover {
+    text-decoration: none;
 }
 
 #commentsPanel {
