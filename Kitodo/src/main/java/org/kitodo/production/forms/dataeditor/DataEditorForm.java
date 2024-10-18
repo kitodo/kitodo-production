@@ -1115,13 +1115,28 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.DATAEDITORSETTING.getTranslationSingular() }, logger, e);
             }
         } else {
             // should never happen any more, since layout settings are always created (even outside of task context)
             int taskId = Objects.nonNull(this.templateTask) ? this.templateTask.getId() : 0;
             int userId = user.getId();
             logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", userId, taskId);
+        }
+    }
+
+    /**
+     * Delete current metadata editor layout.
+     */
+    public void deleteDataEditorSetting() {
+        if (Objects.nonNull(dataEditorSetting)) {
+            try {
+                ServiceManager.getDataEditorSettingService().removeFromDatabase(dataEditorSetting);
+                this.loadDataEditorSettings();
+                PrimeFaces.current().executeScript("PF('dataEditorDeletedResultDialog').show();");
+            } catch (DAOException e) {
+                Helper.setErrorMessage("errorDeleting", new Object[] { ObjectType.DATAEDITORSETTING.getTranslationSingular() }, logger, e);
+            }
         }
     }
 
