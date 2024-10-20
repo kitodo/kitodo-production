@@ -1,0 +1,90 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        template="/WEB-INF/templates/base.xhtml"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:f="http://xmlns.jcp.org/jsf/core"
+        xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:p="http://primefaces.org/ui">
+
+    <f:metadata>
+        <!--@elvariable id="id" type="java.lang.Integer"-->
+        <f:viewParam name="processId"/>
+        <!--@elvariable id="mediaId" type="java.lang.String"-->
+        <f:viewParam name="mediaId"/>
+        <!--@elvariable id="mimeType" type="java.lang.String"-->
+        <f:viewParam name="mimeType"/>
+        <!--@elvariable id="cachingUUID" type="java.lang.String"-->
+        <f:viewParam name="cachingUUID"/>
+    </f:metadata>
+
+    <ui:define name="search">
+        <h2 id="externalViewTitle">
+            <h:outputText rendered="#{fn:startsWith(mimeType, 'audio')}" value="#{msgs.audio} "/>
+            <h:outputText rendered="#{fn:startsWith(mimeType, 'video')}" value="#{msgs.video} "/>
+            <h:outputText rendered="#{fn:startsWith(mimeType, 'image')}" value="#{msgs.image} "/>
+            <h:outputText value="#{ExternalView.convertToShortId(mediaId)}">
+                <f:convertNumber pattern="#" />
+            </h:outputText>
+        </h2>
+    </ui:define>
+
+    <ui:define name="breadcrumbs"></ui:define>
+    <ui:define name="navigation"></ui:define>
+
+    <ui:define name="content">
+        <p:panel id="externalViewPanel">
+            <h:form id="imagePreviewForm" style="height: 100%;" styleClass="focusable">
+                <!-- video and audio -->
+                <ui:fragment rendered="#{fn:startsWith(mimeType, 'video') or fn:startsWith(mimeType, 'audio')}">
+                    <p:outputPanel id="mediaDetailMediaContainer">
+                        <p:media 
+                                styleClass="mediaPreviewItem" 
+                                value="#{mediaProvider.mediaView}"
+                                player="#{fn:startsWith(mimeType, 'video') ? 'html-video' : 'html-audio'}"
+                                width="90%" 
+                                height="auto">
+                            <f:param name="mediaId" value="#{mediaId}"/>
+                            <f:param name="process" value="#{processId}"/>
+                            <f:param name="sessionId" value="#{cachingUUID}"/>
+                            <f:param name="type" value="#{mimeType}"/>
+                            <f:param name="krsc" value="true"/>
+                        </p:media>
+                    </p:outputPanel>
+                </ui:fragment>
+                <!-- image -->
+                <ui:fragment rendered="#{fn:startsWith(mimeType, 'image')}">
+                    <p:graphicImage 
+                            id="mediaPreviewGraphicImage"
+                            value="#{mediaProvider.mediaView}"
+                            styleClass="mediaPreviewItem"
+                            style="display: none;">
+                        <f:param name="mediaId" value="#{mediaId}"/>
+                        <f:param name="process" value="#{processId}"/>
+                    </p:graphicImage>
+
+                    <div id="map" class="map" style="width: 100%; height: 100%;">
+                        <i class="fa fa-spinner fa-spin"/>
+                    </div>
+                </ui:fragment>
+            </h:form>
+        </p:panel>
+
+        <h:outputStylesheet name="webjars/openlayers/5.2.0/ol.css"/>
+        <h:outputScript library="webjars" name="openlayers/5.2.0/ol.js" />
+        <h:outputScript name="js/ol_custom.js"/>
+    </ui:define>
+
+</ui:composition>

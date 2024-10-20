@@ -249,6 +249,17 @@
                                 paginationForm:paginationWrapperPanel
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
+                <p:menuitem value="#{msgs.viewPageInNewWindow}"
+                            rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE}"
+                            icon="fa fa-external-link fa-sm"
+                            styleClass="plain"
+                            outcome="externalView" 
+                            target="_blank">
+                    <f:param name="processId" value="#{DataEditorForm.process.id}"/>
+                    <f:param name="mediaId" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                    <f:param name="mimeType" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType}"/>
+                    <f:param name="cachingUUID" value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                </p:menuitem>
             </p:contextMenu>
             <p:contextMenu id="stripeContextMenu"
                            widgetVar="stripeContextMenu"
