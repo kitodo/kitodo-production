@@ -250,7 +250,9 @@
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
                 <p:menuitem value="#{msgs.viewPageInNewWindow}"
-                            rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE}"
+                            rendered="#{
+                                DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE and 
+                                mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
                             icon="fa fa-external-link fa-sm"
                             styleClass="plain"
                             outcome="externalView" 
