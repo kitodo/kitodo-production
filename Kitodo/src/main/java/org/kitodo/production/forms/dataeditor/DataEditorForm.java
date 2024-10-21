@@ -348,7 +348,6 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
     private void loadStructureTreeTitlesFromRuleset() {
         structureTreeTitles = getRulesetManagement().getFunctionalKeys(FunctionalMetadata.STRUCTURE_TREE_TITLE);
-        logger.error("structure tree titles are: " + String.join(",", structureTreeTitles));
         if (structureTreeTitles.isEmpty()) {
             Locale locale = LocaleHelper.getCurrentLocale();
             Helper.setWarnMessage(Helper.getString(locale, "dataEditor.noStructureTreeTitleFoundWarning"));
