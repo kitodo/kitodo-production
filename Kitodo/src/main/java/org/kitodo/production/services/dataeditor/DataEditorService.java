@@ -15,7 +15,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -91,9 +90,9 @@ public class DataEditorService {
      *
      * @param element IncludedStructuralElement for which the title value is returned.
      * @param metadataTitleKey as a String that its value will be displayed.
-     * @return title value of given element
+     * @return title value of given element or an empty string
      */
-    public static Optional<String> getTitleValue(LogicalDivision element, String metadataTitleKey) {
+    public static String getTitleValue(LogicalDivision element, String metadataTitleKey) {
         String[] metadataPath = metadataTitleKey.split("@");
         int lastIndex = metadataPath.length - 1;
         Collection<Metadata> metadata = element.getMetadata();
@@ -105,12 +104,13 @@ public class DataEditorService {
                     .flatMap(metadataGroup -> metadataGroup.getMetadata().stream())
                     .collect(Collectors.toList());
         }
-        Optional<String> metadataTitle = metadata.stream()
+        String metadataTitle = metadata.stream()
                 .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
                 .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
                 .map(MetadataEntry::getValue)
                 .filter(value -> !value.isEmpty())
-                .findFirst();
+                .findFirst()
+                .orElse("");
         return metadataTitle;
     }
 

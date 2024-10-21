@@ -967,7 +967,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             
             title = metadataKeys.stream()
                 .map((key) -> DataEditorService.getTitleValue(logicalDivision, key))
-                .filter(Optional::isPresent).map(Optional::get).findFirst().orElse("");
+                .filter((t) -> !t.isEmpty()).findFirst().orElse("");
 
             if (StringUtils.isBlank(title)) {
                 title = logicalDivision.getLabel();
