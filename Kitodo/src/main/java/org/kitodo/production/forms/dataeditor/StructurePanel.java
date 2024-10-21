@@ -1838,7 +1838,7 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Get the node label option (either "type", "title" or "type+title")
+     * Get the node label option (either "type", "title" or "type+title").
      * @return value of node label option
      */
     public String getNodeLabelOption() {
@@ -1850,7 +1850,7 @@ public class StructurePanel implements Serializable {
      * @param nodeLabelOption as java.lang.String
      */
     public void setNodeLabelOption(String nodeLabelOption) {
-        if(!Arrays.asList("type", "title", "type+title").contains(nodeLabelOption)) {
+        if (!Arrays.asList("type", "title", "type+title").contains(nodeLabelOption)) {
             throw new IllegalArgumentException("node label option must be either type, title or type+title");
         }
         this.nodeLabelOption = nodeLabelOption;
