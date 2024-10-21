@@ -768,6 +768,9 @@ public class RulesetManagementIT {
         assertThat("Periodical was not found!",
                 rulesetManagement.getFunctionalDivisions(FunctionalDivision.CREATE_CHILDREN_FROM_PARENT),
                 contains("Periodical"));
+        assertThat("structureTreeTitle was not found!", 
+            rulesetManagement.getFunctionalKeys(FunctionalMetadata.STRUCTURE_TREE_TITLE),
+            contains("LABEL"));
 
         // not existing uses
         assertThat("Something was found!",

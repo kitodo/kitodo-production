@@ -31,7 +31,7 @@
         <division id="Volume" withWorkflow="true" processTitle="TSL_ATS+'_'+CatalogIDDigital">
             <label>Band</label>
         </division>
-        <key id="TitleDocMain" domain="source">
+        <key id="TitleDocMain" domain="source" use="structureTreeTitle">
             <label>HauptTitel</label>
         </key>
         <key id="TitleDocMainShort" domain="technical">

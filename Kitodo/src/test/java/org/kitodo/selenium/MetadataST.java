@@ -353,6 +353,44 @@ public class MetadataST extends BaseTestSelenium {
         assertFalse(Browser.getDriver().findElements(By.cssSelector(".thumbnail-banner")).isEmpty());
     }
 
+    /** 
+     * Verifies that the label of a node in the logical structure tree changes according to the 
+     * "structureTreeTitle" option from the ruleset after switching to the "title" display option. 
+     */
+    @Test
+    public void selectStructureTreeTitleTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until logical tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // check that first tree node label shows type label "Band"
+        assertEquals("Band", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0 .ui-treenode-label")).getText());
+
+        // open select menu
+        Browser.getDriver().findElement(By.id("logicalStructureTitle")).click();
+
+        // wait until select menu is open
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalStructureTitle_panel")).isDisplayed());
+
+        // click on title menu entry
+        Browser.getDriver().findElement(By.id("logicalStructureTitle_1")).click();
+
+        // wait until menu disappears
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> !Browser.getDriver().findElement(By.id("logicalStructureTitle_panel")).isDisplayed());
+        
+        // check that node title has changed to metadata value of "HauptTitel"
+        assertEquals("Der Titel des Bandes", 
+            Browser.getDriver().findElement(By.cssSelector("#logicalTree\\:0 .ui-treenode-label")).getText());
+    }
+
     /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails

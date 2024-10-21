@@ -19,7 +19,7 @@
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:outputPanel id="logicalStructureHeader">
-        <p:selectOneMenu styleClass="logicalStructureTitle" value="#{DataEditorForm.structurePanel.titleMetadata}"
+        <p:selectOneMenu id="logicalStructureTitle" value="#{DataEditorForm.structurePanel.titleMetadata}"
                          autoWidth="#{false}">
             <f:selectItem itemLabel="#{msgs.typ}" itemValue="type" />
             <f:selectItem itemLabel="#{msgs.title}" itemValue="title" />
