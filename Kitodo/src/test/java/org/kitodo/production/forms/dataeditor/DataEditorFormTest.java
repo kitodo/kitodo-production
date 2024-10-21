@@ -15,6 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
@@ -73,16 +75,15 @@ public class DataEditorFormTest {
      */
     @Test
     public void shouldGetStructuralElementTitle() {
-        // configure data editor form
-        DataEditorForm dataEditorForm = new DataEditorForm();
-        dataEditorForm.getStructurePanel().setTitleMetadata(TITLE_METADATA_KEY);
+        // define which metadata keys to use as title
+        Collection<String> metadataKeys = Arrays.asList(TITLE_METADATA_KEY);
         // prepare test structure
         LogicalDivision structure = new LogicalDivision();
         MetadataEntry titleMetadata = new MetadataEntry();
         titleMetadata.setKey(TITLE_METADATA_KEY);
         titleMetadata.setValue(TITLE_METADATA);
         structure.getMetadata().add(titleMetadata);
-        assertEquals(TITLE_METADATA, dataEditorForm.getStructureElementTitle(structure),
+        assertEquals(TITLE_METADATA, DataEditorForm.getStructureElementTitle(structure, metadataKeys),
                 "Wrong title metadata value retrieved from structure element");
     }
 

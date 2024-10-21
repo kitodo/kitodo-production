@@ -19,7 +19,7 @@
         xmlns:fn="http://xmlns.jcp.org/jsp/jstl/functions"
         xmlns:p="http://primefaces.org/ui">
     <p:outputPanel id="logicalStructureHeader">
-        <p:selectOneMenu id="logicalStructureTitle" value="#{DataEditorForm.structurePanel.titleMetadata}"
+        <p:selectOneMenu id="logicalStructureTitle" value="#{DataEditorForm.structurePanel.nodeLabelOption}"
                          autoWidth="#{false}">
             <f:selectItem itemLabel="#{msgs.typ}" itemValue="type" />
             <f:selectItem itemLabel="#{msgs.title}" itemValue="title" />
@@ -125,13 +125,13 @@
                               value="&lt;#{fn:length(fn:split(defaultTreeNode.rowKey, '_'))}&gt; "/>
                 <h:outputText value="#{empty logicalElementType ? msgs['dataEditor.withoutType'] : logicalElementType}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata.contains('type') or logicalNode.linked}"/>
+                              rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('type') or logicalNode.linked}"/>
                 <h:outputText value=" - " 
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata.contains('+') and !logicalNode.linked}" />
+                              rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('+') and !logicalNode.linked}" />
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata.contains('title') and !logicalNode.linked}"/>
+                              rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('title') and !logicalNode.linked}"/>
                 <!--<h:outputText value="1234"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata.contains('count') and !logicalNode.linked}"/> -->
+                              rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('count') and !logicalNode.linked}"/> -->
                 <h:outputText value="[#{logicalNode.pageRange}]"
                               rendered="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree and logicalNode.pageRange ne null}"
                               styleClass="pageRange"/>
@@ -148,7 +148,7 @@
                         icon="ui-icon-media-partial">
                 <h:outputText value="#{empty logicalNode.label ? msgs['dataEditor.withoutType'] : logicalNode.label}"
                               title="#{logicalNode.undefined ? msgs['dataEditor.undefinedStructure'] : ''}"
-                              rendered="#{DataEditorForm.structurePanel.titleMetadata eq 'type'}"/>
+                              rendered="#{DataEditorForm.structurePanel.nodeLabelOption eq 'type'}"/>
             </p:treeNode>
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">

@@ -950,20 +950,22 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     /**
-     * Retrieve and return 'title' value of given Object 'dataObject' if Object is instance of
-     * 'LogicalDivision' and if it does have a title. 
+     * Retrieve and return title of dataObject if it is a 'LogicalDivision' and if it has a title. 
+     * Uses metadata value as title if one of the provided keys exists.
      * Return empty string otherwise.
      *
      * @param dataObject
      *          StructureTreeNode containing the LogicalDivision whose title is returned
+     * @param metadataKeys
+     *          the list of metadata keys that are annotated with "structureTreeTitle"
      * @return 'title' value of the LogicalDivision contained in the given StructureTreeNode 'treeNode'
      */
-    public String getStructureElementTitle(Object dataObject) {
+    public static String getStructureElementTitle(Object dataObject, Collection<String> metadataKeys) {
         String title = "";
         if (dataObject instanceof LogicalDivision) {
             LogicalDivision logicalDivision = ((LogicalDivision) dataObject);
             
-            title = structureTreeTitles.stream()
+            title = metadataKeys.stream()
                 .map((key) -> DataEditorService.getTitleValue(logicalDivision, key))
                 .filter(Optional::isPresent).map(Optional::get).findFirst().orElse("");
 
@@ -975,6 +977,19 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
         }
         return title;
+    }
+
+    /**
+     * Retrieve and return title of dataObject if it is a 'LogicalDivision' and if it has a title. 
+     * Uses metadata value as title if one of the provided keys exists.
+     * Return empty string otherwise.
+     *
+     * @param dataObject
+     *          StructureTreeNode containing the LogicalDivision whose title is returned
+     * @return 'title' value of the LogicalDivision contained in the given StructureTreeNode 'treeNode'
+     */
+    public String getStructureElementTitle(Object dataObject) {
+        return DataEditorForm.getStructureElementTitle(dataObject, structureTreeTitles);
     }
 
     /**

@@ -87,7 +87,7 @@
                                 styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
-                        <p:outputLabel value="#{DataEditorForm.structurePanel.titleMetadata eq 'type' ? stripe.label : DataEditorForm.getStructureElementTitle(stripe.structure)}"
+                        <p:outputLabel value="#{DataEditorForm.structurePanel.nodeLabelOption eq 'type' ? stripe.label : DataEditorForm.getStructureElementTitle(stripe.structure)}"
                                        styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                        a:data-logicalTreeNodeId="#{stripe.logicalTreeNodeId}"

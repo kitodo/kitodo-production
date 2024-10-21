@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
@@ -29,8 +30,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.faces.model.SelectItem;
 
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -125,7 +124,11 @@ public class StructurePanel implements Serializable {
      */
     private String activeTabs;
 
-    private String titleMetadata = "type";
+    /**
+     * Stores the users choice of the drop down selection above the logical structure tree. Can be either "type" 
+     * (default), "title" (uses metadata key annotated with "structureTreeTitle" in ruleset) or "type+title".
+     */
+    private String nodeLabelOption = "type";
 
     /**
      * Determines whether the logical tree is built as a combination of physical media nodes and
@@ -1835,19 +1838,22 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Get title metadata.
-     * @return value of titleMetadata
+     * Get the node label option (either "type", "title" or "type+title")
+     * @return value of node label option
      */
-    public String getTitleMetadata() {
-        return titleMetadata;
+    public String getNodeLabelOption() {
+        return nodeLabelOption;
     }
 
     /**
-     * Set title metadata.
-     * @param titleMetadata as java.lang.String
+     * Set node label option.
+     * @param nodeLabelOption as java.lang.String
      */
-    public void setTitleMetadata(String titleMetadata) {
-        this.titleMetadata = titleMetadata;
+    public void setNodeLabelOption(String nodeLabelOption) {
+        if(!Arrays.asList("type", "title", "type+title").contains(nodeLabelOption)) {
+            throw new IllegalArgumentException("node label option must be either type, title or type+title");
+        }
+        this.nodeLabelOption = nodeLabelOption;
     }
 
     /**
