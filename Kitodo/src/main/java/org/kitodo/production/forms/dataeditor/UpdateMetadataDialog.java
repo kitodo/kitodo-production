@@ -47,18 +47,23 @@ public class UpdateMetadataDialog {
      * Trigger re-import of metadata of current process.
      */
     public void updateCatalogMetadata() {
-        try {
-            HashSet<Metadata> existingMetadata = getMetadata(dataEditor.getMetadataPanel().getLogicalMetadataRows());
-            metadataComparisons = DataEditorService.reimportCatalogMetadata(dataEditor.getProcess(),
-                    dataEditor.getWorkpiece(), existingMetadata);
-            if (metadataComparisons.isEmpty()) {
-                PrimeFaces.current().executeScript("PF('metadataUnchangedDialog').show();");
-            } else {
-                PrimeFaces.current().ajax().update("updateMetadataDialog");
-                PrimeFaces.current().executeScript("PF('updateMetadataDialog').show();");
+        if (dataEditor.getSelectedStructure().isPresent()) {
+            try {
+                HashSet<Metadata> existingMetadata = getMetadata(dataEditor.getMetadataPanel().getLogicalMetadataRows());
+                metadataComparisons = DataEditorService.reimportCatalogMetadata(dataEditor.getProcess(),
+                        dataEditor.getWorkpiece(), existingMetadata, dataEditor.getPriorityList(),
+                        dataEditor.getSelectedStructure().get().getType());
+                if (metadataComparisons.isEmpty()) {
+                    PrimeFaces.current().executeScript("PF('metadataUnchangedDialog').show();");
+                } else {
+                    PrimeFaces.current().ajax().update("updateMetadataDialog");
+                    PrimeFaces.current().executeScript("PF('updateMetadataDialog').show();");
+                }
+            } catch (Exception e) {
+                Helper.setErrorMessage(e.getMessage());
             }
-        } catch (Exception e) {
-            Helper.setErrorMessage(e.getMessage());
+        } else {
+            Helper.setErrorMessage("Unable to update metadata: no logical structure selected!");
         }
     }
 

@@ -23,6 +23,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -57,6 +58,7 @@ public class CatalogImportIT {
     private static final String PUBLICATION_VALUE_OLD = "2019";
     private static final String PUBLICATION_VALUE_NEW = "2020";
     private int testProcessId = 0;
+    private static final List<Locale.LanguageRange> languages = Locale.LanguageRange.parse("de, en");
 
     @BeforeAll
     public static void setup() throws Exception {
@@ -103,7 +105,7 @@ public class CatalogImportIT {
         testProcess.setImportConfiguration(configuration);
         HashSet<Metadata> existingMetadata = workpiece.getLogicalStructure().getMetadata();
         List<MetadataComparison> metadataComparisons = DataEditorService.reimportCatalogMetadata(testProcess, workpiece,
-                existingMetadata);
+                existingMetadata, languages, "Monograph");
         assertFalse(metadataComparisons.isEmpty(), "List of metadata comparisons should not be empty");
         MetadataComparison firstComparison = metadataComparisons.get(0);
         assertEquals(PUBLICATION_START_KEY, firstComparison.getMetadataKey(),

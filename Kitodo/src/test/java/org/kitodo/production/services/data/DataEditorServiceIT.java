@@ -63,6 +63,7 @@ public class DataEditorServiceIT {
     private static final String EXPECTED_EXCEPTION_MESSAGE = "Unable to update metadata of process %d; " +
             "(either import configuration or record identifier are missing)";
     private int testProcessId = 0;
+    private static final List<Locale.LanguageRange> languages = Locale.LanguageRange.parse("de, en");
 
     @BeforeAll
     public static void prepareDatabase() throws Exception {
@@ -194,7 +195,7 @@ public class DataEditorServiceIT {
         URI processUri = ServiceManager.getProcessService().getMetadataFileUri(testProcess);
         Workpiece workpiece = ServiceManager.getMetsService().loadWorkpiece(processUri);
         MetadataException thrown = assertThrows(MetadataException.class, () -> DataEditorService.
-                reimportCatalogMetadata(testProcess, workpiece, null));
+                reimportCatalogMetadata(testProcess, workpiece, null, languages, "Manuscript"));
         assertEquals(thrown.getMessage(), String.format(EXPECTED_EXCEPTION_MESSAGE, testProcessId));
     }
 

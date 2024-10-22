@@ -105,7 +105,6 @@
                                                      title="#{msgs['dataEditor.updateMetadata.modeKeep']}"
                                                      actionListener="#{comparison.updateComparison()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
-                                                     disabled="#{empty comparison.newValues}"
                                                      rendered="#{comparison.selection eq reimportEnum.KEEP}"
                                                      icon="fa fa-long-arrow-left fa-lg"/>
                                     <p:commandButton id="selectBothValuesButton"
@@ -114,7 +113,6 @@
                                                      title="#{msgs['dataEditor.updateMetadata.modeExtend']}"
                                                      actionListener="#{comparison.updateComparison()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
-                                                     disabled="#{empty comparison.newValues}"
                                                      rendered="#{comparison.selection eq reimportEnum.ADD}"
                                                      icon="fa fa-arrows-h fa-lg"/>
                                     <p:commandButton id="selectNewValuesButton"
@@ -123,7 +121,6 @@
                                                      title="#{msgs['dataEditor.updateMetadata.modeReplace']}"
                                                      actionListener="#{comparison.updateComparison()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
-                                                     disabled="#{empty comparison.newValues}"
                                                      rendered="#{comparison.selection eq reimportEnum.REPLACE}"
                                                      icon="fa fa-long-arrow-right fa-lg"/>
                                 </p:outputPanel>

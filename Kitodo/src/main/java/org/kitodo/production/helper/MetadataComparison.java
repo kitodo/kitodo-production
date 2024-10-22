@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.Reimport;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.services.data.RulesetService;
@@ -36,6 +37,7 @@ public class MetadataComparison {
     private final HashSet<Metadata> newValues;
     private Reimport selection;
     private boolean isMetadataGroup;
+    private final MetadataViewInterface metadataView;
 
     /**
      * Constructor.
@@ -49,10 +51,12 @@ public class MetadataComparison {
      * @param selection
      *          default selection between old and new metadata entries
      */
-    public MetadataComparison(String metadataKey, HashSet<Metadata> oldValues, HashSet<Metadata> newValues, Reimport selection) {
+    public MetadataComparison(String metadataKey, HashSet<Metadata> oldValues, HashSet<Metadata> newValues,
+                              MetadataViewInterface viewInterface, Reimport selection) {
         this.metadataKey = metadataKey;
         this.oldValues = oldValues;
         this.newValues = newValues;
+        this.metadataView = viewInterface;
         this.selection = selection;
         if (!oldValues.isEmpty()) {
             this.isMetadataGroup = oldValues.toArray()[0] instanceof MetadataGroup;
@@ -136,21 +140,48 @@ public class MetadataComparison {
     /**
      * Update current selection between old and new metadata entries. Circles between available values
      * in the following order: KEEP -> ADD -> REPLACE.
+     * Incorporate "minOccurs" and "maxOccurs" rules from ruleset to determine valid reimport modes.
      */
     public void updateComparison() {
         switch (selection) {
             case KEEP:
-                selection = Reimport.ADD;
+                if (canAdd())
+                    selection = Reimport.ADD;
+                else if (canReplace()) {
+                    selection = Reimport.REPLACE;
+                }
                 break;
             case ADD:
-                selection = Reimport.REPLACE;
+                if (canReplace()) {
+                    selection = Reimport.REPLACE;
+                } else if (canKeep()) {
+                    selection = Reimport.KEEP;
+                }
                 break;
             case REPLACE:
-                selection = Reimport.KEEP;
+                if (canKeep()) {
+                    selection = Reimport.KEEP;
+                } else if (canAdd())
+                    selection = Reimport.ADD;
                 break;
             default:
                 break;
         }
+    }
+
+    private boolean canKeep() {
+        return oldValues.size() >= metadataView.getMinOccurs()
+                && oldValues.size() <= metadataView.getMaxOccurs();
+    }
+
+    private boolean canAdd() {
+        return metadataView.getMinOccurs() <= oldValues.size() + newValues.size()
+                && oldValues.size() + newValues.size() <= metadataView.getMaxOccurs();
+    }
+
+    private boolean canReplace() {
+        return newValues.size() >= metadataView.getMinOccurs()
+                && newValues.size() <= metadataView.getMaxOccurs();
     }
 
     /**
@@ -224,6 +255,15 @@ public class MetadataComparison {
         } else {
             return getValuesSorted(newValues);
         }
+    }
+
+    /**
+     * Get metadataView.
+     *
+     * @return metadataView
+     */
+    public MetadataViewInterface getMetadataView() {
+        return metadataView;
     }
 
     private List<Metadata> getValuesSorted(HashSet<Metadata> metadataSet) {

@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -429,7 +430,9 @@ public class DataEditorService {
      * @return list of metadata comparisons
      */
     public static List<MetadataComparison> reimportCatalogMetadata(Process process, Workpiece workpiece,
-                                                                   HashSet<Metadata> oldMetadataSet)
+                                                                   HashSet<Metadata> oldMetadataSet,
+                                                                   List<Locale.LanguageRange> languages,
+                                                                   String selectedDivisionType)
             throws IOException, UnsupportedFormatException, XPathExpressionException, NoRecordFoundException,
             ProcessGenerationException, ParserConfigurationException, URISyntaxException, InvalidMetadataValueException,
             TransformerException, NoSuchMetadataFieldException, SAXException {
@@ -451,7 +454,7 @@ public class DataEditorService {
             }
             ProcessHelper.generateAtstslFields(updatedProcess, Collections.emptyList(), EDIT, false);
             return initializeMetadataComparisons(process, oldMetadataSet,
-                updatedProcess.getWorkpiece().getLogicalStructure().getMetadata());
+                updatedProcess.getWorkpiece().getLogicalStructure().getMetadata(), languages, selectedDivisionType);
         }
     }
 
@@ -478,24 +481,27 @@ public class DataEditorService {
 
     private static List<MetadataComparison> initializeMetadataComparisons(Process process,
                                                                           HashSet<Metadata> oldMetadata,
-                                                                          HashSet<Metadata> newMetadata)
+                                                                          HashSet<Metadata> newMetadata,
+                                                                          List<Locale.LanguageRange> languages,
+                                                                          String logicalDivisionType)
             throws IOException {
         RulesetManagementInterface ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
         List<MetadataComparison> metadataComparisons = new LinkedList<>();
         HashSet<String> metadataKeyCollection = oldMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new));
         metadataKeyCollection.addAll(newMetadata.stream().map(Metadata::getKey).collect(Collectors.toCollection(HashSet::new)));
+        StructuralElementViewInterface divisionView = ruleset.getStructuralElementView(logicalDivisionType, EDIT, languages);
+        Map<String, MetadataViewInterface> allowedMetadata = divisionView.getAllowedMetadata().stream()
+                .collect(Collectors.toMap(MetadataViewInterface::getId, item -> item));
         for (String metadataKey : metadataKeyCollection) {
             // determine default mode for metadata from ruleset! (e.g. "keep", "replace", etc.)
             Reimport selectionMode = ruleset.getMetadataReimport(metadataKey, EDIT);
+            MetadataViewInterface metadataView = allowedMetadata.get(metadataKey);
             // only add metadata comparison when there is a difference between old and new values!
             HashSet<Metadata> oldValues = filterEntries(metadataKey, oldMetadata);
             HashSet<Metadata> newValues = filterEntries(metadataKey, newMetadata);
-            if (!Objects.equals(oldValues, newValues)) {
-                // deleting values (e.g. replacing them with empty, new values) is not supported
-                if (newValues.isEmpty()) {
-                    selectionMode = Reimport.KEEP;
-                }
-                metadataComparisons.add(new MetadataComparison(metadataKey, oldValues, newValues, selectionMode));
+            if (!Objects.equals(oldValues, newValues) && Objects.nonNull(metadataView)) {
+                metadataComparisons.add(new MetadataComparison(metadataKey, oldValues, newValues, metadataView,
+                        selectionMode));
             }
         }
         return metadataComparisons;
