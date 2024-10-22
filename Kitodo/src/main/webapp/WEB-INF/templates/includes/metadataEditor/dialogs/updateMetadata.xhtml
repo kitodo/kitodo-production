@@ -90,12 +90,16 @@
                                 </p:dataList>
                             </p:column>
                             <p:column id="selectionColumn"
-                                      width="40"
-                                      headerText="#{msgs['dataEditor.updateMetadata.updateMode']}">
+                                      width="40">
                                 <f:facet name="header">
                                     <p:commandButton id="selectColumnHeaderButton"
                                                      type="button"
-                                                     icon="fa fa-exchange fa-lg" />
+                                                     icon="fa fa-exchange fa-lg" >
+                                        <p:tooltip for="selectColumnHeaderButton"
+                                                   position="left">
+                                            #{msgs['dataEditor.updateMetadata.updateMode']}
+                                        </p:tooltip>
+                                    </p:commandButton>
                                 </f:facet>
                                 <p:outputPanel>
                                     <!--@elvariable id="rowIdx" type="java.lang.Integer"-->
@@ -106,7 +110,12 @@
                                                      actionListener="#{comparison.updateComparison()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
                                                      rendered="#{comparison.selection eq reimportEnum.KEEP}"
-                                                     icon="fa fa-long-arrow-left fa-lg"/>
+                                                     icon="fa fa-long-arrow-left fa-lg">
+                                        <p:tooltip for="selectOldValuesButton"
+                                                   position="bottom">
+                                            #{msgs['dataEditor.updateMetadata.modeKeep']}
+                                        </p:tooltip>
+                                    </p:commandButton>
                                     <p:commandButton id="selectBothValuesButton"
                                                      partialSubmit="true"
                                                      process="@this"
@@ -114,7 +123,12 @@
                                                      actionListener="#{comparison.updateComparison()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
                                                      rendered="#{comparison.selection eq reimportEnum.ADD}"
-                                                     icon="fa fa-arrows-h fa-lg"/>
+                                                     icon="fa fa-arrows-h fa-lg">
+                                        <p:tooltip for="selectBothValuesButton"
+                                                   position="bottom">
+                                            #{msgs['dataEditor.updateMetadata.modeExtend']}
+                                        </p:tooltip>
+                                    </p:commandButton>
                                     <p:commandButton id="selectNewValuesButton"
                                                      partialSubmit="true"
                                                      process="@this"
@@ -122,7 +136,12 @@
                                                      actionListener="#{comparison.updateComparison()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
                                                      rendered="#{comparison.selection eq reimportEnum.REPLACE}"
-                                                     icon="fa fa-long-arrow-right fa-lg"/>
+                                                     icon="fa fa-long-arrow-right fa-lg">
+                                        <p:tooltip for="selectNewValuesButton"
+                                                   position="bottom">
+                                            #{msgs['dataEditor.updateMetadata.modeReplace']}
+                                        </p:tooltip>
+                                    </p:commandButton>
                                 </p:outputPanel>
                             </p:column>
                             <p:column id="newValueColumn"

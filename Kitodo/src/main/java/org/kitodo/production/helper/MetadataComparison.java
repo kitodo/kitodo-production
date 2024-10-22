@@ -145,8 +145,9 @@ public class MetadataComparison {
     public void updateComparison() {
         switch (selection) {
             case KEEP:
-                if (canAdd())
+                if (canAdd()) {
                     selection = Reimport.ADD;
+                }
                 else if (canReplace()) {
                     selection = Reimport.REPLACE;
                 }
@@ -161,8 +162,9 @@ public class MetadataComparison {
             case REPLACE:
                 if (canKeep()) {
                     selection = Reimport.KEEP;
-                } else if (canAdd())
+                } else if (canAdd()) {
                     selection = Reimport.ADD;
+                }
                 break;
             default:
                 break;
