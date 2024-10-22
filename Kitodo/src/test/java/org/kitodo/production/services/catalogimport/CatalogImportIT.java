@@ -54,9 +54,9 @@ public class CatalogImportIT {
     private static final int PROJECT_ID = 1;
     private static final int TEMPLATE_ID = 1;
     private static final int IMPORT_DEPTH = 2;
-    private static final String PUBLICATION_START_KEY = "PublicationStart";
-    private static final String PUBLICATION_VALUE_OLD = "2019";
-    private static final String PUBLICATION_VALUE_NEW = "2020";
+    private static final String PUBLICATION_YEAR = "PublicationYear";
+    private static final String PUBLICATION_YEAR_OLD = "1979";
+    private static final String PUBLICATION_YEAR_NEW = "1980";
     private int testProcessId = 0;
     private static final List<Locale.LanguageRange> languages = Locale.LanguageRange.parse("de, en");
 
@@ -108,18 +108,18 @@ public class CatalogImportIT {
                 existingMetadata, languages, "Monograph");
         assertFalse(metadataComparisons.isEmpty(), "List of metadata comparisons should not be empty");
         MetadataComparison firstComparison = metadataComparisons.get(0);
-        assertEquals(PUBLICATION_START_KEY, firstComparison.getMetadataKey(),
-                String.format("Changed metadata should be '%s'", PUBLICATION_START_KEY));
-        MetadataEntry publicationMetadataOld = new MetadataEntry();
-        publicationMetadataOld.setKey(PUBLICATION_START_KEY);
-        publicationMetadataOld.setValue(PUBLICATION_VALUE_OLD);
-        MetadataEntry publicationMetadataNew = new MetadataEntry();
-        publicationMetadataNew.setKey(PUBLICATION_START_KEY);
-        publicationMetadataNew.setValue(PUBLICATION_VALUE_NEW);
-        assertTrue(firstComparison.getOldValues().contains(publicationMetadataOld),
-                String.format("Old values should contain publication year %s", publicationMetadataOld.getValue()));
-        assertTrue(firstComparison.getNewValues().contains(publicationMetadataNew),
-                String.format("New values should contain publication year %s", publicationMetadataNew.getValue()));
+        assertEquals(PUBLICATION_YEAR, firstComparison.getMetadataKey(),
+                String.format("Changed metadata should be '%s'", PUBLICATION_YEAR));
+        MetadataEntry publicationYearOld = new MetadataEntry();
+        publicationYearOld.setKey(PUBLICATION_YEAR);
+        publicationYearOld.setValue(PUBLICATION_YEAR_OLD);
+        MetadataEntry publicationYearNew = new MetadataEntry();
+        publicationYearNew.setKey(PUBLICATION_YEAR);
+        publicationYearNew.setValue(PUBLICATION_YEAR_NEW);
+        assertTrue(firstComparison.getOldValues().contains(publicationYearOld),
+                String.format("Old values should contain publication year %s", publicationYearOld.getValue()));
+        assertTrue(firstComparison.getNewValues().contains(publicationYearNew),
+                String.format("New values should contain publication year %s", publicationYearNew.getValue()));
     }
 
     private static void setupServer() throws IOException {

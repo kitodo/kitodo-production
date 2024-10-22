@@ -16,8 +16,8 @@
                 <kitodo:kitodo xmlns:kitodo="http://meta.kitodo.org/v1/" version="1.0">
                     <kitodo:metadata name="PublisherName">Test Publisher</kitodo:metadata>
                     <kitodo:metadata name="document_type">Monograph</kitodo:metadata>
-                    <kitodo:metadata name="PublicationStart">2019</kitodo:metadata>
                     <kitodo:metadata name="CatalogIDDigital">789</kitodo:metadata>
+                    <kitodo:metadata name="PublicationYear">1979</kitodo:metadata>
                 </kitodo:kitodo>
             </mets:xmlData>
         </mets:mdWrap>

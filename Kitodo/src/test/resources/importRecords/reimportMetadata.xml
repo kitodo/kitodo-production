@@ -29,6 +29,7 @@
                     </recordInfo>
                     <originInfo eventType="publication">
                         <publisher>Test Publisher</publisher>
+                        <dateIssued encoding="w3cdtf">1980-07-22</dateIssued>
                     </originInfo>
                 </mods>
             </srw:recordData>
