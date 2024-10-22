@@ -2835,6 +2835,10 @@ Column content
     color: var(--pure-white);
 }
 
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton {
+    cursor: default;
+}
+
 #updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton,
 #updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton:hover {
     background: var(--cloudy-gray);
