@@ -112,6 +112,7 @@
                                                      rendered="#{comparison.selection eq reimportEnum.KEEP}"
                                                      icon="fa fa-long-arrow-left fa-lg">
                                         <p:tooltip for="selectOldValuesButton"
+                                                   hideEvent="mouseleave click"
                                                    position="bottom">
                                             #{msgs['dataEditor.updateMetadata.modeKeep']}
                                         </p:tooltip>
@@ -125,6 +126,7 @@
                                                      rendered="#{comparison.selection eq reimportEnum.ADD}"
                                                      icon="fa fa-arrows-h fa-lg">
                                         <p:tooltip for="selectBothValuesButton"
+                                                   hideEvent="mouseleave click"
                                                    position="bottom">
                                             #{msgs['dataEditor.updateMetadata.modeExtend']}
                                         </p:tooltip>
@@ -138,6 +140,7 @@
                                                      rendered="#{comparison.selection eq reimportEnum.REPLACE}"
                                                      icon="fa fa-long-arrow-right fa-lg">
                                         <p:tooltip for="selectNewValuesButton"
+                                                   hideEvent="mouseleave click"
                                                    position="bottom">
                                             #{msgs['dataEditor.updateMetadata.modeReplace']}
                                         </p:tooltip>
