@@ -14,6 +14,7 @@ package org.kitodo.production.services.data;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
@@ -2223,7 +2224,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public static String getProcessDuration(ProcessDTO process) {
         String creationDateTimeString = process.getCreationDate();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
         LocalDateTime createLocalDate = LocalDateTime.parse(creationDateTimeString, formatter);
         Duration duration = Duration.between(createLocalDate, LocalDateTime.now());
         return String.format("%sd; %sh", duration.toDays(),

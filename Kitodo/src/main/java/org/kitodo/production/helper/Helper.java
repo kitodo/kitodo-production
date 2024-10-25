@@ -11,6 +11,8 @@
 
 package org.kitodo.production.helper;
 
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.security.SecureRandom;
@@ -398,7 +400,7 @@ public class Helper {
         if (Objects.isNull(date)) {
             return "-";
         } else {
-            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
             return dateFormat.format(date);
         }
     }
@@ -416,12 +418,12 @@ public class Helper {
             return null;
         }
         try {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DEFAULT_DATE_FORMAT);
             LocalDateTime localDate = LocalDateTime.parse(date, formatter);
             Instant instant = localDate.toInstant(ZoneOffset.UTC);
             return Date.from(instant);
         } catch (DateTimeParseException e) {
-            logger.info("invalid date format (yyyy-MM-dd HH:mm:ss) for date string: '" + date + "'");
+            logger.info("invalid date format ('{}') for date string: '{}'", DEFAULT_DATE_FORMAT, date);
             return null;
         }
     }
