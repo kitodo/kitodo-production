@@ -65,6 +65,8 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
      * Fields the user has selected to show in addition, with no data yet.
      */
     private final Collection<String> additionallySelectedFields = new ArrayList<>();
+    private static final Set<String> specialFields = Set.of(METADATA_KEY_LABEL, METADATA_KEY_ORDERLABEL,
+            METADATA_KEY_CONTENTIDS);
 
     private boolean copy;
 
@@ -672,8 +674,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                 division.setLabel(null);
             }
             metadata.clear();
-            Set<String> specialFields = new HashSet<>(Set.of(METADATA_KEY_LABEL, METADATA_KEY_ORDERLABEL,
-                    METADATA_KEY_CONTENTIDS));
 
             for (TreeNode child : treeNode.getChildren()) {
                 ProcessDetail row = (ProcessDetail) child.getData();
@@ -715,7 +715,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
     }
 
     private void updateDivisionFromProcessDetail(String key, ProcessSimpleMetadata processDetail) throws InvalidMetadataValueException {
-        String simpleValue = extractSimpleValue(processDetail);
+        String simpleValue = processDetail.extractSimpleValue();
         if (!processDetail.getSettings().isValid(simpleValue, getListForLeadingMetadataFields())) {
             throw new InvalidMetadataValueException(key, simpleValue);
         };
@@ -723,15 +723,6 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             return;
         }
         updateDivision(key, simpleValue);
-    }
-
-    private String extractSimpleValue(ProcessDetail value) {
-        if (value instanceof ProcessTextMetadata) {
-            return ((ProcessTextMetadata) value).getValue();
-        } else if (value instanceof ProcessSelectMetadata) {
-            return String.join(" ", ((ProcessSelectMetadata) value).getSelectedItems());
-        }
-        return null;
     }
 
     private void updateDivision(String key, String value) {

@@ -12,20 +12,16 @@
 package org.kitodo.production.forms.createprocess;
 
 import java.io.Serializable;
-import java.net.URI;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BiConsumer;
 
 import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
-import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializable {
 
@@ -55,6 +51,8 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      * @return an independently mutable copy
      */
     abstract ProcessSimpleMetadata getClone();
+
+    abstract String extractSimpleValue();
 
     public SimpleMetadataViewInterface getSettings() {
         return settings;
