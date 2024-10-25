@@ -192,6 +192,11 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     }
 
     @Override
+    public String extractSimpleValue() {
+        return String.join(" ", getSelectedItems());
+    }
+
+    @Override
     public boolean isValid() {
         for (String selectedItem : selectedItems) {
             if (!settings.isValid(selectedItem, container.getListForLeadingMetadataFields())) {

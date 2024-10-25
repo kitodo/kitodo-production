@@ -16,17 +16,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
-import org.kitodo.api.dataformat.Division;
 import org.kitodo.exceptions.InvalidMetadataValueException;
-import org.kitodo.exceptions.NoSuchMetadataFieldException;
 
 /**
  * A row on the metadata panel that contains an on/off switch.
@@ -68,6 +64,11 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
     @Override
     public String getMetadataID() {
         return settings.getId();
+    }
+
+    @Override
+    public String extractSimpleValue() {
+        return settings.convertBoolean(active).orElse(null);
     }
 
     @Override
