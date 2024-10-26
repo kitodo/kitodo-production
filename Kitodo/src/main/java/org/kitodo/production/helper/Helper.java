@@ -423,7 +423,7 @@ public class Helper {
             Instant instant = localDate.toInstant(ZoneOffset.UTC);
             return Date.from(instant);
         } catch (DateTimeParseException e) {
-            logger.info("invalid date format ('{}') for date string: '{}'", DEFAULT_DATE_FORMAT, date);
+            logger.info("invalid date format '{}' for date string: '{}'", DEFAULT_DATE_FORMAT, date);
             return null;
         }
     }
