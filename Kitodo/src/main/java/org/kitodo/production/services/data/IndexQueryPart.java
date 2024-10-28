@@ -1,0 +1,119 @@
+/*
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ */
+
+package org.kitodo.production.services.data;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import org.apache.commons.lang3.tuple.Pair;
+
+/**
+ * A portion of the filter entered by the user that is resolved through the
+ * search index.
+ */
+class IndexQueryPart implements UserSpecifiedFilter {
+
+    private static final String UNIQUE_PARAMETER_EXTENSION = "query";
+
+    private static final char VALUE_SEPARATOR = 'q';
+    private static final char DOMAIN_SEPARATOR = 'j';
+    private List<String> lookfor = new ArrayList<>();
+    private final FilterField filterField;
+
+    /**
+     * Constructor. Creates a new IndexQueryPart.
+     * 
+     * @param filterField
+     *            search field selected by the user
+     * @param values
+     *            search terms
+     */
+    IndexQueryPart(FilterField filterField, String values) {
+        this.filterField = filterField;
+        for (String value : splitValues(values)) {
+            this.lookfor.add(addOptionalDomain(filterField.getDomain(), normalize(value)));
+        }
+    }
+
+    private final String addOptionalDomain(String domain, String normalize) {
+        return Objects.nonNull(domain) ? domain + VALUE_SEPARATOR + normalize : normalize;
+    }
+
+    /**
+     * Constructor. Creates a new IndexQueryPart.
+     * 
+     * @param key
+     *            in the ruleset
+     * @param filterField
+     *            search field selected by the user
+     * @param values
+     *            search terms
+     */
+    IndexQueryPart(String key, FilterField filterField, String values) {
+        this.filterField = filterField;
+        for (String value : splitValues(values)) {
+            lookfor.add(normalize(key) + DOMAIN_SEPARATOR + filterField.getDomain() + VALUE_SEPARATOR + normalize(
+                value));
+        }
+    }
+
+    private List<String> splitValues(String value) {
+        String i = value != null ? value : "";
+        return Arrays.asList(i.split("[ ,\\-._]+"));
+    }
+
+    private String normalize(String string) {
+        return string.toLowerCase().replaceAll("[\0-/:-`{-¿]", "");
+    }
+
+    @Override
+    public FilterField getFilterField() {
+        return filterField;
+    }
+
+    /**
+     * Inserts the search parameters into the database query logic.
+     * 
+     * @param varName
+     *            variable name of the HQL search
+     * @param parameterName
+     *            name of the search parameter for the results
+     * @param indexQueries
+     *            puts the prepared tokens for the search queries here
+     * @param restrictions
+     *            puts the HQL restrictions here
+     */
+    void putQueryParameters(String varName, String parameterName,
+            Map<String, Pair<FilterField, String>> indexQueries, Collection<String> restrictions) {
+        if (lookfor.size() == 1) {
+            restrictions.add(varName + ".id IN (:" + parameterName + ')');
+            indexQueries.put(parameterName, Pair.of(filterField, lookfor.get(0)));
+        } else {
+            int queryCount = 0;
+            for (String lookingFor : lookfor) {
+                queryCount++;
+                String uniqueParameterName = parameterName + UNIQUE_PARAMETER_EXTENSION + queryCount;
+                restrictions.add(varName + ".id IN (:" + uniqueParameterName + ')');
+                indexQueries.put(uniqueParameterName, Pair.of(filterField, lookingFor));
+            }
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "~(" + filterField.getSearchField() + ')' + String.join(" ", lookfor) + "~";
+    }
+}
