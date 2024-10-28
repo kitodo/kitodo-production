@@ -500,6 +500,9 @@ public class DataEditorService {
             HashSet<Metadata> oldValues = filterEntries(metadataKey, oldMetadata);
             HashSet<Metadata> newValues = filterEntries(metadataKey, newMetadata);
             if (!Objects.equals(oldValues, newValues) && Objects.nonNull(metadataView)) {
+                if (newValues.isEmpty()) {
+                    selectionMode = Reimport.KEEP;
+                }
                 metadataComparisons.add(new MetadataComparison(metadataKey, oldValues, newValues, metadataView,
                         selectionMode));
             }
@@ -550,27 +553,20 @@ public class DataEditorService {
      * @param comparisons list of metadata comparisons used for the update
      */
     public static void updateMetadataWithNewValues(Workpiece workpiece, List<MetadataComparison> comparisons) {
-        List<Metadata> rootMetadata = new LinkedList<>(workpiece.getLogicalStructure().getMetadata());
         for (MetadataComparison comparison : comparisons) {
-            for (Metadata metadata : rootMetadata) {
-                if (metadata.getKey().equals(comparison.getMetadataKey())) {
-                    switch (comparison.getSelection()) {
-                        case ADD:
-                            // extend existing values with new values
-                            workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
-                            break;
-                        case REPLACE:
-                            // replace existing values with new values
-                            workpiece.getLogicalStructure().getMetadata().removeAll(comparison.getOldValues());
-                            workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
-                            break;
-                        default:
-                            // keep existing values and discard new values
-                            logger.info("Keep existing values for metadata {}", metadata.getKey());
-                    }
-                    // skip remaining metadata entries of current key because they have all been processed at this point
+            switch (comparison.getSelection()) {
+                case ADD:
+                    // extend existing values with new values
+                    workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
                     break;
-                }
+                case REPLACE:
+                    // replace existing values with new values
+                    workpiece.getLogicalStructure().getMetadata().removeAll(comparison.getOldValues());
+                    workpiece.getLogicalStructure().getMetadata().addAll(comparison.getNewValues());
+                    break;
+                default:
+                    // keep existing values and discard new values
+                    logger.info("Keep existing values for metadata {}", comparison.getMetadataKey());
             }
         }
     }

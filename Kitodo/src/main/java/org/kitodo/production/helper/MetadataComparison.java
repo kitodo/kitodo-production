@@ -171,16 +171,20 @@ public class MetadataComparison {
         }
     }
 
+    // "<-"
     private boolean canKeep() {
         return oldValues.size() >= metadataView.getMinOccurs()
                 && oldValues.size() <= metadataView.getMaxOccurs();
     }
 
+    // "<-->"
     private boolean canAdd() {
         return metadataView.getMinOccurs() <= oldValues.size() + newValues.size()
-                && oldValues.size() + newValues.size() <= metadataView.getMaxOccurs();
+                && oldValues.size() + newValues.size() <= metadataView.getMaxOccurs()
+                && !(oldValues.isEmpty() || newValues.isEmpty());
     }
 
+    // "->"
     private boolean canReplace() {
         return newValues.size() >= metadataView.getMinOccurs()
                 && newValues.size() <= metadataView.getMaxOccurs();
