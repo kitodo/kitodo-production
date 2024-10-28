@@ -1168,10 +1168,10 @@ public class ProcessForm extends TemplateBaseForm {
     public void startSettingImportConfigurations(int importConfigurationId) {
         PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').hide();");
         try {
-            ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(getSelectedProcesses(),
-                    importConfigurationId);
+            String configName = ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(
+                    getSelectedProcesses(), importConfigurationId);
             settingImportConfigurationResultMessage = Helper.getTranslation("setImportConfigurationSuccessfulDescription",
-                    String.valueOf(importConfigurationId), String.valueOf(selectedProcessesOrProcessDTOs.size()));
+                    configName, String.valueOf(selectedProcessesOrProcessDTOs.size()));
             importConfigurationsSetSuccessfully = true;
         } catch (DAOException e) {
             settingImportConfigurationResultMessage = e.getLocalizedMessage();

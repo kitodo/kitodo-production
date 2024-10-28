@@ -68,7 +68,7 @@
                                 </p:dataList>
                                 <p:dataList id="oldMetadataGroupValues"
                                             rendered="#{comparison.isMetadataGroup()}"
-                                            value="#{comparison.getOldMetadataGroupsSorted(DataEditorForm.process.ruleset)}"
+                                            value="#{comparison.getMetadataGroupsSorted(DataEditorForm.process.ruleset, comparison.oldValues)}"
                                             var="oldGroup"
                                             styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">
@@ -160,7 +160,7 @@
                                 </p:dataList>
                                 <p:dataList id="newMetadataGroupValues"
                                             rendered="#{comparison.isMetadataGroup()}"
-                                            value="#{comparison.getNewMetadataGroupsSorted(DataEditorForm.process.ruleset)}"
+                                            value="#{comparison.getMetadataGroupsSorted(DataEditorForm.process.ruleset, comparison.newValues)}"
                                             var="newGroup"
                                             styleClass="metadata-groups"
                                             itemStyleClass="metadata-value-list">

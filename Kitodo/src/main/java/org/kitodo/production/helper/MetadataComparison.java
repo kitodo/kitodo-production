@@ -224,38 +224,20 @@ public class MetadataComparison {
     }
 
     /**
-     * List of old metadata groups sorted by their 'groupDisplayLabel'.
+     * List of given metadata groups sorted by their 'groupDisplayLabel'.
      *
-     * @return old metadata groups sorted by their 'groupDisplayLabel'.
+     * @return given metadata groups sorted by their 'groupDisplayLabel'.
      */
-    public List<Metadata> getOldMetadataGroupsSorted(Ruleset ruleset) {
+    public List<Metadata> getMetadataGroupsSorted(Ruleset ruleset, HashSet<Metadata> values) {
         if (isMetadataGroup) {
             try {
-                return RulesetService.getGroupsSortedByGroupDisplayLabel(oldValues, ruleset);
+                return RulesetService.getGroupsSortedByGroupDisplayLabel(values, ruleset);
             } catch (IOException e) {
                 Helper.setErrorMessage(e);
                 return new ArrayList<>();
             }
         } else {
-            return getValuesSorted(oldValues);
-        }
-    }
-
-    /**
-     * List of new metadata groups sorted by their 'groupDisplayLabel'.
-     *
-     * @return new metadata groups sorted by their 'groupDisplayLabel'.
-     */
-    public List<Metadata> getNewMetadataGroupsSorted(Ruleset ruleset) {
-        if (isMetadataGroup) {
-            try {
-                return RulesetService.getGroupsSortedByGroupDisplayLabel(newValues, ruleset);
-            } catch (IOException e) {
-                Helper.setErrorMessage(e);
-                return new ArrayList<>();
-            }
-        } else {
-            return getValuesSorted(newValues);
+            return getValuesSorted(values);
         }
     }
 
