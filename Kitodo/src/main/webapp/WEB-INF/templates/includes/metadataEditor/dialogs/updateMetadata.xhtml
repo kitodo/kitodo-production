@@ -190,7 +190,9 @@
                 <p:commandButton value="#{msgs['apply']}"
                                  id="apply"
                                  action="#{DataEditorForm.applyMetadataUpdate()}"
-                                 update="@all"
+                                 update="metadataAccordion:metadata:metadataTable
+                                         metadataAccordion:addMetadataButtonWrapper
+                                         @(.ui-tree, .stripe)"
                                  styleClass="primary right"
                                  icon="fa fa fa-check fa-lg"
                                  iconPos="right"
