@@ -107,7 +107,7 @@
                                                      partialSubmit="true"
                                                      process="@this"
                                                      title="#{msgs['dataEditor.updateMetadata.modeKeep']}"
-                                                     actionListener="#{comparison.updateComparison()}"
+                                                     actionListener="#{comparison.updateSelection()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
                                                      rendered="#{comparison.selection eq reimportEnum.KEEP}"
                                                      icon="fa fa-long-arrow-left fa-lg">
@@ -121,7 +121,7 @@
                                                      partialSubmit="true"
                                                      process="@this"
                                                      title="#{msgs['dataEditor.updateMetadata.modeExtend']}"
-                                                     actionListener="#{comparison.updateComparison()}"
+                                                     actionListener="#{comparison.updateSelection()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
                                                      rendered="#{comparison.selection eq reimportEnum.ADD}"
                                                      icon="fa fa-arrows-h fa-lg">
@@ -135,7 +135,7 @@
                                                      partialSubmit="true"
                                                      process="@this"
                                                      title="#{msgs['dataEditor.updateMetadata.modeReplace']}"
-                                                     actionListener="#{comparison.updateComparison()}"
+                                                     actionListener="#{comparison.updateSelection()}"
                                                      update="metadataUpdateTable:@row(#{rowIdx})"
                                                      rendered="#{comparison.selection eq reimportEnum.REPLACE}"
                                                      icon="fa fa-long-arrow-right fa-lg">

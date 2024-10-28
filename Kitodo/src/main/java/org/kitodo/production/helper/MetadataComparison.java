@@ -142,7 +142,7 @@ public class MetadataComparison {
      * in the following order: KEEP -> ADD -> REPLACE.
      * Incorporate "minOccurs" and "maxOccurs" rules from ruleset to determine valid reimport modes.
      */
-    public void updateComparison() {
+    public void updateSelection() {
         switch (selection) {
             case KEEP:
                 if (canAdd()) {
