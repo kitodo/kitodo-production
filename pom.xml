@@ -42,8 +42,8 @@
         <maven.compiler.debuglevel>lines,vars,source</maven.compiler.debuglevel>
         <maxAllowedViolations>0</maxAllowedViolations>
         <tomcat.baseversion>9</tomcat.baseversion>
-        <tomcat.version>9.0.65</tomcat.version>
-        <awaitility.version>4.0.1</awaitility.version>
+        <tomcat.version>9.0.96</tomcat.version>
+        <awaitility.version>4.0.3</awaitility.version>
         <com.h2database.h2.version>2.2.224</com.h2database.h2.version>
         <commons-codec.version>1.15</commons-codec.version>
         <commons-io.version>2.14.0</commons-io.version>
@@ -51,7 +51,7 @@
         <commons-net.version>3.9.0</commons-net.version>
         <org.apache.xmlgraphics.version>2.8</org.apache.xmlgraphics.version>
         <org.apache.avalon.framework.version>4.3.1</org.apache.avalon.framework.version>
-        <hamcrest.version>2.2-rc1</hamcrest.version>
+        <hamcrest.version>2.2</hamcrest.version>
         <hibernate.version>5.6.15.Final</hibernate.version>
         <jaxb.api.version>2.3.3</jaxb.api.version>
         <jaxb.glassfish-runtime.version>2.3.9</jaxb.glassfish-runtime.version>
@@ -64,8 +64,8 @@
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
-        <junit.version>5.9.2</junit.version>
-        <elasticsearch.version>7.17.24</elasticsearch.version>
+        <junit.version>5.9.3</junit.version>
+        <elasticsearch.version>7.17.25</elasticsearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
 
         <!-- maven-resources-plugin versions greater 3.2.0 introduce changes that
@@ -77,11 +77,11 @@
         <mockito.version>5.9.0</mockito.version>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
-        <spring.security.version>5.7.11</spring.security.version>
+        <spring.security.version>5.7.13</spring.security.version>
         <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
-        <mariadb-java-client.version>2.7.6</mariadb-java-client.version>
+        <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
         <maven-javadoc-plugin.version>3.3.0</maven-javadoc-plugin.version>
     </properties>
 
