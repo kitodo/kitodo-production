@@ -192,6 +192,9 @@ public class Task extends BaseBean {
     @Transient
     private String editTypeTitle;
 
+    @Transient
+    private transient Keyworder keyworder;
+
     /**
      * Constructor.
      */
@@ -956,5 +959,83 @@ public class Task extends BaseBean {
             return Collections.emptyList();
         }
         return getRoles().stream().map(Role::getId).collect(Collectors.toList());
+    }
+
+    /**
+     * When indexing, outputs the index keywords for free search.
+     * 
+     * @return the index keywords for free search
+     */
+    @Transient
+    @FullTextField(name = "search")
+    public String getKeywordsForFreeSearch() {
+        return initializeKeywords().getSearch();
+    }
+
+    /**
+     * When indexing, outputs the index keywords for searching in title.
+     * 
+     * @return the index keywords for searching in title
+     */
+    @Transient
+    @FullTextField(name = "searchTitle")
+    public String getKeywordsForSearchingInTitle() {
+        return initializeKeywords().getSearchTitle();
+    }
+
+    /**
+     * When indexing, outputs the index keywords for searching by project name.
+     * 
+     * @return the index keywords for searching by project name
+     */
+    @Transient
+    @FullTextField(name = "searchProject")
+    public String getKeywordsForSearchingByProjectName() {
+        return initializeKeywords().getSearchProject();
+    }
+
+    /**
+     * When indexing, outputs the index keywords for searching for assignment to
+     * batches.
+     * 
+     * @return the index keywords for searching for assignment to batches
+     */
+    @Transient
+    @FullTextField(name = "searchBatch")
+    public String getKeywordsForAssignmentToBatches() {
+        return initializeKeywords().getSearchBatch();
+    }
+
+    /**
+     * When indexing, outputs the index keywords for searching for task
+     * information.
+     * 
+     * @return the index keywords for searching for task information
+     */
+    @Transient
+    @FullTextField(name = "searchTask")
+    public String getKeywordsForSearchingForTaskInformation() {
+        return initializeKeywords().getSearchTask();
+    }
+
+    /**
+     * When indexing, outputs the index keywords for searching for metadata.
+     * 
+     * @return the index keywords for searching for metadata
+     */
+    @Transient
+    @FullTextField(name = "searchMetadata")
+    public String getKeywordsForSearchingForMetadata() {
+        return initializeKeywords().getSearchMetadata();
+    }
+
+    private Keyworder initializeKeywords() {
+        if (this.keyworder == null) {
+            Keyworder keyworder = new Keyworder(this);
+            this.keyworder = keyworder;
+            return keyworder;
+        } else {
+            return keyworder;
+        }
     }
 }
