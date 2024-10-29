@@ -80,7 +80,8 @@ class Keyworder {
 
     public Keyworder(Process process) {
         this.titleKeywords = initTitleKeywords(process.getTitle());
-        this.projectKeywords = initProjectKeywords(process.getProject().getTitle());
+        String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
+        this.projectKeywords = initProjectKeywords(projectTitle);
         this.batchKeywords = initBatchKeywords(process.getBatches());
         var taskKeywords = initTaskKeywords(process.getTasks());
         this.taskKeywords = taskKeywords.getLeft();
@@ -90,31 +91,39 @@ class Keyworder {
         this.metadataPseudoKeywords = metadataKeywords.getRight();
         this.processId = process.getId().toString();
         this.commentKeywords = initCommentKeywords(process.getComments());
-
-        if (logger.isTraceEnabled()) {
-            logTrace("process \"" + process.getTitle() + "\" [" + processId + ']');
-        }
     }
 
     public Keyworder(Task task) {
-        this.titleKeywords = initTitleKeywords(task.getProcess().getTitle());
-        this.projectKeywords = initProjectKeywords(task.getProcess().getProject().getTitle());
-        this.batchKeywords = initBatchKeywords(task.getProcess().getBatches());
-        var taskKeywords = initTaskKeywords(Collections.singleton(task));
-        this.taskKeywords = taskKeywords.getLeft();
-        this.taskPseudoKeywords = taskKeywords.getRight();
-        var metadataKeywords = initMetadataKeywords(task.getProcess());
-        this.metadataKeywords = metadataKeywords.getLeft();
-        this.metadataPseudoKeywords = metadataKeywords.getRight();
-        this.processId = task.getProcess().getId().toString();
-        List<Comment> commentsOfTask = task.getProcess().getComments().stream().filter(comment -> Objects.equals(comment
-                .getCurrentTask(), task) || Objects.equals(comment.getCorrectionTask(), task)).collect(Collectors
+        if (Objects.nonNull(task.getProcess())) {
+            this.titleKeywords = initTitleKeywords(task.getProcess().getTitle());
+            this.projectKeywords = initProjectKeywords(task.getProcess().getProject().getTitle());
+            this.batchKeywords = initBatchKeywords(task.getProcess().getBatches());
+            var taskKeywords = initTaskKeywords(Collections.singleton(task));
+            this.taskKeywords = taskKeywords.getLeft();
+            this.taskPseudoKeywords = taskKeywords.getRight();
+            var metadataKeywords = initMetadataKeywords(task.getProcess());
+            this.metadataKeywords = metadataKeywords.getLeft();
+            this.metadataPseudoKeywords = metadataKeywords.getRight();
+            this.processId = task.getProcess().getId().toString();
+            List<Comment> commentsOfTask = task.getProcess().getComments().stream().filter(comment -> Objects.equals(
+                comment.getCurrentTask(), task) || Objects.equals(comment.getCorrectionTask(), task)).collect(Collectors
                         .toList());
-        this.commentKeywords = initCommentKeywords(commentsOfTask);
-
-        if (logger.isTraceEnabled()) {
-            logTrace("task #" + task.getOrdering() + " \"" + task.getTitle() + "\" [" + task.getId() + "] of process \""
-                    + task.getProcess().getTitle() + "\" [" + processId + "]");
+            this.commentKeywords = initCommentKeywords(commentsOfTask);
+        } else {
+            this.titleKeywords = initTitleKeywords(task.getTemplate().getTitle());
+            Set<String> projectKeywords = new HashSet<>();
+            for (Project project : task.getTemplate().getProjects()) {
+                projectKeywords.addAll(initProjectKeywords(project.getTitle()));
+            }
+            this.projectKeywords = projectKeywords;
+            this.batchKeywords = Collections.emptySet();
+            var taskKeywords = initTaskKeywords(Collections.singleton(task));
+            this.taskKeywords = taskKeywords.getLeft();
+            this.taskPseudoKeywords = taskKeywords.getRight();
+            this.metadataKeywords = Collections.emptySet();
+            this.metadataPseudoKeywords = Collections.emptySet();
+            this.processId = task.getTemplate().getId().toString();
+            this.commentKeywords = Collections.emptySet();
         }
     }
 
@@ -472,15 +481,5 @@ class Keyworder {
         allMetadataKeywords.addAll(metadataKeywords);
         allMetadataKeywords.addAll(metadataPseudoKeywords);
         return String.join(" ", allMetadataKeywords);
-    }
-
-    private void logTrace(String about) {
-        logger.trace("Search keywords for {}:/- title words: {}/- project words: {}/- batch words: {}/"
-                + "- task words: {}/- task pseudo-words: {}/- metadata words: {}/- metadata pseudo-words: {}/"
-                + "- process id word: {}/- comment words: {}".replace("/", System.lineSeparator()), about,
-                String.join(", ", titleKeywords), String.join(", ", projectKeywords), String.join(", ", batchKeywords),
-                String.join(", ", taskKeywords), String.join(", ", taskPseudoKeywords),
-                String.join(", ", metadataKeywords), String.join(", ", metadataPseudoKeywords),
-                processId, String.join(", ", commentKeywords));
     }
 }

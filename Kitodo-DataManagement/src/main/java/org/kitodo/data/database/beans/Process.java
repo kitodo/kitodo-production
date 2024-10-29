@@ -1063,6 +1063,7 @@ public class Process extends BaseTemplateBean {
      */
     @Transient
     @FullTextField(name = "search")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForFreeSearch() {
         return initializeKeywords().getSearch();
     }
@@ -1074,6 +1075,7 @@ public class Process extends BaseTemplateBean {
      */
     @Transient
     @FullTextField(name = "searchTitle")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingInTitle() {
         return initializeKeywords().getSearchTitle();
     }
@@ -1085,6 +1087,7 @@ public class Process extends BaseTemplateBean {
      */
     @Transient
     @FullTextField(name = "searchProject")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingByProjectName() {
         return initializeKeywords().getSearchProject();
     }
@@ -1097,6 +1100,7 @@ public class Process extends BaseTemplateBean {
      */
     @Transient
     @FullTextField(name = "searchBatch")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForAssignmentToBatches() {
         return initializeKeywords().getSearchBatch();
     }
@@ -1109,6 +1113,7 @@ public class Process extends BaseTemplateBean {
      */
     @Transient
     @FullTextField(name = "searchTask")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingForTaskInformation() {
         return initializeKeywords().getSearchTask();
     }
@@ -1120,6 +1125,7 @@ public class Process extends BaseTemplateBean {
      */
     @Transient
     @FullTextField(name = "searchMetadata")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingForMetadata() {
         return initializeKeywords().getSearchMetadata();
     }

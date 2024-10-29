@@ -32,10 +32,12 @@ import javax.persistence.Transient;
 
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
@@ -968,6 +970,7 @@ public class Task extends BaseBean {
      */
     @Transient
     @FullTextField(name = "search")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForFreeSearch() {
         return initializeKeywords().getSearch();
     }
@@ -979,6 +982,7 @@ public class Task extends BaseBean {
      */
     @Transient
     @FullTextField(name = "searchTitle")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingInTitle() {
         return initializeKeywords().getSearchTitle();
     }
@@ -990,6 +994,7 @@ public class Task extends BaseBean {
      */
     @Transient
     @FullTextField(name = "searchProject")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingByProjectName() {
         return initializeKeywords().getSearchProject();
     }
@@ -1002,6 +1007,7 @@ public class Task extends BaseBean {
      */
     @Transient
     @FullTextField(name = "searchBatch")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForAssignmentToBatches() {
         return initializeKeywords().getSearchBatch();
     }
@@ -1014,6 +1020,7 @@ public class Task extends BaseBean {
      */
     @Transient
     @FullTextField(name = "searchTask")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingForTaskInformation() {
         return initializeKeywords().getSearchTask();
     }
@@ -1025,6 +1032,7 @@ public class Task extends BaseBean {
      */
     @Transient
     @FullTextField(name = "searchMetadata")
+    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingForMetadata() {
         return initializeKeywords().getSearchMetadata();
     }
