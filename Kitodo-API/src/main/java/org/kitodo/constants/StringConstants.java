@@ -17,4 +17,7 @@ public class StringConstants {
     public static final String SEMICOLON_DELIMITER = "; ";
     public static final String EDIT_FORM_SAVE = "editForm:save";
 
+    // patterns
+    public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
+
 }
