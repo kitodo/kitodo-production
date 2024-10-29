@@ -52,11 +52,13 @@ class Keyworder {
 
     private static final String ANY_METADATA_MARKER = "mdWrap";
     private static final Map<String, String> DOMAIN_MAPPING = new HashMap<>();
+
     static {
         DOMAIN_MAPPING.put("dmdSec", "description");
         DOMAIN_MAPPING.put("sourceMD", "source");
         DOMAIN_MAPPING.put("techMD", "technical");
     }
+
     private static final char DOMAIN_SEPARATOR = 'j';
     private static final char VALUE_SEPARATOR = 'q';
     private static final Pattern METADATA_PATTERN = Pattern.compile("name=\"([^\"]+)\">([^<]*)<", Pattern.DOTALL);
