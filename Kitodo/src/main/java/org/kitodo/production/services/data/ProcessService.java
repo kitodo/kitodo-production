@@ -294,7 +294,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
         Collection<Integer> projectIDs = ServiceManager.getUserService().getCurrentUser().getProjects().stream().filter(
             project -> showInactiveProjects || project.isActive()).map(Project::getId).collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.performIndexSearches(HibernateUtil.getSession());
+        query.performIndexSearches();
         return count(query.formCountQuery(), query.getQueryParameters());
     }
 
@@ -472,7 +472,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
         query.defineSorting(SORT_FIELD_MAPPING.get(sortField), sortOrder);
-        query.performIndexSearches(HibernateUtil.getSession());
+        query.performIndexSearches();
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), offset, limit);
     }
 
@@ -807,7 +807,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
                 .filter(project -> showInactiveProjects || project.isActive()).map(Project::getId)
                 .collect(Collectors.toList());
         query.restrictToProjects(projectIDs);
-        query.performIndexSearches(HibernateUtil.getSession());
+        query.performIndexSearches();
         return getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 

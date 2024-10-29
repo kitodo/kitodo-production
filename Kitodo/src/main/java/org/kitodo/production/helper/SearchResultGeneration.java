@@ -72,7 +72,7 @@ public class SearchResultGeneration {
         if (!this.showInactiveProjects) {
             query.addBooleanRestriction("project.active", Boolean.FALSE);
         }
-        query.performIndexSearches(HibernateUtil.getSession());
+        query.performIndexSearches();
         return ServiceManager.getProcessService().getByQuery(query.formQueryForAll(), query.getQueryParameters());
     }
 

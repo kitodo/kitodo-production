@@ -23,12 +23,16 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.production.enums.ProcessState;
+import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.index.IndexingService;
 import org.primefaces.model.SortOrder;
 
 /**
@@ -36,6 +40,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
+    private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;
     private final String className;
     private final String varName;
@@ -178,19 +183,13 @@ public class BeanQuery {
     }
 
     /**
-     * Performs index searches.
-     * 
-     * @param session
-     *            session of hibernate
+     * Searches the index and inserts the IDs into the HQL query parameters.
      */
-    public void performIndexSearches(Session session) {
-        SearchSession searchSession = Search.session(session);
+    public void performIndexSearches() {
         for (var iterator = indexQueries.entrySet().iterator(); iterator.hasNext();) {
             Entry<String, Pair<FilterField, String>> entry = iterator.next();
-            List<Integer> ids = searchSession.search(beanClass).select(searchSession.scope(beanClass).projection()
-                    .field("id", Integer.class).toProjection()).where(function -> function.match().field(entry
-                            .getValue().getLeft().getSearchField()).matching(entry.getValue().getRight())).fetchAll()
-                    .hits();
+            Collection<Integer> ids = indexingService.searchIds(beanClass, entry.getValue().getLeft().getSearchField(),
+                entry.getValue().getRight());
             parameters.put(entry.getKey(), ids);
             iterator.remove();
         }
