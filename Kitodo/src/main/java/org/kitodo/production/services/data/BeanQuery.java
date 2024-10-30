@@ -23,11 +23,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.Session;
-import org.hibernate.search.mapper.orm.Search;
-import org.hibernate.search.mapper.orm.session.SearchSession;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.production.enums.ProcessState;
