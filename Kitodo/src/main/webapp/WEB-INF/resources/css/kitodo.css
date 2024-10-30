@@ -3396,25 +3396,7 @@ Column content
 
 .thumbnail-parent {
     display: block;
-    height: 104px;
-    width: 75px;
     position: relative;
-}
-
-.thumbnail-parent.media-type-video {
-    width: 185px;
-    height: auto;
-}
-
-.thumbnail-parent.media-type-audio {
-    width: 120px;
-    height: auto;
-}
-
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-audio,
-#imagePreviewForm\:thumbnailStripe .thumbnail-parent.media-type-video {
-    width: 90px;
-    height: auto;
 }
 
 .thumbnail-parent audio,
@@ -3425,6 +3407,8 @@ Column content
 
 .thumbnail-parent video {
     height: auto;
+    vertical-align: bottom;
+    box-sizing: border-box;
 }
 
 .thumbnail {
@@ -3448,6 +3432,7 @@ Column content
 .thumbnail + .thumbnail-container video {
     background: var(--carbon-blue);
     border: solid calc(2 * var(--default-border-width)) var(--carbon-blue);
+    box-sizing: border-box;
 }
 
 .thumbnail.selected + .thumbnail-container .mediaListIconItem,
@@ -3472,13 +3457,27 @@ Column content
     border-style: solid;
 }
 
-
-
 .thumbnail-container {
     display: inline-block;
-    height: 100%;
     position: relative;
-    width: 100%;
+    height: 104px;
+    width: 75px;
+}
+
+.thumbnail-container.media-type-video {
+    width: 185px;
+    height: auto;
+}
+
+.thumbnail-container.media-type-audio {
+    width: 120px;
+    height: auto;
+}
+
+#imagePreviewForm\:thumbnailStripe .thumbnail-container.media-type-audio,
+#imagePreviewForm\:thumbnailStripe .thumbnail-container.media-type-video {
+    width: 90px;
+    height: auto;
 }
 
 .thumbnail-container > .ui-widget-content {
@@ -3584,6 +3583,13 @@ Column content
     opacity: .7;
 }
 
+.thumbnail-parent .thumbnail-banner {
+    word-break: break-word;
+    color: var(--pure-white);
+    font-size: smaller;
+    text-align: center;
+}
+
 #imagePreviewForm {
     height: 100%;
     overflow: hidden;
@@ -3610,6 +3616,7 @@ Column content
 #imagePreviewForm\:unstructuredMedia ul li > .ui-panel.ui-draggable {
     display: inline-block;
     position: relative;
+    vertical-align: top;
 }
 
 .page-drop-area {

@@ -264,6 +264,7 @@ public class Property extends BaseIndexedBean implements Comparable<Property> {
      *            object
      * @return int
      */
+    @Override
     public int compareTo(Property property) {
         int titleMatch = this.getTitle().toLowerCase().compareTo(property.getTitle().toLowerCase());
         int valueMatch = this.getValue().toLowerCase().compareTo(property.getValue().toLowerCase());

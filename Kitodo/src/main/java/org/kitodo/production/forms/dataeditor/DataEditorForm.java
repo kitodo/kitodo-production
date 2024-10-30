@@ -973,6 +973,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * @param treeNode treeNode to be added
      * @return whether the given ProcessDetail can be added or not
      */
+    @Override
     public boolean canBeAdded(TreeNode treeNode) {
         if (Objects.isNull(treeNode.getParent().getParent())) {
             if (Objects.nonNull(metadataPanel.getSelectedMetadataTreeNode()) || Objects.isNull(addMetadataDialog.getAddableMetadata())) {
@@ -1116,6 +1117,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      *
      * @return whether given TreeNode contains ProcessFieldedMetadata and if any further metadata can be added to it
      */
+    @Override
     public boolean metadataAddableToGroup(TreeNode metadataNode) {
         return metadataPanel.metadataAddableToGroup(metadataNode);
     }
@@ -1123,6 +1125,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     /**
      * Prepare addable metadata for metadata group.
      */
+    @Override
     public void prepareAddableMetadataForGroup(TreeNode treeNode) {
         addMetadataDialog.prepareAddableMetadataForGroup(treeNode);
     }
