@@ -14,6 +14,7 @@ package org.kitodo.data.elasticsearch.index.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -195,7 +196,7 @@ public class TemplateTypeTest {
     }
 
     private String formatDate(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         return dateFormat.format(date);
     }
 }

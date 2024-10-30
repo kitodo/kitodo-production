@@ -14,6 +14,7 @@ package org.kitodo.data.elasticsearch.index.type;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -338,7 +339,7 @@ public class ProjectTypeTest {
     @Test
     public void shouldCreateThirdDocument() throws Exception {
         ProjectType processType = new ProjectType();
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
 
         Project project = prepareData().get(2);
         Map<String, Object> actual = processType.createDocument(project);
