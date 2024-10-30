@@ -73,8 +73,9 @@ class UserSpecifiedFilterParser {
                 }
             } else {
                 // add characters but, no spaces at the beginning
-                if (tokenCollector.length() > 0 || glyph > ' ')
+                if (tokenCollector.length() > 0 || glyph > ' ') {
                     tokenCollector.appendCodePoint(glyph);
+                }
             }
         }
         trimRight(tokenCollector);
@@ -115,8 +116,9 @@ class UserSpecifiedFilterParser {
                 }
             } else {
                 // add characters but, no spaces at the beginning
-                if (tokenCollector.length() > 0 || glyph > ' ')
+                if (tokenCollector.length() > 0 || glyph > ' ') {
                     tokenCollector.appendCodePoint(glyph);
+                }
             }
         }
         if (tokenCollector.length() > 0) {
@@ -162,8 +164,7 @@ class UserSpecifiedFilterParser {
             // index search
             return new IndexQueryPart(FilterField.MISC, item.toString());
         } else {
-            // if there is a colon
-            // disassemble the string
+            // if there is a colon: disassemble the string
             String column = item.substring(0, colon).toLowerCase();
             String value = item.substring(colon + 1);
             // is the first one a known search field?
@@ -188,8 +189,7 @@ class UserSpecifiedFilterParser {
                 if (idSearch.matches()) {
                     return new DatabaseQueryPart(filterField, idSearch.group(1), idSearch.group(2));
                 } else {
-                    // if the search field allows an additional colon, then
-                    // search for it
+                    // if the search allows an additional colon, search for it
                     if (filterField.isDivisible()) {
                         // the field allows another colon: then search for it
                         int anotherColon = value.indexOf(":");

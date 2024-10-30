@@ -12,7 +12,8 @@
 package org.kitodo.production.services.index;
 
 import java.util.Collection;
-import java.util.*;
+import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletionStage;
 
 import org.apache.logging.log4j.LogManager;

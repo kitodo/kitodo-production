@@ -290,6 +290,13 @@ public class BeanQuery {
         restrictions.add(restriction.toString());
     }
 
+    /**
+     * Adds search restrictions entered by the user in the filter input.
+     * 
+     * @param filterString
+     *            user input
+     * @see "https://github.com/kitodo/kitodo-production/wiki/Suche-und-Filter"
+     */
     public void restrictWithUserFilterString(String filterString) {
         int userFilterCount = 0;
         for (var groupFilter : UserSpecifiedFilterParser.parse(filterString).entrySet()) {
@@ -380,6 +387,13 @@ public class BeanQuery {
         }
     }
 
+    /**
+     * Returns the query parameters.
+     * 
+     * @return the query parameters
+     * @throws IllegalStateException
+     *             if index queries still need to be made for parameterization
+     */
     public Map<String, Object> getQueryParameters() {
         if (!indexQueries.isEmpty()) {
             throw new IllegalStateException("index searches not yet performed");
