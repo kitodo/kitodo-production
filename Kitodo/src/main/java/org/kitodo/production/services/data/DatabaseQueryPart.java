@@ -25,6 +25,7 @@ class DatabaseQueryPart implements UserSpecifiedFilter {
     private FilterField filterField;
     private Integer firstId;
     private Integer upToId;
+    private boolean operand;
 
     /**
      * Constructor, creates a new DatabaseQueryPart.
@@ -36,10 +37,11 @@ class DatabaseQueryPart implements UserSpecifiedFilter {
      * @param upToId
      *            {@code null} or last ID
      */
-    DatabaseQueryPart(FilterField filterField, String firstId, String upToId) {
+    DatabaseQueryPart(FilterField filterField, String firstId, String upToId, boolean operand) {
         this.filterField = filterField;
         this.firstId = Integer.valueOf(firstId);
         this.upToId = Objects.nonNull(upToId) ? Integer.valueOf(upToId) : null;
+        this.operand = operand;
     }
 
     @Override
@@ -62,8 +64,9 @@ class DatabaseQueryPart implements UserSpecifiedFilter {
      */
     String getDatabaseQuery(String className, String varName, String parameterName) {
         String query = Objects.equals(className, "Task") ? filterField.getTaskQuery() : filterField.getProcessQuery();
-        return varName + '.' + query + (upToId == null ? " = :" + parameterName
-                : " BETWEEN :" + parameterName + " AND :" + parameterName + SECOND_PARAMETER_EXTENSION);
+        return varName + '.' + query + (upToId == null ? (operand ? " = :" : " != :") + parameterName
+                : (operand ? " BETWEEN :" : " NOT BETWEEN :") + parameterName + " AND :" + parameterName
+                        + SECOND_PARAMETER_EXTENSION);
     }
 
     /**
@@ -86,6 +89,7 @@ class DatabaseQueryPart implements UserSpecifiedFilter {
 
     @Override
     public String toString() {
-        return filterField + (upToId == null ? " = " + firstId : " BETWEEN " + firstId + " AND " + upToId);
+        return filterField + (upToId == null ? (operand ? " = " : " != ") + firstId
+                : (operand ? " BETWEEN " : " NOT BETWEEN ") + firstId + " AND " + upToId);
     }
 }

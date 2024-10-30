@@ -32,6 +32,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
     private static final char DOMAIN_SEPARATOR = 'j';
     private List<String> lookfor = new ArrayList<>();
     private final FilterField filterField;
+    private final boolean operand;
 
     /**
      * Constructor. Creates a new IndexQueryPart.
@@ -40,12 +41,15 @@ class IndexQueryPart implements UserSpecifiedFilter {
      *            search field selected by the user
      * @param values
      *            search terms
+     * @param operand
+     *            whether the search must match
      */
-    IndexQueryPart(FilterField filterField, String values) {
+    IndexQueryPart(FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
             this.lookfor.add(addOptionalDomain(filterField.getDomain(), normalize(value)));
         }
+        this.operand = operand;
     }
 
     private final String addOptionalDomain(String domain, String normalize) {
@@ -61,13 +65,16 @@ class IndexQueryPart implements UserSpecifiedFilter {
      *            search field selected by the user
      * @param values
      *            search terms
+     * @param operand
+     *            whether the search must match
      */
-    IndexQueryPart(String key, FilterField filterField, String values) {
+    IndexQueryPart(String key, FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
             lookfor.add(normalize(key) + DOMAIN_SEPARATOR + filterField.getDomain() + VALUE_SEPARATOR + normalize(
                 value));
         }
+        this.operand = operand;
     }
 
     private List<String> splitValues(String value) {
@@ -96,17 +103,17 @@ class IndexQueryPart implements UserSpecifiedFilter {
      * @param restrictions
      *            puts the HQL restrictions here
      */
-    void putQueryParameters(String varName, String parameterName,
-            Map<String, Pair<FilterField, String>> indexQueries, Collection<String> restrictions) {
+    void putQueryParameters(String varName, String parameterName, Map<String, Pair<FilterField, String>> indexQueries,
+            Collection<String> restrictions) {
         if (lookfor.size() == 1) {
-            restrictions.add(varName + ".id IN (:" + parameterName + ')');
+            restrictions.add(varName + (operand ? ".id IN (:" : ".id NOT IN (:") + parameterName + ')');
             indexQueries.put(parameterName, Pair.of(filterField, lookfor.get(0)));
         } else {
             int queryCount = 0;
             for (String lookingFor : lookfor) {
                 queryCount++;
                 String uniqueParameterName = parameterName + UNIQUE_PARAMETER_EXTENSION + queryCount;
-                restrictions.add(varName + ".id IN (:" + uniqueParameterName + ')');
+                restrictions.add(varName + (operand ? ".id IN (:" : ".id NOT IN (:") + uniqueParameterName + ')');
                 indexQueries.put(uniqueParameterName, Pair.of(filterField, lookingFor));
             }
         }

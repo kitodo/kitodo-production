@@ -25,6 +25,8 @@ import java.util.regex.Pattern;
 import net.bytebuddy.utility.nullability.MaybeNull;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * Parser for breaking down the filter string entered by the user. The filter
@@ -33,6 +35,7 @@ import org.apache.commons.lang3.StringUtils;
  * has to be found again. This is possible but not trivial.
  */
 class UserSpecifiedFilterParser {
+    private static final Logger logger = LogManager.getLogger(UserSpecifiedFilterParser.class);
 
     /**
      * The string is parsed and converted to a map.
@@ -80,11 +83,12 @@ class UserSpecifiedFilterParser {
         }
         trimRight(tokenCollector);
         if (tokenCollector.length() > 0) {
-            UserSpecifiedFilter userSpecifiedFilter = parseQueryPart(tokenCollector);
+            UserSpecifiedFilter userSpecifiedFilter = parseQueryPart(tokenCollector.toString());
             if (Objects.nonNull(userSpecifiedFilter)) {
                 queryTokens.add(userSpecifiedFilter);
             }
         }
+        logger.debug("`{}´ -> {}", filter, queryTokens);
         return queryTokens;
     }
 
@@ -111,7 +115,7 @@ class UserSpecifiedFilterParser {
             } else if (!inParentheses && glyph == '|') {
                 if (tokenCollector.length() > 0) {
                     trimRight(tokenCollector);
-                    queryTokens.add(parseQueryPart(tokenCollector));
+                    queryTokens.add(parseQueryPart(tokenCollector.toString()));
                     tokenCollector = new StringBuilder();
                 }
             } else {
@@ -123,7 +127,7 @@ class UserSpecifiedFilterParser {
         }
         if (tokenCollector.length() > 0) {
             trimRight(tokenCollector);
-            queryTokens.add(parseQueryPart(tokenCollector));
+            queryTokens.add(parseQueryPart(tokenCollector.toString()));
         }
         return queryTokens;
     }
@@ -138,7 +142,7 @@ class UserSpecifiedFilterParser {
         // remove spaces at the end
         int lastPos = stringBuilder.length() - 1;
         do {
-            if (stringBuilder.charAt(lastPos) > ' ') {
+            if (lastPos < 0 || stringBuilder.charAt(lastPos) > ' ') {
                 break;
             }
             stringBuilder.setLength(lastPos);
@@ -157,53 +161,62 @@ class UserSpecifiedFilterParser {
      * @return filter for search item, or {@code null} if it doesn’t make sense
      */
     @MaybeNull
-    private static UserSpecifiedFilter parseQueryPart(StringBuilder item) {
+    private static UserSpecifiedFilter parseQueryPart(String item) {
+        boolean substract = item.startsWith("-");
+        if (substract) {
+            item = item.substring(1, item.length());
+        }
+        boolean operand = !substract;
         int colon = item.indexOf(":");
         if (colon < 0) {
             // if there is no colon this is a simple search keyword for the
             // index search
-            return new IndexQueryPart(FilterField.MISC, item.toString());
+            return new IndexQueryPart(FilterField.MISC, item.toString(), operand);
         } else {
             // if there is a colon: disassemble the string
             String column = item.substring(0, colon).toLowerCase();
             String value = item.substring(colon + 1);
-            // is the first one a known search field?
-            FilterField filterField = FilterField.ofString(column);
-            if (Objects.isNull(filterField)) {
-                // if not, this is a search for a specific metadata
-                return new IndexQueryPart(FilterField.MISC, value);
+            return parseQueryPart(column, value, operand);
+        }
+    }
+
+    private static UserSpecifiedFilter parseQueryPart(String column, String value, boolean operand) {
+        // is the first one a known search field?
+        FilterField filterField = FilterField.ofString(column);
+        if (Objects.isNull(filterField)) {
+            // if not, this is a search for a specific metadata
+            return new IndexQueryPart(column, FilterField.MISC, value, operand);
+        } else {
+            // we found a known search field
+            if (StringUtils.isBlank(value)) {
+                // Value is empty: The search only requires that the field
+                // exists. Only interesting for fields that may not exist.
+                if (Objects.isNull(filterField.getSearchField())) {
+                    return null;
+                }
+                return new IndexQueryPart(filterField, null, operand);
+            }
+            // If the search consists of exactly one number, or of a
+            // number-to-number sequence, then the database is filtered
+            // according to the ID or IDs.
+            Matcher idSearch = ID_SEARCH_PATTERN.matcher(value);
+            if (idSearch.matches()) {
+                return new DatabaseQueryPart(filterField, idSearch.group(1), idSearch.group(2), operand);
             } else {
-                // we found a known search field
-                if (StringUtils.isBlank(value)) {
-                    // Value is empty: The search only requires that the field
-                    // exists. Only interesting for fields that may not exist.
-                    if (Objects.isNull(filterField.getSearchField())) {
-                        return null;
+                // if the search allows an additional colon, search for it
+                if (filterField.isDivisible()) {
+                    // the field allows another colon: then search for it
+                    int anotherColon = value.indexOf(":");
+                    if (anotherColon >= 0) {
+                        // a second colon was found
+                        // then split the string
+                        String metadataKey = value.substring(0, anotherColon);
+                        String metadataValue = value.substring(anotherColon + 1);
+                        return new IndexQueryPart(metadataKey, filterField, metadataValue, operand);
                     }
-                    return new IndexQueryPart(filterField, null);
                 }
-                // If the search consists of exactly one number, or of a
-                // number-to-number sequence, then the database is filtered
-                // according to the ID or IDs.
-                Matcher idSearch = ID_SEARCH_PATTERN.matcher(value);
-                if (idSearch.matches()) {
-                    return new DatabaseQueryPart(filterField, idSearch.group(1), idSearch.group(2));
-                } else {
-                    // if the search allows an additional colon, search for it
-                    if (filterField.isDivisible()) {
-                        // the field allows another colon: then search for it
-                        int anotherColon = value.indexOf(":");
-                        if (anotherColon >= 0) {
-                            // a second colon was found
-                            // then split the string
-                            String metadataKey = value.substring(0, anotherColon);
-                            String metadataValue = value.substring(anotherColon + 1);
-                            return new IndexQueryPart(metadataKey, filterField, metadataValue);
-                        }
-                    }
-                    // the field does not allow another colon, or there was no
-                    return new IndexQueryPart(filterField, value);
-                }
+                // the field does not allow another colon, or there was no
+                return new IndexQueryPart(filterField, value, operand);
             }
         }
     }
