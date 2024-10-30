@@ -15,6 +15,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
@@ -241,13 +243,18 @@ class Keyworder {
      * @return metadata keywords, and metadata pseudo keywords
      */
     private static final Pair<Set<String>, Set<String>> initMetadataKeywords(Process process) {
+        final Pair<Set<String>, Set<String>> emptyResult = Pair.of(Collections.emptySet(), Collections.emptySet());
         try {
             String processId = Integer.toString(process.getId());
-            File metaFilePath = Paths.get(KitodoConfig.getKitodoDataDirectory(), processId, "meta.xml").toFile();
-            logger.debug("Reading {} ...", metaFilePath);
-            String metaXml = FileUtils.readFileToString(metaFilePath, StandardCharsets.UTF_8);
+            Path path = Paths.get(KitodoConfig.getKitodoDataDirectory(), processId, "meta.xml");
+            if (!Files.isReadable(path)) {
+                logger.info((Files.exists(path) ? "File not readable: " : "Missing metadata file: ") + path);
+                return emptyResult;
+            }
+            logger.debug("Reading {} ...", path);
+            String metaXml = FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8);
             if (!metaXml.contains(ANY_METADATA_MARKER)) {
-                return Pair.of(Collections.emptySet(), Collections.emptySet());
+                return emptyResult;
             }
             Set<String> metadataKeywords = new HashSet<>();
             Set<String> metadataPseudoKeywords = new HashSet<>();
@@ -275,7 +282,7 @@ class Keyworder {
             return Pair.of(metadataKeywords, metadataPseudoKeywords);
         } catch (IOException | RuntimeException e) {
             logger.catching(e instanceof FileNotFoundException ? Level.INFO : Level.WARN, e);
-            return Pair.of(Collections.emptySet(), Collections.emptySet());
+            return emptyResult;
         }
     }
 
