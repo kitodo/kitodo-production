@@ -15,7 +15,8 @@
         xmlns:h="http://xmlns.jcp.org/jsf/html"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:f="http://xmlns.jcp.org/jsf/core"
-        xmlns:p="http://primefaces.org/ui">
+        xmlns:p="http://primefaces.org/ui"
+        xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
     <!-- parameters:
            * root: table data tree (org.primefaces.model.TreeNode)
@@ -51,8 +52,10 @@
 
                 <p:outputLabel for="#{item.input eq 'dataTable' ? '' : item.input}"
                                value="#{item.label}: #{item.required ? ' *' :''}"
+                               a:data-metadataid="#{item.metadataID}"
                                rendered="#{not item.undefined}"/>
                 <p:outputLabel value="#{item.label}: ⚠️"
+                               a:data-metadataid="#{item.metadataID}"
                                style="background-color: gold;"
                                title="#{msgs['dataEditor.undefinedKey']}"
                                rendered="#{item.undefined}"/>
@@ -198,7 +201,7 @@
                                      icon="fa fa-plus"
                                      styleClass="secondary"
                                      update="addMetadataDialog"
-                                     oncomplete="PF('addMetadataDialog').show()"/>
+                                     oncomplete="PF('addMetadataDialog').show();metadataTable.rememberMetadataGroup(this);"/>
                 </h:panelGroup>
 
                 <!-- button to delete -->

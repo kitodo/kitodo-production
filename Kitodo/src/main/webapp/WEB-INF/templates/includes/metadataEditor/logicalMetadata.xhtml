@@ -43,7 +43,7 @@
                                          update="addMetadataForm"
                                          disabled="#{not DataEditorForm.metadataPanel.metadataAddableToStructureElement()}"
                                          action="#{DataEditorForm.addMetadataDialog.prepareAddableMetadataForStructure(DataEditorForm.metadataPanel.logicalMetadataRows.getChildren())}"
-                                         oncomplete="PF('addMetadataDialog').show();">
+                                         oncomplete="PF('addMetadataDialog').show();metadataTable.rememberMetadataGroup(this);">
                             <f:setPropertyActionListener target="#{DataEditorForm.metadataPanel.selectedMetadataTreeNode}" value="#{null}"/>
                         </p:commandButton>
                     </h:panelGroup>
