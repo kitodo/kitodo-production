@@ -99,8 +99,11 @@ class Keyworder {
 
     public Keyworder(Task task) {
         if (Objects.nonNull(task.getProcess())) {
+            // ordinary task as part of a process
             this.titleKeywords = initTitleKeywords(task.getProcess().getTitle());
-            this.projectKeywords = initProjectKeywords(task.getProcess().getProject().getTitle());
+            Project project = task.getProcess().getProject();
+            this.projectKeywords = Objects.nonNull(project) ? initProjectKeywords(project.getTitle())
+                    : Collections.emptySet();
             this.batchKeywords = initBatchKeywords(task.getProcess().getBatches());
             var taskKeywords = initTaskKeywords(Collections.singleton(task));
             this.taskKeywords = taskKeywords.getLeft();
@@ -113,7 +116,8 @@ class Keyworder {
                 comment.getCurrentTask(), task) || Objects.equals(comment.getCorrectionTask(), task)).collect(Collectors
                         .toList());
             this.commentKeywords = initCommentKeywords(commentsOfTask);
-        } else {
+        } else if (Objects.nonNull(task.getTemplate())) {
+            // template task as part of a production template
             this.titleKeywords = initTitleKeywords(task.getTemplate().getTitle());
             Set<String> projectKeywords = new HashSet<>();
             for (Project project : task.getTemplate().getProjects()) {
@@ -127,6 +131,18 @@ class Keyworder {
             this.metadataKeywords = Collections.emptySet();
             this.metadataPseudoKeywords = Collections.emptySet();
             this.processId = task.getTemplate().getId().toString();
+            this.commentKeywords = Collections.emptySet();
+        } else {
+            // orphaned task (in a few tests)
+            this.titleKeywords = Collections.emptySet();
+            this.projectKeywords = Collections.emptySet();
+            this.batchKeywords = Collections.emptySet();
+            var taskKeywords = initTaskKeywords(Collections.singleton(task));
+            this.taskKeywords = taskKeywords.getLeft();
+            this.taskPseudoKeywords = taskKeywords.getRight();
+            this.metadataKeywords = Collections.emptySet();
+            this.metadataPseudoKeywords = Collections.emptySet();
+            this.processId = null;
             this.commentKeywords = Collections.emptySet();
         }
     }
@@ -388,7 +404,9 @@ class Keyworder {
         freeKeywords.addAll(batchKeywords);
         freeKeywords.addAll(taskKeywords);
         freeKeywords.addAll(metadataKeywords);
-        freeKeywords.add(processId);
+        if (Objects.nonNull(processId)) {
+            freeKeywords.add(processId);
+        }
         freeKeywords.addAll(commentKeywords);
         return String.join(" ", freeKeywords);
     }
