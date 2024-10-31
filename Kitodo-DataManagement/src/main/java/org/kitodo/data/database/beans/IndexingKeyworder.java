@@ -337,14 +337,17 @@ class IndexingKeyworder {
             String ruleset = FileUtils.readFileToString(rulesetFile, StandardCharsets.UTF_8);
             rulesetLabelMap = new HashMap<>();
             Matcher keysMatcher = RULESET_KEY_PATTERN.matcher(ruleset);
-            Set<String> labels = new HashSet<>();
             while (keysMatcher.find()) {
                 String key = normalize(keysMatcher.group(1));
                 Matcher labelMatcher = RULESET_LABEL_PATTERN.matcher(keysMatcher.group(2));
+                Set<String> labels = new HashSet<>();
                 while (labelMatcher.find()) {
                     labels.add(normalize(labelMatcher.group(1)));
                 }
                 rulesetLabelMap.put(key, labels);
+                if (logger.isTraceEnabled()) {
+                    logger.trace("- {} -> {}", key, String.join(", ", labels));
+                }
             }
             rulesetCache.put(file, rulesetLabelMap);
             return rulesetLabelMap;
