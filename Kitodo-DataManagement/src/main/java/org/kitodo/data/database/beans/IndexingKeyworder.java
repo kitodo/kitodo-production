@@ -229,14 +229,15 @@ class IndexingKeyworder {
                 String term = normalize(token);
                 taskKeywords.add(term);
                 if (task.isTypeAutomatic()) {
-                    taskKeywords.add(PSEUDOWORD_TASK_AUTOMATIC + VALUE_SEPARATOR + token);
+                    taskKeywords.add(PSEUDOWORD_TASK_AUTOMATIC + VALUE_SEPARATOR + term);
                 }
                 TaskStatus taskStatus = task.getProcessingStatus();
                 if (Objects.isNull(taskStatus)) {
                     continue;
                 }
                 if (Objects.equals(taskStatus, TaskStatus.DONE)) {
-                    taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE + VALUE_SEPARATOR + token);
+                    taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE);
+                    taskPseudoKeywords.add(PSEUDOWORD_TASK_DONE + VALUE_SEPARATOR + term);
                     User closedUser = task.getProcessingUser();
                     if (Objects.isNull(closedUser)) {
                         continue;
@@ -250,7 +251,9 @@ class IndexingKeyworder {
                             closedUser.getSurname()));
                     }
                 } else {
-                    taskPseudoKeywords.add(taskStatus.toString().toLowerCase() + VALUE_SEPARATOR + token);
+                    String taskKeyword = taskStatus.toString().toLowerCase();
+                    taskPseudoKeywords.add(taskKeyword);
+                    taskPseudoKeywords.add(taskKeyword + VALUE_SEPARATOR + term);
                 }
             }
         }
