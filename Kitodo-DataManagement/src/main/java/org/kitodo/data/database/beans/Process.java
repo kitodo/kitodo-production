@@ -190,7 +190,7 @@ public class Process extends BaseTemplateBean {
     private String baseType;
 
     @Transient
-    private transient Keyworder keyworder;
+    private transient IndexingKeyworder indexingKeyworder;
 
     /**
      * Constructor.
@@ -1130,13 +1130,13 @@ public class Process extends BaseTemplateBean {
         return initializeKeywords().getSearchMetadata();
     }
 
-    private Keyworder initializeKeywords() {
-        if (this.keyworder == null) {
-            Keyworder keyworder = new Keyworder(this);
-            this.keyworder = keyworder;
-            return keyworder;
+    private IndexingKeyworder initializeKeywords() {
+        if (this.indexingKeyworder == null) {
+            IndexingKeyworder indexingKeyworder = new IndexingKeyworder(this);
+            this.indexingKeyworder = indexingKeyworder;
+            return indexingKeyworder;
         } else {
-            return keyworder;
+            return indexingKeyworder;
         }
     }
 }

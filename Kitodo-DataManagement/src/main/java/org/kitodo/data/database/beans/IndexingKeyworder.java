@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,8 +44,8 @@ import org.kitodo.data.database.enums.TaskStatus;
 /**
  * Prepares the search keywords for a process or task.
  */
-class Keyworder {
-    private static final Logger logger = LogManager.getLogger(Keyworder.class);
+class IndexingKeyworder {
+    private static final Logger logger = LogManager.getLogger(IndexingKeyworder.class);
 
     private static final Pattern TITLE_GROUPS_PATTERN = Pattern.compile("[\\p{IsLetter}\\p{Digit}]+");
 
@@ -72,17 +73,17 @@ class Keyworder {
 
     private static final Map<String, Map<String, Collection<String>>> rulesetCache = new HashMap<>();
 
-    private Set<String> titleKeywords;
-    private Set<String> projectKeywords;
-    private Set<String> batchKeywords;
-    private Set<String> taskKeywords;
-    private Set<String> taskPseudoKeywords;
-    private Set<String> metadataKeywords;
-    private Set<String> metadataPseudoKeywords;
-    private String processId;
-    private Set<String> commentKeywords;
+    private Set<String> titleKeywords = Collections.emptySet();
+    private Set<String> projectKeywords = Collections.emptySet();
+    private Set<String> batchKeywords = Collections.emptySet();
+    private Set<String> taskKeywords = Collections.emptySet();
+    private Set<String> taskPseudoKeywords = Collections.emptySet();
+    private Set<String> metadataKeywords = Collections.emptySet();
+    private Set<String> metadataPseudoKeywords = Collections.emptySet();
+    private String processId = null;
+    private Set<String> commentKeywords = Collections.emptySet();
 
-    public Keyworder(Process process) {
+    public IndexingKeyworder(Process process) {
         this.titleKeywords = initTitleKeywords(process.getTitle());
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
         this.projectKeywords = initProjectKeywords(projectTitle);
@@ -90,25 +91,38 @@ class Keyworder {
         var taskKeywords = initTaskKeywords(process.getTasks());
         this.taskKeywords = taskKeywords.getLeft();
         this.taskPseudoKeywords = taskKeywords.getRight();
-        var metadataKeywords = initMetadataKeywords(process);
+        String place = null;
+        if (logger.isDebugEnabled()) {
+            place = "process " + process.getId() + " \"" + process.getTitle() + "\"";
+        }
+        var metadataKeywords = initMetadataKeywords(process, place);
         this.metadataKeywords = metadataKeywords.getLeft();
         this.metadataPseudoKeywords = metadataKeywords.getRight();
         this.processId = process.getId().toString();
         this.commentKeywords = initCommentKeywords(process.getComments());
+        if (logger.isTraceEnabled()) {
+            traceLogKeywords("process_keywords.log");
+        }
     }
 
-    public Keyworder(Task task) {
+    public IndexingKeyworder(Task task) {
         if (Objects.nonNull(task.getProcess())) {
             // ordinary task as part of a process
             this.titleKeywords = initTitleKeywords(task.getProcess().getTitle());
             Project project = task.getProcess().getProject();
-            this.projectKeywords = Objects.nonNull(project) ? initProjectKeywords(project.getTitle())
-                    : Collections.emptySet();
+            if (Objects.nonNull(project)) {
+                this.projectKeywords = initProjectKeywords(project.getTitle());
+            }
             this.batchKeywords = initBatchKeywords(task.getProcess().getBatches());
             var taskKeywords = initTaskKeywords(Collections.singleton(task));
             this.taskKeywords = taskKeywords.getLeft();
             this.taskPseudoKeywords = taskKeywords.getRight();
-            var metadataKeywords = initMetadataKeywords(task.getProcess());
+            String place = null;
+            if (logger.isDebugEnabled()) {
+                place = "task " + task.getId() + " \"" + task.getTitle() + "\", process " + task.getProcess().getId()
+                        + " \"" + task.getProcess().getTitle() + "\"";
+            }
+            var metadataKeywords = initMetadataKeywords(task.getProcess(), place);
             this.metadataKeywords = metadataKeywords.getLeft();
             this.metadataPseudoKeywords = metadataKeywords.getRight();
             this.processId = task.getProcess().getId().toString();
@@ -124,28 +138,21 @@ class Keyworder {
                 projectKeywords.addAll(initProjectKeywords(project.getTitle()));
             }
             this.projectKeywords = projectKeywords;
-            this.batchKeywords = Collections.emptySet();
             var taskKeywords = initTaskKeywords(Collections.singleton(task));
             this.taskKeywords = taskKeywords.getLeft();
             this.taskPseudoKeywords = taskKeywords.getRight();
-            this.metadataKeywords = Collections.emptySet();
-            this.metadataPseudoKeywords = Collections.emptySet();
             this.processId = task.getTemplate().getId().toString();
-            this.commentKeywords = Collections.emptySet();
         } else {
             // orphaned task (in a few tests)
-            this.titleKeywords = Collections.emptySet();
-            this.projectKeywords = Collections.emptySet();
-            this.batchKeywords = Collections.emptySet();
             var taskKeywords = initTaskKeywords(Collections.singleton(task));
             this.taskKeywords = taskKeywords.getLeft();
             this.taskPseudoKeywords = taskKeywords.getRight();
-            this.metadataKeywords = Collections.emptySet();
-            this.metadataPseudoKeywords = Collections.emptySet();
-            this.processId = null;
-            this.commentKeywords = Collections.emptySet();
+        }
+        if (logger.isTraceEnabled()) {
+            traceLogKeywords("task_" + task.getOrdering() + '_' + normalize(task.getTitle()) + "_keywords.log");
         }
     }
+
 
     /**
      * Creates search terms for process titles. These are created in groups
@@ -256,18 +263,22 @@ class Keyworder {
      * 
      * @param process
      *            process of the METS file
+     * @param placeDebug
+     *            what the metadata is read for, only for debug log messages.
+     *            Can be null if logging is disabled on the debug level.
      * @return metadata keywords, and metadata pseudo keywords
      */
-    private static final Pair<Set<String>, Set<String>> initMetadataKeywords(Process process) {
+    private static final Pair<Set<String>, Set<String>> initMetadataKeywords(Process process, String placeDebug) {
         final Pair<Set<String>, Set<String>> emptyResult = Pair.of(Collections.emptySet(), Collections.emptySet());
         try {
             String processId = Integer.toString(process.getId());
             Path path = Paths.get(KitodoConfig.getKitodoDataDirectory(), processId, "meta.xml");
             if (!Files.isReadable(path)) {
-                logger.info((Files.exists(path) ? "File not readable: " : "Missing metadata file: ") + path);
+                logger.info((Files.exists(path) ? "File not readable for indexing: "
+                        : "Missing metadata file for indexing: ") + path);
                 return emptyResult;
             }
-            logger.debug("Reading {} ...", path);
+            logger.debug("Indexing {} in {}", path, placeDebug);
             String metaXml = FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8);
             if (!metaXml.contains(ANY_METADATA_MARKER)) {
                 return emptyResult;
@@ -508,5 +519,40 @@ class Keyworder {
         allMetadataKeywords.addAll(metadataKeywords);
         allMetadataKeywords.addAll(metadataPseudoKeywords);
         return String.join(" ", allMetadataKeywords);
+    }
+
+    /**
+     * Writes the keywords to an output file in the metadata directory of the
+     * process. This is only done if the log level for this class is set to
+     * TRACE.
+     * 
+     * @param keywordsLogfile
+     *            file name (without path)
+     */
+    private final void traceLogKeywords(String keywordsLogfile) {
+        try {
+            File log = Paths.get(KitodoConfig.getKitodoDataDirectory(), processId, keywordsLogfile).toFile();
+            traceLogCollection("[titleKeywords]", titleKeywords, log, false);
+            traceLogCollection("[projectKeywords]", projectKeywords, log, true);
+            traceLogCollection("[batchKeywords]", batchKeywords, log, true);
+            traceLogCollection("[taskKeywords]", taskKeywords, log, true);
+            traceLogCollection("[taskPseudoKeywords]", taskPseudoKeywords, log, true);
+            traceLogCollection("[metadataKeywords]", metadataKeywords, log, true);
+            traceLogCollection("[metadataPseudoKeywords]", metadataPseudoKeywords, log, true);
+            if (Objects.nonNull(processId)) {
+                traceLogCollection("[processId]", Collections.singletonList(processId), log, true);
+            }
+            traceLogCollection("[commentKeywords]", commentKeywords, log, true);
+            logger.trace("Keywords logged to {}", log);
+        } catch (RuntimeException | IOException e) {
+            logger.catching(Level.TRACE, e);
+        }
+    }
+
+    private static final void traceLogCollection(String caption, Collection<String> tokens, File log, boolean append)
+            throws IOException {
+        FileUtils.write(log, caption.concat(System.lineSeparator()), StandardCharsets.UTF_8, append);
+        FileUtils.writeLines(log, StandardCharsets.UTF_8.toString(), new TreeSet<>(tokens), true);
+        FileUtils.write(log, System.lineSeparator(), StandardCharsets.UTF_8, true);
     }
 }
