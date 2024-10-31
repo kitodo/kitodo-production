@@ -542,9 +542,8 @@ class IndexingKeyworder {
             traceLogCollection("[taskPseudoKeywords]", taskPseudoKeywords, log, true);
             traceLogCollection("[metadataKeywords]", metadataKeywords, log, true);
             traceLogCollection("[metadataPseudoKeywords]", metadataPseudoKeywords, log, true);
-            if (Objects.nonNull(processId)) {
-                traceLogCollection("[processId]", Collections.singletonList(processId), log, true);
-            }
+            traceLogCollection("[processId]", Objects.nonNull(processId) ? Collections.singletonList(processId)
+                    : Collections.emptyList(), log, true);
             traceLogCollection("[commentKeywords]", commentKeywords, log, true);
             logger.trace("Keywords logged to {}", log);
         } catch (RuntimeException | IOException e) {
