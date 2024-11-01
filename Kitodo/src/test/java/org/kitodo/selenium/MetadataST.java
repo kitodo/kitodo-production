@@ -354,6 +354,65 @@ public class MetadataST extends BaseTestSelenium {
     }
 
     /**
+     * Tests that a metadata row of the metadata table is highlighted as soon as a user adds a new
+     * row via the add metadata dialog.
+     */
+    @Test
+    public void focusRecentlyAddedMetadataRowTest() throws Exception {
+        login("kowal");
+
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+        // wait until metadata table is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("metadataAccordion:metadata:metadataTable")).isDisplayed()
+        );
+
+        // verify no metadata row is focused yet
+        assertTrue(Browser.getDriver().findElements(
+            By.cssSelector("#metadataAccordion\\:metadata\\:metadataTable tr.focusedRow")).isEmpty()
+        );
+
+        // click on add metadata button
+        Browser.getDriver().findElement(By.id("metadataAccordion:metadata:addMetadataButton")).click();
+        
+        // wait until dialog is visible
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("addMetadataDialog")).isDisplayed()
+        );
+
+        // open select menu
+        Browser.getDriver().findElement(By.id("addMetadataForm:metadataTypeSelection")).click();
+
+        // wait until selection menu list is visible
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> Browser.getDriver().findElement(By.id("addMetadataForm:metadataTypeSelection_items")).isDisplayed()
+        );
+        
+        // select Person as new metadata row
+        Browser.getDriver().findElement(By.cssSelector(
+            "#addMetadataForm\\:metadataTypeSelection_items li[data-label='Person'].ui-selectonemenu-item"
+        )).click();
+
+        // confirm dialog
+        Browser.getDriver().findElement(By.id("addMetadataForm:apply")).click();
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
+            () -> !Browser.getDriver().findElement(By.id("addMetadataDialog")).isDisplayed()
+        );
+
+        // verify metadata row with name "Person" is selected
+        assertEquals("Person:", Browser.getDriver().findElement(
+            By.cssSelector("#metadataAccordion\\:metadata\\:metadataTable tr.focusedRow label")
+        ).getText());
+
+        // verify accordion was scrolled down
+        assertTrue(0 < (Long)Browser.getDriver().executeScript(
+            "return document.getElementById('metadataAccordion:metadata:metadataTable').scrollTop;"
+        ));
+    }
+
+    /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
      */

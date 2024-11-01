@@ -164,7 +164,7 @@
                                      update="addMetadataDialog"
                                      disabled="#{not CreateProcessForm.addMetadataDialog.metadataAddableToStructureElement()}"
                                      action="#{CreateProcessForm.addMetadataDialog.prepareAddableMetadataForStructure()}"
-                                     oncomplete="PF('addMetadataDialog').show();">
+                                     oncomplete="PF('addMetadataDialog').show();metadataTable.focusMetadataRow.remember(this.source);">
                     </p:commandButton>
                 </h:panelGroup>
             </div>
