@@ -3370,6 +3370,9 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     left: 16px;
     position: absolute;
     top: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: start;
 }
 
 #map .ol-overlaycontainer-stopevent > .ol-zoom.ol-unselectable.ol-control {
@@ -3391,6 +3394,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 }
 
 #map .ol-control {
+    display: inline-block;
     background: transparent;
     padding: 0;
     position: static;
@@ -3823,6 +3827,29 @@ kbd {
     border-radius: var(--default-border-radius);
     margin: 0 var(--default-half-size);
     padding: 0 var(--default-half-size);
+}
+
+#externalViewTitle {
+    color: var(--pure-white);
+    line-height: 1.5em;
+}
+
+#externalViewPanel {
+    margin: auto 16px; 
+}
+
+#externalViewPanel, #externalViewPanel_content {
+    padding: 0;
+    height: 100%;
+    overflow: hidden;
+}
+
+#externalViewPanel #imagePreviewForm\:mediaDetailMediaContainer {
+    height: 100%;
+}
+
+#externalViewPanel video {
+    max-height: 90%;
 }
 
 /*----------------------------------------------------------------------

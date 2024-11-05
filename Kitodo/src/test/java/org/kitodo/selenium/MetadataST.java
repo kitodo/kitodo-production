@@ -469,6 +469,63 @@ public class MetadataST extends BaseTestSelenium {
         ));
     }
 
+    /*
+     * Verifies that an image can be openend in a separate window by clicking on the corresponding 
+     * context menu item of the first logical tree node.
+     */
+    @Test
+    public void openPageInSeparateWindowTest() throws Exception {
+        login("kowal");
+
+        // remember current window handle
+        String firstWindowHandle = Browser.getDriver().getWindowHandle();
+       
+        // open the metadata editor
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
+
+         // wait until structure tree is shown
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("logicalTree")).isDisplayed());
+
+        // right click on first tree node representing image 2
+        WebElement firstTreeNode = Browser.getDriver().findElement(
+            By.cssSelector("#logicalTree\\:0_0 .ui-treenode-content")
+        );
+        new Actions(Browser.getDriver()).contextClick(firstTreeNode).build().perform();
+
+        // wait until menu is visible
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> Browser.getDriver().findElement(By.id("contextMenuLogicalTree")).isDisplayed());
+
+        // click second menu entry to open new tab
+        Browser.getDriver().findElement(By.cssSelector(
+            "#contextMenuLogicalTree .ui-menuitem:nth-child(2) .ui-menuitem-link"
+        )).click();
+
+        // find handle of new tab window
+        String newWindowHandle = Browser.getDriver().getWindowHandles().stream()
+            .filter((h) -> !h.equals(firstWindowHandle)).findFirst().get();
+
+        // switch to new window
+        Browser.getDriver().switchTo().window(newWindowHandle);
+
+        // wait until preview image is found
+        await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+            .until(() -> !Browser.getDriver().findElements(By.id("imagePreviewForm:mediaPreviewGraphicImage")).isEmpty());
+
+        // check that title contains image number
+        assertEquals("Bild 2", Browser.getDriver().findElement(By.id("externalViewTitle")).getText());
+
+        // check that canvas is visible
+        assertTrue(Browser.getDriver().findElement(By.cssSelector("#map canvas")).isDisplayed());
+
+        // close tab
+        Browser.getDriver().close();
+
+        // switch back to previous window
+        Browser.getDriver().switchTo().window(firstWindowHandle);
+    }
+
     /**
      * Close metadata editor and logout after every test.
      * @throws Exception when page navigation fails
