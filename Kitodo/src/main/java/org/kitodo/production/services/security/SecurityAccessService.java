@@ -1113,4 +1113,22 @@ public class SecurityAccessService extends SecurityAccess {
     public boolean hasAuthorityToUseMassImport() {
         return hasAnyAuthorityForClient("useMassImport");
     }
+
+    /**
+     * Check if the current user has the permission to set import configurations for processes.
+     *
+     * @return true if the current user has the permission to set import configurations for processes.
+     */
+    public boolean hasAuthorityToSetImportConfiguration() {
+        return hasAuthorityForClient("setImportConfiguration");
+    }
+
+    /**
+     * Check if the current user has the permission to re-import metadata in the metadata editor.
+     *
+     * @return true if the current user has the permission to re-import metadata in the metadata editor.
+     */
+    public boolean hasAuthorityToReimportMetadata() {
+        return hasAuthorityForClient("reimportMetadata");
+    }
 }

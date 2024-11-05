@@ -20,4 +20,6 @@ public class StringConstants {
     // patterns
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
+    // acquisition stages
+    public static final String EDIT = "edit";
 }

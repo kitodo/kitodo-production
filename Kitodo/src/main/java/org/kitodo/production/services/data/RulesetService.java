@@ -14,19 +14,30 @@ package org.kitodo.production.services.data;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.Operator;
 import org.elasticsearch.index.query.QueryBuilder;
+import org.kitodo.api.Metadata;
+import org.kitodo.api.MetadataEntry;
+import org.kitodo.api.MetadataGroup;
+import org.kitodo.api.dataeditor.rulesetmanagement.ComplexMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalDivision;
+import org.kitodo.api.dataeditor.rulesetmanagement.MetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -265,5 +276,97 @@ public class RulesetService extends ClientSearchService<Ruleset, RulesetDTO, Rul
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return Collections.emptySet();
         }
+    }
+
+    /**
+     * Sort 'MetadataGroup' instance in given set 'metadataSet' by their nested functional metadata 'groupDisplayLabel'
+     * if present and return resulting list.
+     *
+     * @param metadataSet set of metadata to be sorted by 'groupDisplayLabel'
+     * @param ruleset Ruleset from which keys of functional metadata 'groupDisplayLabel' are retrieved
+     * @return list of metadata instances of type 'MetadataGroup', filtered by their 'groupDisplayLabel'
+     * @throws IOException if Ruleset could not be loaded
+     */
+    public static List<Metadata> getGroupsSortedByGroupDisplayLabel(HashSet<Metadata> metadataSet, Ruleset ruleset)
+            throws IOException {
+        Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(ruleset);
+        return metadataSet.stream().filter(m -> m instanceof MetadataGroup)
+                .sorted(Comparator.comparing(m -> ServiceManager.getRulesetService().getAnyNestedMetadataValue(m, groupDisplayLabel)))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieve and return value of Metadata with any of the given 'keys' from given Ruleset 'ruleset'. If Metadata
+     * contains no nested metadata with any of the given keys an empty String is returned instead.
+     *
+     * @param metadata Metadata for which value of nested metadata is retrieved
+     * @param keys keys of nested metadata whose value is to be retrieved
+     * @return value found of first nested metadata found, identified by provided keys
+     */
+    public String getAnyNestedMetadataValue(Metadata metadata, Collection<String> keys) {
+        for (String groupDisplayLabelKey : keys) {
+            String[] keySegments = groupDisplayLabelKey.split("@");
+            String metadataValue = getNestedMetadataValue(metadata, Arrays.asList(keySegments).subList(1, keySegments.length));
+            if (StringUtils.isNotBlank(metadataValue)) {
+                return metadataValue;
+            }
+        }
+        return "";
+    }
+
+    private String getNestedMetadataValue(Metadata metadata, List<String> keySegments) {
+        if (metadata instanceof MetadataEntry) {
+            return ((MetadataEntry)metadata).getValue();
+        } else {
+            if (Objects.isNull(keySegments) || keySegments.isEmpty()) {
+                return "";
+            }
+            String currentSegment = keySegments.get(0);
+            for (Metadata metadataElement : ((MetadataGroup)metadata).getMetadata()) {
+                if (currentSegment.equals(metadataElement.getKey())) {
+                    return getNestedMetadataValue(metadataElement, keySegments.subList(1, keySegments.size()));
+                }
+            }
+        }
+        return "";
+    }
+
+    /**
+     * Retrieve translated label of MetadataEntry with key 'metadataEntryKey' nested in MetadataGroup with key
+     * 'groupKey' from provided RulesetManagementInterface 'ruleset'.
+     *
+     * @param ruleset RulesetManagementInterface containing metadata rules
+     * @param metadataEntryKey key of MetadataEntry in MetadataGroup for which translated label is returned
+     * @param groupKey key of MetadataGroup
+     * @param acquisitionStage Acquisition stage as String
+     * @param languageRange preferred languages as list of LanguageRange
+     * @return translated label of MetadataEntry nested in MetadataGroup
+     */
+    public String getMetadataEntryLabel(RulesetManagementInterface ruleset, String metadataEntryKey, String groupKey,
+                                        String acquisitionStage, List<Locale.LanguageRange> languageRange) {
+        ComplexMetadataViewInterface viewInterface = ruleset.getMetadataView(groupKey, acquisitionStage, languageRange);
+        if (Objects.nonNull(viewInterface)) {
+            for (MetadataViewInterface metadataViewInterface : viewInterface.getAllowedMetadata()) {
+                if (metadataEntryKey.equals(metadataViewInterface.getId())) {
+                    return metadataViewInterface.getLabel();
+                }
+            }
+        }
+        return metadataEntryKey;
+    }
+
+    /**
+     * Retrieve translated label of Metadata with key 'metadataKey' from RulesetManagementInterface 'ruleset'.
+     *
+     * @param ruleset RulesetManagementInterface containing metadata rules
+     * @param metadataKey key of metadata for which translated label is returned
+     * @param acquisitionStage Acquisition stage as String
+     * @param languageRange preferred languages as list of LanguageRange
+     * @return translated label of Metadata
+     */
+    public String getMetadataLabel(RulesetManagementInterface ruleset, String metadataKey, String acquisitionStage,
+                                   List<Locale.LanguageRange> languageRange) {
+        MetadataViewInterface viewInterface = ruleset.getMetadataView(metadataKey, acquisitionStage, languageRange);
+        return viewInterface.getLabel();
     }
 }

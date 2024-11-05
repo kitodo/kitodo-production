@@ -112,6 +112,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -2864,5 +2865,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public SortBuilder sortById(SortOrder order) {
         return SortBuilders.fieldSort(ProcessTypeField.ID.getKey()).order(order);
+    }
+
+    /**
+     * Set import configuration of given processes.
+     * @param processes list of processes for which import configuration is set
+     * @param configurationId ID of import configuration to assign to processes
+     * @return name of ImportConfiguration
+     * @throws DAOException when loading import configuration by ID or saving updated processes fails
+     */
+    public String setImportConfigurationForMultipleProcesses(List<Process> processes, int configurationId)
+            throws DAOException {
+        ImportConfiguration configuration = ServiceManager.getImportConfigurationService().getById(configurationId);
+        for (Process process : processes) {
+            process.setImportConfiguration(configuration);
+            saveToDatabase(process);
+        }
+        return configuration.getTitle();
     }
 }
