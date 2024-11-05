@@ -93,11 +93,13 @@
 
         <p:outputPanel styleClass="mediaDetailNavigationPanel">
             <p:commandButton id="mediaDetailNavigationPreviousButton" 
-                             title="previous page"
+                             title="#{msgs['dataEditor.navigateToPreviousElement']}"
+                             disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
                              icon="fa fa-arrow-left fa-lg"
                              onclick="metadataEditor.shortcuts.navigateByShortcut(-1, false);" />
             <p:commandButton id="mediaDetailNavigationNextButton" 
-                             title="next page"
+                             title="#{msgs['dataEditor.navigateToNextElement']}"
+                             disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
                              icon="fa fa-arrow-right fa-lg"
                              onclick="metadataEditor.shortcuts.navigateByShortcut(1, false);" />
         </p:outputPanel>

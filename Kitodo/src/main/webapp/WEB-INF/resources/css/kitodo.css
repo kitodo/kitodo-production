@@ -3446,7 +3446,7 @@ Column content
     opacity: 1.0;
 }
 
-#imagePreviewForm .mediaDetailNavigationPanel button:hover {
+#imagePreviewForm .mediaDetailNavigationPanel button:enabled:hover {
     background: var(--blue);
 }
 

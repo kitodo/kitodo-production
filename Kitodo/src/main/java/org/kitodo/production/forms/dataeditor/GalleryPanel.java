@@ -1048,4 +1048,60 @@ public class GalleryPanel {
     public MediaPartialsPanel getMediaPartialsPanel() {
         return mediaPartialsPanel;
     }
+
+    /**
+     * Return true if the currently selected media (that is shown in the detail view) is the verify 
+     * first media of all available media.
+     * @return boolean true if selected media is first media
+     */
+    public boolean isSelectedMediaFirst() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.isNull(lastSelection)) {
+            return false;
+        }
+
+        List<GalleryMediaContent> medias = getMedias();
+        if (medias.isEmpty()) {
+            return false;
+        }
+
+        PhysicalDivision firstPhysicalDivision = medias.get(0).getView().getPhysicalDivision();
+        if (Objects.isNull(firstPhysicalDivision)) {
+            return false;
+        }
+
+        if (firstPhysicalDivision.equals(lastSelection.getKey())) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Return true if the currently selected media (that is shown in the detail view) is the verify 
+     * last media of all available media.
+     * @return boolean true if selected media is last media
+     */
+    public boolean isSelectedMediaLast() {
+        Pair<PhysicalDivision, LogicalDivision> lastSelection = getLastSelection();
+        if (Objects.isNull(lastSelection)) {
+            return false;
+        }
+
+        List<GalleryMediaContent> medias = getMedias();
+        if (medias.isEmpty()) {
+            return false;
+        }
+
+        PhysicalDivision firstPhysicalDivision = medias.get(medias.size() - 1).getView().getPhysicalDivision();
+        if (Objects.isNull(firstPhysicalDivision)) {
+            return false;
+        }
+
+        if (firstPhysicalDivision.equals(lastSelection.getKey())) {
+            return true;
+        }
+
+        return false;
+    }
 }
