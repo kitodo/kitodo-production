@@ -138,6 +138,7 @@
             <permit key="CatalogIDDigital" minOccurs="1"/>
             <permit key="CatalogIDSource" minOccurs="1"/>
             <permit key="TSL_ATS"/>
+            <permit key="PublicationYear"/>
             <permit key="ContributorPerson"/>
             <permit key="Person">
                 <permit key="Role" unspecified="forbidden">
