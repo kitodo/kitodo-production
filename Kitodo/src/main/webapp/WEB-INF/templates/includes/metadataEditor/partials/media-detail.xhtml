@@ -91,6 +91,17 @@
             </p:outputPanel>
         </ui:fragment>
 
+        <p:outputPanel styleClass="mediaDetailNavigationPanel">
+            <p:commandButton id="mediaDetailNavigationPreviousButton" 
+                             title="previous page"
+                             icon="fa fa-arrow-left fa-lg"
+                             onclick="metadataEditor.shortcuts.navigateByShortcut(-1, false);" />
+            <p:commandButton id="mediaDetailNavigationNextButton" 
+                             title="next page"
+                             icon="fa fa-arrow-right fa-lg"
+                             onclick="metadataEditor.shortcuts.navigateByShortcut(1, false);" />
+        </p:outputPanel>
+
     </h:panelGroup>
 
 </ui:composition>
