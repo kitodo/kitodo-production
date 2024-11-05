@@ -961,7 +961,7 @@ tr.ui-widget-content {
 }
 
 tr.ui-widget-content:not(:first-child) {
-    border-top: 1px solid var(--cloudy-gray) !important;
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 tr.ui-widget-content.ui-expanded-row-content:not(:first-child),
