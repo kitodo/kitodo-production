@@ -1155,7 +1155,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public void saveDataEditorSetting() {
         if (Objects.nonNull(dataEditorSetting)) {
-            if (Objects.nonNull(templateTask) && !templateTask.getId().equals(dataEditorSetting.getTaskId())) {          
+            if (Objects.nonNull(templateTask) && !templateTask.getId().equals(dataEditorSetting.getTaskId())) {
                 // create a copy of the task-independent configuration 
                 // in case the user wants to save it as task-specific config
                 dataEditorSetting = new DataEditorSetting(dataEditorSetting);
