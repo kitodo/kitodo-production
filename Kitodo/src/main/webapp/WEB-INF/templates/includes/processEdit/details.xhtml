@@ -48,6 +48,23 @@
                 </p:selectOneMenu>
             </div>
 
+            <div>
+                <p:outputLabel for="ruleset" value="#{msgs['importConfig.configuration']}"/>
+                <p:selectOneMenu id="importConfiguration"
+                                 value="#{ProcessForm.process.importConfiguration}"
+                                 converter="#{importConfigurationConverter}"
+                                 disabled="#{isViewMode}">
+                    <f:selectItem itemValue="#{null}"
+                                  itemLabel="#{msgs['none']}"/>
+                    <f:selectItems value="#{ProcessForm.importConfigurations}"
+                                   var="config"
+                                   itemValue="#{config}"
+                                   itemLabel="#{config.title}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+
         </p:row>
 
         <p:row>

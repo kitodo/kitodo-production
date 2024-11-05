@@ -16,6 +16,7 @@ import java.io.InputStream;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -38,6 +39,7 @@ import org.apache.logging.log4j.Logger;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Docket;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -100,6 +102,8 @@ public class ProcessForm extends TemplateBaseForm {
     private static final String PROCESS_TABLE_VIEW_ID = "/pages/processes.xhtml";
     private static final String PROCESS_TABLE_ID = "processesTabView:processesForm:processesTable";
     private final Map<Integer, Boolean> assignedProcesses = new HashMap<>();
+    private String settingImportConfigurationResultMessage;
+    private boolean importConfigurationsSetSuccessfully = false;
 
     @Inject
     private CustomListColumnInitializer initializer;
@@ -770,6 +774,20 @@ public class ProcessForm extends TemplateBaseForm {
     }
 
     /**
+     * Get list of all import configurations.
+     *
+     * @return list of all import configurations.
+     */
+    public List<ImportConfiguration> getImportConfigurations() {
+        try {
+            return ServiceManager.getImportConfigurationService().getAll();
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e);
+            return Collections.emptyList();
+        }
+    }
+
+    /**
      * Get task statuses for select list.
      *
      * @return array of task statuses
@@ -1133,5 +1151,51 @@ public class ProcessForm extends TemplateBaseForm {
      */
     public boolean showLastComment() {
         return ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.SHOW_LAST_COMMENT);
+    }
+
+    /**
+     * Display dialog to set import configuration for selected processes.
+     */
+    public void setImportConfiguration() {
+        PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').show();");
+    }
+
+    /**
+     * Assign import configuration with given ID 'importConfigurationId' to all selected processes.
+     *
+     * @param importConfigurationId ID of import configuration to assign to selected processes
+     */
+    public void startSettingImportConfigurations(int importConfigurationId) {
+        PrimeFaces.current().executeScript("PF('selectImportConfigurationDialog').hide();");
+        try {
+            String configName = ServiceManager.getProcessService().setImportConfigurationForMultipleProcesses(
+                    getSelectedProcesses(), importConfigurationId);
+            settingImportConfigurationResultMessage = Helper.getTranslation("setImportConfigurationSuccessfulDescription",
+                    configName, String.valueOf(selectedProcessesOrProcessDTOs.size()));
+            importConfigurationsSetSuccessfully = true;
+        } catch (DAOException e) {
+            settingImportConfigurationResultMessage = e.getLocalizedMessage();
+            importConfigurationsSetSuccessfully = false;
+        }
+        Ajax.update("importConfigurationsSelectedDialog");
+        PrimeFaces.current().executeScript("PF('importConfigurationsSelectedDialog').show();");
+    }
+
+    /**
+     * Get value of 'settingImportConfigurationResultMessage'.
+     *
+     * @return value of 'settingImportConfigurationResultMessage'
+     */
+    public String getSettingImportConfigurationResultMessage() {
+        return settingImportConfigurationResultMessage;
+    }
+
+    /**
+     * Get value of 'importConfigurationsSetSuccessfully'.
+     *
+     * @return value of 'importConfigurationsSetSuccessfully'
+     */
+    public boolean isImportConfigurationsSetSuccessfully() {
+        return importConfigurationsSetSuccessfully;
     }
 }

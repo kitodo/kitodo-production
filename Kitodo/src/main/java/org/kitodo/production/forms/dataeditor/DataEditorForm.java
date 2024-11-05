@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -44,6 +45,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.kitodo.api.MetadataGroup;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.PhysicalDivision;
@@ -55,6 +57,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.data.database.beans.DataEditorSetting;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
+import org.kitodo.data.database.beans.Task;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidImagesException;
@@ -69,6 +72,7 @@ import org.kitodo.production.interfaces.MetadataTreeTableInterface;
 import org.kitodo.production.interfaces.RulesetSetupInterface;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.services.ServiceManager;
+import org.kitodo.production.services.data.ImportService;
 import org.kitodo.production.services.dataeditor.DataEditorService;
 import org.omnifaces.cdi.ViewScoped;
 import org.primefaces.PrimeFaces;
@@ -95,6 +99,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * Dialog for adding metadata.
      */
     private final AddMetadataDialog addMetadataDialog;
+
+    private final UpdateMetadataDialog updateMetadataDialog;
 
     /**
      * Backing bean for the add PhysicalDivision dialog.
@@ -184,12 +190,12 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     private List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia;
 
     /**
-     * The id of the template's task corresponding to the current task that is under edit.
+     * The template task corresponding to the current task that is under edit.
      * This is used for saving and loading the metadata editor settings.
      * The current task, the corresponding template task id and the settings are only available
      * if the user opened the editor from a task.
      */
-    private int templateTaskId;
+    private Task templateTask;
 
     private DataEditorSetting dataEditorSetting;
 
@@ -228,6 +234,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         this.paginationPanel = new PaginationPanel(this);
         this.addDocStrucTypeDialog = new AddDocStrucTypeDialog(this);
         this.addMetadataDialog = new AddMetadataDialog(this);
+        this.updateMetadataDialog = new UpdateMetadataDialog(this);
         this.addPhysicalDivisionDialog = new AddPhysicalDivisionDialog(this);
         this.changeDocStrucTypeDialog = new ChangeDocStrucTypeDialog(this);
         this.editPagesDialog = new EditPagesDialog(this);
@@ -271,9 +278,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             this.currentChildren.addAll(process.getChildren());
             this.user = ServiceManager.getUserService().getCurrentUser();
             this.checkProjectFolderConfiguration();
-            if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
-                this.templateTaskId = Integer.parseInt(taskId);
-            }
+            this.loadTemplateTask(taskId);
             this.loadDataEditorSettings();
             errorMessage = "";
 
@@ -313,10 +318,15 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     }
 
     private void showDataEditorSettingsLoadedMessage() throws DAOException {
-        String task = ServiceManager.getTaskService().getById(templateTaskId).getTitle();
         Locale locale = LocaleHelper.getCurrentLocale();
         String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
-        String text = MessageFormat.format(Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyText"), task);
+        String text = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyDefaultText");
+        if (Objects.nonNull(this.templateTask) && Objects.nonNull(dataEditorSetting) 
+                && templateTask.getId().equals(dataEditorSetting.getTaskId())) {
+            text = MessageFormat.format(
+                Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyForTaskText"), this.templateTask.getTitle()
+            );
+        }        
         String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
                 .replace("SEVERITY", "info");
         PrimeFaces.current().executeScript("PF('notifications').removeAll();");
@@ -337,17 +347,47 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         }
     }
 
-    private void loadDataEditorSettings() {
-        if (templateTaskId > 0) {
-            dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(user.getId(),
-                    templateTaskId);
-            if (Objects.isNull(dataEditorSetting)) {
-                dataEditorSetting = new DataEditorSetting();
-                dataEditorSetting.setUserId(user.getId());
-                dataEditorSetting.setTaskId(templateTaskId);
+    /**
+     * Load template task from database.
+     * 
+     * @param taskId the id of the template task
+     * @throws DAOException if loading fails
+     */
+    private void loadTemplateTask(String taskId) throws DAOException {
+        if (StringUtils.isNotBlank(taskId) && StringUtils.isNumeric(taskId)) {
+            try {
+                int templateTaskId = Integer.parseInt(taskId);
+                if (templateTaskId > 0) {
+                    this.templateTask = ServiceManager.getTaskService().getById(templateTaskId);
+                }
+            } catch (NumberFormatException e) {
+                logger.warn("view parameter 'templateTaskId' is not a valid integer");
             }
-        } else {
-            dataEditorSetting = null;
+        }
+    }
+
+    /**
+     * Load data editor settings (width of metadata editor columns) from database. Either load task-specific 
+     * configuration (if it exists) or default configuration (if it exists) or initialize new empty data editor setting.
+     */
+    private void loadDataEditorSettings() {
+        // use template task id if it exists, otherwise use null for task-independent layout
+        Integer taskId = Objects.nonNull(this.templateTask) ? this.templateTask.getId() : null;
+        int userId = user.getId();
+
+        // try to load data editor setting from database
+        dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(userId, taskId);
+
+        // try to load task-independent data editor setting from database
+        if (Objects.isNull(dataEditorSetting)) {
+            dataEditorSetting = ServiceManager.getDataEditorSettingService().loadDataEditorSetting(userId, null);
+        }
+
+        // initialize empty data editor setting if none were previously saved by the user
+        if (Objects.isNull(dataEditorSetting)) {
+            dataEditorSetting = new DataEditorSetting();
+            dataEditorSetting.setUserId(userId);
+            dataEditorSetting.setTaskId(taskId);
         }
     }
 
@@ -628,6 +668,16 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     public AddMetadataDialog getAddMetadataDialog() {
         return addMetadataDialog;
     }
+
+    /**
+     * Get updateMetadataDialog.
+     *
+     * @return value of updateMetadataDialog
+     */
+    public UpdateMetadataDialog getUpdateMetadataDialog() {
+        return updateMetadataDialog;
+    }
+
 
     /**
      * Returns the backing bean for the add media dialog. This function is used
@@ -1025,8 +1075,8 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      *
      * @return value of templateTaskId
      */
-    public int getTemplateTaskId() {
-        return templateTaskId;
+    public Task getTemplateTask() {
+        return templateTask;
     }
 
     /**
@@ -1066,19 +1116,43 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
 
 
     /**
-     * Save current metadata editor layout.
+     * Save current metadata editor layout. Either save it as task-specific layout (if editor was opened from a task) 
+     * or as task-independent layout (otherwise).
      */
     public void saveDataEditorSetting() {
-        if (Objects.nonNull(dataEditorSetting) && dataEditorSetting.getTaskId() > 0) {
+        if (Objects.nonNull(dataEditorSetting)) {
+            if (Objects.nonNull(templateTask) && !templateTask.getId().equals(dataEditorSetting.getTaskId())) {          
+                // create a copy of the task-independent configuration 
+                // in case the user wants to save it as task-specific config
+                dataEditorSetting = new DataEditorSetting(dataEditorSetting);
+                dataEditorSetting.setTaskId(templateTask.getId());
+            }
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
-                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.USER.getTranslationSingular() }, logger, e);
+                Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.DATAEDITORSETTING.getTranslationSingular() }, logger, e);
             }
         } else {
-            logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", user.getId(),
-                templateTaskId);
+            // should never happen any more, since layout settings are always created (even outside of task context)
+            int taskId = Objects.nonNull(this.templateTask) ? this.templateTask.getId() : 0;
+            int userId = user.getId();
+            logger.error("Could not save DataEditorSettings with userId {} and templateTaskId {}", userId, taskId);
+        }
+    }
+
+    /**
+     * Delete current metadata editor layout.
+     */
+    public void deleteDataEditorSetting() {
+        if (Objects.nonNull(dataEditorSetting)) {
+            try {
+                ServiceManager.getDataEditorSettingService().removeFromDatabase(dataEditorSetting);
+                this.loadDataEditorSettings();
+                PrimeFaces.current().executeScript("PF('dataEditorDeletedResultDialog').show();");
+            } catch (DAOException e) {
+                Helper.setErrorMessage("errorDeleting", new Object[] { ObjectType.DATAEDITORSETTING.getTranslationSingular() }, logger, e);
+            }
         }
     }
 
@@ -1213,5 +1287,83 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public String getMetadataFileLoadingError() {
         return metadataFileLoadingError;
+    }
+
+    /**
+     * Check and return whether conditions for metadata update are met or not.
+     *
+     * @return whether metadata of process can be updated
+     */
+    public boolean canUpdateMetadata() {
+        try {
+            return DataEditorService.canUpdateCatalogMetadata(process, workpiece, structurePanel.getSelectedLogicalNode());
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return false;
+        }
+    }
+
+    /**
+     * Perform metadata update for current process.
+     */
+    public void applyMetadataUpdate() {
+        DataEditorService.updateMetadataWithNewValues(workpiece, updateMetadataDialog.getMetadataComparisons());
+        metadataPanel.update();
+    }
+
+    /**
+     * Retrieve and return value of metadata configured as functional metadata 'recordIdentifier'.
+     *
+     * @return the 'recordIdentifier' metadata value of the current process
+     */
+    public String getProcessRecordIdentifier() {
+        try {
+            return DataEditorService.getRecordIdentifierValueOfProcess(process, workpiece);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return "";
+        }
+    }
+
+    /**
+     * Get label of metadata with key 'metadataKey'.
+     *
+     * @param metadataKey key of metadata for which label is returned
+     *
+     * @return label of metadata with given key 'metadataKey'
+     */
+    public String getMetadataLabel(String metadataKey) {
+        return ServiceManager.getRulesetService().getMetadataLabel(ruleset, metadataKey, getAcquisitionStage(),
+                getPriorityList());
+    }
+
+    /**
+     * Get translated label of MetadataEntry with key 'metadataEntryKey' nested in MetadataGroup with key 'groupKey'.
+     *
+     * @param metadataEntryKey key of MetadataEntry nested in MetadataGroup with key 'groupKey' whose label is returned
+     *
+     * @param groupKey key of MetadataGroup to which MetadataEntry with given key 'metadataEntryKey' belongs
+     *
+     * @return label of nested MetadataEntry
+     */
+    public String getMetadataEntryLabel(String metadataEntryKey, String groupKey) {
+        return ServiceManager.getRulesetService().getMetadataEntryLabel(ruleset, metadataEntryKey, groupKey,
+                getAcquisitionStage(), getPriorityList());
+    }
+
+    /**
+     * Retrieve and return value of functional metadata 'groupDisplayLabel' from given MetadataGroup 'metadataGroup'.
+     *
+     * @param metadataGroup MetadataGroup for which 'groupDisplayLabel' value is returned
+     * @return value of functional metadata 'groupDisplayLabel'
+     */
+    public String getGroupDisplayLabel(MetadataGroup metadataGroup) {
+        try {
+            Collection<String> groupDisplayLabel = ImportService.getGroupDisplayLabelMetadata(process.getRuleset());
+            return ServiceManager.getRulesetService().getAnyNestedMetadataValue(metadataGroup, groupDisplayLabel);
+        } catch (IOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return "";
+        }
     }
 }
