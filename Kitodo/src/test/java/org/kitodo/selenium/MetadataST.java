@@ -450,6 +450,9 @@ public class MetadataST extends BaseTestSelenium {
         // check that title contains image number
         assertEquals("Bild 2", Browser.getDriver().findElement(By.id("externalViewTitle")).getText());
 
+        // check that canvas is visible
+        assertTrue(Browser.getDriver().findElement(By.cssSelector("#map canvas")).isDisplayed());
+
         // close tab
         Browser.getDriver().close();
 
