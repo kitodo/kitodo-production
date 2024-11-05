@@ -1,0 +1,83 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <ui:param name="layoutWasLoaded" value="#{
+        DataEditorForm.dataEditorSetting.structureWidth gt 0 or
+        DataEditorForm.dataEditorSetting.metadataWidth gt 0 or
+        DataEditorForm.dataEditorSetting.galleryWidth gt 0}"/>
+    <p:overlayPanel for="metadataEditorLayoutButtonForm:open" style="display: none;">
+        <h:form id="metadataEditorLayoutForm">
+            <ul>
+                <li>
+                    <p:commandLink
+                        id="saveDefault"
+                        onclick="saveLayout()" 
+                        action="#{DataEditorForm.saveDataEditorSetting()}"
+                        update="metadataEditorLayoutForm dataEditorSavingResultForm"
+                        disabled="#{DataEditorForm.templateTask ne null}">
+                        <i class="fa fa-floppy-o"></i>
+                        <h:outputText value="#{msgs['dataEditor.layoutMenuSaveDefaultText']}" />
+                        <h:outputText 
+                            value=" (#{msgs['dataEditor.layoutMenuActiveText']})" 
+                            rendered="#{DataEditorForm.dataEditorSetting.taskId eq null and layoutWasLoaded}" />                 
+                    </p:commandLink>
+                    <p:commandButton 
+                        id="removeDefault"
+                        icon="fa fa-trash" 
+                        action="#{DataEditorForm.deleteDataEditorSetting()}"
+                        update="metadataEditorLayoutForm dataEditorSavingResultForm"
+                        disabled="#{DataEditorForm.templateTask ne null or not layoutWasLoaded}" 
+                        styleClass="secondary" 
+                        title="#{msgs['dataEditor.layoutMenuDeleteTitle']}" />
+                </li>
+                <li>
+                    <p:commandLink 
+                        id="saveForTask"
+                        onclick="saveLayout()" 
+                        action="#{DataEditorForm.saveDataEditorSetting()}"
+                        update="metadataEditorLayoutForm dataEditorSavingResultForm"
+                        disabled="#{DataEditorForm.templateTask eq null}">
+                        <i class="fa fa-floppy-o"></i>
+                        <h:outputText value="#{msgs['dataEditor.layoutMenuSaveForTaskText']}" />
+                        <h:outputText 
+                            value=" (#{msgs['dataEditor.layoutMenuActiveText']})" 
+                            rendered="#{DataEditorForm.dataEditorSetting.taskId ne null and layoutWasLoaded}" />
+                    </p:commandLink>
+                    <p:commandButton 
+                        id="removeForTask"
+                        icon="fa fa-trash" 
+                        action="#{DataEditorForm.deleteDataEditorSetting()}"
+                        update="metadataEditorLayoutForm dataEditorSavingResultForm"
+                        disabled="#{DataEditorForm.dataEditorSetting.taskId eq null or not layoutWasLoaded}" 
+                        styleClass="secondary" 
+                        title="#{msgs['dataEditor.layoutMenuDeleteTitle']}" />
+                </li>
+            </ul>
+            <h:inputHidden id="structureWidth"
+                           value="#{DataEditorForm.dataEditorSetting.structureWidth}"/>
+            <h:inputHidden id="metadataWidth"
+                           value="#{DataEditorForm.dataEditorSetting.metadataWidth}"/>
+            <h:inputHidden id="galleryWidth"
+                           value="#{DataEditorForm.dataEditorSetting.galleryWidth}"/>
+        </h:form>
+    </p:overlayPanel>
+</ui:composition>
+
+
+
+

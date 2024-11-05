@@ -16,9 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.kitodo.data.database.beans.Docket;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.DocketDAO;
@@ -31,6 +28,9 @@ import org.kitodo.production.dto.ClientDTO;
 import org.kitodo.production.dto.DocketDTO;
 import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.data.base.ClientSearchService;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 import org.primefaces.model.SortOrder;
 
 public class DocketService extends ClientSearchService<Docket, DocketDTO, DocketDAO> {

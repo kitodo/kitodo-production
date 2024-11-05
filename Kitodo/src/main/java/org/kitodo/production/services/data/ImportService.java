@@ -418,6 +418,7 @@ public class ImportService {
         }
         if (processGenerator.generateProcess(templateID, projectID)) {
             process = processGenerator.getGeneratedProcess();
+            process.setImportConfiguration(importConfiguration);
         }
         TempProcess tempProcess;
 
@@ -462,6 +463,15 @@ public class ImportService {
             return getParentID(internalDocument, parentIdMetadata,importConfiguration.getParentElementTrimMode());
         }
         return null;
+    }
+
+    public TempProcess importTempProcess(ImportConfiguration importConfiguration, String recordId, int templateID,
+                                         int projectID)
+            throws UnsupportedFormatException, NoRecordFoundException, XPathExpressionException,
+            ProcessGenerationException, URISyntaxException, IOException, ParserConfigurationException, SAXException,
+            InvalidMetadataValueException, TransformerException, NoSuchMetadataFieldException {
+        Document internalDocument = importDocument(importConfiguration, recordId, false, false);
+        return createTempProcessFromDocument(importConfiguration, internalDocument, templateID, projectID);
     }
 
     /**
@@ -656,6 +666,7 @@ public class ImportService {
                 Document childDocument = XMLUtils.parseXMLString((String)internalRecord.getOriginalData());
                 TempProcess tempProcess = createTempProcessFromDocument(importConfiguration, childDocument,
                         templateId, projectId);
+                tempProcess.getProcess().setImportConfiguration(importConfiguration);
                 ProcessHelper.generateAtstslFields(tempProcess, parentProcesses, ACQUISITION_STAGE_CREATE, false);
                 childProcesses.add(tempProcess);
             }
@@ -1324,6 +1335,16 @@ public class ImportService {
      */
     public static Collection<String> getHigherLevelIdentifierMetadata(Ruleset ruleset) throws IOException {
         return getFunctionalMetadata(ruleset, FunctionalMetadata.HIGHERLEVEL_IDENTIFIER);
+    }
+
+    /**
+     * Load and return keys of functional metadata 'groupDisplayLabel' from provided ruleset.
+     * @param ruleset Ruleset from which keys are loaded and returned
+     * @return list of String containing the keys of functional metadata for type 'groupDisplayLabel'
+     * @throws IOException thrown if ruleset file cannot be loaded
+     */
+    public static Collection<String> getGroupDisplayLabelMetadata(Ruleset ruleset) throws IOException {
+        return getFunctionalMetadata(ruleset, FunctionalMetadata.GROUP_DISPLAY_LABEL);
     }
 
     private DataImport createDataImportFromImportConfiguration(ImportConfiguration importConfiguration) {

@@ -12,13 +12,13 @@
 package org.kitodo.production.services.data;
 
 import static org.awaitility.Awaitility.await;
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.OptionalInt;
 
 import org.apache.commons.lang3.SystemUtils;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
@@ -65,6 +63,8 @@ import org.kitodo.production.services.ServiceManager;
 import org.kitodo.production.services.dataformat.MetsService;
 import org.kitodo.production.services.file.FileService;
 import org.kitodo.test.utils.ProcessTestUtils;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
 
 /**
  * Tests for ProcessService class.

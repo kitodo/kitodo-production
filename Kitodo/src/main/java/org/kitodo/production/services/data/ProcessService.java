@@ -11,13 +11,13 @@
 
 package org.kitodo.production.services.data;
 
-import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.multiMatchQuery;
-import static org.elasticsearch.index.query.QueryBuilders.nestedQuery;
 import static org.kitodo.constants.StringConstants.DEFAULT_DATE_FORMAT;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.NO_OPEN_CORRECTION_COMMENTS;
 import static org.kitodo.data.database.enums.CorrectionComments.OPEN_CORRECTION_COMMENTS;
+import static org.opensearch.index.query.QueryBuilders.matchQuery;
+import static org.opensearch.index.query.QueryBuilders.multiMatchQuery;
+import static org.opensearch.index.query.QueryBuilders.nestedQuery;
 
 import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
@@ -85,16 +85,6 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.MatchQueryBuilder;
-import org.elasticsearch.index.query.MultiMatchQueryBuilder;
-import org.elasticsearch.index.query.NestedQueryBuilder;
-import org.elasticsearch.index.query.Operator;
-import org.elasticsearch.index.query.QueryBuilder;
-import org.elasticsearch.index.query.WildcardQueryBuilder;
-import org.elasticsearch.search.sort.SortBuilder;
-import org.elasticsearch.search.sort.SortBuilders;
-import org.elasticsearch.search.sort.SortOrder;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -112,6 +102,7 @@ import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Comment;
 import org.kitodo.data.database.beans.Folder;
+import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.Property;
@@ -163,6 +154,16 @@ import org.kitodo.production.services.file.FileService;
 import org.kitodo.production.services.workflow.WorkflowControllerService;
 import org.kitodo.production.workflow.KitodoNamespaceContext;
 import org.kitodo.serviceloader.KitodoServiceLoader;
+import org.opensearch.index.query.BoolQueryBuilder;
+import org.opensearch.index.query.MatchQueryBuilder;
+import org.opensearch.index.query.MultiMatchQueryBuilder;
+import org.opensearch.index.query.NestedQueryBuilder;
+import org.opensearch.index.query.Operator;
+import org.opensearch.index.query.QueryBuilder;
+import org.opensearch.index.query.WildcardQueryBuilder;
+import org.opensearch.search.sort.SortBuilder;
+import org.opensearch.search.sort.SortBuilders;
+import org.opensearch.search.sort.SortOrder;
 import org.primefaces.model.charts.ChartData;
 import org.primefaces.model.charts.axes.cartesian.linear.CartesianLinearAxes;
 import org.primefaces.model.charts.bar.BarChartOptions;
@@ -2864,5 +2865,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      */
     public SortBuilder sortById(SortOrder order) {
         return SortBuilders.fieldSort(ProcessTypeField.ID.getKey()).order(order);
+    }
+
+    /**
+     * Set import configuration of given processes.
+     * @param processes list of processes for which import configuration is set
+     * @param configurationId ID of import configuration to assign to processes
+     * @return name of ImportConfiguration
+     * @throws DAOException when loading import configuration by ID or saving updated processes fails
+     */
+    public String setImportConfigurationForMultipleProcesses(List<Process> processes, int configurationId)
+            throws DAOException {
+        ImportConfiguration configuration = ServiceManager.getImportConfigurationService().getById(configurationId);
+        for (Process process : processes) {
+            process.setImportConfiguration(configuration);
+            saveToDatabase(process);
+        }
+        return configuration.getTitle();
     }
 }
