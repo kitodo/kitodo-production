@@ -270,8 +270,10 @@ public class WorkflowForm extends BaseForm {
 
         xmlDiagram = requestParameterMap.get("editForm:workflowTabView:xmlDiagram");
         if (Objects.nonNull(xmlDiagram)) {
-            svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
-            xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+            if (xmlDiagram.contains("kitodo-diagram-separator")) {
+                svgDiagram = StringUtils.substringAfter(xmlDiagram, "kitodo-diagram-separator");
+                xmlDiagram = StringUtils.substringBefore(xmlDiagram, "kitodo-diagram-separator");
+            }
 
             Reader reader = new Reader(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             reader.validateWorkflowTasks();
@@ -279,7 +281,9 @@ public class WorkflowForm extends BaseForm {
             Converter converter = new Converter(new ByteArrayInputStream(xmlDiagram.getBytes(StandardCharsets.UTF_8)));
             converter.validateWorkflowTaskList();
 
-            saveFile(svgDiagramURI, svgDiagram);
+            if (Objects.nonNull(svgDiagram)) {
+                saveFile(svgDiagramURI, svgDiagram);
+            }
             saveFile(xmlDiagramURI, xmlDiagram);
         }
 
