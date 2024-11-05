@@ -81,6 +81,9 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "contextMenuLogicalTree")
     private WebElement contextMenuLogicalTree;
 
+    @FindBy(id = "imagePreviewForm:previewButton")
+    private WebElement imagePreviewButton;
+
     public MetadataEditorPage() {
         super("metadataEditor.jsf");
     }
@@ -270,5 +273,12 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
         return !Browser.getDriver().findElements(By.cssSelector(
             "#logicalTree\\:" + nodeId + " .assigned-several-times"
         )).isEmpty();
+    }
+
+    /*
+     * Open detail view by clicking on image preview button.
+     */
+    public void openDetailView() {
+        imagePreviewButton.click();
     }
 }
