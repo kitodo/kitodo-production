@@ -82,9 +82,15 @@
             </h:form>
         </p:panel>
 
-        <h:outputStylesheet name="webjars/openlayers/5.2.0/ol.css"/>
-        <h:outputScript library="webjars" name="openlayers/5.2.0/ol.js" />
+        <h:outputStylesheet name="webjars/openlayers/6.14.1/ol.css"/>
+        <h:outputScript library="webjars" name="openlayers/6.14.1/ol.js" />
         <h:outputScript name="js/ol_custom.js"/>
+        <h:outputScript>
+            $(document).ready(function () {
+                // load openlayers and show image
+                metadataEditor.detailMap.update();
+            });
+        </h:outputScript>
     </ui:define>
 
 </ui:composition>
