@@ -65,7 +65,7 @@
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
         <junit.version>5.9.3</junit.version>
-        <elasticsearch.version>7.17.25</elasticsearch.version>
+        <opensearch.version>2.15.0</opensearch.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
 
         <!-- maven-resources-plugin versions greater 3.2.0 introduce changes that
@@ -456,29 +456,29 @@ from system library in Java 11+ -->
                 </exclusions>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>elasticsearch-rest-high-level-client</artifactId>
-                <version>${elasticsearch.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>commons-codec</groupId>
-                        <artifactId>commons-codec</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>commons-logging</groupId>
-                        <artifactId>commons-logging</artifactId>
-                    </exclusion>
-                </exclusions>
+                <groupId>org.opensearch</groupId>
+                <artifactId>opensearch</artifactId>
+                <version>${opensearch.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.client</groupId>
-                <artifactId>transport</artifactId>
-                <version>${elasticsearch.version}</version>
+                <groupId>org.opensearch</groupId>
+                <artifactId>opensearch-core</artifactId>
+                <version>${opensearch.version}</version>
             </dependency>
             <dependency>
-                <groupId>org.elasticsearch.plugin</groupId>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-rest-client</artifactId>
+                <version>${opensearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.client</groupId>
+                <artifactId>opensearch-rest-high-level-client</artifactId>
+                <version>${opensearch.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.opensearch.plugin</groupId>
                 <artifactId>transport-netty4-client</artifactId>
-                <version>${elasticsearch.version}</version>
+                <version>${opensearch.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
