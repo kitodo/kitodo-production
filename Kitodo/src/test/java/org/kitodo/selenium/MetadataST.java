@@ -430,7 +430,7 @@ public class MetadataST extends BaseTestSelenium {
         );
 
         // click on add metadata button
-        Browser.getDriver().findElement(By.id("metadataAccordion:metadata:addMetadataButton")).click();
+        Browser.getDriver().findElement(By.id("metadataAccordion:addMetadataButton")).click();
         
         // wait until dialog is visible
         await().ignoreExceptions().pollDelay(100, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS).until(
