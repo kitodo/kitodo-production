@@ -74,7 +74,12 @@ public enum FunctionalMetadata {
     /**
      * Document type metadata use for document classification during process import.
      */
-    DOC_TYPE("docType");
+    DOC_TYPE("docType"),
+
+    /**
+     * Metadata used as label for metadata groups to be displayed in various UI components.
+     */
+    GROUP_DISPLAY_LABEL("groupDisplayLabel");
 
     /**
      * With the logger, text can be written to a log file or to the console.

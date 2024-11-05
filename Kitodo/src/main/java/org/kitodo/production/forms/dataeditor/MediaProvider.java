@@ -11,11 +11,12 @@
 
 package org.kitodo.production.forms.dataeditor;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.enterprise.context.ApplicationScoped;
+import javax.enterprise.context.SessionScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.event.PhaseId;
 import javax.inject.Named;
@@ -28,11 +29,11 @@ import org.primefaces.model.StreamedContent;
 
 
 /**
- * Application scoped media provider bean.
+ * Session scoped media provider bean.
  */
-@ApplicationScoped
+@SessionScoped
 @Named
-public class MediaProvider {
+public class MediaProvider implements Serializable {
 
     private static final Logger logger = LogManager.getLogger(MediaProvider.class);
 

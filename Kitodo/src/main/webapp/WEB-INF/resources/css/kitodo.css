@@ -122,6 +122,10 @@ html.progressCursor * {
     display: none;
 }
 
+div.ui-contextmenu .ui-menuitem .ui-menuitem-text {
+    padding: 0 0.5em;
+}
+
 /*----------------------------------------------------------------------
 Header
 ----------------------------------------------------------------------*/
@@ -735,6 +739,7 @@ section#content-section {
     white-space: nowrap;
 }
 
+.ui-panelgrid-cell > h3 span.set-apart,
 .content-header > .ui-panel-content > h3 span.set-apart {
     color: var(--medium-gray);
     flex-grow: 0;
@@ -2194,10 +2199,6 @@ Metadata Editor
     pointer-events: all;
 }
 
-#metadataEditorLayoutForm {
-    margin: 0;
-}
-
 #metadataEditorHeader .ui-panel,
 #metadataEditorHeader .ui-panel-content {
     padding: 0;
@@ -2772,10 +2773,108 @@ Column content
     margin-left: 0.3em;
 }
 
-#logicalStructureHeader {
+.metadata-column-menu {
     border-bottom: 1px solid var(--cloudy-gray);
     display: flex;
-    padding: var(--default-half-size);
+    padding: var(--default-half-size) 0 var(--default-half-size) var(--default-half-size);
+}
+
+.ui-widget-content .metadata-column-menu .ui-button {
+    margin-right: var(--default-half-size);
+}
+
+#updateMetadataDialog .ui-panelgrid-cell div {
+    margin: 0;
+}
+
+#updateMetadataDialog_content {
+    overflow-y: hidden;
+}
+
+#updateMetadataDialog_content .selected {
+    color: var(--carbon-blue);
+    font-weight: bold;
+}
+
+#updateMetadataDialog_content .unselected {
+    color: var(--medium-gray);
+    font-weight: bold;
+}
+
+#updateMetadataDialog_content .ui-datatable td:nth-child(1) span {
+    font-weight: normal;
+}
+
+#updateMetadataDialog_content .metadata-value-list {
+    list-style: none;
+}
+
+#updateMetadataDialog_content .ui-widget-content {
+    background: transparent;
+}
+
+#updateMetadataDialog_content .ui-datalist-empty-message {
+    display: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable > .ui-datatable-scrollable-header {
+    background: var(--cloudy-gray);
+}
+
+#updateMetadataForm\:metadataUpdateTable > .ui-datatable-scrollable-body {
+    background: var(--pure-white);
+}
+
+#updateMetadataForm\:metadataUpdateTable tr:hover {
+    background: var(--trans-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable button.ui-button {
+    background: transparent;
+    color: var(--carbon-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable button.ui-button:hover {
+    background: var(--focused-blue);
+    color: var(--pure-white);
+}
+
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton {
+    cursor: default;
+}
+
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton,
+#updateMetadataForm\:metadataUpdateTable button#updateMetadataForm\:metadataUpdateTable\:selectColumnHeaderButton:hover {
+    background: var(--cloudy-gray);
+    color: var(--carbon-blue);
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-body tr {
+    border: none;
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-body > table > tbody > tr:not(:first-child) {
+    border-top: solid 1px var(--cloudy-gray);
+}
+
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header,
+#updateMetadataForm\:metadataUpdateTable .ui-datatable-scrollable-header-box {
+    margin-bottom: 0;
+}
+
+#updateMetadataForm\:updateMetadataHelp {
+    float: right;
+    right: 12px;
+    top: -12px;
+}
+
+#updateMetadataForm td[role='gridcell'] {
+    vertical-align: top;
+    padding: var(--group-margin) var(--default-half-size) var(--group-margin) var(--default-full-size);
+}
+
+#updateMetadataForm .metadata-groups li:not(:first-child) {
+    border-top: 1px solid var(--cloudy-gray);
 }
 
 #logicalStructureHeader .logicalStructureTitle {
@@ -2796,6 +2895,30 @@ Column content
 
 #logicalStructureMenuForm ul li {
     padding: 0.5em 0.25em;
+}
+
+#metadataEditorLayoutForm ul {
+    list-style: none;
+    margin: 0.25em 0;
+}
+
+#metadataEditorLayoutForm ul li {
+    padding: 0.25em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+#metadataEditorLayoutForm i.fa {
+    margin-right: 0.5em;
+}
+
+#metadataEditorLayoutForm .ui-commandlink {
+    margin-right: 1em;
+}
+
+#metadataEditorLayoutForm a, #metadataEditorLayoutForm a:hover {
+    text-decoration: none;
 }
 
 #commentsPanel {
