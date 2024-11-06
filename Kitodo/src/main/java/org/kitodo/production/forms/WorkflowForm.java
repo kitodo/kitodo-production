@@ -332,6 +332,7 @@ public class WorkflowForm extends BaseForm {
 
     private void saveWorkflow() {
         try {
+            this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
             ServiceManager.getWorkflowService().save(this.workflow, true);
         } catch (DataException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
@@ -345,7 +346,6 @@ public class WorkflowForm extends BaseForm {
      */
     public String newWorkflow() {
         this.workflow = new Workflow();
-        this.workflow.setClient(ServiceManager.getUserService().getSessionClientOfAuthenticatedUser());
         return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
     }
 
