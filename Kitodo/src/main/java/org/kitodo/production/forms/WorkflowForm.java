@@ -345,8 +345,7 @@ public class WorkflowForm extends BaseForm {
      * @return page
      */
     public String newWorkflow() {
-        this.workflow = new Workflow();
-        return workflowEditPath + "&id=" + (Objects.isNull(this.workflow.getId()) ? 0 : this.workflow.getId());
+        return workflowEditPath + "&id=0";
     }
 
     /**
