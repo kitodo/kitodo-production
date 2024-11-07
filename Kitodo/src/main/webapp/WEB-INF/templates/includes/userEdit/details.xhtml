@@ -124,6 +124,23 @@
                             redisplay="true"/>
             </h:panelGroup>
             <div>
+                <p:outputLabel for="defaultClient"
+                               value="#{msgs['defaultClient']}"
+                               title="#{msgs['defaultClient']}"/>
+                <p:selectOneMenu id="defaultClient"
+                                 converter="#{clientConverter}"
+                                 value="#{UserForm.userObject.defaultClient}"
+                                 disabled="#{isViewMode}">
+                    <f:selectItem noSelectionOption="true"
+                                  itemLabel="#{msgs['notSelected']}"/>
+                    <f:selectItems value="#{UserForm.userObject.clients}"
+                                   var="client"
+                                   itemLabel="#{client.name}"/>
+                    <p:ajax event="change"
+                            oncomplete="toggleSave()"/>
+                </p:selectOneMenu>
+            </div>
+            <div>
                 <!-- table size -->
                 <p:outputLabel for="table-size" value="#{msgs.tableSize}" />
                 <p:inputText id="table-size" value="#{UserForm.userObject.tableSize}" disabled="#{isViewMode}"
