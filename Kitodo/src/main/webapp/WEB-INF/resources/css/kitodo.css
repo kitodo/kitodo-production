@@ -3436,7 +3436,7 @@ Column content
 }
 
 #imagePreviewForm .mediaDetailNavigationPanel button {
-    margin: var(--default-full-size);
+    margin: var(--default-full-size) var(--default-half-size);
     pointer-events: all;
     opacity: 0.0;
     transition: opacity 0.1s linear;

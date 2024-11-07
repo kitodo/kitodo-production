@@ -19,9 +19,12 @@
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
         xmlns:a="http://xmlns.jcp.org/jsf/passthrough">
 
-    <h:panelGroup id="mediaDetail" layout="block">
-        <ui:param name="selectedGalleryMediaContent"
-                  value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
+    <ui:param name="selectedGalleryMediaContent"
+        value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key)}"/>
+    
+    <h:panelGroup id="mediaDetail" 
+                  layout="block"
+                  a:data-logicaltreenodeid="#{selectedGalleryMediaContent.getLogicalTreeNodeId()}">
 
         <ui:fragment
                 rendered="#{mediaProvider.hasMediaViewVariant(selectedGalleryMediaContent) and (fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'video') or fn:startsWith(selectedGalleryMediaContent.mediaViewMimeType, 'audio'))}">
@@ -92,16 +95,22 @@
         </ui:fragment>
 
         <p:outputPanel styleClass="mediaDetailNavigationPanel">
-            <p:commandButton id="mediaDetailNavigationPreviousButton" 
-                             title="#{msgs['dataEditor.navigateToPreviousElement']}"
+            <p:commandButton title="#{msgs['dataEditor.navigateToPreviousElement']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
-                             icon="fa fa-arrow-left fa-lg"
-                             onclick="metadataEditor.shortcuts.navigateByShortcut(-1, false);" />
-            <p:commandButton id="mediaDetailNavigationNextButton" 
-                             title="#{msgs['dataEditor.navigateToNextElement']}"
+                             icon="fa fa-angle-double-left fa-lg"
+                             onclick="metadataEditor.detailView.navigate(-20);" />
+            <p:commandButton title="#{msgs['dataEditor.navigateToPreviousElement']}"
+                             disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
+                             icon="fa fa-angle-left fa-lg"
+                             onclick="metadataEditor.detailView.navigate(-1);" />
+            <p:commandButton title="#{msgs['dataEditor.navigateToNextElement']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
-                             icon="fa fa-arrow-right fa-lg"
-                             onclick="metadataEditor.shortcuts.navigateByShortcut(1, false);" />
+                             icon="fa fa-angle-right fa-lg"
+                             onclick="metadataEditor.detailView.navigate(+1);" />
+            <p:commandButton title="#{msgs['dataEditor.navigateToNextElement']}"
+                             disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
+                             icon="fa fa-angle-double-right fa-lg"
+                             onclick="metadataEditor.detailView.navigate(+20);" />
         </p:outputPanel>
 
     </h:panelGroup>
