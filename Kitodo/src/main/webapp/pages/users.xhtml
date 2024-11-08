@@ -38,6 +38,17 @@
             <p:outputPanel rendered="#{UserForm.activeTabIndex eq 0}">
                 <ui:include src="/WEB-INF/templates/includes/users/filterMenu.xhtml"/>
             </p:outputPanel>
+            <p:outputPanel rendered="#{UserForm.activeTabIndex eq 1 and UserForm.user.clients.size() gt 1}">
+                <h:form id="allClientsRolesForm">
+                    <p:selectBooleanCheckbox id="showAllClientsRoles"
+                                             value="#{RoleForm.showRolesOfAllAvailableClients}"
+                                             itemLabel="#{msgs.showRolesOfAllAvailableClients}"
+                                             styleClass="switch">
+                        <p:ajax onstart="PF('rolesTable').getPaginator().setPage(0);"
+                                update="filterMenuWrapper usersTabView:rolesTable"/>
+                    </p:selectBooleanCheckbox>
+                </h:form>
+            </p:outputPanel>
         </h:panelGroup>
         <h:form id="configureColumnsForm"
                 rendered="#{SecurityAccessController.hasAuthorityToConfigureColumns()}">
