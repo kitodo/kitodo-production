@@ -48,7 +48,8 @@ public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
         try {
             SessionClientController controller = new SessionClientController();
             if (ServiceManager.getIndexingService().isIndexCorrupted()
-                    || controller.getAvailableClientsOfCurrentUser().size() > 1) {
+                    || (controller.getAvailableClientsOfCurrentUser().size() > 1
+                    && Objects.isNull(controller.getDefaultClientOfCurrentUser()))) {
                 // redirect to empty landing page, where dialogs are displayed depending on both checks!
                 redirectStrategy.sendRedirect(httpServletRequest, httpServletResponse, EMPTY_LANDING_PAGE);
             } else {
