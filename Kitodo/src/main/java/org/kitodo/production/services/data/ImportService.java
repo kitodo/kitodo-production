@@ -405,10 +405,14 @@ public class ImportService {
 
     /**
      * Creates a temporary Process from the given document with templateID und projectID.
+     * @param importConfiguration ImportConfiguration used to create TempProcess
      * @param document the given document
      * @param templateID the template to use
      * @param projectID the project to use
      * @return a temporary process
+     * @throws ProcessGenerationException when creating process for given template and project fails
+     * @throws IOException when loading workpiece of TempProcess or retrieving type of document fails
+     * @throws TransformerException when loading workpiece of TempProcess fails
      */
     public TempProcess createTempProcessFromDocument(ImportConfiguration importConfiguration, Document document,
                                                      int templateID, int projectID)
@@ -612,6 +616,10 @@ public class ImportService {
 
     /**
      * Check if there already is a parent process in Database.
+     *
+     * @param parentID ID of parent process to retrieve
+     * @param ruleset ruleset of parent process to retrieve
+     * @param projectID ID of project to which parent process must belong
      */
     public void checkForParent(String parentID, Ruleset ruleset, int projectID) {
         this.parentTempProcess = retrieveParentTempProcess(parentID, ruleset, projectID);
@@ -835,6 +843,15 @@ public class ImportService {
                 StringConstants.LEVEL, level);
     }
 
+    /**
+     * Check and return whether maximum number of tags with given tag name 'tagName' in XML with content given as
+     * 'xmlString' exceeds limit configured as maxNumberOfProcessesForImportMask in kitodo_config.properties.
+     *
+     * @param xmlString String representation of XML content to check
+     * @param tagName name of XML tag counted in XML content
+     * @return whether the number of tags exceeds the allowed limit
+     * @throws XMLStreamException when retrieving number of tags in XML content fails
+     */
     public boolean isMaxNumberOfRecordsExceeded(String xmlString, String tagName) throws XMLStreamException {
         int numberOfRecords = XMLUtils.getNumberOfElements(xmlString, tagName);
         return numberOfRecords > ConfigCore.getIntParameterOrDefaultValue(ParameterCore.MAX_NUMBER_OF_PROCESSES_FOR_IMPORT_MASK);

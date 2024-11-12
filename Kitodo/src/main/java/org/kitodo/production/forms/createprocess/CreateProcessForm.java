@@ -122,6 +122,12 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
         this.priorityList = priorityList;
     }
 
+    /**
+     * Calculate number of EAD elements of selected level (e.g. "item", "file" etc.) from "xmlString", containing
+     * content of currently imported XML file.
+     *
+     * @throws XMLStreamException when retrieving EAD from XML data fails
+     */
     public void calculateNumberOfEadElements() throws XMLStreamException {
         numberOfEadElements = XMLUtils.getNumberOfElements(xmlString, selectedEadLevel);
     }

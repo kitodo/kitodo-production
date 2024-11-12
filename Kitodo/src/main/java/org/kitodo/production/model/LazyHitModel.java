@@ -30,7 +30,9 @@ public class LazyHitModel extends LazyDataModel<Object> {
     private SearchResult searchResult = null;
 
     /**
-     * Empty default constructor. Sets default catalog and search field, if configured.
+     * Constructor setting this LazyHitModels 'CatalogImportDialog'.
+     *
+     * @param dialog as CatalogImportDialog
      */
     public LazyHitModel(CatalogImportDialog dialog) {
         this.catalogImportDialog = dialog;

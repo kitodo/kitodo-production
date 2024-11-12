@@ -230,7 +230,7 @@ public class ImportEadProcessesThread extends EmptyTask {
     }
 
     private void cleanUpProcesses(List<Integer> processIds, int newParentId) {
-        logger.error("Deleting processes created until this point to resolve erroneous intermediate state.");
+        logger.info("Deleting processes created until this point to resolve erroneous intermediate state.");
         // cleanup any processes that might have been created until this point
         for (int id : processIds) {
             try {

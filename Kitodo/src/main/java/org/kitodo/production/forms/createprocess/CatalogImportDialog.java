@@ -428,7 +428,7 @@ public class CatalogImportDialog  extends MetadataImportDialog implements Serial
     /**
      * Set selectedField.
      *
-     * @param field as java.lang.String
+     * @param field as String
      */
     public void setSelectedField(String field) {
         this.selectedField = field;
