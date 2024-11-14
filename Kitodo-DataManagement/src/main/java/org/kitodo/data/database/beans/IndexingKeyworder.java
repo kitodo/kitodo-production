@@ -89,7 +89,7 @@ class IndexingKeyworder {
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
         this.projectKeywords = initProjectKeywords(projectTitle);
         this.batchKeywords = initBatchKeywords(process.getBatches());
-        var taskKeywords = initTaskKeywords(process.getTasks());
+        var taskKeywords = initTaskKeywords(process.getTasksUnmodified());
         this.taskKeywords = taskKeywords.getLeft();
         this.taskPseudoKeywords = taskKeywords.getRight();
         String place = null;

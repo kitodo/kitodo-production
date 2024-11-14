@@ -13,6 +13,7 @@ package org.kitodo.data.database.beans;
 
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -479,6 +480,15 @@ public class Process extends BaseTemplateBean {
         if (Objects.isNull(this.tasks)) {
             this.tasks = new ArrayList<>();
         }
+        return this.tasks;
+    }
+
+    /**
+     * Returns the tasks of the process without forced initialization.
+     *
+     * @return the task list
+     */
+    Collection<Task> getTasksUnmodified() {
         return this.tasks;
     }
 
