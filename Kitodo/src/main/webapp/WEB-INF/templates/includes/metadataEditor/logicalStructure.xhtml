@@ -177,7 +177,7 @@
                                 DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE and
                                 mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
                         icon="fa fa-external-link fa-sm"
-                        styleClass="plain"
+                        styleClass="plain viewPageInNewWindow"
                         outcome="externalView" 
                         target="_blank">
                 <f:param name="processId" value="#{DataEditorForm.process.id}"/>
@@ -196,7 +196,7 @@
                         update="dialogEditDocStrucTypeDialog"/>
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
-                        styleClass="plain"
+                        styleClass="plain assignToNextElement"
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         action="#{DataEditorForm.structurePanel.assign}"
@@ -209,7 +209,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.unassign}"
                         icon="fa fa-chain-broken fa-sm"
-                        styleClass="plain"
+                        styleClass="plain unassign"
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         action="#{DataEditorForm.structurePanel.unassign}"
