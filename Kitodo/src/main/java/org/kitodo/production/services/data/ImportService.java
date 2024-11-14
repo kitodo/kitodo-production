@@ -786,9 +786,8 @@ public class ImportService {
         List<Element> childElements = getEADElements(eadCollectionDocument, eadChildProcessLevel);
 
         if (parentElements.size() != 1) {
-            throw new ProcessGenerationException(
-                    String.format("EAD XML does not contain exactly one element of parent level '%s'!",
-                            eadParentProcessLevel));
+            throw new ProcessGenerationException(Helper.getTranslation(
+                    "importError.wrongNumberOfEadParentLevelElements", eadParentProcessLevel));
         }
 
         // create temp processes for parent (e.g. "collection") and children (e.g. "files")
