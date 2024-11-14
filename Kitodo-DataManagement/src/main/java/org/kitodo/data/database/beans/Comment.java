@@ -22,7 +22,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.enums.CommentType;
 
 @Entity
@@ -32,7 +31,6 @@ public class Comment extends BaseBean {
      * The field message holds the comment message.
      */
     @Column(name = "message", columnDefinition = "longtext")
-    @GenericField
     private String message;
 
     /**
@@ -40,7 +38,6 @@ public class Comment extends BaseBean {
      */
     @Column(name = "type")
     @Enumerated(EnumType.STRING)
-    @GenericField
     private CommentType type;
 
     /**

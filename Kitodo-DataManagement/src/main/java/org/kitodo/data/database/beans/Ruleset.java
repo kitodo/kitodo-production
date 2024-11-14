@@ -27,29 +27,22 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmb
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 
 @Entity
-@Indexed(index = "kitodo-ruleset")
 @Table(name = "ruleset")
 public class Ruleset extends BaseBean {
 
-    @GenericField
     @Column(name = "title")
     private String title;
 
-    @GenericField
     @Column(name = "file")
     private String file;
 
-    @GenericField
     @Column(name = "orderMetadataByRuleset")
     private Boolean orderMetadataByRuleset = false;
 
-    @GenericField
     @Column(name = "active")
     private Boolean active = true;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"id", "name"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_ruleset_client_id"))
     private Client client;
 

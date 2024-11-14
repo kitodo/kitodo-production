@@ -30,13 +30,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.annotations.LazyCollection;
-import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
@@ -49,105 +45,80 @@ import org.kitodo.data.database.persistence.TaskDAO;
 @Table(name = "task")
 public class Task extends BaseBean {
 
-    @FullTextField
     @Column(name = "title")
     private String title;
 
-    @GenericField
     @Column(name = "ordering")
     private Integer ordering;
 
-    @GenericField
     @Column(name = "processingStatus")
     @Convert(converter = TaskStatusConverter.class)
     private TaskStatus processingStatus = TaskStatus.LOCKED;
 
-    @GenericField
     @Column(name = "processingTime")
     private Date processingTime;
 
-    @GenericField
     @Column(name = "processingBegin")
     private Date processingBegin;
 
-    @GenericField
     @Column(name = "processingEnd")
     private Date processingEnd;
 
-    @GenericField
     @Column(name = "editType")
     @Convert(converter = TaskEditTypeConverter.class)
     private TaskEditType editType = TaskEditType.UNNOWKN;
 
-    @GenericField
     @Column(name = "homeDirectory")
     private short homeDirectory;
 
-    @GenericField
     @Column(name = "concurrent")
     private boolean concurrent = false;
 
-    @GenericField
     @Column(name = "last")
     private boolean last = false;
 
-    @GenericField
     @Column(name = "correction")
     private boolean correction = false;
 
-    @GenericField
     @Column(name = "typeMetadata")
     private boolean typeMetadata = false;
 
-    @GenericField
     @Column(name = "typeAutomatic")
     private boolean typeAutomatic = false;
 
-    @GenericField
     @Column(name = "typeImagesRead")
     private boolean typeImagesRead = false;
 
-    @GenericField
     @Column(name = "typeImagesWrite")
     private boolean typeImagesWrite = false;
 
-    @GenericField
     @Column(name = "typeGenerateImages")
     private boolean typeGenerateImages = false;
 
-    @GenericField
     @Column(name = "typeValidateImages")
     private boolean typeValidateImages = false;
 
-    @GenericField
     @Column(name = "typeExportDms")
     private boolean typeExportDMS = false;
 
-    @GenericField
     @Column(name = "typeAcceptClose")
     private boolean typeAcceptClose = false;
 
-    @GenericField
     @Column(name = "scriptName")
     private String scriptName;
 
-    @GenericField
     @Column(name = "scriptPath")
     private String scriptPath;
 
-    @GenericField
     @Column(name = "typeCloseVerify")
     private boolean typeCloseVerify = false;
 
-    @GenericField
     @Column(name = "batchStep")
     private boolean batchStep = false;
 
-    @GenericField
     @Column(name = "repeatOnCorrection")
     private boolean repeatOnCorrection = false;
 
-    @GenericField
     @Column(name = "workflowId")
     private String workflowId;
 
@@ -159,17 +130,14 @@ public class Task extends BaseBean {
      * This field contains information about user, which works on this task.
      */
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"surname", "name", "id", "login"})
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_task_user_id"))
     private User processingUser;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"id", "title", "projects.id", "client.id"})
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
     private Template template;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"id", "title", "project.id", "project.client.id"})
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_task_process_id"))
     private Process process;
 
@@ -177,9 +145,7 @@ public class Task extends BaseBean {
      * This field contains information about user's roles, which are allowed to
      * work on this task.
      */
-    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.PERSIST)
-    @IndexedEmbedded(includePaths = {"id"})
     @JoinTable(name = "task_x_role", joinColumns = {
         @JoinColumn(name = "task_id", foreignKey = @ForeignKey(name = "FK_task_x_role_task_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_task_x_user_role_id")) })

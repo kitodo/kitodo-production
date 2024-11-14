@@ -17,7 +17,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,9 +39,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.converter.ProcessConverter;
 import org.kitodo.data.database.enums.CorrectionComments;
@@ -55,58 +52,44 @@ import org.kitodo.data.database.persistence.ProcessDAO;
 @Table(name = "process")
 public class Process extends BaseTemplateBean {
 
-    @GenericField
     @Column(name = "sortHelperImages")
     private Integer sortHelperImages;
 
-    @GenericField
     @Column(name = "sortHelperArticles")
     private Integer sortHelperArticles;
 
-    @GenericField
     @Column(name = "sortHelperMetadata")
     private Integer sortHelperMetadata;
 
-    @GenericField
     @Column(name = "sortHelperDocstructs")
     private Integer sortHelperDocstructs;
 
-    @FullTextField
     @Column(name = "wikiField", columnDefinition = "longtext")
     private String wikiField = "";
 
-    @GenericField
     @Column(name = "processBaseUri")
     private String processBaseUri;
 
-    @GenericField
     @Column(name = "ordering")
     private Integer ordering;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title", "id"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title", "active", "id", "client.id"})
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
     private Project project;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title", "id"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
     private Ruleset ruleset;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title", "id"})
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_process_template_id"))
     private Template template;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"title", "id"})
     @JoinColumn(name = "parent_id", foreignKey = @ForeignKey(name = "FK_process_parent_id"))
     private Process parent;
 
@@ -116,39 +99,27 @@ public class Process extends BaseTemplateBean {
     @Transient
     private boolean hasChildren = true;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "process", cascade = CascadeType.ALL, orphanRemoval = true)
-    @IndexedEmbedded(includePaths = {"title", "id"})
     @OrderBy("ordering")
     private List<Task> tasks;
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @OneToMany(mappedBy = "process", cascade = CascadeType.PERSIST, orphanRemoval = true)
-    @IndexedEmbedded(includePaths = {"message"})
     private List<Comment> comments;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
-    @IndexedEmbedded(includePaths = {"id", "title", "value"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinTable(name = "process_x_property", joinColumns = {
         @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_process_x_property_process_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_process_x_property_property_id")) })
     private List<Property> properties;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
-    @IndexedEmbedded(includePaths = {"id", "title", "value"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinTable(name = "template_x_property", joinColumns = {
         @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_template_x_property_process_id")) }, inverseJoinColumns = {
             @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_template_x_property_property_id")) })
     private List<Property> templates;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(cascade = CascadeType.ALL)
-    @IndexedEmbedded(includePaths = {"id", "title", "value"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinTable(name = "workpiece_x_property", joinColumns = {
         @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_process_id")) },
             inverseJoinColumns = {
@@ -157,15 +128,12 @@ public class Process extends BaseTemplateBean {
 
     @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "processes")
-    @IndexedEmbedded(includePaths = {"title", "id"})
     private List<Batch> batches = new ArrayList<>();
 
     @Column(name = "exported")
-    @GenericField
     private boolean exported;
 
     @Column(name = "inChoiceListShown")
-    @GenericField
     Boolean inChoiceListShown;
 
     @Column(name = "ocrd_workflow_id")

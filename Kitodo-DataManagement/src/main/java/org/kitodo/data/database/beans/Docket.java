@@ -27,25 +27,19 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmb
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 
 @Entity
-@Indexed(index = "kitodo-docket")
 @Table(name = "docket")
 public class Docket extends BaseBean {
 
-    @GenericField
     @Column(name = "title")
     private String title;
 
-    @GenericField
     @Column(name = "file")
     private String file;
 
-    @GenericField
     @Column(name = "active")
     private Boolean active = true;
 
     @ManyToOne
-    @IndexedEmbedded(includePaths = {"id", "name"})
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.SHALLOW)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_docket_client_id"))
     private Client client;
 

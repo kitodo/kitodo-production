@@ -40,6 +40,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.data.database.enums.TaskStatus;
+import org.kitodo.data.database.persistence.HibernateUtil;
 
 /**
  * Prepares the search keywords for a process or task.
@@ -107,7 +108,6 @@ class IndexingKeyworder {
 
     public IndexingKeyworder(Task task) {
         if (Objects.nonNull(task.getProcess())) {
-            // ordinary task as part of a process
             this.titleKeywords = initTitleKeywords(task.getProcess().getTitle());
             Project project = task.getProcess().getProject();
             if (Objects.nonNull(project)) {
@@ -130,23 +130,6 @@ class IndexingKeyworder {
                 comment.getCurrentTask(), task) || Objects.equals(comment.getCorrectionTask(), task)).collect(Collectors
                         .toList());
             this.commentKeywords = initCommentKeywords(commentsOfTask);
-        } else if (Objects.nonNull(task.getTemplate())) {
-            // template task as part of a production template
-            this.titleKeywords = initTitleKeywords(task.getTemplate().getTitle());
-            Set<String> projectKeywords = new HashSet<>();
-            for (Project project : task.getTemplate().getProjects()) {
-                projectKeywords.addAll(initProjectKeywords(project.getTitle()));
-            }
-            this.projectKeywords = projectKeywords;
-            var taskKeywords = initTaskKeywords(Collections.singleton(task));
-            this.taskKeywords = taskKeywords.getLeft();
-            this.taskPseudoKeywords = taskKeywords.getRight();
-            this.processId = task.getTemplate().getId().toString();
-        } else {
-            // orphaned task (in a few tests)
-            var taskKeywords = initTaskKeywords(Collections.singleton(task));
-            this.taskKeywords = taskKeywords.getLeft();
-            this.taskPseudoKeywords = taskKeywords.getRight();
         }
         if (logger.isTraceEnabled()) {
             traceLogKeywords("task_" + task.getOrdering() + '_' + normalize(task.getTitle()) + "_keywords.log");
