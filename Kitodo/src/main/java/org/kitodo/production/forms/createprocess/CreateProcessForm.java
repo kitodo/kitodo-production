@@ -129,7 +129,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
      * @throws XMLStreamException when retrieving EAD from XML data fails
      */
     public void calculateNumberOfEadElements() throws XMLStreamException {
-        numberOfEadElements = XMLUtils.getNumberOfElements(xmlString, selectedEadLevel);
+        numberOfEadElements = XMLUtils.getNumberOfEADElements(xmlString, selectedEadLevel);
     }
 
     /**

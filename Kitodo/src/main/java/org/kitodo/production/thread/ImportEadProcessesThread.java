@@ -127,7 +127,7 @@ public class ImportEadProcessesThread extends EmptyTask {
         List<Integer> newProcessIds = new ArrayList<>();
         int newParentId = 0;
         try {
-            int numberOfElements = XMLUtils.getNumberOfElements(xmlString, eadLevel);
+            int numberOfElements = XMLUtils.getNumberOfEADElements(xmlString, eadLevel);
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
             XMLEventReader eventReader = inputFactory.createXMLEventReader(new StringReader(xmlString));
             boolean inProcessElement = false;

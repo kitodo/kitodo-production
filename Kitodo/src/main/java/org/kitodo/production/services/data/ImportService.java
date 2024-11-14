@@ -852,7 +852,7 @@ public class ImportService {
      * @throws XMLStreamException when retrieving number of tags in XML content fails
      */
     public boolean isMaxNumberOfRecordsExceeded(String xmlString, String tagName) throws XMLStreamException {
-        int numberOfRecords = XMLUtils.getNumberOfElements(xmlString, tagName);
+        int numberOfRecords = XMLUtils.getNumberOfEADElements(xmlString, tagName);
         return numberOfRecords > ConfigCore.getIntParameterOrDefaultValue(ParameterCore.MAX_NUMBER_OF_PROCESSES_FOR_IMPORT_MASK);
     }
 

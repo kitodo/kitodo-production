@@ -272,7 +272,7 @@ public class XMLUtils {
      * @return number of EAD elements with given level
      * @throws XMLStreamException when parsing XML string fails
      */
-    public static int getNumberOfElements(String xmlString, String eadLevel) throws XMLStreamException {
+    public static int getNumberOfEADElements(String xmlString, String eadLevel) throws XMLStreamException {
         int count = 0;
         XMLInputFactory factory = XMLInputFactory.newInstance();
         XMLStreamReader reader = factory.createXMLStreamReader(new StringReader(xmlString));
