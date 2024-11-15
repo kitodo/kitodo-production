@@ -45,6 +45,8 @@ import org.kitodo.api.Metadata;
 import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.FunctionalMetadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.RulesetManagementInterface;
+import org.kitodo.config.ConfigCore;
+import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.constants.StringConstants;
 import org.kitodo.data.database.beans.Client;
 import org.kitodo.data.database.beans.ImportConfiguration;
@@ -126,6 +128,7 @@ public class ImportEadProcessesThread extends EmptyTask {
         setAuthenticatedUser();
         List<Integer> newProcessIds = new ArrayList<>();
         int newParentId = 0;
+        boolean stopOnError = ConfigCore.getBooleanParameter(ParameterCore.STOP_EAD_COLLECTION_IMPORT_ON_EXCEPTION);
         try {
             int numberOfElements = XMLUtils.getNumberOfEADElements(xmlString, eadLevel);
             XMLInputFactory inputFactory = XMLInputFactory.newInstance();
@@ -197,7 +200,14 @@ public class ImportEadProcessesThread extends EmptyTask {
                             inProcessElement = false;
                             String content = event.toString();
                             stringBuilder.append(removeDefaultNamespaceUri(content));
-                            newProcessIds.add(parseXmlStringToProcessedTempProcess(stringBuilder.toString()).getProcess().getId());
+                            try {
+                                newProcessIds.add(parseXmlStringToProcessedTempProcess(stringBuilder.toString()).getProcess().getId());
+                            } catch (Exception e) {
+                                logger.error(e.getMessage(), e);
+                                if (stopOnError) {
+                                    throw new ProcessGenerationException("Unable to create process. Cause: " + e.getMessage());
+                                }
+                            }
                             stringBuilder = new StringBuilder();
                         } else {
                             if (inParentProcessElement || inProcessElement) {
