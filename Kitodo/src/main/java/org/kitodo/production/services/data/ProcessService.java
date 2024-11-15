@@ -316,10 +316,10 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
      * Find all parent processes for a process ordered such that the root parent comes first.
      * 
      * @param process the process whose parents are to be found
-     * @return the list of parent processes (direct parents and grand parents, and more)
+     * @return the list of parent processes (direct parents and grandparents, and more)
      */
     public List<Process> findParentProcesses(Process process) {
-        List<Process> parents = new ArrayList<Process>();
+        List<Process> parents = new ArrayList<>();
         Process current = process;
         while (Objects.nonNull(current.getParent())) {
             current = current.getParent();
@@ -958,18 +958,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             convertLastProcessingDates(jsonObject, processDTO);
             convertTaskProgress(jsonObject, processDTO);
 
-            List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
-            List<PropertyDTO> properties = new ArrayList<>();
-            for (Map<String, Object> stringObjectMap : jsonArray) {
-                PropertyDTO propertyDTO = new PropertyDTO();
-                Object title = stringObjectMap.get(JSON_TITLE);
-                Object value = stringObjectMap.get(JSON_VALUE);
-                if (Objects.nonNull(title)) {
-                    propertyDTO.setTitle(title.toString());
-                    propertyDTO.setValue(Objects.nonNull(value) ? value.toString() : "");
-                    properties.add(propertyDTO);
-                }
-            }
+            List<PropertyDTO> properties = getProperties(jsonObject);
             processDTO.setProperties(properties);
 
             if (!related) {
@@ -983,6 +972,22 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             }
         }
         return processDTO;
+    }
+
+    private List<PropertyDTO> getProperties(Map<String, Object> jsonObject) throws DataException {
+        List<Map<String, Object>> jsonArray = ProcessTypeField.PROPERTIES.getJsonArray(jsonObject);
+        List<PropertyDTO> properties = new ArrayList<>();
+        for (Map<String, Object> stringObjectMap : jsonArray) {
+            PropertyDTO propertyDTO = new PropertyDTO();
+            Object title = stringObjectMap.get(JSON_TITLE);
+            Object value = stringObjectMap.get(JSON_VALUE);
+            if (Objects.nonNull(title)) {
+                propertyDTO.setTitle(title.toString());
+                propertyDTO.setValue(Objects.nonNull(value) ? value.toString() : "");
+                properties.add(propertyDTO);
+            }
+        }
+        return properties;
     }
 
 

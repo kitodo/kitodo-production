@@ -1,0 +1,51 @@
+<!--
+ *
+ * (c) Kitodo. Key to digital objects e. V. <contact@kitodo.org>
+ *
+ * This file is part of the Kitodo project.
+ *
+ * It is licensed under GNU General Public License version 3 or later.
+ *
+ * For the full copyright and license information, please read the
+ * GPL3-License.txt file that was distributed with this source code.
+ *
+-->
+
+<ui:composition
+        xmlns="http://www.w3.org/1999/xhtml"
+        xmlns:h="http://xmlns.jcp.org/jsf/html"
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+        xmlns:p="http://primefaces.org/ui">
+    <p:confirmDialog global="true"
+                     showEffect="fade"
+                     hideEffect="explode"
+                     styleClass="confirm-delete"
+                     style="padding-left: var(--default-double-size); padding-right: var(--default-double-size);"
+                     width="640px"
+                     appendTo="@(body)"
+                     message="#{CreateProcessForm.getMaxNumberOfRecordsExceededMessage()}"
+                     widgetVar="maxNumberOfRecordsExceededDialog"
+                     id="maxNumberOfRecordsExceededDialog">
+        <h:form id="maxNumberOfRecordsExceededForm">
+            <h:panelGroup styleClass="ui-confirm-dialog-message"
+                          style="display: block; margin-left: -6px; margin-top: -16px;">
+                <h:outputText value="#{msgs['doYouWantToProceed']}"/>
+            </h:panelGroup>
+            <p:commandButton
+                    id="confirmButton"
+                    value="#{msgs.yes}"
+                    styleClass="ui-confirmdialog-yes primary right"
+                    icon="fa fa-check fa-lg"
+                    iconPos="right"
+                    action="#{CreateProcessForm.importRecordsInBackground()}"
+                    onclick="PF('maxNumberOfRecordsExceededDialog').hide();"/>
+            <p:commandButton
+                    id="cancelButton"
+                    value="#{msgs.no}"
+                    styleClass="ui-confirmdialog-no secondary right"
+                    iconPos="right"
+                    onclick="PF('maxNumberOfRecordsExceededDialog').hide();"
+                    icon="fa fa-times fa-lg" />
+        </h:form>
+    </p:confirmDialog>
+</ui:composition>

@@ -21,5 +21,17 @@ public class StringConstants {
     public static final String DEFAULT_DATE_FORMAT = "yyyy-MM-dd HH:mm:ss";
 
     // acquisition stages
+    public static final String CREATE = "create";
     public static final String EDIT = "edit";
+
+    // EAD string constants
+    public static final String EAD = "ead";
+    public static final String LEVEL = "level";
+    public static final String C_TAG_NAME = "c";
+    // EAD levels
+    public static final String COLLECTION = "collection";
+    public static final String CLASS = "class";
+    public static final String SERIES = "series";
+    public static final String FILE = "file";
+    public static final String ITEM = "item";
 }
