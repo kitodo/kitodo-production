@@ -317,12 +317,6 @@ public enum ParameterCore implements ParameterInterface {
      */
     PAGE_SEPARATORS(new Parameter<>("metsEditor.pageSeparators", "\" \"")),
 
-    /**
-     # Priority list of metadata keys used to display title information in the metadata editors structure and gallery
-     panels.
-     */
-    TITLE_KEYS(new Parameter<>("metsEditor.titleMetadata", "")),
-
     /*
      * backup of metadata configuration
      */
@@ -618,6 +612,8 @@ public enum ParameterCore implements ParameterInterface {
     ACTIVE_MQ_AUTH_USERNAME(new Parameter<>("activeMQ.authUsername", "")),
 
     ACTIVE_MQ_AUTH_PASSWORD(new Parameter<>("activeMQ.authPassword", "")),
+
+    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE(new Parameter<UndefinedParameter>("activeMQ.createNewProcesses.queue")),
 
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
 

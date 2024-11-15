@@ -80,10 +80,14 @@ public class SessionClientController {
      * Display client selection dialog if user is logged in and has multiple clients.
      */
     public void showClientSelectDialog() {
-        if (Objects.isNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
-            PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
+        User currentUser = ServiceManager.getUserService().getCurrentUser();
+        Client defaultClient = currentUser.getDefaultClient();
+        if (Objects.nonNull(defaultClient)) {
+            setSessionClient(defaultClient);
         } else if (userHasOnlyOneClient()) {
             setSessionClient(getFirstClientOfCurrentUser());
+        } else if (Objects.isNull(getCurrentSessionClient()) && !userHasOnlyOneClient()) {
+            PrimeFaces.current().executeScript("PF('selectClientDialog').show();");
         }
     }
 
@@ -160,6 +164,15 @@ public class SessionClientController {
             }
         }
         return clients;
+    }
+
+    /**
+     * Get default client of current user.
+     *
+     * @return default client of current user
+     */
+    public Client getDefaultClientOfCurrentUser() {
+        return ServiceManager.getUserService().getCurrentUser().getDefaultClient();
     }
 
     /**

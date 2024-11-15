@@ -378,7 +378,7 @@
             <label>subtitle</label>
             <label lang="de">UnterTitel</label>
         </key>
-        <key id="TitleDocMain" domain="source">
+        <key id="TitleDocMain" domain="source" use="structureTreeTitle">
             <label>maint title</label>
             <label lang="de">HauptTitel</label>
         </key>

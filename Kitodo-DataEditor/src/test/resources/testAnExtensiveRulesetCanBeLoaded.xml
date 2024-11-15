@@ -314,7 +314,7 @@
             <label>physical page number</label>
             <label lang="de">physische Seitenzahl (Imagenummer)</label>
         </key>
-        <key id="LABEL" domain="mets:div">
+        <key id="LABEL" domain="mets:div" use="structureTreeTitle">
             <label>logical page number</label>
             <label lang="de">logische Seitenzahl (gedruckte Zeitenzahl)</label>
         </key>

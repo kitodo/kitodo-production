@@ -88,11 +88,17 @@
                                 styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
-                        <p:outputLabel value="#{DataEditorForm.structurePanel.titleMetadata eq 'type' ? stripe.label : DataEditorForm.getStructureElementTitle(stripe.structure)}"
-                                       styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
+                        <p:outputLabel styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                        a:data-logicalTreeNodeId="#{stripe.logicalTreeNodeId}"
-                                       rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
+                                       rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}">
+                            <h:outputText value="#{stripe.label}"
+                                          rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('type')}" />
+                            <h:outputText value=" - " 
+                                          rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('+')}" />
+                            <h:outputText value="#{DataEditorForm.getStructureElementTitle(stripe.structure)}"
+                                          rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('title')}" />
+                        </p:outputLabel>
                         <p:outputPanel>
                             <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                             <p:dataList styleClass="structureElementDataList"
@@ -206,7 +212,7 @@
                                 DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE and 
                                 mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
                             icon="fa fa-external-link fa-sm"
-                            styleClass="plain"
+                            styleClass="plain viewPageInNewWindow"
                             outcome="externalView" 
                             target="_blank">
                     <f:param name="processId" value="#{DataEditorForm.process.id}"/>
@@ -216,7 +222,7 @@
                 </p:menuitem>
                 <p:menuitem value="#{msgs.assignToNextElement}"
                             icon="fa fa-link fa-sm"
-                            styleClass="plain"
+                            styleClass="plain assignToNextElement"
                             disabled="#{readOnly}"
                             rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and
                             DataEditorForm.selectedMedia.size() eq 1}"
@@ -230,7 +236,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.unassign}"
                             icon="fa fa-chain-broken fa-sm"
-                            styleClass="plain"
+                            styleClass="plain unassign"
                             disabled="#{readOnly}"
                             rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() == 1}"
                             action="#{DataEditorForm.structurePanel.unassign}"
