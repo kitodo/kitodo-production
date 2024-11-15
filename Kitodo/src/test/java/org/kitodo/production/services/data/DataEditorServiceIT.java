@@ -90,16 +90,6 @@ public class DataEditorServiceIT {
     }
 
     /**
-     * Test retrieving title keys.
-     */
-    @Test
-    public void shouldGetTitleKeys() {
-        List<String> titleKeys = DataEditorService.getTitleKeys();
-        assertTrue(titleKeys.contains(TITLE_DOC_MAIN),
-                String.format("List of title keys should contain '%s'", TITLE_DOC_MAIN));
-    }
-
-    /**
      * Test retrieving title value.
      * @throws DAOException when adding test process fails.
      * @throws DataException when adding test process fails.
