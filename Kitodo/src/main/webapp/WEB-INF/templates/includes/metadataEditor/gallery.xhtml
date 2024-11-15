@@ -88,11 +88,17 @@
                                 styleClass="pageList"
                                 binding="#{currentElement}">
                         <!-- Index 0 of stripes is used to identify the logical root element. -->
-                        <p:outputLabel value="#{DataEditorForm.structurePanel.titleMetadata eq 'type' ? stripe.label : DataEditorForm.getStructureElementTitle(stripe.structure)}"
-                                       styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
+                        <p:outputLabel styleClass="stripe #{DataEditorForm.structurePanel.selectedLogicalNode.selected and DataEditorForm.isStripeSelected(stripe.getStructure()) ? 'selected' : ''}"
                                        a:data-stripe="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe)}"
                                        a:data-logicalTreeNodeId="#{stripe.logicalTreeNodeId}"
-                                       rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}"/>
+                                       rendered="#{DataEditorForm.galleryPanel.stripes.indexOf(stripe) ne 0}">
+                            <h:outputText value="#{stripe.label}"
+                                          rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('type')}" />
+                            <h:outputText value=" - " 
+                                          rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('+')}" />
+                            <h:outputText value="#{DataEditorForm.getStructureElementTitle(stripe.structure)}"
+                                          rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('title')}" />
+                        </p:outputLabel>
                         <p:outputPanel>
                             <!--@elvariable id="structuredThumbnail" type="org.kitodo.production.forms.dataeditor.GalleryMediaContent"-->
                             <p:dataList styleClass="structureElementDataList"

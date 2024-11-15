@@ -23,6 +23,17 @@
             </mets:xmlData>
         </mets:mdWrap>
     </mets:dmdSec>
+    <mets:amdSec>
+        <mets:sourceMD ID="uuid-823ac5e4-368a-3d65-906b-2960aae610e8">
+            <mets:mdWrap>
+                <mets:xmlData>
+                    <kitodo:kitodo>
+                        <kitodo:metadata name="TitleDocMain">Der Titel des Bandes</kitodo:metadata>
+                    </kitodo:kitodo>
+                </mets:xmlData>
+            </mets:mdWrap>
+        </mets:sourceMD>
+    </mets:amdSec>
     <mets:fileSec>
         <mets:fileGrp USE="DEFAULT">
             <mets:file ID="uuid-9e2e7831-e7f8-4dce-b1d8-448376b268ff" MIMETYPE="image/png">
@@ -81,7 +92,7 @@
         </mets:div>
     </mets:structMap>
     <mets:structMap TYPE="LOGICAL">
-        <mets:div ID="uuid-15d624fa-a428-44c1-bea4-da5c85fa7fb9" DMDID="uuid-7804f52e-4e5d-36d2-9883-adc6892bdfd0" TYPE="Volume" ORDER="1"/>
+        <mets:div ID="uuid-15d624fa-a428-44c1-bea4-da5c85fa7fb9" DMDID="uuid-7804f52e-4e5d-36d2-9883-adc6892bdfd0" ADMID="uuid-823ac5e4-368a-3d65-906b-2960aae610e8" TYPE="Volume" ORDER="1"/>
     </mets:structMap>
     <mets:structLink>
         <mets:smLink xlink:to="uuid-2e197ca3-fbbb-4c3c-9b3d-fb2055ec689a" xlink:from="uuid-15d624fa-a428-44c1-bea4-da5c85fa7fb9"/>

@@ -2877,7 +2877,7 @@ Column content
     border-top: 1px solid var(--cloudy-gray);
 }
 
-#logicalStructureHeader .logicalStructureTitle {
+#logicalStructureTitle {
     flex-grow: 1;
     flex-shrink: 1;
     margin-right: var(--default-half-size);
