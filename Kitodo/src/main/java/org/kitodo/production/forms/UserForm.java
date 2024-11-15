@@ -364,6 +364,9 @@ public class UserForm extends BaseForm {
                 for (Client client : this.userObject.getClients()) {
                     if (client.getId().equals(clientId)) {
                         this.userObject.getClients().remove(client);
+                        if (client.equals(this.userObject.getDefaultClient())) {
+                            this.userObject.setDefaultClient(null);
+                        }
                         break;
                     }
                 }

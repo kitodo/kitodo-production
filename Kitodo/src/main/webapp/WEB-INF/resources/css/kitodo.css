@@ -2711,7 +2711,7 @@ Column content
 
 #structureAccordion .scroll-wrapper {
     box-sizing: border-box;
-    height: calc(100% - 53px);
+    height: calc(100% - var(--input-height) - 2 * var(--default-half-size));
     overflow: hidden scroll;
     width: 100%;
 }
@@ -2966,7 +2966,6 @@ Column content
 
 #metadataAccordion,
 #metadataAccordion > .ui-accordion-content,
-#metadataAccordion\:logicalMetadataWrapperPanel,
 #metadataAccordion\:physicalMetadataWrapperPanel,
 #metadataAccordion\:logicalMetadataWrapperPanel_content,
 #metadataAccordion\:physicalMetadataWrapperPanel_content,
@@ -2975,6 +2974,10 @@ Column content
 #metadataAccordion\:metadata\:metadataTable,
 #metadataAccordion\:physicalMetadata\:metadataTable {
     height: 100%;
+}
+
+#metadataAccordion\:logicalMetadataWrapperPanel {
+    height: calc(100% - var(--input-height) - 2 * var(--default-half-size));
 }
 
 #structureAccordion .ui-accordion-header,
@@ -2999,10 +3002,6 @@ Column content
 #metadataAccordion\:physicalMetadata\:metadataTable {
     background: var(--trans-blue);
     overflow-y: scroll;
-}
-
-#metadataAccordion\:metadata\:metadataTable table[role='treegrid'] {
-    margin-bottom: 42px;
 }
 
 #metadataAccordion\:metadata\:metadataTable_data,
