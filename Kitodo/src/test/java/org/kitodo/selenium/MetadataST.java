@@ -215,12 +215,12 @@ public class MetadataST extends BaseTestSelenium {
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
         Pages.getMetadataEditorPage().closeEditor();
-        Pages.getUserEditPage().setPaginationToShowByDefault();
+        Pages.getUserEditPage().togglePaginationToShowByDefault();
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertTrue(Pages.getMetadataEditorPage().isPaginationPanelVisible());
         // disable pagination again to prevent conflicts with other tests (when interacting with metadata table)
         Pages.getMetadataEditorPage().closeEditor();
-        Pages.getUserEditPage().setPaginationToShowByDefault();
+        Pages.getUserEditPage().togglePaginationToShowByDefault();
         Pages.getProcessesPage().goTo().editMetadata(MockDatabase.MEDIA_RENAMING_TEST_PROCESS_TITLE);
         assertFalse(Pages.getMetadataEditorPage().isPaginationPanelVisible());
     }

@@ -80,6 +80,6 @@ class FocusMetadataRow {
 
 }
 
-// register class with global metadataTabel namespace
+// register class with global metadataTable namespace
 var metadataTable = metadataTable || {};
 metadataTable.focusMetadataRow = new FocusMetadataRow();

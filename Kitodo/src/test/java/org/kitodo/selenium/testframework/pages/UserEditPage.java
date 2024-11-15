@@ -196,7 +196,7 @@ public class UserEditPage extends EditPage<UserEditPage> {
     /**
      * Set pagination panel to show by default in metadata editor.
      */
-    public void setPaginationToShowByDefault() throws Exception {
+    public void togglePaginationToShowByDefault() throws Exception {
         openUserConfig();
         switchToTabByIndex(TabIndex.USER_METADATA_EDITOR_SETTINGS.getIndex());
         WebElement switchCheckBox = showPaginationByDefaultSwitch.findElement(By.className("ui-chkbox-box"));
