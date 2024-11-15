@@ -3167,7 +3167,7 @@ Column content
 
 #metadataAccordion\:metadata\:metadataTable_data tr.focusedRow,
 div[id$='metadataTable'].ui-treetable tr.focusedRow {
-    background-color: #ffe;
+    background-color: var(--trans-blue-highlight);
 }
 
 #imagePreviewForm {
