@@ -25,7 +25,6 @@
             <f:selectItem itemLabel="#{msgs.typ}" itemValue="type" />
             <f:selectItem itemLabel="#{msgs.title}" itemValue="title" />
             <f:selectItem itemLabel="#{msgs.typ} - #{msgs.title}" itemValue="type+title" />
-            <!--<f:selectItem itemLabel="#{msgs.typ} - #{msgs.count}" itemValue="type+count" />-->
             <p:ajax event="change" update="@(.ui-tree, .stripe)"/>
         </p:selectOneMenu>
         <p:outputPanel styleClass="logicalStructureMenuWrapper">
@@ -132,8 +131,6 @@
                               rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('+') and !logicalNode.linked}" />
                 <h:outputText value="#{DataEditorForm.getStructureElementTitle(logicalNode.dataObject)}"
                               rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('title') and !logicalNode.linked}"/>
-                <!--<h:outputText value="1234"
-                              rendered="#{DataEditorForm.structurePanel.nodeLabelOption.contains('count') and !logicalNode.linked}"/> -->
                 <h:outputText value="[#{logicalNode.pageRange}]"
                               rendered="#{DataEditorForm.structurePanel.showPageRangeInLogicalTree and logicalNode.pageRange ne null}"
                               styleClass="pageRange"/>

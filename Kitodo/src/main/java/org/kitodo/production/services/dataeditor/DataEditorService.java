@@ -131,14 +131,13 @@ public class DataEditorService {
                     .flatMap(metadataGroup -> metadataGroup.getMetadata().stream())
                     .collect(Collectors.toList());
         }
-        String metadataTitle = metadata.stream()
+        return metadata.stream()
                 .filter(currentMetadata -> Objects.equals(currentMetadata.getKey(), metadataPath[lastIndex]))
                 .filter(MetadataEntry.class::isInstance).map(MetadataEntry.class::cast)
                 .map(MetadataEntry::getValue)
                 .filter(value -> !value.isEmpty())
                 .findFirst()
                 .orElse("");
-        return metadataTitle;
     }
 
     /**

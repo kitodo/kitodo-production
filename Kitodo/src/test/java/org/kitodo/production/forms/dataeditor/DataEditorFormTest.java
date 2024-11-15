@@ -15,7 +15,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -76,7 +75,7 @@ public class DataEditorFormTest {
     @Test
     public void shouldGetStructuralElementTitle() {
         // define which metadata keys to use as title
-        Collection<String> metadataKeys = Arrays.asList(TITLE_METADATA_KEY);
+        Collection<String> metadataKeys = List.of(TITLE_METADATA_KEY);
         // prepare test structure
         LogicalDivision structure = new LogicalDivision();
         MetadataEntry titleMetadata = new MetadataEntry();
