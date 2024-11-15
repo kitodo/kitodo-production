@@ -75,7 +75,7 @@
                     listener="#{DataEditorForm.structurePanel.treeLogicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
-                                changeToMapView();
+                                metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 expandMetadata('logical-metadata-tab');"
                     update="galleryHeadingWrapper
@@ -91,7 +91,7 @@
                     onstart="$('#contextMenuLogicalTree .ui-menuitem').addClass('ui-state-disabled')"
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
-                                changeToMapView();
+                                metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 PF('contextMenuLogicalTree').show(currentEvent)"
                     update="@(.stripe)
@@ -178,6 +178,19 @@
                     update="dialogAddDocStrucTypeDialog">
                 <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
             </p:menuitem>
+            <p:menuitem value="#{msgs.viewPageInNewWindow}"
+                        rendered="#{
+                                DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE and
+                                mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
+                        icon="fa fa-external-link fa-sm"
+                        styleClass="plain viewPageInNewWindow"
+                        outcome="externalView" 
+                        target="_blank">
+                <f:param name="processId" value="#{DataEditorForm.process.id}"/>
+                <f:param name="mediaId" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                <f:param name="mimeType" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType}"/>
+                <f:param name="cachingUUID" value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+            </p:menuitem>
             <p:menuitem value="#{msgs.changeDocstructType}"
                         rendered="#{DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.STRUCTURE_NODE_TYPE and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         icon="fa fa-pencil fa-sm"
@@ -189,7 +202,7 @@
                         update="dialogEditDocStrucTypeDialog"/>
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
-                        styleClass="plain"
+                        styleClass="plain assignToNextElement"
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         action="#{DataEditorForm.structurePanel.assign}"
@@ -202,7 +215,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.unassign}"
                         icon="fa fa-chain-broken fa-sm"
-                        styleClass="plain"
+                        styleClass="plain unassign"
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and not DataEditorForm.structurePanel.selectedLogicalNode.data.linked}"
                         action="#{DataEditorForm.structurePanel.unassign}"

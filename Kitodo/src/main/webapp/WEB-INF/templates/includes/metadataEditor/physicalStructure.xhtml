@@ -34,7 +34,7 @@
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
                     oncomplete="scrollToSelectedThumbnail();
                                 scrollToSelectedPaginationRow();
-                                initializeImage();
+                                metadataEditor.detailMap.update();
                                 metadataEditor.gallery.mediaView.update();
                                 expandMetadata('physical-metadata-tab');"
                     update="galleryHeadingWrapper
@@ -44,7 +44,7 @@
             <p:ajax event="contextMenu"
                     listener="#{DataEditorForm.structurePanel.treePhysicalSelect}"
                     onstart="$('#contextMenuPhysicalTree .ui-menuitem').addClass('ui-state-disabled')"
-                    oncomplete="initializeImage();metadataEditor.gallery.mediaView.update();PF('contextMenuPhysicalTree').show(currentEvent)"
+                    oncomplete="metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();PF('contextMenuPhysicalTree').show(currentEvent)"
                     update="@(.stripe)
                                 @(.thumbnail)
                                 galleryHeadingWrapper
@@ -102,7 +102,7 @@
                         update="dialogAddPhysicalDivisionForm"/>
             <p:menuitem value="#{msgs.assignToNextElement}"
                         icon="fa fa-link fa-sm"
-                        styleClass="plain"
+                        styleClass="plain assignToNextElement"
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and not
                             DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() eq 1}"
@@ -116,7 +116,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.unassign}"
                         icon="fa fa-chain-broken fa-sm"
-                        styleClass="plain"
+                        styleClass="plain unassign"
                         disabled="#{readOnly}"
                         rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() == 1}"
                         action="#{DataEditorForm.structurePanel.unassign}"

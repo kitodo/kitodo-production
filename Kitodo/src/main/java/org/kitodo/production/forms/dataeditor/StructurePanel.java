@@ -1686,7 +1686,7 @@ public class StructurePanel implements Serializable {
     }
 
     private LogicalDivision getTreeNodeStructuralElement(TreeNode treeNode) {
-        if (treeNode.getData() instanceof StructureTreeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
                 return (LogicalDivision) structureTreeNode.getDataObject();
@@ -1696,10 +1696,20 @@ public class StructurePanel implements Serializable {
     }
 
     private PhysicalDivision getTreeNodePhysicalDivision(TreeNode treeNode) {
-        if (treeNode.getData() instanceof StructureTreeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
             if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
                 return (PhysicalDivision) structureTreeNode.getDataObject();
+            }
+        }
+        return null;
+    }
+
+    private View getTreeNodeView(TreeNode treeNode) {
+        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                return (View) structureTreeNode.getDataObject();
             }
         }
         return null;
@@ -1767,28 +1777,101 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Check if the selected Node's PhysicalDivision can be assigned to the next logical element in addition to the current assignment.
+     * Find the next logical structure node that can be used to create a new link to the currently selected node. 
+     * The node needs to be the last node amongst its siblings.
+     * 
+     * @param node the tree node of the currently selected physical devision node
+     * @return the next logical tree node 
+     */
+    private TreeNode findNextLogicalNodeForViewAssignment(TreeNode node) {
+        if (Objects.isNull(getTreeNodeView(node))) {
+            // node is not a view
+            return null;
+        }
+
+        List<TreeNode> viewSiblings = node.getParent().getChildren();
+        if (viewSiblings.indexOf(node) != viewSiblings.size() - 1) {
+            // view is not last view amongst siblings
+            return null;
+        }
+
+        // pseudo-recursively find next logical node
+        return findNextLogicalNodeForViewAssignmentRecursive(node.getParent());
+    }
+
+    /**
+     * Find the next logical structure node that can be used to create a link by pseudo-recursively iterating over 
+     * logical parent and logical children nodes. 
+     * 
+     * @param node the tree node of the logical division
+     * @return the tree node of the next logical division
+     */
+    private TreeNode findNextLogicalNodeForViewAssignmentRecursive(TreeNode node) {
+        TreeNode current = node;
+
+        while (Objects.nonNull(current)) {
+            if (Objects.isNull(getTreeNodeStructuralElement(current))) {
+                // node is not a logical node
+                return null;
+            }
+
+            // check whether next sibling is a logical node as well
+            List<TreeNode> currentSiblings = current.getParent().getChildren();
+            int currentIndex = currentSiblings.indexOf(current);
+
+            if (currentSiblings.size() > currentIndex + 1) {
+                TreeNode nextSibling = currentSiblings.get(currentIndex + 1);
+                if (Objects.isNull(getTreeNodeStructuralElement(nextSibling))) {
+                    // next sibling is not a logical node
+                    return null;
+                }
+
+                // next sibling is a logical node and potential valid result, unless there are children
+                TreeNode nextLogical = nextSibling;
+
+                // check sibling has children (with first child being another logical node)
+                while (!nextLogical.getChildren().isEmpty()) {
+                    TreeNode firstChild = nextLogical.getChildren().get(0);
+                    if (Objects.isNull(getTreeNodeStructuralElement(firstChild))) {
+                        // first child is not a logical node
+                        return nextLogical;
+                    }
+                    // iterate to child node
+                    nextLogical = firstChild;
+                }
+                return nextLogical;
+            }
+
+            // node is last amongst siblings
+            // iterate to parent node
+            current = current.getParent();
+        }
+        return null;
+    }
+
+    /**
+     * Check if the selected Node's PhysicalDivision can be assigned to the next logical element in addition to the 
+     * current assignment.
+     * 
      * @return {@code true} if the PhysicalDivision can be assigned to the next LogicalDivision
      */
     public boolean isAssignableSeveralTimes() {
-        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof  StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-            if (structureTreeNode.getDataObject() instanceof View) {
-                List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
-                int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
-                List<TreeNode> viewSiblings = selectedLogicalNode.getParent().getChildren();
-                // check for selected node's positions and siblings after selected node's parent
-                if (viewSiblings.indexOf(selectedLogicalNode) == viewSiblings.size() - 1
-                        && logicalNodeSiblings.size() > logicalNodeIndex + 1) {
-                    TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
-                    if (nextSibling.getData() instanceof StructureTreeNode) {
-                        StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
-                        return structureTreeNodeSibling.getDataObject() instanceof LogicalDivision;
+        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(selectedLogicalNode);
+        if (Objects.nonNull(nextLogical)) {
+            // check whether first child is already view of current node (too avoid adding views multiple times)
+            if (!nextLogical.getChildren().isEmpty()) {
+                TreeNode childNode = nextLogical.getChildren().get(0);
+                View childNodeView = getTreeNodeView(childNode);
+                View selectedView = getTreeNodeView(selectedLogicalNode);
+                if (Objects.nonNull(childNodeView) && Objects.nonNull(selectedView)) {
+                    if (childNodeView.equals(selectedView)) {
+                        // first child is already a view for the currently selected node
+                        return false;
                     }
                 }
             }
+            return true;
         }
-
         return false;
     }
 
@@ -1796,14 +1879,12 @@ public class StructurePanel implements Serializable {
      * Assign selected Node's PhysicalDivision to the next LogicalDivision.
      */
     public void assign() {
-        if (isAssignableSeveralTimes()) {
+        TreeNode nextLogical = findNextLogicalNodeForViewAssignment(selectedLogicalNode);
+        if (Objects.nonNull(nextLogical)) {
             View view = (View) ((StructureTreeNode) selectedLogicalNode.getData()).getDataObject();
             View viewToAssign = new View();
             viewToAssign.setPhysicalDivision(view.getPhysicalDivision());
-            List<TreeNode> logicalNodeSiblings = selectedLogicalNode.getParent().getParent().getChildren();
-            int logicalNodeIndex = logicalNodeSiblings.indexOf(selectedLogicalNode.getParent());
-            TreeNode nextSibling = logicalNodeSiblings.get(logicalNodeIndex + 1);
-            StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextSibling.getData();
+            StructureTreeNode structureTreeNodeSibling = (StructureTreeNode) nextLogical.getData();
             LogicalDivision logicalDivision = (LogicalDivision) structureTreeNodeSibling.getDataObject();
             dataEditor.assignView(logicalDivision, viewToAssign, 0);
             severalAssignments.add(viewToAssign.getPhysicalDivision());

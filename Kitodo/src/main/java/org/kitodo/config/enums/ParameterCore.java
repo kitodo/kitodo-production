@@ -613,6 +613,8 @@ public enum ParameterCore implements ParameterInterface {
 
     ACTIVE_MQ_AUTH_PASSWORD(new Parameter<>("activeMQ.authPassword", "")),
 
+    ACTIVE_MQ_CREATE_NEW_PROCESSES_QUEUE(new Parameter<UndefinedParameter>("activeMQ.createNewProcesses.queue")),
+
     ACTIVE_MQ_FINALIZE_STEP_QUEUE(new Parameter<UndefinedParameter>("activeMQ.finalizeStep.queue")),
 
     ACTIVE_MQ_KITODO_SCRIPT_ALLOW(new Parameter<UndefinedParameter>("activeMQ.kitodoScript.allow")),

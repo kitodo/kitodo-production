@@ -66,7 +66,7 @@
                     <p:commandButton id="previewButton"
                                      update="imagePreviewForm galleryHeadingWrapper"
                                      icon="fa fa-file"
-                                     oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();changeToMapView();metadataEditor.gallery.mediaView.update();"
+                                     oncomplete="metadataEditor.shortcuts.updateViews();scrollToSelectedPreviewThumbnail();metadataEditor.detailMap.update();metadataEditor.gallery.mediaView.update();"
                                      title="#{msgs['dataEditor.galleryDetailView']}"
                                      styleClass="#{DataEditorForm.galleryPanel.galleryViewMode eq 'preview' ? 'active' : 'inactive'}">
                         <f:setPropertyActionListener value="preview" target="#{DataEditorForm.galleryPanel.galleryViewMode}"/>
@@ -207,9 +207,22 @@
                             update="dialogAddDocStrucTypeDialog">
                     <f:actionListener binding="#{DataEditorForm.addDocStrucTypeDialog.preparePreselectedViews()}"/>
                 </p:menuitem>
+                <p:menuitem value="#{msgs.viewPageInNewWindow}"
+                            rendered="#{
+                                DataEditorForm.structurePanel.selectedLogicalNode.type eq StructurePanel.VIEW_NODE_TYPE and 
+                                mediaProvider.hasPreviewVariant(DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key))}"
+                            icon="fa fa-external-link fa-sm"
+                            styleClass="plain viewPageInNewWindow"
+                            outcome="externalView" 
+                            target="_blank">
+                    <f:param name="processId" value="#{DataEditorForm.process.id}"/>
+                    <f:param name="mediaId" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).id}"/>
+                    <f:param name="mimeType" value="#{DataEditorForm.galleryPanel.getGalleryMediaContent(DataEditorForm.galleryPanel.lastSelection.key).mediaViewMimeType}"/>
+                    <f:param name="cachingUUID" value="#{DataEditorForm.galleryPanel.cachingUUID}"/>
+                </p:menuitem>
                 <p:menuitem value="#{msgs.assignToNextElement}"
                             icon="fa fa-link fa-sm"
-                            styleClass="plain"
+                            styleClass="plain assignToNextElement"
                             disabled="#{readOnly}"
                             rendered="#{DataEditorForm.structurePanel.assignableSeveralTimes and
                             DataEditorForm.selectedMedia.size() eq 1}"
@@ -223,7 +236,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.unassign}"
                             icon="fa fa-chain-broken fa-sm"
-                            styleClass="plain"
+                            styleClass="plain unassign"
                             disabled="#{readOnly}"
                             rendered="#{DataEditorForm.structurePanel.assignedSeveralTimes and DataEditorForm.selectedMedia.size() == 1}"
                             action="#{DataEditorForm.structurePanel.unassign}"
@@ -297,8 +310,8 @@
                                     galleryWrapperPanel"/>
             </p:contextMenu>
         </h:form>
-        <h:outputStylesheet name="webjars/openlayers/5.2.0/ol.css"/>
-        <h:outputScript library="webjars" name="openlayers/5.2.0/ol.js" />
+        <h:outputStylesheet name="webjars/openlayers/6.14.1/ol.css"/>
+        <h:outputScript library="webjars" name="openlayers/6.14.1/ol.js" />
         <h:outputScript name="js/ol_custom.js"/>
         <h:outputScript name="js/metadataeditor_gallery_drag_drop.js" rendered="#{editImages}" />
     </p:panel>
