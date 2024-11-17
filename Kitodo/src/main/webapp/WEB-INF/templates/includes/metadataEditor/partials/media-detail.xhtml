@@ -94,20 +94,24 @@
             </p:outputPanel>
         </ui:fragment>
 
-        <p:outputPanel styleClass="mediaDetailNavigationPanel">
-            <p:commandButton title="#{msgs['dataEditor.navigateToPreviousElement']}"
+        <p:outputPanel id="mediaDetailNavigationPanel">
+            <p:commandButton id="navigateToPreviousElementFast"
+                             title="#{msgs['dataEditor.navigateToPreviousElement']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
                              icon="fa fa-angle-double-left fa-lg"
                              onclick="metadataEditor.detailView.navigate(-20);" />
-            <p:commandButton title="#{msgs['dataEditor.navigateToPreviousElement']}"
+            <p:commandButton id="navigateToPreviousElementSlow"
+                             title="#{msgs['dataEditor.navigateToPreviousElement']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
                              icon="fa fa-angle-left fa-lg"
                              onclick="metadataEditor.detailView.navigate(-1);" />
-            <p:commandButton title="#{msgs['dataEditor.navigateToNextElement']}"
+            <p:commandButton id="navigateToNextElementSlow"
+                             title="#{msgs['dataEditor.navigateToNextElement']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
                              icon="fa fa-angle-right fa-lg"
                              onclick="metadataEditor.detailView.navigate(+1);" />
-            <p:commandButton title="#{msgs['dataEditor.navigateToNextElement']}"
+            <p:commandButton id="navigateToNextElementFast"
+                             title="#{msgs['dataEditor.navigateToNextElement']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
                              icon="fa fa-angle-double-right fa-lg"
                              onclick="metadataEditor.detailView.navigate(+20);" />

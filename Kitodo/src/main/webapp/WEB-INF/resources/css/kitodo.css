@@ -3426,7 +3426,7 @@ Column content
     background-color: var(--blue);
 }
 
-#imagePreviewForm .mediaDetailNavigationPanel {
+#imagePreviewForm\:mediaDetailNavigationPanel {
     position: absolute;
     width: 100%;
     bottom: 0;
@@ -3434,18 +3434,18 @@ Column content
     pointer-events: none;
 }
 
-#imagePreviewForm .mediaDetailNavigationPanel button {
+#imagePreviewForm\:mediaDetailNavigationPanel button {
     margin: var(--default-full-size) var(--default-half-size);
     pointer-events: all;
     opacity: 0.0;
     transition: opacity 0.1s linear;
 }
 
-#imagePreviewForm:hover .mediaDetailNavigationPanel button {
+#imagePreviewForm:hover #imagePreviewForm\:mediaDetailNavigationPanel button {
     opacity: 1.0;
 }
 
-#imagePreviewForm .mediaDetailNavigationPanel button:enabled:hover {
+#imagePreviewForm\:mediaDetailNavigationPanel button:enabled:hover {
     background: var(--blue);
 }
 
