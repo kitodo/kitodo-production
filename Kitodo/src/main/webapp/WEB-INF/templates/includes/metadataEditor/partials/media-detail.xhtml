@@ -95,23 +95,23 @@
         </ui:fragment>
 
         <p:outputPanel id="mediaDetailNavigationPanel">
-            <p:commandButton id="navigateToPreviousElementFast"
-                             title="#{msgs['dataEditor.navigateToPreviousElement']}"
+            <p:commandButton id="navigateToPreviousElementMany"
+                             title="#{msgs['dataEditor.navigateToPreviousElementMany']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
                              icon="fa fa-angle-double-left fa-lg"
                              onclick="metadataEditor.detailView.navigate(-20);" />
-            <p:commandButton id="navigateToPreviousElementSlow"
-                             title="#{msgs['dataEditor.navigateToPreviousElement']}"
+            <p:commandButton id="navigateToPreviousElementOne"
+                             title="#{msgs['dataEditor.navigateToPreviousElementOne']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaFirst()}"
                              icon="fa fa-angle-left fa-lg"
                              onclick="metadataEditor.detailView.navigate(-1);" />
-            <p:commandButton id="navigateToNextElementSlow"
-                             title="#{msgs['dataEditor.navigateToNextElement']}"
+            <p:commandButton id="navigateToNextElementOne"
+                             title="#{msgs['dataEditor.navigateToNextElementOne']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
                              icon="fa fa-angle-right fa-lg"
                              onclick="metadataEditor.detailView.navigate(+1);" />
-            <p:commandButton id="navigateToNextElementFast"
-                             title="#{msgs['dataEditor.navigateToNextElement']}"
+            <p:commandButton id="navigateToNextElementMany"
+                             title="#{msgs['dataEditor.navigateToNextElementMany']}"
                              disabled="#{DataEditorForm.galleryPanel.isSelectedMediaLast()}"
                              icon="fa fa-angle-double-right fa-lg"
                              onclick="metadataEditor.detailView.navigate(+20);" />
