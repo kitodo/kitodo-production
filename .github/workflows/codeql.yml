@@ -14,7 +14,8 @@ name: "CodeQL"
 on:
   push:
   pull_request:
-    branches: [ master ]
+    branches:
+      - 3.8.x
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
