@@ -23,10 +23,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.Table;
 
 import org.kitodo.data.database.persistence.ClientDAO;
 
 @Entity
+@Table(name = "client")
 public class Client extends BaseBean {
 
     @Column(name = "name")

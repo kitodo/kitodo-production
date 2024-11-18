@@ -127,7 +127,6 @@ public class Process extends BaseTemplateBean {
                 @JoinColumn(name = "property_id", foreignKey = @ForeignKey(name = "FK_workpiece_x_property_property_id")) })
     private List<Property> workpieces;
 
-    @LazyCollection(LazyCollectionOption.FALSE)
     @ManyToMany(mappedBy = "processes")
     private List<Batch> batches = new ArrayList<>();
 

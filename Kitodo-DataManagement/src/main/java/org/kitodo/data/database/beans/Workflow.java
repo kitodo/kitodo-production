@@ -35,7 +35,6 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 public class Workflow extends BaseBean {
 
     @GenericField
-    @Column(name = "title")
     private String title;
 
     @Column(name = "status")
