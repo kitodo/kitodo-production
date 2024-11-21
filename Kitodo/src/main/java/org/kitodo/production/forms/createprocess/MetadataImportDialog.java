@@ -54,6 +54,9 @@ public abstract class MetadataImportDialog {
      */
     MetadataImportDialog(CreateProcessForm createProcessForm) {
         this.createProcessForm = createProcessForm;
+        this.createProcessForm.numberOfEadElements = 0;
+        this.createProcessForm.setXmlString("");
+        this.createProcessForm.setFilename("");
     }
 
     void attachToExistingParentAndGenerateAtstslIfNotExist(TempProcess tempProcess)

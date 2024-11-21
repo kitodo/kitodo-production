@@ -36,7 +36,6 @@
             <h:outputText value="#{msgs.createNewProcess} (#{msgs.template}: '#{CreateProcessForm.template.title}')"
                           styleClass="shortable"/>
         </h3>
-
         <p:button id="cancel"
                   value="#{msgs.cancel}"
                   onclick="setConfirmUnload(false);"
@@ -125,6 +124,7 @@
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/progress.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/searchEdit.xhtml"/>
         <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/addMetadata.xhtml"/>
+        <ui:include src="/WEB-INF/templates/includes/processFromTemplate/dialogs/maxNumberOfRecordsExceeded.xhtml"/>
     </ui:define>
 
     <ui:define name="breadcrumbs">
@@ -137,6 +137,7 @@
     <ui:define name="page-scripts">
         <h:outputScript name="js/defaultScript.js" target="body"/>
         <h:outputScript name="js/metadata_editor.js" target="body"/>
+        <h:outputScript name="js/metadata_table.js" target="body"/>
     </ui:define>
 
 </ui:composition>

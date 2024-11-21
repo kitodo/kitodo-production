@@ -22,7 +22,7 @@
               id="searchEditDialog"
               width="578"
               modal="true"
-              visible="#{CreateProcessForm.defaultConfigurationType eq 'PROCESS_TEMPLATE'}"
+              visible="#{false}"
               appendTo="@(body)"
               resizable="false">
         <h3>#{msgs.processTemplate}</h3>
@@ -58,6 +58,7 @@
                                  icon="fa fa-download" iconPos="right"/>
                 <p:commandButton id="close"
                                  value="#{msgs.close}"
+                                 process="@this"
                                  styleClass="secondary right"
                                  icon="fa fa-times fa-lg"
                                  iconPos="right"

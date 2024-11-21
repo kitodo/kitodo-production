@@ -2401,6 +2401,17 @@ form#metadata div label,
     margin: 0;
 }
 
+.metadata-import-dialog-form .ead-level-selection-table {
+    width: 100%;
+}
+
+.metadata-import-dialog-form .ead-level-selection-table > tbody > tr > td.ui-panelgrid-cell {
+    vertical-align: top;
+}
+
+.ui-dialog .ui-panelgrid-cell div.ead-level-selection div {
+    margin-bottom: auto;
+}
 
 #metadataAccordion\:metadata .ui-treetable-indent,
 #metadataAccordion\:metadata .ui-treetable-toggler {
@@ -3163,6 +3174,11 @@ Column content
 #metadataAccordion\:physicalMetadata\:metadataTable_data .ui-selectoneradio label {
     display: inline-block;
     overflow: hidden;
+}
+
+#metadataAccordion\:metadata\:metadataTable_data tr.focusedRow,
+div[id$='metadataTable'].ui-treetable tr.focusedRow {
+    background-color: var(--trans-blue-highlight);
 }
 
 #imagePreviewForm {

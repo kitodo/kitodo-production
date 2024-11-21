@@ -31,6 +31,7 @@
                                   styleClass="dialogFieldWrapper">
                         <div>
                             <p:selectOneMenu id="metadataTypeSelection"
+                                             widgetVar="metadataTypeSelection"
                                              value="#{CreateProcessForm.addMetadataDialog.selectedMetadata}">
                                 <f:selectItems value="#{CreateProcessForm.addMetadataDialog.addableMetadata}"/>
                             </p:selectOneMenu>
@@ -43,7 +44,7 @@
                                          action="#{CreateProcessForm.processMetadata.addMetadataEntry}"
                                          process="addMetadataDialog"
                                          update="editForm:processFromTemplateTabView:metadataTable editForm:processFromTemplateTabView:addMetadataButtonWrapper"
-                                         oncomplete="PF('addMetadataDialog').hide();"
+                                         oncomplete="PF('addMetadataDialog').hide();metadataTable.focusMetadataRow.focus();"
                                          value="#{msgs.apply}"
                                          styleClass="primary right"/>
                         <p:commandButton id="cancel"
