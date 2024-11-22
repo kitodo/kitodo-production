@@ -1070,11 +1070,7 @@ public class GalleryPanel {
             return false;
         }
 
-        if (firstPhysicalDivision.equals(lastSelection.getKey())) {
-            return true;
-        }
-
-        return false;
+        return firstPhysicalDivision.equals(lastSelection.getKey());
     }
 
     /**
@@ -1093,15 +1089,11 @@ public class GalleryPanel {
             return false;
         }
 
-        PhysicalDivision firstPhysicalDivision = medias.get(medias.size() - 1).getView().getPhysicalDivision();
-        if (Objects.isNull(firstPhysicalDivision)) {
+        PhysicalDivision lastPhysicalDivision = medias.get(medias.size() - 1).getView().getPhysicalDivision();
+        if (Objects.isNull(lastPhysicalDivision)) {
             return false;
         }
 
-        if (firstPhysicalDivision.equals(lastSelection.getKey())) {
-            return true;
-        }
-
-        return false;
+        return lastPhysicalDivision.equals(lastSelection.getKey());
     }
 }

@@ -226,15 +226,15 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
         
         // image is thumbnail 2, which is the very first image, such that left buttons are disabled
         assertEquals("Bild 2, Seite -", findElementsByCSS(GALLERY_HEADING_WRAPPER_SELECTOR).get(0).getText().strip());
-        WebElement leftFast = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementMany").get(0);
-        WebElement rightFast = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementMany").get(0);
+        WebElement leftMany = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementMany").get(0);
+        WebElement rightMany = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementMany").get(0);
 
         // check left buttons are disabled and right buttons are enabled
-        assertFalse(leftFast.isEnabled());
-        assertTrue(rightFast.isEnabled());
+        assertFalse(leftMany.isEnabled());
+        assertTrue(rightMany.isEnabled());
         
         // click on right-many button, which selects last image
-        rightFast.click();
+        rightMany.click();
 
         // wait for image 3 to be shown
         pollAssertTrue(
@@ -244,15 +244,15 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
         );
 
         // find buttons again because image preview is re-rendered
-        WebElement leftSlow = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0);
-        WebElement rightSlow = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementOne").get(0);
+        WebElement leftOne = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0);
+        WebElement rightOne = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementOne").get(0);
 
-        // check left buttons are enalbed and right buttons are disabled
-        assertTrue(leftSlow.isEnabled());
-        assertFalse(rightSlow.isEnabled());
+        // check left buttons are enabled and right buttons are disabled
+        assertTrue(leftOne.isEnabled());
+        assertFalse(rightOne.isEnabled());
 
         // click on left-one button, selecting image 1 (middle image of all 3 images)
-        leftSlow.click();
+        leftOne.click();
 
         // wait for image 1 to be shown
         pollAssertTrue(
@@ -262,16 +262,16 @@ public class MetadataImagePreviewST extends BaseTestSelenium {
         );
 
         // find buttons again because image preview is re-rendered
-        leftSlow = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0);
-        rightSlow = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementOne").get(0);
+        leftOne = findElementsByCSS("#imagePreviewForm\\:navigateToPreviousElementOne").get(0);
+        rightOne = findElementsByCSS("#imagePreviewForm\\:navigateToNextElementOne").get(0);
 
         // both left and right buttons are enabled
-        assertTrue(leftSlow.isEnabled());
-        assertTrue(rightSlow.isEnabled());
+        assertTrue(leftOne.isEnabled());
+        assertTrue(rightOne.isEnabled());
 
         // check that buttons are displayed (since mouse in hovering buttons due to prior click)
-        assertTrue(leftSlow.isDisplayed());
-        assertTrue(rightSlow.isDisplayed());
+        assertTrue(leftOne.isDisplayed());
+        assertTrue(rightOne.isDisplayed());
 
         // move mouse to main header menu
         new Actions(Browser.getDriver()).moveToElement(findElementsByCSS("#menu").get(0)).perform();
