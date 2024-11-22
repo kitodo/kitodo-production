@@ -3280,6 +3280,7 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
     width: calc(100% - 100px);
     align-items: center;
     justify-content: left;
+    position: relative;
 }
 
 #imagePreviewForm\:mediaDetailMediaContainer {
@@ -3439,6 +3440,29 @@ div[id$='metadataTable'].ui-treetable tr.focusedRow {
 
 #map div.ol-control button {
     background-color: var(--blue);
+}
+
+#imagePreviewForm\:mediaDetailNavigationPanel {
+    position: absolute;
+    width: 100%;
+    bottom: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+#imagePreviewForm\:mediaDetailNavigationPanel button {
+    margin: var(--default-full-size) var(--default-half-size);
+    pointer-events: all;
+    opacity: 0.0;
+    transition: opacity 0.1s linear;
+}
+
+#imagePreviewForm:hover #imagePreviewForm\:mediaDetailNavigationPanel button {
+    opacity: 1.0;
+}
+
+#imagePreviewForm\:mediaDetailNavigationPanel button:enabled:hover {
+    background: var(--blue);
 }
 
 #galleryWrapperPanel,
