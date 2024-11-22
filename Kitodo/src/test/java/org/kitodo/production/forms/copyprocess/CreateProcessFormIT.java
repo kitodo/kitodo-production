@@ -75,66 +75,109 @@ public class CreateProcessFormIT {
         MockDatabase.cleanDatabase();
     }
 
+    // Helper to create and initialize a CreateProcessForm with common properties
+    private CreateProcessForm setupCreateProcessForm(String docType, String title) throws Exception {
+        CreateProcessForm form = new CreateProcessForm();
+        form.getProcessDataTab().setDocType(docType);
+
+        Process process = new Process();
+        Workpiece workPiece = new Workpiece();
+        TempProcess tempProcess = new TempProcess(process, workPiece);
+        form.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
+
+        form.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
+        form.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
+        form.getMainProcess().setTitle(title);
+
+        form.updateRulesetAndDocType(tempProcess.getProcess().getRuleset());
+        return form;
+    }
+
+    // Helper to manage script permissions
+    private void setScriptPermissions(boolean enable) throws Exception {
+        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
+        if (!SystemUtils.IS_OS_WINDOWS) {
+            if (enable) {
+                ExecutionPermission.setExecutePermission(script);
+            } else {
+                ExecutionPermission.setNoExecutePermission(script);
+            }
+        }
+    }
+
+    // Helper to clean up database and file system
+    private void cleanUpProcess(Process process) throws Exception {
+        Integer processId = process.getId();
+        processService.remove(processId);
+        fileService.delete(URI.create(processId.toString()));
+    }
+
     @Test
     public void shouldCreateNewProcess() throws Exception {
-        CreateProcessForm underTest = new CreateProcessForm();
-        underTest.getProcessDataTab().setDocType("Monograph");
-        Process newProcess = new Process();
-        Workpiece newWorkPiece = new Workpiece();
-        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
-        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
-        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
-        underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
-        underTest.getMainProcess().setTitle("title");
-        underTest.updateRulesetAndDocType(tempProcess.getProcess().getRuleset());
-        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setExecutePermission(script);
-        }
+        CreateProcessForm underTest = setupCreateProcessForm("Monograph", "title");
+
+        setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
-        if (!SystemUtils.IS_OS_WINDOWS) {
-            ExecutionPermission.setNoExecutePermission(script);
-        }
+        setScriptPermissions(false);
+
         long after = processService.count();
         assertEquals(before + 1, after, "No process was created!");
 
-        // clean up database, index and file system
-        Integer processId = newProcess.getId();
-        processService.remove(processId);
-        fileService.delete(URI.create(processId.toString()));
+        cleanUpProcess(underTest.getMainProcess());
     }
 
-    /**
-     * tests creation of processes without workflow.
-     */
     @Test
     public void shouldCreateNewProcessWithoutWorkflow() throws Exception {
-        CreateProcessForm underTest = new CreateProcessForm();
-        underTest.getProcessDataTab().setDocType("MultiVolumeWork");
-        Process newProcess = new Process();
-        Workpiece newWorkPiece = new Workpiece();
-        TempProcess tempProcess = new TempProcess(newProcess, newWorkPiece);
-        underTest.setProcesses(new LinkedList<>(Collections.singletonList(tempProcess)));
-        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
-        underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
-        underTest.getMainProcess().setTitle("title");
-        underTest.updateRulesetAndDocType(tempProcess.getProcess().getRuleset());
+        CreateProcessForm underTest = setupCreateProcessForm("MultiVolumeWork", "title");
 
-        File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
-        ExecutionPermission.setExecutePermission(script);
+        setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
-        ExecutionPermission.setNoExecutePermission(script);
+        setScriptPermissions(false);
+
         long after = processService.count();
         assertEquals(before + 1, after, "No process was created!");
+        assertTrue(underTest.getMainProcess().getTasks().isEmpty(), "Process should not have tasks");
+        assertNull(underTest.getMainProcess().getSortHelperStatus(), "Process should not have sortHelperStatus");
 
-        assertTrue(newProcess.getTasks().isEmpty(), "Process should not have tasks");
-        assertNull(newProcess.getSortHelperStatus(), "process should not have sortHelperStatus");
-
-        // clean up database, index and file system
-        Integer processId = newProcess.getId();
-        processService.remove(processId);
-        fileService.delete(URI.create(processId.toString()));
+        cleanUpProcess(underTest.getMainProcess());
     }
+
+    @Test
+    public void shouldNotCreateNewProcessWithInvalidTitle() throws Exception {
+        CreateProcessForm underTest = setupCreateProcessForm("Monograph", "title with whitespaces");
+
+        long before = processService.count();
+        underTest.createNewProcess();
+        long after = processService.count();
+
+        assertEquals(before, after, "A process with an invalid title was created!");
+    }
+
+    @Test
+    public void shouldNotAllowDuplicateTitles() throws Exception {
+        // First process creation
+        CreateProcessForm underTest = setupCreateProcessForm("Monograph", "title");
+
+        setScriptPermissions(true);
+        long before = processService.count();
+        underTest.createNewProcess();
+        setScriptPermissions(false);
+
+        long after = processService.count();
+        assertEquals(before + 1, after, "First process creation failed. No process was created!");
+
+        // Second process creation with duplicate title
+        CreateProcessForm underTestTwo = setupCreateProcessForm("Monograph", "title");
+
+        long beforeDuplicate = processService.count();
+        underTestTwo.createNewProcess();
+        long afterDuplicate = processService.count();
+
+        assertEquals(beforeDuplicate, afterDuplicate, "A duplicate process with the same title was created!");
+
+        cleanUpProcess(underTest.getMainProcess());
+    }
+
 }
