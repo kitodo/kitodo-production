@@ -80,7 +80,7 @@ Nachdem nun Projekt, Workflow und Produktionsvorlage erstellt sind, muss (falls 
 <li>Geben Sie unter den Reitern <i>OPAC abfragen</i>, <i>Vorgangsdaten</i>, <i>Zusätzliche Details</i> und <i>Suche</i> die Daten für den Vorgang ein. </li>
 <center><img src= "../pictures/VorgangAnlegenReiter.png" alt="Bild" width= 70% height= auto></center>
 <li>Anschließend finden Sie den neuen Vorgang in der <i>Vorgangsliste</i> oder auf Ihrem <i>Kitodo-Desktop</i>.</li>
-<img src= "../pictures/VorgangslisteNeuerVorgang.png" alt="Bild" width= 50% height= auto><img src= "/user/pictures/NeuerVorgangDesktop.png" alt="Bild" width= 50% height= auto>
+<img src= "../pictures/VorgangslisteNeuerVorgang.png" alt="Bild" width= 50% height= auto><img src= "../pictures/NeuerVorgangDesktop.png" alt="Bild" width= 50% height= auto>
 </ol>
 
 
