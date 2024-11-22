@@ -1,7 +1,7 @@
 # Das erste Mal mit Kitodo arbeiten
 Kitodo wird Ihnen bei der ersten Nutzung sowohl optisch als auch in der Benutzung anders vorkommen. Daher folgt hier eine kurze Zusammenfassung, welche die anfängliche Nutzung von Kitodo unterstützen soll.
 
-###Ein Projekt ohne Produktionsvorlage anlegen
+### Ein Projekt ohne Produktionsvorlage anlegen
 <ol>
 <li>Als erstes müssen Sie ein Projekt (falls noch nicht vorhanden) anlegen. Dazu klicken Sie im "<b>Dashboard</b>" auf "<b>Projekte</b>".
 <center><img src= "../pictures/DashboardProjekte.png" alt="Bild" width= 75% height= auto></center>
@@ -17,7 +17,7 @@ Kitodo wird Ihnen bei der ersten Nutzung sowohl optisch als auch in der Benutzun
 </li>
 </ol>
 
-###Einen Workflow für das Projekt erstellen
+### Einen Workflow für das Projekt erstellen
 <ol>
 <li> Um einen neuen Workflow zu erstellen, klicken Sie auf den Button "<b>Neu +</b>" und anschließend auf "<b> + Neuer Workflow</b>"</li>
 <center><img src= "../pictures/NeuerWorkflow.png" alt="Bild" width= 100% height= auto></center>
@@ -35,7 +35,7 @@ Kitodo wird Ihnen bei der ersten Nutzung sowohl optisch als auch in der Benutzun
 <center><img src= "../pictures/WorkflowsListe.png" alt="Bild" width= 70% height= auto></center>
 </ol>
 
-###Eine Produktionsvorlage erstellen
+### Eine Produktionsvorlage erstellen
 <ol>
 <li>Um eine neue Produktionsvorlage zu erstellen, klicken Sie auf den Button "<b>Neu +</b>" und anschließend auf "<b> + Neue Produktionsvorlage</b>".</li>
 <center><img src= "../pictures/NeueProduktionsvorlage.png" alt="Bild" width= 90% height= auto></center>
@@ -49,7 +49,7 @@ Kitodo wird Ihnen bei der ersten Nutzung sowohl optisch als auch in der Benutzun
 <center><img src= "../pictures/ProduktionsvorlagenListe.png" alt="Bild" width= 50% height= auto></center>
 </ol>
 
-###Eine Produktionsvorlage für das Projekt auswählen
+### Eine Produktionsvorlage für das Projekt auswählen
 
 Nachdem nun Projekt, Workflow und Produktionsvorlage erstellt sind, muss (falls noch nicht geschehen) für das neue Projekt noch die Produktionsvorlage ausgewählt werden:
 <ol>
@@ -71,7 +71,7 @@ Nachdem nun Projekt, Workflow und Produktionsvorlage erstellt sind, muss (falls 
 <center><img src= "../pictures/ProduktionsvorlageSpeichern1.png" alt="Bild" width= 70% height= auto></center>
 </ol>
 
-###Einen Vorgang anlegen
+### Einen Vorgang anlegen
 <ol>
 <li> Um einen neuen Vorgang anzulegen, klicken Sie in der <i>Projektliste</i> auf das Icon zum Ausklappen des jeweiligen Projekts.</i>
 <center><img src= "../pictures/ProjekteAusklappen.png" alt="Bild" width= 50% height= auto></center>
