@@ -86,7 +86,7 @@ public class CreateProcessFormIT {
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
-
+        underTest.updateRulesetAndDocType(tempProcess.getProcess().getRuleset());
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         if (!SystemUtils.IS_OS_WINDOWS) {
             ExecutionPermission.setExecutePermission(script);
@@ -119,6 +119,7 @@ public class CreateProcessFormIT {
         underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         underTest.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
         underTest.getMainProcess().setTitle("title");
+        underTest.updateRulesetAndDocType(tempProcess.getProcess().getRuleset());
 
         File script = new File(ConfigCore.getParameter(ParameterCore.SCRIPT_CREATE_DIR_META));
         ExecutionPermission.setExecutePermission(script);
