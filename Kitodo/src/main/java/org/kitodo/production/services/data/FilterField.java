@@ -50,8 +50,10 @@ enum FilterField {
             "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.DONE, "searchTask", "closed"),
     TASK_FINISHED_USER(
-            "tasks AS task WITH task.processingStatus = :queryObject AND (task.processingUser.name = # OR task.processingUser.surname = # OR task.processingUser.login = # OR task.processingUser.ldapLogin = #)",
-            "~.processingStatus = :queryObject AND (~.processingUser.name = # OR ~.processingUser.surname = # OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)",
+            "tasks AS task WITH task.processingStatus = :queryObject AND (task.processingUser.name = # OR task.processingUser.surname = # "
+                    .concat("OR task.processingUser.login = # OR task.processingUser.ldapLogin = #)"),
+            "~.processingStatus = :queryObject AND (~.processingUser.name = # OR ~.processingUser.surname = # "
+                    .concat("OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)"),
             "tasks AS task WITH task.processingStatus = :queryObject AND task.processingUser.id",
             "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, "searchTask", "closeduser");
 
@@ -68,61 +70,34 @@ enum FilterField {
             return null;
         }
         switch (fieldName.toLowerCase()) {
-            case "":
-                return null;
-            case "id":
-                return PROCESS_ID;
-            case "process":
-                return PROCESS_TITLE;
-            case "project":
-                return PROJECT;
-            case "projectexact":
-                return PROJECT;
-            case "batch":
-                return BATCH;
-            case "step":
-                return TASK;
-            case "stepautomatic":
-                return TASK_AUTOMATIC;
-            case "steplocked":
-                return TASK_UNREADY;
-            case "stepopen":
-                return TASK_READY;
-            case "stepinwork":
-                return TASK_ONGOING;
-            case "stepdone":
-                return TASK_FINISHED;
-            case "stepdonetitle":
-                return TASK_FINISHED;
-            case "stepdoneuser":
-                return TASK_FINISHED_USER;
+            case "": return null;
+            case "id": return PROCESS_ID;
+            case "process": return PROCESS_TITLE;
+            case "project": return PROJECT;
+            case "projectexact": return PROJECT;
+            case "batch": return BATCH;
+            case "step": return TASK;
+            case "stepautomatic": return TASK_AUTOMATIC;
+            case "steplocked": return TASK_UNREADY;
+            case "stepopen": return TASK_READY;
+            case "stepinwork": return TASK_ONGOING;
+            case "stepdone": return TASK_FINISHED;
+            case "stepdonetitle": return TASK_FINISHED;
+            case "stepdoneuser": return TASK_FINISHED_USER;
 
-            case "prozess":
-                return PROCESS_TITLE;
-            case "projekt":
-                return PROJECT;
-            case "projektexakt":
-                return PROJECT_EXACT;
-            case "gruppe":
-                return BATCH;
-            case "schritt":
-                return TASK;
-            case "schrittautomatisch":
-                return TASK_AUTOMATIC;
-            case "schrittgesperrt":
-                return TASK_UNREADY;
-            case "schrittoffen":
-                return TASK_READY;
-            case "schrittinarbeit":
-                return TASK_ONGOING;
-            case "schrittabgeschlossen":
-                return TASK_FINISHED;
-            case "abgeschlossenerschritttitel":
-                return TASK_FINISHED;
-            case "abgeschlossenerschrittbenutzer":
-                return TASK_FINISHED_USER;
-            default:
-                return null;
+            case "prozess": return PROCESS_TITLE;
+            case "projekt": return PROJECT;
+            case "projektexakt": return PROJECT_EXACT;
+            case "gruppe": return BATCH;
+            case "schritt": return TASK;
+            case "schrittautomatisch": return TASK_AUTOMATIC;
+            case "schrittgesperrt": return TASK_UNREADY;
+            case "schrittoffen": return TASK_READY;
+            case "schrittinarbeit": return TASK_ONGOING;
+            case "schrittabgeschlossen": return TASK_FINISHED;
+            case "abgeschlossenerschritttitel": return TASK_FINISHED;
+            case "abgeschlossenerschrittbenutzer": return TASK_FINISHED_USER;
+            default: return null;
         }
     }
 
