@@ -17,6 +17,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -62,21 +63,21 @@ public class Comment extends BaseBean {
     /**
      * This field contains information about user, which create the comment.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "FK_comment_user_id"))
     private User author;
 
     /**
      * This field contains information about the currentTask, when the comment is created.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "currentTask_id", foreignKey = @ForeignKey(name = "FK_comment_currentTask_id"))
     private Task currentTask;
 
     /**
      * This field contains information about the correctionTask, where the user can correct the error.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "correctionTask_id", foreignKey = @ForeignKey(name = "FK_comment_correctionTask_id"))
     private Task correctionTask;
 
@@ -84,7 +85,7 @@ public class Comment extends BaseBean {
     /**
      * The field process holds the process of the comment.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_comment_process_id"))
     private Process process;
 

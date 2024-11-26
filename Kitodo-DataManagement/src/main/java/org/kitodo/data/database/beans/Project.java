@@ -25,6 +25,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
@@ -107,12 +108,12 @@ public class Project extends BaseBean implements Comparable<Project> {
     @ManyToMany(mappedBy = "projects", cascade = CascadeType.PERSIST)
     private List<Template> templates;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_importconfiguration_id",
             foreignKey = @ForeignKey(name = "FK_project_default_importconfiguration_id"))
     private ImportConfiguration defaultImportConfiguration;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "default_child_process_importconfiguration_id",
             foreignKey = @ForeignKey(name = "FK_project_default_child_process_importconfiguration_id"))
     private ImportConfiguration defaultChildProcessImportConfiguration;
@@ -120,28 +121,28 @@ public class Project extends BaseBean implements Comparable<Project> {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Folder> folders;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "client_id", foreignKey = @ForeignKey(name = "FK_project_client_id"))
     private Client client;
 
     /**
      * Folder to use as source for generation of derived resources.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "generatorSource_folder_id", foreignKey = @ForeignKey(name = "FK_project_generatorSource_folder_id"))
     private Folder generatorSource;
 
     /**
      * Folder with media to use for the viewer.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mediaView_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_folder_id"))
     private Folder mediaView;
 
     /**
      * Folder with media to use for the preview.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preview_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_folder_id"))
     private Folder preview;
 
@@ -155,14 +156,14 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Folder with media to use for the audio preview.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preview_audio_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_audio_folder_id"))
     private Folder audioPreview;
 
     /**
      * Folder with media to use for the audio viewer.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mediaView_audio_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_audio_folder_id"))
     private Folder audioMediaView;
 
@@ -175,14 +176,14 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Folder with media to use for the video preview.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "preview_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_preview_video_folder_id"))
     private Folder videoPreview;
 
     /**
      * Folder with media to use for the video viewer.
      */
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "mediaView_video_folder_id", foreignKey = @ForeignKey(name = "FK_project_mediaView_video_folder_id"))
     private Folder videoMediaView;
 
