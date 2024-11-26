@@ -13,24 +13,24 @@ package org.kitodo.production.services.data;
 
 import io.reactivex.annotations.CheckReturnValue;
 
-import java.util.AbstractCollection;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.hibernate.query.Query;
 import org.kitodo.data.database.beans.BaseBean;
 import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.data.database.persistence.BaseDAO;
 import org.primefaces.model.SortOrder;
 
 public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> {
-    private static final Logger logger = LogManager.getLogger(BaseBeanService.class);
-    private static final Pattern PARAMETER_PATTERN = Pattern.compile(":(\\w+)");
+    protected static final EnumMap<SortOrder, String> SORT_ORDER_MAPPING;
+
+    static {
+        SORT_ORDER_MAPPING = new EnumMap<>(SortOrder.class);
+        SORT_ORDER_MAPPING.put(SortOrder.ASCENDING, "ASC");
+        SORT_ORDER_MAPPING.put(SortOrder.DESCENDING, "DESC");
+    }
 
     protected S dao;
 
@@ -150,7 +150,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @return amount of rows in database according to given query
      */
     public Long count(String query) throws DAOException {
-        logger.debug(query);
         return dao.count(query);
     }
 
@@ -164,7 +163,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @return amount of rows in database according to given query
      */
     public Long count(String query, Map<String, Object> parameters) throws DAOException {
-        debugLogQuery(query, parameters);
         return dao.count(query, parameters);
     }
 
@@ -220,7 +218,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @return list of exact bean objects
      */
     public List<T> getByQuery(String query) {
-        logger.debug(query);
         return dao.getByQuery(query);
     }
 
@@ -234,12 +231,10 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @return list of beans objects
      */
     public List<T> getByQuery(String query, Map<String, Object> parameters) {
-        debugLogQuery(query, parameters);
         return dao.getByQuery(query, parameters);
     }
 
     public List<T> getByQuery(String query, Map<String, Object> parameters, int begin, int max) {
-        debugLogQuery(query, parameters, begin, max);
         return dao.getByQuery(query, parameters, begin, max);
     }
 
@@ -258,7 +253,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @return list of exact bean objects
      */
     public List<T> getByQuery(String query, Map<String, Object> parameters, int max) {
-        debugLogQuery(query, parameters, 0, max);
         return dao.getByQuery(query, parameters, 0, max);
     }
 
@@ -275,7 +269,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
      * @return list of strings
      */
     public List<String> getStringList(String query, Map<String, Object> parameters) {
-        debugLogQuery(query, parameters);
         return dao.getStringsByQuery(query, parameters);
     }
 
@@ -349,60 +342,6 @@ public abstract class BaseBeanService<T extends BaseBean, S extends BaseDAO<T>> 
             return " ORDER BY " + sortField + " DESC";
         } else {
             return "";
-        }
-    }
-
-    /**
-     * Enters a search query into the log when it is running in debug level.
-     * Placeholders are replaced with their parameter values.
-     * 
-     * @param query
-     *            search query
-     * @param parameters
-     *            parameter values
-     */
-    private static void debugLogQuery(String query, Map<String, Object> parameters) {
-        debugLogQuery(query, parameters, Integer.MIN_VALUE, Integer.MIN_VALUE);
-    }
-
-    /**
-     * Enters a search query into the log when it is running in debug level.
-     * Placeholders are replaced with their parameter values.
-     * 
-     * @param query
-     *            search query
-     * @param parameters
-     *            parameter values
-     * @param initPointer
-     *            can initialize the object pointer to a later object (sets
-     *            {@linkplain Query#setFirstResult(int)})
-     * @param stopCount
-     *            the search stops after count hits (sets
-     *            {@linkplain Query#setMaxResults(int)})
-     */
-    private static void debugLogQuery(String query, Map<String, Object> parameters, int initPointer, int stopCount) {
-        if (logger.isDebugEnabled()) {
-            String resolved = PARAMETER_PATTERN.matcher(query).replaceAll(matchResult -> {
-                Object parameter = parameters.get(matchResult.group(1));
-                if (Objects.isNull(parameter)) {
-                    return matchResult.group();
-                }
-                if (parameter instanceof String) {
-                    return '\'' + ((String) parameter) + '\'';
-                }
-                if (parameter instanceof AbstractCollection) {
-                    return Objects.toString(parameter).replaceFirst("^\\[(.*)\\]$", "$1");
-                }
-                return Objects.toString(parameter);
-            });
-            if (initPointer != Integer.MIN_VALUE || stopCount != Integer.MIN_VALUE) {
-                if (stopCount != Integer.MIN_VALUE) {
-                    resolved = String.format("%s (limit=%d)", resolved, stopCount);
-                } else {
-                    resolved = String.format("%s (limit=%d, offset=%d)", resolved, stopCount, initPointer);
-                }
-            }
-            logger.debug(resolved);
         }
     }
 }

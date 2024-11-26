@@ -15,7 +15,10 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Locale;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.MockDatabase;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.production.helper.TempProcess;
@@ -24,6 +27,17 @@ import org.kitodo.test.utils.ProcessTestUtils;
 import org.primefaces.model.DefaultTreeNode;
 
 public class ProcessDataTabTest {
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        MockDatabase.startNode();
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        MockDatabase.stopNode();
+        MockDatabase.cleanDatabase();
+    }
 
     /**
      * Test the generation of atstsl fields.

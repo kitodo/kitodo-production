@@ -450,7 +450,7 @@ public class WorkflowControllerServiceIT {
             "Report of problem was incorrect - task '" + correctionTask.getTitle() + "' is not a correction task!",
             correctionTask.isCorrection());
 
-        Process process = currentTask.getProcess();
+        Process process = problem.getCurrentTask().getProcess();
         for (Task task : process.getTasks()) {
             if (correctionTask.getOrdering() < task.getOrdering() && task.getOrdering() < currentTask.getOrdering()) {
                 assertEquals("Report of problem was incorrect - tasks between were not set up to locked!",

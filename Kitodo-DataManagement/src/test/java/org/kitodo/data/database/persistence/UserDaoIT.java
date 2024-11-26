@@ -17,11 +17,24 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.kitodo.MockIndex;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.data.database.exceptions.DAOException;
 
 public class UserDaoIT {
+
+    @BeforeClass
+    public static void setUp() throws Exception {
+        MockIndex.startNode();
+    }
+
+    @AfterClass
+    public static void tearDown() throws Exception {
+        MockIndex.stopNode();
+    }
 
     @Test
     public void runPersistenceSuitTest() throws DAOException {

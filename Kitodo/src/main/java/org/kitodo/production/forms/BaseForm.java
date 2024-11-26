@@ -256,6 +256,9 @@ public class BaseForm implements Serializable {
      */
     public void onTabChange(TabChangeEvent event) {
         setActiveTabIndex(event.getComponent().getChildren().indexOf(event.getTab()));
+        if (Objects.equals(event.getTab().getId(), "indexingTab")) {
+            IndexingForm.setNumberOfDatabaseObjects();
+        }
     }
 
     /**

@@ -101,7 +101,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("orderingMax", orderingMax);
         parameters.put("orderingMin", orderingMin);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering < :orderingMin"
+        return getByQuery("FROM Task WHERE process.id = :processId AND ordering < :orderingMin"
                 + " AND ordering > :orderingMax ORDER BY ordering ASC",
             parameters);
     }
@@ -119,7 +119,7 @@ public class TaskDAO extends BaseDAO<Task> {
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
-        return getByQuery("FROM Task WHERE process_id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
+        return getByQuery("FROM Task WHERE process.id = :processId AND ordering > :ordering AND repeatOnCorrection = 1",
             parameters);
     }
 
@@ -137,7 +137,7 @@ public class TaskDAO extends BaseDAO<Task> {
         parameters.put("ordering", ordering);
         parameters.put(KEY_PROCESS_ID, processId);
         return getByQuery(
-            "FROM Task WHERE process_id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
+            "FROM Task WHERE process.id = :processId AND ordering < :ordering" + " ORDER BY ordering DESC", parameters);
     }
 
     /**
