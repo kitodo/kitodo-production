@@ -128,7 +128,7 @@ public class Project extends BaseBean implements Comparable<Project> {
     /**
      * Folder to use as source for generation of derived resources.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "generatorSource_folder_id", foreignKey = @ForeignKey(name = "FK_project_generatorSource_folder_id"))
     private Folder generatorSource;
 
