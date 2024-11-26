@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.data.database.beans.BaseBean;
+import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Role;
 import org.kitodo.production.enums.ProcessState;
 import org.kitodo.production.services.ServiceManager;
@@ -35,6 +36,7 @@ import org.primefaces.model.SortOrder;
  */
 public class BeanQuery {
     private static final Pattern EXPLICIT_ID_SEARCH = Pattern.compile("id:(\\d+)");
+    private final FilterService fileterService = ServiceManager.getFilterService();
     private final IndexingService indexingService = ServiceManager.getIndexingService();
     private final Class<? extends BaseBean> beanClass;
     private final String className;
@@ -294,7 +296,8 @@ public class BeanQuery {
      */
     public void restrictWithUserFilterString(String filterString) {
         int userFilterCount = 0;
-        for (var groupFilter : UserSpecifiedFilterParser.parse(filterString).entrySet()) {
+        for (var groupFilter : fileterService.parse(filterString, beanClass.isAssignableFrom(Process.class))
+                .entrySet()) {
             List<String> groupFilters = new ArrayList<>();
             for (UserSpecifiedFilter searchFilter : groupFilter.getValue()) {
                 userFilterCount++;

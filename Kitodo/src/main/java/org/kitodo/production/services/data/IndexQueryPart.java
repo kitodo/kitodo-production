@@ -29,7 +29,6 @@ class IndexQueryPart implements UserSpecifiedFilter {
     private static final String UNIQUE_PARAMETER_EXTENSION = "query";
 
     private static final char VALUE_SEPARATOR = 'q';
-    private static final char DOMAIN_SEPARATOR = 'j';
     private List<String> lookfor = new ArrayList<>();
     private final FilterField filterField;
     private final boolean operand;
@@ -47,13 +46,13 @@ class IndexQueryPart implements UserSpecifiedFilter {
     IndexQueryPart(FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
-            this.lookfor.add(addOptionalDomain(filterField.getDomain(), normalize(value)));
+            this.lookfor.add(addOptionalPseudoword(filterField.getPseudoword(), normalize(value)));
         }
         this.operand = operand;
     }
 
-    private final String addOptionalDomain(String domain, String normalize) {
-        return Objects.nonNull(domain) ? domain + VALUE_SEPARATOR + normalize : normalize;
+    private final String addOptionalPseudoword(String pseudoword, String value) {
+        return Objects.nonNull(pseudoword) ? pseudoword + VALUE_SEPARATOR + value : value;
     }
 
     /**
@@ -71,8 +70,7 @@ class IndexQueryPart implements UserSpecifiedFilter {
     IndexQueryPart(String key, FilterField filterField, String values, boolean operand) {
         this.filterField = filterField;
         for (String value : splitValues(values)) {
-            lookfor.add(normalize(key) + DOMAIN_SEPARATOR + filterField.getDomain() + VALUE_SEPARATOR + normalize(
-                value));
+            lookfor.add(normalize(key) + VALUE_SEPARATOR + normalize(value));
         }
         this.operand = operand;
     }

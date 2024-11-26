@@ -13,33 +13,47 @@ package org.kitodo.production.services.data;
 
 import java.util.Objects;
 
+import net.bytebuddy.utility.nullability.MaybeNull;
+
 import org.kitodo.data.database.enums.TaskStatus;
 
 /**
  * Constants for known search field names in filters.
  */
 enum FilterField {
-    MISC(null, null, null, "search", null),
-    PROCESS_ID("id", "process.id", null, null, null),
-    PROCESS_TITLE(null, null, null, "searchTitle", null),
-    PROJECT("project.id", "process.project.id", null, "searchProject", null),
-    BATCH("batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, "searchBatch", null),
-    TASK("tasks AS task WITH task.id", "id", null, "searchTask", null),
-    TASK_AUTOMATIC("tasks AS task WITH task.typeAutomatic = :queryObject AND task.id",
-            "typeAutomatic = :queryObject AND id", Boolean.TRUE, "searchTask", "automatic"),
-    TASK_UNREADY("tasks AS task WITH task.processingStatus = :queryObject AND task.id",
+    SEARCH(null, null, null, null, null, "search", null),
+    PROCESS_ID(null, null, "id", "process.id", null, null, null),
+    PROCESS_TITLE("title", "process.title", null, null, null, "searchTitle", null),
+    PROJECT("project.title", "process.project.title", "project.id", "process.project.id", null, "searchProject", null),
+    PROJECT_EXACT("project.title", "process.project.title", "project.id", "process.project.id", null, null, null),
+    BATCH("process.batches AS batch WITH batch.title", "process.batches AS batch WITH batch.title",
+            "batches AS batch WITH batch.id", "process.batches AS batch WITH batch.id", null, null, null),
+    TASK("tasks AS task WITH task.title", "title", "tasks AS task WITH task.id", "id", null, "searchTask", null),
+    TASK_AUTOMATIC("tasks AS task WITH task.typeAutomatic = :queryObject AND task.title",
+            "typeAutomatic = :queryObject AND title",
+            "tasks AS task WITH task.typeAutomatic = :queryObject AND task.id", "typeAutomatic = :queryObject AND id",
+            Boolean.TRUE, "searchTask", "automatic"),
+    TASK_UNREADY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
+            "processingStatus = :queryObject AND title",
+            "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.LOCKED, "searchTask", "locked"),
-    TASK_READY("tasks AS task WITH task.processingStatus = :queryObject AND task.id",
+    TASK_READY("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
+            "processingStatus = :queryObject AND title",
+            "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.OPEN, "searchTask", "open"),
-    TASK_ONGOING("tasks AS task WITH task.processingStatus = :queryObject AND task.id",
+    TASK_ONGOING("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
+            "processingStatus = :queryObject AND title",
+            "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.INWORK, "searchTask", "inwork"),
-    TASK_FINISHED("tasks AS task WITH task.processingStatus = :queryObject AND task.id",
+    TASK_FINISHED("tasks AS task WITH task.processingStatus = :queryObject AND task.title",
+            "processingStatus = :queryObject AND title",
+            "tasks AS task WITH task.processingStatus = :queryObject AND task.id",
             "processingStatus = :queryObject AND id", TaskStatus.DONE, "searchTask", "closed"),
-    TASK_FINISHED_USER("tasks AS task WITH task.processingStatus = :queryObject AND task.processingUser.id",
-            "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, "searchTask", "closeduser"),
-    METADATA_SOURCEMD(null, null, null, "searchMetadata", "source"),
-    METADATA_TECHMD(null, null, null, "searchMetadata", "technical"),
-    METADATA_DMDSEC(null, null, null, "searchMetadata", "description");
+    TASK_FINISHED_USER(
+            "tasks AS task WITH task.processingStatus = :queryObject AND (task.processingUser.name = # OR task.processingUser.surname = # OR task.processingUser.login = # OR task.processingUser.ldapLogin = #)",
+            "~.processingStatus = :queryObject AND (~.processingUser.name = # OR ~.processingUser.surname = # OR ~.processingUser.login = # OR ~.processingUser.ldapLogin = #)",
+            "tasks AS task WITH task.processingStatus = :queryObject AND task.processingUser.id",
+            "processingStatus = :queryObject AND processingUser.id", TaskStatus.DONE, "searchTask", "closeduser");
 
     /**
      * Here the string search field names (user input) are mapped to the
@@ -51,16 +65,18 @@ enum FilterField {
      */
     static FilterField ofString(String fieldName) {
         if (Objects.isNull(fieldName)) {
-            return MISC;
+            return null;
         }
         switch (fieldName.toLowerCase()) {
             case "":
-                return MISC;
+                return null;
             case "id":
                 return PROCESS_ID;
             case "process":
                 return PROCESS_TITLE;
             case "project":
+                return PROJECT;
+            case "projectexact":
                 return PROJECT;
             case "batch":
                 return BATCH;
@@ -80,17 +96,13 @@ enum FilterField {
                 return TASK_FINISHED;
             case "stepdoneuser":
                 return TASK_FINISHED_USER;
-            case "template":
-                return METADATA_SOURCEMD;
-            case "processproperty":
-                return METADATA_TECHMD;
-            case "workpiece":
-                return METADATA_DMDSEC;
 
             case "prozess":
                 return PROCESS_TITLE;
             case "projekt":
                 return PROJECT;
+            case "projektexakt":
+                return PROJECT_EXACT;
             case "gruppe":
                 return BATCH;
             case "schritt":
@@ -109,38 +121,47 @@ enum FilterField {
                 return TASK_FINISHED;
             case "abgeschlossenerschrittbenutzer":
                 return TASK_FINISHED_USER;
-            case "vorlage":
-                return METADATA_SOURCEMD;
-            case "prozesseigenschaft":
-                return METADATA_TECHMD;
-            case "werkstueck":
-                return METADATA_TECHMD;
             default:
                 return null;
         }
     }
 
-    private final String processQuery;
-    private final String taskQuery;
+    private final String processTitleQuery;
+    private final String taskTitleQuery;
+    private final String processIdQuery;
+    private final String taskIdQuery;
     private final Object queryObject;
     private final String searchField;
-    private final String domain;
+    private final String pseudoword;
 
-    private FilterField(String processQuery, String taskQuery, Object queryObject, String searchField, String domain) {
-        this.processQuery = processQuery;
-        this.taskQuery = taskQuery;
+    private FilterField(String processTitleQuery, String taskTitleQuery, String processIdQuery, String taskIdQuery,
+            Object queryObject, String searchField, String pseudoword) {
+        this.processTitleQuery = processTitleQuery;
+        this.taskTitleQuery = taskTitleQuery;
+        this.processIdQuery = processIdQuery;
+        this.taskIdQuery = taskIdQuery;
         this.queryObject = queryObject;
         this.searchField = searchField;
-        this.domain = domain;
+        this.pseudoword = pseudoword;
     }
 
     /**
-     * If true, searches can be performed on various metadata.
+     * If not null, this query can be used to search for a process object by
+     * title.
      * 
-     * @return whether different metadata can be searched
+     * @return query to search for a process object
      */
-    boolean isDivisible() {
-        return Objects.isNull(processQuery) && Objects.nonNull(domain);
+    String getProcessTitleQuery() {
+        return processTitleQuery;
+    }
+
+    /**
+     * If not null, this query can be used to search for a task object by title.
+     * 
+     * @return query to search for a task object
+     */
+    String getTaskTitleQuery() {
+        return taskTitleQuery;
     }
 
     /**
@@ -148,8 +169,8 @@ enum FilterField {
      * 
      * @return query to search for a process object
      */
-    String getProcessQuery() {
-        return processQuery;
+    String getProcessIdQuery() {
+        return processIdQuery;
     }
 
     /**
@@ -157,8 +178,8 @@ enum FilterField {
      * 
      * @return query to search for a task object
      */
-    String getTaskQuery() {
-        return taskQuery;
+    String getTaskIdQuery() {
+        return taskIdQuery;
     }
 
     /**
@@ -172,10 +193,12 @@ enum FilterField {
     }
 
     /**
-     * Search field on the process index or task index to search for keywords.
+     * Search field on the process index to search for keywords. Returns
+     * {@code null} if this search field does not allow index search.
      * 
-     * @return search field
+     * @return search field, may be {@code null}
      */
+    @MaybeNull
     String getSearchField() {
         return searchField;
     }
@@ -185,7 +208,7 @@ enum FilterField {
      * 
      * @return word component
      */
-    String getDomain() {
-        return domain;
+    String getPseudoword() {
+        return pseudoword;
     }
 }

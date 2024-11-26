@@ -79,7 +79,7 @@ public class Process extends BaseTemplateBean {
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
     private Project project;
 
@@ -1095,18 +1095,6 @@ public class Process extends BaseTemplateBean {
     @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
     public String getKeywordsForSearchingForTaskInformation() {
         return initializeKeywords().getSearchTask();
-    }
-
-    /**
-     * When indexing, outputs the index keywords for searching for metadata.
-     * 
-     * @return the index keywords for searching for metadata
-     */
-    @Transient
-    @FullTextField(name = "searchMetadata")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingForMetadata() {
-        return initializeKeywords().getSearchMetadata();
     }
 
     private IndexingKeyworder initializeKeywords() {

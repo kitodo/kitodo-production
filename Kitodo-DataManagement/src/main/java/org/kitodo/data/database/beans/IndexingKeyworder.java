@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -30,7 +31,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -40,7 +40,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.kitodo.config.KitodoConfig;
 import org.kitodo.data.database.enums.TaskStatus;
-import org.kitodo.data.database.persistence.HibernateUtil;
 
 /**
  * Prepares the search keywords for a process or task.
@@ -48,28 +47,18 @@ import org.kitodo.data.database.persistence.HibernateUtil;
 class IndexingKeyworder {
     private static final Logger logger = LogManager.getLogger(IndexingKeyworder.class);
 
-    private static final Pattern TITLE_GROUPS_PATTERN = Pattern.compile("[\\p{IsLetter}\\p{Digit}]+");
-
     private static final String PSEUDOWORD_TASK_AUTOMATIC = "automatic";
     private static final String PSEUDOWORD_TASK_DONE = "closed";
     private static final String PSEUDOWORD_TASK_DONE_PROCESSING_USER = "closeduser";
-
     private static final String ANY_METADATA_MARKER = "mdWrap";
-    private static final Map<String, String> DOMAIN_MAPPING = new HashMap<>();
-
-    static {
-        DOMAIN_MAPPING.put("dmdSec", "description");
-        DOMAIN_MAPPING.put("sourceMD", "source");
-        DOMAIN_MAPPING.put("techMD", "technical");
-    }
-
-    private static final char DOMAIN_SEPARATOR = 'j';
     private static final char VALUE_SEPARATOR = 'q';
+
+    private static final Pattern TITLE_GROUPS_PATTERN = Pattern.compile("[\\p{IsLetter}\\p{Digit}]+");
     private static final Pattern METADATA_PATTERN = Pattern.compile("name=\"([^\"]+)\">([^<]*)<", Pattern.DOTALL);
-    private static final Pattern METADATA_SECTIONS_PATTERN = Pattern.compile(
-        "<mets:(dmdSec|sourceMD|techMD).*?o>(.*?)</kitodo:k", Pattern.DOTALL);
-    private static final Pattern RULESET_KEY_PATTERN = Pattern.compile("key id=\"([^\"]+)\">(.*?)</key>",
-        Pattern.DOTALL);
+    private static final Pattern METADATA_SECTIONS_PATTERN =
+            Pattern.compile("<mets:dmdSec.*?o>(.*?)</kitodo:k", Pattern.DOTALL);
+    private static final Pattern RULESET_KEY_PATTERN =
+            Pattern.compile("key id=\"([^\"]+)\">(.*?)</key>", Pattern.DOTALL);
     private static final Pattern RULESET_LABEL_PATTERN = Pattern.compile("<label[^>]*>([^<]+)", Pattern.DOTALL);
 
     private static final Map<String, Map<String, Collection<String>>> rulesetCache = new HashMap<>();
@@ -85,61 +74,33 @@ class IndexingKeyworder {
     private Set<String> commentKeywords = Collections.emptySet();
 
     public IndexingKeyworder(Process process) {
-        this.titleKeywords = initTitleKeywords(process.getTitle());
+        this.titleKeywords = filterMinLength(initTitleKeywords(process.getTitle()));
         String projectTitle = Objects.nonNull(process.getProject()) ? process.getProject().getTitle() : "";
-        this.projectKeywords = initProjectKeywords(projectTitle);
-        this.batchKeywords = initBatchKeywords(process.getBatches());
+        this.projectKeywords = filterMinLength(initSimpleKeywords(projectTitle));
+        this.batchKeywords = filterMinLength(initBatchKeywords(process.getBatches()));
         var taskKeywords = initTaskKeywords(process.getTasksUnmodified());
-        this.taskKeywords = taskKeywords.getLeft();
-        this.taskPseudoKeywords = taskKeywords.getRight();
+        this.taskKeywords = filterMinLength(taskKeywords.getLeft());
+        this.taskPseudoKeywords = filterMinLength(taskKeywords.getRight());
         String place = null;
         if (logger.isDebugEnabled()) {
             place = "process " + process.getId() + " \"" + process.getTitle() + "\"";
         }
         var metadataKeywords = initMetadataKeywords(process, place);
-        this.metadataKeywords = metadataKeywords.getLeft();
-        this.metadataPseudoKeywords = metadataKeywords.getRight();
+        this.metadataKeywords = filterMinLength(metadataKeywords.getLeft());
+        this.metadataPseudoKeywords = filterMinLength(metadataKeywords.getRight());
         this.processId = process.getId().toString();
-        this.commentKeywords = initCommentKeywords(process.getComments());
+        this.commentKeywords = filterMinLength(initCommentKeywords(process.getComments()));
         if (logger.isTraceEnabled()) {
-            traceLogKeywords("process_keywords.log");
+            traceLogKeywords("indexterms.log");
         }
     }
-
-    public IndexingKeyworder(Task task) {
-        if (Objects.nonNull(task.getProcess())) {
-            this.titleKeywords = initTitleKeywords(task.getProcess().getTitle());
-            Project project = task.getProcess().getProject();
-            if (Objects.nonNull(project)) {
-                this.projectKeywords = initProjectKeywords(project.getTitle());
-            }
-            this.batchKeywords = initBatchKeywords(task.getProcess().getBatches());
-            var taskKeywords = initTaskKeywords(Collections.singleton(task));
-            this.taskKeywords = taskKeywords.getLeft();
-            this.taskPseudoKeywords = taskKeywords.getRight();
-            String place = null;
-            if (logger.isDebugEnabled()) {
-                place = "task " + task.getId() + " \"" + task.getTitle() + "\", process " + task.getProcess().getId()
-                        + " \"" + task.getProcess().getTitle() + "\"";
-            }
-            var metadataKeywords = initMetadataKeywords(task.getProcess(), place);
-            this.metadataKeywords = metadataKeywords.getLeft();
-            this.metadataPseudoKeywords = metadataKeywords.getRight();
-            this.processId = task.getProcess().getId().toString();
-            List<Comment> commentsOfTask = task.getProcess().getComments().stream().filter(comment -> Objects.equals(
-                comment.getCurrentTask(), task) || Objects.equals(comment.getCorrectionTask(), task)).collect(Collectors
-                        .toList());
-            this.commentKeywords = initCommentKeywords(commentsOfTask);
-        }
-        if (logger.isTraceEnabled()) {
-            traceLogKeywords("task_" + task.getOrdering() + '_' + normalize(task.getTitle()) + "_keywords.log");
-        }
-    }
-
 
     /**
-     * Creates search terms for process titles. These are created in groups
-     * aligned to the left so that the beginning of the title is found.
+     * Creates search terms for process titles. To do this, the process title is
+     * separated into groups of consecutive characters and numbers, and these
+     * are generated in their entirety and starting from the front or from the
+     * back. The latter is more common, as the last four digits of a PPN are
+     * used for the search and the hit rate is excellent.
      * 
      * @param processTitle
      *            the title of the process
@@ -150,25 +111,30 @@ class IndexingKeyworder {
         Matcher matcher = TITLE_GROUPS_PATTERN.matcher(processTitle);
         while (matcher.find()) {
             String normalized = normalize(matcher.group());
-            int length = normalized.length();
+            final int length = normalized.length();
+            // starting from the beginning
             for (int end = 1; end <= length; end++) {
                 tokens.add(normalized.substring(0, end));
+            }
+            // ending at the end
+            for (int beginning = length - 1; beginning >= 0; beginning--) {
+                tokens.add(normalized.substring(beginning, length));
             }
         }
         return tokens;
     }
 
     /**
-     * Makes the keywords for searching by project title. These are just single
+     * Makes the keywords for searching by a string. These are just single
      * words.
      * 
-     * @param projectTitle
-     *            the title of the project
+     * @param input
+     *            the input string
      * @return keywords
      */
-    private static final Set<String> initProjectKeywords(String projectTitle) {
+    private static final Set<String> initSimpleKeywords(String input) {
         Set<String> tokens = new HashSet<>();
-        for (String term : splitValues(projectTitle)) {
+        for (String term : splitValues(input)) {
             tokens.add(normalize(term));
         }
         return tokens;
@@ -191,7 +157,7 @@ class IndexingKeyworder {
         for (Batch batch : batches) {
             String optionalTitle = batch.getTitle();
             if (StringUtils.isNotBlank(optionalTitle)) {
-                tokens.addAll(initTitleKeywords(optionalTitle));
+                tokens.addAll(initSimpleKeywords(optionalTitle));
             }
         }
         return tokens;
@@ -274,20 +240,18 @@ class IndexingKeyworder {
             Map<String, Collection<String>> rulesetLabelMap = getRulesetLabelMap(process.getRuleset().getFile());
             Matcher metadataSectionsMatcher = METADATA_SECTIONS_PATTERN.matcher(metaXml);
             while (metadataSectionsMatcher.find()) {
-                String domain = DOMAIN_MAPPING.get(metadataSectionsMatcher.group(1));
-                Matcher keyMatcher = METADATA_PATTERN.matcher(metadataSectionsMatcher.group(2));
+                Matcher keyMatcher = METADATA_PATTERN.matcher(metadataSectionsMatcher.group(1));
                 while (keyMatcher.find()) {
                     String key = normalize(keyMatcher.group(1));
                     String valueString = keyMatcher.group(2);
                     for (String singleValue : splitValues(valueString)) {
                         String value = normalize(singleValue);
                         metadataKeywords.add(value);
-                        metadataPseudoKeywords.add(domain + VALUE_SEPARATOR + value);
                         metadataPseudoKeywords.add(key + VALUE_SEPARATOR + value);
-                        metadataPseudoKeywords.add(key + DOMAIN_SEPARATOR + domain + VALUE_SEPARATOR + value);
+                        metadataPseudoKeywords.add(key);
                         for (String label : rulesetLabelMap.getOrDefault(key, Collections.emptyList())) {
                             metadataPseudoKeywords.add(label + VALUE_SEPARATOR + value);
-                            metadataPseudoKeywords.add(label + DOMAIN_SEPARATOR + domain + VALUE_SEPARATOR + value);
+                            metadataPseudoKeywords.add(label);
                         }
                     }
                 }
@@ -341,8 +305,7 @@ class IndexingKeyworder {
     }
 
     /**
-     * Creates the keywords for searching in correction messages. This is a
-     * double-truncated search, i.e. any substring.
+     * Creates the keywords for searching in correction messages.
      * 
      * @param comments
      *            the comments of a process
@@ -353,14 +316,7 @@ class IndexingKeyworder {
         for (Comment comment : comments) {
             String message = comment.getMessage();
             if (StringUtils.isNotBlank(message)) {
-                for (String splitWord : splitValues(message)) {
-                    String word = normalize(splitWord);
-                    for (int i = 0; i < word.length(); i++) {
-                        for (int j = i + 1; j <= word.length(); j++) {
-                            tokens.add(word.substring(i, j));
-                        }
-                    }
-                }
+                tokens.addAll(initSimpleKeywords(message));
             }
         }
         return tokens;
@@ -391,9 +347,47 @@ class IndexingKeyworder {
     }
 
     /**
+     * Filter minimum-length tokens. Only tokens at least three characters long
+     * should be indexed, because you'll never search for tokens that are too
+     * short anyway, but it would bloat the index a lot.
+     * 
+     * @param tokens
+     *            input set, is changed!
+     * @return input set
+     */
+    private static Set<String> filterMinLength(Set<String> tokens) {
+        for (Iterator<String> iterator = tokens.iterator(); iterator.hasNext();) {
+            if (iterator.next().length() < 3) {
+                iterator.remove();
+            }
+        }
+        return tokens;
+    }
+
+    /**
      * Returns the search keywords for the free search. These are search
      * keywords for title terms, the title of the project, names of assigned
-     * batches, task names, and metadata.
+     * batches, task names, and metadata. For searching the metadata, there are
+     * both the bare terms and pseudowords to particularly powerfully search the
+     * various metadata keys.
+     * 
+     * <p>
+     * Suppose there is metadata with the key "TitleDocMain" and a value
+     * containing the string "Berlin, Charlottenburg". In the ruleset,
+     * "TitleDocMain" is translated as "Maint title" and "Hauptsachtitel". This
+     * produces the following pseudo search terms in addition to the search term
+     * "berlin":
+     * <ul>
+     * <li>{@code titledocmainqberlin} - for search "TitleDocMain:berlin"</li>
+     * <li>{@code mainttitleqberlin} - for search "Maint title:berlin"</li>
+     * <li>{@code hauptsachtitelqberlin} - for search
+     * "Hauptsachtitel:berlin"</li>
+     * <li>and, formed according to the same scheme, {@code charlottenburg} and
+     * its psodowords.
+     * </ul>
+     * This means that if a user searches for "Maint title:Berlin,
+     * Charlottenburg", the index has to search for:
+     * {@code mainttitleqberlin mainttitleqcharlottenburg}.
      * 
      * @return search keywords for the free search
      */
@@ -404,6 +398,7 @@ class IndexingKeyworder {
         freeKeywords.addAll(batchKeywords);
         freeKeywords.addAll(taskKeywords);
         freeKeywords.addAll(metadataKeywords);
+        freeKeywords.addAll(metadataPseudoKeywords);
         if (Objects.nonNull(processId)) {
             freeKeywords.add(processId);
         }
@@ -469,45 +464,6 @@ class IndexingKeyworder {
         allTaskKeywords.addAll(taskKeywords);
         allTaskKeywords.addAll(taskPseudoKeywords);
         return String.join(" ", allTaskKeywords);
-    }
-
-    /**
-     * Returns search keywords for searching the metadata. These are both the
-     * bare terms and pseudowords to particularly powerfully search the various
-     * metadata and domains.
-     * 
-     * <p>
-     * Suppose there is a metadata in a {@code dmdSec} with the key
-     * "TitleDocMain" and a value containing the string "Berlin,
-     * Charlottenburg". In the ruleset, "TitleDocMain" is translated as "Maint
-     * title" and "Hauptsachtitel". This produces the following pseudo search
-     * terms in addition to the search term "berlin":
-     * <ul>
-     * <li>{@code descriptionqberlin} - for search "workpiece:berlin"</li>
-     * <li>{@code titledocmainqberlin} - for search "TitleDocMain:berlin"</li>
-     * <li>{@code mainttitleqberlin} - for search "Maint title:berlin"</li>
-     * <li>{@code hauptsachtitelqberlin} - for search
-     * "Hauptsachtitel:berlin"</li>
-     * <li>{@code titledocmainqberlin} - for search
-     * "workpiece:TitleDocMain:berlin"</li>
-     * <li>{@code mainttitleqberlin} - for search "workpiece:Maint
-     * title:berlin"</li>
-     * <li>{@code hauptsachtitelqberlin} - for search
-     * "workpiece:Hauptsachtitel:berlin"</li>
-     * <li>and, formed according to the same scheme, {@code charlottenburg} and
-     * its psodowords.
-     * </ul>
-     * This means that if a user searches for "Maint title:Berlin,
-     * Charlottenburg", the index has to search for:
-     * {@code mainttitleqberlin mainttitleqcharlottenburg}.
-     * 
-     * @return search keywords for searching the metadata
-     */
-    public String getSearchMetadata() {
-        Set<String> allMetadataKeywords = new HashSet<>();
-        allMetadataKeywords.addAll(metadataKeywords);
-        allMetadataKeywords.addAll(metadataPseudoKeywords);
-        return String.join(" ", allMetadataKeywords);
     }
 
     /**

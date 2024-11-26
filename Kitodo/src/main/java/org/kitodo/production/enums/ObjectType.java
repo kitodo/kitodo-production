@@ -51,7 +51,7 @@ public enum ObjectType {
     PROJECT("project", "projects", false, Project.class),
     PROPERTY("property", "properties", false, Property.class),
     RULESET("ruleset", "rulesets", false, Ruleset.class),
-    TASK("task", "tasks", true, Task.class),
+    TASK("task", "tasks", false, Task.class),
     TEMPLATE("template", "template", false, Template.class),
     USER("user", "users", false, User.class),
     ROLE("role", "roles", false, Role.class),

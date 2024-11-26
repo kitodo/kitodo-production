@@ -30,10 +30,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import org.hibernate.search.mapper.pojo.automaticindexing.ReindexOnUpdate;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexingDependency;
 import org.kitodo.data.database.converter.TaskEditTypeConverter;
 import org.kitodo.data.database.converter.TaskStatusConverter;
 import org.kitodo.data.database.enums.TaskEditType;
@@ -41,7 +37,6 @@ import org.kitodo.data.database.enums.TaskStatus;
 import org.kitodo.data.database.persistence.TaskDAO;
 
 @Entity
-@Indexed(index = "kitodo-task")
 @Table(name = "task")
 public class Task extends BaseBean {
 
@@ -159,9 +154,6 @@ public class Task extends BaseBean {
 
     @Transient
     private String editTypeTitle;
-
-    @Transient
-    private transient IndexingKeyworder indexingKeyworder;
 
     /**
      * Constructor.
@@ -927,89 +919,5 @@ public class Task extends BaseBean {
             return Collections.emptyList();
         }
         return getRoles().stream().map(Role::getId).collect(Collectors.toList());
-    }
-
-    /**
-     * When indexing, outputs the index keywords for free search.
-     * 
-     * @return the index keywords for free search
-     */
-    @Transient
-    @FullTextField(name = "search")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForFreeSearch() {
-        return initializeKeywords().getSearch();
-    }
-
-    /**
-     * When indexing, outputs the index keywords for searching in title.
-     * 
-     * @return the index keywords for searching in title
-     */
-    @Transient
-    @FullTextField(name = "searchTitle")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingInTitle() {
-        return initializeKeywords().getSearchTitle();
-    }
-
-    /**
-     * When indexing, outputs the index keywords for searching by project name.
-     * 
-     * @return the index keywords for searching by project name
-     */
-    @Transient
-    @FullTextField(name = "searchProject")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingByProjectName() {
-        return initializeKeywords().getSearchProject();
-    }
-
-    /**
-     * When indexing, outputs the index keywords for searching for assignment to
-     * batches.
-     * 
-     * @return the index keywords for searching for assignment to batches
-     */
-    @Transient
-    @FullTextField(name = "searchBatch")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForAssignmentToBatches() {
-        return initializeKeywords().getSearchBatch();
-    }
-
-    /**
-     * When indexing, outputs the index keywords for searching for task
-     * information.
-     * 
-     * @return the index keywords for searching for task information
-     */
-    @Transient
-    @FullTextField(name = "searchTask")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingForTaskInformation() {
-        return initializeKeywords().getSearchTask();
-    }
-
-    /**
-     * When indexing, outputs the index keywords for searching for metadata.
-     * 
-     * @return the index keywords for searching for metadata
-     */
-    @Transient
-    @FullTextField(name = "searchMetadata")
-    @IndexingDependency(reindexOnUpdate = ReindexOnUpdate.NO)
-    public String getKeywordsForSearchingForMetadata() {
-        return initializeKeywords().getSearchMetadata();
-    }
-
-    private IndexingKeyworder initializeKeywords() {
-        if (this.indexingKeyworder == null) {
-            IndexingKeyworder indexingKeyworder = new IndexingKeyworder(this);
-            this.indexingKeyworder = indexingKeyworder;
-            return indexingKeyworder;
-        } else {
-            return indexingKeyworder;
-        }
     }
 }
