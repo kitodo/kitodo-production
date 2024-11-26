@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -329,6 +330,16 @@ public class BeanQuery {
     }
 
     /**
+     * Disables the sort order of the query. This can speed up the check whether
+     * there is <i>any</i> object for a specific search query. However, you no
+     * longer have a reliable order when navigating the result list, and should
+     * therefore only be used in special cases.
+     */
+    public void setUnordered() {
+        sorting = null;
+    }
+
+    /**
      * Forms and returns a query to count all objects.
      * 
      * @return a query to count all objects
@@ -351,7 +362,9 @@ public class BeanQuery {
             query.append("SELECT ").append(varName).append(' ');
         }
         innerFormQuery(query);
-        query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
+        if (Objects.nonNull(sorting)) {
+            query.append(" ORDER BY ").append(sorting.getKey()).append(' ').append(sorting.getValue());
+        }
         return query.toString();
     }
 

@@ -635,6 +635,7 @@ public class ProcessService extends BaseBeanService<Process, ProcessDAO> {
     public Collection<?> findByTemplate(int templateId) throws DAOException {
         BeanQuery query = new BeanQuery(Process.class);
         query.addIntegerRestriction("template.id", templateId);
+        query.setUnordered();
         return getByQuery(query.formQueryForAll(), query.getQueryParameters(), 0, 1);
     }
 
