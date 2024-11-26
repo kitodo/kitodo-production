@@ -23,17 +23,46 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
     protected boolean operand;
     private String value;
 
+    /**
+     * Creates a new part of the search engine to be resolved on the database.
+     *
+     * @param filterField
+     *            search field chosen by the user
+     * @param value
+     *            what the user wants to find
+     * @param operand
+     *            whether it should be found
+     */
     DatabaseQueryPart(FilterField filterField, String value, boolean operand) {
         this.filterField = filterField;
         this.operand = operand;
         this.value = value;
     }
 
+    /**
+     * Creates a new part of the search engine to be resolved on the database.
+     *
+     * @param filterField
+     *            search field chosen by the user
+     * @param operand
+     *            whether it should be found
+     */
     protected DatabaseQueryPart(FilterField filterField, boolean operand) {
         this.filterField = filterField;
         this.operand = operand;
     }
 
+    /**
+     * Returns the database search query.
+     * 
+     * @param className
+     *            which objects to search
+     * @param varName
+     *            HQL query variable representing the object to search
+     * @param parameterName
+     *            string of the parameter for the search value
+     * @return the database search query
+     */
     String getDatabaseQuery(String className, String varName, String parameterName) {
         String query = Objects.equals(className, "Task") ? filterField.getTaskTitleQuery()
                 : filterField.getProcessTitleQuery();
@@ -42,6 +71,14 @@ public class DatabaseQueryPart implements UserSpecifiedFilter {
         return operand ? query : "NOT (" + query + ')';
     }
 
+    /**
+     * Adds the parameters for the search query.
+     * 
+     * @param parameterName
+     *            string of the parameter for the search value
+     * @param parameters
+     *            map to which the parameters should be added
+     */
     void addParameters(String parameterName, Map<String, Object> parameters) {
         if (Objects.nonNull(filterField.getQueryObject())) {
             parameters.put("queryObject", filterField.getQueryObject());

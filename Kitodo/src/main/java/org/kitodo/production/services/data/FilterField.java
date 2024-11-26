@@ -109,6 +109,24 @@ enum FilterField {
     private final String searchField;
     private final String pseudoword;
 
+    /**
+     * Creates a filter field enum constant.
+     * 
+     * @param processTitleQuery
+     *            search for processes by label in the database
+     * @param taskTitleQuery
+     *            search for tasks by label in the database
+     * @param processIdQuery
+     *            search for processes by id in the database
+     * @param taskIdQuery
+     *            search for tasks by id in the database
+     * @param queryObject
+     *            object {@code :queryObject}, if used in the query
+     * @param searchField
+     *            search field for index search
+     * @param pseudoword
+     *            auxiliary term for searching the index
+     */
     private FilterField(String processTitleQuery, String taskTitleQuery, String processIdQuery, String taskIdQuery,
             Object queryObject, String searchField, String pseudoword) {
         this.processTitleQuery = processTitleQuery;
@@ -126,6 +144,7 @@ enum FilterField {
      * 
      * @return query to search for a process object
      */
+    @MaybeNull
     String getProcessTitleQuery() {
         return processTitleQuery;
     }
@@ -135,6 +154,7 @@ enum FilterField {
      * 
      * @return query to search for a task object
      */
+    @MaybeNull
     String getTaskTitleQuery() {
         return taskTitleQuery;
     }
@@ -144,6 +164,7 @@ enum FilterField {
      * 
      * @return query to search for a process object
      */
+    @MaybeNull
     String getProcessIdQuery() {
         return processIdQuery;
     }
@@ -153,6 +174,7 @@ enum FilterField {
      * 
      * @return query to search for a task object
      */
+    @MaybeNull
     String getTaskIdQuery() {
         return taskIdQuery;
     }
@@ -163,6 +185,7 @@ enum FilterField {
      * 
      * @return object to be added to the query parameters
      */
+    @MaybeNull
     Object getQueryObject() {
         return queryObject;
     }
@@ -179,10 +202,12 @@ enum FilterField {
     }
 
     /**
-     * Word component to limit the index search.
+     * Word component to limit the index search. Returns {@code null} if no
+     * pseudoword is needed.
      * 
      * @return word component
      */
+    @MaybeNull
     String getPseudoword() {
         return pseudoword;
     }
