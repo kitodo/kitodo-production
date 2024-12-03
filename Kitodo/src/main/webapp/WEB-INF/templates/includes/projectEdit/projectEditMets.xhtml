@@ -117,7 +117,7 @@
         <p:dataTable id="folderTable" var="folder" value="#{ProjectForm.folderList}"
                      disabled="#{ProjectForm.locked}">
             <p:column headerText="#{msgs.metsfilegroups}">
-                <h:outputText value="#{folder.path}, #{folder.fileGroup}" />
+                <h:outputText value="#{folder.path}#{empty folder.fileGroup ? '' : ', '.concat(folder.fileGroup)}" />
             </p:column>
             <p:column>
                 <!-- edit button -->
