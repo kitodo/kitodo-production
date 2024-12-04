@@ -20,7 +20,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
-import javax.persistence.Transient;
 
 import org.hibernate.Hibernate;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
