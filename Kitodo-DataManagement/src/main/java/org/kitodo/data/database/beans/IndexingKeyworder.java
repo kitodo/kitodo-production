@@ -81,11 +81,7 @@ class IndexingKeyworder {
         var taskKeywords = initTaskKeywords(process.getTasksUnmodified());
         this.taskKeywords = filterMinLength(taskKeywords.getLeft());
         this.taskPseudoKeywords = filterMinLength(taskKeywords.getRight());
-        String place = null;
-        if (logger.isDebugEnabled()) {
-            place = "process " + process.getId() + " \"" + process.getTitle() + "\"";
-        }
-        var metadataKeywords = initMetadataKeywords(process, place);
+        var metadataKeywords = initMetadataKeywords(process);
         this.metadataKeywords = filterMinLength(metadataKeywords.getLeft());
         this.metadataPseudoKeywords = filterMinLength(metadataKeywords.getRight());
         this.processId = process.getId().toString();
@@ -220,7 +216,7 @@ class IndexingKeyworder {
      *            Can be null if logging is disabled on the debug level.
      * @return metadata keywords, and metadata pseudo keywords
      */
-    private static final Pair<Set<String>, Set<String>> initMetadataKeywords(Process process, String placeDebug) {
+    private static final Pair<Set<String>, Set<String>> initMetadataKeywords(Process process) {
         final Pair<Set<String>, Set<String>> emptyResult = Pair.of(Collections.emptySet(), Collections.emptySet());
         try {
             String processId = Integer.toString(process.getId());
@@ -230,7 +226,7 @@ class IndexingKeyworder {
                         : "Missing metadata file for indexing: ") + path);
                 return emptyResult;
             }
-            logger.debug("Indexing {} in {}", path, placeDebug);
+            logger.debug("Indexing {} in process {} \"{}\"", path, process.getId(), process.getTitle());
             String metaXml = FileUtils.readFileToString(path.toFile(), StandardCharsets.UTF_8);
             if (!metaXml.contains(ANY_METADATA_MARKER)) {
                 return emptyResult;
