@@ -559,6 +559,9 @@ public abstract class BaseDAO<T extends BaseBean> implements Serializable {
                 }
                 if (parameter instanceof Collection) {
                     int size = ((Collection<?>) parameter).size();
+                    /* Up to a dozen numbers are written out, but for a larger
+                    number (and that can be 500,000 IDs) only the number of
+                    elements is logged, otherwise the logging is unreadable. */
                     if (size > 12) {
                         return "... " + size + " elements ...";
                     }
