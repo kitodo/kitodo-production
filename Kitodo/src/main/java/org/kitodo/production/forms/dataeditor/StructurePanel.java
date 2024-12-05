@@ -395,7 +395,7 @@ public class StructurePanel implements Serializable {
 
     /**
      * Return the currently selected logical divison if it is the only selected structure element.
-     * @return
+     * @return LogicalDivison as Optional instance
      */
     Optional<LogicalDivision> getSelectedStructure() {
         TreeNode selectedLogicalNode = getSelectedLogicalNodeIfSingle();
@@ -558,15 +558,14 @@ public class StructurePanel implements Serializable {
         if (!keepSelection) {
             show();
             return;
-        }
+        }       
 
-        Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
-            
         String physicalRowKey = null;
         if (Objects.nonNull(selectedPhysicalNode)) {
             physicalRowKey = selectedPhysicalNode.getRowKey();
         }
 
+        Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
         List<TreeNode> keepSelectedLogicalNodes = getSelectedLogicalNodes();
         TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
         show();
@@ -1114,8 +1113,11 @@ public class StructurePanel implements Serializable {
                 if (!this.logicalStructureTreeContainsMedia()) {
                     selectedTreeNodes = updateLogicalNodeSelectionRecursive(structure, logicalTree);
                 } else {
-                    selectedTreeNodes = updatePhysSelectionInLogTreeRecursive(galleryMediaContent.getView().getPhysicalDivision(), structure,
-                            logicalTree);
+                    selectedTreeNodes = updatePhysSelectionInLogTreeRecursive(
+                        galleryMediaContent.getView().getPhysicalDivision(), 
+                        structure,
+                        logicalTree
+                    );
                 }
                 if (Objects.nonNull(selectedTreeNodes)) {
                     setSelectedLogicalNodes(selectedTreeNodes);
@@ -1335,14 +1337,21 @@ public class StructurePanel implements Serializable {
      * Move page encapsulated in given StructureTreeNode 'dragNode' to Structural Element encapsulated in given
      * StructureTreeNode 'dropNode' at index encoded in given TreeDragDropEvent 'event'.
      *
-     * @param event
-     *          TreeDragDropEvent triggering 'movePageNode'
+     * @param dragTreeNode
+     *          TreeNode that is being dragged
+     * @param dropTreeNode
+     *          TreeNode to which the node is being dropped
      * @param dropStructureNode
      *          StructureTreeNode containing the Structural Element to which the page is moved
      * @param dragStructureNode
      *          StructureTreeNode containing the View/Page that is moved
      */
-    private void movePageNode(TreeNode dragTreeNode, TreeNode dropTreeNode, StructureTreeNode dropStructureNode, StructureTreeNode dragStructureNode) throws Exception {
+    private void movePageNode(
+        TreeNode dragTreeNode, 
+        TreeNode dropTreeNode, 
+        StructureTreeNode dropStructureNode, 
+        StructureTreeNode dragStructureNode
+    ) throws Exception {
         TreeNode dragParent = dragTreeNode.getParent();
         if (dragParent.getData() instanceof StructureTreeNode) {
             StructureTreeNode dragParentTreeNode = (StructureTreeNode) dragParent.getData();
