@@ -558,21 +558,21 @@ public class StructurePanel implements Serializable {
         if (!keepSelection) {
             show();
             return;
-        }       
+        }
 
         String physicalRowKey = null;
         if (Objects.nonNull(selectedPhysicalNode)) {
             physicalRowKey = selectedPhysicalNode.getRowKey();
         }
 
-        Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
         List<TreeNode> keepSelectedLogicalNodes = getSelectedLogicalNodes();
         TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
+        Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
         show();
         setSelectedLogicalNodes(keepSelectedLogicalNodes);
         selectedPhysicalNode = keepSelectedPhysicalNode;
         restoreSelectionFromRowKeys(logicalRowKeys, this.logicalTree);
-        
+
         // ------------------------ TODO TODO TODO --------------
         /*if (Objects.nonNull(physicalRowKey)) {
             restoreSelection(physicalRowKey, this.physicalTree);
