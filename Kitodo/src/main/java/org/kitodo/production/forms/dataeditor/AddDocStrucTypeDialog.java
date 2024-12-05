@@ -19,6 +19,7 @@ import static org.kitodo.production.metadata.InsertionPosition.LAST_CHILD_OF_CUR
 import static org.kitodo.production.metadata.InsertionPosition.PARENT_OF_CURRENT_ELEMENT;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -182,10 +183,10 @@ public class AddDocStrucTypeDialog {
                 }
             }
             dataEditor.refreshStructurePanel();
-            TreeNode selectedLogicalTreeNode = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
+            List<TreeNode> selectedLogicalTreeNodes = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
                     this.dataEditor.getStructurePanel().getLogicalTree());
-            if (Objects.nonNull(selectedLogicalTreeNode)) {
-                this.dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalTreeNode);
+            if (Objects.nonNull(selectedLogicalTreeNodes)) {
+                this.dataEditor.getStructurePanel().setSelectedLogicalNodes(selectedLogicalTreeNodes);
                 this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
                 dataEditor.refreshStructurePanel();
             }
@@ -436,13 +437,13 @@ public class AddDocStrucTypeDialog {
 
     private void checkSelectedLogicalNode() {
         //If a view is selected in logical tree then the 'selectedLogicalNode' will be set to the parent of this view
-        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
         if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
             if (structureTreeNode.getDataObject() instanceof View) {
                 if (Objects.nonNull(selectedLogicalNode.getParent())) {
                     previouslySelectedLogicalNode = selectedLogicalNode;
-                    dataEditor.getStructurePanel().setSelectedLogicalNode(selectedLogicalNode.getParent());
+                    dataEditor.getStructurePanel().setSelectedLogicalNodes(Arrays.asList(selectedLogicalNode.getParent()));
                 }
             }
         }
@@ -594,7 +595,7 @@ public class AddDocStrucTypeDialog {
         selectFirstPageOnAddNode = null;
         selectLastPageOnAddNode = null;
         if (Objects.nonNull(previouslySelectedLogicalNode)) {
-            dataEditor.getStructurePanel().setSelectedLogicalNode(previouslySelectedLogicalNode);
+            dataEditor.getStructurePanel().setSelectedLogicalNodes(Arrays.asList(previouslySelectedLogicalNode));
             previouslySelectedLogicalNode = null;
         }
     }

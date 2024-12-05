@@ -371,14 +371,14 @@ public class PaginationPanel {
     private void updateMetadataPanel() {
         if (dataEditor.getSelectedStructure().isPresent()) {
             dataEditor.getMetadataPanel().showLogical(dataEditor.getSelectedStructure());
-        } else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode())
-                && dataEditor.getStructurePanel().getSelectedLogicalNode().getData() instanceof StructureTreeNode
+        } /* else if (Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNodes())
+                && dataEditor.getStructurePanel().getSelectedLogicalNodes().getData() instanceof StructureTreeNode
                 && Objects.nonNull(dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
                 && ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData())
                 .getDataObject() instanceof View) {
             View view = (View) ((StructureTreeNode) dataEditor.getStructurePanel().getSelectedLogicalNode().getData()).getDataObject();
             dataEditor.getMetadataPanel().showPageInLogical(view.getPhysicalDivision());
-        }
+        }*/
     }
 
     /**
