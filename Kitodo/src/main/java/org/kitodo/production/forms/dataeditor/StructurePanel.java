@@ -560,6 +560,8 @@ public class StructurePanel implements Serializable {
             return;
         }
 
+        final Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
+
         String physicalRowKey = null;
         if (Objects.nonNull(selectedPhysicalNode)) {
             physicalRowKey = selectedPhysicalNode.getRowKey();
@@ -567,7 +569,6 @@ public class StructurePanel implements Serializable {
 
         List<TreeNode> keepSelectedLogicalNodes = getSelectedLogicalNodes();
         TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
-        Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
         show();
         setSelectedLogicalNodes(keepSelectedLogicalNodes);
         selectedPhysicalNode = keepSelectedPhysicalNode;
