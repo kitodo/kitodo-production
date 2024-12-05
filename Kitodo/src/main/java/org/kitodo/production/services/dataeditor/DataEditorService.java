@@ -264,10 +264,10 @@ public class DataEditorService {
                             dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         }
 
-        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
 
         if (Objects.isNull(selectedLogicalNode)) {
-            throw new IllegalStateException("No logical node selected!");
+            return null;
         }
 
         if (!(selectedLogicalNode.getData() instanceof StructureTreeNode)) {
