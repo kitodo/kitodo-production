@@ -433,7 +433,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         structurePanel.getSeveralAssignments().addAll(severalAssignments);
 
         structurePanel.show();
-        structurePanel.getSelectedLogicalNode().setSelected(true);
+        for (TreeNode node : structurePanel.getSelectedLogicalNodes()) {
+            node.setSelected(true);
+        }
         structurePanel.getSelectedPhysicalNode().setSelected(true);
         metadataPanel.showLogical(getSelectedStructure());
         metadataPanel.showPhysical(getSelectedPhysicalDivision());
@@ -647,7 +649,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      * clicked on the context menu entry to delete the physical division.
      */
     public void deletePhysicalDivision() {
-        structurePanel.deleteSelectedPhysicalDivision();
+        structurePanel.deleteSelectedPhysicalDivisions();
         updateNumberOfScans();
     }
 
@@ -1330,7 +1332,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
      */
     public boolean canUpdateMetadata() {
         try {
-            return DataEditorService.canUpdateCatalogMetadata(process, workpiece, structurePanel.getSelectedLogicalNode());
+            return DataEditorService.canUpdateCatalogMetadata(process, workpiece, structurePanel.getSelectedLogicalNodeIfSingle());
         } catch (IOException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return false;
