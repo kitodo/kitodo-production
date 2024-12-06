@@ -12,9 +12,7 @@
 package org.kitodo.production.forms.copyprocess;
 
 import static org.awaitility.Awaitility.await;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.File;
 import java.net.URI;
@@ -33,6 +31,7 @@ import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.User;
+import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
 import org.kitodo.production.helper.TempProcess;
 import org.kitodo.production.services.ServiceManager;
@@ -76,7 +75,7 @@ public class CreateProcessFormIT {
     }
 
     // Helper to create and initialize a CreateProcessForm with common properties
-    private CreateProcessForm setupCreateProcessForm(String docType, String title) throws Exception {
+    private CreateProcessForm setupCreateProcessForm(String docType) throws Exception {
         CreateProcessForm form = new CreateProcessForm();
         form.getProcessDataTab().setDocType(docType);
 
@@ -87,7 +86,6 @@ public class CreateProcessFormIT {
 
         form.getMainProcess().setProject(ServiceManager.getProjectService().getById(1));
         form.getMainProcess().setRuleset(ServiceManager.getRulesetService().getById(1));
-        form.getMainProcess().setTitle(title);
 
         form.updateRulesetAndDocType(tempProcess.getProcess().getRuleset());
         return form;
@@ -114,8 +112,8 @@ public class CreateProcessFormIT {
 
     @Test
     public void shouldCreateNewProcess() throws Exception {
-        CreateProcessForm underTest = setupCreateProcessForm("Monograph", "title");
-
+        CreateProcessForm underTest = setupCreateProcessForm("Monograph");
+        underTest.getMainProcess().setTitle("title");
         setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
@@ -129,8 +127,8 @@ public class CreateProcessFormIT {
 
     @Test
     public void shouldCreateNewProcessWithoutWorkflow() throws Exception {
-        CreateProcessForm underTest = setupCreateProcessForm("MultiVolumeWork", "title");
-
+        CreateProcessForm underTest = setupCreateProcessForm("MultiVolumeWork");
+        underTest.getMainProcess().setTitle("title");
         setScriptPermissions(true);
         long before = processService.count();
         underTest.createNewProcess();
@@ -145,36 +143,38 @@ public class CreateProcessFormIT {
     }
 
     @Test
-    public void shouldNotCreateNewProcessWithInvalidTitle() throws Exception {
-        CreateProcessForm underTest = setupCreateProcessForm("Monograph", "title with whitespaces");
-
+    public void shouldThrowExceptionForInvalidTitle() throws Exception {
+        // Attempt to create a process with an invalid title
+        CreateProcessForm underTest = setupCreateProcessForm("Monograph");
+        underTest.getMainProcess().setTitle("title with whitespaces");
         long before = processService.count();
-        underTest.createNewProcess();
+        assertThrows(ProcessGenerationException.class, underTest::createProcessHierarchy,
+                "Expected a ProcessGenerationException to be thrown for an invalid title, but it was not.");
         long after = processService.count();
-
+        // Ensure no process was created
         assertEquals(before, after, "A process with an invalid title was created!");
     }
 
     @Test
     public void shouldNotAllowDuplicateTitles() throws Exception {
         // First process creation
-        CreateProcessForm underTest = setupCreateProcessForm("Monograph", "title");
+        CreateProcessForm underTest = setupCreateProcessForm("Monograph");
+        underTest.getMainProcess().setTitle("title");
 
         setScriptPermissions(true);
         long before = processService.count();
-        underTest.createNewProcess();
+        underTest.createProcessHierarchy();
         setScriptPermissions(false);
 
         long after = processService.count();
         assertEquals(before + 1, after, "First process creation failed. No process was created!");
-
         // Second process creation with duplicate title
-        CreateProcessForm underTestTwo = setupCreateProcessForm("Monograph", "title");
-
+        CreateProcessForm underTestTwo = setupCreateProcessForm("Monograph");
+        underTestTwo.getMainProcess().setTitle("title");
         long beforeDuplicate = processService.count();
-        underTestTwo.createNewProcess();
+        assertThrows(ProcessGenerationException.class, underTestTwo::createProcessHierarchy,
+                "Expected a ProcessGenerationException to be thrown for duplicate title, but it was not.");
         long afterDuplicate = processService.count();
-
         assertEquals(beforeDuplicate, afterDuplicate, "A duplicate process with the same title was created!");
 
         cleanUpProcess(underTest.getMainProcess());
