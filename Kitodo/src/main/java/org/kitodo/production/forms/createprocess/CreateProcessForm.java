@@ -514,7 +514,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     /**
      * Create process hierarchy.
      */
-    private void createProcessHierarchy()
+    public void createProcessHierarchy()
             throws DataException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
