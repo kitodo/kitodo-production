@@ -1215,6 +1215,9 @@ tr.ui-expanded-row-content:hover .ui-datatable tbody {
     color: var(--carbon-blue) !important;
 }
 
+.ui-progressbar-determinate .ui-progressbar-label {
+    line-height: initial;
+}
 
 .ui-picklist-caption {
     border-bottom: 1px solid var(--carbon-blue) !important;
