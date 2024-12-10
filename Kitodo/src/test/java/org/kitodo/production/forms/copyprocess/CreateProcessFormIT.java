@@ -24,6 +24,7 @@ import java.util.LinkedList;
 
 import org.apache.commons.lang3.SystemUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.kitodo.ExecutionPermission;
@@ -50,6 +51,7 @@ public class CreateProcessFormIT {
     private static final ProcessService processService = ServiceManager.getProcessService();
 
     private static final String firstProcess = "First process";
+    private Process createdProcess;
 
     /**
      * Is running before the class runs.
@@ -75,6 +77,16 @@ public class CreateProcessFormIT {
     public static void cleanDatabase() throws Exception {
         MockDatabase.stopNode();
         MockDatabase.cleanDatabase();
+    }
+
+    @AfterEach
+    public void cleanUpAfterEach() throws Exception {
+        if (createdProcess != null && createdProcess.getId() != null) {
+            processService.remove(createdProcess.getId());
+            fileService.delete(URI.create(createdProcess.getId().toString()));
+        }
+        createdProcess = null;
+        setScriptPermissions(false);
     }
 
     // Helper to create and initialize a CreateProcessForm with common properties
@@ -106,13 +118,6 @@ public class CreateProcessFormIT {
         }
     }
 
-    // Helper to clean up database and file system
-    private void cleanUpProcess(Process process) throws Exception {
-        Integer processId = process.getId();
-        processService.remove(processId);
-        fileService.delete(URI.create(processId.toString()));
-    }
-
     @Test
     public void shouldCreateNewProcess() throws Exception {
         CreateProcessForm underTest = setupCreateProcessForm("Monograph");
@@ -125,7 +130,7 @@ public class CreateProcessFormIT {
         long after = processService.count();
         assertEquals(before + 1, after, "No process was created!");
 
-        cleanUpProcess(underTest.getMainProcess());
+        createdProcess = underTest.getMainProcess();
     }
 
     @Test
@@ -142,7 +147,7 @@ public class CreateProcessFormIT {
         assertTrue(underTest.getMainProcess().getTasks().isEmpty(), "Process should not have tasks");
         assertNull(underTest.getMainProcess().getSortHelperStatus(), "Process should not have sortHelperStatus");
 
-        cleanUpProcess(underTest.getMainProcess());
+        createdProcess = underTest.getMainProcess();
     }
 
     @Test
@@ -180,7 +185,7 @@ public class CreateProcessFormIT {
         long afterDuplicate = processService.count();
         assertEquals(beforeDuplicate, afterDuplicate, "A duplicate process with the same title was created!");
 
-        cleanUpProcess(underTest.getMainProcess());
+        createdProcess = underTest.getMainProcess();
     }
 
 }
