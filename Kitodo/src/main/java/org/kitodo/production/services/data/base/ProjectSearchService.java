@@ -106,4 +106,15 @@ public abstract class ProjectSearchService<T extends BaseIndexedBean, S extends 
     public Long countDocuments(QueryBuilder query) throws DataException {
         return super.countDocuments(queryForProjects(query));
     }
+
+    /**
+     * Execute a count query without filtering
+     * for projects of the current user.
+     * @param query
+     *            as QueryBuilder object
+     * @return amount of objects according to given query or 0 if query is null
+     */
+    public Long countDocumentsAcrossProjects(QueryBuilder query) throws DataException {
+        return super.countDocuments(query);
+    }
 }
