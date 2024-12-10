@@ -26,7 +26,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.kitodo.data.database.enums.WorkflowStatus;
 import org.kitodo.data.database.persistence.WorkflowDAO;
 
@@ -34,7 +33,7 @@ import org.kitodo.data.database.persistence.WorkflowDAO;
 @Table(name = "workflow")
 public class Workflow extends BaseBean {
 
-    @GenericField
+    @Column(name = "title")
     private String title;
 
     @Column(name = "status")
