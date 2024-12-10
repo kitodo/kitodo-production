@@ -160,7 +160,7 @@ public class Process extends BaseTemplateBean {
     private String baseType;
 
     @Transient
-    private transient IndexingKeyworder indexingKeyworder;
+    private transient ProcessKeywords processKeywords;
 
     /**
      * Constructor.
@@ -1097,13 +1097,13 @@ public class Process extends BaseTemplateBean {
         return initializeKeywords().getSearchTask();
     }
 
-    private IndexingKeyworder initializeKeywords() {
-        if (this.indexingKeyworder == null) {
-            IndexingKeyworder indexingKeyworder = new IndexingKeyworder(this);
-            this.indexingKeyworder = indexingKeyworder;
+    private ProcessKeywords initializeKeywords() {
+        if (this.processKeywords == null) {
+            ProcessKeywords indexingKeyworder = new ProcessKeywords(this);
+            this.processKeywords = indexingKeyworder;
             return indexingKeyworder;
         } else {
-            return indexingKeyworder;
+            return processKeywords;
         }
     }
 }
