@@ -64,7 +64,7 @@
                          iconPos="right"
                          onclick="setConfirmUnload(false);PF('notifications').renderMessage({'summary':'#{msgs.projectSaving}','detail':'#{msgs.youWillBeRedirected}','severity':'info'});"
                          disabled="#{ProjectForm.saveDisabled}"
-                         update="notifications"/>
+                         update="notifications editForm:error-messages"/>
     </ui:define>
 
     <ui:define name="messages">
