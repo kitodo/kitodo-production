@@ -34,6 +34,7 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
+import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
@@ -163,11 +164,22 @@ public class CreateProcessFormIT {
         assertEquals(before, after, "A process with an invalid title was created!");
     }
 
+
     @Test
-    public void shouldNotAllowDuplicateTitles() throws Exception {
+    public void shouldNotAllowDuplicateProcessTitles() throws Exception {
+        assertDuplicateTitleNotAllowed(1, false);
+    }
+
+    @Test
+    public void shouldNotAllowProcessTitlesInProjectsTheUserDoesNotBelongTo() throws Exception {
+        assertDuplicateTitleNotAllowed(2, true);
+    }
+
+    private void assertDuplicateTitleNotAllowed(int projectId, boolean switchUserContext) throws Exception {
         // First process creation
         CreateProcessForm underTest = setupCreateProcessForm("Monograph");
         underTest.getMainProcess().setTitle("title");
+        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(projectId));
 
         setScriptPermissions(true);
         long before = processService.count();
@@ -176,9 +188,18 @@ public class CreateProcessFormIT {
 
         long after = processService.count();
         assertEquals(before + 1, after, "First process creation failed. No process was created!");
+
+        // Switch user context to check with a user which does not has access to project 2
+        if (switchUserContext) {
+            User userTwo = ServiceManager.getUserService().getById(2);
+            SecurityTestUtils.addUserDataToSecurityContext(userTwo, 1);
+        }
+
         // Second process creation with duplicate title
         CreateProcessForm underTestTwo = setupCreateProcessForm("Monograph");
         underTestTwo.getMainProcess().setTitle("title");
+        underTestTwo.getMainProcess().setProject(ServiceManager.getProjectService().getById(projectId));
+
         long beforeDuplicate = processService.count();
         assertThrows(ProcessGenerationException.class, underTestTwo::createProcessHierarchy,
                 "Expected a ProcessGenerationException to be thrown for duplicate title, but it was not.");
