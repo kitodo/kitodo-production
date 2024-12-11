@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.7.2-SNAPSHOT</version>
+        <version>3.7.2</version>
     </parent>
 
     <name>Kitodo - Data Management</name>
