@@ -13,6 +13,7 @@ package org.kitodo.production.forms.copyprocess;
 
 import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -193,6 +194,11 @@ public class CreateProcessFormIT {
         if (switchUserContext) {
             User userTwo = ServiceManager.getUserService().getById(2);
             SecurityTestUtils.addUserDataToSecurityContext(userTwo, 1);
+            // Assert that the user 2 is NOT associated with project 2
+            assertFalse(ServiceManager.getProjectService()
+                    .getById(projectId)
+                    .getUsers()
+                    .contains(userTwo), "User should not have access to projectOne");
         }
 
         // Second process creation with duplicate title
