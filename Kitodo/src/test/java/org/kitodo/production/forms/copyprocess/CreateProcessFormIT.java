@@ -35,7 +35,6 @@ import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
 import org.kitodo.data.database.beans.Process;
-import org.kitodo.data.database.beans.Project;
 import org.kitodo.data.database.beans.User;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.forms.createprocess.CreateProcessForm;
@@ -130,9 +129,8 @@ public class CreateProcessFormIT {
         setScriptPermissions(false);
 
         long after = processService.count();
-        assertEquals(before + 1, after, "No process was created!");
-
         createdProcess = underTest.getMainProcess();
+        assertEquals(before + 1, after, "No process was created!");
     }
 
     @Test
@@ -143,13 +141,11 @@ public class CreateProcessFormIT {
         long before = processService.count();
         underTest.createNewProcess();
         setScriptPermissions(false);
-
         long after = processService.count();
+        createdProcess = underTest.getMainProcess();
         assertEquals(before + 1, after, "No process was created!");
         assertTrue(underTest.getMainProcess().getTasks().isEmpty(), "Process should not have tasks");
         assertNull(underTest.getMainProcess().getSortHelperStatus(), "Process should not have sortHelperStatus");
-
-        createdProcess = underTest.getMainProcess();
     }
 
     @Test
@@ -168,19 +164,19 @@ public class CreateProcessFormIT {
 
     @Test
     public void shouldNotAllowDuplicateProcessTitles() throws Exception {
-        assertDuplicateTitleNotAllowed(1, false);
+        assertDuplicateTitleNotAllowed(1, 1, false);
     }
 
     @Test
     public void shouldNotAllowProcessTitlesInProjectsTheUserDoesNotBelongTo() throws Exception {
-        assertDuplicateTitleNotAllowed(2, true);
+        assertDuplicateTitleNotAllowed(2, 1, true);
     }
 
-    private void assertDuplicateTitleNotAllowed(int projectId, boolean switchUserContext) throws Exception {
+    private void assertDuplicateTitleNotAllowed(int firstProjectId, int secondProjectId, boolean switchUserContext) throws Exception {
         // First process creation
         CreateProcessForm underTest = setupCreateProcessForm("Monograph");
         underTest.getMainProcess().setTitle("title");
-        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(projectId));
+        underTest.getMainProcess().setProject(ServiceManager.getProjectService().getById(firstProjectId));
 
         setScriptPermissions(true);
         long before = processService.count();
@@ -188,6 +184,7 @@ public class CreateProcessFormIT {
         setScriptPermissions(false);
 
         long after = processService.count();
+        createdProcess = underTest.getMainProcess();
         assertEquals(before + 1, after, "First process creation failed. No process was created!");
 
         // Switch user context to check with a user which does not has access to project 2
@@ -196,23 +193,19 @@ public class CreateProcessFormIT {
             SecurityTestUtils.addUserDataToSecurityContext(userTwo, 1);
             // Assert that the user 2 is NOT associated with project 2
             assertFalse(ServiceManager.getProjectService()
-                    .getById(projectId)
+                    .getById(firstProjectId)
                     .getUsers()
-                    .contains(userTwo), "User should not have access to projectOne");
+                    .contains(userTwo), "User 2 should not have access to project 2");
         }
-
         // Second process creation with duplicate title
         CreateProcessForm underTestTwo = setupCreateProcessForm("Monograph");
         underTestTwo.getMainProcess().setTitle("title");
-        underTestTwo.getMainProcess().setProject(ServiceManager.getProjectService().getById(projectId));
+        underTestTwo.getMainProcess().setProject(ServiceManager.getProjectService().getById(secondProjectId));
 
         long beforeDuplicate = processService.count();
         assertThrows(ProcessGenerationException.class, underTestTwo::createProcessHierarchy,
                 "Expected a ProcessGenerationException to be thrown for duplicate title, but it was not.");
         long afterDuplicate = processService.count();
         assertEquals(beforeDuplicate, afterDuplicate, "A duplicate process with the same title was created!");
-
-        createdProcess = underTest.getMainProcess();
     }
-
 }
