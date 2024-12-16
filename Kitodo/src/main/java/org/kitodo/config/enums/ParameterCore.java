@@ -367,7 +367,7 @@ public enum ParameterCore implements ParameterInterface {
     /**
      * Validation of process title via regular expression.
      */
-    VALIDATE_PROCESS_TITLE_REGEX(new Parameter<>("validateProzessTitelRegex", "[\\w-]*")),
+    VALIDATE_PROCESS_TITLE_REGEX(new Parameter<>("validateProzessTitelRegex", "^[\\w-]+$")),
 
     /**
      * Validation of the identifier via regular expression.
