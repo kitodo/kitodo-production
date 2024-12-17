@@ -51,7 +51,6 @@ import org.kitodo.data.database.beans.Batch;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.enums.BatchType;
 import org.kitodo.data.database.exceptions.DAOException;
-import org.kitodo.data.exceptions.DataException;
 import org.kitodo.exceptions.CommandException;
 import org.kitodo.exceptions.ProcessGenerationException;
 import org.kitodo.production.enums.ProcessState;
@@ -505,15 +504,11 @@ public class NewspaperProcessesMigrator {
             LogicalDivision processDayLogicalDivision = computeIfAbsent(
                 processMonthLogicalDivision, daySimpleMetadataView, day, dayType);
             MetadataEditor.writeMetadataEntry(metaFileDayLogicalDivision, daySimpleMetadataView, day);
-            createLinkStructureOfIssues(process, yearFileDayLogicalDivision,
-                processDayLogicalDivision);
+            createLinkStructureOfIssues(process, processDayLogicalDivision);
         }
     }
 
-    private void createLinkStructureOfIssues(Process process,
-            LogicalDivision yearFileDayLogicalDivision,
-            LogicalDivision processDayLogicalDivision) {
-
+    private void createLinkStructureOfIssues(Process process, LogicalDivision processDayLogicalDivision) {
         MetadataEditor.addLink(processDayLogicalDivision, process.getId());
     }
 
@@ -618,8 +613,6 @@ public class NewspaperProcessesMigrator {
      *             if the process cannot be generated
      * @throws IOException
      *             if an I/O error occurs when accessing the file system
-     * @throws DataException
-     *             if there is an error saving the process
      * @throws DAOException
      *             if a process cannot be load from the database
      */

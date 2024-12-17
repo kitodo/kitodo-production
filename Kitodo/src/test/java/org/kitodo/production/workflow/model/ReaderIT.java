@@ -71,11 +71,11 @@ public class ReaderIT {
 
         Task task = entry[0].getKey();
         TaskInfo taskInfo = entry[0].getValue();
-        assertCorrectTask(task, taskInfo, "Say hello", 1, "");
+        assertCorrectTask(task, taskInfo, "Say hello", 1);
 
         task = entry[1].getKey();
         taskInfo = entry[1].getValue();
-        assertCorrectTask(task, taskInfo, "Execute script", 2, "");
+        assertCorrectTask(task, taskInfo, "Execute script", 2);
     }
 
     @Test
@@ -92,20 +92,20 @@ public class ReaderIT {
             String title = task.getName();
             switch (title) {
                 case "Task1":
-                    assertCorrectTask(task, taskInfo, "Task1", 1, "");
+                    assertCorrectTask(task, taskInfo, "Task1", 1);
                     assertFalse(taskInfo.isLast(), "Process definition - workflow's task last property were determined incorrectly!");
                     break;
                 case "ScriptTask":
-                    assertCorrectTask(task, taskInfo, "ScriptTask", 2, "${type==1}");
+                    assertCorrectTask(task, taskInfo, "ScriptTask", 2);
                     break;
                 case "Task3":
-                    assertCorrectTask(task, taskInfo, "Task3", 2, "${type==2}");
+                    assertCorrectTask(task, taskInfo, "Task3", 2);
                     break;
                 case "Task4":
-                    assertCorrectTask(task, taskInfo, "Task4", 2, "default");
+                    assertCorrectTask(task, taskInfo, "Task4", 2);
                     break;
                 case "Task5":
-                    assertCorrectTask(task, taskInfo, "Task5", 3, "");
+                    assertCorrectTask(task, taskInfo, "Task5", 3);
                     assertTrue(taskInfo.isLast(), "Process definition - workflow's task last property were determined incorrectly!");
                     break;
                 default:
@@ -137,28 +137,28 @@ public class ReaderIT {
             String title = task.getName();
             switch (title) {
                 case "Task1":
-                    assertCorrectTask(task, taskInfo, "Task1", 1, "");
+                    assertCorrectTask(task, taskInfo, "Task1", 1);
                     assertFalse(taskInfo.isLast(), "Process definition - workflow's task last property were determined incorrectly!");
                     break;
                 case "Task2":
-                    assertCorrectTask(task, taskInfo, "Task2", 2, "");
+                    assertCorrectTask(task, taskInfo, "Task2", 2);
                     break;
                 case "Task3":
-                    assertCorrectTask(task, taskInfo, "Task3", 3, "type=2");
+                    assertCorrectTask(task, taskInfo, "Task3", 3);
                     assertFalse(taskInfo.isLast(), "Process definition - workflow's task last property were determined incorrectly!");
                     break;
                 case "Task4":
-                    assertCorrectTask(task, taskInfo, "Task4", 4, "type=2");
+                    assertCorrectTask(task, taskInfo, "Task4", 4);
                     break;
                 case "Task5":
-                    assertCorrectTask(task, taskInfo, "Task5", 4, "type=2");
+                    assertCorrectTask(task, taskInfo, "Task5", 4);
                     break;
                 case "Task6":
-                    assertCorrectTask(task, taskInfo, "Task6", 5, "type=2");
+                    assertCorrectTask(task, taskInfo, "Task6", 5);
                     assertTrue(taskInfo.isLast(), "Process definition - workflow's task last property were determined incorrectly!");
                     break;
                 case "Task7":
-                    assertCorrectTask(task, taskInfo, "Task7", 3, "type=1");
+                    assertCorrectTask(task, taskInfo, "Task7", 3);
                     assertTrue(taskInfo.isLast(), "Process definition - workflow's task last property were determined incorrectly!");
                     break;
                 default:
@@ -176,7 +176,7 @@ public class ReaderIT {
         assertEquals(Helper.getTranslation("workflowExceptionLoop", "Task1"), exception.getMessage());
     }
 
-    private void assertCorrectTask(Task task, TaskInfo taskInfo, String title, int ordering, String condition) {
+    private void assertCorrectTask(Task task, TaskInfo taskInfo, String title, int ordering) {
         assertEquals(title, task.getName(), "Process definition - workflow's task title was read incorrectly!");
         assertEquals(ordering, taskInfo.getOrdering(), "Process definition - workflow's task ordering was determined incorrectly!");
     }
