@@ -222,8 +222,7 @@ public class TemplateForm extends TemplateBaseForm {
      * @return url to templateEdit view
      */
     public String saveTaskAndRedirect() {
-        saveTask(this.task, this.template, ObjectType.TEMPLATE.getTranslationSingular(),
-            ServiceManager.getTemplateService());
+        saveTask(this.task);
         return templateEditPath + "&id=" + (Objects.isNull(this.template.getId()) ? 0 : this.template.getId());
     }
 

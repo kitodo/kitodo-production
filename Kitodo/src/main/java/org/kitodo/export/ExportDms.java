@@ -197,7 +197,7 @@ public class ExportDms extends ExportMets {
 
         // validate metadata
         if (ConfigCore.getBooleanParameterOrDefaultValue(ParameterCore.USE_META_DATA_VALIDATION)
-                && !ServiceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs, process)) {
+                && !ServiceManager.getMetadataValidationService().validate(gdzfile, this.myPrefs)) {
             if (Objects.nonNull(exportDmsTask)) {
                 exportDmsTask.setException(new MetadataException("metadata validation failed", null));
             }
