@@ -67,7 +67,7 @@
                         </div>
                         <div>
                             <label for="password">#{msgs.password}</label>
-                            <input id="password" type="password" name="password"/>
+                            <p:password id="password" toggleMask="true" name="password"/>
                         </div>
                         <button id="login" aria-disabled="false"><span class="button-text">#{msgs.signIn}</span> <span class="ui-icon ui-c fa fa-sign-in fa-lg"/></button>
                         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
