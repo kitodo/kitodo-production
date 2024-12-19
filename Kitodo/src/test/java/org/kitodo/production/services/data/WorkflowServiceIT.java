@@ -12,6 +12,7 @@
 package org.kitodo.production.services.data;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -22,11 +23,12 @@ import org.junit.jupiter.api.Test;
 import org.kitodo.MockDatabase;
 import org.kitodo.SecurityTestUtils;
 import org.kitodo.data.database.beans.Workflow;
+import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.services.ServiceManager;
 
 public class WorkflowServiceIT {
 
-    private WorkflowService workflowService = ServiceManager.getWorkflowService();
+    private final WorkflowService workflowService = ServiceManager.getWorkflowService();
 
     @BeforeAll
     public static void prepareDatabase() throws Exception {
@@ -61,5 +63,14 @@ public class WorkflowServiceIT {
         assertEquals(1, workflows.size(), "Workflows were not found in database!");
 
         SecurityTestUtils.cleanSecurityContext();
+    }
+
+    @Test
+    public void shouldNotSaveNewWorkflowWithExistingTitle() {
+        Workflow workflow = new Workflow("test");
+        DataException dataException = assertThrows(DataException.class,
+                () -> workflowService.saveWorkflow(workflow),
+                "Expected DataException to be thrown when saving a new workflow with an existing title");
+        assertEquals("Workflow with title 'test' already exists.", dataException.getMessage());
     }
 }
