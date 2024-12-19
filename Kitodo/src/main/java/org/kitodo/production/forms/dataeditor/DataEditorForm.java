@@ -231,6 +231,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
 
+    private boolean globalLayoutLoaded = false;
+    private boolean taskLayoutLoaded = false;
+
     /**
      * Public constructor.
      */
@@ -405,6 +408,14 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             dataEditorSetting.setUserId(userId);
             dataEditorSetting.setTaskId(taskId);
         }
+
+        // initialize flags to signal whether global or task specific settings have been loaded or not
+        boolean layoutLoaded = (dataEditorSetting.getStructureWidth() > 0
+                || dataEditorSetting.getMetadataWidth() > 0
+                || dataEditorSetting.getGalleryWidth() > 0);
+
+        globalLayoutLoaded = Objects.isNull(dataEditorSetting.getTaskId()) && layoutLoaded;
+        taskLayoutLoaded = Objects.nonNull(dataEditorSetting.getTaskId()) && layoutLoaded;
     }
 
     /**
@@ -1399,5 +1410,23 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";
         }
+    }
+
+    /**
+     * Get value of 'globalLayoutLoaded'.
+     *
+     * @return value of 'globalLayoutLoaded'
+     */
+    public boolean isGlobalLayoutLoaded() {
+        return globalLayoutLoaded;
+    }
+
+    /**
+     * Get value of 'taskLayoutLoaded'.
+     *
+     * @return value of 'taskLayoutLoaded'
+     */
+    public boolean isTaskLayoutLoaded() {
+        return taskLayoutLoaded;
     }
 }
