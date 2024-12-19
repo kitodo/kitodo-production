@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -318,30 +317,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
-            if (Objects.nonNull(this.dataEditorSetting) && Objects.nonNull(dataEditorSetting.getId())) {
-                showDataEditorSettingsLoadedMessage();
-            }
         } catch (FileNotFoundException e) {
             metadataFileLoadingError = e.getLocalizedMessage();
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    private void showDataEditorSettingsLoadedMessage() throws DAOException {
-        Locale locale = LocaleHelper.getCurrentLocale();
-        String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
-        String text = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyDefaultText");
-        if (Objects.nonNull(this.templateTask) && Objects.nonNull(dataEditorSetting) 
-                && templateTask.getId().equals(dataEditorSetting.getTaskId())) {
-            text = MessageFormat.format(
-                Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyForTaskText"), this.templateTask.getTitle()
-            );
-        }        
-        String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
-                .replace("SEVERITY", "info");
-        PrimeFaces.current().executeScript("PF('notifications').removeAll();");
-        PrimeFaces.current().executeScript(script);
     }
 
     private void checkProjectFolderConfiguration() {
@@ -1174,6 +1154,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                loadDataEditorSettings();
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.DATAEDITORSETTING.getTranslationSingular() }, logger, e);
