@@ -37,9 +37,9 @@
 
         <h:form id="metadataEditorLayoutButtonForm">
             <p:commandButton id="open"
-                title="#{msgs['dataEditor.layoutMenuButtonTitle']}"
-                icon="fa fa-wrench"
-                styleClass="secondary"/>
+                             title="#{msgs['dataEditor.layoutMenuButtonTitle']}"
+                             icon="fa fa-wrench"
+                             styleClass="secondary #{DataEditorForm.isGlobalLayoutLoaded() ? 'settings-loaded' : DataEditorForm.isTaskLayoutLoaded() ? 'settings-loaded-task' : ''}"/>
         </h:form>
 
         <h:form id="buttonForm">
