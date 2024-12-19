@@ -258,7 +258,7 @@ public class UploadFileDialog {
     }
 
     private void initPosition() {
-        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
         if (Objects.nonNull(selectedLogicalNode)
                 && selectedLogicalNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
@@ -283,7 +283,7 @@ public class UploadFileDialog {
 
     private void preparePossiblePositions() {
         possiblePositions = new ArrayList<>();
-        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNode();
+        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
         if (Objects.nonNull(selectedLogicalNode)
                 && selectedLogicalNode.getData() instanceof StructureTreeNode) {
             StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
