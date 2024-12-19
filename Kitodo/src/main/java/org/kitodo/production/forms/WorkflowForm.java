@@ -334,7 +334,7 @@ public class WorkflowForm extends BaseForm {
     }
 
     private void saveWorkflow() throws DataException {
-        ServiceManager.getWorkflowService().save(this.workflow, true);
+        ServiceManager.getWorkflowService().saveWorkflow(this.workflow);
     }
 
     /**
