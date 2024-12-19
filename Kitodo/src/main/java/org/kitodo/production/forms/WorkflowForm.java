@@ -90,7 +90,7 @@ public class WorkflowForm extends BaseForm {
     /**
      * Get list of workflow statues for select list.
      *
-     * @return list of SelectItem objects
+     * @return array of SelectItem objects
      */
     public WorkflowStatus[] getWorkflowStatuses() {
         return WorkflowStatus.values();
@@ -160,7 +160,10 @@ public class WorkflowForm extends BaseForm {
             } else {
                 return this.stayOnCurrentPage;
             }
-        } catch (IOException | DAOException | DataException e) {
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            return this.stayOnCurrentPage;
+        } catch (IOException | DAOException e) {
             Helper.setErrorMessage("errorDiagramFile", new Object[] {this.workflow.getTitle() }, logger, e);
             return this.stayOnCurrentPage;
         } catch (WorkflowException e) {
@@ -226,7 +229,11 @@ public class WorkflowForm extends BaseForm {
      */
     public void archive() {
         this.workflow.setStatus(WorkflowStatus.ARCHIVED);
-        saveWorkflow();
+        try {
+            saveWorkflow();
+        } catch (DataException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
     }
 
     /**
@@ -326,12 +333,8 @@ public class WorkflowForm extends BaseForm {
         return xmlDiagramName;
     }
 
-    private void saveWorkflow() {
-        try {
-            ServiceManager.getWorkflowService().save(this.workflow, true);
-        } catch (DataException e) {
-            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-        }
+    private void saveWorkflow() throws DataException {
+        ServiceManager.getWorkflowService().saveWorkflow(this.workflow);
     }
 
     /**
@@ -535,7 +538,7 @@ public class WorkflowForm extends BaseForm {
     /**
      * Get language.
      *
-     * @return language of the currently logged in user
+     * @return language of the currently logged-in user
      */
     public String getLanguage() {
         return ServiceManager.getUserService().getCurrentUser().getLanguage();
