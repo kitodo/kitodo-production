@@ -55,6 +55,7 @@ import org.kitodo.api.dataformat.MediaVariant;
 import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
+import org.kitodo.api.dataformat.mets.LinkedMetsResource;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
 import org.kitodo.config.ConfigCore;
 import org.kitodo.config.enums.ParameterCore;
@@ -62,6 +63,7 @@ import org.kitodo.data.database.beans.ImportConfiguration;
 import org.kitodo.data.database.beans.Process;
 import org.kitodo.data.database.beans.Ruleset;
 import org.kitodo.exceptions.FileStructureValidationException;
+import org.kitodo.data.database.exceptions.DAOException;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.MetadataException;
 import org.kitodo.exceptions.NoRecordFoundException;
@@ -590,5 +592,21 @@ public class DataEditorService {
                     logger.info("Keep existing values for metadata {}", comparison.getMetadataKey());
             }
         }
+    }
+
+    /**
+     * Return the ID of linked process represented by the given logical division. Returns null if given logical division
+     * does not represent a linked process.
+     *
+     * @param logicalDivision logical division potentially representing a linked process
+     * @return ID of linked process
+     * @throws DAOException if linked process cannot be loaded from database
+     */
+    public Integer getLinkedProcessId(LogicalDivision logicalDivision) throws DAOException {
+        LinkedMetsResource resource = logicalDivision.getLink();
+        if (Objects.nonNull(resource)) {
+            return ServiceManager.getProcessService().processIdFromUri(resource.getUri());
+        }
+        return null;
     }
 }

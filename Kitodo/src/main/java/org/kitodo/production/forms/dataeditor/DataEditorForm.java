@@ -213,6 +213,9 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
 
     private int numberOfScans = 0;
     private String errorMessage;
+    private String errorTitle = Helper.getTranslation("metadataLocked");
+    private String blockingUserName;
+    private static final String METADATA_REDIRECT = "metadataEditor.jsf?id=%d&referer=%s&faces-redirect=true";
 
     @Inject
     private MediaProvider mediaProvider;
@@ -230,6 +233,8 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
 
     private boolean globalLayoutLoaded = false;
     private boolean taskLayoutLoaded = false;
+    private Integer linkedProcessId = null;
+    private boolean linkedProcessClicked = false;
 
     /**
      * Public constructor.
@@ -285,12 +290,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
             this.checkProjectFolderConfiguration();
             this.loadTemplateTask(taskId);
             this.loadDataEditorSettings();
-            errorMessage = "";
-
-            User blockedUser = MetadataLock.getLockUser(process.getId());
-            if (Objects.nonNull(blockedUser) && !blockedUser.equals(this.user)) {
-                errorMessage = Helper.getTranslation("blocked");
-            }
+            this.checkProcessMetadataAccessConditions(process, false);
             String metadataLanguage = user.getMetadataLanguage();
             priorityList = LanguageRange.parse(metadataLanguage.isEmpty() ? "en" : metadataLanguage);
             ruleset = ServiceManager.getRulesetService().openRuleset(process.getRuleset());
@@ -1347,6 +1347,7 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
         }
     }
 
+
     /**
      * Get value of 'globalLayoutLoaded'.
      *
@@ -1363,5 +1364,120 @@ public class DataEditorForm extends ValidatableForm implements MetadataTreeTable
      */
     public boolean isTaskLayoutLoaded() {
         return taskLayoutLoaded;
+    }
+
+    private void checkProcessMetadataAccessConditions(Process process, boolean linkedProcess) {
+        linkedProcessId = null;
+        errorMessage = null;
+        errorTitle = null;
+        blockingUserName = null;
+        User blockingUser = MetadataLock.getLockUser(process.getId());
+        if (!ServiceManager.getUserService().getCurrentUser().getProjects().contains(process.getProject())) {
+            errorMessage = Helper.getTranslation("metadataUnassignedProjectMessage");
+            errorTitle = Helper.getTranslation("metadataUnassignedProjectTitle");
+        } else if (Objects.nonNull(blockingUser) && !blockingUser.equals(this.user)) {
+            errorMessage = Helper.getTranslation("blocked");
+            errorTitle = Helper.getTranslation("metadataLocked");
+            blockingUserName = blockingUser.getFullName();
+        } else if (linkedProcess) {
+            linkedProcessId = process.getId();
+        }
+    }
+
+    /**
+     * Checks whether
+     * - the currently selected structure tree node represents a linked process
+     * - the linked process belongs to a project assigned to the current user
+     * - the linked process is currently opened in the metadata editor by another user
+     * Sets properties containing error message and error title used in corresponding popup dialog accordingly.
+     */
+    public void checkConditionsForOpeningLinkedProcessInMetadataEditor() {
+        linkedProcessClicked = true;
+        try {
+            Optional<LogicalDivision> divisionOptional = structurePanel.getSelectedStructure();
+            if (divisionOptional.isPresent()) {
+                Integer processId = ServiceManager.getDataEditorService().getLinkedProcessId(divisionOptional.get());
+                if (Objects.nonNull(processId)) {
+                    Process process = ServiceManager.getProcessService().getById(processId);
+                    checkProcessMetadataAccessConditions(process, true);
+                }
+            }
+        } catch (DAOException e) {
+            Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+        }
+    }
+
+    /**
+     * Open linked process of currently selected logical structure in metadata editor.
+     */
+    public void openLinkedProcess() {
+        if (Objects.nonNull(errorMessage)) {
+            PrimeFaces.current().ajax().update("metadataLockedDialog");
+            PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            String linkedProcessUrl = String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+            try {
+                context.getExternalContext().redirect(linkedProcessUrl);
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
+    /**
+     * Get value of 'linkedProcessClicked'.
+     *
+     * @param id of linked process
+     */
+    public void setLinkedProcessId(Integer id) {
+        linkedProcessId = id;
+    }
+
+    /**
+     * Check whether user has access to linked process and whether it is currently locked and then return the link to
+     * the linked process in the metadata editor.
+     *
+     * @return link to linked process in metadata editor
+     */
+    public String getUrlOfLinkedProcess() {
+        checkConditionsForOpeningLinkedProcessInMetadataEditor();
+        return String.format(METADATA_REDIRECT, linkedProcessId, referringView);
+    }
+
+    /**
+     * Method called when dialog informing user about blocked process is closed. If the dialog was shown when opening
+     * a linked process the dialog is closed. When the dialog was shown when trying to directly open a blocked process,
+     * for example by manually entering its URL, closing the dialog sends the user to the desktop page.
+     */
+    public void confirmMetadataLocked() {
+        if (linkedProcessClicked) {
+            linkedProcessClicked = false;
+        } else {
+            FacesContext context = FacesContext.getCurrentInstance();
+            try {
+                context.getExternalContext().redirect("desktop.jsf");
+            } catch (IOException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
+        }
+    }
+
+    /**
+     * Get error title.
+     *
+     * @return error title
+     */
+    public String getErrorTitle() {
+        return errorTitle;
+    }
+
+    /**
+     * Get name of blocking user.
+     *
+     * @return name of blocking user
+     */
+    public String getBlockingUser() {
+        return blockingUserName;
     }
 }

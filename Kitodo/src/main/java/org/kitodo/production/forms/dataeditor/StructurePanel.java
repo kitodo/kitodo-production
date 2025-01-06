@@ -31,6 +31,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.LogManager;
@@ -1171,9 +1172,26 @@ public class StructurePanel implements Serializable {
             // select those tree nodes
             StructureTreeOperations.selectTreeNodes(selectedTreeNodes);
 
+            // workaround to store ID of linked parent process
+            List<TreeNode<Object>> currentlySelectedLogicalNodes = getSelectedLogicalNodes();
+            if (selectedTreeNodes.isEmpty() && !currentlySelectedLogicalNodes.isEmpty()
+                    && currentlySelectedLogicalNodes.getFirst().getData() instanceof StructureTreeNode) {
+                setLinkedParentProcessId(currentlySelectedLogicalNodes);
+            }
+
             // remember new selection
             previouslySelectedLogicalNodes = getSelectedLogicalNodes();
             setSelectedLogicalNodes(new ArrayList<>(selectedTreeNodes));
+        }
+    }
+
+    private void setLinkedParentProcessId(List<TreeNode<Object>> currentlySelectedLogicalNodes) {
+        String nodeLabel = ((StructureTreeNode) currentlySelectedLogicalNodes.getFirst().getData()).getLabel();
+        if (nodeLabel.contains("[") && nodeLabel.indexOf("[") < nodeLabel.indexOf("]")) {
+            String idString = nodeLabel.substring(nodeLabel.indexOf("[") + 1, nodeLabel.indexOf("]"));
+            if (StringUtils.isNumeric(idString)) {
+                dataEditor.setLinkedProcessId(Integer.parseInt(idString));
+            }
         }
     }
 

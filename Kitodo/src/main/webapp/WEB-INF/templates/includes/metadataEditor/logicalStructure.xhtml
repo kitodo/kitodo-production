@@ -156,7 +156,7 @@
         </p:tree>
         <p:contextMenu for="logicalTree" id="contextMenuLogicalTree" widgetVar="contextMenuLogicalTree">
             <p:menuitem value="#{msgs.addElement}"
-                        rendered="#{DataEditorForm.selectedMedia.size() lt 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked}"
+                        rendered="#{DataEditorForm.selectedMedia.size() lt 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null}"
                         icon="fa fa-plus fa-sm"
                         styleClass="plain"
                         disabled="#{readOnly}"
@@ -169,7 +169,7 @@
             </p:menuitem>
             <p:menuitem
                     value="#{DataEditorForm.consecutivePagesSelected() ? msgs.addElement.concat(' ').concat(msgs.assignMedia) : msgs['dataEditor.removeElement.noConsecutivePagesSelected']}"
-                    rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked}"
+                    rendered="#{DataEditorForm.selectedMedia.size() ge 1 and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null}"
                     icon="fa fa-plus fa-sm"
                     styleClass="plain"
                     disabled="#{readOnly or not DataEditorForm.consecutivePagesSelected()}"
@@ -257,6 +257,22 @@
                                 metadataAccordion:logicalMetadataHeader
                                 metadataAccordion:logicalMetadataWrapperPanel
                                 galleryWrapperPanel"/>
+            <p:menuitem value="#{msgs['metadataEdit']}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked or DataEditorForm.structurePanel.selectedLogicalNodeIfSingle eq null}"
+                        icon="fa fa-list-alt fa-lg"
+                        styleClass="plain editLinkedMetadata"
+                        onclick="$('#loadingScreen').show()"
+                        oncomplete="$('#loadingScreen').hide()"
+                        actionListener="#{DataEditorForm.checkConditionsForOpeningLinkedProcessInMetadataEditor()}"
+                        action="#{DataEditorForm.openLinkedProcess()}"
+                        process="@this"/>
+            <p:menuitem value="#{msgs['metadataEditNewTab']}"
+                        target="_blank"
+                        url="#{DataEditorForm.getUrlOfLinkedProcess()}"
+                        rendered="#{DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked or DataEditorForm.structurePanel.selectedLogicalNodeIfSingle eq null}"
+                        icon="fa fa-list-alt fa-lg"
+                        styleClass="plain editLinkedMetadata"
+                        process="@this"/>
             <p:menuitem value="#{msgs.deleteMedia}"
                         rendered="#{SecurityAccessController.hasAuthorityToDeleteMedia() and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.type eq StructurePanel.VIEW_NODE_TYPE}"
                         icon="fa fa-trash fa-sm"
