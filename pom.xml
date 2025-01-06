@@ -61,7 +61,7 @@
         <myfaces.version>2.3.10</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
         <pdfbox.version>3.0.3</pdfbox.version>
-        <poi.version>5.2.5</poi.version>
+        <poi.version>5.3.0</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
@@ -441,7 +441,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.8.0</version>
+                <version>4.10.0</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
