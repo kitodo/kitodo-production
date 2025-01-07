@@ -22,6 +22,10 @@
                      update="processesTabView:processesForm:processesTable
                              parsedFiltersForm:parsedFilters
                              processCount"/>
+    <p:remoteCommand name="removeFilterForEdit"
+                     action="#{ProcessForm.filterMenu.removeFilter}"
+                     oncomplete="setFilterInputPadding()"
+                     update="parsedFiltersForm:parsedFilters"/>
     <p:remoteCommand name="updateSuggestions"
                      action="#{ProcessForm.filterMenu.updateSuggestions}"
                      update="filterOptionsForm:suggestions"/>
