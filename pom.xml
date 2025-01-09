@@ -76,6 +76,7 @@
         <maven-jar-plugin.version>3.3.0</maven-jar-plugin.version>
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
         <mockito.version>5.9.0</mockito.version>
+        <byte-buddy.version>1.14.17</byte-buddy.version>
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
         <spring.security.version>5.7.13</spring.security.version>
@@ -611,6 +612,12 @@ from system library in Java 11+ -->
                 <version>${mockito.version}</version>
                 <scope>test</scope>
             </dependency>
+           <dependency> <!-- needed for Mockito: https://github.com/mockito/mockito/issues/3328 -->
+               <groupId>net.bytebuddy</groupId>
+               <artifactId>byte-buddy</artifactId>
+               <version>${byte-buddy.version}</version>
+                <scope>test</scope>
+           </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
