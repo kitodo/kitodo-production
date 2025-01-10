@@ -2908,6 +2908,26 @@ Column content
     padding: 0.5em 0.25em;
 }
 
+button.settings-loaded::after,
+button.settings-loaded-task::after {
+    background: white;
+    color: var(--green);
+    font-family: FontAwesome;
+    font-size: large;
+    font-weight: normal;
+    position: absolute;
+    right: -6px;
+    top: -6px;
+}
+
+button.settings-loaded::after {
+    content: "\f05d";
+}
+
+button.settings-loaded-task::after {
+    content: "\f058";
+}
+
 #metadataEditorLayoutForm ul {
     list-style: none;
     margin: 0.25em 0;
