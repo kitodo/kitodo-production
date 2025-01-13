@@ -200,8 +200,11 @@ public class TaskActionProcessor extends ActiveMQProcessor {
     }
 
     private static boolean isEqualCorrectionTask(Integer correctionTaskId, Task correctionTask) {
-        return (Objects.isNull(correctionTaskId) && Objects.isNull(correctionTask)) || (Objects.nonNull(
-                correctionTaskId) && correctionTaskId.equals(correctionTask.getId()));
+        return (Objects.isNull(correctionTaskId)
+                    && Objects.isNull(correctionTask))
+                || (Objects.nonNull(correctionTaskId)
+                    && Objects.nonNull(correctionTask)
+                    && correctionTaskId.equals(correctionTask.getId()));
     }
 
 }

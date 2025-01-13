@@ -469,7 +469,8 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                     processDataTab.setAllDocTypes(docTypes);
                     titleRecordLinkTab.setChosenParentProcess(String.valueOf(parentId));
                     titleRecordLinkTab.chooseParentProcess();
-                    if (Objects.nonNull(project.getDefaultChildProcessImportConfiguration())) {
+                    if (Objects.nonNull(project) && Objects.nonNull(project
+                            .getDefaultChildProcessImportConfiguration())) {
                         setCurrentImportConfiguration(project.getDefaultChildProcessImportConfiguration());
                     }
                     if (setChildCount(titleRecordLinkTab.getTitleRecordProcess(), rulesetManagement, workpiece)) {
