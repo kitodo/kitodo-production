@@ -11,30 +11,21 @@
 
 package org.kitodo.production.services.security;
 
-import java.text.MessageFormat;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import javax.servlet.http.HttpSessionEvent;
-import javax.servlet.http.HttpSessionListener;
-
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.kitodo.production.helper.Helper;
 import org.kitodo.production.metadata.MetadataLock;
 import org.kitodo.production.security.SecurityConfig;
 import org.kitodo.production.security.SecuritySession;
 import org.kitodo.production.security.SecurityUserDetails;
-import org.springframework.security.core.context.SecurityContextImpl;
 import org.springframework.security.core.session.SessionInformation;
 import org.springframework.security.core.session.SessionRegistry;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class SessionService implements HttpSessionListener {
+public class SessionService {
 
-    private static final Logger logger = LogManager.getLogger(SessionService.class);
     private static volatile SessionService instance = null;
     private final SessionRegistry sessionRegistry;
 
@@ -44,27 +35,6 @@ public class SessionService implements HttpSessionListener {
     private SessionService() {
         SecurityConfig securityConfig = SecurityConfig.getInstance();
         this.sessionRegistry = securityConfig.getSessionRegistry();
-    }
-
-    /*
-     * This function is called when the session from the servlet container expires.
-     */
-    @Override
-    public void sessionDestroyed(HttpSessionEvent se) {
-        Object securityContextObject = se.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        if (securityContextObject instanceof SecurityContextImpl) {
-            SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
-            Object principal = securityContext.getAuthentication().getPrincipal();
-            if (principal instanceof SecurityUserDetails) {
-                expireSessionsOfUser((SecurityUserDetails) principal);
-            } else {
-                logger.warn(MessageFormat.format("Cannot expire session: {0} is not an instance of SecurityUserDetails",
-                    Helper.getObjectDescription(principal)));
-            }
-        } else {
-            logger.warn(MessageFormat.format("Cannot expire session: {0} is not an instance of SecurityContextImpl",
-                Helper.getObjectDescription(securityContextObject)));
-        }
     }
 
     /**
