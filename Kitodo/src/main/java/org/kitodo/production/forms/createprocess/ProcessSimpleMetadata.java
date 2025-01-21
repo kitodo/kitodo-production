@@ -52,6 +52,11 @@ abstract class ProcessSimpleMetadata extends ProcessDetail implements Serializab
      */
     abstract ProcessSimpleMetadata getClone();
 
+    /**
+     * Returns a simpler string representation of the Metadata.
+     *
+     * @return A string representation of the Metadata
+     */
     abstract String extractSimpleValue();
 
     public SimpleMetadataViewInterface getSettings() {
