@@ -686,7 +686,7 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
                     metadata.addAll(row.getMetadataWithFilledValues());
                 }
             }
-            if (!Objects.isNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
+            if (Objects.nonNull(hiddenMetadata) && !hiddenMetadata.isEmpty()) {
                 for (Metadata hidden : hiddenMetadata) {
                     if (hidden instanceof MetadataEntry) {
                         MetadataEntry entry = (MetadataEntry) hidden;
