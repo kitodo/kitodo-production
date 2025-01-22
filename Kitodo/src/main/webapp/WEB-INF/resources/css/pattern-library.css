@@ -1619,6 +1619,10 @@ Popup dialogs
     padding: 5px 10px;
 }
 
+.ui-growl {
+    top: 55px;
+}
+
 .ui-growl-item {
     background: var(--green);
     text-shadow: 0 0 0 transparent;
