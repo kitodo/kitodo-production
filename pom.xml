@@ -79,7 +79,7 @@
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
         <spring.security.version>5.7.13</spring.security.version>
-        <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
+        <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
