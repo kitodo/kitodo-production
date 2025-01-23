@@ -18,7 +18,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
@@ -56,7 +56,7 @@ public class SearchResultGeneration {
      *
      * @return HSSFWorkbook
      */
-    public XSSFWorkbook getResult() {
+    public SXSSFWorkbook getResult() {
         return getWorkbook();
     }
 
@@ -96,8 +96,8 @@ public class SearchResultGeneration {
         return query;
     }
 
-    private XSSFWorkbook getWorkbook() {
-        XSSFWorkbook workbook = new XSSFWorkbook();
+    private SXSSFWorkbook getWorkbook() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
         Sheet sheet = workbook.createSheet("Search results");
 
         Row title = sheet.createRow(0);

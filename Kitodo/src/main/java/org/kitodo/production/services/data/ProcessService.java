@@ -82,7 +82,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.XML;
@@ -1559,7 +1559,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                XSSFWorkbook wb = sr.getResult();
+                SXSSFWorkbook wb = sr.getResult();
                 List<List<Cell>> rowList = new ArrayList<>();
                 Sheet mySheet = wb.getSheetAt(0);
                 Iterator<Row> rowIter = mySheet.rowIterator();
@@ -1585,6 +1585,7 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
                 }
 
                 document.close();
+                wb.close();
                 out.flush();
                 facesContext.responseComplete();
             }
@@ -1605,8 +1606,9 @@ public class ProcessService extends ProjectSearchService<Process, ProcessDTO, Pr
             try (OutputStream out = response.getResponseOutputStream()) {
                 SearchResultGeneration sr = new SearchResultGeneration(filter, showClosedProcesses,
                         showInactiveProjects);
-                XSSFWorkbook wb = sr.getResult();
+                SXSSFWorkbook wb = sr.getResult();
                 wb.write(out);
+                wb.close();
                 out.flush();
                 facesContext.responseComplete();
             }
