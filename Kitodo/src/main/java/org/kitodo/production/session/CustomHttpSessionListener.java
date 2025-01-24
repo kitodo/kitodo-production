@@ -12,6 +12,8 @@
 
 package org.kitodo.production.session;
 
+import java.util.Objects;
+
 import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -22,8 +24,6 @@ import org.kitodo.production.helper.Helper;
 import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.context.SecurityContextImpl;
-
-import java.util.Objects;
 
 
 @WebListener
