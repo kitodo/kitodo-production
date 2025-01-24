@@ -82,7 +82,7 @@
             </ui:insert>
             <o:highlight styleClass="ui-state-error" />
             <ui:fragment id="activityMonitors"
-                         rendered="#{not empty SessionClientController.currentSessionClient}">
+                         rendered="#{not empty SessionClientController.currentSessionClient and session.maxInactiveInterval gt 0}">
                 <p:idleMonitor timeout="#{(session.maxInactiveInterval - SessionClientController.getAutomaticLogoutWarningSeconds()) * 1000}"
                                multiWindowSupport="true"
                                onidle="PF('logoutTimer').start()"

@@ -189,7 +189,9 @@ public class SessionClientController {
      * Get amount of time that warning message is displayed to inform user that he will be logged
      * out of the system automatically due to inactivity. Value returned in seconds.
      * If the session HTTP session timeout configured in the 'web.xml' file is 60 seconds or less,
-     * the message will be shown 30 seconds before logout. Otherwise, it will be shown 60 seconds in advance.
+     * the message will be shown 30 seconds before logout. If the timeout is between 1 and 5 minutes,
+     * the message will appear 60 seconds before logout. For any session timeout larger than 5 Minutes,
+     * it will be shown 300 seconds in advance.
      * @return number of seconds the warning message is displayed to the user before automatic logout
      */
     public int getAutomaticLogoutWarningSeconds() {
@@ -199,6 +201,10 @@ public class SessionClientController {
             int maxInactiveInterval = session.getMaxInactiveInterval();
             if (maxInactiveInterval <= 60) {
                 return 30;
+            } else if (maxInactiveInterval < 300) {
+                return 60;
+            } else {
+                return 300;
             }
         }
         return 60;

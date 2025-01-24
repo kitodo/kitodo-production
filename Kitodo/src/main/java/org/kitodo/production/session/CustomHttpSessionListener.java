@@ -23,6 +23,8 @@ import org.kitodo.production.security.SecurityUserDetails;
 import org.kitodo.production.services.ServiceManager;
 import org.springframework.security.core.context.SecurityContextImpl;
 
+import java.util.Objects;
+
 
 @WebListener
 public class CustomHttpSessionListener implements HttpSessionListener {
@@ -36,7 +38,7 @@ public class CustomHttpSessionListener implements HttpSessionListener {
      */
     @Override
     public void sessionCreated(HttpSessionEvent sessionEvent) {
-        logger.info("Session created: {}", sessionEvent.getSession().getId());
+        logger.debug("Session created: {}", sessionEvent.getSession().getId());
     }
 
     /**
@@ -47,18 +49,18 @@ public class CustomHttpSessionListener implements HttpSessionListener {
     @Override
     public void sessionDestroyed(HttpSessionEvent sessionEvent) {
         Object securityContextObject = sessionEvent.getSession().getAttribute("SPRING_SECURITY_CONTEXT");
-        if (securityContextObject instanceof SecurityContextImpl) {
+        if (Objects.nonNull(securityContextObject) && securityContextObject instanceof SecurityContextImpl) {
             SecurityContextImpl securityContext = (SecurityContextImpl) securityContextObject;
             Object principal = securityContext.getAuthentication().getPrincipal();
             if (principal instanceof SecurityUserDetails) {
-                logger.info("Session expired: {}", sessionEvent.getSession().getId());
+                logger.debug("Session expired: {}", sessionEvent.getSession().getId());
                 ServiceManager.getSessionService().expireSessionsOfUser((SecurityUserDetails) principal);
             } else {
-                logger.warn("Cannot expire session: {} is not an instance of SecurityUserDetails",
+                logger.debug("Cannot expire session: {} is not an instance of SecurityUserDetails",
                         Helper.getObjectDescription(principal));
             }
         } else {
-            logger.warn("Cannot expire session: {} is not an instance of SecurityContextImpl",
+            logger.debug("Cannot expire session: {} is not an instance of SecurityContextImpl",
                     Helper.getObjectDescription(securityContextObject));
         }
     }
