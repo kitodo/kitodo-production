@@ -514,7 +514,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
     /**
      * Create process hierarchy.
      */
-    private void createProcessHierarchy()
+    public void createProcessHierarchy()
             throws DataException, ProcessGenerationException, IOException {
         // discard all processes in hierarchy except the first if parent process in
         // title record link tab is selected!
@@ -523,7 +523,7 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 && !this.titleRecordLinkTab.getSelectedInsertionPosition().isEmpty()) {
             this.processes = new LinkedList<>(Collections.singletonList(this.processes.get(0)));
         }
-        ProcessService.checkTasks(this.getMainProcess(), processDataTab.getDocType());
+        processTempProcess(this.processes.get(0));
         processAncestors();
         processChildren();
         // main process and it's ancestors need to be saved, so they have IDs before creating their process directories
@@ -612,18 +612,22 @@ public class CreateProcessForm extends BaseForm implements MetadataTreeTableInte
                 ProcessService.setParentRelations(processes.get(index + 1).getProcess(), process);
             }
             if (Objects.nonNull(tempProcess.getMetadataNodes())) {
-                try {
-                    tempProcess.getProcessMetadata().preserve();
-                    ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
-                } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
-                    throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
-                } catch (RulesetNotFoundException e) {
-                    throw new ProcessGenerationException(
-                            "Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
-                } catch (IOException e) {
-                    throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
-                }
+                processTempProcess(tempProcess);
             }
+        }
+    }
+
+    private void processTempProcess(TempProcess tempProcess) throws ProcessGenerationException {
+        try {
+            tempProcess.getProcessMetadata().preserve();
+            ImportService.processTempProcess(tempProcess, rulesetManagement, acquisitionStage, priorityList, null);
+        } catch (InvalidMetadataValueException | NoSuchMetadataFieldException e) {
+            throw new ProcessGenerationException("Error creating process hierarchy: invalid metadata found!");
+        } catch (RulesetNotFoundException e) {
+            throw new ProcessGenerationException(
+                    "Ruleset not found:" + tempProcess.getProcess().getRuleset().getTitle());
+        } catch (IOException e) {
+            throw new ProcessGenerationException("Error reading Ruleset: " + tempProcess.getProcess().getRuleset().getTitle());
         }
     }
 
