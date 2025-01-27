@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
 window.updateLogoutCountdown = function(t) {
-    let growlMessage = $('#sticky-notifications_container div.ui-growl-message p')
+    let growlMessage = $('#sticky-notifications_container div.ui-growl-message p');
     let currentTime;
     let minutes = Math.floor(t.current / 60);
     let seconds = t.current % 60;
@@ -25,8 +25,8 @@ window.updateLogoutCountdown = function(t) {
     }
     let currentMessage = growlMessage.text();
     if (currentMessage.match(/\d+:\d+/g)) {
-        growlMessage.text(currentMessage.replace(/\d+:\d+/g, currentTime))
+        growlMessage.text(currentMessage.replace(/\d+:\d+/g, currentTime));
     } else {
         growlMessage.text(currentMessage + " " + currentTime);
     }
-}
+};
