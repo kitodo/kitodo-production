@@ -14,7 +14,7 @@ $(document).ready(function() {
 });
 
 window.updateLogoutCountdown = function(t) {
-    let growlMessage = $('#sticky-notifications_container div.ui-growl-message p')
+    let growlMessage = $('#sticky-notifications_container div.ui-growl-message p');
     let currentTime;
     let minutes = Math.floor(t.current / 60);
     let seconds = t.current % 60;
