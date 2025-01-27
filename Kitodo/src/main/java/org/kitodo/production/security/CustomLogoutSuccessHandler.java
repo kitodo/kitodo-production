@@ -12,7 +12,6 @@
 package org.kitodo.production.security;
 
 import java.io.IOException;
-import java.text.MessageFormat;
 import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +52,8 @@ public class CustomLogoutSuccessHandler extends SimpleUrlLogoutSuccessHandler im
                     UserDetails user = (UserDetails) principal;
                     ServiceManager.getSessionService().expireSessionsOfUser(user);
                 } else {
-                    logger.warn(MessageFormat.format("Cannot expire session: {0} is not an instance of UserDetails",
-                        Helper.getObjectDescription(principal)));
+                    logger.warn("Cannot expire session: {} is not an instance of UserDetails",
+                            Helper.getObjectDescription(principal));
                 }
             } else {
                 logger.warn("Cannot expire session: authentication.getDetails() is null");
