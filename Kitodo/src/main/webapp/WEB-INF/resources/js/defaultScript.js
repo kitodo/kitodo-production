@@ -25,8 +25,8 @@ window.updateLogoutCountdown = function(t) {
     }
     let currentMessage = growlMessage.text();
     if (currentMessage.match(/\d+:\d+/g)) {
-        growlMessage.text(currentMessage.replace(/\d+:\d+/g, currentTime))
+        growlMessage.text(currentMessage.replace(/\d+:\d+/g, currentTime));
     } else {
         growlMessage.text(currentMessage + " " + currentTime);
     }
-}
+};
