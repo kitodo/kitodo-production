@@ -40,19 +40,25 @@
 
             <div>
                 <p:outputLabel for="startdate" value="#{msgs.startDate}" />
-                <p:calendar id="startdate" styleClass="input-with-button" value="#{ProjectForm.project.startDate}"
-                            showOn="button"
-                            disabled="#{ProjectForm.locked}">
+                <p:datePicker id="startdate"
+                              styleClass="input-with-button"
+                              value="#{ProjectForm.project.startDate}"
+                              showOn="button"
+                              showIcon="true"
+                              disabled="#{ProjectForm.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
-                </p:calendar>
+                </p:datePicker>
             </div>
             <div>
                 <p:outputLabel for="enddate" value="#{msgs.endDate}" />
-                <p:calendar id="enddate" styleClass="input-with-button" value="#{ProjectForm.project.endDate}"
-                            showOn="button"
+                <p:datePicker id="enddate"
+                              styleClass="input-with-button"
+                              value="#{ProjectForm.project.endDate}"
+                              showOn="button"
+                              showIcon="true"
                             disabled="#{ProjectForm.locked}">
                     <p:ajax event="dateSelect" oncomplete="toggleSave()"/>
-                </p:calendar>
+                </p:datePicker>
             </div>
             <div>
                 <p:outputLabel for="filenamelength" value="#{msgs.filenameLengthForRenaming}" />
