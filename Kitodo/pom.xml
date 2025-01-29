@@ -18,7 +18,7 @@
     <parent>
         <groupId>org.kitodo</groupId>
         <artifactId>kitodo-production</artifactId>
-        <version>3.8.1-SNAPSHOT</version>
+        <version>3.8.1</version>
     </parent>
 
     <name>Kitodo - Core</name>

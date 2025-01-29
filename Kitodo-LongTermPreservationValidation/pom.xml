@@ -19,7 +19,7 @@
     <parent>
         <artifactId>kitodo-production</artifactId>
         <groupId>org.kitodo</groupId>
-        <version>3.8.1-SNAPSHOT</version>
+        <version>3.8.1</version>
     </parent>
 
     <name>Kitodo - Long Term Preservation Validation</name>
