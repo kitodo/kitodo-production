@@ -24,7 +24,8 @@
 
     <p:panelGrid id="useredit-grid" columns="2" layout="grid">
 
-            <div>
+        <p:column>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="surname" value="#{msgs.surname}"/>
                 <p:inputText id="surname"
                              class="input"
@@ -32,8 +33,8 @@
                              placeholder="#{msgs.surname}"
                              value="#{UserForm.userObject.surname}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="firstName" value="#{msgs.firstName}"/>
                 <p:inputText id="firstName"
                              class="input"
@@ -41,15 +42,15 @@
                              placeholder="#{msgs.firstName}"
                              value="#{UserForm.userObject.name}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="location" value="#{msgs.location}"/>
                 <p:inputText id="location"
                              class="input"
                              disabled="#{isViewMode || (isConfigMode and UserForm.user.ldapGroup ne null)}"
                              placeholder="#{msgs.location}"
                              value="#{UserForm.userObject.location}"/>
-            </div>
+            </h:panelGroup>
             <!--
             Use invisible pseudo fields to prevent browser autofill from targeting the ldap login
             and password fields. Browsers often ignore autocomplete="off", even when passed through with
@@ -62,18 +63,18 @@
                     <f:passThroughAttribute name="autocomplete" value="new-password"/>
                 </h:inputSecret>
             </h:panelGroup>
-            <div>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="ldapLogin" value="#{msgs.ldaplogin}"/>
                 <p:inputText id="ldapLogin" class="input" disabled="#{isViewMode || isConfigMode}"
                              placeholder="#{msgs.ldaplogin}" onchange="toggleSave()"
                              value="#{UserForm.userObject.ldapLogin}"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="active" value="#{msgs.userAccountActive}"/>
                 <p:selectBooleanCheckbox id="active" styleClass="switch input" disabled="#{isViewMode || isConfigMode}"
                                          value="#{UserForm.userObject.active}" onchange="toggleSave()"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:commandButton id="writeUserToLdapButton"
                                  action="#{UserForm.writeUserAtLdapServer}"
                                  value="#{msgs.ldapKonfigurationSchreiben}"
@@ -83,8 +84,8 @@
                                  disabled="#{isViewMode || isConfigMode || UserForm.userObject.ldapGroup eq null}"
                                  class="button-filled-green">
                 </p:commandButton>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:commandButton onclick="PF('changePasswordDialog').show()"
                                  id="changePasswordButton"
                                  value="#{msgs.passwordChange}"
@@ -107,15 +108,18 @@
                                  rendered="#{isEditMode}">
                     <p:resetInput target=":resetPasswordForm"/>
                 </p:commandButton>
-            </div>
+            </h:panelGroup>
+        </p:column>
 
-            <div>
+
+        <p:column>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="login" value="#{msgs.login}"/>
                 <p:inputText id="login" class="input" disabled="#{isViewMode || isConfigMode}" placeholder="#{msgs.login}"
                              value="#{UserForm.userObject.login}" readonly="#{UserForm.userObject.id ne null}"
                              required="#{empty param['editForm:saveButtonToggler']}"/>
-            </div>
-            <h:panelGroup layout="block"
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell"
                           title="#{UserForm.isLdapServerReadOnly() ? msgs.cannotSetUserPasswordForReadOnlyLDAPServer : msgs.password}">
                 <p:outputLabel for="password" value="#{msgs.password}" rendered="#{isCreateMode}"/>
                 <p:password id="password" class="input" rendered="#{isCreateMode}"
@@ -125,7 +129,7 @@
                             onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
                             redisplay="true"/>
             </h:panelGroup>
-            <h:panelGroup layout="block"
+            <h:panelGroup styleClass="panel-grid-cell"
                           title="#{UserForm.isLdapServerReadOnly() ? msgs.cannotSetUserPasswordForReadOnlyLDAPServer : msgs.password}">
                 <p:outputLabel for="passwordValidation" value="#{msgs.confirmNewPassword}" rendered="#{isCreateMode}"/>
                 <p:password id="passwordValidation" class="input" rendered="#{isCreateMode}"
@@ -134,7 +138,7 @@
                             onchange="toggleSave()" required="#{empty param['editForm:saveButtonToggler']}"
                             redisplay="true"/>
             </h:panelGroup>
-            <h:panelGroup layout="block"
+            <h:panelGroup styleClass="panel-grid-cell"
                           id="defaultClientWrapper"
                           rendered="#{UserForm.userObject.clients.size() gt 1}">
                 <p:outputLabel for="defaultClient"
@@ -152,7 +156,7 @@
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
             </h:panelGroup>
-            <div>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <!-- table size -->
                 <p:outputLabel for="table-size" value="#{msgs.tableSize}" />
                 <p:inputText id="table-size" value="#{UserForm.userObject.tableSize}" disabled="#{isViewMode}"
@@ -160,8 +164,8 @@
                     <f:convertNumber integerOnly="true"/>
                     <f:validateLongRange maximum="100" minimum="10" />
                 </p:inputText>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="languages" value="#{msgs.languageUserInterface}" />
                 <p:selectOneMenu id="languages" value="#{UserForm.userObject.language}" disabled="#{isViewMode}"
                                  required="#{empty param['editForm:saveButtonToggler']}">
@@ -169,8 +173,8 @@
                                    itemLabel="#{language.displayLanguageSelf}" itemValue="#{language.id}"/>
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="ldapGroup" value="#{msgs.ldapGroup}"/>
                 <p:selectOneMenu id="ldapGroup" value="#{UserForm.userObject.ldapGroup}"
                                  disabled="#{isViewMode || isConfigMode}" converter="#{ldapGroupConverter}">
@@ -179,19 +183,21 @@
                                    itemValue="#{ldapGroup}" itemLabel="#{ldapGroup.title}"/>
                     <p:ajax oncomplete="toggleSave()" update="editForm:userTabView:writeUserToLdapButton"/>
                 </p:selectOneMenu>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="withMassDownload" value="#{msgs.massDownload}"/>
                 <p:selectBooleanCheckbox id="withMassDownload" styleClass="switch input" disabled="#{isViewMode}"
                                          value="#{UserForm.userObject.withMassDownload}"
                                          onchange="toggleSave()"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <!-- show process data in my tasks -->
                 <p:outputLabel for="show-process-data" value="#{msgs.showProcessInTaskList}" />
                 <p:selectBooleanCheckbox id="show-process-data" styleClass="switch input" onchange="toggleSave()"
                                          disabled="#{isViewMode}" value="#{UserForm.userObject.configProductionDateShow}"/>
-            </div>
+            </h:panelGroup>
+
+        </p:column>
 
     </p:panelGrid>
 </ui:composition>

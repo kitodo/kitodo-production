@@ -105,11 +105,11 @@
                                 </li>
                                 <div id="languageList" style="display: none;">
                                     <p:outputPanel deferred="true" deferredMode="visible">
-                                        <p:repeat value="#{LanguageForm.supportedLocales}" var="language">
+                                        <ui:repeat value="#{LanguageForm.supportedLocales}" var="language">
                                             <li class="toggle-list">
                                                 <p:commandLink value="#{language.displayLanguageSelf}" action="#{LanguageForm.setLanguage(language['id'])}"/>
                                             </li>
-                                        </p:repeat>
+                                        </ui:repeat>
                                     </p:outputPanel>
                                 </div>
 
@@ -125,11 +125,11 @@
                                 </li>
                                 <div id="clientList" style="display: none">
                                     <p:outputPanel deferred="true" deferredMode="visible">
-                                        <p:repeat value="#{SessionClientController.availableClientsOfCurrentUserSortedByName}" var="client">
+                                        <ui:repeat value="#{SessionClientController.availableClientsOfCurrentUserSortedByName}" var="client">
                                             <li class="toggle-list">
                                                 <p:commandLink value="#{client.name}" action="#{SessionClientController.setSessionClient(client)}" update="@all"/>
                                             </li>
-                                        </p:repeat>
+                                        </ui:repeat>
                                     </p:outputPanel>
                                 </div>
                                 <li>

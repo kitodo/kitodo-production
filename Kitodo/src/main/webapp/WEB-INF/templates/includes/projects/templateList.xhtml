@@ -167,7 +167,7 @@
                             <p:panelGrid id="templateActionDetailTable"
                                          columns="2"
                                          columnClasses="label, actionsColumn">
-                                <p:repeat id="projects"
+                                <ui:repeat id="projects"
                                           value="#{item.projects}"
                                           var="project">
                                     <div class="project-template-action">
@@ -189,7 +189,7 @@
                                             </h:outputText>
                                         </h:panelGroup>
                                     </div>
-                                </p:repeat>
+                                </ui:repeat>
                             </p:panelGrid>
                         </h:form>
                     </p:panelGrid>
