@@ -129,6 +129,10 @@
         <location>/pages/desktop.jsf</location>
     </error-page>
     <error-page>
+        <error-code>404</error-code>
+        <location>/pages/pageNotFound.jsf</location>
+    </error-page>
+    <error-page>
         <exception-type>java.lang.Throwable</exception-type>
         <location>/pages/error.jsf</location>
     </error-page>

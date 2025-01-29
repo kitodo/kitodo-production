@@ -24,6 +24,7 @@
                      styleClass="default-layout allSelectable"
                      var="process"
                      value="#{ProcessForm.lazyBeanModel}"
+                     rowKey="#{process.id}"
                      first="#{ProcessForm.firstRow}"
                      selection="#{ProcessForm.selectedProcesses}"
                      lazy="true"
@@ -269,9 +270,9 @@
         </p:overlayPanel>
         
         <ul style="display: none" id="excludedProcessIds">
-            <p:repeat value="#{ProcessForm.excludedProcessIds}" var="processId">
+            <ui:repeat value="#{ProcessForm.excludedProcessIds}" var="processId">
                 <li>#{processId}</li>
-            </p:repeat>
+            </ui:repeat>
         </ul>
 
         <div id="dropDownMenus">

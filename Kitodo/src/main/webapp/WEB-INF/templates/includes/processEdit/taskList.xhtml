@@ -17,7 +17,11 @@
         xmlns:o="http://omnifaces.org/ui"
         xmlns:p="http://primefaces.org/ui"
         xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
-    <p:dataTable id="taskTable" var="item" value="#{ProcessForm.process.tasks}">
+    <!--@elvariable id="item" type="org.kitodo.data.database.beans.Task"-->
+    <p:dataTable id="taskTable"
+                 var="item"
+                 value="#{ProcessForm.process.tasks}"
+                 rowKey="#{item.id}">
 
         <!-- ordering -->
         <p:column headerText="#{msgs.nr}" id="taskOrder">

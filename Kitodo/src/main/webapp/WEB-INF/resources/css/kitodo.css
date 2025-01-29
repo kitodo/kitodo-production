@@ -487,20 +487,20 @@ body.first-visit #portal-header {
 Breadcrumb menu
 ----------------------------------------------------------------------*/
 
-.breadcrumb-menu {
+body .ui-breadcrumb {
     padding: 0;
 }
 
-.breadcrumb-menu ul li.ui-breadcrumb-chevron {
+body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron {
     display: none;
 }
 
-.breadcrumb-menu ul li {
+body .ui-breadcrumb .ui-breadcrumb-items li {
     overflow: visible;
 }
 
-.breadcrumb-menu ul li .ui-menuitem-link,
-.breadcrumb-menu ul li .ui-menuitem-link.ui-icon-home {
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link,
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home {
     background-color: var(--focused-blue);
     background-image: none;
     border-radius: var(--default-border-radius);
@@ -517,29 +517,29 @@ Breadcrumb menu
     white-space: nowrap;
 }
 
-.breadcrumb-menu ul li .ui-menuitem-text,
-.breadcrumb-menu ul li .ui-menuitem-icon {
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text,
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-icon {
     display: inline-block;
     height: var(--input-height);
     line-height: var(--input-height);
 }
 
-.breadcrumb-menu ul li .ui-menuitem-text {
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text {
     padding: 0 4px;
     text-overflow: ellipsis;
 }
 
-.breadcrumb-menu ul li:first-child:not(:hover) .ui-menuitem-text {
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child:not(:hover) .ui-menuitem-text {
     padding: 0;
     width: 0;
     opacity: 0;
 }
 
-.breadcrumb-menu ul li:not(:first-child) {
+body .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child) {
     margin-left: 6px;
 }
 
-.breadcrumb-menu ul li:not(:first-child)::before {
+body .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child)::before {
     background-color: var(--focused-blue);
     border: solid var(--blue);
     border-width: 3px 0 0 3px;
@@ -552,30 +552,30 @@ Breadcrumb menu
     width: 12px;
 }
 
-.breadcrumb-menu ul li:hover .ui-menuitem-link,
-.breadcrumb-menu ul li:hover .ui-menuitem-text::after,
-.breadcrumb-menu ul li:hover::before {
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link,
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-text::after,
+body .ui-breadcrumb .ui-breadcrumb-items li:hover::before {
     background: var(--pure-white);
     color: var(--carbon-blue);
 }
 
-.breadcrumb-menu ul li:hover .ui-menuitem-icon {
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-icon {
     padding-left: var(--default-half-size);
 }
 
-.breadcrumb-menu ul li:hover .ui-menuitem-link {
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link {
     width: auto;
 }
 
-.breadcrumb-menu ul li:hover .ui-menuitem-text {
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-text {
     padding: 0 var(--default-half-size);
 }
 
-.breadcrumb-menu ul li,
-.breadcrumb-menu ul li .ui-menuitem-link,
-.breadcrumb-menu ul li .ui-menuitem-icon,
-.breadcrumb-menu ul li .ui-menuitem-text,
-.breadcrumb-menu ul li:not(:first-child)::before {
+body .ui-breadcrumb .ui-breadcrumb-items li,
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link,
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-icon,
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text,
+body .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child)::before {
     transition: .3s;
 }
 
@@ -715,12 +715,12 @@ section#content-section {
     height: 90px;
 }
 
-.content-header {
+body .content-header {
     padding: var(--input-padding) var(--default-full-size);
     position: relative;
 }
 
-.content-header > .ui-panel-content {
+body .content-header > .ui-panel-content {
     display: flex;
     padding: 0;
 }
@@ -872,8 +872,9 @@ label.ui-outputlabel[for] {
     flex: 1;
 }
 
-#filterInputForm\:filterfield {
+body #filterInputForm\:filterfield {
     border-radius: var(--default-border-radius) 0 0 var(--default-border-radius);
+    padding: 0;
     width: 100%;
 }
 
@@ -2719,14 +2720,14 @@ form#metadata div label,
     display: none;
 }
 
-.collapsibleWrapper .columnHeadingWrapper {
+body .collapsibleWrapper .columnHeadingWrapper {
     height: 36px;
     line-height: 36px;
     padding: 0 16px;
     font-weight: bold;
 }
 
-.collapsibleWrapper .columnHeadingWrapper button {
+body .collapsibleWrapper .columnHeadingWrapper button {
     background: none;
     border: none;
     height: 36px;
@@ -4316,15 +4317,15 @@ footer {
 
 /* Primefaces theme */
 
-.ui-widget {
+body .ui-widget {
     font-size: 100%;
 }
 
-.right {
+body .right {
     float: right;
 }
 
-.ui-widget-content {
+body .ui-panel .ui-widget-content.ui-panel-content {
     border: 0 none;
 }
 
@@ -4394,13 +4395,13 @@ footer {
     border-top: solid var(--contrast-border-width) var(--medium-gray);
 }
 
-.ui-tabs .ui-tabs-panel {
+body .ui-tabs .ui-tabs-panels .ui-tabs-panel {
     background: var(--pure-white);
     min-height: calc(100% - var(--contrast-border-width));
     padding: var(--contrast-border-width) 0 0 0;
 }
 
-.ui-tabs .ui-tabs-panel > .ui-panelgrid {
+body .ui-tabs .ui-tabs-panels .ui-tabs-panel > .ui-panelgrid {
     padding-left: var(--default-half-size);
     padding-right: var(--default-half-size);
 }
@@ -4435,8 +4436,10 @@ footer {
     min-width: 0;
 }
 
-.ui-selectonemenu .ui-selectonemenu-trigger .ui-icon {
-    background: transparent;
+body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-tree-toggler.ui-icon-triangle-1-e::before,
+body .ui-tree .ui-tree-container .ui-treenode .ui-treenode-content .ui-tree-toggler.ui-icon-triangle-1-s::before,
+body .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon::before {
+    content: none;
 }
 
 .ui-selectonemenu .ui-selectonemenu-trigger::before {
@@ -4704,15 +4707,15 @@ min 1200px
         background-size: 100% auto;
     }
 
-    .breadcrumb-menu ul li:not(:first-child) .ui-menuitem-icon {
+    .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child) .ui-menuitem-icon {
         padding-left: var(--default-half-size);
     }
 
-    .breadcrumb-menu ul li .ui-menuitem-link {
+    .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link {
         width: auto;
     }
 
-    .breadcrumb-menu ul li .ui-menuitem-text {
+    .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text {
         padding: 0 var(--default-half-size);
     }
 }
