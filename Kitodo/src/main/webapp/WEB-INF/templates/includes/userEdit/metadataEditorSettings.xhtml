@@ -14,14 +14,15 @@
 <ui:composition
         xmlns:f="http://xmlns.jcp.org/jsf/core"
         xmlns:p="http://primefaces.org/ui"
-        xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+        xmlns:ui="http://xmlns.jcp.org/jsf/facelets" xmlns:h="http://java.sun.com/jsf/html">
 
     <!--@elvariable id="isViewMode" type="boolean"-->
     <p:panelGrid id="metadataEditorSettings"
                  columns="2"
                  layout="grid">
 
-            <div>
+        <p:column>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="metaDataLanguage"
                                value="#{msgs.metadataLanguage}"/>
                 <p:selectOneMenu id="metaDataLanguage"
@@ -34,8 +35,8 @@
                                    itemValue="#{language.value}"/>
                     <p:ajax oncomplete="toggleSave()"/>
                 </p:selectOneMenu>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="defaultGalleryView"
                                value="#{msgs['userEdit.metadataEditorSettings.defaultGalleryView']}"/>
                 <p:selectOneRadio id="defaultGalleryView"
@@ -46,8 +47,8 @@
                                    var="viewMode"
                                    itemLabel="#{UserForm.getGalleryViewModeTranslation(viewMode)}"/>
                 </p:selectOneRadio>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:commandButton onclick="PF('changeShortcutsDialog').show()"
                                  id="showShortcutsDialogButton"
                                  value="#{msgs['shortcuts.change']}"
@@ -55,9 +56,12 @@
                                  iconPos="right"
                                  styleClass="secondary">
                 </p:commandButton>
-            </div>
+            </h:panelGroup>
+        </p:column>
 
-            <div>
+        <p:column>
+
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="showCommentsByDefault"
                                value="#{msgs['userEdit.metadataEditorSettings.showCommentsByDefault']}"/>
                 <p:selectBooleanCheckbox id="showCommentsByDefault"
@@ -65,8 +69,8 @@
                                          disabled="#{isViewMode}"
                                          value="#{UserForm.userObject.showCommentsByDefault}"
                                          onchange="toggleSave()"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="showPaginationPanelByDefault"
                                value="#{msgs['userEdit.metadataEditorSettings.showPaginationByDefault']}"/>
                 <p:selectBooleanCheckbox id="showPaginationPanelByDefault"
@@ -74,8 +78,8 @@
                                          disabled="#{isViewMode}"
                                          value="#{UserForm.userObject.showPaginationByDefault}"
                                          onchange="toggleSave()"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="paginateFromFirstPageByDefault"
                                value="#{msgs['userEdit.metadataEditorSettings.paginateFromFirstPageByDefault']}"/>
                 <p:selectBooleanCheckbox id="paginateFromFirstPageByDefault"
@@ -83,8 +87,8 @@
                                          disabled="#{isViewMode}"
                                          value="#{UserForm.userObject.paginateFromFirstPageByDefault}"
                                          onchange="toggleSave()"/>
-            </div>
-            <div>
+            </h:panelGroup>
+            <h:panelGroup styleClass="panel-grid-cell">
                 <p:outputLabel for="showPhysicalPageNumberBelowThumbnail"
                                value="#{msgs['userEdit.metadataEditorSettings.showPhysicalPageNumberBelowThumbnail']}"/>
                 <p:selectBooleanCheckbox id="showPhysicalPageNumberBelowThumbnail"
@@ -92,6 +96,7 @@
                                          disabled="#{isViewMode}"
                                          value="#{UserForm.userObject.showPhysicalPageNumberBelowThumbnail}"
                                          onchange="toggleSave()"/>
-            </div>
+            </h:panelGroup>
+        </p:column>
     </p:panelGrid>
 </ui:composition>
