@@ -18,7 +18,6 @@ import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -231,6 +230,9 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
     static final String GROWL_MESSAGE =
             "PF('notifications').renderMessage({'summary':'SUMMARY','detail':'DETAIL','severity':'SEVERITY'});";
 
+    private boolean globalLayoutLoaded = false;
+    private boolean taskLayoutLoaded = false;
+
     /**
      * Public constructor.
      */
@@ -315,30 +317,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             } else {
                 PrimeFaces.current().executeScript("PF('metadataLockedDialog').show();");
             }
-            if (Objects.nonNull(this.dataEditorSetting) && Objects.nonNull(dataEditorSetting.getId())) {
-                showDataEditorSettingsLoadedMessage();
-            }
         } catch (FileNotFoundException e) {
             metadataFileLoadingError = e.getLocalizedMessage();
         } catch (IOException | DAOException | InvalidImagesException | NoSuchElementException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
         }
-    }
-
-    private void showDataEditorSettingsLoadedMessage() throws DAOException {
-        Locale locale = LocaleHelper.getCurrentLocale();
-        String title = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyTitle");
-        String text = Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyDefaultText");
-        if (Objects.nonNull(this.templateTask) && Objects.nonNull(dataEditorSetting) 
-                && templateTask.getId().equals(dataEditorSetting.getTaskId())) {
-            text = MessageFormat.format(
-                Helper.getString(locale, "dataEditor.layoutLoadedSuccessfullyForTaskText"), this.templateTask.getTitle()
-            );
-        }        
-        String script = GROWL_MESSAGE.replace("SUMMARY", title).replace("DETAIL", text)
-                .replace("SEVERITY", "info");
-        PrimeFaces.current().executeScript("PF('notifications').removeAll();");
-        PrimeFaces.current().executeScript(script);
     }
 
     private void checkProjectFolderConfiguration() {
@@ -405,6 +388,14 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             dataEditorSetting.setUserId(userId);
             dataEditorSetting.setTaskId(taskId);
         }
+
+        // initialize flags to signal whether global or task specific settings have been loaded or not
+        boolean layoutLoaded = (dataEditorSetting.getStructureWidth() > 0
+                || dataEditorSetting.getMetadataWidth() > 0
+                || dataEditorSetting.getGalleryWidth() > 0);
+
+        globalLayoutLoaded = Objects.isNull(dataEditorSetting.getTaskId()) && layoutLoaded;
+        taskLayoutLoaded = Objects.nonNull(dataEditorSetting.getTaskId()) && layoutLoaded;
     }
 
     /**
@@ -1165,6 +1156,7 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             }
             try {
                 ServiceManager.getDataEditorSettingService().saveToDatabase(dataEditorSetting);
+                loadDataEditorSettings();
                 PrimeFaces.current().executeScript("PF('dataEditorSavingResultDialog').show();");
             } catch (DAOException e) {
                 Helper.setErrorMessage("errorSaving", new Object[] {ObjectType.DATAEDITORSETTING.getTranslationSingular() }, logger, e);
@@ -1401,5 +1393,23 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             return "";
         }
+    }
+
+    /**
+     * Get value of 'globalLayoutLoaded'.
+     *
+     * @return value of 'globalLayoutLoaded'
+     */
+    public boolean isGlobalLayoutLoaded() {
+        return globalLayoutLoaded;
+    }
+
+    /**
+     * Get value of 'taskLayoutLoaded'.
+     *
+     * @return value of 'taskLayoutLoaded'
+     */
+    public boolean isTaskLayoutLoaded() {
+        return taskLayoutLoaded;
     }
 }

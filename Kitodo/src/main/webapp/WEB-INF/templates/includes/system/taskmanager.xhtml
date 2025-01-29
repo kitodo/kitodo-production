@@ -24,8 +24,9 @@
             <p:column headerText="#{msgs.title}">
                 <h:outputText value="#{item.name}"/>
             </p:column>
-            <p:column headerText="#{msgs.progress}">
-                <h:outputText value="#{item.progress}%"/>
+            <p:column headerText="#{msgs.progress}" width="200">
+                <p:progressBar value="#{item.progress}"
+                               labelTemplate="{value}%"/>
             </p:column>
             <p:column headerText="#{msgs.status}">
                 <h:outputText value="#{item.stateDescription}"/>

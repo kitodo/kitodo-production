@@ -354,7 +354,8 @@
                 This can be used if a certain metadata entry must not be changed at a certain point in time. (If no
                 changes are to be made to the metadata in its whole, this should be mapped via the authorization
                 management, not via the ruleset.) With "excluded", a metadata entry can be hidden. It is not deleted,
-                it is simply not displayed. With "multiline", a larger input box can be requested for a metadata key.
+                it is simply not displayed. With "filterable" an input field is rendered for checkbox lists to filter
+                the list of available values. With "multiline", a larger input box can be requested for a metadata key.
                 This makes sense for entries that contain a lot of text, for example an abstract. Settings must be
                 nested in order to define properties of subkeys.
             </xs:documentation>

@@ -60,7 +60,8 @@
         <jhove.version>1.20.1</jhove.version>
         <myfaces.version>2.3.10</myfaces.version>
         <mysql.version>8.2.0</mysql.version>
-        <poi.version>5.2.5</poi.version>
+        <pdfbox.version>3.0.3</pdfbox.version>
+        <poi.version>5.3.0</poi.version>
         <primefaces.extensions.version>8.0.5</primefaces.extensions.version>
         <saxon.version>9.9.1-8</saxon.version>
         <log4j.version>2.19.0</log4j.version>
@@ -78,7 +79,7 @@
         <properties-maven-plugin.version>1.2.1</properties-maven-plugin.version>
         <selenium.version>3.141.59</selenium.version>
         <spring.security.version>5.7.13</spring.security.version>
-        <flyway-maven-plugin.version>8.4.4</flyway-maven-plugin.version>
+        <flyway-maven-plugin.version>9.22.3</flyway-maven-plugin.version>
         <spotbugs-maven-plugin.version>4.3.0</spotbugs-maven-plugin.version>
         <pitest.version>1.4.10</pitest.version>
         <mariadb-java-client.version>2.7.12</mariadb-java-client.version>
@@ -332,7 +333,13 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.apache.pdfbox</groupId>
                 <artifactId>pdfbox</artifactId>
-                <version>3.0.3</version>
+                <version>${pdfbox.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox-io</artifactId>
+                <version>${pdfbox.version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -340,7 +347,7 @@ from system library in Java 11+ -->
                 <artifactId>poi-ooxml</artifactId>
                 <version>${poi.version}</version>
                 <exclusions>
-                    <!-- exlcude stax-api which provides javax.xml.namespace package
+                    <!-- exclude stax-api which provides javax.xml.namespace package
                          already included in system modules of Java 11+ -->
                     <exclusion>
                         <groupId>stax</groupId>
@@ -387,7 +394,7 @@ from system library in Java 11+ -->
                         <groupId>commons-logging</groupId>
                         <artifactId>commons-logging</artifactId>
                     </exclusion>
-                    <!-- exlcude xml-apis which provides javax.xml.transform package
+                    <!-- exclude xml-apis which provides javax.xml.transform package
                          already included in system modules of Java 11+ -->
                     <exclusion>
                         <groupId>xml-apis</groupId>
@@ -434,7 +441,7 @@ from system library in Java 11+ -->
             <dependency>
                 <groupId>org.codehaus.plexus</groupId>
                 <artifactId>plexus-archiver</artifactId>
-                <version>4.8.0</version>
+                <version>4.10.0</version>
                 <scope>test</scope>
                 <exclusions>
                     <exclusion>
@@ -804,6 +811,7 @@ from system library in Java 11+ -->
                 <groupId>org.xmlunit</groupId>
                 <artifactId>xmlunit-matchers</artifactId>
                 <version>2.9.1</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>se.jiderhamn.classloader-leak-prevention</groupId>
