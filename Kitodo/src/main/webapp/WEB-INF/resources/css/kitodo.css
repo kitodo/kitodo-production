@@ -183,10 +183,6 @@ body.first-visit #portal-header {
     white-space: nowrap;
 }
 
-#search-form\:search-field {
-    display: none;
-}
-
 #search-form\:search-field::placeholder {
     color: var(--pure-white);
 }
@@ -222,11 +218,15 @@ body.first-visit #portal-header {
     width: 50px;
 }
 
-#portal-search form:hover,
+#portal-search form:hover {
+    background: var(--pure-white);
+    color: var(--carbon-blue);
+}
+
 #portal-search form:hover #search-form\:search-field,
 #portal-search form:hover #search-form\:search-field::placeholder,
 #portal-search form:hover button {
-    background: var(--pure-white);
+    background: transparent;
     color: var(--carbon-blue);
 }
 
@@ -489,6 +489,7 @@ Breadcrumb menu
 
 body .ui-breadcrumb {
     padding: 0;
+    border: none;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron {
@@ -496,25 +497,38 @@ body .ui-breadcrumb .ui-breadcrumb-items li.ui-breadcrumb-chevron {
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li {
+    background-color: var(--focused-blue);
+    border-radius: var(--default-border-radius);
     overflow: visible;
+    position: relative;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link,
 body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home {
-    background-color: var(--focused-blue);
+    background-color: transparent;
     background-image: none;
-    border-radius: var(--default-border-radius);
-    color: var(--pure-white);
     display: inline-block;
     font-size: small;
     height: var(--input-height);
     line-height: var(--input-height);
     margin-top: 0;
-    text-align: center;
     text-decoration: none;
     text-indent: 0;
-    width: var(--input-height);
     white-space: nowrap;
+}
+
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link .ui-menuitem-icon,
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link .ui-menuitem-text,
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child a.ui-icon-home,
+body .ui-breadcrumb .ui-breadcrumb-items li:last-child .ui-menuitem-link .ui-menuitem-icon,
+body .ui-breadcrumb .ui-breadcrumb-items li:last-child .ui-menuitem-link .ui-menuitem-text {
+    color: var(--pure-white);
+}
+
+
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link {
+    min-width: var(--input-height);
+    padding: 0 10px;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text,
@@ -525,8 +539,12 @@ body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-icon {
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text {
-    padding: 0 4px;
-    text-overflow: ellipsis;
+    width: 0;
+    overflow: hidden;
+}
+
+body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-icon {
+    vertical-align: top;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li:first-child:not(:hover) .ui-menuitem-text {
@@ -544,23 +562,32 @@ body .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child)::before {
     border: solid var(--blue);
     border-width: 3px 0 0 3px;
     content: "";
-    height: 12px;
-    left: -8px;
+    height: 10px;
+    left: -15px;
     position: absolute;
     top: 11px;
     transform: translateZ(1px) rotate(-45deg);
-    width: 12px;
+    width: 10px;
 }
 
-body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link,
-body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-text::after,
-body .ui-breadcrumb .ui-breadcrumb-items li:hover::before {
-    background: var(--pure-white);
+body .ui-breadcrumb .ui-breadcrumb-items li:hover {
+    background-color: var(--pure-white);
+}
+
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link .ui-menuitem-icon,
+body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link .ui-menuitem-text,
+body .ui-breadcrumb .ui-breadcrumb-items li:first-child:hover a.ui-icon-home,
+body .ui-breadcrumb .ui-breadcrumb-items li:last-child:hover .ui-menuitem-link .ui-menuitem-icon,
+body .ui-breadcrumb .ui-breadcrumb-items li:last-child:hover .ui-menuitem-link .ui-menuitem-text {
     color: var(--carbon-blue);
 }
 
+body .ui-breadcrumb .ui-breadcrumb-items li:hover::before {
+    background-color: var(--pure-white);
+}
+
 body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-icon {
-    padding-left: var(--default-half-size);
+    padding-right: var(--default-half-size);
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link {
@@ -568,7 +595,7 @@ body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-link {
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li:hover .ui-menuitem-text {
-    padding: 0 var(--default-half-size);
+    width: auto;
 }
 
 body .ui-breadcrumb .ui-breadcrumb-items li,
@@ -874,7 +901,6 @@ label.ui-outputlabel[for] {
 
 body #filterInputForm\:filterfield {
     border-radius: var(--default-border-radius) 0 0 var(--default-border-radius);
-    padding: 0;
     width: 100%;
 }
 
@@ -920,6 +946,10 @@ body #filterInputForm\:filterfield {
     padding: 0 var(--default-half-size) 0 var(--default-double-size);
 }
 
+#filterOptionsFormWrapper .ui-chkbox {
+    padding-bottom: var(--input-padding);
+}
+
 #filterOptionsForm\:taskFilters,
 #filterOptionsForm\:taskStatus {
     border: none;
@@ -941,6 +971,8 @@ body #filterInputForm\:filterfield {
 
 #parsedFiltersForm\:parsedFilters .ui-widget-content {
     background: none;
+    border: none;
+    padding: 0;
 }
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-data {
@@ -961,7 +993,7 @@ body #filterInputForm\:filterfield {
 #parsedFiltersForm\:parsedFilters .ui-datalist-item {
     list-style: none;
     display: inline-block;
-    height: 24px;
+    height: 30px;
     line-height: 24px;
     padding: 3px;
     border-radius: var(--default-border-radius);
@@ -980,6 +1012,7 @@ body #filterInputForm\:filterfield {
 #parsedFiltersForm\:parsedFilters .ui-datalist-item .value,
 #parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
     display: inline-block;
+    vertical-align: text-bottom;
 }
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-item .category {
@@ -992,7 +1025,8 @@ body #filterInputForm\:filterfield {
 
 
 #parsedFiltersForm\:parsedFilters .ui-datalist-item .ui-button {
-    height: auto;
+    height: 100%;
+    margin-left: var(--default-half-size);
     width: auto;
 }
 
@@ -1141,6 +1175,10 @@ main i.fa {
 #login-section h3 {
     font-size: 22px;
     margin-bottom: 32px;
+}
+
+#login-section .ui-password {
+    width: 100%;
 }
 
 #login-section input[id=username], #login-section input[type=password] {
@@ -1306,17 +1344,26 @@ main i.fa {
     width: 100%;
 }
 
-.configure-columns-button {
+#configureColumnsForm .configure-columns-button {
     display: inline-block !important;
     height: var(--input-height);
 }
 
-.configure-columns-button .ui-selectcheckboxmenu-label::after {
+#configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-label-container {
+    padding: 0;
+}
+
+#configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-label {
+    border-radius: var(--default-border-radius);
+    height: var(--input-height);
+}
+
+#configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-label::after {
     font-family: 'FontAwesome';
     content: '\f0db';
 }
 
-.configure-columns-button .ui-selectcheckboxmenu-trigger {
+#configureColumnsForm .configure-columns-button .ui-selectcheckboxmenu-trigger {
     display: none;
 }
 
@@ -4616,6 +4663,17 @@ body .ui-selectonemenu .ui-selectonemenu-trigger .ui-icon::before {
 }
 
 /*----------------------------------------------------------------------
+FontAwesome Fix
+----------------------------------------------------------------------*/
+body .fa {
+    font-size: inherit;
+}
+
+body .fa-lg {
+    font-size: 1.33333333em
+}
+
+/*----------------------------------------------------------------------
 min 700px
 ----------------------------------------------------------------------*/
 
@@ -4630,7 +4688,6 @@ min 700px
     }
 
     #search-form\:search-field {
-        display: table-cell;
         vertical-align: top;
     }
 
@@ -4707,16 +4764,12 @@ min 1200px
         background-size: 100% auto;
     }
 
-    .ui-breadcrumb .ui-breadcrumb-items li:not(:first-child) .ui-menuitem-icon {
-        padding-left: var(--default-half-size);
+    body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-icon {
+        padding-right: var(--default-half-size);
     }
 
-    .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-link {
+    body .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text {
         width: auto;
-    }
-
-    .ui-breadcrumb .ui-breadcrumb-items li .ui-menuitem-text {
-        padding: 0 var(--default-half-size);
     }
 }
 
