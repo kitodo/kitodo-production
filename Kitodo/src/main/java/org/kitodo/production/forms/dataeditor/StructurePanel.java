@@ -70,17 +70,17 @@ public class StructurePanel implements Serializable {
      * If changing the tree node fails, we need this value to undo the user’s
      * select action.
      */
-    private List<TreeNode> previouslySelectedLogicalNodes;
+    private List<TreeNode> previouslySelectedLogicalNodes = new ArrayList<>();
 
     /**
      * If changing the tree node fails, we need this value to undo the user’s
      * select action.
      */
-    private TreeNode previouslySelectedPhysicalNode;
+    private List<TreeNode> previouslySelectedPhysicalNodes = new ArrayList<>();
 
-    private TreeNode[] selectedLogicalNodes;
+    private TreeNode[] selectedLogicalNodes = new TreeNode[] {};
 
-    private TreeNode selectedPhysicalNode;
+    private TreeNode[] selectedPhysicalNodes = new TreeNode[] {};
 
     private LogicalDivision structure;
 
@@ -165,9 +165,9 @@ public class StructurePanel implements Serializable {
         logicalTree = null;
         physicalTree = null;
         selectedLogicalNodes = new TreeNode[] {};
-        selectedPhysicalNode = null;
+        selectedPhysicalNodes = new TreeNode[] {};
         previouslySelectedLogicalNodes = new ArrayList<>();
-        previouslySelectedPhysicalNode = null;
+        previouslySelectedPhysicalNodes = new ArrayList<>();
         structure = null;
         subfoldersCache = new HashMap<>();
         severalAssignments = new LinkedList<>();
@@ -357,7 +357,6 @@ public class StructurePanel implements Serializable {
                 }
             }
         }
-        
     }
 
     /**
@@ -373,24 +372,63 @@ public class StructurePanel implements Serializable {
     }
 
     /**
-     * Get selectedPhysicalNode.
+     * Get selected physical TreeNodes if it is the only selected TreeNode 
+     * (e.g. when opening the context menu).
      *
-     * @return value of selectedPhysicalNode
+     * @return TreeNode instance if it is the only selected node or null
      */
-    public TreeNode getSelectedPhysicalNode() {
-        return selectedPhysicalNode;
+    public TreeNode getSelectedPhysicalNodeIfSingle() {
+        List<TreeNode> nodes = getSelectedPhysicalNodes();
+        if (Objects.nonNull(nodes) && nodes.size() == 1) {
+            return nodes.get(0);
+        }
+        return null;
     }
 
     /**
-     * Set selectedPhysicalNode.
+     * Get selected physical nodes as list.
+     *
+     * @return value of selectedPhysicalNode
+     */
+    public List<TreeNode> getSelectedPhysicalNodes() {
+        return Arrays.asList(selectedPhysicalNodes);
+    }
+
+    /**
+     * Get selected physical TreeNodes as Array (as required by PrimeFaces).
+     *
+     * @return value of selectedLogicalNodes as array
+     */
+    public TreeNode[] getSelectedPhysicalNodesAsArray() {
+        return selectedLogicalNodes;
+    }
+
+    /**
+     * Set selected physical nodes array (as required by PrimeFaces).
      *
      * @param selectedPhysicalNode as org.primefaces.model.TreeNode
      */
-    public void setSelectedPhysicalNode(TreeNode selectedPhysicalNode) {
-        if (Objects.nonNull(selectedPhysicalNode)) {
-            this.selectedPhysicalNode = selectedPhysicalNode;
-            expandNode(selectedPhysicalNode.getParent());
+    public void setSelectedPhysicalNodesAsArray(TreeNode[] selected) {
+        if (Objects.nonNull(selected)) {
+            this.selectedPhysicalNodes = selected;
+            for (TreeNode node : selected) {
+                if (Objects.nonNull(node)) {
+                    expandNode(node.getParent());
+                }
+            }
         }
+    }
+
+    /**
+     * Set selected physical TreeNodes from Collection.
+     *
+     * @param selected
+     *          collection of TreeNodes that will be selected
+     */
+    public void setSelectedPhysicalNodes(List<TreeNode> selected) {
+        if (Objects.nonNull(selected)) {
+            this.setSelectedLogicalNodesAsArray((TreeNode[])selected.toArray(new TreeNode[selected.size()]));
+        }        
     }
 
     /**
@@ -408,51 +446,13 @@ public class StructurePanel implements Serializable {
     }
 
     Optional<PhysicalDivision> getSelectedPhysicalDivision() {
+        TreeNode selectedPhysicalNode = getSelectedPhysicalNodeIfSingle();
         if (Objects.isNull(selectedPhysicalNode)) {
             return Optional.empty();
         }
         StructureTreeNode structureTreeNode = (StructureTreeNode) selectedPhysicalNode.getData();
         Object dataObject = structureTreeNode.getDataObject();
         return Optional.ofNullable(dataObject instanceof PhysicalDivision ? (PhysicalDivision) dataObject : null);
-    }
-
-    /**
-     * Select given PhysicalDivision in physical structure tree.
-     *
-     * @param physicalDivision
-     *          PhysicalDivision to be selected in physical structure tree
-     */
-    void selectPhysicalDivision(PhysicalDivision physicalDivision) {
-        TreeNode matchingTreeNode = getMatchingTreeNode(getPhysicalTree(), physicalDivision);
-        if (Objects.nonNull(matchingTreeNode)) {
-            updatePhysicalNodeSelection(matchingTreeNode);
-            matchingTreeNode.setSelected(true);
-            previouslySelectedPhysicalNode.setSelected(false);
-            show(true);
-        }
-    }
-
-    private TreeNode getMatchingTreeNode(TreeNode parent, PhysicalDivision physicalDivision) {
-        TreeNode matchingTreeNode = null;
-        for (TreeNode treeNode : parent.getChildren()) {
-            if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
-                StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-                if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
-                    PhysicalDivision currentPhysicalDivision = (PhysicalDivision) structureTreeNode.getDataObject();
-                    if (Objects.nonNull(currentPhysicalDivision.getDivId())
-                            && currentPhysicalDivision.getDivId().equals(physicalDivision.getDivId())) {
-                        matchingTreeNode = treeNode;
-                        break;
-                    } else {
-                        matchingTreeNode = getMatchingTreeNode(treeNode, physicalDivision);
-                        if (Objects.nonNull(matchingTreeNode)) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-        return matchingTreeNode;
     }
 
     /**
@@ -561,24 +561,16 @@ public class StructurePanel implements Serializable {
         }
 
         final Set<String> logicalRowKeys = getTreeNodeRowKeys(this.getSelectedLogicalNodes());
-
-        String physicalRowKey = null;
-        if (Objects.nonNull(selectedPhysicalNode)) {
-            physicalRowKey = selectedPhysicalNode.getRowKey();
-        }
-
+        final Set<String> physicalRowKeys = getTreeNodeRowKeys(this.getSelectedPhysicalNodes());
         List<TreeNode> keepSelectedLogicalNodes = getSelectedLogicalNodes();
-        TreeNode keepSelectedPhysicalNode = selectedPhysicalNode;
+        List<TreeNode> keepSelectedPhysicalNodes = getSelectedPhysicalNodes();
+
         show();
+
         setSelectedLogicalNodes(keepSelectedLogicalNodes);
-        selectedPhysicalNode = keepSelectedPhysicalNode;
+        setSelectedPhysicalNodes(keepSelectedPhysicalNodes);
         restoreSelectionFromRowKeys(logicalRowKeys, this.logicalTree);
-
-        // ------------------------ TODO TODO TODO --------------
-        /*if (Objects.nonNull(physicalRowKey)) {
-            restoreSelection(physicalRowKey, this.physicalTree);
-        }*/
-
+        restoreSelectionFromRowKeys(physicalRowKeys, this.physicalTree);
     }
 
     /**
@@ -596,10 +588,8 @@ public class StructurePanel implements Serializable {
         this.physicalTree = buildMediaTree(dataEditor.getWorkpiece().getPhysicalStructure());
         updatePhysicalNodeExpansionStates(this.physicalTree, this.previousExpansionStatesPhysicalTree);
 
-        setSelectedLogicalNodes(Arrays.asList(logicalTree.getChildren().get(logicalTree.getChildCount() - 1)));
-        this.selectedPhysicalNode = physicalTree.getChildren().get(0);
         this.previouslySelectedLogicalNodes = getSelectedLogicalNodes();
-        this.previouslySelectedPhysicalNode = selectedPhysicalNode;
+        this.previouslySelectedPhysicalNodes = getSelectedLogicalNodes();
         dataEditor.checkForChanges();
     }
 
@@ -1029,20 +1019,32 @@ public class StructurePanel implements Serializable {
      */
     public void treeLogicalSelect(NodeSelectEvent event) {
         /*
-         * The newly selected element has already been set in 'selectedLogicalNode' by
+         * The newly selected element has already been set in 'selectedLogicalNodes' by
          * JSF at this point.
          */
         try {
-            TreeNode selectedTreeNode = getSelectedLogicalNodeIfSingle();
-            if (Objects.nonNull(selectedTreeNode)) {
-                dataEditor.switchStructure(selectedTreeNode.getData(), true);
-            }
+            // find selected physical divisions
+            List<TreeNode> selectedTreeNodes = getSelectedLogicalNodes();
+            List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = selectedTreeNodes.stream()
+                .map(StructureTreeOperations::getPhysicalDivisionPairFromTreeNode)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+            // find selected logical divisions
+            List<LogicalDivision> selectedLogicalDivisions = selectedTreeNodes.stream()
+                .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+            
+            // update selection throughout meta data editor
+            dataEditor.updateSelection(selectedPhysicalDivisions, selectedLogicalDivisions);
+
             previouslySelectedLogicalNodes = getSelectedLogicalNodes();
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             setSelectedLogicalNodes(previouslySelectedLogicalNodes);
         }
-    }
+    }    
 
     /**
      * Callback function triggered when a node is selected in the physical structure tree.
@@ -1055,192 +1057,91 @@ public class StructurePanel implements Serializable {
          * The newly selected element has already been set in 'selectedPhysicalNode' by
          * JSF at this point.
          */
-        try {
-            dataEditor.switchPhysicalDivision();
-            previouslySelectedPhysicalNode = selectedPhysicalNode;
+        try {                
+            // find selected physical divisions
+            List<TreeNode> selectedTreeNodes = getSelectedPhysicalNodes();
+            List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = selectedTreeNodes.stream()
+                .map(StructureTreeOperations::getPhysicalDivisionPairFromTreeNode)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+            // update selection throughout meta data editor
+            dataEditor.updateSelection(selectedPhysicalDivisions, Collections.emptyList());
+
+            previouslySelectedPhysicalNodes = getSelectedPhysicalNodes();
         } catch (NoSuchMetadataFieldException e) {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
-            selectedPhysicalNode = previouslySelectedPhysicalNode;
-        }
-    }
-
-    void updateNodeSelection(GalleryMediaContent galleryMediaContent, LogicalDivision structure) {
-        this.updateLogicalNodeSelection(galleryMediaContent, structure);
-        this.updatePhysicalNodeSelection(galleryMediaContent);
-    }
-
-    private void updatePhysicalNodeSelection(TreeNode treeNode) {
-        if (this.isSeparateMedia()) {
-            if (Objects.nonNull(previouslySelectedPhysicalNode)) {
-                previouslySelectedPhysicalNode.setSelected(false);
-            }
-            if (Objects.nonNull(selectedPhysicalNode) && !selectedPhysicalNode.equals(treeNode)) {
-                selectedPhysicalNode.setSelected(false);
-            }
-            if (Objects.nonNull(physicalTree) && Objects.nonNull(treeNode)) {
-                setSelectedPhysicalNode(treeNode);
-                this.dataEditor.getMetadataPanel().showPhysical(this.dataEditor.getSelectedPhysicalDivision());
-            }
-        }
-    }
-
-    void updatePhysicalNodeSelection(GalleryMediaContent galleryMediaContent) {
-        if (Objects.nonNull(physicalTree)) {
-            TreeNode selectedTreeNode = updatePhysicalNodeSelectionRecursive(galleryMediaContent, physicalTree);
-            updatePhysicalNodeSelection(selectedTreeNode);
-        }
-    }
-
-    void updateLogicalNodeSelection(GalleryMediaContent galleryMediaContent, LogicalDivision structure) {
-        if (Objects.nonNull(previouslySelectedLogicalNodes)) {
-            for (TreeNode node : previouslySelectedLogicalNodes) {
-                node.setSelected(false);
-            }
-        }
-        if (Objects.nonNull(selectedLogicalNodes)) {
-            for (TreeNode node : selectedLogicalNodes) {
-                node.setSelected(false);
-            }
-        }
-        if (Objects.nonNull(this.logicalTree)) {
-            if (Objects.isNull(structure)) {
-                GalleryStripe matchingGalleryStripe = this.dataEditor.getGalleryPanel().getLogicalStructureOfMedia(galleryMediaContent);
-                if (Objects.nonNull(matchingGalleryStripe)) {
-                    structure = matchingGalleryStripe.getStructure();
-                }
-            }
-            if (Objects.nonNull(structure)) {
-                List<TreeNode> selectedTreeNodes;
-                if (!this.logicalStructureTreeContainsMedia()) {
-                    selectedTreeNodes = updateLogicalNodeSelectionRecursive(structure, logicalTree);
-                } else {
-                    selectedTreeNodes = updatePhysSelectionInLogTreeRecursive(
-                        galleryMediaContent.getView().getPhysicalDivision(), 
-                        structure,
-                        logicalTree
-                    );
-                }
-                if (Objects.nonNull(selectedTreeNodes)) {
-                    setSelectedLogicalNodes(selectedTreeNodes);
-                } else {
-                    Helper.setErrorMessage("Unable to update node selection in logical structure!");
-                }
-            }
-        }
-    }
-
-    void updateLogicalNodeSelection(LogicalDivision logicalDivision) {
-        if (Objects.nonNull(previouslySelectedLogicalNodes)) {
-            for (TreeNode node : previouslySelectedLogicalNodes) {
-                node.setSelected(false);
-            }
-        }
-        if (Objects.nonNull(selectedLogicalNodes)) {
-            for (TreeNode node : selectedLogicalNodes) {
-                node.setSelected(false);
-            }
-        }
-        if (Objects.nonNull(logicalTree)) {
-            List<TreeNode> selectedTreeNodes = updateLogicalNodeSelectionRecursive(logicalDivision, logicalTree);
-            if (Objects.nonNull(selectedTreeNodes) && selectedTreeNodes.size() > 0) {
-                setSelectedLogicalNodes(selectedTreeNodes);
-                try {
-                    dataEditor.switchStructure(selectedTreeNodes.get(0).getData(), false);
-                } catch (NoSuchMetadataFieldException e) {
-                    logger.error(e.getLocalizedMessage());
-                }
-            } else {
-                Helper.setErrorMessage("Unable to update node selection in logical structure!");
-            }
+            setSelectedPhysicalNodes(previouslySelectedPhysicalNodes);
         }
     }
 
     /**
-     * Update the node selection in logical tree.
-     * @param structure the LogicalDivision to be selected as a TreeNode
-     * @param treeNode the logical structure tree
-     * @return the TreeNode that will be selected
+     * Overwrite both physical and logical trees with new tree node selection from outside user interactions 
+     * (e.g. gallery, pagination panel).
+     * 
+     * @param selectedPhysicalDivisions the list of selected physical divisions (and their parent logical divisions)
+     * @param selectedLogicalDivisions the list of selected logical divisions
      */
-    public List<TreeNode> updateLogicalNodeSelectionRecursive(LogicalDivision structure, TreeNode treeNode) {
-        List<TreeNode> matchingTreeNodes = new ArrayList<>();
-        for (TreeNode currentTreeNode : treeNode.getChildren()) {
-            if (treeNodeMatchesStructure(structure, currentTreeNode)) {
-                currentTreeNode.setSelected(true);
-                matchingTreeNodes.add(currentTreeNode);
-            } else {
-                matchingTreeNodes.addAll(updateLogicalNodeSelectionRecursive(structure, currentTreeNode));
-            }
+    public void updateNodeSelection(
+        List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions, 
+        List<LogicalDivision> selectedLogicalDivisions
+    ) { 
+        // update logical tree       
+        this.updateLogicalTreeNodeSelection(selectedPhysicalDivisions, selectedLogicalDivisions);
+        
+        // update physical tree if available
+        if (this.isSeparateMedia()) {
+            this.updatePhysicalTreeNodeSelection(selectedPhysicalDivisions);
         }
-        return matchingTreeNodes;
     }
 
-    private TreeNode updatePhysicalNodeSelectionRecursive(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
-        if (Objects.isNull(galleryMediaContent)) {
-            return null;
+    /** 
+     * Overwrite physical tree with new tree node selection from outside user interactions 
+     * (e.g. gallery, pagination panel).
+     */
+    private void updatePhysicalTreeNodeSelection(List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions) {
+        if (Objects.nonNull(physicalTree)) {
+            // clear tree node selection
+            StructureTreeOperations.clearTreeNodeSelection(physicalTree);
+
+            // find tree nodes matching selected physical divisions
+            Set<TreeNode> selectedTreeNodes = StructureTreeOperations.findTreeNodesMatchingDivisions(
+                physicalTree, selectedPhysicalDivisions, Collections.emptyList()
+            );
+
+            // select those tree nodes
+            StructureTreeOperations.selectTreeNodes(selectedTreeNodes);
+
+            // remember new selection
+            previouslySelectedPhysicalNodes = getSelectedPhysicalNodes();
+            setSelectedPhysicalNodes(new ArrayList<>(selectedTreeNodes));
         }
-        TreeNode matchingTreeNode = null;
-        for (TreeNode currentTreeNode : treeNode.getChildren()) {
-            if (currentTreeNode.getChildCount() < 1 && treeNodeMatchesGalleryMediaContent(galleryMediaContent, currentTreeNode)) {
-                currentTreeNode.setSelected(true);
-                matchingTreeNode = currentTreeNode;
-            } else {
-                currentTreeNode.setSelected(false);
-                matchingTreeNode = updatePhysicalNodeSelectionRecursive(galleryMediaContent, currentTreeNode);
-            }
-            if (Objects.nonNull(matchingTreeNode)) {
-                break;
-            }
-        }
-        return matchingTreeNode;
     }
 
-    private List<TreeNode> updatePhysSelectionInLogTreeRecursive(PhysicalDivision selectedPhysicalDivision, LogicalDivision parentElement,
-                                                           TreeNode treeNode) {
-        List<TreeNode> matchingTreeNodes = new ArrayList<>();
-        for (TreeNode currentTreeNode : treeNode.getChildren()) {
-            if (treeNode.getData() instanceof StructureTreeNode
-                    && Objects.nonNull(((StructureTreeNode) treeNode.getData()).getDataObject())
-                    && (((StructureTreeNode) treeNode.getData()).getDataObject().equals(parentElement)
-                    || MEDIA_PARTIAL_NODE_TYPE.equals(currentTreeNode.getType()))
-                    && currentTreeNode.getData() instanceof StructureTreeNode
-                    && ((StructureTreeNode) currentTreeNode.getData()).getDataObject() instanceof View
-                    && ((View) ((StructureTreeNode) currentTreeNode.getData()).getDataObject()).getPhysicalDivision()
-                            .equals(selectedPhysicalDivision)) {
-                currentTreeNode.setSelected(true);
-                matchingTreeNodes.add(currentTreeNode);
-            } else {
-                currentTreeNode.setSelected(false);
-                matchingTreeNodes.addAll(updatePhysSelectionInLogTreeRecursive(selectedPhysicalDivision, parentElement, currentTreeNode));
-            }
-        }
-        return matchingTreeNodes;
-    }
+    /** 
+     * Overwrite logical tree with new tree node selection from outside user interactions 
+     * (e.g. gallery, pagination panel).
+     */
+    private void updateLogicalTreeNodeSelection(
+        List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions, 
+        List<LogicalDivision> selectedLogicalDivisions
+    ) {
+        if (Objects.nonNull(logicalTree)) {
+            // clear tree node selection
+            StructureTreeOperations.clearTreeNodeSelection(logicalTree);
+            
+            // find tree nodes matching selected logical and physical divisions
+            Set<TreeNode> selectedTreeNodes = StructureTreeOperations.findTreeNodesMatchingDivisions(
+                logicalTree, selectedPhysicalDivisions, selectedLogicalDivisions
+            );
 
-    private boolean treeNodeMatchesGalleryMediaContent(GalleryMediaContent galleryMediaContent, TreeNode treeNode) {
-        if (treeNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-            PhysicalDivision physicalDivision = null;
-            if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
-                physicalDivision = (PhysicalDivision) structureTreeNode.getDataObject();
-            } else if (structureTreeNode.getDataObject() instanceof View) {
-                View view = (View) structureTreeNode.getDataObject();
-                physicalDivision = view.getPhysicalDivision();
-            }
-            if (Objects.nonNull(physicalDivision) && Objects.nonNull(galleryMediaContent.getView())) {
-                return Objects.equals(physicalDivision, galleryMediaContent.getView().getPhysicalDivision());
-            }
+            // select those tree nodes
+            StructureTreeOperations.selectTreeNodes(selectedTreeNodes);
+            
+            // remember new selection
+            previouslySelectedLogicalNodes = getSelectedLogicalNodes();
+            setSelectedLogicalNodes(new ArrayList<>(selectedTreeNodes));
         }
-        return false;
-    }
-
-    private boolean treeNodeMatchesStructure(LogicalDivision structure, TreeNode treeNode) {
-        if (Objects.nonNull(treeNode) && treeNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) treeNode.getData();
-            if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
-                return Objects.equals(structureTreeNode.getDataObject(), structure);
-            }
-        }
-        return false;
     }
 
     /**
@@ -1282,33 +1183,54 @@ public class StructurePanel implements Serializable {
         Object dropNodeObject = dropTreeNode.getData();
         expandNode(dropTreeNode);
 
-        for (TreeNode dragTreeNode : event.getDragNodes()) {
-            Object dragNodeObject = dragTreeNode.getData();
-            try {
+        try {
+            boolean logicalMoved = false;
+            boolean physicalMoved = false;
+            boolean pageMoved = false;
+
+            for (TreeNode dragTreeNode : event.getDragNodes()) {
+                Object dragNodeObject = dragTreeNode.getData();
                 StructureTreeNode dropNode = (StructureTreeNode) dropNodeObject;
                 StructureTreeNode dragNode = (StructureTreeNode) dragNodeObject;
 
                 if (dropNode.isLinked()) {
-                    Helper.setErrorMessage("dataEditor.dragNDropLinkError");
-                    show();
-                }
-                else if (dragNode.getDataObject() instanceof LogicalDivision
+                    throw new IllegalArgumentException(Helper.getTranslation("dataEditor.dragNDropLinkError"));
+                } else if (dragNode.getDataObject() instanceof LogicalDivision
                         && dropNode.getDataObject() instanceof LogicalDivision) {
-                    checkLogicalDragDrop(dragNode, dropNode);
+                    logicalMoved |= checkLogicalDragDrop(dragNode, dropNode);
                 } else if (dragNode.getDataObject() instanceof PhysicalDivision
                         && dropNode.getDataObject() instanceof PhysicalDivision) {
-                    checkPhysicalDragDrop(dragNode, dropNode);
+                    physicalMoved |= checkPhysicalDragDrop(dragNode, dropNode);
                 } else if (dragNode.getDataObject() instanceof View
                         && dropNode.getDataObject() instanceof LogicalDivision) {
-                    movePageNode(dragTreeNode, dropTreeNode, dropNode, dragNode);
+                    pageMoved |= movePageNode(dragTreeNode, dropTreeNode, dropNode, dragNode);
                 } else {
-                    Helper.setErrorMessage(
-                        Helper.getTranslation("dataEditor.dragNDropError", dragNode.getLabel(), dropNode.getLabel()));
-                    show();
+                    throw new IllegalArgumentException(
+                        Helper.getTranslation("dataEditor.dragNDropError", dragNode.getLabel(), dropNode.getLabel())
+                    );
                 }
-            } catch (Exception exception) {
-                logger.error(exception.getLocalizedMessage(), exception);
             }
+
+            if (logicalMoved || pageMoved) {
+                if (logicalStructureTreeContainsMedia()) {
+                    preserveLogicalAndPhysical();
+                } else {
+                    preserveLogical();
+                }
+                this.dataEditor.getGalleryPanel().updateStripes();
+                this.dataEditor.getPaginationPanel().show();
+            }
+            if (physicalMoved) {
+                preservePhysical();
+            }
+            
+        } catch (IllegalArgumentException e) {
+            // invalid drag and drop operation
+            Helper.setErrorMessage(e.getMessage());
+        } catch (Exception exception) {
+            logger.error(exception.getLocalizedMessage(), exception);
+        } finally {
+            show(true);
         }
     }
 
@@ -1347,33 +1269,27 @@ public class StructurePanel implements Serializable {
      * @param dragStructureNode
      *          StructureTreeNode containing the View/Page that is moved
      */
-    private void movePageNode(
+    private boolean movePageNode(
         TreeNode dragTreeNode, 
         TreeNode dropTreeNode, 
         StructureTreeNode dropStructureNode, 
         StructureTreeNode dragStructureNode
-    ) throws Exception {
+    ) throws IllegalArgumentException {
         TreeNode dragParent = dragTreeNode.getParent();
         if (dragParent.getData() instanceof StructureTreeNode) {
             StructureTreeNode dragParentTreeNode = (StructureTreeNode) dragParent.getData();
             if (dragParentTreeNode.getDataObject() instanceof LogicalDivision) {
                 // FIXME waiting for PrimeFaces' tree drop index bug to be fixed.
                 // Until fixed dropping nodes onto other nodes will produce random drop indices.
-                preserveLogicalAndPhysical();
-                show();
-                expandNode(dropTreeNode);
-                dataEditor.getGalleryPanel().updateStripes();
-                dataEditor.getPaginationPanel().show();
-                return;
+                return true;
             } else {
-                Helper.setErrorMessage(
+                throw new IllegalArgumentException(
                     Helper.getTranslation("dataEditor.dragNDropError", dragStructureNode.getLabel(), dropStructureNode.getLabel()));
             }
         } else {
-            Helper.setErrorMessage(
+            throw new IllegalArgumentException(
                 Helper.getTranslation("dataEditor.dragNDropError", dragStructureNode.getLabel(), dropStructureNode.getLabel()));
         }
-        show();
     }
 
     /**
@@ -1543,7 +1459,7 @@ public class StructurePanel implements Serializable {
         }
     }
 
-    private void checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
+    private boolean checkLogicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) throws IllegalArgumentException {
         LogicalDivision dragStructure = (LogicalDivision) dragNode.getDataObject();
         LogicalDivision dropStructure = (LogicalDivision) dropNode.getDataObject();
 
@@ -1558,29 +1474,22 @@ public class StructurePanel implements Serializable {
             if (!dragParents.isEmpty()) {
                 LogicalDivision parentStructure = dragParents.get(dragParents.size() - 1);
                 if (parentStructure.getChildren().contains(dragStructure)) {
-                    if (logicalStructureTreeContainsMedia()) {
-                        preserveLogicalAndPhysical();
-                    } else {
-                        preserveLogical();
-                    }
-                    this.dataEditor.getGalleryPanel().updateStripes();
-                    this.dataEditor.getPaginationPanel().show();
+                    return true;
                 } else {
-                    Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
+                    throw new IllegalArgumentException(Helper.getTranslation("dataEditor.childNotContainedError",
                         dragNode.getLabel()));
                 }
             } else {
-                Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
+                throw new IllegalArgumentException(Helper.getTranslation("dataEditor.noParentsError",
                     dragNode.getLabel()));
             }
         } else {
-            Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+            throw new IllegalArgumentException(Helper.getTranslation("dataEditor.forbiddenChildElement",
                 dragNode.getLabel(), dropNode.getLabel()));
         }
-        show();
     }
 
-    private void checkPhysicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) {
+    private boolean checkPhysicalDragDrop(StructureTreeNode dragNode, StructureTreeNode dropNode) throws IllegalArgumentException {
         PhysicalDivision dragUnit = (PhysicalDivision) dragNode.getDataObject();
         PhysicalDivision dropUnit = (PhysicalDivision) dropNode.getDataObject();
 
@@ -1591,22 +1500,21 @@ public class StructurePanel implements Serializable {
         if (divisionView.getAllowedSubstructuralElements().containsKey(dragUnit.getType())) {
             dragParents = MetadataEditor.getAncestorsOfPhysicalDivision(dragUnit, dataEditor.getWorkpiece().getPhysicalStructure());
             if (dragParents.isEmpty()) {
-                Helper.setErrorMessage(Helper.getTranslation("dataEditor.noParentsError",
+                throw new IllegalArgumentException(Helper.getTranslation("dataEditor.noParentsError",
                     dragNode.getLabel()));
             } else {
                 PhysicalDivision parentUnit = dragParents.get(dragParents.size() - 1);
                 if (parentUnit.getChildren().contains(dragUnit)) {
-                    preservePhysical();
+                    return true;
                 } else {
-                    Helper.setErrorMessage(Helper.getTranslation("dataEditor.childNotContainedError",
+                    throw new IllegalArgumentException(Helper.getTranslation("dataEditor.childNotContainedError",
                         dragUnit.getType()));
                 }
             }
         } else {
-            Helper.setErrorMessage(Helper.getTranslation("dataEditor.forbiddenChildElement",
+            throw new IllegalArgumentException(Helper.getTranslation("dataEditor.forbiddenChildElement",
                 dragNode.getLabel(), dropNode.getLabel()));
         }
-        show();
     }
 
     private void preserveLogicalAndPhysical() throws UnknownTreeNodeDataException {
