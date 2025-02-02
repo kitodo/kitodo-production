@@ -51,6 +51,7 @@ import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.api.dataeditor.rulesetmanagement.StructuralElementViewInterface;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.api.dataformat.MediaVariant;
+import org.kitodo.api.dataformat.PhysicalDivision;
 import org.kitodo.api.dataformat.View;
 import org.kitodo.api.dataformat.Workpiece;
 import org.kitodo.api.externaldatamanagement.ImportConfigurationType;
@@ -297,10 +298,19 @@ public class DataEditorService {
                     dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         }
 
+        // data object is a physical division
+        if (dataObject instanceof PhysicalDivision) {
+            PhysicalDivision div = (PhysicalDivision) dataObject;
+            return dataEditor.getRulesetManagement().getStructuralElementView(
+                div.getType(), dataEditor.getAcquisitionStage(), dataEditor.getPriorityList()
+            );
+        }
+
         // data object is a sibling process
         if (dataObject instanceof Process) {
             return null;
-        }
+        }        
+
         throw new IllegalStateException("Data object has unknown type '" + dataObject.getClass().getName() + "'!");
     }
 

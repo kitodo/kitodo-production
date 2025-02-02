@@ -41,7 +41,8 @@
                                      imagePreviewForm:stripeContextMenu
                                      imagePreviewForm:mediaContextMenu
                                      metadataAccordion:logicalMetadataHeader
-                                     metadataAccordion:logicalMetadataWrapperPanel"/>
+                                     metadataAccordion:logicalMetadataWrapperPanel
+                                     metadataAccordion:physicalMetadataWrapperPanel"/>
             <p:remoteCommand name="setGalleryViewMode"
                              action="#{DataEditorForm.galleryPanel.setGalleryViewMode}"
                              update="imagePreviewForm galleryHeadingWrapper"
@@ -313,6 +314,7 @@
         <h:outputStylesheet name="webjars/openlayers/6.14.1/ol.css"/>
         <h:outputScript library="webjars" name="openlayers/6.14.1/ol.js" />
         <h:outputScript name="js/ol_custom.js"/>
+        <h:outputScript name="js/metadataeditor_tree_drag_drop.js" />
         <h:outputScript name="js/metadataeditor_gallery_drag_drop.js" rendered="#{editImages}" />
     </p:panel>
 </ui:composition>

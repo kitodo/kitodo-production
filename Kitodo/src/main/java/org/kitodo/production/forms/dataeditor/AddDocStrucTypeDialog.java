@@ -182,13 +182,15 @@ public class AddDocStrucTypeDialog {
                 }
             }
             dataEditor.refreshStructurePanel();
-            List<TreeNode> selectedLogicalTreeNodes = dataEditor.getStructurePanel().updateLogicalNodeSelectionRecursive(newStructure,
-                    this.dataEditor.getStructurePanel().getLogicalTree());
-            if (Objects.nonNull(selectedLogicalTreeNodes)) {
-                this.dataEditor.getStructurePanel().setSelectedLogicalNodes(selectedLogicalTreeNodes);
-                this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
-                dataEditor.refreshStructurePanel();
-            }
+            
+            dataEditor.getStructurePanel().updateNodeSelection(
+                Collections.emptyList(),
+                Collections.singletonList(newStructure)
+            );
+            
+            this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
+            dataEditor.refreshStructurePanel();
+            
             List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
                     .sorted(Comparator.comparingInt(p -> p.getLeft().getOrder()))
                     .collect(Collectors.toList());
