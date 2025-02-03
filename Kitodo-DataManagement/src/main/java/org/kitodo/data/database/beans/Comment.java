@@ -85,7 +85,7 @@ public class Comment extends BaseBean {
     /**
      * The field process holds the process of the comment.
      */
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_comment_process_id"))
     private Process process;
 
