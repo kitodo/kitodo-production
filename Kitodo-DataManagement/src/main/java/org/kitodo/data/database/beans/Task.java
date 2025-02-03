@@ -133,7 +133,7 @@ public class Task extends BaseBean {
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
     private Template template;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_task_process_id"))
     private Process process;
 
