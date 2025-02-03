@@ -15,13 +15,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.EnumMap;
-import java.util.function.BiConsumer;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.kitodo.api.MdSec;
 import org.kitodo.api.Metadata;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
-import org.kitodo.api.dataformat.Division;
 import org.kitodo.api.dataformat.LogicalDivision;
 import org.kitodo.exceptions.InvalidMetadataValueException;
 import org.kitodo.exceptions.NoSuchMetadataFieldException;
