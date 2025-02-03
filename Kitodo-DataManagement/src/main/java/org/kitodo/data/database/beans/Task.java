@@ -22,6 +22,7 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.ForeignKey;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -132,7 +133,7 @@ public class Task extends BaseBean {
     @JoinColumn(name = "template_id", foreignKey = @ForeignKey(name = "FK_task_template_id"))
     private Template template;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "process_id", foreignKey = @ForeignKey(name = "FK_task_process_id"))
     private Process process;
 
