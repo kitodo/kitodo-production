@@ -83,7 +83,7 @@ public class Process extends BaseTemplateBean {
     @JoinColumn(name = "project_id", foreignKey = @ForeignKey(name = "FK_process_project_id"))
     private Project project;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "ruleset_id", foreignKey = @ForeignKey(name = "FK_process_ruleset_id"))
     private Ruleset ruleset;
 
