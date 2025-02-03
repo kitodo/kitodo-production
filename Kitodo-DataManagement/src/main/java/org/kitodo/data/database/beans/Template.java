@@ -302,7 +302,7 @@ public class Template extends BaseTemplateBean {
 
     @Override
     public int hashCode() {
-        return Objects.hash(client, docket, ruleset, workflow);
+        return id;
     }
 
     /**
