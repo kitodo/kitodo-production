@@ -302,7 +302,7 @@ public class Template extends BaseTemplateBean {
 
     @Override
     public int hashCode() {
-        return id;
+        return Objects.nonNull(id) ? id : super.hashCode();
     }
 
     /**
