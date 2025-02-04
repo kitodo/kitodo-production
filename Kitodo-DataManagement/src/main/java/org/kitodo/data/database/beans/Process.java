@@ -75,7 +75,7 @@ public class Process extends BaseTemplateBean {
     @Column(name = "ordering")
     private Integer ordering;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "docket_id", foreignKey = @ForeignKey(name = "FK_process_docket_id"))
     private Docket docket;
 
