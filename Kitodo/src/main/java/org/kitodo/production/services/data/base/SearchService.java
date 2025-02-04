@@ -631,7 +631,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return query
      */
     protected QueryBuilder createSetQuery(String key, Set<?> values, boolean contains) {
-        if (contains && !values.isEmpty()) {
+        if (contains && Objects.nonNull(values) && !values.isEmpty()) {
             return termsQuery(key, values);
         } else if (!contains && Objects.nonNull(values)) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
