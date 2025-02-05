@@ -477,6 +477,7 @@ public class WorkflowControllerServiceIT {
         ServiceManager.getCommentService().save(correctionComment);
 
         workflowService.reportProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
+        ServiceManager.getCommentService().refresh(correctionComment);
         workflowService.solveProblem(correctionComment, TaskEditType.MANUAL_SINGLE);
 
         Process process = ServiceManager.getProcessService().getById(currentTask.getProcess().getId());
