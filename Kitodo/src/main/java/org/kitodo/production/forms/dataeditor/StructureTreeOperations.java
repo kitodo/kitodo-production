@@ -52,7 +52,8 @@ public class StructureTreeOperations {
     }
 
     /**
-     * Mark all provided tree nodes as selected
+     * Mark all provided tree nodes as selected.
+     * 
      * @param nodes the set of nodes that are marked as selected
      */
     public static void selectTreeNodes(Set<TreeNode> nodes) {
@@ -147,23 +148,23 @@ public class StructureTreeOperations {
                     if (parentStructureTreeNode.getDataObject() instanceof LogicalDivision) {
                         LogicalDivision logicalDivision = (LogicalDivision) parentStructureTreeNode.getDataObject();
                         return new ImmutablePair<>(view.getPhysicalDivision(), logicalDivision);
-                    }   
+                    }
                 } else {
                     return new ImmutablePair<>(view.getPhysicalDivision(), null);
                 }
             }
-            
+
             if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
                 // tree node is physical division (as implemented in physical structure tree)
                 PhysicalDivision physicalDivision = (PhysicalDivision) structureTreeNode.getDataObject();
-                
+
                 if (!physicalDivision.getLogicalDivisions().isEmpty()) {
                     return new ImmutablePair<>(physicalDivision, physicalDivision.getLogicalDivisions().get(0));
                 } else {
                     return new ImmutablePair<>(physicalDivision, null);
                 }
             }
-        }   
+        }
         return null;
     }
 
@@ -182,7 +183,7 @@ public class StructureTreeOperations {
         }
         return null;
     }
-    
+
     /**
      * Return all tree nodes that match the physical divisions and logical divisons.
      * 
@@ -197,14 +198,14 @@ public class StructureTreeOperations {
         List<LogicalDivision> logicalDivisions
     ) {
         Set<TreeNode> matchingTreeNodes = new HashSet<>();
-        
+
         if (!logicalDivisions.isEmpty()) {
             matchingTreeNodes.addAll(findTreeNodeMatchingCriteria(root, (TreeNode node) -> {
                     // do not use List.contains operation, which uses content based "equals"-methods of Division class
                     // and there can be multiple divisions that are essentially equal (same properties)
                     // but each have their own tree node
                     LogicalDivision targetLogicalDivision = getLogicalDivisionFromTreeNode(node);
-                    for(LogicalDivision logicalDivision : logicalDivisions) {
+                    for (LogicalDivision logicalDivision : logicalDivisions) {
                         if (logicalDivision == targetLogicalDivision) {
                             return true;
                         }
@@ -213,7 +214,7 @@ public class StructureTreeOperations {
                 }
             ));
         }
-        
+
         if (!physicalDivisions.isEmpty()) {
             matchingTreeNodes.addAll(findTreeNodeMatchingCriteria(root, (TreeNode node) -> {
                 // do not use List.contains operation, which uses content based "equals"-methods of Division class
@@ -221,7 +222,7 @@ public class StructureTreeOperations {
                 // but each have their own tree node
                 Pair<PhysicalDivision, LogicalDivision> targetPair = getPhysicalDivisionPairFromTreeNode(node);
                 if (Objects.nonNull(targetPair)) {
-                    for(Pair<PhysicalDivision, LogicalDivision>  pair : physicalDivisions) {
+                    for (Pair<PhysicalDivision, LogicalDivision>  pair : physicalDivisions) {
                         if (Objects.nonNull(pair) 
                                 && targetPair.getLeft() == pair.getLeft() 
                                 && targetPair.getRight() == pair.getRight()) {
@@ -250,7 +251,7 @@ public class StructureTreeOperations {
                 // node is a physical division, try to find its parent logical division
                 if (Objects.nonNull(getLogicalDivisionFromTreeNode(node.getParent()))) {
                     return node.getParent();
-                };                
+                }
             } else if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
                 // node is a logical divison, return self
                 return node;
