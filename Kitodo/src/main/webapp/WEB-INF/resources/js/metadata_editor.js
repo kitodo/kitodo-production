@@ -834,8 +834,11 @@ metadataEditor.logicalTree = {
         this.resetSelectionStyle();
         PF("logicalTree").selections = [];
         for(let i = 0; i < treeNodeIds.length; i++) {
-            this._addNodeToSelection(this._getNodeFromTreeNodeId(treeNodeIds[i]));
-            PF("logicalTree").addToSelection(treeNodeIds[i]);
+            let node = this._getNodeFromTreeNodeId(treeNodeIds[i]);
+            if (node) {
+                this._addNodeToSelection(node);
+                PF("logicalTree").addToSelection(treeNodeIds[i]);
+            }
         }        
     },
 
@@ -978,9 +981,12 @@ metadataEditor.physicalTree = {
         this.resetSelectionStyle();
         PF("physicalTree").selections = [];
         for(let i = 0; i < treeNodeIds.length; i++) {
-            this._addNodeToSelection(this._getNodeFromTreeNodeId(treeNodeIds[i]));
-            let rowkey = this._findRowKeyByTreeNodeId(treeNodeIds[i]);
-            PF("physicalTree").addToSelection(rowkey);
+            let node = this._getNodeFromTreeNodeId(treeNodeIds[i]);
+            if (node) {
+                this._addNodeToSelection(node);
+                let rowkey = this._findRowKeyByTreeNodeId(treeNodeIds[i]);
+                PF("physicalTree").addToSelection(rowkey);
+            }
         }
     },
 
