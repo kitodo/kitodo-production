@@ -122,7 +122,12 @@ public class StructureTreeOperations {
                 View view = (View) structureTreeNode.getDataObject();
                 return view.getPhysicalDivision();
             }
-        }   
+
+            if (structureTreeNode.getDataObject() instanceof PhysicalDivision) {
+                return (PhysicalDivision) structureTreeNode.getDataObject();
+            }
+        }
+        
         return null;
     }
 
