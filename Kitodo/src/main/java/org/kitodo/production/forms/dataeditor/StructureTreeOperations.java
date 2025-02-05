@@ -200,14 +200,36 @@ public class StructureTreeOperations {
         
         if (!logicalDivisions.isEmpty()) {
             matchingTreeNodes.addAll(findTreeNodeMatchingCriteria(root, (TreeNode node) -> {
-                    return logicalDivisions.contains(getLogicalDivisionFromTreeNode(node));
+                    // do not use List.contains operation, which uses content based "equals"-methods of Division class
+                    // and there can be multiple divisions that are essentially equal (same properties)
+                    // but each have their own tree node
+                    LogicalDivision targetLogicalDivision = getLogicalDivisionFromTreeNode(node);
+                    for(LogicalDivision logicalDivision : logicalDivisions) {
+                        if (logicalDivision == targetLogicalDivision) {
+                            return true;
+                        }
+                    }
+                    return false;
                 }
             ));
         }
         
         if (!physicalDivisions.isEmpty()) {
             matchingTreeNodes.addAll(findTreeNodeMatchingCriteria(root, (TreeNode node) -> {
-                return physicalDivisions.contains(getPhysicalDivisionPairFromTreeNode(node));
+                // do not use List.contains operation, which uses content based "equals"-methods of Division class
+                // and there can be multiple logical divisions that are essentially equal (same properties)
+                // but each have their own tree node
+                Pair<PhysicalDivision, LogicalDivision> targetPair = getPhysicalDivisionPairFromTreeNode(node);
+                if (Objects.nonNull(targetPair)) {
+                    for(Pair<PhysicalDivision, LogicalDivision>  pair : physicalDivisions) {
+                        if (Objects.nonNull(pair) 
+                                && targetPair.getLeft() == pair.getLeft() 
+                                && targetPair.getRight() == pair.getRight()) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
             }));
         }
 
