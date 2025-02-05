@@ -1277,8 +1277,6 @@ public class StructurePanel implements Serializable {
      *
      * @param dragTreeNode
      *          TreeNode that is being dragged
-     * @param dropTreeNode
-     *          TreeNode to which the node is being dropped
      * @param dropStructureNode
      *          StructureTreeNode containing the Structural Element to which the page is moved
      * @param dragStructureNode
