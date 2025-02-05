@@ -854,7 +854,7 @@ public class GalleryPanel {
             int pageX = Integer.parseInt(params.get("pageX"));
             int pageY = Integer.parseInt(params.get("pageY"));
             createEvent = "(function(){let e=new Event('mousedown');e.pageX=" + pageX + ";e.pageY=" + pageY + ";return e})()";
-        }  
+        }
 
         if (StringUtils.isNotBlank(physicalDivisionOrder)) {
             selectMedia(physicalDivisionOrder, stripeIndex, selectionType);

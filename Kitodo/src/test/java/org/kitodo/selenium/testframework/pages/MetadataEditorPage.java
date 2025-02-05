@@ -279,6 +279,13 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
             ).size() == count);
     }
 
+    /**
+     * Check that overlay text of a gallery thumbnail matches an expected text.
+     * 
+     * @param thumbnailId the id of the thumbnail
+     * @param expectedText the expected overlay text
+     * @param errorText an error message in case the overlay text does not match
+     */
     public void checkGalleryThumbnailOverlayText(String thumbnailId, String expectedText, String errorText) {
         // find gallery thumbnail
         WebElement thumbnail = Browser.getDriver().findElement(By.id(thumbnailId));

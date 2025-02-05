@@ -24,8 +24,8 @@ function registerPrimeFacesTreeSelectionOrderSorting() {
         backupFunc.apply(this, [rowKey]);
         
         this.selections.sort(function (rk1, rk2) {
-            let rk1a = rk1.split("_").map(function(s) { return parseInt(s) });
-            let rk2a = rk2.split("_").map(function(s) { return parseInt(s) });
+            let rk1a = rk1.split("_").map(function(s) { return parseInt(s); });
+            let rk2a = rk2.split("_").map(function(s) { return parseInt(s); });
             let idx = 0;
             let length = Math.max(rk1a.length, rk2a.length);
 

@@ -413,12 +413,10 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
-        logger.error("prepare");
         elementsToAddSpinnerValue = 1;
         checkSelectedLogicalNode();
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
-            logger.error("isPresent: " + selectedStructure.get());
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                 dataEditor.getWorkpiece().getLogicalStructure());
             prepareDocStructPositionSelectionItems(parents.isEmpty());
