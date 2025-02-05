@@ -1207,7 +1207,7 @@ public class StructurePanel implements Serializable {
                     physicalMoved |= checkPhysicalDragDrop(dragNode, dropNode);
                 } else if (dragNode.getDataObject() instanceof View
                         && dropNode.getDataObject() instanceof LogicalDivision) {
-                    pageMoved |= movePageNode(dragTreeNode, dropTreeNode, dropNode, dragNode);
+                    pageMoved |= movePageNode(dragTreeNode, dropNode, dragNode);
                 } else {
                     throw new IllegalArgumentException(
                         Helper.getTranslation("dataEditor.dragNDropError", dragNode.getLabel(), dropNode.getLabel())
@@ -1286,7 +1286,6 @@ public class StructurePanel implements Serializable {
      */
     private boolean movePageNode(
         TreeNode dragTreeNode, 
-        TreeNode dropTreeNode, 
         StructureTreeNode dropStructureNode, 
         StructureTreeNode dragStructureNode
     ) throws IllegalArgumentException {
