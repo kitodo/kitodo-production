@@ -16,9 +16,9 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.kitodo.data.elasticsearch.index.type.enums.ProcessTypeField;
 import org.kitodo.data.exceptions.DataException;
 import org.kitodo.production.dto.ProcessDTO;
@@ -56,7 +56,7 @@ public class SearchResultGeneration {
      *
      * @return HSSFWorkbook
      */
-    public HSSFWorkbook getResult() {
+    public SXSSFWorkbook getResult() {
         return getWorkbook();
     }
 
@@ -96,11 +96,11 @@ public class SearchResultGeneration {
         return query;
     }
 
-    private HSSFWorkbook getWorkbook() {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet("Search results");
+    private SXSSFWorkbook getWorkbook() {
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Search results");
 
-        HSSFRow title = sheet.createRow(0);
+        Row title = sheet.createRow(0);
         title.createCell(0).setCellValue(this.filter);
         for (int i = 1; i < 8; i++) {
             title.createCell(i).setCellValue("");
@@ -113,7 +113,7 @@ public class SearchResultGeneration {
         return workbook;
     }
 
-    private void insertRowData(HSSFSheet sheet) {
+    private void insertRowData(Sheet sheet) {
         int rowCounter = 2;
         long numberOfProcessedProcesses = 0;
         int elasticsearchLimit = 9999;
@@ -149,8 +149,8 @@ public class SearchResultGeneration {
         }
     }
 
-    private void setRowHeader(HSSFSheet sheet) {
-        HSSFRow rowHeader = sheet.createRow(1);
+    private void setRowHeader(Sheet sheet) {
+        Row rowHeader = sheet.createRow(1);
         rowHeader.createCell(0).setCellValue(Helper.getTranslation("title"));
         rowHeader.createCell(1).setCellValue(Helper.getTranslation("ID"));
         rowHeader.createCell(2).setCellValue(Helper.getTranslation("Datum"));
@@ -161,8 +161,8 @@ public class SearchResultGeneration {
         rowHeader.createCell(7).setCellValue(Helper.getTranslation("Status"));
     }
 
-    private void prepareRow(int rowCounter, HSSFSheet sheet, ProcessDTO processDTO) {
-        HSSFRow row = sheet.createRow(rowCounter);
+    private void prepareRow(int rowCounter, Sheet sheet, ProcessDTO processDTO) {
+        Row row = sheet.createRow(rowCounter);
         row.createCell(0).setCellValue(processDTO.getTitle());
         row.createCell(1).setCellValue(processDTO.getId());
         row.createCell(2).setCellValue(processDTO.getCreationDate());

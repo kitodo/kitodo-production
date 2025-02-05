@@ -221,7 +221,9 @@ public class ProcessFieldedMetadata extends ProcessDetail implements Serializabl
             }
         }
         List<MetadataViewWithValuesInterface> tableData = metadataView.getSortedVisibleMetadata(entered, additionallySelectedFields);
-        treeNode.getChildren().clear();
+        if (Objects.nonNull(treeNode) && Objects.nonNull(treeNode.getChildren())) {
+            treeNode.getChildren().clear();
+        }
         hiddenMetadata = Collections.emptyList();
         for (MetadataViewWithValuesInterface rowData : tableData) {
             Optional<MetadataViewInterface> optionalMetadataView = rowData.getMetadata();

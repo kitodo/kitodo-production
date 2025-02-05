@@ -609,10 +609,8 @@ public class StructurePanel implements Serializable {
 
     private void restoreSelectionFromRowKeys(Set<String> rowKeys, TreeNode parentNode) {
         for (TreeNode childNode : parentNode.getChildren()) {
-            if (Objects.nonNull(childNode) && rowKeys.contains(childNode.getRowKey())) {
-                childNode.setSelected(true);
-            } else {
-                childNode.setSelected(false);
+            if (Objects.nonNull(childNode)) {
+                childNode.setSelected(rowKeys.contains(childNode.getRowKey()));
                 restoreSelectionFromRowKeys(rowKeys, childNode);
             }
         }

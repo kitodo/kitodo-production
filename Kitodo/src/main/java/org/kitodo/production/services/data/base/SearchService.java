@@ -20,7 +20,6 @@ import static org.opensearch.index.query.QueryBuilders.termsQuery;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -632,7 +631,7 @@ public abstract class SearchService<T extends BaseIndexedBean, S extends BaseDTO
      * @return query
      */
     protected QueryBuilder createSetQuery(String key, Set<?> values, boolean contains) {
-        if (contains && !values.isEmpty()) {
+        if (contains && Objects.nonNull(values) && !values.isEmpty()) {
             return termsQuery(key, values);
         } else if (!contains && Objects.nonNull(values)) {
             BoolQueryBuilder boolQuery = new BoolQueryBuilder();
