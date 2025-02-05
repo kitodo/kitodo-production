@@ -250,7 +250,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
                 <p:menuitem value="#{msgs.uploadMedia}"
                             action="#{DataEditorForm.uploadFileDialog.prepare}"
-                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete()}"
+                            rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and DataEditorForm.selectedMedia.size() == 1}"
                             icon="fa fa-upload fa-sm"
                             styleClass="plain"
                             update = "uploadFileDialog"

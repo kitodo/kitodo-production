@@ -227,7 +227,7 @@
                                 imagePreviewForm:mediaContextMenu"/>
             <p:menuitem value="#{msgs.uploadMedia}"
                         action="#{DataEditorForm.uploadFileDialog.prepare}"
-                        rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked}"
+                        rendered="#{SecurityAccessController.hasAuthorityToUploadMedia() and DataEditorForm.isFolderConfigurationComplete() and DataEditorForm.structurePanel.selectedLogicalNodeIfSingle ne null and not DataEditorForm.structurePanel.selectedLogicalNodeIfSingle.data.linked}"
                         icon="fa fa-upload fa-sm"
                         styleClass="plain"
                         update="uploadFileDialog"
