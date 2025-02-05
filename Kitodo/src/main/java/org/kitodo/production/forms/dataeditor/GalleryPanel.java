@@ -1020,7 +1020,7 @@ public class GalleryPanel {
     }
 
     /**
-     * Return true if the currently selected media (that is shown in the detail view) is the  
+     * Return true if the currently selected media (that is shown in the detail view) is the
      * first media of all available media.
      * @return boolean true if selected media is first media
      */
@@ -1044,7 +1044,7 @@ public class GalleryPanel {
     }
 
     /**
-     * Return true if the currently selected media (that is shown in the detail view) is the  
+     * Return true if the currently selected media (that is shown in the detail view) is the
      * last media of all available media.
      * @return boolean true if selected media is last media
      */

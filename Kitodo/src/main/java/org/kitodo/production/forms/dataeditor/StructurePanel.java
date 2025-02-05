@@ -408,7 +408,7 @@ public class StructurePanel implements Serializable {
     /**
      * Set selected physical nodes array (as required by PrimeFaces).
      *
-     * @param selectedPhysicalNode as org.primefaces.model.TreeNode
+     * @param selected array of selected org.primefaces.model.TreeNode
      */
     public void setSelectedPhysicalNodesAsArray(TreeNode[] selected) {
         if (Objects.nonNull(selected)) {
@@ -1039,7 +1039,7 @@ public class StructurePanel implements Serializable {
                 .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
-            
+
             // update selection throughout meta data editor
             dataEditor.updateSelection(selectedPhysicalDivisions, selectedLogicalDivisions);
 
@@ -1048,7 +1048,7 @@ public class StructurePanel implements Serializable {
             Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
             setSelectedLogicalNodes(previouslySelectedLogicalNodes);
         }
-    }    
+    }
 
     /**
      * Callback function triggered when a node is selected in the physical structure tree.
@@ -1061,7 +1061,7 @@ public class StructurePanel implements Serializable {
          * The newly selected element has already been set in 'selectedPhysicalNode' by
          * JSF at this point.
          */
-        try {                
+        try {
             // find selected physical divisions
             List<TreeNode> selectedTreeNodes = getSelectedPhysicalNodes();
             List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions = selectedTreeNodes.stream()
@@ -1090,9 +1090,9 @@ public class StructurePanel implements Serializable {
         List<Pair<PhysicalDivision, LogicalDivision>> selectedPhysicalDivisions, 
         List<LogicalDivision> selectedLogicalDivisions
     ) { 
-        // update logical tree       
+        // update logical tree
         this.updateLogicalTreeNodeSelection(selectedPhysicalDivisions, selectedLogicalDivisions);
-        
+
         // update physical tree if available
         if (this.isSeparateMedia()) {
             this.updatePhysicalTreeNodeSelection(selectedPhysicalDivisions);
@@ -1133,7 +1133,7 @@ public class StructurePanel implements Serializable {
         if (Objects.nonNull(logicalTree)) {
             // clear tree node selection
             StructureTreeOperations.clearTreeNodeSelection(logicalTree);
-            
+
             // find tree nodes matching selected logical and physical divisions
             Set<TreeNode> selectedTreeNodes = StructureTreeOperations.findTreeNodesMatchingDivisions(
                 logicalTree, selectedPhysicalDivisions, selectedLogicalDivisions
@@ -1141,7 +1141,7 @@ public class StructurePanel implements Serializable {
 
             // select those tree nodes
             StructureTreeOperations.selectTreeNodes(selectedTreeNodes);
-            
+
             // remember new selection
             previouslySelectedLogicalNodes = getSelectedLogicalNodes();
             setSelectedLogicalNodes(new ArrayList<>(selectedTreeNodes));
@@ -1215,19 +1215,8 @@ public class StructurePanel implements Serializable {
                 }
             }
 
-            if (logicalMoved || pageMoved) {
-                if (logicalStructureTreeContainsMedia()) {
-                    preserveLogicalAndPhysical();
-                } else {
-                    preserveLogical();
-                }
-                this.dataEditor.getGalleryPanel().updateStripes();
-                this.dataEditor.getPaginationPanel().show();
-            }
-            if (physicalMoved) {
-                preservePhysical();
-            }
-            
+            preserveAfterDragDrop(logicalMoved, pageMoved, physicalMoved);
+
         } catch (IllegalArgumentException e) {
             // invalid drag and drop operation
             Helper.setErrorMessage(e.getMessage());
@@ -1235,6 +1224,28 @@ public class StructurePanel implements Serializable {
             logger.error(exception.getLocalizedMessage(), exception);
         } finally {
             show(true);
+        }
+    }
+
+    /**
+     * Save drag drop changes in case no conflicts with ruleset were found.
+     * 
+     * @param logicalMoved whether a logical division was moved
+     * @param pageMoved whether a page was moved
+     * @param physicalMoved whether a physical division was moved
+     */
+    private void preserveAfterDragDrop(boolean logicalMoved, boolean pageMoved, boolean physicalMoved) {
+        if (logicalMoved || pageMoved) {
+            if (logicalStructureTreeContainsMedia()) {
+                preserveLogicalAndPhysical();
+            } else {
+                preserveLogical();
+            }
+            this.dataEditor.getGalleryPanel().updateStripes();
+            this.dataEditor.getPaginationPanel().show();
+        }
+        if (physicalMoved) {
+            preservePhysical();
         }
     }
 

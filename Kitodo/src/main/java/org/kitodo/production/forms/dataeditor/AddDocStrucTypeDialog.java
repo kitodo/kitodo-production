@@ -442,8 +442,8 @@ public class AddDocStrucTypeDialog {
      * Determines the logical parent division that can be used as a basis for the dialog and overwrites the 
      * user selection with this logical parent division. 
      * 
-     * Note: Sneakily overwriting the current user selection is a very bad legacy design choice of this dialog. 
-     * This should be improved in the future!
+     * <p>Note: Sneakily overwriting the current user selection is a very bad legacy design choice of this dialog. 
+     * This should be improved in the future!</p>
      */
     private void checkSelectedLogicalNode() {
         Set<LogicalDivision> logicalDivisionSet =  dataEditor.getStructurePanel().getSelectedLogicalNodes().stream()
@@ -459,7 +459,7 @@ public class AddDocStrucTypeDialog {
                     .collect(Collectors.toSet())
             );
         }
-        
+
         if (logicalDivisionSet.size() == 1) {
             LogicalDivision logicalDivision = logicalDivisionSet.iterator().next();
             if (Objects.nonNull(logicalDivision)) {
@@ -751,13 +751,13 @@ public class AddDocStrucTypeDialog {
             return " - ";
         }
     }
-    
+
     private StructuralElementViewInterface getDivisionViewOfStructure(String structure) {
         StructuralElementViewInterface divisionView = dataEditor.getRulesetManagement()
                 .getStructuralElementView(structure, dataEditor.getAcquisitionStage(), dataEditor.getPriorityList());
         return divisionView;
     }
-    
+
     /**
      * This method checks if the selected metadatakey refers to complex metadata.
      * 
