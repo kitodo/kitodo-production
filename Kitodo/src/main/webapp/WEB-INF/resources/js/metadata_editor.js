@@ -735,6 +735,11 @@ metadataEditor.gallery = {
 metadataEditor.logicalTree = {
 
     /**
+     * Remembers the logical tree node id for the node that was last selected by the user.
+     */
+    lastSelectedTreeNodeId: null,
+
+    /**
      * Handler that is called by Primefaces when a tree node is clicked.
      * 
      * @param node the tree node that is clicked as jquery object
@@ -742,40 +747,69 @@ metadataEditor.logicalTree = {
      */
     onNodeClick(node, event) {
         // determine tree node id of the clicked node
-        let currentTreeNodeId = node.attr("id").split(":")[1];
+        let currentTreeNodeId = this._getTreeNodeIdFromNode(node);
 
         if (!(event.metaKey || event.ctrlKey)) {
-            // remove all previous selections when clicking without ctrl key
+            // remove all previous selections when clicking without ctrl key or shift key
             this.resetSelectionStyle();
         }
 
         // mark current node as selected
         let mode = "add";
-        if (node.hasClass("ui-treenode-selected") && this._findSelectedNodes().length > 1) {
-            // remove selection if users clicks on node again while holding ctrl key and there are other selected nodes
-            this._removeNodeFromSelection(currentTreeNodeId);
-            mode = "remove";
+        if (!event.shiftKey) {
+            if (node.hasClass("ui-treenode-selected") && this._findSelectedNodes().length > 1) {
+                // remove selection if users clicks on node again while holding ctrl key and there are other selected nodes
+                this._removeNodeFromSelection(node);
+                mode = "remove";
+            } else {
+                // add node to selection
+                this._addNodeToSelection(node);
+            }
+            // remember node for shift selection
+            lastSelectedTreeNodeId = currentTreeNodeId;
         } else {
-            // add node to selection
-            this._addNodeToSelection(currentTreeNodeId);
+            // range select between lastSelectedTreeNodeId and currentTreeNodeId
+            let fromNode = this._getNodeFromTreeNodeId(lastSelectedTreeNodeId);
+            let toNode = this._getNodeFromTreeNodeId(currentTreeNodeId);
+            this._addNodeToSelection(toNode);
+            if (fromNode.parent().is(toNode.parent())) {
+                // valid shift selection between siblings
+                let firstNode = toNode.is(fromNode.nextAll()) ? fromNode : toNode;
+                let secondNode = firstNode.is(fromNode) ? toNode : fromNode;
+                if (!firstNode.is(secondNode)) {
+                    let that = this;
+                    firstNode.nextUntil(secondNode).each(function () {
+                        that._addNodeToSelection($(this));
+                    });
+                    this._addNodeToSelection(firstNode);
+                    this._addNodeToSelection(secondNode);
+                }
+            } else {
+                // treat shift selection as single selection
+                // remember node for next shift selection
+                lastSelectedTreeNodeId = currentTreeNodeId;
+            }
         }
 
         // find all selected nodes
-        let nodes = this._findSelectedNodes();
-
-        // extract tree node ids from current selection
-        let treeNodeIds = [];
-        nodes.each(function () {
-            let treeNodeId = $(this).attr("id").split(":")[1];
-            treeNodeIds.push(treeNodeId);
+        let that = this;
+        let treeNodeIds = this._findSelectedNodes().toArray().map(function(node) {
+            return that._getTreeNodeIdFromNode($(node));
         });
         
         metadataEditor.gallery.stripes.markManyAsSelected(treeNodeIds);
         metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, mode == "add" ? currentTreeNodeId: null);
         metadataEditor.pagination.markManyAsSelected(treeNodeIds);
         
-        if (metadataEditor.physicalTree.isAvailable()) {
-            metadataEditor.physicalTree.markManyAsSelected(treeNodeIds);
+        if (this == metadataEditor.logicalTree) {
+            // update physical tree if this method was invoked from a logical tree event
+            if (metadataEditor.physicalTree.isAvailable()) {
+                metadataEditor.physicalTree.markManyAsSelected(treeNodeIds);
+            }
+        }
+        if (this == metadataEditor.physicalTree) {
+            // update logical tree selection if this method was invoked from a physical tree event
+            metadataEditor.logicalTree.markManyAsSelected(treeNodeIds);
         }
     },
 
@@ -800,9 +834,28 @@ metadataEditor.logicalTree = {
         this.resetSelectionStyle();
         PF("logicalTree").selections = [];
         for(let i = 0; i < treeNodeIds.length; i++) {
-            this._addNodeToSelection(treeNodeIds[i]);
+            this._addNodeToSelection(this._getNodeFromTreeNodeId(treeNodeIds[i]));
             PF("logicalTree").addToSelection(treeNodeIds[i]);
         }        
+    },
+
+    /**
+     * Return the tree node id from a jquery node object.
+     * @param {*} node the jquery node object
+     * @returns the tree node id
+     */
+    _getTreeNodeIdFromNode(node) {
+        return node.attr("id").split(":")[1];
+    },
+
+    /**
+     * Return the jquery node for a tree node id.
+     * 
+     * @param treeNodeId the tree node id
+     * @returns the jquery object of the node in the logical tree
+     */
+    _getNodeFromTreeNodeId(treeNodeId) {
+        return $("#logicalTree\\:" + treeNodeId);
     },
 
     /**
@@ -838,10 +891,10 @@ metadataEditor.logicalTree = {
     /**
      * Adds one node to the selection.
      * 
-     * @param treeNodeId the logical tree node id as string, identifying the tree node
+     * @param node the jquery node object that is added to the selection
      */
-    _addNodeToSelection(treeNodeId) {
-        this._styleNodeAsSelected($("#logicalTree\\:" + treeNodeId));
+    _addNodeToSelection(node) {
+        this._styleNodeAsSelected(node);
     },
 
     /**
@@ -859,10 +912,10 @@ metadataEditor.logicalTree = {
     /**
      * Remove one node from the selection.
      * 
-     * @param treeNodeId the logical tree node id as string, identifying the tree node
+     * @param node the jquery node object that is removed from the selection
      */
-    _removeNodeFromSelection(treeNodeId) {
-        this._styleNodeAsUnselected($("#logicalTree\\:" + treeNodeId));  
+    _removeNodeFromSelection(node) {
+        this._styleNodeAsUnselected(node);  
     },
 
     /**
@@ -900,41 +953,7 @@ metadataEditor.physicalTree = {
      * @param event the mouse event
      */
     onNodeClick(node, event) {
-        // find logical tree node id for the clicked tree node
-        let currentTreeNodeId = this._findTreeNodeId(node);
-
-        if (!(event.metaKey || event.ctrlKey)) {
-            // remove all previous selections when clicking without ctrl key
-            this.resetSelectionStyle();
-        }
-
-        // mark current node as selected
-        let mode = "add";
-        if (node.hasClass("ui-treenode-selected") && this._findSelectedNodes().length > 1) {
-            // remove selection if users clicks on node again while holding ctrl key and there are other selected nodes
-            this._removeNodeFromSelection(currentTreeNodeId);
-            mode = "remove";
-        } else {
-            // add node to selection
-            this._addNodeToSelection(currentTreeNodeId);
-        }
-
-        // find all selected nodes
-        let nodes = this._findSelectedNodes();
-
-        // extract tree node ids from current selection
-        let treeNodeIds = [];
-        let that = this;
-        nodes.each(function () {
-            treeNodeIds.push(that._findTreeNodeId($(this)));
-        });
-
-        // apply selection to other components of the metadata editor
-        metadataEditor.logicalTree.markManyAsSelected(treeNodeIds);
-        metadataEditor.pagination.markManyAsSelected(treeNodeIds);
-        metadataEditor.gallery.pages.markManyAsSelected(treeNodeIds, mode == "add" ? currentTreeNodeId : null);
-        metadataEditor.gallery.stripes.resetSelectionStyle();
-
+        metadataEditor.logicalTree.onNodeClick.apply(this, [node, event]);
     },
 
     /**
@@ -959,21 +978,36 @@ metadataEditor.physicalTree = {
         this.resetSelectionStyle();
         PF("physicalTree").selections = [];
         for(let i = 0; i < treeNodeIds.length; i++) {
-            this._addNodeToSelection(treeNodeIds[i]);
+            this._addNodeToSelection(this._getNodeFromTreeNodeId(treeNodeIds[i]));
             let rowkey = this._findRowKeyByTreeNodeId(treeNodeIds[i]);
             PF("physicalTree").addToSelection(rowkey);
         }
     },
 
     /**
-     * Return the tree node id for a node in the physical structure tree.
-     * 
-     * @param node jquery object of the tree node
+     * Return the tree node id from a jquery node object.
+     * @param node the jquery node object
      * @returns the tree node id
      */
-    _findTreeNodeId(node) {
+    _getTreeNodeIdFromNode(node) {
         let order = node.find("> .ui-treenode-content label[data-order]")[0].dataset.order;
         return metadataEditor.gallery.pages.findTreeNodeIdByOrder(order);
+    },
+
+    /**
+     * Return the jquery node for a tree node id.
+     * 
+     * @param treeNodeId the tree node id
+     * @returns the jquery object of the node in the logical tree
+     */
+    _getNodeFromTreeNodeId(treeNodeId) {
+        let order = metadataEditor.gallery.pages.findOrderByTreeNodeId(treeNodeId);
+        if (order !== null) {
+            let span = $("#physicalTree label[data-order=\"" + order + "\"]");
+            let node = span.closest(".ui-treenode");
+            return node;
+        }
+        return null;
     },
 
     /**
@@ -998,29 +1032,19 @@ metadataEditor.physicalTree = {
     /**
      * Add a single node to the selection.
      * 
-     * @param {*} treeNodeId the tree node id of the newly selected node
+     * @param {*} node the jquery node that is added to the selection
      */
-    _addNodeToSelection(treeNodeId) {
-        let order = metadataEditor.gallery.pages.findOrderByTreeNodeId(treeNodeId);
-        if (order !== null) {
-            let span = $("#physicalTree label[data-order=\"" + order + "\"]");
-            let node = span.closest(".ui-treenode");
-            metadataEditor.logicalTree._styleNodeAsSelected(node);
-        }
+    _addNodeToSelection(node) {
+        metadataEditor.logicalTree._styleNodeAsSelected(node);
     },
 
     /**
      * Remove a single node from the selection.
      * 
-     * @param {*} treeNodeId the tree node id of the newly selected node
+     * @param node the jquery node that is removed from the selection
      */
-    _removeNodeFromSelection(treeNodeId) {
-        let order = metadataEditor.gallery.pages.findOrderByTreeNodeId(treeNodeId);
-        if (order !== null) {
-            let span = $("#physicalTree label[data-order=\"" + order + "\"]");
-            let node = span.closest(".ui-treenode");
-            metadataEditor.logicalTree._styleNodeAsUnselected(node);
-        }
+    _removeNodeFromSelection(node) {
+        metadataEditor.logicalTree._styleNodeAsUnselected(node);
     },
 
     /**
