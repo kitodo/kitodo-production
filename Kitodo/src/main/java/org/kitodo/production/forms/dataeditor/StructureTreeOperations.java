@@ -214,4 +214,26 @@ public class StructureTreeOperations {
         return matchingTreeNodes;
     }
 
+    /**
+     * Return the logical parent tree node of a node if it is a physical divison node, or 
+     * itself if it is a logical node.
+     */
+    public static TreeNode getTreeNodeLogicalParentOrSelf(TreeNode node) {
+        if (Objects.isNull(node)) {
+            return null;
+        }
+        if (node.getData() instanceof StructureTreeNode) {
+            StructureTreeNode structureTreeNode = (StructureTreeNode) node.getData();
+            if (structureTreeNode.getDataObject() instanceof View) {
+                // node is a physical division, try to find its parent logical division
+                if (Objects.nonNull(getLogicalDivisionFromTreeNode(node.getParent()))) {
+                    return node.getParent();
+                };                
+            } else if (structureTreeNode.getDataObject() instanceof LogicalDivision) {
+                // node is a logical divison, return self
+                return node;
+            }
+        }
+        return null;
+    }
 }
