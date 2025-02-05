@@ -184,12 +184,11 @@ public class AddDocStrucTypeDialog {
             }
             dataEditor.refreshStructurePanel();
             
-            dataEditor.getStructurePanel().updateNodeSelection(
-                Collections.emptyList(),
-                Collections.singletonList(newStructure)
-            );
-            
-            this.dataEditor.getMetadataPanel().showLogical(this.dataEditor.getSelectedStructure());
+            try {
+                dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(newStructure));
+            } catch (NoSuchMetadataFieldException e) {
+                Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
+            }
             dataEditor.refreshStructurePanel();
             
             List<Pair<PhysicalDivision, LogicalDivision>> selectedMedia = this.dataEditor.getSelectedMedia().stream()
@@ -415,10 +414,12 @@ public class AddDocStrucTypeDialog {
      * Prepare popup dialog by retrieving available insertion positions and doc struct types for selected element.
      */
     public void prepare() {
+        logger.error("prepare");
         elementsToAddSpinnerValue = 1;
         checkSelectedLogicalNode();
         Optional<LogicalDivision> selectedStructure = dataEditor.getSelectedStructure();
         if (selectedStructure.isPresent()) {
+            logger.error("isPresent: " + selectedStructure.get());
             this.parents = MetadataEditor.getAncestorsOfLogicalDivision(selectedStructure.get(),
                 dataEditor.getWorkpiece().getLogicalStructure());
             prepareDocStructPositionSelectionItems(parents.isEmpty());
@@ -437,15 +438,35 @@ public class AddDocStrucTypeDialog {
         }
     }
 
+    /** 
+     * Determines the logical parent division that can be used as a basis for the dialog and overwrites the 
+     * user selection with this logical parent division. 
+     * 
+     * Note: Sneakily overwriting the current user selection is a very bad legacy design choice of this dialog. 
+     * This should be improved in the future!
+     */
     private void checkSelectedLogicalNode() {
-        //If a view is selected in logical tree then the 'selectedLogicalNode' will be set to the parent of this view
-        TreeNode selectedLogicalNode = dataEditor.getStructurePanel().getSelectedLogicalNodeIfSingle();
-        if (Objects.nonNull(selectedLogicalNode) && selectedLogicalNode.getData() instanceof StructureTreeNode) {
-            StructureTreeNode structureTreeNode = (StructureTreeNode) selectedLogicalNode.getData();
-            if (structureTreeNode.getDataObject() instanceof View) {
-                if (Objects.nonNull(selectedLogicalNode.getParent())) {
-                    previouslySelectedLogicalNode = selectedLogicalNode;
-                    dataEditor.getStructurePanel().setSelectedLogicalNodes(Arrays.asList(selectedLogicalNode.getParent()));
+        Set<LogicalDivision> logicalDivisionSet =  dataEditor.getStructurePanel().getSelectedLogicalNodes().stream()
+            .map(StructureTreeOperations::getTreeNodeLogicalParentOrSelf)
+            .map(StructureTreeOperations::getLogicalDivisionFromTreeNode)
+            .collect(Collectors.toSet());
+
+        if (logicalDivisionSet.isEmpty()) {
+            // determine logical parent division for selection of media (in case of gallery selection)
+            logicalDivisionSet.addAll(
+                dataEditor.getSelectedMedia().stream()
+                    .map(Pair::getRight)
+                    .collect(Collectors.toSet())
+            );
+        }
+        
+        if (logicalDivisionSet.size() == 1) {
+            LogicalDivision logicalDivision = logicalDivisionSet.iterator().next();
+            if (Objects.nonNull(logicalDivision)) {
+                try {
+                    dataEditor.updateSelection(Collections.emptyList(), Collections.singletonList(logicalDivision));
+                } catch (NoSuchMetadataFieldException e) {
+                    Helper.setErrorMessage(e.getLocalizedMessage(), logger, e);
                 }
             }
         }
