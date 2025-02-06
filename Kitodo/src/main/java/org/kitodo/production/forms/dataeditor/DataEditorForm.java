@@ -921,10 +921,11 @@ public class DataEditorForm implements MetadataTreeTableInterface, RulesetSetupI
         getSelectedMedia().addAll(selectedPhysicalDivisions);
 
         // update logical meta data panel
-        if (!getStructurePanel().isSeparateMedia() && selectedPhysicalDivisions.size() == 1) {
+        if (!getStructurePanel().isSeparateMedia() && selectedPhysicalDivisions.size() == 1 
+                && selectedLogicalDivisions.isEmpty()) {
             // show physical division in logical meta data panel in combined meta data mode
             getMetadataPanel().showPageInLogical(selectedPhysicalDivisions.get(0).getLeft());
-        } else if (selectedLogicalDivisions.size() == 1) {
+        } else if (selectedLogicalDivisions.size() == 1 && selectedPhysicalDivisions.isEmpty()) {
             // show logical division in logical meta data panel
             getMetadataPanel().showLogical(Optional.of(selectedLogicalDivisions.get(0)));
         } else {
