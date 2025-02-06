@@ -315,6 +315,9 @@
             </resource>
             <resource>
                 <!-- ATTENTION! we need the config-local declaration at first cause it shall be placed as last resource in the classpath -->
+                <!-- See also:
+                       • https://github.com/apache/maven/pull/840
+                       • https://github.com/apache/maven/pull/1061          -->
                 <directory>${maven.multiModuleProjectDirectory}/config-local</directory>
             </resource>
             <resource>
