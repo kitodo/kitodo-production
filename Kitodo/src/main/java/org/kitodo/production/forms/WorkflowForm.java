@@ -83,12 +83,15 @@ public class WorkflowForm extends BaseForm {
     private Integer roleId;
     private boolean migration;
     private static final String MIGRATION_FORM_PATH = MessageFormat.format(REDIRECT_PATH,"system");
+    private ExternalContext externalContext;
 
     /**
      * Constructor.
      */
     public WorkflowForm() {
         super.setLazyDTOModel(new LazyDTOModel(ServiceManager.getWorkflowService()));
+        this.externalContext = FacesContext.getCurrentInstance() != null
+                ? FacesContext.getCurrentInstance().getExternalContext() : null;
     }
 
     /**
@@ -116,6 +119,10 @@ public class WorkflowForm extends BaseForm {
      */
     public void setWorkflowStatus(WorkflowStatus workflowStatus) {
         this.workflowStatus = workflowStatus;
+    }
+
+    public void setExternalContext(ExternalContext externalContext) {
+        this.externalContext = externalContext; // Allow test injection
     }
 
     /**
@@ -420,10 +427,9 @@ public class WorkflowForm extends BaseForm {
                 this.svgDiagram = IOUtils.toString(svgInputStream, StandardCharsets.UTF_8);
             }
             // Store duplicated workflow in Flash scope
-            ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
-            externalContext.getFlash().put("duplicatedWorkflow", this.workflow);
-            externalContext.getFlash().put("xmlDiagram", this.xmlDiagram);
-            externalContext.getFlash().put("svgDiagram", this.svgDiagram);
+            storeInFlashScope("duplicatedWorkflow", this.workflow);
+            storeInFlashScope("xmlDiagram", this.xmlDiagram);
+            storeInFlashScope("svgDiagram", this.svgDiagram);
 
             return workflowEditPath + "&id=0";
 
@@ -489,6 +495,12 @@ public class WorkflowForm extends BaseForm {
         } catch (DAOException e) {
             Helper.setErrorMessage(ERROR_LOADING_ONE, new Object[] {ObjectType.WORKFLOW.getTranslationSingular(), id },
                 logger, e);
+        }
+    }
+
+    private void storeInFlashScope(String key, Object value) {
+        if (externalContext != null) {
+            externalContext.getFlash().put(key, value);
         }
     }
 
