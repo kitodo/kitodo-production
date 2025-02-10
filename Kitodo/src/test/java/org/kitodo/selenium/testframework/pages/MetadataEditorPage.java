@@ -11,6 +11,7 @@
 
 package org.kitodo.selenium.testframework.pages;
 
+import org.kitodo.MockDatabase;
 import org.kitodo.selenium.testframework.Browser;
 import org.kitodo.selenium.testframework.Pages;
 import org.openqa.selenium.By;
@@ -18,12 +19,19 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.FindBy;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MetadataEditorPage extends Page<MetadataEditorPage> {
+
+    private static final String SAVE_AND_EXIT_BUTTON_ID = "buttonForm:saveExit";
+    private static final String LOGICAL_TREE = "logicalTree";
 
     @SuppressWarnings("unused")
     @FindBy(id = "structureTreeForm")
@@ -51,19 +59,19 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
     @FindBy(id = "buttonForm:save")
     private WebElement saveButton;
 
-    @FindBy(id = "buttonForm:saveExit")
+    @FindBy(id = SAVE_AND_EXIT_BUTTON_ID)
     private WebElement saveAndExitButton;
 
     @FindBy(id = "buttonForm:renameMedia")
     private WebElement renameMediaButton;
 
-    @FindBy(id = "logicalTree:0")
+    @FindBy(id = LOGICAL_TREE + ":0")
     private WebElement logicalTree;
 
-    @FindBy(id = "logicalTree:0_0")
+    @FindBy(id = LOGICAL_TREE + ":0_0")
     private WebElement firstChildProcess;
 
-    @FindBy(id = "logicalTree:0_1")
+    @FindBy(id = LOGICAL_TREE + ":0_1")
     private WebElement secondChildNode;
 
     @FindBy(id = "expandAllButton")
@@ -278,5 +286,100 @@ public class MetadataEditorPage extends Page<MetadataEditorPage> {
      */
     public void openDetailView() {
         imagePreviewButton.click();
+    }
+
+    /**
+     * Create new structure element and return corresponding WebElement.
+     *
+     * @return WebElement representing newly created structure element
+     * @throws Exception when page navigation fails
+     */
+    public WebElement createStructureElement() throws Exception {
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(LOGICAL_TREE))::isDisplayed);
+        WebElement structureTree = Browser.getDriver().findElement(By.id(LOGICAL_TREE));
+        WebElement logicalRoot = structureTree.findElement(By.className("ui-tree-selectable"));
+        logicalRoot.click();
+        await().ignoreExceptions().pollDelay(1000, TimeUnit.MILLISECONDS).pollInterval(500, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS).until(logicalRoot::isDisplayed);
+        // right click action
+        Actions rightClickAction = new Actions(Browser.getDriver());
+        rightClickAction.contextClick(logicalRoot).build().perform();
+        // wait for loading screen to disappear
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).pollInterval(300, TimeUnit.MILLISECONDS)
+                .atMost(5, TimeUnit.SECONDS).until(Browser.getDriver()
+                        .findElement(By.id(SAVE_AND_EXIT_BUTTON_ID))::isDisplayed);
+        WebElement contextMenu = Browser.getDriver().findElement(By.id("contextMenuLogicalTree"));
+        List<WebElement> menuItems = contextMenu.findElements(By.className("ui-menuitem"));
+        assertEquals(3, menuItems.size(), "Wrong number of context menu items");
+        // click "add element" option
+        menuItems.get(0).click();
+        // open "structure element type selection" menu
+        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection"), 1000, 1000, 5);
+        // click first option
+        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1"), 1000, 500, 3);
+        WebDriverWait wait = new WebDriverWait(Browser.getDriver(), 3);
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(By.id("dialogAddDocStrucTypeForm:docStructAddTypeSelection_1")));
+        // add structure element with selected type by clicking "accept"/"apply" button
+        Thread.sleep(1000);
+        clickItemWhenDisplayed(By.id("dialogAddDocStrucTypeForm:addDocStruc"), 500, 500, 5);
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(SAVE_AND_EXIT_BUTTON_ID))::isEnabled);
+        structureTree = Browser.getDriver().findElement(By.id(LOGICAL_TREE));
+        return structureTree.findElement(By.id(LOGICAL_TREE + ":0_0"));
+    }
+
+    /**
+     * Perform drag'n'drop action and return thumbnail overlay of target page as WebElement.
+     * @param dropPositionId ID of html element where dragged element should be dropped
+     * @param targetId ID of html dragged element when drag'n'drop operation finished
+     * @param expectedOverlayText String containing expected overlay text of page to move via drag'n'drop
+     * @return WebElement containing thumbnail of target page.
+     * @throws Exception when page navigation fails
+     */
+    public WebElement performDragAndDrop(String dropPositionId, String targetId, String expectedOverlayText)
+            throws Exception {
+        WebElement unstructuredMedia = Browser.getDriver().findElement(By.id("imagePreviewForm:unstructuredMedia"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(unstructuredMedia::isDisplayed);
+        // first page in unstructured media
+        WebElement firstThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:0:unstructuredMediaPanel"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(firstThumbnail::isDisplayed);
+        // hover over second thumbnail to verify overlay text before drag'n'drop
+        Actions hoverAction = new Actions(Browser.getDriver());
+        WebElement secondThumbnail = Browser.getDriver()
+                .findElement(By.id("imagePreviewForm:unstructuredMediaList:1:unstructuredMediaPanel"));
+        hoverAction.moveToElement(secondThumbnail).build().perform();
+        WebElement thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(thumbnailOverlay::isDisplayed);
+        assertEquals(expectedOverlayText, thumbnailOverlay.getText().strip(), "Last thumbnail has wrong overlay before drag'n'drop action");
+        // drop position for drag'n'drop action
+        WebElement dropPosition = Browser.getDriver()
+                .findElement(By.id(dropPositionId));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(3, TimeUnit.SECONDS)
+                .until(dropPosition::isDisplayed);
+        // drag'n'drop action
+        Actions dragAndDropAction = new Actions(Browser.getDriver());
+        dragAndDropAction.dragAndDrop(firstThumbnail, dropPosition).build().perform();
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(Browser.getDriver().findElement(By.id(SAVE_AND_EXIT_BUTTON_ID))::isEnabled);
+        Pages.getMetadataEditorPage().saveAndExit();
+        // check whether new position has been saved correctly
+        Pages.getProcessesPage().goTo().editMetadata(MockDatabase.DRAG_N_DROP_TEST_PROCESS_TITLE);
+        secondThumbnail = Browser.getDriver().findElement(By.id(targetId));
+        hoverAction.moveToElement(secondThumbnail).build().perform();
+        thumbnailOverlay = secondThumbnail.findElement(By.className("thumbnail-overlay"));
+        await().ignoreExceptions().pollDelay(300, TimeUnit.MILLISECONDS).atMost(5, TimeUnit.SECONDS)
+                .until(thumbnailOverlay::isDisplayed);
+        return thumbnailOverlay;
+    }
+
+    private void clickItemWhenDisplayed(By selector, long delay, long intervall, long timeout) {
+        await().ignoreExceptions().pollDelay(delay, TimeUnit.MILLISECONDS).pollInterval(intervall, TimeUnit.MILLISECONDS)
+                .atMost(timeout, TimeUnit.SECONDS).until(Browser.getDriver().findElement(selector)::isDisplayed);
+        Browser.getDriver().findElement(selector).click();
     }
 }
