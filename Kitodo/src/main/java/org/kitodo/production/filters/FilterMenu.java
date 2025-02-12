@@ -301,6 +301,7 @@ public class FilterMenu {
                 .getRequestParameterMap();
         if (parameters.containsKey("input") && StringUtils.isBlank(filterInEditMode)) {
             filterInEditMode = parameters.get("input");
+            parsedFilters.clear();
             submitFilters();
         }
         return filterInEditMode;
