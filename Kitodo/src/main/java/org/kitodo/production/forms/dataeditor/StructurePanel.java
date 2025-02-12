@@ -706,6 +706,15 @@ public class StructurePanel implements Serializable {
         return node;
     }
 
+    private boolean setContainsViewByReference(List<View> set, View view) {
+        for (View v : set) {
+            if (v == view) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * Recursively build the logical structure tree.
      *
@@ -728,7 +737,7 @@ public class StructurePanel implements Serializable {
             parent.setExpanded(true);
         }
 
-        Set<View> viewsShowingOnAChild = new HashSet<>();
+        List<View> viewsShowingOnAChild = new LinkedList<>();
         if (!this.logicalStructureTreeContainsMedia()) {
             for (LogicalDivision child : structure.getChildren()) {
                 viewsShowingOnAChild.addAll(buildStructureTreeRecursively(child, parent, processTypeMap, viewCache));
@@ -741,9 +750,9 @@ public class StructurePanel implements Serializable {
                     // add child and their views
                     viewsShowingOnAChild.addAll(buildStructureTreeRecursively(pair.getRight(), parent,
                             processTypeMap, viewCache));
-                } else if (!viewsShowingOnAChild.contains(pair.getLeft())) {
+                } else if (!(setContainsViewByReference(viewsShowingOnAChild, pair.getLeft()))) {
                     // add views of current logical division as leaf nodes
-                    DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, false, pair.getLeft(), parent);
+                    DefaultTreeNode viewNode = addTreeNode(buildViewLabel(pair.getLeft()), false, viewsShowingOnAChild.contains(pair.getLeft()), pair.getLeft(), parent);
                     viewNode.setType(pair.getLeft().getPhysicalDivision().hasMediaPartial()
                             ? MEDIA_PARTIAL_NODE_TYPE
                             : VIEW_NODE_TYPE);
