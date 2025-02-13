@@ -19,6 +19,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.NoSuchElementException;
 import java.util.Objects;
 
 import javax.faces.model.SelectItem;
@@ -31,6 +32,7 @@ import org.kitodo.api.MetadataEntry;
 import org.kitodo.api.dataeditor.rulesetmanagement.Domain;
 import org.kitodo.api.dataeditor.rulesetmanagement.SimpleMetadataViewInterface;
 import org.kitodo.exceptions.InvalidMetadataValueException;
+import org.kitodo.exceptions.MetadataException;
 
 public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Serializable {
     private static final Logger logger = LogManager.getLogger(ProcessSelectMetadata.class);
@@ -225,5 +227,15 @@ public class ProcessSelectMetadata extends ProcessSimpleMetadata implements Seri
     @Override
     public String getMetadataID() {
         return settings.getId();
+    }
+
+    @Override
+    public void setValue(String value) {
+        if (!items.parallelStream().anyMatch(selectItem -> Objects.equals(value, selectItem.getValue()))) {
+            throw new MetadataException(
+                    "Invalid value \"" + value + "\" for select-type metadata \"" + super.label + '"',
+                    new NoSuchElementException(value));
+        }
+        setSelectedItem(value);
     }
 }

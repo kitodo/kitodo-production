@@ -121,4 +121,9 @@ public class ProcessBooleanMetadata extends ProcessSimpleMetadata implements Ser
     public void setActive(boolean active) {
         this.active = active;
     }
+
+    @Override
+    public void setValue(String value) {
+        setActive(StringUtils.isNotBlank(value));
+    }
 }

@@ -92,4 +92,12 @@ public abstract class ProcessSimpleMetadata extends ProcessDetail implements Ser
     public int getMinOccurs() {
         return settings.getMinOccurs();
     }
+    
+    /**
+     * Sets the contents of the input field of this process metadata.
+     *
+     * @param value
+     *            value to be set
+     */
+    public abstract void setValue(String value);
 }

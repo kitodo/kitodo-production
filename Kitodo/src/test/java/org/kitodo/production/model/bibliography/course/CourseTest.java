@@ -17,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Collections;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -31,7 +32,7 @@ public class CourseTest {
     public void testCloneMethod() throws IOException, ParserConfigurationException, SAXException {
         String xmlString = new String(Files.readAllBytes(new File("src/test/resources/newspaper-course.xml").toPath()));
         Document xmlDocument = XMLUtils.parseXMLString(xmlString);
-        Course course = new Course(xmlDocument, null);
+        Course course = new Course(xmlDocument, Collections.emptyMap());
 
         // assert / check some data from the xml file
         assertEquals(23L, course.getIndividualIssues().size());
