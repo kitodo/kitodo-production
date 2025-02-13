@@ -104,24 +104,6 @@ public class KitodoProduction implements ServletContextListener, HttpSessionList
     }
 
     /**
-     * Returns the servlet context.
-     * 
-     * @return the servlet context
-     */
-    public ServletContext getServletContext() {
-        return context;
-    }
-
-    /**
-     * Returns the manifest. If there is one. Otherwise, it can also be empty.
-     * 
-     * @return the manifest
-     */
-    public Optional<Manifest> getManifest() {
-        return manifest;
-    }
-
-    /**
      * Returns application version information.
      * 
      * @return version information
